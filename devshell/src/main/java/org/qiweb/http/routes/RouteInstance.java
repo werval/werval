@@ -2,6 +2,7 @@ package org.qiweb.http.routes;
 
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import org.qi4j.functional.Specification;
 import org.qiweb.util.Couples;
 import org.qiweb.http.controllers.Result;
 
+import static io.netty.util.CharsetUtil.UTF_8;
 import static org.qi4j.api.util.NullArgumentException.validateNotEmpty;
 import static org.qi4j.api.util.NullArgumentException.validateNotNull;
 import static org.qi4j.functional.Iterables.addAll;
@@ -33,6 +35,7 @@ import static org.qi4j.functional.Specifications.in;
     private final HttpMethod httpMethod;
     private final String path;
     private final Class<?> controllerType;
+    private Method controllerMethod;
     private final String controllerMethodName;
     private final Iterable<Couple<String, Class<?>>> controllerParams;
 
@@ -102,8 +105,8 @@ import static org.qi4j.functional.Specifications.in;
         Class[] controllerParamsTypes = toArray( Class.class, Couples.<Class>right( controllerParams ) );
         try
         {
-            Method method = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
-            if( !method.getReturnType().isAssignableFrom( Result.class ) )
+            controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
+            if( !controllerMethod.getReturnType().isAssignableFrom( Result.class ) )
             {
                 throw new IllegalRouteException( toString(),
                                                  "Controller Method '" + controllerType.getSimpleName() + "#"
@@ -121,25 +124,25 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public boolean satisfiedBy( HttpRequest httpRequest )
+    public boolean satisfiedBy( HttpRequest request )
     {
-        HttpMethod httpRequestMethod = httpRequest.getMethod();
-        String httpRequestUri = httpRequest.getUri();
-        String[] httpRequestUriSegments = httpRequestUri.substring( 1 ).split( "/" );
-        if( !httpMethod.equals( httpRequestMethod ) )
+        HttpMethod requestMethod = request.getMethod();
+        String requestPath = new QueryStringDecoder( request.getUri(), UTF_8 ).path();
+        String[] requestPathSegments = requestPath.substring( 1 ).split( "/" );
+        if( !httpMethod.equals( requestMethod ) )
         {
             return false;
         }
         String[] routePathSegments = path.substring( 1 ).split( "/" );
-        if( routePathSegments.length != httpRequestUriSegments.length )
+        if( routePathSegments.length != requestPathSegments.length )
         {
             return false;
         }
         for( int idx = 0; idx < routePathSegments.length; idx++ )
         {
             String routePathSegment = routePathSegments[idx];
-            String httpRequestSegment = httpRequestUriSegments[idx];
-            if( !routePathSegment.startsWith( ":" ) && !routePathSegment.equals( httpRequestSegment ) )
+            String requestPathSegment = requestPathSegments[idx];
+            if( !routePathSegment.startsWith( ":" ) && !routePathSegment.equals( requestPathSegment ) )
             {
                 return false;
             }
@@ -166,6 +169,12 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
+    public Method controllerMethod()
+    {
+        return controllerMethod;
+    }
+
+    @Override
     public String controllerMethodName()
     {
         return controllerMethodName;
@@ -175,6 +184,28 @@ import static org.qi4j.functional.Specifications.in;
     public Iterable<Couple<String, Class<?>>> controllerParams()
     {
         return controllerParams;
+    }
+
+    @Override
+    public String controllerParamPathValue( final String paramName, String path )
+    {
+        String[] routePathSegments = this.path.split( "/" );
+        int segmentIndex = 0;
+        boolean segmentFound = false;
+        for( String routePathSegment : routePathSegments )
+        {
+            if( routePathSegment.equals( ":" + paramName ) )
+            {
+                segmentFound = true;
+                break;
+            }
+            segmentIndex++;
+        }
+        if( !segmentFound )
+        {
+            throw new IllegalArgumentException( "Parameter named '" + paramName + "' not found." );
+        }
+        return path.split( "/" )[segmentIndex];
     }
 
     @Override

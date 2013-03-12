@@ -1,9 +1,5 @@
 package org.qiweb.http.routes;
 
-import org.qiweb.http.routes.IllegalRouteException;
-import org.qiweb.http.routes.Routes;
-import org.qiweb.http.routes.RouteBuilder;
-import org.qiweb.http.routes.Route;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import java.util.Collections;
@@ -64,7 +60,7 @@ public class RoutesTest
         //     to( MyController.class, { c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) } ).
         //     newInstance();
 
-        assertThat( route.toString(), equalTo( "GET /foo/:id/bar/:slug org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )" ) );
+        assertThat( route.toString(), equalTo( "GET /foo/:id/bar/:slug org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )" ) );
     }
 
     /**
@@ -74,15 +70,15 @@ public class RoutesTest
     public static enum RoutesToTest
     {
 
-        TRANSIENT( "GET / org.qiweb.http.router.RoutesTest$MyController.test() transient",
+        TRANSIENT( "GET / org.qiweb.http.routes.RoutesTest$MyController.test() transient",
                    GET, "/", MyController.class, "test" ),
-        SERVICE( "GET / org.qiweb.http.router.RoutesTest$MyController.test() service",
+        SERVICE( "GET / org.qiweb.http.routes.RoutesTest$MyController.test() service",
                  GET, "/", MyController.class, "test" ),
-        SIMPLEST( "GET / org.qiweb.http.router.RoutesTest$MyController.test()",
+        SIMPLEST( "GET / org.qiweb.http.routes.RoutesTest$MyController.test()",
                   GET, "/", MyController.class, "test" ),
-        TEST( "  POST    /foo/bar    org.qiweb.http.router.RoutesTest$MyController.test()",
+        TEST( "  POST    /foo/bar    org.qiweb.http.routes.RoutesTest$MyController.test()",
               POST, "/foo/bar", MyController.class, "test" ),
-        ANOTHER( "GET /foo/:id/bar/:slug org.qiweb.http.router.RoutesTest$MyController.another(String    id ,Integer slug   )",
+        ANOTHER( "GET /foo/:id/bar/:slug org.qiweb.http.routes.RoutesTest$MyController.another(String    id ,Integer slug   )",
                  GET, "/foo/:id/bar/:slug", MyController.class, "another", new RoutesToTest.Params()
         {
             @Override
@@ -92,7 +88,7 @@ public class RoutesTest
                                  new Couple<String, Class<?>>( "slug", Integer.class ) );
             }
         } ),
-        ANOTHER_ONE( "GET /foo/:id/bar/:slug/cathedral/:id org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )",
+        ANOTHER_ONE( "GET /foo/:id/bar/:slug/cathedral/:id org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )",
                      GET, "/foo/:id/bar/:slug/cathedral/:id", MyController.class, "another", new RoutesToTest.Params()
         {
             @Override
@@ -102,22 +98,22 @@ public class RoutesTest
                                  new Couple<String, Class<?>>( "slug", Integer.class ) );
             }
         } ),
-        //        TEST_NO_PARENTHESIS( "  POST    /foo/bar    org.qiweb.http.router.RoutesTest$MyController.test",
+        //        TEST_NO_PARENTHESIS( "  POST    /foo/bar    org.qiweb.http.routes.RoutesTest$MyController.test",
         //                             POST, "/foo/bar", MyController.class, "test" ),
         WRONG_STRING_1( "WRONG /route", IllegalRouteException.class ),
         WRONG_STRING_2( "", IllegalRouteException.class ),
         WRONG_STRING_3( null, IllegalRouteException.class ),
-        WRONG_STRING_4( "# GET / org.qiweb.http.router.RoutesTest$MyController.test()", IllegalRouteException.class ),
+        WRONG_STRING_4( "# GET / org.qiweb.http.routes.RoutesTest$MyController.test()", IllegalRouteException.class ),
         WRONG_CONTROLLER_1( "GET /foo /bar com.acme.Controller.method()", IllegalRouteException.class ),
         WRONG_CONTROLLER_2( "GET / unknown.Type.method()", IllegalRouteException.class ),
-        WRONG_METHOD_1( "GET / org.qiweb.http.router.RoutesTest$MyController.unknownMethod()", IllegalRouteException.class ),
-        WRONG_METHOD_2( "GET / org.qiweb.http.router.RoutesTest$MyController.test( WhatTheHeck param )", IllegalRouteException.class ),
-        WRONG_PARAMS_1( "GET /nothing/at/all org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_2( "GET /:wrong org.qiweb.http.router.RoutesTest$MyController.test()", IllegalRouteException.class ),
-        WRONG_PARAMS_3( "GET /foo/:id/bar org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_4( "GET /foo/:id/bar/:slug/cathedral/:bazar org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_5( "GET /foo/:id/bar/:slugf org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_6( "GET /foo/:idf/bar/:slug org.qiweb.http.router.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_METHOD_1( "GET / org.qiweb.http.routes.RoutesTest$MyController.unknownMethod()", IllegalRouteException.class ),
+        WRONG_METHOD_2( "GET / org.qiweb.http.routes.RoutesTest$MyController.test( WhatTheHeck param )", IllegalRouteException.class ),
+        WRONG_PARAMS_1( "GET /nothing/at/all org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_2( "GET /:wrong org.qiweb.http.routes.RoutesTest$MyController.test()", IllegalRouteException.class ),
+        WRONG_PARAMS_3( "GET /foo/:id/bar org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_4( "GET /foo/:id/bar/:slug/cathedral/:bazar org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_5( "GET /foo/:id/bar/:slugf org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_6( "GET /foo/:idf/bar/:slug org.qiweb.http.routes.RoutesTest$MyController.another( String id, Integer slug )", IllegalRouteException.class ),
         WRONG_PARAMS_99( "", IllegalRouteException.class );
         private String routeString;
         private HttpMethod httpMethod;

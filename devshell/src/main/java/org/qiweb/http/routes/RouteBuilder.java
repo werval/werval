@@ -33,9 +33,9 @@ import org.codeartisans.java.toolbox.Strings;
  *     to( MyController.class, new MethodRecorder<MyController>()
  * {
  *     @Override
- *     protected void call( MyController controller )
+ *     protected void call( MyController ctrl )
  *     {
- *         controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
+ *         ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) );
  *     }
  * } ).newInstance();
  * 
@@ -46,7 +46,7 @@ import org.codeartisans.java.toolbox.Strings;
  * <p>If you happen to use Java 8 you'll be able to shorten the code a bit:</p>
  * <pre>
  * Route route = route( GET ).on( "/foo/:slug/bar/:id" ).
- *     to( MyController.class, { c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) } ).
+ *     to( MyController.class, ctrl -> ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) ) ).
  *     newInstance();
  * </pre>
  */

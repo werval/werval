@@ -1,21 +1,14 @@
 package org.qiweb.http.server;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import org.qi4j.api.configuration.Configuration;
 import org.qi4j.api.entity.Identity;
 import org.qi4j.api.injection.scope.Service;
 import org.qi4j.api.injection.scope.This;
-import org.qiweb.http.controllers.Result;
 import org.qiweb.http.routes.Routes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,52 +20,13 @@ public class HttpServerInstance
     implements HttpServer
 {
 
-    public static interface FakeController
-    {
-
-        Result test();
-
-        Result another( String id, Integer slug );
-
-        Result index();
-
-        Result foo();
-
-        Result bar();
-    }
-
-    private static class HttpServerChannelInitializer
-        extends ChannelInitializer<Channel>
-    {
-
-        private final Routes routes;
-
-        private HttpServerChannelInitializer( Routes routes )
-        {
-            this.routes = routes;
-        }
-
-        @Override
-        public void initChannel( Channel channel )
-            throws Exception
-        {
-            ChannelPipeline pipeline = channel.pipeline();
-
-            // HTTP Decoding / Encoding
-            pipeline.addLast( "decoder", new HttpRequestDecoder( 4096, 8192, 8192 ) );
-            pipeline.addLast( "encoder", new HttpResponseEncoder() );
-            // pipeline.addLast("chunked-writer", new ChunkedWriteHandler());
-
-            // Get the hand to the Router
-            pipeline.addLast( "handler", new RouterHandler( routes ) );
-        }
-    }
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
     private final String identity;
     private final Routes routes;
     private final ChannelGroup allChannels;
     private HttpServerConfig config;
     private Configuration<HttpServerConfiguration> configuration;
+    private ServerBootstrap bootstrap;
 
     public HttpServerInstance( @This Identity identity,
                                @This Configuration<HttpServerConfiguration> configuration,
@@ -104,16 +58,15 @@ public class HttpServerInstance
         }
 
         // Netty Bootstrap
-        ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap = new ServerBootstrap();
 
-        // Event Loops
-        EventLoopGroup acceptorEventLoopGroup = new NioEventLoopGroup();
-        EventLoopGroup clientsEventLoopGroup = new NioEventLoopGroup();
-        bootstrap.group( acceptorEventLoopGroup, clientsEventLoopGroup );
+        // Event Loops.
+        // The first is used to handle the accept of new connections and the second will serve the IO of them. 
+        bootstrap.group( new NioEventLoopGroup(), new NioEventLoopGroup() );
 
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
-        bootstrap.childHandler( new HttpServerChannelInitializer( routes ) );
+        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, routes ) );
 
         // Bind
         bootstrap.option( TCP_NODELAY, true ); // http://www.unixguide.net/network/socketfaq/2.16.shtml
@@ -129,7 +82,8 @@ public class HttpServerInstance
         throws Exception
     {
         LOG.info( "[{}] Netty Passivation", identity );
-        allChannels.close().awaitUninterruptibly();
+        // allChannels.close().awaitUninterruptibly(); // Not needed anymore with 4.0
+        bootstrap.shutdown();
         LOG.info( "[{}] Netty Passivated", identity );
     }
 }

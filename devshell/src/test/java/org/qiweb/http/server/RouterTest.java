@@ -1,5 +1,6 @@
 package org.qiweb.http.server;
 
+import com.acme.app.FakeController;
 import java.io.IOException;
 import java.util.Arrays;
 import org.apache.http.HttpResponse;
@@ -7,6 +8,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.qi4j.api.service.importer.InstanceImporter;
@@ -14,7 +16,6 @@ import org.qi4j.bootstrap.AssemblyException;
 import org.qi4j.bootstrap.ModuleAssembly;
 import org.qi4j.entitystore.memory.MemoryEntityStoreService;
 import org.qi4j.test.AbstractQi4jTest;
-import org.qiweb.http.controllers.Result;
 import org.qiweb.http.routes.Routes;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -30,20 +31,6 @@ public class RouterTest
     private static final int LISTEN_PORT = 23023;
     private static final String BASE_URL = "http://127.0.0.1:23023/";
 
-    public static interface FakeController
-    {
-
-        Result test();
-
-        Result another( String id, Integer slug );
-
-        Result index();
-
-        Result foo();
-
-        Result bar();
-    }
-
     @Override
     public void assemble( ModuleAssembly ma )
         throws AssemblyException
@@ -58,7 +45,8 @@ public class RouterTest
         // Routes
         Routes routes = routes( parseRoute( "GET / " + FakeController.class.getName() + ".index()" ),
                                 parseRoute( "GET /foo " + FakeController.class.getName() + ".foo()" ),
-                                parseRoute( "GET /bar " + FakeController.class.getName() + ".bar()" ) );
+                                parseRoute( "GET /bar " + FakeController.class.getName() + ".bar()" ),
+                                parseRoute( "GET /:id/:slug " + FakeController.class.getName() + ".another( String id, Integer slug )" ) );
         ma.importedServices( Routes.class ).importedBy( InstanceImporter.class ).setMetaInfo( routes );
 
         // HTTP Server
@@ -70,7 +58,7 @@ public class RouterTest
     public void testRoutes()
         throws IOException
     {
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = newHttpClientInstance();
 
         HttpResponse response = client.execute( new HttpGet( BASE_URL ) );
         soutResponse( response );
@@ -91,6 +79,17 @@ public class RouterTest
         response = client.execute( new HttpGet( BASE_URL + "/bazar" ) );
         soutResponse( response );
         assertThat( response.getStatusLine().getStatusCode(), equalTo( 404 ) );
+
+        response = client.execute( new HttpGet( BASE_URL + "/azertyuiop/1234" ) );
+        soutResponse( response );
+        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
+    }
+
+    private HttpClient newHttpClientInstance()
+    {
+        DefaultHttpClient client = new DefaultHttpClient();
+        client.setHttpRequestRetryHandler( new DefaultHttpRequestRetryHandler( 0, false ) );
+        return client;
     }
 
     private void soutResponse( HttpResponse response )
