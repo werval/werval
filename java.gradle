@@ -1,0 +1,69 @@
+apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+apply from: "$rootProject.projectDir.absolutePath/../repositories.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../libraries.gradle"
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+dependencies {
+    // Adding dependencies here will add the dependencies to each subproject.
+    runtime libraries.logback
+    testCompile libraries.junit
+}
+
+task createFolders(description: 'Creates the source folders if they do not exist.') doLast {
+    sourceSets*.allSource*.srcDirs*.each { File srcDir ->
+        if (!srcDir.isDirectory()) {
+            println "Creating source folder: ${srcDir}"
+            srcDir.mkdirs()
+        }
+    }
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+        // info {
+        //     exceptionFormat "full"
+        // }   
+    }   
+}
+
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar 
+    archives sourcesJar
+}
+
+configure( install.repositories.mavenInstaller ) {
+    pom.groupId = project.group
+    pom.artifactId = project.name
+    pom.version = project.version
+    pom.project {
+        description = project.description
+        url = "http://qiweb.org"
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id = "eskatos"
+                name = "Paul Merlin"
+                email = "paul@nosphere.org"
+            }
+        }
+    }   
+}

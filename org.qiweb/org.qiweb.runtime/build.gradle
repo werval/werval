@@ -1,0 +1,9 @@
+
+dependencies {
+
+    compile project( ":org.qiweb.bootstrap" )
+    
+    runtime libraries.logback
+    
+}
+

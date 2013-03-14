@@ -1,0 +1,9 @@
+//
+// This file is to be applied to every org.qiweb framework subproject.
+//
+
+apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
+
+dependencies {
+    // Adding dependencies here will add the dependencies to each submodule.
+}

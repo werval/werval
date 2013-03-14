@@ -1,0 +1,34 @@
+
+dependencies {
+
+    compile project( ":org.qiweb.runtime" )
+    compile libraries.gradle_tooling
+    compile libraries.qi4j_bootstrap
+    compile libraries.jtoolbox
+    compile libraries.jnotify
+    compile libraries.netty_codec_http
+    compile libraries.netty_example // TODO Remove me!
+    compile "classworlds:classworlds:1.1"
+    compile "com.google.classpath-explorer:classpath-explorer:1.0" // Misko Every ClassPathExplorer
+    
+    runtime libraries.qi4j_runtime
+    runtime "org.osgi:org.osgi.core:4.2.0" // Needed when doing massive eager classloading ...
+    runtime libraries.logback
+    
+    testCompile libraries.qi4j_test
+    testCompile libraries.httpclient
+
+}
+
+task(runFuck, dependsOn: 'testClasses', type: JavaExec) {
+    main = 'org.qiweb.http.fuck.FuckingClassLoaders'
+    classpath = sourceSets.test.runtimeClasspath
+    // jvmArgs = [ '-XX:+TraceClassLoading' ]
+}
+
+task(runRouterTest, dependsOn: 'testClasses', type: JavaExec) {
+    main = 'org.qiweb.http.server.RouterTest'
+    classpath = sourceSets.test.runtimeClasspath
+    // jvmArgs = [ '-XX:+TraceClassLoading' ]
+}
+

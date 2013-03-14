@@ -1,0 +1,30 @@
+// Define libraries used accross QiWeb and their versions
+
+def v_gradle_tooling = '1.4'
+def v_httpclient = '4.2.3'
+def v_jtoolbox = '1.5'
+def v_jnotify = '0.94'
+def v_junit = '4.11'
+def v_logback = '1.0.9'
+def v_netty = '4.0.0.Beta2'
+def v_qi4j = '2.0-SNAPSHOT'
+def v_slf4j = '1.7.2'
+
+rootProject.ext {
+    libraries = [
+        gradle_tooling: "org.gradle:gradle-tooling-api:$v_gradle_tooling",
+        httpclient: "org.apache.httpcomponents:httpclient:$v_httpclient",
+        jtoolbox: "org.codeartisans:java-toolbox:$v_jtoolbox",
+        jnotify: "net.contentobjects.jnotify:jnotify:$v_jnotify",
+        junit: "junit:junit:$v_junit",
+        logback: "ch.qos.logback:logback-classic:$v_logback",
+        netty_codec_http: "io.netty:netty-codec-http:$v_netty",
+        netty_example: "io.netty:netty-example:$v_netty",
+        qi4j_api: "org.qi4j.core:org.qi4j.core.api:$v_qi4j",
+        qi4j_bootstrap: "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
+        qi4j_runtime: "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
+        qi4j_test: "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
+        slf4j: "org.slf4j:slf4j-api:$v_slf4j"
+    ]
+}
+

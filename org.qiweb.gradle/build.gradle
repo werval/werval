@@ -1,0 +1,13 @@
+
+apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
+apply plugin: 'groovy'
+
+dependencies {
+
+    compile gradleApi()
+    groovy localGroovy()
+
+    compile "org.qiweb:org.qiweb.devshell:$version"
+    compile libraries.gradle_tooling
+    
+}

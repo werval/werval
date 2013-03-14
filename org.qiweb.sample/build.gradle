@@ -1,0 +1,29 @@
+
+apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
+
+buildscript {
+    repositories {
+        mavenLocal();
+        mavenCentral();
+        maven {
+            url "https://repository-qi4j.forge.cloudbees.com/release/"
+            url "http://repo.gradle.org/gradle/libs-releases-local/"
+            url "http://repo.typesafe.com/typesafe/releases"
+        }   
+    }
+    dependencies {
+        classpath "org.qiweb:org.qiweb.gradle:0"
+    }
+}
+
+apply plugin: 'qiweb'
+
+qiweb {
+    message = "Message from org.qiweb.sample build!"
+}
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.runtime:$version"
+    
+}

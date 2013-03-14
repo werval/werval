@@ -1,23 +1,71 @@
-import org.gradle.api.artifacts.*
+// QiWeb Root Build
+//
+// Simple Gradle build that provide quick tasks accross other builds in
+// subdirectories. It is also the holder of the Gradle Wrapper task.
+//
+// Other Gradle files in this directory are used by projets in subdirectories
+// and allow to define common aspects of the build.
 
-apply plugin: 'base' // To add "clean" task to the root project.
+// TODO Factor this code out.
 
-subprojects {
-    apply from: rootProject.file('common.gradle')
+
+// Clean
+//
+task _clean_org_qiweb( type: GradleBuild, description: 'Clean org.qiweb' ) {
+    buildFile = 'org.qiweb/build.gradle'
+    tasks = [ 'clean' ]
 }
-
-task mergedJavadoc(type: Javadoc, description: 'Creates Javadoc from all the projects.') {
-    title = 'QiWeb'
-    destinationDir = new File(project.buildDir, 'merged-javadoc')
-    // Note: The closures below are executed lazily.
-    source {
-        subprojects*.sourceSets*.main*.allSource
-    }
-    classpath.from {
-        subprojects*.configurations*.compile*.copyRecursive({ !(it instanceof ProjectDependency); })*.resolve()
-    }
+task _clean_org_qiweb_gradle( type: GradleBuild, description: 'Clean org.qiweb.gradle' ) {
+    buildFile = 'org.qiweb.gradle/build.gradle'
+    tasks = [ 'clean' ]
 }
+task _clean_org_qiweb_sample( type: GradleBuild, description: 'Clean org.qiweb.sample' ) {
+    buildFile = 'org.qiweb.sample/build.gradle'
+    tasks = [ 'clean' ]
+}
+task clean( dependsOn: [ _clean_org_qiweb, _clean_org_qiweb_gradle, _clean_org_qiweb_sample ],
+            description: 'Clean org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
 
-task wrapper(type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.') {
+
+// Assemble
+//
+task _assemble_org_qiweb( type: GradleBuild, description: 'Assemble org.qiweb' ) {
+    buildFile = 'org.qiweb/build.gradle'
+    tasks = [ 'assemble' ]
+}
+task _assemble_org_qiweb_gradle( type: GradleBuild, description: 'Assemble org.qiweb.gradle' ) {
+    buildFile = 'org.qiweb.gradle/build.gradle'
+    tasks = [ 'assemble' ]
+}
+task _assemble_org_qiweb_sample( type: GradleBuild, description: 'Assemble org.qiweb.sample' ) {
+    buildFile = 'org.qiweb.sample/build.gradle'
+    tasks = [ 'assemble' ]
+}
+task assemble( dependsOn: [ _assemble_org_qiweb, _assemble_org_qiweb_gradle, _assemble_org_qiweb_sample ],
+            description: 'Assemble org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
+
+
+// Install
+//
+task _install_org_qiweb( type: GradleBuild, description: 'Install org.qiweb' ) {
+    buildFile = 'org.qiweb/build.gradle'
+    tasks = [ 'install' ]
+}
+task _install_org_qiweb_gradle( type: GradleBuild, description: 'Install org.qiweb.gradle' ) {
+    buildFile = 'org.qiweb.gradle/build.gradle'
+    tasks = [ 'install' ]
+}
+task _install_org_qiweb_sample( type: GradleBuild, description: 'Install org.qiweb.sample' ) {
+    buildFile = 'org.qiweb.sample/build.gradle'
+    tasks = [ 'install' ]
+}
+task install( dependsOn: [ _install_org_qiweb, _install_org_qiweb_gradle, _install_org_qiweb_sample ],
+            description: 'Install org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
+
+
+// Gradle Wrapper
+//
+task wrapper( type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.' ) {
     gradleVersion = '1.4'
 }
+
