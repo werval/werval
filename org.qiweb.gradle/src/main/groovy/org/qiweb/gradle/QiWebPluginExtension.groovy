@@ -2,6 +2,9 @@ package org.qiweb.gradle
 
 class QiWebPluginExtension {
 
-    def String message = 'Hello from QiWebPlugin'
+    def String mainRebuildTask = "compileJava"
+    
+    def String testRebuildTask = "compileTestJava"
+
 }
 

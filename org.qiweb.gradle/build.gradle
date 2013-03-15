@@ -8,6 +8,6 @@ dependencies {
     groovy localGroovy()
 
     compile "org.qiweb:org.qiweb.devshell:$version"
-    compile libraries.gradle_tooling
+    // compile libraries.gradle_tooling
     
 }

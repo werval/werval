@@ -63,9 +63,14 @@ public class QiWebDevShell
         System.out.println( ANSI_RESET + ANSI_GREEN + message + ANSI_RESET );
     }
 
-    public static void info( String message )
+    public static void highlight( String message )
     {
         System.out.println( ANSI_RESET + ANSI_WHITE + message + ANSI_RESET );
+    }
+
+    public static void info( String message )
+    {
+        System.out.println( ANSI_RESET + message + ANSI_RESET );
     }
 
     public static void warn( String message )

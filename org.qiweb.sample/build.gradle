@@ -19,7 +19,9 @@ buildscript {
 apply plugin: 'qiweb'
 
 qiweb {
-    message = "Message from org.qiweb.sample build!"
+    
+    mainRebuildTask = "compileJava"
+    
 }
 
 dependencies {
