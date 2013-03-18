@@ -8,7 +8,7 @@ public class HttpApplicationInstance
 {
 
     private final RoutesProvider routesProvider;
-    private final ClassLoader classLoader;
+    private ClassLoader classLoader;
 
     public HttpApplicationInstance( ClassLoader classLoader, RoutesProvider routesProvider )
     {
@@ -20,6 +20,11 @@ public class HttpApplicationInstance
     public ClassLoader classLoader()
     {
         return classLoader;
+    }
+
+    public void changeClassLoader( ClassLoader classLoader )
+    {
+        this.classLoader = classLoader;
     }
 
     @Override
