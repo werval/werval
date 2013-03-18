@@ -36,7 +36,7 @@ public class DumbNetty
         {
             FullHttpResponse response = new DefaultFullHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.OK );
             StringWriter sw = new StringWriter();
-            sw.append( "Woup!" );
+            sw.append( "Dumb!" );
             response.data().writeBytes( copiedBuffer( sw.toString(), UTF_8 ) );
             ctx.write( response ).addListener( ChannelFutureListener.CLOSE );
         }

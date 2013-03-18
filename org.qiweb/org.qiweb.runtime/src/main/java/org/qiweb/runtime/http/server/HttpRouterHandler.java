@@ -58,7 +58,6 @@ public class HttpRouterHandler
         throws Exception
     {
         LOG.warn( "Exception caught: {}( {} )", cause.getClass().getSimpleName(), cause.getMessage(), cause );
-        super.exceptionCaught( context, cause );
         FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, INTERNAL_SERVER_ERROR );
         response.headers().set( CONTENT_TYPE, "text/plain; charset=UTF-8" );
         StringWriter sw = new StringWriter();

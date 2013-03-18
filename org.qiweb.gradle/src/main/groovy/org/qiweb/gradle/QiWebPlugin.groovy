@@ -3,7 +3,7 @@ package org.qiweb.gradle
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.qiweb.devshell.JNotifyWatcher
-import org.qiweb.devshell.NewDevShell
+import org.qiweb.devshell.DevShell
 import org.gradle.api.Task
 
 class QiWebPlugin implements Plugin<Project> {
@@ -48,7 +48,7 @@ class QiWebPlugin implements Plugin<Project> {
                 testSources, testOutput, testClassPath as URL[], project.qiweb.testRebuildTask,
                 new JNotifyWatcher() )
             
-            def devShell = new NewDevShell( devShellSPI )
+            def devShell = new DevShell( devShellSPI )
             addShutdownHook { devShell.stop() }
             devShell.start()
         }

@@ -2,6 +2,7 @@ package org.qiweb.runtime.http.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.EventExecutorGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -13,31 +14,22 @@ import org.slf4j.LoggerFactory;
 /**
  * Distinguish HttpRequests and WebSocketFrames.
  */
-// #####################################################################################################################
-// #####################################################################################################################
-//
-//  TOOODOOOOOOO
-//
-//  * Move Executors initialization code from HttpApplication over here
-//  * And then move it one step upper so they are not reinstanciated on each request ....
-//  * Have only one executor in DEV mode so that requests are handled sequentially
-//
-// #####################################################################################################################
-// #####################################################################################################################
 public class SubProtocolSwitchHandler
     extends ChannelInboundMessageHandlerAdapter<Object>
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
+    private final EventExecutorGroup httpExecutors;
     private final HttpApplication httpApp;
     private boolean inBoundMessageBufferUpdated = false;
     private final DevShellSPI devSPI;
 
-    public SubProtocolSwitchHandler( ChannelGroup allChannels, HttpApplication httpApp, DevShellSPI devSPI )
+    public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors, HttpApplication httpApp, DevShellSPI devSPI )
     {
         super();
         this.allChannels = allChannels;
+        this.httpExecutors = httpExecutors;
         this.httpApp = httpApp;
         this.devSPI = devSPI;
     }
@@ -76,7 +68,7 @@ public class SubProtocolSwitchHandler
             FullHttpRequest request = (FullHttpRequest) message;
             LOG.trace( "Received a FullHttpRequest message: {}", request );
             LOG.debug( "Switching to plain HTTP protocol" );
-            context.pipeline().addLast( httpApp.httpExecutors(), "router", new HttpRouterHandler( httpApp ) );
+            context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( httpApp ) );
             context.pipeline().remove( this );
             request.retain();
             context.nextInboundMessageBuffer().add( request );
