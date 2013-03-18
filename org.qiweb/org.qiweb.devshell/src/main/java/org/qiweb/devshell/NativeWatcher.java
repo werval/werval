@@ -105,7 +105,7 @@ import java.util.jar.JarFile;
                 public Object invoke( Object proxy, Method method, Object[] args )
                     throws Throwable
                 {
-                    QiWebDevShell.success( "Source has changed!" );
+                    NewDevShell.success( "Source has changed!" );
                     changed = true;
                     return null;
                 }

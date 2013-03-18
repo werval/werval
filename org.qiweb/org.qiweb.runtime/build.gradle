@@ -2,8 +2,16 @@
 dependencies {
 
     compile project( ":org.qiweb.bootstrap" )
+    compile libraries.qi4j_bootstrap
+    compile libraries.jtoolbox
+    compile libraries.netty_codec_http
+    compile libraries.netty_example // TODO Remove me!
+    compile "com.google.classpath-explorer:classpath-explorer:1.0" // Misko Every ClassPathExplorer // TODO Remove me!
     
+    runtime libraries.qi4j_runtime
     runtime libraries.logback
     
+    testCompile libraries.httpclient
+
 }
 

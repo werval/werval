@@ -1,5 +1,6 @@
 package org.qiweb.devshell;
 
+import org.qiweb.spi.dev.Watcher;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class JNotifyWatcher
         if( !nativeLibsDeployed )
         {
             // Find the JNotify JAR in the ClassPath
-            URLClassLoader loader = (URLClassLoader) SimplerNativeWatcher.class.getClassLoader();
+            URLClassLoader loader = (URLClassLoader) JNotifyWatcher.class.getClassLoader();
             File jNotifyJar = jNotifyJar( loader );
             if( jNotifyJar == null )
             {

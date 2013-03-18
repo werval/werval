@@ -1,7 +1,8 @@
 package org.qiweb.devshell.assembly;
 
 import org.qi4j.bootstrap.*;
-import org.qiweb.http.server.HttpServer;
+import org.qiweb.runtime.http.server.HttpServer;
+import org.qiweb.runtime.http.server.HttpServerInstance;
 
 public class DevShellAssembler
     implements ApplicationAssembler
@@ -34,7 +35,7 @@ public class DevShellAssembler
         LayerAssembly http = assembly.layer( "http" );
 
         ModuleAssembly server = http.module( "server" );
-        server.services( HttpServer.class ).instantiateOnStartup();
+        server.services( HttpServer.class ).withMixins( HttpServerInstance.class ).instantiateOnStartup();
 
         return http;
     }
