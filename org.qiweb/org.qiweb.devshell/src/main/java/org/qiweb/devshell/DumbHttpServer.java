@@ -23,7 +23,7 @@ import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static io.netty.util.CharsetUtil.UTF_8;
 
-public class DumbNetty
+public class DumbHttpServer
 {
 
     private static class DumbHandler
@@ -41,10 +41,14 @@ public class DumbNetty
             ctx.write( response ).addListener( ChannelFutureListener.CLOSE );
         }
     }
+    private final String listenAddress;
+    private final int listenPort;
     private ServerBootstrap bootstrap;
 
-    public DumbNetty()
+    public DumbHttpServer( String listenAddress, int listenPort )
     {
+        this.listenAddress = listenAddress;
+        this.listenPort = listenPort;
     }
 
     public void start()
@@ -67,7 +71,7 @@ public class DumbNetty
         } );
         bootstrap.option( TCP_NODELAY, true );
         bootstrap.option( SO_KEEPALIVE, true );
-        bootstrap.localAddress( "127.0.0.1", 23023 );
+        bootstrap.localAddress( listenAddress, listenPort );
         bootstrap.bind().sync();
     }
 

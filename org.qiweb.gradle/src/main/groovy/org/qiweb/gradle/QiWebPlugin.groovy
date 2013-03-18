@@ -20,7 +20,7 @@ class QiWebPlugin implements Plugin<Project> {
             project.logger.lifecycle ">> QiWeb DevShell for " + project.getName() + " starting..."
             
             def projectName = project.getName()
-            def projectDir = project.getProjectDir()
+            def rootDir = project.getProjectDir()
             def buildDir = project.getBuildDir();
 
             def mainSources = project.sourceSets*.allSource*.srcDirs[0]
@@ -32,23 +32,18 @@ class QiWebPlugin implements Plugin<Project> {
             def mainClassPath = project.sourceSets.main.runtimeClasspath.files.collect { f -> f.toURI().toURL() }
             def testClassPath = project.sourceSets.test.runtimeClasspath.files.collect { f -> f.toURI().toURL() }
 
-            // Start with a build
-            project.getTasksByName( project.qiweb.mainRebuildTask, true)*.each  { Task task ->
-                //task.execute()
-            }
-
             // Deploy JNotify            
             JNotifyWatcher.deployNativeLibraries( buildDir )
             
             // Start the DevShell
             
             def devShellSPI = new org.qiweb.gradle.GradleDevShellSPI(
-                projectName, projectDir, buildDir, 
+                projectName, rootDir, buildDir, 
                 mainSources, mainOutput, mainClassPath as URL[], project.qiweb.mainRebuildTask,
                 testSources, testOutput, testClassPath as URL[], project.qiweb.testRebuildTask,
                 new JNotifyWatcher() )
             
-            def devShell = new DevShell( devShellSPI )
+            def final devShell = new DevShell( devShellSPI )
             addShutdownHook { devShell.stop() }
             devShell.start()
         }

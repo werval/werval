@@ -27,5 +27,6 @@ qiweb {
 dependencies {
 
     compile "org.qiweb:org.qiweb.runtime:$version"
+    compile libraries.qi4j_api
     
 }

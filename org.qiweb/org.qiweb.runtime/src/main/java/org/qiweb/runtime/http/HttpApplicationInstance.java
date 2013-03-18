@@ -17,25 +17,19 @@ public class HttpApplicationInstance
     }
 
     @Override
-    public ClassLoader classLoader()
+    public final ClassLoader classLoader()
     {
         return classLoader;
     }
 
-    public void changeClassLoader( ClassLoader classLoader )
+    public final void changeClassLoader( ClassLoader classLoader )
     {
         this.classLoader = classLoader;
     }
 
     @Override
-    public Routes routes()
+    public final Routes routes()
     {
         return routesProvider.routes( classLoader );
-    }
-
-    @Override
-    public <T> T controllerInstance( Class<T> controllerType )
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

@@ -79,6 +79,7 @@ public class HttpRouterHandler
                    Thread.currentThread().getName(),
                    Thread.currentThread().getContextClassLoader() );
 
+        // Set the dreaded Thread Context ClassLoader to the HttpApplication ClassLoader
         Thread.currentThread().setContextClassLoader( httpApp.classLoader() );
 
         LOG.debug( "Received a FullHttpRequest: {}", request );

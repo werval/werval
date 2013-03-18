@@ -1,5 +1,6 @@
 // Define libraries used accross QiWeb and their versions
 
+def v_classworlds = '2.4.2'
 def v_gradle_tooling = '1.4'
 def v_httpclient = '4.2.3'
 def v_jtoolbox = '1.5'
@@ -12,6 +13,7 @@ def v_slf4j = '1.7.2'
 
 rootProject.ext {
     libraries = [
+        classworlds: "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
         gradle_tooling: "org.gradle:gradle-tooling-api:$v_gradle_tooling",
         httpclient: "org.apache.httpcomponents:httpclient:$v_httpclient",
         jtoolbox: "org.codeartisans:java-toolbox:$v_jtoolbox",
@@ -20,6 +22,7 @@ rootProject.ext {
         logback: "ch.qos.logback:logback-classic:$v_logback",
         netty_codec_http: "io.netty:netty-codec-http:$v_netty",
         netty_example: "io.netty:netty-example:$v_netty",
+        qi4j_functional: "org.qi4j.core:org.qi4j.core.functional:$v_qi4j",
         qi4j_api: "org.qi4j.core:org.qi4j.core.api:$v_qi4j",
         qi4j_bootstrap: "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
         qi4j_runtime: "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",

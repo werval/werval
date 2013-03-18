@@ -8,6 +8,4 @@ public interface HttpApplication
     ClassLoader classLoader();
 
     Routes routes();
-
-    <T> T controllerInstance( Class<T> controllerType );
 }

@@ -2,8 +2,6 @@
 dependencies {
 
     compile project( ":org.qiweb.api" )
-    
-    runtime libraries.logback
         
 }
 
