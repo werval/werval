@@ -52,7 +52,7 @@ public class HttpServerInstance
 
         // I/O Event Loops.
         // The first is used to handle the accept of new connections and the second will serve the IO of them. 
-        bootstrap.group( new NioEventLoopGroup(), new NioEventLoopGroup() );
+        bootstrap.group( new NioEventLoopGroup( devSPI == null ? 1 : 0 ), new NioEventLoopGroup( devSPI == null ? 1 : 0 ) );
 
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
