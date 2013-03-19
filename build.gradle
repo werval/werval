@@ -19,12 +19,25 @@ task _clean_org_qiweb_gradle( type: GradleBuild, description: 'Clean org.qiweb.g
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'clean' ]
 }
-task _clean_org_qiweb_sample( type: GradleBuild, description: 'Clean org.qiweb.sample' ) {
+task _clean_org_qiweb_maven( type: Exec, description: 'Clean org.qiweb.maven' ) {
+    commandLine = [ 'mvn', '-f', 'org.qiweb.maven/pom.xml', 'clean' ]
+}
+task _clean_org_qiweb_sample_gradle( type: GradleBuild, description: 'Clean org.qiweb.sample using Gradle' ) {
     buildFile = 'org.qiweb.sample/build.gradle'
     tasks = [ 'clean' ]
 }
-task clean( dependsOn: [ _clean_org_qiweb, _clean_org_qiweb_gradle, _clean_org_qiweb_sample ],
-            description: 'Clean org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
+task _clean_org_qiweb_sample_maven( type: Exec, description: 'Clean org.qiweb.sample using Maven' ) {
+    commandLine = [ 'mvn', '-f', 'org.qiweb.sample/pom.xml', 'clean' ]
+}
+task clean( 
+    dependsOn: [
+        _clean_org_qiweb, 
+        _clean_org_qiweb_gradle, 
+        _clean_org_qiweb_maven, 
+        _clean_org_qiweb_sample_gradle,
+        _clean_org_qiweb_sample_maven
+    ],
+    description: 'Clean org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
 
 
 // Assemble
@@ -37,12 +50,25 @@ task _assemble_org_qiweb_gradle( type: GradleBuild, description: 'Assemble org.q
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'assemble' ]
 }
-task _assemble_org_qiweb_sample( type: GradleBuild, description: 'Assemble org.qiweb.sample' ) {
+task _assemble_org_qiweb_maven( type: Exec, description: 'Assemble org.qiweb.maven' ) {
+    commandLine = [ 'mvn', '-nsu', '-f', 'org.qiweb.maven/pom.xml', 'package' ]
+}
+task _assemble_org_qiweb_sample_gradle( type: GradleBuild, description: 'Assemble org.qiweb.sample using Gradle' ) {
     buildFile = 'org.qiweb.sample/build.gradle'
     tasks = [ 'assemble' ]
 }
-task assemble( dependsOn: [ _assemble_org_qiweb, _assemble_org_qiweb_gradle, _assemble_org_qiweb_sample ],
-            description: 'Assemble org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
+task _assemble_org_qiweb_sample_maven( type: Exec, description: 'Assemble org.qiweb.sample using Maven') {
+    commandLine = [ 'mvn', '-nsu', '-f', 'org.qiweb.sample/pom.xml', 'package' ]
+}
+task assemble( 
+    dependsOn: [ 
+        _assemble_org_qiweb, 
+        _assemble_org_qiweb_gradle, 
+        _assemble_org_qiweb_maven, 
+        _assemble_org_qiweb_sample_gradle, 
+        _assemble_org_qiweb_sample_maven 
+    ],
+    description: 'Assemble org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
 
 
 // Install
@@ -55,12 +81,25 @@ task _install_org_qiweb_gradle( type: GradleBuild, description: 'Install org.qiw
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'install' ]
 }
-task _install_org_qiweb_sample( type: GradleBuild, description: 'Install org.qiweb.sample' ) {
+task _install_org_qiweb_maven( type: Exec, description: 'Install org.qiweb.maven' ) {
+    commandLine = [ 'mvn', '-nsu', '-f', 'org.qiweb.maven/pom.xml', 'install' ]
+}
+task _install_org_qiweb_sample_gradle( type: GradleBuild, description: 'Install org.qiweb.sample using Gradle' ) {
     buildFile = 'org.qiweb.sample/build.gradle'
     tasks = [ 'install' ]
 }
-task install( dependsOn: [ _install_org_qiweb, _install_org_qiweb_gradle, _install_org_qiweb_sample ],
-            description: 'Install org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
+task _install_org_qiweb_sample_maven( type: Exec, description: 'Install org.qiweb.sample using Maven' ) {
+    commandLine = [ 'mvn', '-nsu', '-f', 'org.qiweb.sample/pom.xml', 'install' ]
+}
+task install( 
+    dependsOn: [ 
+        _install_org_qiweb, 
+        _install_org_qiweb_gradle, 
+        _install_org_qiweb_maven, 
+        _install_org_qiweb_sample_gradle,
+        _install_org_qiweb_sample_maven 
+    ],
+    description: 'Install org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
 
 
 // Gradle Wrapper
