@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
+import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
 
 public class HttpServerInstance
     implements HttpServer
@@ -45,14 +46,15 @@ public class HttpServerInstance
     public void activateService()
         throws Exception
     {
-        LOG.info( "[{}] Netty Activation", identity );
+        LOG.debug( "[{}] Netty Activation", identity );
 
         // Netty Bootstrap
         bootstrap = new ServerBootstrap();
 
         // I/O Event Loops.
         // The first is used to handle the accept of new connections and the second will serve the IO of them. 
-        bootstrap.group( new NioEventLoopGroup( devSPI == null ? 1 : 0 ), new NioEventLoopGroup( devSPI == null ? 1 : 0 ) );
+        bootstrap.group( new NioEventLoopGroup( devSPI == null ? DEFAULT_POOL_SIZE : 1 ),
+                         new NioEventLoopGroup( devSPI == null ? DEFAULT_POOL_SIZE : 1 ) );
 
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
@@ -64,16 +66,16 @@ public class HttpServerInstance
         bootstrap.localAddress( listenAddress, listenPort );
         allChannels.add( bootstrap.bind().sync().channel() );
 
-        LOG.info( "[{}] Netty Activated", identity );
+        LOG.debug( "[{}] Netty Activated", identity );
     }
 
     @Override
     public void passivateService()
         throws Exception
     {
-        LOG.info( "[{}] Netty Passivation", identity );
+        LOG.debug( "[{}] Netty Passivation", identity );
         // allChannels.close().awaitUninterruptibly(); // Not needed anymore with 4.0
         bootstrap.shutdown();
-        LOG.info( "[{}] Netty Passivated", identity );
+        LOG.debug( "[{}] Netty Passivated", identity );
     }
 }

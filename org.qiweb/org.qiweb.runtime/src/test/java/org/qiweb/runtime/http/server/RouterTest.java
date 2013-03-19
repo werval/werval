@@ -47,10 +47,10 @@ public class RouterTest
         throws Exception
     {
         RoutesProvider routesProvider = new RoutesParserProvider(
-            "GET / com.acme.app.FakeController.index()\n"
-            + "GET /foo com.acme.app.FakeController.foo()\n"
-            + "GET /bar com.acme.app.FakeController.bar()\n"
-            + "GET /:id/:slug com.acme.app.FakeController.another( String id, Integer slug )" );
+            "GET / com.acme.app.FakeControllerInstance.index()\n"
+            + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
+            + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
+            + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" );
         httpServer = new HttpServerInstance(
             "router-test",
             LISTEN_ADDRESS, LISTEN_PORT,

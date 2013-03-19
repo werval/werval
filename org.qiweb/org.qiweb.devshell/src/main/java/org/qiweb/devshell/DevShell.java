@@ -102,9 +102,10 @@ public class DevShell
             Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.http.routes.RoutesParserProvider" ).getConstructor( new Class<?>[]
             {
                 String.class
-            } ).newInstance( new Object[]
+            } ).newInstance( new Object[] // Routes
             {
-                "GET / com.acme.app.FakeController.index()" // Routes
+                "GET /favicon.ico org.qiweb.controller.Default.notFound()\n"
+                + "GET / com.acme.app.FakeControllerInstance.index()"
             } );
             Class<?> httpAppClass = appRealm.loadClass( "org.qiweb.runtime.http.HttpApplication" );
             Object httpAppInstance = appRealm.loadClass( "org.qiweb.runtime.http.HttpApplicationInstance" ).getConstructor( new Class<?>[]

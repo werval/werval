@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.runtime</artifactId>
+            <artifactId>org.qiweb.stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

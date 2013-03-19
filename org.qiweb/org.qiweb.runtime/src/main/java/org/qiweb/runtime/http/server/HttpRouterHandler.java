@@ -117,7 +117,7 @@ public class HttpRouterHandler
             // Object controller = module.newTransient( route.controllerType() );
             // Object controller = module.findService( route.controllerType() ).get();
 
-            Object controller = httpApp.classLoader().loadClass( route.controllerType().getName() + "Instance" ).newInstance();
+            Object controller = httpApp.classLoader().loadClass( route.controllerType().getName() ).newInstance();
 
             // Invoke its method
             LOG.debug( "Will invoke controller method: {}", route.controllerMethod() );

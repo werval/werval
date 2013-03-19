@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.runtime.http.HttpApplication;
 import org.qiweb.spi.dev.DevShellSPI;
 
+import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
+
 /* package */ class HttpServerChannelInitializer
     extends ChannelInitializer<Channel>
 {
@@ -40,7 +42,8 @@ import org.qiweb.spi.dev.DevShellSPI;
         this.httpApp = httpApp;
         this.devSPI = devSPI;
         // TODO Executors count configuration
-        this.httpExecutors = new DefaultEventExecutorGroup( devSPI == null ? 0 : 1, new ExecutorsThreadFactory() );
+        this.httpExecutors = new DefaultEventExecutorGroup( devSPI == null ? DEFAULT_POOL_SIZE : 1,
+                                                            new ExecutorsThreadFactory() );
     }
 
     @Override
@@ -59,7 +62,8 @@ import org.qiweb.spi.dev.DevShellSPI;
         // or a single FullHttpRequest if a handler ask for it
         pipeline.addLast( "http-codec", new HttpServerCodec() );
 
-        // Transform multiple messages into a single FullHttpRequest or FullHttpResponse. 
+        // Transform multiple messages into a single FullHttpRequest or FullHttpResponse.
+        // TODO FIXME This should be removed to support more protocols
         pipeline.addLast( "http-aggregator", new HttpObjectAggregator( 1048576 ) );
 
         // Get the hand to the Router

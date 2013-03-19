@@ -46,7 +46,7 @@ public class SubProtocolSwitchHandler
     public void channelInactive( ChannelHandlerContext context )
         throws Exception
     {
-        // Request Complete!
+        // TODO Request Complete!
         super.channelInactive( context );
     }
 
