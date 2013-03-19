@@ -7,10 +7,10 @@
         </encoder>
     </appender>
 
-    <root level="info">
+    <root level="warn">
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="org.gradle" level="warn"/>
+    <logger name="org.qiweb"  level="trace"/>
 
 </configuration>
