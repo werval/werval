@@ -34,20 +34,23 @@ public class DevShell
         }
 
         @Override
-        public void rebuildMain()
+        public synchronized void rebuildMain()
         {
-            try
+            if( hasMainChanged() )
             {
-                super.rebuildMain();
-                reSetupApplicationRealm();
-                httpAppInstance.getClass().getMethod( "changeClassLoader", new Class<?>[]
+                try
                 {
-                    ClassLoader.class
-                } ).invoke( httpAppInstance, classWorld.getRealm( currentApplicationRealmID() ) );
-            }
-            catch( Exception ex )
-            {
-                throw new RuntimeException( "Unable to reload Application: " + ex.getMessage(), ex );
+                    super.rebuildMain();
+                    reSetupApplicationRealm();
+                    httpAppInstance.getClass().getMethod( "changeClassLoader", new Class<?>[]
+                    {
+                        ClassLoader.class
+                    } ).invoke( httpAppInstance, classWorld.getRealm( currentApplicationRealmID() ) );
+                }
+                catch( Exception ex )
+                {
+                    throw new RuntimeException( "Unable to reload Application: " + ex.getMessage(), ex );
+                }
             }
         }
     }

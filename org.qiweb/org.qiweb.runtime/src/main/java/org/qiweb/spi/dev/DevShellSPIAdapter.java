@@ -114,8 +114,11 @@ public class DevShellSPIAdapter
     @Override
     public final synchronized void rebuildMain()
     {
-        doRebuildMain();
-        mainChanged = false;
+        if( mainChanged )
+        {
+            doRebuildMain();
+            mainChanged = false;
+        }
     }
 
     /**
@@ -154,8 +157,11 @@ public class DevShellSPIAdapter
     @Override
     public final synchronized void rebuildTest()
     {
-        doRebuildTest();
-        testChanged = false;
+        if( testChanged )
+        {
+            doRebuildTest();
+            testChanged = false;
+        }
     }
 
     /**
