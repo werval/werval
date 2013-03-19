@@ -434,7 +434,7 @@ public class Results
         extends AbstractResult<SimpleResult>
     {
 
-        private ByteBuf body = EMPTY_BUFFER;
+        private ByteBuf entity = EMPTY_BUFFER;
 
         public SimpleResult( int status )
         {
@@ -446,26 +446,26 @@ public class Results
             super( status.code() );
         }
 
-        public ByteBuf body()
+        public ByteBuf entity()
         {
-            return body;
+            return entity;
         }
 
-        public final SimpleResult withoutBody()
+        public final SimpleResult withoutEntity()
         {
-            body = EMPTY_BUFFER;
+            entity = EMPTY_BUFFER;
             return this;
         }
 
-        public final SimpleResult withBody( ByteBuf body )
+        public final SimpleResult withEntity( ByteBuf entity )
         {
-            this.body = body;
+            this.entity = entity;
             return this;
         }
 
-        public final SimpleResult withBody( String body )
+        public final SimpleResult withEntity( String entity )
         {
-            this.body = copiedBuffer( body, UTF_8 );
+            this.entity = copiedBuffer( entity, UTF_8 );
             return this;
         }
     }
@@ -474,13 +474,13 @@ public class Results
         extends AbstractResult<StreamResult>
     {
 
-        private final InputStream input;
+        private final InputStream entityInput;
         private final int contentLength;
 
-        public StreamResult( int status, InputStream input, int contentLength )
+        public StreamResult( int status, InputStream entityInput, int contentLength )
         {
             super( status );
-            this.input = input;
+            this.entityInput = entityInput;
             this.contentLength = contentLength;
             withHeader( CONTENT_LENGTH, String.valueOf( contentLength ) );
         }
@@ -490,9 +490,9 @@ public class Results
             this( status.code(), input, contentLength );
         }
 
-        public final InputStream input()
+        public final InputStream entityInput()
         {
-            return input;
+            return entityInput;
         }
 
         public final int contentLength()

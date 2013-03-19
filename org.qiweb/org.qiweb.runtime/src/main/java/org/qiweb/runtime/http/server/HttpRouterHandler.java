@@ -147,12 +147,12 @@ public class HttpRouterHandler
             else if( result instanceof StreamResult )
             {
                 StreamResult streamResult = (StreamResult) result;
-                response.data().writeBytes( streamResult.input(), streamResult.contentLength() );
+                response.data().writeBytes( streamResult.entityInput(), streamResult.contentLength() );
             }
             else if( result instanceof SimpleResult )
             {
                 SimpleResult simpleResult = (SimpleResult) result;
-                response.data().writeBytes( simpleResult.body() );
+                response.data().writeBytes( simpleResult.entity() );
             }
 
             // response.data().writeBytes( copiedBuffer( "Route match: " + route.toString() + "\r\n", UTF_8 ) );
