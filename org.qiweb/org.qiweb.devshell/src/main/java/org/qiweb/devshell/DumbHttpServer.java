@@ -31,7 +31,7 @@ public class DumbHttpServer
     {
 
         @Override
-        protected void messageReceived( ChannelHandlerContext ctx, FullHttpRequest msg )
+        public void messageReceived( ChannelHandlerContext ctx, FullHttpRequest msg )
             throws Exception
         {
             FullHttpResponse response = new DefaultFullHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.OK );

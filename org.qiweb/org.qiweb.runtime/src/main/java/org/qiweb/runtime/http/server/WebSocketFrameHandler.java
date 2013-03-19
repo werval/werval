@@ -30,7 +30,7 @@ public class WebSocketFrameHandler
     }
 
     @Override
-    protected void messageReceived( ChannelHandlerContext context, WebSocketFrame frame )
+    public void messageReceived( ChannelHandlerContext context, WebSocketFrame frame )
         throws Exception
     {
         LOG.debug( "Received a WebSocketFrame: {}", frame );

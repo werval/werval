@@ -2,10 +2,10 @@ package org.qiweb.runtime.http.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
-import io.netty.channel.EventExecutorGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.qiweb.runtime.http.HttpApplication;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    protected boolean beginMessageReceived( ChannelHandlerContext context )
+    public boolean beginMessageReceived( ChannelHandlerContext context )
         throws Exception
     {
         inBoundMessageBufferUpdated = false;
@@ -59,7 +59,7 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    protected void messageReceived( ChannelHandlerContext context, Object message )
+    public void messageReceived( ChannelHandlerContext context, Object message )
         throws Exception
     {
         if( message instanceof FullHttpRequest )
@@ -95,7 +95,7 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    protected void endMessageReceived( ChannelHandlerContext context )
+    public void endMessageReceived( ChannelHandlerContext context )
         throws Exception
     {
         if( inBoundMessageBufferUpdated )
