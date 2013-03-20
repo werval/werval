@@ -7,12 +7,13 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.runtime.http.HeadersInstance;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
@@ -380,7 +381,7 @@ public class Results
     {
 
         private final int status;
-        private final Map<String, List<String>> headers = new LinkedHashMap<>();
+        private final MutableHeaders headers = new HeadersInstance();
 
         private AbstractResult( int status )
         {
@@ -394,32 +395,20 @@ public class Results
         }
 
         @Override
-        public final Map<String, List<String>> headers()
+        public final Headers headers()
         {
-            return Collections.unmodifiableMap( headers );
+            return headers;
         }
 
         public final ResultType withHeader( String name, String value )
         {
-            if( headers.get( name ) == null )
-            {
-                headers.put( name, new ArrayList<String>() );
-            }
-            headers.get( name ).add( value );
+            headers.with( name, value );
             return (ResultType) this;
         }
 
         public final ResultType as( String contentType )
         {
-            if( headers.containsKey( CONTENT_TYPE ) )
-            {
-                headers.get( CONTENT_TYPE ).clear();
-            }
-            else
-            {
-                headers.put( CONTENT_TYPE, new ArrayList<String>() );
-            }
-            headers.get( CONTENT_TYPE ).add( contentType );
+            headers.withSingle( CONTENT_TYPE, contentType );
             return (ResultType) this;
         }
 

@@ -113,13 +113,13 @@ public class HttpRouterHandler
 //            qi4jApp.activate();
 //            Module module = qi4jApp.findModule( "main", "main" );
 
-            // Lookup Controller Service
+            // Lookup Controller
             // Object controller = module.newTransient( route.controllerType() );
             // Object controller = module.findService( route.controllerType() ).get();
 
             Object controller = httpApp.classLoader().loadClass( route.controllerType().getName() ).newInstance();
 
-            // Invoke its method
+            // Invoke Controller
             LOG.debug( "Will invoke controller method: {}", route.controllerMethod() );
             Result result = (Result) route.controllerMethod().invoke( controller, pathParams.toArray() );
 
@@ -130,9 +130,9 @@ public class HttpRouterHandler
             response = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
 
             // Headers - Wait for them to be set by controller
-            for( String headerName : result.headers().keySet() )
+            for( String headerName : result.headers().names() )
             {
-                response.headers().add( headerName, result.headers().get( headerName ) );
+                response.headers().add( headerName, result.headers().valueOf( headerName ) );
             }
             if( keepAlive && httpVersion == HTTP_1_1 )
             {
