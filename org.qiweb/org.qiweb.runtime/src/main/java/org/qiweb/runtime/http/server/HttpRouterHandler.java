@@ -79,12 +79,13 @@ public class HttpRouterHandler
                    Thread.currentThread().getName(),
                    Thread.currentThread().getContextClassLoader() );
 
-        // Set the dreaded Thread Context ClassLoader to the HttpApplication ClassLoader
-        Thread.currentThread().setContextClassLoader( httpApp.classLoader() );
 
         LOG.debug( "Received a FullHttpRequest: {}", request );
         final boolean keepAlive = isKeepAlive( request );
         HttpVersion httpVersion = request.getProtocolVersion();
+
+        // Set the dreaded Thread Context ClassLoader to the HttpApplication ClassLoader
+        Thread.currentThread().setContextClassLoader( httpApp.classLoader() );
 
         FullHttpResponse response;
         try
