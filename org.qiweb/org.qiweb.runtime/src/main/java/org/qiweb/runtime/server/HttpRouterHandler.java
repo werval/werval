@@ -1,5 +1,6 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,27 +10,22 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.http.QueryString;
-import org.qiweb.runtime.http.HttpApplication;
-import org.qiweb.api.http.Result;
-import org.qiweb.runtime.http.HeadersInstance;
-import org.qiweb.runtime.http.HttpRequestHeaderInstance;
-import org.qiweb.runtime.http.QueryStringInstance;
-import org.qiweb.runtime.http.controllers.Results.ChunkedResult;
-import org.qiweb.runtime.http.controllers.Results.SimpleResult;
-import org.qiweb.runtime.http.controllers.Results.StreamResult;
+import org.qiweb.api.QiWebApplication;
+import org.qiweb.api.controllers.Outcome;
+import org.qiweb.runtime.controllers.Outcomes.ChunkedOutcome;
+import org.qiweb.runtime.controllers.Outcomes.SimpleOutcome;
+import org.qiweb.runtime.controllers.Outcomes.StreamOutcome;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteNotFoundException;
+import org.qiweb.runtime.http.HttpFactories;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +35,8 @@ import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
 import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
+import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -54,9 +50,9 @@ public class HttpRouterHandler
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpRouterHandler.class );
-    private final HttpApplication httpApp;
+    private final QiWebApplication httpApp;
 
-    public HttpRouterHandler( HttpApplication httpApp )
+    public HttpRouterHandler( QiWebApplication httpApp )
     {
         super();
         this.httpApp = httpApp;
@@ -67,16 +63,13 @@ public class HttpRouterHandler
         throws Exception
     {
         LOG.warn( "Exception caught: {}( {} )", cause.getClass().getSimpleName(), cause.getMessage(), cause );
-        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, INTERNAL_SERVER_ERROR );
-        response.headers().set( CONTENT_TYPE, "text/plain; charset=UTF-8" );
         StringWriter sw = new StringWriter();
         sw.append( "500 Internal Server Error\n" ).append( cause.getMessage() ).append( "\n" );
         cause.printStackTrace( new PrintWriter( sw ) );
-        sw.append( "\n\nClassLoaders state:\n\n" );
+        sw.append( "\n\nCurrent Thread Context ClassLoader state:\n\n" );
         ClassLoaders.printLoadedClasses( Thread.currentThread().getContextClassLoader(), new PrintWriter( sw ) );
         sw.append( "\n" );
-        response.data().writeBytes( copiedBuffer( sw.toString(), UTF_8 ) );
-        context.write( response ).addListener( ChannelFutureListener.CLOSE );
+        sendError( context, INTERNAL_SERVER_ERROR, sw.toString() );
     }
 
     @Override
@@ -84,57 +77,18 @@ public class HttpRouterHandler
         throws Exception
     {
 
-        LOG.debug( "In Thread '{}' using classloader '{}'",
-                   Thread.currentThread().getName(),
-                   Thread.currentThread().getContextClassLoader() );
-
 
         LOG.debug( "Received a FullHttpRequest: {}", request );
-        final boolean keepAlive = isKeepAlive( request );
-        HttpVersion httpVersion = request.getProtocolVersion();
 
         // Generate a unique identifier per request
         String requestIdentity = UUID.randomUUID().toString();
 
-        // Eventually parse URI to Path
-        // String requestPath = ( request.getUri().startsWith( "http://" ) || request.getUri().startsWith( "https://" ) )
-        //                     ? request.getUri().substring( request.getUri().indexOf( '/', 9 ) )
-        //                     : request.getUri();
-
-        // Path and QueryString
-        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), UTF_8 );
-        String requestPath = queryStringDecoder.path();
-        QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
-
-        // Headers
-        MutableHeaders headers = new HeadersInstance();
-        for( String name : request.headers().names() )
-        {
-            for( String value : request.headers().getAll( name ) )
-            {
-                headers.with( name, value );
-            }
-        }
-
-        // Does the request come with an entity? - RFC2616 Sections 4.3 and 4.4
-        boolean hasEntity = ( request.headers().get( CONTENT_LENGTH ) != null
-                              || request.headers().get( TRANSFER_ENCODING ) != null
-                              || request.headers().getAll( CONTENT_TYPE ).contains( "multipart/byteranges" ) );
-
-        // Build QiWeb HTTPRequestHeader
-        HttpRequestHeader requestHeader = new HttpRequestHeaderInstance( requestIdentity,
-                                                                         request.getProtocolVersion().text(),
-                                                                         request.getMethod().name(),
-                                                                         request.getUri(),
-                                                                         requestPath,
-                                                                         queryString,
-                                                                         headers,
-                                                                         hasEntity );
+        MutableHeaders headers = HttpFactories.headersOf( request );
+        RequestHeader requestHeader = HttpFactories.requestHeaderOf( requestIdentity, headers, request );
 
         // Set the dreaded Thread Context ClassLoader to the HttpApplication ClassLoader
         Thread.currentThread().setContextClassLoader( httpApp.classLoader() );
 
-        FullHttpResponse response;
         try
         {
             final Route route = httpApp.routes().route( requestHeader );
@@ -169,64 +123,76 @@ public class HttpRouterHandler
 
             // Invoke Controller
             LOG.debug( "Will invoke controller method: {}", route.controllerMethod() );
-            Result result = (Result) route.controllerMethod().invoke( controller, pathParams.toArray() );
+            Outcome outcome = (Outcome) route.controllerMethod().invoke( controller, pathParams.toArray() );
 
-            // Build the response
+            // == Build the response
 
-            // Status - Wait for it to be set by controller
-            HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( result.status() );
-            response = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
+            // Status
+            HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( outcome.status() );
+            FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
 
-            // Headers - Wait for them to be set by controller
-            for( String headerName : result.headers().names() )
+            // Headers
+            for( String headerName : outcome.headers().names() )
             {
-                response.headers().add( headerName, result.headers().valueOf( headerName ) );
+                response.headers().add( headerName, outcome.headers().valueOf( headerName ) );
             }
-            if( keepAlive && httpVersion == HTTP_1_1 )
+            if( isKeepAlive( request ) && request.getProtocolVersion() == HTTP_1_1 )
             {
                 response.headers().set( CONNECTION, KEEP_ALIVE );
             }
-            // Body - Wait for it to be set by controller
-            if( result instanceof ChunkedResult )
+
+            // Body
+            if( outcome instanceof ChunkedOutcome )
             {
-                ChunkedResult chunkedResult = (ChunkedResult) result;
+                ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
                 // TODO
             }
-            else if( result instanceof StreamResult )
+            else if( outcome instanceof StreamOutcome )
             {
-                StreamResult streamResult = (StreamResult) result;
-                response.data().writeBytes( streamResult.entityInput(), streamResult.contentLength() );
+                StreamOutcome streamOutcome = (StreamOutcome) outcome;
+                response.data().writeBytes( streamOutcome.entityInput(), streamOutcome.contentLength() );
             }
-            else if( result instanceof SimpleResult )
+            else if( outcome instanceof SimpleOutcome )
             {
-                SimpleResult simpleResult = (SimpleResult) result;
-                response.data().writeBytes( simpleResult.entity() );
+                SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
+                response.headers().set( CONTENT_LENGTH, simpleOutcome.entity().readableBytes() );
+                response.data().writeBytes( simpleOutcome.entity() );
             }
 
             // response.data().writeBytes( copiedBuffer( "Route match: " + route.toString() + "\r\n", UTF_8 ) );
-            // response.data().writeBytes( copiedBuffer( "Result: " + result + "\r\n", UTF_8 ) );
+            // response.data().writeBytes( copiedBuffer( "Outcome: " + outcome + "\r\n", UTF_8 ) );
 
             // Passivate the Qi4j Application
             // qi4jApp.passivate();
+
+            // Write response
+            ChannelFuture writeFuture = context.write( response );
+
+            // Close the connection as soon as the response is sent if not keep alive
+            if( !isKeepAlive( request ) )
+            {
+                writeFuture.addListener( ChannelFutureListener.CLOSE );
+            }
         }
         catch( RouteNotFoundException ex )
         {
-            response = new DefaultFullHttpResponse( HTTP_1_1, NOT_FOUND );
-            response.headers().set( CONTENT_TYPE, "text/plain; charset=UTF-8" );
-            response.data().writeBytes( copiedBuffer( "404 Route Not Found\nTried:\n" + httpApp.routes().toString() + "\n", UTF_8 ) );
-        }
-
-        // Write response
-        ChannelFuture writeFuture = context.write( response );
-
-        // Close the connection as soon as the response is sent if not keep alive
-        if( true || !keepAlive )
-        {
-            writeFuture.addListener( ChannelFutureListener.CLOSE );
+            LOG.trace( "Route Not Found: " + ex.getMessage(), ex );
+            sendError( context, NOT_FOUND, "404 Route Not Found\nTried:\n" + httpApp.routes().toString() + "\n" );
         }
     }
 
-    private List<Object> pathParameters( HttpRequestHeader requestHeader, Route route )
+    private void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
+    {
+        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status );
+        ByteBuf buf = copiedBuffer( body, UTF_8 );
+        response.headers().set( CONTENT_TYPE, "text/plain; charset=UTF-8" );
+        response.headers().set( CONTENT_LENGTH, buf.readableBytes() );
+        response.headers().set( CONNECTION, CLOSE );
+        response.data().writeBytes( buf );
+        context.write( response ).addListener( ChannelFutureListener.CLOSE );
+    }
+
+    private List<Object> pathParameters( RequestHeader requestHeader, Route route )
     {
         List<Object> pathParams = new ArrayList<>();
         for( Entry<String, Class<?>> controllerParam : route.controllerParams().entrySet() )

@@ -1,4 +1,4 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -13,7 +13,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.runtime.http.HttpApplication;
+import org.qiweb.api.QiWebApplication;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
@@ -35,11 +35,11 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         }
     }
     private final ChannelGroup allChannels;
-    private final HttpApplication httpApp;
+    private final QiWebApplication httpApp;
     private final DevShellSPI devSPI;
     private final EventExecutorGroup httpExecutors;
 
-    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, HttpApplication httpApp, DevShellSPI devSPI )
+    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, QiWebApplication httpApp, DevShellSPI devSPI )
     {
         this.allChannels = allChannels;
         this.httpApp = httpApp;

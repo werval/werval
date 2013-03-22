@@ -1,25 +1,25 @@
 package com.acme.app;
 
-import org.qiweb.api.http.Result;
-import org.qiweb.runtime.http.controllers.Results;
+import org.qiweb.api.controllers.Outcome;
+import org.qiweb.runtime.controllers.Outcomes;
 
 public class FakeControllerInstance
     implements FakeController
 {
 
     @Override
-    public Result test()
+    public Outcome test()
     {
-        return Results.ok().
+        return Outcomes.ok().
             withHeader( "controller-method", "test" ).
             as( "text/plain; charset=UTF-8" ).
             withEntity( "Does your test work?" );
     }
 
     @Override
-    public Result another( String id, Integer slug )
+    public Outcome another( String id, Integer slug )
     {
-        return Results.ok().
+        return Outcomes.ok().
             withHeader( "controller-method", "another" ).
             withHeader( "controller-param-id", id ).
             withHeader( "controller-param-slug", slug.toString() ).
@@ -28,27 +28,27 @@ public class FakeControllerInstance
     }
 
     @Override
-    public Result index()
+    public Outcome index()
     {
-        return Results.ok().
+        return Outcomes.ok().
             withHeader( "controller-method", "index" ).
             as( "text/plain; charset=UTF-8" ).
             withEntity( "It works!" );
     }
 
     @Override
-    public Result foo()
+    public Outcome foo()
     {
-        return Results.ok().
+        return Outcomes.ok().
             withHeader( "controller-method", "foo" ).
             as( "text/plain; charset=UTF-8" ).
             withEntity( "cathedral" );
     }
 
     @Override
-    public Result bar()
+    public Outcome bar()
     {
-        return Results.ok().
+        return Outcomes.ok().
             withHeader( "controller-method", "bar" ).
             as( "text/plain; charset=UTF-8" ).
             withEntity( "bazar" );

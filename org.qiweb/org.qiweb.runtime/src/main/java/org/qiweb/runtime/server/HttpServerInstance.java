@@ -1,11 +1,11 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.qiweb.runtime.http.HttpApplication;
+import org.qiweb.api.QiWebApplication;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,17 +22,17 @@ public class HttpServerInstance
     private final String identity;
     private final String listenAddress;
     private final int listenPort;
-    private final HttpApplication httpApp;
+    private final QiWebApplication httpApp;
     private final DevShellSPI devSPI;
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
 
-    public HttpServerInstance( String identity, String listenAddress, int listenPort, HttpApplication httpApp )
+    public HttpServerInstance( String identity, String listenAddress, int listenPort, QiWebApplication httpApp )
     {
         this( identity, listenAddress, listenPort, httpApp, null );
     }
 
-    public HttpServerInstance( String identity, String listenAddress, int listenPort, HttpApplication httpApp, DevShellSPI devSPI )
+    public HttpServerInstance( String identity, String listenAddress, int listenPort, QiWebApplication httpApp, DevShellSPI devSPI )
     {
         this.identity = identity;
         this.listenAddress = listenAddress;
@@ -60,9 +60,11 @@ public class HttpServerInstance
         bootstrap.channel( NioServerSocketChannel.class );
         bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, httpApp, devSPI ) );
 
-        // Bind
+        // Configuration
         bootstrap.option( TCP_NODELAY, true ); // http://www.unixguide.net/network/socketfaq/2.16.shtml
         bootstrap.option( SO_KEEPALIVE, true ); // http://tldp.org/HOWTO/html_single/TCP-Keepalive-HOWTO/
+
+        // Bind
         bootstrap.localAddress( listenAddress, listenPort );
         allChannels.add( bootstrap.bind().sync().channel() );
 
@@ -74,8 +76,8 @@ public class HttpServerInstance
         throws Exception
     {
         LOG.debug( "[{}] Netty Passivation", identity );
-        // allChannels.close().awaitUninterruptibly(); // Not needed anymore with 4.0
         bootstrap.shutdown();
+        allChannels.clear();
         LOG.debug( "[{}] Netty Passivated", identity );
     }
 }

@@ -1,4 +1,4 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.qiweb.runtime.http.HttpApplicationInstance;
+import org.qiweb.runtime.QiWebApplicationInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 
@@ -54,7 +54,7 @@ public class RouterTest
         httpServer = new HttpServerInstance(
             "router-test",
             LISTEN_ADDRESS, LISTEN_PORT,
-            new HttpApplicationInstance( getClass().getClassLoader(), routesProvider ) );
+            new QiWebApplicationInstance( getClass().getClassLoader(), routesProvider ) );
         httpServer.activateService();
     }
 

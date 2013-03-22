@@ -2,7 +2,7 @@ package org.qiweb.api.routes;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 
 /**
  * Route. HttpRequest satisfiedBy.
@@ -24,5 +24,5 @@ public interface Route
 
     String controllerParamPathValue( String paramName, String path );
 
-    boolean satisfiedBy( HttpRequestHeader requestHeader );
+    boolean satisfiedBy( RequestHeader requestHeader );
 }

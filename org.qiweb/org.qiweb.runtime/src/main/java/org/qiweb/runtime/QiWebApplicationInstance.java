@@ -1,16 +1,17 @@
-package org.qiweb.runtime.http;
+package org.qiweb.runtime;
 
+import org.qiweb.api.QiWebApplication;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.routes.RoutesProvider;
 
-public class HttpApplicationInstance
-    implements HttpApplication
+public class QiWebApplicationInstance
+    implements QiWebApplication
 {
 
     private final RoutesProvider routesProvider;
     private ClassLoader classLoader;
 
-    public HttpApplicationInstance( ClassLoader classLoader, RoutesProvider routesProvider )
+    public QiWebApplicationInstance( ClassLoader classLoader, RoutesProvider routesProvider )
     {
         this.routesProvider = routesProvider;
         this.classLoader = classLoader;

@@ -1,19 +1,19 @@
 package com.acme.app;
 
 import org.qi4j.api.mixin.Mixins;
-import org.qiweb.api.http.Result;
+import org.qiweb.api.controllers.Outcome;
 
 @Mixins( FakeControllerInstance.class )
 public interface FakeController
 {
 
-    Result test();
+    Outcome test();
 
-    Result another( String id, Integer slug );
+    Outcome another( String id, Integer slug );
 
-    Result index();
+    Outcome index();
 
-    Result foo();
+    Outcome foo();
 
-    Result bar();
+    Outcome bar();
 }

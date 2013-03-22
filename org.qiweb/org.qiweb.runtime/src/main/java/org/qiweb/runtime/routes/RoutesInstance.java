@@ -5,7 +5,7 @@ import org.qiweb.api.routes.Routes;
 import org.qiweb.api.routes.RouteNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 
 /**
  * Instance of Routes.
@@ -18,7 +18,7 @@ import org.qiweb.api.http.HttpRequestHeader;
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Route route( HttpRequestHeader requestHeader )
+    public Route route( RequestHeader requestHeader )
     {
         for( Route route : this )
         {

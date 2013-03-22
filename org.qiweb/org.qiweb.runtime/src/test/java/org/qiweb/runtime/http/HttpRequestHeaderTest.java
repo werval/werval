@@ -3,7 +3,7 @@ package org.qiweb.runtime.http;
 import org.codeartisans.java.toolbox.Strings;
 import org.junit.Test;
 import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.MutableHeaders;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
@@ -50,13 +50,13 @@ public class HttpRequestHeaderTest
         assertThat( withHeaders( headers.withSingle( CONTENT_TYPE, "application/json;foo=bar;charset=utf-8" ) ).charset(), equalTo( "utf-8" ) );
     }
 
-    private HttpRequestHeader withUri( String uri )
+    private RequestHeader withUri( String uri )
     {
-        return new HttpRequestHeaderInstance( null, null, null, uri, null, null, null, false );
+        return new RequestHeaderInstance( null, null, null, uri, null, null, null, false );
     }
 
-    private HttpRequestHeader withHeaders( Headers headers )
+    private RequestHeader withHeaders( Headers headers )
     {
-        return new HttpRequestHeaderInstance( null, null, null, null, null, null, headers, false );
+        return new RequestHeaderInstance( null, null, null, null, null, null, headers, false );
     }
 }

@@ -1,4 +1,4 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
@@ -6,7 +6,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.qiweb.runtime.http.HttpApplication;
+import org.qiweb.api.QiWebApplication;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +21,11 @@ public class SubProtocolSwitchHandler
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
     private final EventExecutorGroup httpExecutors;
-    private final HttpApplication httpApp;
+    private final QiWebApplication httpApp;
     private boolean inBoundMessageBufferUpdated = false;
     private final DevShellSPI devSPI;
 
-    public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors, HttpApplication httpApp, DevShellSPI devSPI )
+    public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors, QiWebApplication httpApp, DevShellSPI devSPI )
     {
         super();
         this.allChannels = allChannels;

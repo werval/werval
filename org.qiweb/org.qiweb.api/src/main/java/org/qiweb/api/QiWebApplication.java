@@ -1,8 +1,8 @@
-package org.qiweb.runtime.http;
+package org.qiweb.api;
 
 import org.qiweb.api.routes.Routes;
 
-public interface HttpApplication
+public interface QiWebApplication
 {
 
     ClassLoader classLoader();

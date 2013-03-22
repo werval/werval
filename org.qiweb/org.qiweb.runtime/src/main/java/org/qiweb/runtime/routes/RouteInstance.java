@@ -12,8 +12,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.qi4j.functional.Function;
 import org.qi4j.functional.Specification;
-import org.qiweb.api.http.HttpRequestHeader;
-import org.qiweb.api.http.Result;
+import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.controllers.Outcome;
 
 import static org.qi4j.api.util.NullArgumentException.validateNotEmpty;
 import static org.qi4j.api.util.NullArgumentException.validateNotNull;
@@ -99,18 +99,18 @@ import static org.qi4j.functional.Specifications.in;
             }
         }
 
-        // Ensure controller method exists and return a Result
+        // Ensure controller method exists and return an Outcome
 
         Class[] controllerParamsTypes = controllerParams.values().toArray( new Class[ controllerParams.values().size() ] );
         try
         {
             controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
-            if( !controllerMethod.getReturnType().isAssignableFrom( Result.class ) )
+            if( !controllerMethod.getReturnType().isAssignableFrom( Outcome.class ) )
             {
                 throw new IllegalRouteException( toString(),
                                                  "Controller Method '" + controllerType.getSimpleName() + "#"
                                                  + controllerMethodName + "( " + controllerParamsTypes + " )' "
-                                                 + "do not return a Result." );
+                                                 + "do not return an Outcome." );
             }
         }
         catch( NoSuchMethodException ex )
@@ -123,7 +123,7 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public boolean satisfiedBy( HttpRequestHeader requestHeader )
+    public boolean satisfiedBy( RequestHeader requestHeader )
     {
         String requestMethod = requestHeader.method();
         String requestPath = requestHeader.path();

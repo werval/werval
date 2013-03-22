@@ -18,9 +18,18 @@ import org.qiweb.spi.dev.DevShellSPIWrapper;
 import static org.qiweb.devshell.Color.*;
 import static org.qiweb.runtime.util.ClassLoaders.*;
 
+/**
+ * QiWeb DevShell.
+ * <p>Bind a build plugin to a QiWeb runtime using a DevShellSPI.</p>
+ * <p>Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.</p>
+ */
 public class DevShell
 {
 
+    /**
+     * Decorate DevShellSPI to reload classes after a rebuild.
+     * <p>This is the decorated instance of DevShellSPI that is passed to the HttpServer.</p>
+     */
     private class DevShellSPIDecorator
         extends DevShellSPIWrapper
     {
@@ -57,7 +66,7 @@ public class DevShell
     private static final String DEVSHELL_REALM_ID = "DevShellRealm";
     private static final String DEPENDENCIES_REALM_ID = "DependenciesRealm";
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
-    private static final AtomicLong APPLICAITON_REALM_COUNT = new AtomicLong( 0L );
+    private static final AtomicLong APPLICATION_REALM_COUNT = new AtomicLong( 0L );
     private final DevShellSPI spi;
     private final URLClassLoader originalLoader;
     private ClassWorld classWorld;
@@ -70,12 +79,12 @@ public class DevShell
 
     private static String nextApplicationRealmID()
     {
-        return APPLICATION_REALM_ID + "-" + APPLICAITON_REALM_COUNT.incrementAndGet();
+        return APPLICATION_REALM_ID + "-" + APPLICATION_REALM_COUNT.incrementAndGet();
     }
 
     private static String currentApplicationRealmID()
     {
-        return APPLICATION_REALM_ID + "-" + APPLICAITON_REALM_COUNT.get();
+        return APPLICATION_REALM_ID + "-" + APPLICATION_REALM_COUNT.get();
     }
 
     @SuppressWarnings( "unchecked" )
@@ -107,8 +116,8 @@ public class DevShell
                 "GET /favicon.ico org.qiweb.controller.Default.notFound()\n"
                 + "GET / com.acme.app.FakeControllerInstance.index()"
             } );
-            Class<?> httpAppClass = appRealm.loadClass( "org.qiweb.runtime.http.HttpApplication" );
-            Object httpAppInstance = appRealm.loadClass( "org.qiweb.runtime.http.HttpApplicationInstance" ).getConstructor( new Class<?>[]
+            Class<?> httpAppClass = appRealm.loadClass( "org.qiweb.api.QiWebApplication" );
+            Object httpAppInstance = appRealm.loadClass( "org.qiweb.runtime.QiWebApplicationInstance" ).getConstructor( new Class<?>[]
             {
                 ClassLoader.class,
                 routesProviderClass
@@ -117,7 +126,7 @@ public class DevShell
                 appRealm,
                 routesProviderInstance
             } );
-            Class<?> httpServerInstanceClass = appRealm.loadClass( "org.qiweb.runtime.http.server.HttpServerInstance" );
+            Class<?> httpServerInstanceClass = appRealm.loadClass( "org.qiweb.runtime.server.HttpServerInstance" );
             Constructor<?> httpServerInstanceCtor = httpServerInstanceClass.getConstructor( new Class<?>[]
             {
                 String.class, String.class, int.class, httpAppClass, DevShellSPI.class

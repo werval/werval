@@ -1,9 +1,9 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import org.qiweb.runtime.http.HttpApplication;
+import org.qiweb.api.QiWebApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +12,9 @@ public class WebSocketFrameHandler
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketFrameHandler.class );
-    private final HttpApplication httpApp;
+    private final QiWebApplication httpApp;
 
-    public WebSocketFrameHandler( HttpApplication httpApp )
+    public WebSocketFrameHandler( QiWebApplication httpApp )
     {
         super();
         this.httpApp = httpApp;
@@ -26,7 +26,7 @@ public class WebSocketFrameHandler
     {
         LOG.warn( "Exception caught: {}( {} )", cause.getClass().getSimpleName(), cause.getMessage(), cause );
         super.exceptionCaught( context, cause );
-        context.channel().close().syncUninterruptibly();
+        context.channel().close();
     }
 
     @Override
@@ -34,5 +34,6 @@ public class WebSocketFrameHandler
         throws Exception
     {
         LOG.debug( "Received a WebSocketFrame: {}", frame );
+        context.channel().close();
     }
 }

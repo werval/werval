@@ -6,13 +6,13 @@ import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
 import org.qi4j.functional.Function;
 import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 
-public class HttpRequestHeaderInstance
-    implements HttpRequestHeader
+public class RequestHeaderInstance
+    implements RequestHeader
 {
 
     private final String identity;
@@ -22,7 +22,7 @@ public class HttpRequestHeaderInstance
     private final String path;
     private final QueryString queryString;
     private final Headers headers;
-    private final boolean hasEntity;
+    private final boolean hasBody;
     private Map<String, Object> lazyValues = new HashMap<>();
 
     @SuppressWarnings( "unchecked" )
@@ -35,11 +35,11 @@ public class HttpRequestHeaderInstance
         return (T) lazyValues.get( key );
     }
 
-    public HttpRequestHeaderInstance( String identity,
-                                      String version, String method,
-                                      String uri, String path, QueryString queryString,
-                                      Headers headers,
-                                      boolean hasEntity )
+    public RequestHeaderInstance( String identity,
+                                  String version, String method,
+                                  String uri, String path, QueryString queryString,
+                                  Headers headers,
+                                  boolean hasBody )
     {
         this.identity = identity;
         this.version = version;
@@ -48,7 +48,7 @@ public class HttpRequestHeaderInstance
         this.path = path;
         this.queryString = queryString;
         this.headers = headers;
-        this.hasEntity = hasEntity;
+        this.hasBody = hasBody;
     }
 
     @Override
@@ -94,9 +94,9 @@ public class HttpRequestHeaderInstance
     }
 
     @Override
-    public boolean hasEntity()
+    public boolean hasBody()
     {
-        return hasEntity;
+        return hasBody;
     }
 
     @Override
@@ -201,8 +201,8 @@ public class HttpRequestHeaderInstance
     }
 
     @Override
-    public HttpRequestHeader clone()
+    public RequestHeader clone()
     {
-        return new HttpRequestHeaderInstance( identity, version, method, uri, path, queryString, headers, hasEntity );
+        return new RequestHeaderInstance( identity, version, method, uri, path, queryString, headers, hasBody );
     }
 }

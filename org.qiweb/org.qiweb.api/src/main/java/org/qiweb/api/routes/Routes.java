@@ -1,7 +1,7 @@
 package org.qiweb.api.routes;
 
 import org.qiweb.api.routes.RouteNotFoundException;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 
 /**
  * Routes.
@@ -17,6 +17,6 @@ public interface Routes
      * @return a Route satisfiedBy the HttpRequest
      * @throws RouteNotFoundException when no Route is satisfiedBy the HttpRequest
      */
-    Route route( HttpRequestHeader requestHeader )
+    Route route( RequestHeader requestHeader )
         throws RouteNotFoundException;
 }

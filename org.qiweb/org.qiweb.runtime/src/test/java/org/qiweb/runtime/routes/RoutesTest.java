@@ -10,9 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
-import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.runtime.http.HeadersInstance;
-import org.qiweb.runtime.http.HttpRequestHeaderInstance;
+import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 
@@ -197,9 +197,9 @@ public class RoutesTest
         assertThat( routes.route( requestHeaderForGetPath( "/foo/1234567890/bar/42" ) ), equalTo( another ) );
     }
 
-    private HttpRequestHeader requestHeaderForGetPath( String path )
+    private RequestHeader requestHeaderForGetPath( String path )
     {
-        return new HttpRequestHeaderInstance( "identity", "HTTP/1.1",
+        return new RequestHeaderInstance( "identity", "HTTP/1.1",
                                               "GET", "http://localhost" + path, path,
                                               new QueryStringInstance(), new HeadersInstance(), false );
     }

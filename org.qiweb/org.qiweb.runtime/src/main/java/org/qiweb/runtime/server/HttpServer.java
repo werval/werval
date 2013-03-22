@@ -1,4 +1,4 @@
-package org.qiweb.runtime.http.server;
+package org.qiweb.runtime.server;
 
 import org.qi4j.api.service.ServiceActivation;
 

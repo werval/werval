@@ -6,7 +6,7 @@ package org.qiweb.api.http;
  * <p>No Entity.</p>
  * <p>Helper methods.</p>
  */
-public interface HttpRequestHeader
+public interface RequestHeader
 {
 
     /**
@@ -45,9 +45,9 @@ public interface HttpRequestHeader
     Headers headers();
 
     /**
-     * @return TRUE if the HTTP Request comes with an entity, otherwise return FALSE
+     * @return TRUE if the HTTP Request comes with a body, otherwise return FALSE
      */
-    boolean hasEntity();
+    boolean hasBody();
 
     /**
      * The HTTP Client Address.
@@ -95,5 +95,5 @@ public interface HttpRequestHeader
     /**
      * @return A new deep copy instance.
      */
-    HttpRequestHeader clone();
+    RequestHeader clone();
 }
