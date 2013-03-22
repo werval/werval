@@ -1,7 +1,5 @@
 package org.qiweb.runtime.http.routes;
 
-import io.netty.handler.codec.http.HttpMethod;
-
 /**
  * Thrown when no satisfying Route found.
  */
@@ -10,17 +8,17 @@ public class RouteNotFoundException
 {
 
     private static final long serialVersionUID = 1L;
-    private final HttpMethod method;
+    private final String method;
     private final String uri;
 
-    public RouteNotFoundException( HttpMethod method, String uri )
+    public RouteNotFoundException( String method, String uri )
     {
-        super( "No route for " + method.name() + " " + uri );
+        super( "No route for " + method + " " + uri );
         this.method = method;
         this.uri = uri;
     }
 
-    public HttpMethod method()
+    public String method()
     {
         return method;
     }

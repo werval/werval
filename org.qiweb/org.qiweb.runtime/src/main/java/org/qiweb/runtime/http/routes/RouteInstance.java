@@ -1,8 +1,5 @@
 package org.qiweb.runtime.http.routes;
 
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -10,10 +7,10 @@ import java.util.Set;
 import org.codeartisans.java.toolbox.Couple;
 import org.qi4j.functional.Function;
 import org.qi4j.functional.Specification;
+import org.qiweb.api.http.HttpRequestHeader;
 import org.qiweb.runtime.util.Couples;
 import org.qiweb.api.http.Result;
 
-import static io.netty.util.CharsetUtil.UTF_8;
 import static org.qi4j.api.util.NullArgumentException.validateNotEmpty;
 import static org.qi4j.api.util.NullArgumentException.validateNotNull;
 import static org.qi4j.functional.Iterables.addAll;
@@ -32,14 +29,14 @@ import static org.qi4j.functional.Specifications.in;
     implements Route
 {
 
-    private final HttpMethod httpMethod;
+    private final String httpMethod;
     private final String path;
     private final Class<?> controllerType;
     private Method controllerMethod;
     private final String controllerMethodName;
     private final Iterable<Couple<String, Class<?>>> controllerParams;
 
-    /* package */ RouteInstance( HttpMethod httpMethod, String path,
+    /* package */ RouteInstance( String httpMethod, String path,
                    Class<?> controllerType,
                    String controllerMethodName,
                    Iterable<Couple<String, Class<?>>> controllerParams )
@@ -83,7 +80,7 @@ import static org.qi4j.functional.Specifications.in;
             }
         }, iterable( path.substring( 1 ).split( "/" ) ) ) );
 
-        Set<String> allParamsNames = new LinkedHashSet<String>();
+        Set<String> allParamsNames = new LinkedHashSet<>();
         addAll( allParamsNames, controllerParamsNames );
         addAll( allParamsNames, pathParamsNames );
         for( String paramName : allParamsNames )
@@ -124,10 +121,10 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public boolean satisfiedBy( HttpRequest request )
+    public boolean satisfiedBy( HttpRequestHeader requestHeader )
     {
-        HttpMethod requestMethod = request.getMethod();
-        String requestPath = new QueryStringDecoder( request.getUri(), UTF_8 ).path();
+        String requestMethod = requestHeader.method();
+        String requestPath = requestHeader.path();
         String[] requestPathSegments = requestPath.substring( 1 ).split( "/" );
         if( !httpMethod.equals( requestMethod ) )
         {
@@ -151,7 +148,7 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public HttpMethod httpMethod()
+    public String httpMethod()
     {
         return httpMethod;
     }

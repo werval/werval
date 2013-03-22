@@ -1,8 +1,8 @@
 package org.qiweb.runtime.http.routes;
 
-import io.netty.handler.codec.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.qiweb.api.http.HttpRequestHeader;
 
 /**
  * Instance of Routes.
@@ -15,16 +15,16 @@ import java.util.Iterator;
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Route route( HttpRequest httpRequest )
+    public Route route( HttpRequestHeader requestHeader )
     {
         for( Route route : this )
         {
-            if( route.satisfiedBy( httpRequest ) )
+            if( route.satisfiedBy( requestHeader ) )
             {
                 return route;
             }
         }
-        throw new RouteNotFoundException( httpRequest.getMethod(), httpRequest.getUri() );
+        throw new RouteNotFoundException( requestHeader.method(), requestHeader.uri() );
     }
 
     @Override

@@ -18,7 +18,7 @@ public class HeadersInstance
     implements MutableHeaders
 {
 
-    private Map<String, List<String>> headers;
+    private final Map<String, List<String>> headers;
 
     /**
      * Create new empty Headers instance.
@@ -67,7 +67,7 @@ public class HeadersInstance
     }
 
     @Override
-    public Map<String, String> toMap()
+    public Map<String, String> asMap()
     {
         Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
         for( Map.Entry<String, List<String>> entry : headers.entrySet() )
@@ -80,7 +80,7 @@ public class HeadersInstance
     }
 
     @Override
-    public Map<String, List<String>> toMapAll()
+    public Map<String, List<String>> asMapAll()
     {
         return Collections.unmodifiableMap( headers );
     }

@@ -1,17 +1,16 @@
 package org.qiweb.runtime.http.routes;
 
 import com.acme.app.FakeController;
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
 import java.util.Collections;
 import java.util.List;
 import org.codeartisans.java.toolbox.Couple;
 import org.junit.Test;
+import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.runtime.http.HeadersInstance;
+import org.qiweb.runtime.http.HttpRequestHeaderInstance;
+import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.routes.RouteBuilder.MethodRecorder;
 
-import static io.netty.handler.codec.http.HttpMethod.GET;
-import static io.netty.handler.codec.http.HttpMethod.POST;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -31,7 +30,7 @@ public class RoutesTest
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()
     {
-        Route route = route( GET ).on( "/foo/:id/bar/:slug" ).
+        Route route = route( "GET" ).on( "/foo/:id/bar/:slug" ).
             to( FakeController.class, new MethodRecorder<FakeController>()
         {
             @Override
@@ -57,15 +56,15 @@ public class RoutesTest
     {
 
         TRANSIENT( "GET / com.acme.app.FakeController.test() transient",
-                   GET, "/", FakeController.class, "test" ),
+                   "GET", "/", FakeController.class, "test" ),
         SERVICE( "GET / com.acme.app.FakeController.test() service",
-                 GET, "/", FakeController.class, "test" ),
+                 "GET", "/", FakeController.class, "test" ),
         SIMPLEST( "GET / com.acme.app.FakeController.test()",
-                  GET, "/", FakeController.class, "test" ),
+                  "GET", "/", FakeController.class, "test" ),
         TEST( "  POST    /foo/bar    com.acme.app.FakeController.test()",
-              POST, "/foo/bar", FakeController.class, "test" ),
+              "POST", "/foo/bar", FakeController.class, "test" ),
         ANOTHER( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another(String    id ,Integer slug   )",
-                 GET, "/foo/:id/bar/:slug", FakeController.class, "another", new RoutesToTest.Params()
+                 "GET", "/foo/:id/bar/:slug", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
             public Iterable<Couple<String, Class<?>>> params()
@@ -75,7 +74,7 @@ public class RoutesTest
             }
         } ),
         ANOTHER_ONE( "GET /foo/:id/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
-                     GET, "/foo/:id/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
+                     "GET", "/foo/:id/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
             public Iterable<Couple<String, Class<?>>> params()
@@ -102,7 +101,7 @@ public class RoutesTest
         WRONG_PARAMS_6( "GET /foo/:idf/bar/:slug com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
         WRONG_PARAMS_99( "", IllegalRouteException.class );
         private String routeString;
-        private HttpMethod httpMethod;
+        private String httpMethod;
         private String path;
         private Class<?> controllerType;
         private String controllerMethod;
@@ -115,7 +114,7 @@ public class RoutesTest
             this.expectedException = expectedException;
         }
 
-        private RoutesToTest( String routeString, HttpMethod httpMethod, String path, Class<?> controllerType, String controllerMethod )
+        private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod )
         {
             this.routeString = routeString;
             this.httpMethod = httpMethod;
@@ -125,7 +124,7 @@ public class RoutesTest
             this.pathParams = Collections.emptyList();
         }
 
-        private RoutesToTest( String routeString, HttpMethod httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
+        private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
         {
             this( routeString, httpMethod, path, controllerType, controllerMethod );
             this.pathParams = params.params();
@@ -185,10 +184,17 @@ public class RoutesTest
 
         Routes routes = RouteBuilder.routes( index, foo, bar, another );
 
-        assertThat( routes.route( new DefaultHttpRequest( HTTP_1_1, GET, "/" ) ), equalTo( index ) );
-        assertThat( routes.route( new DefaultHttpRequest( HTTP_1_1, GET, "/foo" ) ), equalTo( foo ) );
-        assertThat( routes.route( new DefaultHttpRequest( HTTP_1_1, GET, "/bar" ) ), equalTo( bar ) );
-        assertThat( routes.route( new DefaultHttpRequest( HTTP_1_1, GET, "/foo/1234567890/bar/42" ) ), equalTo( another ) );
+        assertThat( routes.route( requestHeaderForGetPath( "/" ) ), equalTo( index ) );
+        assertThat( routes.route( requestHeaderForGetPath( "/foo" ) ), equalTo( foo ) );
+        assertThat( routes.route( requestHeaderForGetPath( "/bar" ) ), equalTo( bar ) );
+        assertThat( routes.route( requestHeaderForGetPath( "/foo/1234567890/bar/42" ) ), equalTo( another ) );
+    }
+
+    private HttpRequestHeader requestHeaderForGetPath( String path )
+    {
+        return new HttpRequestHeaderInstance( "identity", "HTTP/1.1",
+                                              "GET", "http://localhost" + path, path,
+                                              new QueryStringInstance(), new HeadersInstance(), false );
     }
 
     private void assertRoute( Route route, RoutesToTest refRoute )

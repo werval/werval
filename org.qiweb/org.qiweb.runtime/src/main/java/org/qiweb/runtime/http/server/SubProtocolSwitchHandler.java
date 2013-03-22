@@ -88,7 +88,7 @@ public class SubProtocolSwitchHandler
         }
         else
         {
-            LOG.error( "Received a message of an unknown type ({}), channel will be closed.", message.getClass() );
+            LOG.warn( "Received a message of an unknown type ({}), channel will be closed.", message.getClass() );
             context.channel().close();
         }
     }

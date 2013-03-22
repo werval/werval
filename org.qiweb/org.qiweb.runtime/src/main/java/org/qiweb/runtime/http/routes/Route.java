@@ -1,19 +1,18 @@
 package org.qiweb.runtime.http.routes;
 
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpRequest;
 import java.lang.reflect.Method;
 import org.codeartisans.java.toolbox.Couple;
 import org.qi4j.functional.Specification;
+import org.qiweb.api.http.HttpRequestHeader;
 
 /**
  * Route. HttpRequest satisfiedBy.
  */
 public interface Route
-    extends Specification<HttpRequest>
+    extends Specification<HttpRequestHeader>
 {
 
-    HttpMethod httpMethod();
+    String httpMethod();
 
     String path();
 

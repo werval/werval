@@ -15,9 +15,16 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.codeartisans.java.toolbox.Couple;
+import org.qiweb.api.http.HttpRequestHeader;
+import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.QueryString;
 import org.qiweb.runtime.http.HttpApplication;
 import org.qiweb.api.http.Result;
+import org.qiweb.runtime.http.HeadersInstance;
+import org.qiweb.runtime.http.HttpRequestHeaderInstance;
+import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.controllers.Results.ChunkedResult;
 import org.qiweb.runtime.http.controllers.Results.SimpleResult;
 import org.qiweb.runtime.http.controllers.Results.StreamResult;
@@ -30,7 +37,9 @@ import org.slf4j.LoggerFactory;
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
 import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
@@ -84,17 +93,55 @@ public class HttpRouterHandler
         final boolean keepAlive = isKeepAlive( request );
         HttpVersion httpVersion = request.getProtocolVersion();
 
+        // Generate a unique identifier per request
+        String requestIdentity = UUID.randomUUID().toString();
+
+        // Eventually parse URI to Path
+        // String requestPath = ( request.getUri().startsWith( "http://" ) || request.getUri().startsWith( "https://" ) )
+        //                     ? request.getUri().substring( request.getUri().indexOf( '/', 9 ) )
+        //                     : request.getUri();
+
+        // Path and QueryString
+        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), UTF_8 );
+        String requestPath = queryStringDecoder.path();
+        QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
+
+        // Headers
+        MutableHeaders headers = new HeadersInstance();
+        for( String name : request.headers().names() )
+        {
+            for( String value : request.headers().getAll( name ) )
+            {
+                headers.with( name, value );
+            }
+        }
+
+        // Does the request come with an entity? - RFC2616 Sections 4.3 and 4.4
+        boolean hasEntity = ( request.headers().get( CONTENT_LENGTH ) != null
+                              || request.headers().get( TRANSFER_ENCODING ) != null
+                              || request.headers().getAll( CONTENT_TYPE ).contains( "multipart/byteranges" ) );
+
+        // Build QiWeb HTTPRequestHeader
+        HttpRequestHeader requestHeader = new HttpRequestHeaderInstance( requestIdentity,
+                                                                         request.getProtocolVersion().text(),
+                                                                         request.getMethod().name(),
+                                                                         request.getUri(),
+                                                                         requestPath,
+                                                                         queryString,
+                                                                         headers,
+                                                                         hasEntity );
+
         // Set the dreaded Thread Context ClassLoader to the HttpApplication ClassLoader
         Thread.currentThread().setContextClassLoader( httpApp.classLoader() );
 
         FullHttpResponse response;
         try
         {
-            final Route route = httpApp.routes().route( request );
+            final Route route = httpApp.routes().route( requestHeader );
             LOG.debug( "Will route request to: {}", route );
 
             // Parse path parameters
-            List<Object> pathParams = pathParameters( request, route );
+            List<Object> pathParams = pathParameters( requestHeader, route );
 
 
             // Assemble and activate a Qi4j Application
@@ -179,15 +226,14 @@ public class HttpRouterHandler
         }
     }
 
-    private List<Object> pathParameters( HttpRequest request, Route route )
+    private List<Object> pathParameters( HttpRequestHeader requestHeader, Route route )
     {
-        String requestPath = new QueryStringDecoder( request.getUri(), UTF_8 ).path();
         List<Object> pathParams = new ArrayList<>();
         for( Couple<String, Class<?>> controllerParam : route.controllerParams() )
         {
             String paramName = controllerParam.left();
             Class<?> paramType = controllerParam.right();
-            String paramStringValue = route.controllerParamPathValue( paramName, requestPath );
+            String paramStringValue = route.controllerParamPathValue( paramName, requestHeader.path() );
             if( Integer.class.isAssignableFrom( paramType ) )
             {
                 pathParams.add( Integer.valueOf( paramStringValue ) );

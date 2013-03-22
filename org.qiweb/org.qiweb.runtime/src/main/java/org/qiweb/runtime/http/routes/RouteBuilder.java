@@ -1,6 +1,5 @@
 package org.qiweb.runtime.http.routes;
 
-import io.netty.handler.codec.http.HttpMethod;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -169,9 +168,6 @@ public final class RouteBuilder
             String controllerMethodParams = cleanRouteString.substring( controllerMethodEnd + 1, controllerParamsEnd ).trim();
             //System.out.println( "controller method params = '" + controllerMethodParams + "'" );
 
-            // Parse HTTP Method
-            HttpMethod httpMethod = HttpMethod.valueOf( method );
-
             // Parse controller type
             Class<?> controllerType = loader.loadClass( controllerTypeName );
 
@@ -214,7 +210,7 @@ public final class RouteBuilder
             }
 
             // Create new Route instance
-            return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams );
+            return new RouteInstance( method, path, controllerType, controllerMethodName, controllerParams );
         }
         catch( IllegalRouteException ex )
         {
@@ -227,19 +223,19 @@ public final class RouteBuilder
     }
 
     /**
-     * Create a new RouteBuilder for a HttpMethod.
+     * Create a new RouteBuilder for a Http Method.
      */
-    public static RouteBuilder route( HttpMethod method )
+    public static RouteBuilder route( String method )
     {
         return new RouteBuilder( method );
     }
-    private final HttpMethod httpMethod;
+    private final String httpMethod;
     private String path;
     private Class<?> controllerType;
     private String controllerMethodName;
     private final List<Couple<String, Class<?>>> controllerParams = new ArrayList<>();
 
-    private RouteBuilder( HttpMethod httpMethod )
+    private RouteBuilder( String httpMethod )
     {
         this.httpMethod = httpMethod;
     }
