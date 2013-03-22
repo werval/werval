@@ -1,5 +1,6 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.api.routes;
 
+import org.qiweb.api.routes.RouteNotFoundException;
 import org.qiweb.api.http.HttpRequestHeader;
 
 /**

@@ -13,8 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.qiweb.runtime.http.HttpApplicationInstance;
-import org.qiweb.runtime.http.routes.RoutesParserProvider;
-import org.qiweb.runtime.http.routes.RoutesProvider;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;

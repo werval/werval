@@ -1,15 +1,13 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.api.routes;
 
 import java.lang.reflect.Method;
-import org.codeartisans.java.toolbox.Couple;
-import org.qi4j.functional.Specification;
+import java.util.Map;
 import org.qiweb.api.http.HttpRequestHeader;
 
 /**
  * Route. HttpRequest satisfiedBy.
  */
 public interface Route
-    extends Specification<HttpRequestHeader>
 {
 
     String httpMethod();
@@ -22,7 +20,9 @@ public interface Route
 
     String controllerMethodName();
 
-    Iterable<Couple<String, Class<?>>> controllerParams();
+    Map<String, Class<?>> controllerParams();
 
     String controllerParamPathValue( String paramName, String path );
+
+    boolean satisfiedBy( HttpRequestHeader requestHeader );
 }

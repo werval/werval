@@ -1,14 +1,16 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.runtime.routes;
 
+import org.qiweb.api.routes.Routes;
+import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.IllegalRouteException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Scanner;
-import org.codeartisans.java.toolbox.Couple;
 import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
 
@@ -58,7 +60,7 @@ public final class RouteBuilder
     public static abstract class MethodRecorder<T>
     {
 
-        private final List<Couple<String, Class<?>>> controllerParams = new ArrayList<>();
+        private final Map<String, Class<?>> controllerParams = new LinkedHashMap<>();
 
         /**
          * Record a new method parameter.
@@ -69,16 +71,16 @@ public final class RouteBuilder
          */
         protected final <ParamType> ParamType p( String name, Class<ParamType> type )
         {
-            controllerParams.add( new Couple<String, Class<?>>( name, type ) );
+            controllerParams.put( name, type );
             return null;
         }
 
         /**
          * @return Recorded method parameters
          */
-        public final List<Couple<String, Class<?>>> controllerParams()
+        public final Map<String, Class<?>> controllerParams()
         {
-            return Collections.unmodifiableList( controllerParams );
+            return Collections.unmodifiableMap( controllerParams );
         }
 
         /**
@@ -172,7 +174,7 @@ public final class RouteBuilder
             Class<?> controllerType = loader.loadClass( controllerTypeName );
 
             // Parse controller method parameters
-            List<Couple<String, Class<?>>> controllerParams = new ArrayList<>();
+            Map<String, Class<?>> controllerParams = new LinkedHashMap<>();
             if( controllerMethodParams.length() > 0 )
             {
                 String[] controllerMethodParamsSegments = controllerMethodParams.split( "," );
@@ -197,7 +199,7 @@ public final class RouteBuilder
                     {
                         paramType = Class.forName( "java.lang." + paramTypeName );
                     }
-                    controllerParams.add( new Couple<String, Class<?>>( paramName, paramType ) );
+                    controllerParams.put( paramName, paramType );
                 }
             }
 
@@ -233,7 +235,7 @@ public final class RouteBuilder
     private String path;
     private Class<?> controllerType;
     private String controllerMethodName;
-    private final List<Couple<String, Class<?>>> controllerParams = new ArrayList<>();
+    private final Map<String, Class<?>> controllerParams = new LinkedHashMap<>();
 
     private RouteBuilder( String httpMethod )
     {
@@ -283,7 +285,7 @@ public final class RouteBuilder
         this.controllerType = controllerType;
         this.controllerMethodName = methodNameHolder.getHolded();
         this.controllerParams.clear();
-        this.controllerParams.addAll( methodRecorder.controllerParams() );
+        this.controllerParams.putAll( methodRecorder.controllerParams() );
 
         return this;
     }

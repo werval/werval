@@ -1,4 +1,4 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.api.routes;
 
 /**
  * Thrown when trying to build a Route instance with an illegal route string.

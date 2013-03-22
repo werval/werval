@@ -15,8 +15,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
-import org.codeartisans.java.toolbox.Couple;
 import org.qiweb.api.http.HttpRequestHeader;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.http.QueryString;
@@ -28,8 +28,8 @@ import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.controllers.Results.ChunkedResult;
 import org.qiweb.runtime.http.controllers.Results.SimpleResult;
 import org.qiweb.runtime.http.controllers.Results.StreamResult;
-import org.qiweb.runtime.http.routes.Route;
-import org.qiweb.runtime.http.routes.RouteNotFoundException;
+import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.RouteNotFoundException;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,10 +229,10 @@ public class HttpRouterHandler
     private List<Object> pathParameters( HttpRequestHeader requestHeader, Route route )
     {
         List<Object> pathParams = new ArrayList<>();
-        for( Couple<String, Class<?>> controllerParam : route.controllerParams() )
+        for( Entry<String, Class<?>> controllerParam : route.controllerParams().entrySet() )
         {
-            String paramName = controllerParam.left();
-            Class<?> paramType = controllerParam.right();
+            String paramName = controllerParam.getKey();
+            Class<?> paramType = controllerParam.getValue();
             String paramStringValue = route.controllerParamPathValue( paramName, requestHeader.path() );
             if( Integer.class.isAssignableFrom( paramType ) )
             {

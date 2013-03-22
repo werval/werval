@@ -1,14 +1,18 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.runtime.routes;
 
+import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.IllegalRouteException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import org.codeartisans.java.toolbox.Couple;
 import org.qi4j.functional.Function;
 import org.qi4j.functional.Specification;
 import org.qiweb.api.http.HttpRequestHeader;
-import org.qiweb.runtime.util.Couples;
 import org.qiweb.api.http.Result;
 
 import static org.qi4j.api.util.NullArgumentException.validateNotEmpty;
@@ -18,8 +22,6 @@ import static org.qi4j.functional.Iterables.filter;
 import static org.qi4j.functional.Iterables.iterable;
 import static org.qi4j.functional.Iterables.map;
 import static org.qi4j.functional.Iterables.matchesAny;
-import static org.qi4j.functional.Iterables.toArray;
-import static org.qi4j.functional.Iterables.toList;
 import static org.qi4j.functional.Specifications.in;
 
 /**
@@ -34,12 +36,12 @@ import static org.qi4j.functional.Specifications.in;
     private final Class<?> controllerType;
     private Method controllerMethod;
     private final String controllerMethodName;
-    private final Iterable<Couple<String, Class<?>>> controllerParams;
+    private final Map<String, Class<?>> controllerParams;
 
     /* package */ RouteInstance( String httpMethod, String path,
                    Class<?> controllerType,
                    String controllerMethodName,
-                   Iterable<Couple<String, Class<?>>> controllerParams )
+                   Map<String, Class<?>> controllerParams )
     {
         validateNotNull( "HTTP Method", httpMethod );
         validateNotEmpty( "Path", path );
@@ -49,7 +51,7 @@ import static org.qi4j.functional.Specifications.in;
         this.path = path;
         this.controllerType = controllerType;
         this.controllerMethodName = controllerMethodName;
-        this.controllerParams = toList( controllerParams );
+        this.controllerParams = new LinkedHashMap<>( controllerParams );
         validate();
     }
 
@@ -63,7 +65,7 @@ import static org.qi4j.functional.Specifications.in;
         // Ensure all parameters in path are bound to controller parameters and "vice et versa".
         // Allow multiple occurences of a single parameter name in the path
 
-        Iterable<String> controllerParamsNames = Couples.<String>left( controllerParams );
+        Iterable<String> controllerParamsNames = controllerParams.keySet();
         Iterable<String> pathParamsNames = map( new Function<String, String>()
         {
             @Override
@@ -99,7 +101,7 @@ import static org.qi4j.functional.Specifications.in;
 
         // Ensure controller method exists and return a Result
 
-        Class[] controllerParamsTypes = toArray( Class.class, Couples.<Class>right( controllerParams ) );
+        Class[] controllerParamsTypes = controllerParams.values().toArray( new Class[ controllerParams.values().size() ] );
         try
         {
             controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
@@ -178,9 +180,9 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public Iterable<Couple<String, Class<?>>> controllerParams()
+    public Map<String, Class<?>> controllerParams()
     {
-        return controllerParams;
+        return Collections.unmodifiableMap( controllerParams );
     }
 
     @Override
@@ -211,14 +213,14 @@ import static org.qi4j.functional.Specifications.in;
         StringBuilder sb = new StringBuilder();
         sb.append( httpMethod ).append( " " ).append( path ).append( " " ).
             append( controllerType.getName() ).append( "." ).append( controllerMethodName ).append( "(" );
-        Iterator<Couple<String, Class<?>>> it = controllerParams.iterator();
+        Iterator<Entry<String, Class<?>>> it = controllerParams.entrySet().iterator();
         if( it.hasNext() )
         {
             sb.append( " " );
             while( it.hasNext() )
             {
-                Couple<String, Class<?>> param = it.next();
-                sb.append( param.right().getSimpleName() ).append( " " ).append( param.left() );
+                Entry<String, Class<?>> param = it.next();
+                sb.append( param.getValue().getSimpleName() ).append( " " ).append( param.getKey() );
                 if( it.hasNext() )
                 {
                     sb.append( ", " );

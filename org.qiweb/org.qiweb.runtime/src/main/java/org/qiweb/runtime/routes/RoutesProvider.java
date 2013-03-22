@@ -1,4 +1,6 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.runtime.routes;
+
+import org.qiweb.api.routes.Routes;
 
 public interface RoutesProvider
 {

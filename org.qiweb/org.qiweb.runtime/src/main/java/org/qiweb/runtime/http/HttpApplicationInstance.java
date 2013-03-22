@@ -1,7 +1,7 @@
 package org.qiweb.runtime.http;
 
-import org.qiweb.runtime.http.routes.Routes;
-import org.qiweb.runtime.http.routes.RoutesProvider;
+import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.routes.RoutesProvider;
 
 public class HttpApplicationInstance
     implements HttpApplication

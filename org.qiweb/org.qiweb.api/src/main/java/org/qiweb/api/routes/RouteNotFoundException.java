@@ -1,4 +1,4 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.api.routes;
 
 /**
  * Thrown when no satisfying Route found.

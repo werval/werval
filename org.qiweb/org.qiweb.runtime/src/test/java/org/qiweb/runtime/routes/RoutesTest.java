@@ -1,25 +1,28 @@
-package org.qiweb.runtime.http.routes;
+package org.qiweb.runtime.routes;
 
+import org.qiweb.runtime.routes.RouteBuilder;
+import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.Routes;
+import org.qiweb.api.routes.IllegalRouteException;
 import com.acme.app.FakeController;
 import java.util.Collections;
-import java.util.List;
-import org.codeartisans.java.toolbox.Couple;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.http.HttpRequestHeader;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.HttpRequestHeaderInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
-import org.qiweb.runtime.http.routes.RouteBuilder.MethodRecorder;
+import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.qi4j.functional.Iterables.count;
 import static org.qi4j.functional.Iterables.first;
-import static org.qi4j.functional.Iterables.iterable;
 import static org.qi4j.functional.Iterables.skip;
-import static org.qi4j.functional.Iterables.toList;
-import static org.qiweb.runtime.http.routes.RouteBuilder.route;
+import static org.qiweb.runtime.routes.RouteBuilder.route;
 
 /**
  * Assert that Routes and Route types behave correctly and that RouteBuilder is able to parse all routes definitions.
@@ -67,20 +70,24 @@ public class RoutesTest
                  "GET", "/foo/:id/bar/:slug", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
-            public Iterable<Couple<String, Class<?>>> params()
+            public Map<String, Class<?>> params()
             {
-                return iterable( new Couple<String, Class<?>>( "id", String.class ),
-                                 new Couple<String, Class<?>>( "slug", Integer.class ) );
+                Map<String, Class<?>> params = new LinkedHashMap<>();
+                params.put( "id", String.class );
+                params.put( "slug", Integer.class );
+                return params;
             }
         } ),
         ANOTHER_ONE( "GET /foo/:id/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
                      "GET", "/foo/:id/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
-            public Iterable<Couple<String, Class<?>>> params()
+            public Map<String, Class<?>> params()
             {
-                return iterable( new Couple<String, Class<?>>( "id", String.class ),
-                                 new Couple<String, Class<?>>( "slug", Integer.class ) );
+                Map<String, Class<?>> params = new LinkedHashMap<>();
+                params.put( "id", String.class );
+                params.put( "slug", Integer.class );
+                return params;
             }
         } ),
         //        TEST_NO_PARENTHESIS( "  POST    /foo/bar    com.acme.app.FakeController.test",
@@ -105,7 +112,7 @@ public class RoutesTest
         private String path;
         private Class<?> controllerType;
         private String controllerMethod;
-        private Iterable<Couple<String, Class<?>>> pathParams;
+        private Map<String, Class<?>> pathParams;
         private Class<? extends Exception> expectedException;
 
         private RoutesToTest( String routeString, Class<? extends Exception> expectedException )
@@ -121,7 +128,7 @@ public class RoutesTest
             this.path = path;
             this.controllerType = controllerType;
             this.controllerMethod = controllerMethod;
-            this.pathParams = Collections.emptyList();
+            this.pathParams = Collections.emptyMap();
         }
 
         private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
@@ -133,7 +140,7 @@ public class RoutesTest
         public static interface Params
         {
 
-            Iterable<Couple<String, Class<?>>> params();
+            Map<String, Class<?>> params();
         }
     }
 
@@ -203,16 +210,14 @@ public class RoutesTest
         assertThat( "URI/Path", route.path(), equalTo( refRoute.path ) );
         assertThat( "Controller Type", route.controllerType().getName(), equalTo( refRoute.controllerType.getName() ) );
         assertThat( "Controller Method", route.controllerMethodName(), equalTo( refRoute.controllerMethod ) );
-        assertThat( "Parameters Count", count( route.controllerParams() ), equalTo( count( refRoute.pathParams ) ) );
+        assertThat( "Parameters Count", count( route.controllerParams().keySet() ), equalTo( count( refRoute.pathParams.keySet() ) ) );
 
-        List<Couple<String, Class<?>>> routeParameters = toList( route.controllerParams() );
-        List<Couple<String, Class<?>>> refRouteParameters = toList( refRoute.pathParams );
-        for( int idx = 0; idx < routeParameters.size(); idx++ )
+        Map<String, Class<?>> routeParameters = new LinkedHashMap<>( route.controllerParams() );
+        Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.pathParams );
+        for( Entry<String, Class<?>> routeEntry : routeParameters.entrySet() )
         {
-            Couple<String, Class<?>> routeParam = routeParameters.get( idx );
-            Couple<String, Class<?>> refRouteParam = refRouteParameters.get( idx );
-            assertThat( "Parameter Name", routeParam.left(), equalTo( refRouteParam.left() ) );
-            assertThat( "Parameter Type", routeParam.right().getName(), equalTo( refRouteParam.right().getName() ) );
+            String routeParamName = routeEntry.getKey();
+            assertThat( "Parameter " + routeParamName, routeEntry.getValue().getName(), equalTo( refRouteParameters.get( routeParamName ).getName() ) );
         }
     }
 }

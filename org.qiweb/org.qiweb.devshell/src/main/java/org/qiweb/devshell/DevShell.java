@@ -98,8 +98,8 @@ public class DevShell
 
             ClassRealm appRealm = classWorld.getRealm( currentApplicationRealmID() );
 
-            Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.http.routes.RoutesProvider" );
-            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.http.routes.RoutesParserProvider" ).getConstructor( new Class<?>[]
+            Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
+            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesParserProvider" ).getConstructor( new Class<?>[]
             {
                 String.class
             } ).newInstance( new Object[] // Routes
