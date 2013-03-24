@@ -35,6 +35,12 @@ public class HttpFactories
         NullArgumentException.ensureNotNull( "Request Headers", headers );
         NullArgumentException.ensureNotNull( "Netty HttpRequest", request );
 
+        // Method
+        String method = request.getMethod().name();
+        if( request.headers().get( "X-HTTP-Method-Override" ) != null )
+        {
+            method = request.headers().get( "X-HTTP-Method-Override" );
+        }
         // Path and QueryString
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), UTF_8 );
         String requestPath = queryStringDecoder.path();
@@ -47,7 +53,7 @@ public class HttpFactories
 
         return new RequestHeaderInstance( identity,
                                           request.getProtocolVersion().text(),
-                                          request.getMethod().name(),
+                                          method,
                                           request.getUri(),
                                           requestPath,
                                           queryString,
