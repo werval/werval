@@ -1,6 +1,5 @@
 package org.qiweb.runtime.server;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,7 +7,6 @@ import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -94,7 +92,7 @@ public class HttpRouterHandler
             final Route route = httpApp.routes().route( requestHeader );
             LOG.debug( "Will route request to: {}", route );
 
-            // Parse path parameters
+            // Parse route path parameters
             List<Object> pathParams = pathParameters( requestHeader, route );
 
 
@@ -169,30 +167,28 @@ public class HttpRouterHandler
             ChannelFuture writeFuture = context.write( response );
 
             // Close the connection as soon as the response is sent if not keep alive
-            if( !isKeepAlive( request ) )
+            if( true || !isKeepAlive( request ) ) // FIXME We don't KEEP ALIVE
             {
                 writeFuture.addListener( ChannelFutureListener.CLOSE );
             }
         }
         catch( RouteNotFoundException ex )
         {
-            LOG.trace( "Route Not Found: " + ex.getMessage(), ex );
-            sendError( context, NOT_FOUND, "404 Route Not Found\nTried:\n" + httpApp.routes().toString() + "\n" );
+            LOG.trace( ex.getMessage() + " will return a 404 Not Found error" );
+            sendError( context, NOT_FOUND, "404 Route Not Found\nTried:\n" + httpApp.routes().toString() + "\n\n" );
         }
     }
 
-    private void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
+    private static void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
     {
-        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status );
-        ByteBuf buf = copiedBuffer( body, UTF_8 );
-        response.headers().set( CONTENT_TYPE, "text/plain; charset=UTF-8" );
-        response.headers().set( CONTENT_LENGTH, buf.readableBytes() );
+        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, UTF_8 ) );
+        response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );
+        response.headers().set( CONTENT_LENGTH, response.data().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );
-        response.data().writeBytes( buf );
         context.write( response ).addListener( ChannelFutureListener.CLOSE );
     }
 
-    private List<Object> pathParameters( RequestHeader requestHeader, Route route )
+    private static List<Object> pathParameters( RequestHeader requestHeader, Route route )
     {
         List<Object> pathParams = new ArrayList<>();
         for( Entry<String, Class<?>> controllerParam : route.controllerParams().entrySet() )

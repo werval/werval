@@ -6,7 +6,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpContentDecompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
@@ -71,9 +70,9 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         // GZip decompression support
         pipeline.addLast( "http-decompressor", new HttpContentDecompressor() );
 
-        // Transform multiple messages into a single FullHttpRequest or FullHttpResponse.
-        // TODO FIXME This should be removed to support more protocols
-        pipeline.addLast( "http-aggregator", new HttpObjectAggregator( 1048576 ) );
+        // Aggregate chunked HttpRequests to disk
+        // TODO Move this to SubProtocolSwitchHandler
+        pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( -1 ) );
 
         // Log Netty Messages
         // pipeline.addLast( "message-logging", new MessageLoggingHandler() );

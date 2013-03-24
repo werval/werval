@@ -3,7 +3,7 @@ package org.qiweb.runtime.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.qiweb.api.QiWebApplication;
@@ -62,15 +62,13 @@ public class SubProtocolSwitchHandler
     public void messageReceived( ChannelHandlerContext context, Object message )
         throws Exception
     {
-        if( message instanceof FullHttpRequest )
+        if( message instanceof HttpRequest )
         {
             rebuildIfNeeded();
-            FullHttpRequest request = (FullHttpRequest) message;
-            LOG.trace( "Received a FullHttpRequest message: {}", request );
+            HttpRequest request = (HttpRequest) message;
             LOG.debug( "Switching to plain HTTP protocol" );
             context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( httpApp ) );
             context.pipeline().remove( this );
-            request.retain();
             context.nextInboundMessageBuffer().add( request );
             inBoundMessageBufferUpdated = true;
         }
@@ -78,7 +76,6 @@ public class SubProtocolSwitchHandler
         {
             rebuildIfNeeded();
             WebSocketFrame frame = (WebSocketFrame) message;
-            LOG.trace( "Received a WebSocketFrame message: {}", frame );
             LOG.debug( "Switching to WebSocket protocol" );
             context.pipeline().addLast( "router", new WebSocketFrameHandler( httpApp ) );
             context.pipeline().remove( this );
