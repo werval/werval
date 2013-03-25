@@ -1,6 +1,7 @@
 import org.gradle.api.artifacts.*
 
 apply plugin: 'base' // To add "clean" task to the root project.
+apply plugin: 'sonar-runner'
 
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
