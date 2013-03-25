@@ -31,12 +31,14 @@ public class FakeControllerInstance
     @Override
     public Outcome index()
     {
+        Controller.response().headers().with( "X-QiWeb-HTTP-Request-Identity",
+                                              Controller.request().header().identity() );
         return Outcomes.ok().
-            withHeader( "controller-method", "index" ).
+            withHeader( "X-QiWeb-Controller-Method", "index" ).
             as( "text/plain; charset=UTF-8" ).
             withEntity( "It works!\nThis request had the following ID: " + Controller.request().header().identity()
-                        + "\n\nHeaders: " + Controller.headers()
-                        + "\n\nCookies: " + Controller.cookies() );
+                        + "\n\nHeaders: " + Controller.request().header().headers()
+                        + "\n\nCookies: " + Controller.request().header().cookies() );
     }
 
     @Override

@@ -463,13 +463,13 @@ public class Outcomes
         extends AbstractOutcome<StreamOutcome>
     {
 
-        private final InputStream entityInput;
+        private final InputStream bodyInputStream;
         private final int contentLength;
 
-        public StreamOutcome( int status, InputStream entityInput, int contentLength )
+        public StreamOutcome( int status, InputStream bodyInputStream, int contentLength )
         {
             super( status );
-            this.entityInput = entityInput;
+            this.bodyInputStream = bodyInputStream;
             this.contentLength = contentLength;
             withHeader( CONTENT_LENGTH, String.valueOf( contentLength ) );
         }
@@ -479,9 +479,9 @@ public class Outcomes
             this( status.code(), input, contentLength );
         }
 
-        public final InputStream entityInput()
+        public final InputStream bodyInputStream()
         {
-            return entityInput;
+            return bodyInputStream;
         }
 
         public final int contentLength()

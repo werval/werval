@@ -4,6 +4,7 @@ import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.Request;
+import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
 
 /**
@@ -23,7 +24,12 @@ public class Controller
      */
     public static Context context()
     {
-        return CONTEXT_THREAD_LOCAL.get();
+        Context context = CONTEXT_THREAD_LOCAL.get();
+        if( context == null )
+        {
+            throw new RuntimeException( "No Context in this Thread (" + Thread.currentThread().getName() + ")" );
+        }
+        return context;
     }
 
     /**
@@ -40,29 +46,16 @@ public class Controller
     }
 
     /**
-     * @return Current Request Headers or null if no Context
+     * @return Current Response or null if no Context
      */
-    public static Headers headers()
+    public static Response response()
     {
         Context context = context();
         if( context == null )
         {
             return null;
         }
-        return context.request().header().headers();
-    }
-
-    /**
-     * @return Current Request Cookies or null if no Context
-     */
-    public static Cookies cookies()
-    {
-        Context context = context();
-        if( context == null )
-        {
-            return null;
-        }
-        return context.request().header().cookies();
+        return context.response();
     }
 
     /**

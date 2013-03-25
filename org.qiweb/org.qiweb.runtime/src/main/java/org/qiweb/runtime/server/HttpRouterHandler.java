@@ -10,7 +10,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -18,17 +17,20 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.QiWebApplication;
 import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.http.RequestBody;
+import org.qiweb.api.http.Response;
+import org.qiweb.api.http.Session;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteNotFoundException;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.controllers.ControllerContext;
 import org.qiweb.runtime.controllers.Outcomes.ChunkedOutcome;
 import org.qiweb.runtime.controllers.Outcomes.SimpleOutcome;
 import org.qiweb.runtime.controllers.Outcomes.StreamOutcome;
+import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERR
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
-import static org.qiweb.runtime.http.HttpFactories.bodyOf;
 import static org.qiweb.runtime.http.HttpFactories.contextOf;
 import static org.qiweb.runtime.http.HttpFactories.requestHeaderOf;
 import static org.qiweb.runtime.http.HttpFactories.requestOf;
@@ -155,6 +156,9 @@ public class HttpRouterHandler
 
         // Route the request
         Routes routes = httpApp.routes();
+
+        // Prepare Controller Context
+        ControllerContext controllerContext = new ControllerContext();
         try
         {
             final Route route = routes.route( requestHeader );
@@ -167,12 +171,18 @@ public class HttpRouterHandler
             List<Object> pathParams = pathParameters( requestHeader, route );
 
             // Parse Request
-            RequestBody body = bodyOf( requestHeader, nettyRequest );
-            Request request = requestOf( requestHeader, body );
-            Context context = contextOf( request, null, null );
+            Request request = requestOf( requestHeader, nettyRequest );
+
+            // Parse Session & Flash
+            Session session = null; // TODO Parse Session
+            Flash flash = null; // TODO Parse Flash
+
+            // Prepare Response
+            Response response = new ResponseInstance();
 
             // Set Controller Context
-            setCurrentThreadContext( httpApp.classLoader(), context );
+            Context context = contextOf( session, request, response, flash );
+            controllerContext.setOnCurrentThread( httpApp.classLoader(), context );
 
             // Lookup Controller
             Object controller = httpApp.classLoader().loadClass( route.controllerType().getName() ).newInstance();
@@ -185,16 +195,20 @@ public class HttpRouterHandler
 
             // Status
             HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( outcome.status() );
-            FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
+            FullHttpResponse nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
 
             // Headers
+            for( String headerName : response.headers().names() )
+            {
+                nettyResponse.headers().add( headerName, response.headers().valueOf( headerName ) );
+            }
             for( String headerName : outcome.headers().names() )
             {
-                response.headers().add( headerName, outcome.headers().valueOf( headerName ) );
+                nettyResponse.headers().add( headerName, outcome.headers().valueOf( headerName ) );
             }
             if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
             {
-                response.headers().set( CONNECTION, KEEP_ALIVE );
+                nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
             }
 
             // Body
@@ -206,17 +220,17 @@ public class HttpRouterHandler
             else if( outcome instanceof StreamOutcome )
             {
                 StreamOutcome streamOutcome = (StreamOutcome) outcome;
-                response.data().writeBytes( streamOutcome.entityInput(), streamOutcome.contentLength() );
+                nettyResponse.data().writeBytes( streamOutcome.bodyInputStream(), streamOutcome.contentLength() );
             }
             else if( outcome instanceof SimpleOutcome )
             {
                 SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
-                response.headers().set( CONTENT_LENGTH, simpleOutcome.entity().readableBytes() );
-                response.data().writeBytes( simpleOutcome.entity() );
+                nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.entity().readableBytes() );
+                nettyResponse.data().writeBytes( simpleOutcome.entity() );
             }
 
             // Write response
-            ChannelFuture writeFuture = nettyContext.write( response );
+            ChannelFuture writeFuture = nettyContext.write( nettyResponse );
 
             // Close the connection as soon as the response is sent if not keep alive
             if( true || !isKeepAlive( nettyRequest ) ) // FIXME We don't KEEP ALIVE
@@ -231,41 +245,7 @@ public class HttpRouterHandler
         }
         finally
         {
-            // Clear Controller Context
-            clearCurrentThreadContext();
-        }
-    }
-    private ClassLoader originalLoader = null;
-
-    private void setCurrentThreadContext( ClassLoader loader, Context context )
-    {
-        originalLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( loader );
-        getControllerContextThreadLocal().set( context );
-    }
-
-    private void clearCurrentThreadContext()
-    {
-        Thread.currentThread().setContextClassLoader( originalLoader );
-        originalLoader = null;
-        getControllerContextThreadLocal().remove();
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private ThreadLocal<Context> getControllerContextThreadLocal()
-    {
-        try
-        {
-            Field field = Controller.class.getDeclaredField( "CONTEXT_THREAD_LOCAL" );
-            if( !field.isAccessible() )
-            {
-                field.setAccessible( true );
-            }
-            return (ThreadLocal<Context>) field.get( null );
-        }
-        catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
-        {
-            throw new RuntimeException( ex.getMessage(), ex );
+            controllerContext.clearCurrentThread();
         }
     }
 

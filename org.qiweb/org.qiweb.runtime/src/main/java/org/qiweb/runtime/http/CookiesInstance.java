@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
-import org.qiweb.api.http.Cookies;
+import org.qiweb.api.http.MutableCookies;
 import org.qiweb.runtime.util.Comparators;
 
 public class CookiesInstance
-    implements Cookies
+    implements MutableCookies
 {
 
     private final Map<String, Cookie> cookies;

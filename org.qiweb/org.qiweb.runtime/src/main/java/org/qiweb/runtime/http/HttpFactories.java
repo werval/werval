@@ -31,6 +31,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestBody.Upload;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
 import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
@@ -178,14 +179,14 @@ public class HttpFactories
         return body;
     }
 
-    public static Request requestOf( RequestHeader header, RequestBody body )
+    public static Request requestOf( RequestHeader header, FullHttpRequest nettyRequest )
     {
-        return new RequestInstance( header, body );
+        return new RequestInstance( header, bodyOf( header, nettyRequest ) );
     }
 
-    public static Context contextOf( Request request, Flash flash, Session session )
+    public static Context contextOf( Session session, Request request, Response response, Flash flash )
     {
-        return new ContextInstance( request, flash, session );
+        return new ContextInstance( session, request, response, flash );
     }
 
     private HttpFactories()
