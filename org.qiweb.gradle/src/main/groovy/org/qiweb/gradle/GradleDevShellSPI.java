@@ -8,12 +8,25 @@ import org.gradle.tooling.ProjectConnection;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 import org.qiweb.spi.dev.Watcher;
 
+/**
+ * Gradle DevShellSPI implementation.
+ * <p>Use the Gradle Tooling API to rebuild the project.</p>
+ */
 public class GradleDevShellSPI
     extends DevShellSPIAdapter
 {
 
+    /**
+     * Name of the Gradle task to run to rebuild the main sources.
+     */
     private final String mainRebuildTask;
+    /**
+     * Name of the Gradle task to run to rebuild the test sources.
+     */
     private final String testRebuildTask;
+    /**
+     * Gradle Tooling API Connector.
+     */
     private final GradleConnector connector = GradleConnector.newConnector();
 
     public GradleDevShellSPI(
@@ -31,9 +44,6 @@ public class GradleDevShellSPI
     @Override
     protected void doRebuildMain()
     {
-        System.out.println( "-------------------------------------------------------" );
-        System.out.println( "REBUILD MAIN" );
-
         ProjectConnection connection = connector.connect();
         try
         {
@@ -44,16 +54,12 @@ public class GradleDevShellSPI
         finally
         {
             connection.close();
-            System.out.println( "-------------------------------------------------------" );
         }
     }
 
     @Override
     protected void doRebuildTest()
     {
-        System.out.println( "-------------------------------------------------------" );
-        System.out.println( "REBUILD TEST" );
-
         ProjectConnection connection = connector.connect();
         try
         {
@@ -64,7 +70,6 @@ public class GradleDevShellSPI
         finally
         {
             connection.close();
-            System.out.println( "-------------------------------------------------------" );
         }
     }
 }

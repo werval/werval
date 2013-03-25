@@ -8,8 +8,10 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -49,6 +51,7 @@ import static io.netty.util.CharsetUtil.UTF_8;
 import static org.qiweb.runtime.http.HttpFactories.contextOf;
 import static org.qiweb.runtime.http.HttpFactories.requestHeaderOf;
 import static org.qiweb.runtime.http.HttpFactories.requestOf;
+import static org.qiweb.runtime.http.HttpFactories.sessionOf;
 
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
@@ -60,22 +63,10 @@ import static org.qiweb.runtime.http.HttpFactories.requestOf;
  *     and PATCH methods. Parsing is done only for URL-encoded forms and multipart form data. For other request body
  *     types, it's the application responsibility to do the parsing.
  * </p>
- * <p>On FullHttpRequests:</p>
- * <ul>
- *     <li>Generate a new request identity</li>
- *     <li>If the request is a WebSocket UPGRADE, process and stop here</li>
- *     <li>Build the QiWeb RequestHeader</li>
- *     <li>Route the request, return a 404 if no route were found</li>
- *     <li>Parse route path parameters and validate them, return a 4xx if something is wrong (should be 404)</li>
- *     <li>Lookup the controller instance that will process the request, return a 4xx if somethings goes wrong</li>
- *     <li>Consume and parse the whole RequestBody</li>
- *     <li>MultipartFormData, ie. file upload should overflow to disk</li>
- *     <li>Invoke the controller method</li>
- * </ul>
  * 
  * <h4>WebSocket UPGRADE Requests</h4>
  * 
- * <p>TODO</p>
+ * <p>TODO WebSocket</p>
  */
 // Assemble and activate a Qi4j Application
 //            Object qi4jRuntime = httpApp.classLoader().loadClass( "org.qi4j.runtime.Qi4jRuntimeImpl" ).newInstance();
@@ -122,7 +113,6 @@ public class HttpRouterHandler
 
     @Override
     public void exceptionCaught( ChannelHandlerContext nettyContext, Throwable cause )
-        throws Exception
     {
         LOG.warn( "{} Exception caught: {}( {} )",
                   requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
@@ -138,16 +128,17 @@ public class HttpRouterHandler
 
     @Override
     public boolean beginMessageReceived( ChannelHandlerContext nettyContext )
-        throws Exception
     {
         // Generate a unique identifier per request
         requestIdentity = generateNewRequestIdentity();
-        return super.beginMessageReceived( nettyContext );
+        return true;
     }
 
     @Override
     public void messageReceived( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest )
-        throws Exception
+        throws ClassNotFoundException, InstantiationException,
+               IllegalAccessException, InvocationTargetException,
+               IOException
     {
         LOG.debug( "{} Received a FullHttpRequest: {}", requestIdentity, nettyRequest );
 
@@ -164,17 +155,17 @@ public class HttpRouterHandler
             final Route route = routes.route( requestHeader );
             LOG.debug( "{} Will route request to: {}", requestIdentity, route );
 
-            // Eventually UPGRADE to WebSocket
-            // TODO
-
             // Parse route path parameters - TODO Finish this, return a 404 if failed
             List<Object> pathParams = pathParameters( requestHeader, route );
+
+            // Eventually UPGRADE to WebSocket
+            // TODO WebSocket
 
             // Parse Request
             Request request = requestOf( requestHeader, nettyRequest );
 
             // Parse Session & Flash
-            Session session = null; // TODO Parse Session
+            Session session = sessionOf( requestHeader );
             Flash flash = null; // TODO Parse Flash
 
             // Prepare Response
@@ -215,7 +206,7 @@ public class HttpRouterHandler
             if( outcome instanceof ChunkedOutcome )
             {
                 ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
-                // TODO
+                // TODO ChunkedOutcome
             }
             else if( outcome instanceof StreamOutcome )
             {

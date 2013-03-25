@@ -44,7 +44,7 @@ public class HttpServerInstance
 
     @Override
     public void activateService()
-        throws Exception
+        throws InterruptedException
     {
         LOG.debug( "[{}] Netty Activation", identity );
 
@@ -60,9 +60,10 @@ public class HttpServerInstance
         bootstrap.channel( NioServerSocketChannel.class );
         bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, httpApp, devSPI ) );
 
-        // Configuration
-        bootstrap.option( TCP_NODELAY, true ); // http://www.unixguide.net/network/socketfaq/2.16.shtml
-        bootstrap.option( SO_KEEPALIVE, true ); // http://tldp.org/HOWTO/html_single/TCP-Keepalive-HOWTO/
+        // See http://www.unixguide.net/network/socketfaq/2.16.shtml
+        bootstrap.option( TCP_NODELAY, true );
+        // See http://tldp.org/HOWTO/html_single/TCP-Keepalive-HOWTO/
+        bootstrap.option( SO_KEEPALIVE, true );
 
         // Bind
         bootstrap.localAddress( listenAddress, listenPort );
@@ -73,7 +74,6 @@ public class HttpServerInstance
 
     @Override
     public void passivateService()
-        throws Exception
     {
         LOG.debug( "[{}] Netty Passivation", identity );
         bootstrap.shutdown();

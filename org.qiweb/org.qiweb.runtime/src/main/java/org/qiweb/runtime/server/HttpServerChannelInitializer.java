@@ -50,7 +50,6 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
 
     @Override
     public void initChannel( Channel channel )
-        throws Exception
     {
         ChannelPipeline pipeline = channel.pipeline();
 
@@ -71,7 +70,7 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         pipeline.addLast( "http-decompressor", new HttpContentDecompressor() );
 
         // Aggregate chunked HttpRequests to disk
-        // TODO Move this to SubProtocolSwitchHandler
+        // TODO Move this to SubProtocolSwitchHandler or ensure it won't mangle with WebSockets
         pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( -1 ) );
 
         // Log Netty Messages

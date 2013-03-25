@@ -1,4 +1,4 @@
-package org.qiweb.runtime.server;
+package org.qiweb.runtime.util;
 
 import io.netty.buffer.AbstractByteBuf;
 import io.netty.buffer.ByteBuf;
@@ -15,16 +15,19 @@ import java.nio.ByteOrder;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
+import org.qiweb.runtime.QiWebRuntimeException;
 
 /**
  * Read-only ByteBuff wrapping a File.
  * <p>Used by {@link HttpOnDiskRequestAggregator} to aggregate requests bodies.</p>
  * <p>used by {@link HttpRouterHandler} to parse requests bodies.</p>
  */
-public class FileByteBuff
+public final class FileByteBuff
     extends AbstractByteBuf
 {
 
+    private static final String NOT_SUPPORTED = "Not supported";
+    private static final String READ_ONLY = "Read Only.";
     private final File file;
     private final RandomAccessFile raf;
     private final long length;
@@ -46,7 +49,7 @@ public class FileByteBuff
         }
         catch( FileNotFoundException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
@@ -58,7 +61,7 @@ public class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
@@ -72,7 +75,7 @@ public class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
@@ -86,14 +89,14 @@ public class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
     @Override
     protected int _getUnsignedMedium( int index )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
@@ -106,7 +109,7 @@ public class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
@@ -120,38 +123,38 @@ public class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
     @Override
     protected void _setByte( int index, int value )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     protected void _setShort( int index, int value )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     protected void _setMedium( int index, int value )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     protected void _setInt( int index, int value )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     protected void _setLong( int index, long value )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
@@ -167,7 +170,7 @@ public class FileByteBuff
     @Override
     public ByteBuf capacity( int newCapacity )
     {
-        throw new UnsupportedOperationException( "Read Only." );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
@@ -197,9 +200,7 @@ public class FileByteBuff
     @Override
     public ByteBuf getBytes( int index, ByteBuf dst, int dstIndex, int length )
     {
-        checkIndex( index, length );
-        checkDstIndex( index, length, dstIndex, dst.capacity() );
-        throw new UnsupportedOperationException( "Not supported yet." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
@@ -215,66 +216,66 @@ public class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 
     @Override
     public ByteBuf getBytes( int index, ByteBuffer dst )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public ByteBuf getBytes( int index, OutputStream out, int length )
         throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public int getBytes( int index, GatheringByteChannel out, int length )
         throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public ByteBuf setBytes( int index, ByteBuf src, int srcIndex, int length )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     public ByteBuf setBytes( int index, byte[] src, int srcIndex, int length )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     public ByteBuf setBytes( int index, ByteBuffer src )
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     public int setBytes( int index, InputStream in, int length )
         throws IOException
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     public int setBytes( int index, ScatteringByteChannel in, int length )
         throws IOException
     {
-        throw new UnsupportedOperationException( "Read Only" );
+        throw new UnsupportedOperationException( READ_ONLY );
     }
 
     @Override
     public ByteBuf copy( int index, int length )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
@@ -286,13 +287,13 @@ public class FileByteBuff
     @Override
     public ByteBuffer nioBuffer( int index, int length )
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public ByteBuffer[] nioBuffers( int index, int length )
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
@@ -304,13 +305,13 @@ public class FileByteBuff
     @Override
     public byte[] array()
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public int arrayOffset()
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
@@ -322,19 +323,19 @@ public class FileByteBuff
     @Override
     public long memoryAddress()
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public ByteBuf suspendIntermediaryDeallocations()
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override
     public ByteBuf resumeIntermediaryDeallocations()
     {
-        throw new UnsupportedOperationException( "Not supported." );
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 
     @Override

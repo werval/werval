@@ -1,5 +1,8 @@
 package org.qiweb.gradle
 
+/**
+ * QiWeb Gradle Plugin Configuration.
+ */
 class QiWebPluginExtension {
 
     def String mainRebuildTask = "compileJava"
@@ -7,4 +10,3 @@ class QiWebPluginExtension {
     def String testRebuildTask = "compileTestJava"
 
 }
-

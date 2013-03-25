@@ -8,9 +8,12 @@ public class RoutesParserProvider
 
     private final String routesString;
 
+    /**
+     * Empty routes provider.
+     */
     public RoutesParserProvider()
     {
-        this( "" ); // NO ROUTES
+        this( "" );
     }
 
     public RoutesParserProvider( String routesString )

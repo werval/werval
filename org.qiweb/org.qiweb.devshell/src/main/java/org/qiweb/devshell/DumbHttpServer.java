@@ -32,7 +32,6 @@ public class DumbHttpServer
 
         @Override
         public void messageReceived( ChannelHandlerContext ctx, FullHttpRequest msg )
-            throws Exception
         {
             FullHttpResponse response = new DefaultFullHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.OK );
             StringWriter sw = new StringWriter();
@@ -61,7 +60,6 @@ public class DumbHttpServer
         {
             @Override
             protected void initChannel( Channel ch )
-                throws Exception
             {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast( "http-codec", new HttpServerCodec() );

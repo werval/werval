@@ -6,18 +6,23 @@ import org.qiweb.devshell.JNotifyWatcher
 import org.qiweb.devshell.DevShell
 import org.gradle.api.Task
 
+/**
+ * QiWeb Gradle Plugin.
+ */
 class QiWebPlugin implements Plugin<Project> {
 
 
     void apply( Project project ) {
 
-        project.logger.lifecycle ">> Applying QiWeb DevShell Gradle Plugin on " + project.name
+        project.logger.info ">> Applying QiWeb DevShell Gradle Plugin on " + project.name
         
         project.extensions.create( "qiweb", QiWebPluginExtension )
         
         project.task( "devshell", description: 'Start the QiWeb DevShell.' ) << {
             
             project.logger.lifecycle ">> QiWeb DevShell for " + project.getName() + " starting..."
+            
+            // == Gather build info
             
             def projectName = project.getName()
             def rootDir = project.getProjectDir()
@@ -32,10 +37,11 @@ class QiWebPlugin implements Plugin<Project> {
             def mainClassPath = project.sourceSets.main.runtimeClasspath.files.collect { f -> f.toURI().toURL() }
             def testClassPath = project.sourceSets.test.runtimeClasspath.files.collect { f -> f.toURI().toURL() }
 
-            // Deploy JNotify            
+            // == Deploy JNotify Native Librairies
+            
             JNotifyWatcher.deployNativeLibraries( buildDir )
             
-            // Start the DevShell
+            // == Start the DevShell
             
             def devShellSPI = new org.qiweb.gradle.GradleDevShellSPI(
                 projectName, rootDir, buildDir, 

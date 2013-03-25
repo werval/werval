@@ -1,6 +1,6 @@
 package org.qiweb.devshell;
 
-/* package */ class Color
+/* package */ final class Color
 {
 
     public static final String ANSI_RESET = "\u001B[0m";

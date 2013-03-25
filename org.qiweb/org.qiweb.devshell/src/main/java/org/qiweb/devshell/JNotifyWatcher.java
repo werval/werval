@@ -33,7 +33,7 @@ public class JNotifyWatcher
             File jNotifyJar = jNotifyJar( loader );
             if( jNotifyJar == null )
             {
-                throw new RuntimeException( "Unable to find JNotify JAR in the ClassPath." );
+                throw new QiWebDevShellException( "Unable to find JNotify JAR in the ClassPath." );
             }
             try
             {
@@ -59,7 +59,7 @@ public class JNotifyWatcher
             catch( IOException | SecurityException | IllegalAccessException |
                    IllegalArgumentException | NoSuchFieldException ex )
             {
-                throw new RuntimeException( "Unable to deploy JNotify Native Libraries: " + ex.getMessage(), ex );
+                throw new QiWebDevShellException( "Unable to deploy JNotify Native Libraries: " + ex.getMessage(), ex );
             }
         }
     }
@@ -79,28 +79,30 @@ public class JNotifyWatcher
     private static void unzipFiltered( File jarFile, File targetDir, String startsWith )
         throws IOException
     {
-        JarFile jar = new JarFile( jarFile );
-        Enumeration<JarEntry> entries = jar.entries();
-        while( entries.hasMoreElements() )
+        try( JarFile jar = new JarFile( jarFile ) )
         {
-            JarEntry entry = entries.nextElement();
-            if( entry.getName().startsWith( startsWith ) )
+            Enumeration<JarEntry> entries = jar.entries();
+            while( entries.hasMoreElements() )
             {
-                File target = new java.io.File( targetDir + java.io.File.separator + entry.getName() );
-                if( entry.isDirectory() )
+                JarEntry entry = entries.nextElement();
+                if( entry.getName().startsWith( startsWith ) )
                 {
-                    if( !target.mkdirs() )
+                    File target = new File( targetDir + java.io.File.separator + entry.getName() );
+                    if( entry.isDirectory() )
                     {
-                        throw new RuntimeException( "Unable to deploy JNotify Native Libraries: Cannot create directory " + target );
+                        if( !target.mkdirs() )
+                        {
+                            throw new QiWebDevShellException( "Unable to deploy JNotify Native Libraries: Cannot create directory " + target );
+                        }
+                        continue;
                     }
-                    continue;
-                }
-                try( InputStream input = jar.getInputStream( entry );
-                     FileOutputStream output = new FileOutputStream( target ) )
-                {
-                    while( input.available() > 0 )
+                    try( InputStream input = jar.getInputStream( entry );
+                         FileOutputStream output = new FileOutputStream( target ) )
                     {
-                        output.write( input.read() );
+                        while( input.available() > 0 )
+                        {
+                            output.write( input.read() );
+                        }
                     }
                 }
             }
@@ -168,14 +170,14 @@ public class JNotifyWatcher
                     }
                     catch( JNotifyException ex )
                     {
-                        throw new RuntimeException( "Unable to unwatch directories." + ex.getMessage(), ex );
+                        throw new QiWebDevShellException( "Unable to unwatch directories." + ex.getMessage(), ex );
                     }
                 }
             };
         }
         catch( JNotifyException ex )
         {
-            throw new RuntimeException( "Unable to watch directories." + ex.getMessage(), ex );
+            throw new QiWebDevShellException( "Unable to watch directories." + ex.getMessage(), ex );
         }
     }
 }

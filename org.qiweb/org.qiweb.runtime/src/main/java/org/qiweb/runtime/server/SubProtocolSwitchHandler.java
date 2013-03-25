@@ -36,31 +36,25 @@ public class SubProtocolSwitchHandler
 
     @Override
     public void channelActive( ChannelHandlerContext context )
-        throws Exception
     {
-        super.channelActive( context );
         allChannels.add( context.channel() );
     }
 
     @Override
     public void channelInactive( ChannelHandlerContext context )
-        throws Exception
     {
         // TODO Request Complete!
-        super.channelInactive( context );
     }
 
     @Override
     public boolean beginMessageReceived( ChannelHandlerContext context )
-        throws Exception
     {
         inBoundMessageBufferUpdated = false;
-        return super.beginMessageReceived( context );
+        return true;
     }
 
     @Override
     public void messageReceived( ChannelHandlerContext context, Object message )
-        throws Exception
     {
         if( message instanceof HttpRequest )
         {
@@ -92,13 +86,11 @@ public class SubProtocolSwitchHandler
 
     @Override
     public void endMessageReceived( ChannelHandlerContext context )
-        throws Exception
     {
         if( inBoundMessageBufferUpdated )
         {
             context.fireInboundBufferUpdated();
         }
-        super.endMessageReceived( context );
     }
 
     private void rebuildIfNeeded()

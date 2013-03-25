@@ -1,6 +1,7 @@
 
 apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
 apply plugin: 'groovy'
+apply plugin: 'sonar-runner'
 
 dependencies {
 
@@ -11,3 +12,10 @@ dependencies {
     compile libraries.gradle_tooling
     
 }
+
+sonarRunner {
+    sonarProperties {
+        // property "sonar.language", "grvy"
+    }
+}
+

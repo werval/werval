@@ -33,6 +33,7 @@ import org.qiweb.api.http.RequestBody.Upload;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.runtime.QiWebRuntimeException;
 import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.RequestBodyInstance.UploadInstance;
@@ -46,7 +47,7 @@ import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static io.netty.util.CharsetUtil.UTF_8;
 
-public class HttpFactories
+public final class HttpFactories
 {
 
     public static MutableHeaders headersOf( HttpRequest request )
@@ -157,6 +158,8 @@ public class HttpFactories
                                                                         fileUpload.getFile() );
                                     uploads.get( fileUpload.getName() ).add( upload );
                                     break;
+                                default:
+                                    break;
                             }
                         }
                         body = new RequestBodyInstance( attributes, uploads );
@@ -165,7 +168,7 @@ public class HttpFactories
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
                            NotEnoughDataDecoderException | IOException ex )
                     {
-                        throw new RuntimeException( ex.getMessage(), ex );
+                        throw new QiWebRuntimeException( ex.getMessage(), ex );
                     }
                 default:
                     body = new RequestBodyInstance( request.data() );
@@ -174,7 +177,7 @@ public class HttpFactories
         }
         else
         {
-            body = new RequestBodyInstance(); // Empty
+            body = new RequestBodyInstance();
         }
         return body;
     }
@@ -182,6 +185,19 @@ public class HttpFactories
     public static Request requestOf( RequestHeader header, FullHttpRequest nettyRequest )
     {
         return new RequestInstance( header, bodyOf( header, nettyRequest ) );
+    }
+
+    public static Session sessionOf( RequestHeader header )
+    {
+        String cookiePrefix = "QIWEB";
+        String session = header.cookies().valueOf( cookiePrefix + "_SESSION" );
+        if( Strings.isEmpty( session ) )
+        {
+            return new SessionInstance();
+        }
+        Map<String, String> sessionData = new TreeMap<>( Comparators.LOWER_CASE );
+        // TODO Parse Session Cookie
+        return new SessionInstance( sessionData );
     }
 
     public static Context contextOf( Session session, Request request, Response response, Flash flash )

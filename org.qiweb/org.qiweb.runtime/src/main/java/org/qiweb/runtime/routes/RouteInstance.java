@@ -3,6 +3,7 @@ package org.qiweb.runtime.routes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.IllegalRouteException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,7 +28,7 @@ import static org.qi4j.functional.Specifications.in;
 /**
  * Instance of a Route.
  */
-/* package */ class RouteInstance
+/* package */ final class RouteInstance
     implements Route
 {
 
@@ -101,24 +102,24 @@ import static org.qi4j.functional.Specifications.in;
 
         // Ensure controller method exists and return an Outcome
 
-        Class[] controllerParamsTypes = controllerParams.values().toArray( new Class[ controllerParams.values().size() ] );
+        Class<?>[] controllerParamsTypes = controllerParams.values().toArray( new Class<?>[ controllerParams.values().size() ] );
         try
         {
             controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
             if( !controllerMethod.getReturnType().isAssignableFrom( Outcome.class ) )
             {
-                throw new IllegalRouteException( toString(),
-                                                 "Controller Method '" + controllerType.getSimpleName() + "#"
-                                                 + controllerMethodName + "( " + controllerParamsTypes + " )' "
-                                                 + "do not return an Outcome." );
+                throw new IllegalRouteException( toString(), "Controller Method '" + controllerType.getSimpleName()
+                                                             + "#" + controllerMethodName
+                                                             + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
+                                                             + "do not return an Outcome." );
             }
         }
         catch( NoSuchMethodException ex )
         {
-            throw new IllegalRouteException( toString(),
-                                             "Controller Method '" + controllerType.getSimpleName() + "#"
-                                             + controllerMethodName + "( " + controllerParamsTypes + " )' not found.",
-                                             ex );
+            throw new IllegalRouteException( toString(), "Controller Method '" + controllerType.getSimpleName()
+                                                         + "#" + controllerMethodName
+                                                         + "( " + Arrays.toString( controllerParamsTypes )
+                                                         + " )' not found.", ex );
         }
     }
 

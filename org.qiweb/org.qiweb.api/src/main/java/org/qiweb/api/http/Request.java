@@ -1,12 +1,11 @@
 package org.qiweb.api.http;
 
 /**
- * A request.
+ * A Request is a RequestHeader plus a RequestBody.
  */
 public interface Request
+    extends RequestHeader
 {
-
-    RequestHeader header();
 
     RequestBody body();
 }

@@ -30,7 +30,7 @@ public class DevShell
      * Decorate DevShellSPI to reload classes after a rebuild.
      * <p>This is the decorated instance of DevShellSPI that is passed to the HttpServer.</p>
      */
-    private class DevShellSPIDecorator
+    private final class DevShellSPIDecorator
         extends DevShellSPIWrapper
     {
 
@@ -58,7 +58,7 @@ public class DevShell
                 }
                 catch( Exception ex )
                 {
-                    throw new RuntimeException( "Unable to reload Application: " + ex.getMessage(), ex );
+                    throw new QiWebDevShellException( "Unable to reload Application: " + ex.getMessage(), ex );
                 }
             }
         }
@@ -157,7 +157,7 @@ public class DevShell
         {
             String msg = "Unable to start QiWeb DevShell: " + ex.getMessage();
             red( msg );
-            throw new RuntimeException( msg, ex );
+            throw new QiWebDevShellException( msg, ex );
         }
     }
 
@@ -172,7 +172,7 @@ public class DevShell
         {
             String msg = "Unable to stop QiWeb DevShell: " + ex.getMessage();
             red( msg );
-            throw new RuntimeException( msg, ex );
+            throw new QiWebDevShellException( msg, ex );
         }
     }
 
@@ -254,12 +254,9 @@ public class DevShell
             if( !url.toString().endsWith( ".jar" ) )
             {
                 File dir = new File( url.getFile() );
-                if( !dir.exists() )
+                if( !dir.exists() && !dir.mkdirs() )
                 {
-                    if( !dir.mkdirs() )
-                    {
-                        throw new RuntimeException( "Unable to create inexistant classpath directory: " + dir );
-                    }
+                    throw new QiWebDevShellException( "Unable to create inexistant classpath directory: " + dir );
                 }
                 set.add( url );
             }

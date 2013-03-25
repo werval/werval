@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
@@ -24,9 +25,9 @@ public class QueryStringInstance
     public QueryStringInstance( Map<String, List<String>> parameters )
     {
         this();
-        for( String key : parameters.keySet() )
+        for( Entry<String, List<String>> entry : parameters.entrySet() )
         {
-            this.parameters.put( key, new ArrayList<>( parameters.get( key ) ) );
+            this.parameters.put( entry.getKey(), new ArrayList<>( entry.getValue() ) );
         }
     }
 

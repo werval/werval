@@ -1,5 +1,8 @@
 package org.qiweb.runtime.http;
 
+import org.qiweb.api.http.Cookies;
+import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
@@ -18,9 +21,87 @@ public class RequestInstance
     }
 
     @Override
-    public RequestHeader header()
+    public String identity()
     {
-        return header;
+        return header.identity();
+    }
+
+    @Override
+    public String version()
+    {
+        return header.version();
+    }
+
+    @Override
+    public String method()
+    {
+        return header.method();
+    }
+
+    @Override
+    public String uri()
+    {
+        return header.uri();
+    }
+
+    @Override
+    public String path()
+    {
+        return header.path();
+    }
+
+    @Override
+    public QueryString queryString()
+    {
+        return header.queryString();
+    }
+
+    @Override
+    public String remoteAddress()
+    {
+        return header.remoteAddress();
+    }
+
+    @Override
+    public String host()
+    {
+        return header.host();
+    }
+
+    @Override
+    public int port()
+    {
+        return header.port();
+    }
+
+    @Override
+    public String domain()
+    {
+        return header.domain();
+    }
+
+    @Override
+    public String contentType()
+    {
+        return header.contentType();
+    }
+
+    @Override
+    public String charset()
+    {
+        return header.charset();
+    }
+
+    @Override
+    public Headers headers()
+    {
+        return header.headers();
+    }
+
+    @Override
+    public Cookies cookies()
+    {
+        return header.cookies();
     }
 
     @Override

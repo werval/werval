@@ -11,8 +11,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.runtime.QiWebRuntimeException;
 import org.qiweb.runtime.http.HeadersInstance;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
@@ -22,7 +24,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.util.CharsetUtil.UTF_8;
 
-public class Outcomes
+public final class Outcomes
 {
 
     /**
@@ -349,34 +351,33 @@ public class Outcomes
     {
         try
         {
-            String fullUrl = url;
-            Iterator<String> itNames = queryString.keySet().iterator();
-            if( itNames.hasNext() )
+            // FIXME Move URL generation out of Outcomes!
+            StringBuilder fullUrl = new StringBuilder( url );
+            Iterator<Entry<String, List<String>>> itKey = queryString.entrySet().iterator();
+            if( itKey.hasNext() )
             {
-                fullUrl += url.contains( "?" ) ? '&' : '?';
-                while( itNames.hasNext() )
+                fullUrl.append( url.contains( "?" ) ? '&' : '?' );
+                while( itKey.hasNext() )
                 {
-                    String paramName = itNames.next();
-                    Iterator<String> itValues = queryString.get( paramName ).iterator();
-                    while( itValues.hasNext() )
+                    Entry<String, List<String>> entry = itKey.next();
+                    String paramName = entry.getKey();
+                    for( Iterator<String> itVal = entry.getValue().iterator(); itVal.hasNext(); )
                     {
-                        String paramValue = itValues.next();
-                        fullUrl += paramName + "=" + URLEncoder.encode( paramValue, "utf-8" )
-                                   + ( itValues.hasNext() ? "&" : "" );
-
+                        String paramValue = itVal.next();
+                        fullUrl.append( paramName ).append( "=" ).append( URLEncoder.encode( paramValue, "utf-8" ) ).append( itVal.hasNext() ? "&" : "" );
                     }
-                    fullUrl += itNames.hasNext() ? "&" : "";
+                    fullUrl.append( itKey.hasNext() ? "&" : "" );
                 }
             }
-            return new SimpleOutcome( status ).withHeader( HttpHeaders.Names.LOCATION, fullUrl );
+            return new SimpleOutcome( status ).withHeader( HttpHeaders.Names.LOCATION, fullUrl.toString() );
         }
         catch( UnsupportedEncodingException ex )
         {
-            throw new RuntimeException( "UTF-8 Charset is not supported oO", ex );
+            throw new QiWebRuntimeException( "UTF-8 Charset is not supported oO", ex );
         }
     }
 
-    private static abstract class AbstractOutcome<OutcomeType extends AbstractOutcome<?>>
+    private abstract static class AbstractOutcome<T extends AbstractOutcome<?>>
         implements Outcome
     {
 
@@ -400,16 +401,18 @@ public class Outcomes
             return headers;
         }
 
-        public final OutcomeType withHeader( String name, String value )
+        @SuppressWarnings( "unchecked" )
+        public final T withHeader( String name, String value )
         {
             headers.with( name, value );
-            return (OutcomeType) this;
+            return (T) this;
         }
 
-        public final OutcomeType as( String contentType )
+        @SuppressWarnings( "unchecked" )
+        public final T as( String contentType )
         {
             headers.withSingle( CONTENT_TYPE, contentType );
-            return (OutcomeType) this;
+            return (T) this;
         }
 
         @Override
@@ -459,7 +462,7 @@ public class Outcomes
         }
     }
 
-    public static abstract class StreamOutcome
+    public abstract static class StreamOutcome
         extends AbstractOutcome<StreamOutcome>
     {
 
@@ -490,7 +493,7 @@ public class Outcomes
         }
     }
 
-    public static abstract class ChunkedOutcome
+    public abstract static class ChunkedOutcome
         extends AbstractOutcome<ChunkedOutcome>
     {
 
@@ -503,5 +506,9 @@ public class Outcomes
         {
             super( status.code() );
         }
+    }
+
+    private Outcomes()
+    {
     }
 }

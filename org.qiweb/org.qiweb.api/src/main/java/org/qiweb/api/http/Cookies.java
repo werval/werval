@@ -30,7 +30,7 @@ public interface Cookies
     /**
      * HTTP Cookie.
      */
-    public interface Cookie
+    interface Cookie
     {
 
         String name();

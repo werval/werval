@@ -129,21 +129,9 @@ public class RequestHeaderInstance
                 String parse = uri.substring( 9 );
                 parse = parse.substring( 0, parse.indexOf( '/' ) );
                 int colIdx = parse.indexOf( ':' );
-                if( colIdx < 0 )
-                {
-                    if( uri.startsWith( "https" ) )
-                    {
-                        return 443;
-                    }
-                    else
-                    {
-                        return 80;
-                    }
-                }
-                else
-                {
-                    return Integer.valueOf( parse.substring( colIdx + 1, parse.length() ) );
-                }
+                return colIdx < 0
+                       ? uri.startsWith( "https" ) ? 443 : 80
+                       : Integer.valueOf( parse.substring( colIdx + 1, parse.length() ) );
             }
         } );
     }
@@ -198,11 +186,5 @@ public class RequestHeaderInstance
                 return headers.valueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
             }
         } );
-    }
-
-    @Override
-    public RequestHeader clone()
-    {
-        return new RequestHeaderInstance( identity, version, method, uri, path, queryString, headers, cookies );
     }
 }

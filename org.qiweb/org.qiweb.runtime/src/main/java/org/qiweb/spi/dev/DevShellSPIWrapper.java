@@ -8,11 +8,16 @@ public class DevShellSPIWrapper
     implements DevShellSPI
 {
 
-    protected final DevShellSPI wrapped;
+    private final DevShellSPI wrapped;
 
     public DevShellSPIWrapper( DevShellSPI wrapped )
     {
         this.wrapped = wrapped;
+    }
+
+    public DevShellSPI wrapped()
+    {
+        return wrapped;
     }
 
     @Override

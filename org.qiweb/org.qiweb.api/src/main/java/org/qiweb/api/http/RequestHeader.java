@@ -91,9 +91,4 @@ public interface RequestHeader
      * @return The HTTP Request Charset or an empty String
      */
     String charset();
-
-    /**
-     * @return A new deep copy instance.
-     */
-    RequestHeader clone();
 }

@@ -21,7 +21,7 @@ public interface RequestBody
 
     String asString( Charset charset );
 
-    static interface Upload
+    interface Upload
     {
 
         String contentType();

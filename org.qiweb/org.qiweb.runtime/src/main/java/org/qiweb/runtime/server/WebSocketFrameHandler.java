@@ -22,16 +22,13 @@ public class WebSocketFrameHandler
 
     @Override
     public void exceptionCaught( ChannelHandlerContext context, Throwable cause )
-        throws Exception
     {
         LOG.warn( "Exception caught: {}( {} )", cause.getClass().getSimpleName(), cause.getMessage(), cause );
-        super.exceptionCaught( context, cause );
         context.channel().close();
     }
 
     @Override
     public void messageReceived( ChannelHandlerContext context, WebSocketFrame frame )
-        throws Exception
     {
         LOG.debug( "Received a WebSocketFrame: {}", frame );
         context.channel().close();

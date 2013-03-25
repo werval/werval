@@ -57,19 +57,19 @@ public final class RouteBuilder
     /**
      * @param <T> the controller type
      */
-    public static abstract class MethodRecorder<T>
+    public abstract static class MethodRecorder<T>
     {
 
         private final Map<String, Class<?>> controllerParams = new LinkedHashMap<>();
 
         /**
          * Record a new method parameter.
-         * @param <ParamType> the parametrized parameter type
+         * @param <T> the parametrized parameter type
          * @param name the parameter name
          * @param type the parmeter type
          * @return an ignored default value
          */
-        protected final <ParamType> ParamType p( String name, Class<ParamType> type )
+        protected final <T> T p( String name, Class<T> type )
         {
             controllerParams.put( name, type );
             return null;
@@ -137,13 +137,18 @@ public final class RouteBuilder
      * @throws IllegalRouteException when the textual route definition is invalid
      */
     public static Route parseRoute( final String routeString )
-        throws IllegalRouteException
     {
         return parseRoute( RouteBuilder.class.getClassLoader(), routeString );
     }
 
+    /**
+     * Parse a textual route definition to a Route instance.
+     * @param loader The ClassLoader to use to find Controller classes
+     * @param routeString a textual route definition
+     * @return a new Route instance
+     * @throws IllegalRouteException when the textual route definition is invalid
+     */
     public static Route parseRoute( ClassLoader loader, final String routeString )
-        throws IllegalRouteException
     {
         if( Strings.isEmpty( routeString ) )
         {
@@ -273,7 +278,6 @@ public final class RouteBuilder
         {
             @Override
             public Object invoke( Object proxy, Method method, Object[] args )
-                throws Throwable
             {
                 methodNameHolder.setHolded( method.getName() );
                 return null;

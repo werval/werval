@@ -1,8 +1,9 @@
 package com.acme.app;
 
-import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.runtime.controllers.Outcomes;
+
+import static org.qiweb.api.controllers.Controller.*;
 
 public class FakeControllerInstance
     implements FakeController
@@ -31,14 +32,13 @@ public class FakeControllerInstance
     @Override
     public Outcome index()
     {
-        Controller.response().headers().with( "X-QiWeb-HTTP-Request-Identity",
-                                              Controller.request().header().identity() );
+        response().headers().with( "X-QiWeb-HTTP-Request-Identity", request().identity() );
         return Outcomes.ok().
             withHeader( "X-QiWeb-Controller-Method", "index" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "It works!\nThis request had the following ID: " + Controller.request().header().identity()
-                        + "\n\nHeaders: " + Controller.request().header().headers()
-                        + "\n\nCookies: " + Controller.request().header().cookies() );
+            withEntity( "It works!\nThis request had the following ID: " + request().identity()
+                        + "\n\nHeaders: " + request().headers()
+                        + "\n\nCookies: " + request().cookies() );
     }
 
     @Override

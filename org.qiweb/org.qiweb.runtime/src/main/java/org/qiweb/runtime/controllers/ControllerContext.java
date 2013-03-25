@@ -3,6 +3,7 @@ package org.qiweb.runtime.controllers;
 import java.lang.reflect.Field;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Controller;
+import org.qiweb.runtime.QiWebRuntimeException;
 
 public final class ControllerContext
 {
@@ -37,7 +38,7 @@ public final class ControllerContext
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( ex.getMessage(), ex );
         }
     }
 }

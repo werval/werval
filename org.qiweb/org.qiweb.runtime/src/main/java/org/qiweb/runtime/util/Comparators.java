@@ -3,7 +3,7 @@ package org.qiweb.runtime.util;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class Comparators
+public final class Comparators
 {
 
     public static final Comparator<String> LOWER_CASE = new Comparator<String>()
