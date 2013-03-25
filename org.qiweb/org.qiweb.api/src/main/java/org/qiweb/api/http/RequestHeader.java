@@ -45,11 +45,6 @@ public interface RequestHeader
     Headers headers();
 
     /**
-     * @return TRUE if the HTTP Request comes with a body, otherwise return FALSE
-     */
-    boolean hasBody();
-
-    /**
      * The HTTP Client Address.
      * <p>Computed from the X-Forwarded-For header value if this header is present and the local address is loopback.</p>
      * @return The HTTP Client Address or an empty String

@@ -22,7 +22,6 @@ public class RequestHeaderInstance
     private final String path;
     private final QueryString queryString;
     private final Headers headers;
-    private final boolean hasBody;
     private Map<String, Object> lazyValues = new HashMap<>();
 
     @SuppressWarnings( "unchecked" )
@@ -38,8 +37,7 @@ public class RequestHeaderInstance
     public RequestHeaderInstance( String identity,
                                   String version, String method,
                                   String uri, String path, QueryString queryString,
-                                  Headers headers,
-                                  boolean hasBody )
+                                  Headers headers )
     {
         this.identity = identity;
         this.version = version;
@@ -48,7 +46,6 @@ public class RequestHeaderInstance
         this.path = path;
         this.queryString = queryString;
         this.headers = headers;
-        this.hasBody = hasBody;
     }
 
     @Override
@@ -91,12 +88,6 @@ public class RequestHeaderInstance
     public Headers headers()
     {
         return headers;
-    }
-
-    @Override
-    public boolean hasBody()
-    {
-        return hasBody;
     }
 
     @Override
@@ -203,6 +194,6 @@ public class RequestHeaderInstance
     @Override
     public RequestHeader clone()
     {
-        return new RequestHeaderInstance( identity, version, method, uri, path, queryString, headers, hasBody );
+        return new RequestHeaderInstance( identity, version, method, uri, path, queryString, headers );
     }
 }

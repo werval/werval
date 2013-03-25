@@ -52,11 +52,11 @@ public class HttpRequestHeaderTest
 
     private RequestHeader withUri( String uri )
     {
-        return new RequestHeaderInstance( null, null, null, uri, null, null, null, false );
+        return new RequestHeaderInstance( null, null, null, uri, null, null, null );
     }
 
     private RequestHeader withHeaders( Headers headers )
     {
-        return new RequestHeaderInstance( null, null, null, null, null, null, headers, false );
+        return new RequestHeaderInstance( null, null, null, null, null, null, headers );
     }
 }

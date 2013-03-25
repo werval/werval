@@ -1,5 +1,6 @@
 package com.acme.app;
 
+import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.runtime.controllers.Outcomes;
 
@@ -33,7 +34,7 @@ public class FakeControllerInstance
         return Outcomes.ok().
             withHeader( "controller-method", "index" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "It works!" );
+            withEntity( "It works!\nThis request had the following ID: " + Controller.request().header().identity() );
     }
 
     @Override

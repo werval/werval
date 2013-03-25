@@ -200,8 +200,8 @@ public class RoutesTest
     private RequestHeader requestHeaderForGetPath( String path )
     {
         return new RequestHeaderInstance( "identity", "HTTP/1.1",
-                                              "GET", "http://localhost" + path, path,
-                                              new QueryStringInstance(), new HeadersInstance(), false );
+                                          "GET", "http://localhost" + path, path,
+                                          new QueryStringInstance(), new HeadersInstance() );
     }
 
     private void assertRoute( Route route, RoutesToTest refRoute )
