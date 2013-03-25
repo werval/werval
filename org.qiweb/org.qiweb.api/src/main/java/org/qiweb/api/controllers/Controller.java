@@ -1,12 +1,17 @@
 package org.qiweb.api.controllers;
 
+import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Flash;
+import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Session;
 
 /**
  * Controller.
- * <p>This class only provide static helpers so you can extend it or not, as you like.</p>
+ * <p>
+ *     This class only provide static helpers backed by a ThreadLocal<Context> so you can extend it or not,
+ *     as you like.
+ * </p>
  */
 public class Controller
 {
@@ -14,7 +19,7 @@ public class Controller
     private static final ThreadLocal<Context> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
-     * @return Current Thread Context or null
+     * @return Current Request Context or null if no Context
      */
     public static Context context()
     {
@@ -22,7 +27,7 @@ public class Controller
     }
 
     /**
-     * @return Current Thread Request or null
+     * @return Current Request or null if no Context
      */
     public static Request request()
     {
@@ -35,7 +40,33 @@ public class Controller
     }
 
     /**
-     * @return Current Thread Flash or null
+     * @return Current Request Headers or null if no Context
+     */
+    public static Headers headers()
+    {
+        Context context = context();
+        if( context == null )
+        {
+            return null;
+        }
+        return context.request().header().headers();
+    }
+
+    /**
+     * @return Current Request Cookies or null if no Context
+     */
+    public static Cookies cookies()
+    {
+        Context context = context();
+        if( context == null )
+        {
+            return null;
+        }
+        return context.request().header().cookies();
+    }
+
+    /**
+     * @return Current Request Flash or null if no Context
      */
     public static Flash flash()
     {
@@ -48,7 +79,7 @@ public class Controller
     }
 
     /**
-     * @return Current Thread Session or null
+     * @return Current Request Session or null if no Context
      */
     public static Session session()
     {

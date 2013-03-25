@@ -34,7 +34,9 @@ public class FakeControllerInstance
         return Outcomes.ok().
             withHeader( "controller-method", "index" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "It works!\nThis request had the following ID: " + Controller.request().header().identity() );
+            withEntity( "It works!\nThis request had the following ID: " + Controller.request().header().identity()
+                        + "\n\nHeaders: " + Controller.headers()
+                        + "\n\nCookies: " + Controller.cookies() );
     }
 
     @Override

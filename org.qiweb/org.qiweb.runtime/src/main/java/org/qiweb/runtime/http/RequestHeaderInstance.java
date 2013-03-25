@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
 import org.qi4j.functional.Function;
+import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
@@ -22,6 +23,7 @@ public class RequestHeaderInstance
     private final String path;
     private final QueryString queryString;
     private final Headers headers;
+    private final Cookies cookies;
     private Map<String, Object> lazyValues = new HashMap<>();
 
     @SuppressWarnings( "unchecked" )
@@ -37,7 +39,7 @@ public class RequestHeaderInstance
     public RequestHeaderInstance( String identity,
                                   String version, String method,
                                   String uri, String path, QueryString queryString,
-                                  Headers headers )
+                                  Headers headers, Cookies cookies )
     {
         this.identity = identity;
         this.version = version;
@@ -46,6 +48,7 @@ public class RequestHeaderInstance
         this.path = path;
         this.queryString = queryString;
         this.headers = headers;
+        this.cookies = cookies;
     }
 
     @Override
@@ -88,6 +91,12 @@ public class RequestHeaderInstance
     public Headers headers()
     {
         return headers;
+    }
+
+    @Override
+    public Cookies cookies()
+    {
+        return cookies;
     }
 
     @Override
@@ -194,6 +203,6 @@ public class RequestHeaderInstance
     @Override
     public RequestHeader clone()
     {
-        return new RequestHeaderInstance( identity, version, method, uri, path, queryString, headers );
+        return new RequestHeaderInstance( identity, version, method, uri, path, queryString, headers, cookies );
     }
 }

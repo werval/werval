@@ -45,6 +45,11 @@ public interface RequestHeader
     Headers headers();
 
     /**
+     * @return The HTTP Request Cookies
+     */
+    Cookies cookies();
+
+    /**
      * The HTTP Client Address.
      * <p>Computed from the X-Forwarded-For header value if this header is present and the local address is loopback.</p>
      * @return The HTTP Client Address or an empty String

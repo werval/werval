@@ -1,6 +1,5 @@
 package org.qiweb.runtime.routes;
 
-import org.qiweb.runtime.routes.RouteBuilder;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.routes.IllegalRouteException;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
@@ -201,7 +201,7 @@ public class RoutesTest
     {
         return new RequestHeaderInstance( "identity", "HTTP/1.1",
                                           "GET", "http://localhost" + path, path,
-                                          new QueryStringInstance(), new HeadersInstance() );
+                                          new QueryStringInstance(), new HeadersInstance(), new CookiesInstance() );
     }
 
     private void assertRoute( Route route, RoutesToTest refRoute )
