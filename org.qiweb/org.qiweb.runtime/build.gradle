@@ -2,6 +2,7 @@
 dependencies {
 
     compile project( ":org.qiweb.api" )
+    compile libraries.slf4j
     compile libraries.jtoolbox
     compile libraries.qi4j_api
     compile libraries.netty_codec_http

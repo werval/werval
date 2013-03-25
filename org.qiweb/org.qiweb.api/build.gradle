@@ -1,6 +1,4 @@
 
 dependencies {
 
-    compile libraries.slf4j
-    
 }
