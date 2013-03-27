@@ -2,7 +2,6 @@ package org.qiweb.devshell;
 
 import java.io.File;
 import org.qiweb.spi.dev.DevShellSPI;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,7 +22,7 @@ import static org.qiweb.runtime.util.ClassLoaders.*;
  * <p>Bind a build plugin to a QiWeb runtime using a DevShellSPI.</p>
  * <p>Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.</p>
  */
-public class DevShell
+public final class DevShell
 {
 
     /**
@@ -54,7 +53,8 @@ public class DevShell
                     httpAppInstance.getClass().getMethod( "changeClassLoader", new Class<?>[]
                     {
                         ClassLoader.class
-                    } ).invoke( httpAppInstance, classWorld.getRealm( currentApplicationRealmID() ) );
+                    } ).
+                        invoke( httpAppInstance, classWorld.getRealm( currentApplicationRealmID() ) );
                 }
                 catch( Exception ex )
                 {
@@ -97,7 +97,6 @@ public class DevShell
             spi.rebuildMain();
 
             cyan( "Isolating worlds..." );
-
             yellow( "DevShell Class ClassLoader is: " + getClass().getClassLoader() );
             yellow( "Current Thread Context ClassLoader is: " + originalLoader );
 
@@ -107,38 +106,50 @@ public class DevShell
 
             ClassRealm appRealm = classWorld.getRealm( currentApplicationRealmID() );
 
+            // Config
+            Class<?> configClass = appRealm.loadClass( "org.qiweb.api.Config" );
+            Object configInstance = appRealm.loadClass( "org.qiweb.runtime.ConfigInstance" ).newInstance();
+
+            // RoutesProvider
             Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
-            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesParserProvider" ).getConstructor( new Class<?>[]
+            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesParserProvider" ).
+                getConstructor( new Class<?>[]
             {
                 String.class
-            } ).newInstance( new Object[] // Routes
+            } ).
+                newInstance( new Object[] // Routes
             {
                 "GET /favicon.ico org.qiweb.controller.Default.notFound()\n"
                 + "GET / com.acme.app.FakeControllerInstance.index()"
             } );
-            Class<?> httpAppClass = appRealm.loadClass( "org.qiweb.api.QiWebApplication" );
-            Object httpAppInstance = appRealm.loadClass( "org.qiweb.runtime.QiWebApplicationInstance" ).getConstructor( new Class<?>[]
+
+            // Application
+            Class<?> appClass = appRealm.loadClass( "org.qiweb.api.Application" );
+            Object appInstance = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" ).
+                getConstructor( new Class<?>[]
             {
+                configClass,
                 ClassLoader.class,
                 routesProviderClass
-            } ).newInstance( new Object[]
+            } ).
+                newInstance( new Object[]
             {
+                configInstance,
                 appRealm,
                 routesProviderInstance
             } );
-            Class<?> httpServerInstanceClass = appRealm.loadClass( "org.qiweb.runtime.server.HttpServerInstance" );
-            Constructor<?> httpServerInstanceCtor = httpServerInstanceClass.getConstructor( new Class<?>[]
-            {
-                String.class, String.class, int.class, httpAppClass, DevShellSPI.class
-            } );
 
-            white( "Attempting to instanciate HttpServerInstance from Dependencies ClassRealm loaded class" );
-            Object httpServer = httpServerInstanceCtor.newInstance( new Object[]
+            // HttpServer
+            Object httpServer = appRealm.loadClass( "org.qiweb.runtime.server.HttpServerInstance" ).
+                getConstructor( new Class<?>[]
+            {
+                String.class, appClass, DevShellSPI.class
+            } ).
+                newInstance( new Object[]
             {
                 "devshell-httpserver",
-                "127.0.0.1", 23023,
-                httpAppInstance,
-                new DevShellSPIDecorator( spi, httpAppInstance )
+                appInstance,
+                new DevShellSPIDecorator( spi, appInstance )
             } );
 
             httpServer.getClass().getMethod( "activateService" ).invoke( httpServer );

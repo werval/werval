@@ -1,5 +1,6 @@
 package org.qiweb.api.controllers;
 
+import org.qiweb.api.Application;
 import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
@@ -11,6 +12,8 @@ import org.qiweb.api.http.Session;
  */
 public interface Context
 {
+
+    Application application();
 
     Session session();
 

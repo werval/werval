@@ -12,7 +12,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.QiWebApplication;
+import org.qiweb.api.Application;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
@@ -34,17 +34,19 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         }
     }
     private final ChannelGroup allChannels;
-    private final QiWebApplication httpApp;
-    private final DevShellSPI devSPI;
+    private final Application app;
+    private final DevShellSPI devSpi;
     private final EventExecutorGroup httpExecutors;
 
-    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, QiWebApplication httpApp, DevShellSPI devSPI )
+    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, Application httpApp, DevShellSPI devSpi )
     {
         this.allChannels = allChannels;
-        this.httpApp = httpApp;
-        this.devSPI = devSPI;
-        // TODO Executors count configuration
-        this.httpExecutors = new DefaultEventExecutorGroup( devSPI == null ? DEFAULT_POOL_SIZE : 1,
+        this.app = httpApp;
+        this.devSpi = devSpi;
+        int executors = app.config().has( "qiweb.http.executors" )
+                        ? app.config().getInteger( "qiweb.http.executors" )
+                        : DEFAULT_POOL_SIZE;
+        this.httpExecutors = new DefaultEventExecutorGroup( devSpi == null ? executors : 1,
                                                             new ExecutorsThreadFactory() );
     }
 
@@ -71,7 +73,7 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
 
         // Aggregate chunked HttpRequests to disk
         // TODO Move this to SubProtocolSwitchHandler or ensure it won't mangle with WebSockets
-        pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( -1 ) );
+        pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( app, -1 ) );
 
         // Log Netty Messages
         // pipeline.addLast( "message-logging", new MessageLoggingHandler() );
@@ -83,6 +85,6 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         pipeline.addLast( "chunked-write-handler", new ChunkedWriteHandler() );
 
         // Protocol Switching Handler
-        pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, httpExecutors, httpApp, devSPI ) );
+        pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, httpExecutors, app, devSpi ) );
     }
 }

@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
+import org.qiweb.api.Application;
+import org.qiweb.api.QiWebException;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
@@ -200,9 +202,9 @@ public final class HttpFactories
         return new SessionInstance( sessionData );
     }
 
-    public static Context contextOf( Session session, Request request, Response response, Flash flash )
+    public static Context contextOf( Application application, Session session, Request request, Response response, Flash flash )
     {
-        return new ContextInstance( session, request, response, flash );
+        return new ContextInstance( application, session, request, response, flash );
     }
 
     private HttpFactories()

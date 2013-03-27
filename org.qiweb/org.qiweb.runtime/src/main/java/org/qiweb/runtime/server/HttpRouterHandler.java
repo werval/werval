@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.QiWebApplication;
+import org.qiweb.api.Application;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Flash;
@@ -90,7 +90,7 @@ import static org.qiweb.runtime.http.HttpFactories.sessionOf;
 // /* ... */
 // Passivate the Qi4j Application
 // qi4jApp.passivate();
-public class HttpRouterHandler
+public final class HttpRouterHandler
     extends ChannelInboundMessageHandlerAdapter<FullHttpRequest>
 {
 
@@ -102,13 +102,13 @@ public class HttpRouterHandler
     {
         return REQUEST_IDENTITY_PREFIX + REQUEST_IDENTITY_COUNT.getAndIncrement();
     }
-    private final QiWebApplication httpApp;
+    private final Application app;
     private String requestIdentity;
 
-    public HttpRouterHandler( QiWebApplication httpApp )
+    public HttpRouterHandler( Application app )
     {
         super();
-        this.httpApp = httpApp;
+        this.app = app;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class HttpRouterHandler
         RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest );
 
         // Route the request
-        Routes routes = httpApp.routes();
+        Routes routes = app.routes();
 
         // Prepare Controller Context
         ControllerContext controllerContext = new ControllerContext();
@@ -172,11 +172,11 @@ public class HttpRouterHandler
             Response response = new ResponseInstance();
 
             // Set Controller Context
-            Context context = contextOf( session, request, response, flash );
-            controllerContext.setOnCurrentThread( httpApp.classLoader(), context );
+            Context context = contextOf( app, session, request, response, flash );
+            controllerContext.setOnCurrentThread( app.classLoader(), context );
 
             // Lookup Controller
-            Object controller = httpApp.classLoader().loadClass( route.controllerType().getName() ).newInstance();
+            Object controller = app.classLoader().loadClass( route.controllerType().getName() ).newInstance();
 
             // Invoke Controller
             LOG.debug( "{} Will invoke controller method: {}", requestIdentity, route.controllerMethod() );

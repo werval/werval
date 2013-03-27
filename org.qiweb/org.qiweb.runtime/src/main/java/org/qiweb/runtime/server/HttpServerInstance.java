@@ -5,7 +5,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.qiweb.api.QiWebApplication;
+import org.qiweb.api.Application;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,26 +20,22 @@ public class HttpServerInstance
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
     private final String identity;
-    private final String listenAddress;
-    private final int listenPort;
-    private final QiWebApplication httpApp;
-    private final DevShellSPI devSPI;
+    private final Application app;
+    private final DevShellSPI devSpi;
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
 
-    public HttpServerInstance( String identity, String listenAddress, int listenPort, QiWebApplication httpApp )
+    public HttpServerInstance( String identity, Application app )
     {
-        this( identity, listenAddress, listenPort, httpApp, null );
+        this( identity, app, null );
     }
 
-    public HttpServerInstance( String identity, String listenAddress, int listenPort, QiWebApplication httpApp, DevShellSPI devSPI )
+    public HttpServerInstance( String identity, Application app, DevShellSPI devSpi )
     {
         this.identity = identity;
-        this.listenAddress = listenAddress;
-        this.listenPort = listenPort;
-        this.httpApp = httpApp;
+        this.app = app;
+        this.devSpi = devSpi;
         this.allChannels = new DefaultChannelGroup( identity );
-        this.devSPI = devSPI;
     }
 
     @Override
@@ -52,13 +48,19 @@ public class HttpServerInstance
         bootstrap = new ServerBootstrap();
 
         // I/O Event Loops.
-        // The first is used to handle the accept of new connections and the second will serve the IO of them. 
-        bootstrap.group( new NioEventLoopGroup( devSPI == null ? DEFAULT_POOL_SIZE : 1 ),
-                         new NioEventLoopGroup( devSPI == null ? DEFAULT_POOL_SIZE : 1 ) );
+        // The first is used to handle the accept of new connections and the second will serve the IO of them.
+        int acceptors = app.config().has( "qiweb.http.acceptors" )
+                        ? app.config().getInteger( "qiweb.http.acceptors" )
+                        : DEFAULT_POOL_SIZE;
+        int iothreads = app.config().has( "qiweb.http.iothreads" )
+                        ? app.config().getInteger( "qiweb.http.iothreads" )
+                        : DEFAULT_POOL_SIZE;
+        bootstrap.group( new NioEventLoopGroup( devSpi == null ? acceptors : 1 ),
+                         new NioEventLoopGroup( devSpi == null ? iothreads : 1 ) );
 
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
-        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, httpApp, devSPI ) );
+        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, app, devSpi ) );
 
         // See http://www.unixguide.net/network/socketfaq/2.16.shtml
         bootstrap.option( TCP_NODELAY, true );
@@ -66,7 +68,8 @@ public class HttpServerInstance
         bootstrap.option( SO_KEEPALIVE, true );
 
         // Bind
-        bootstrap.localAddress( listenAddress, listenPort );
+        bootstrap.localAddress( app.config().getString( "qiweb.http.address" ),
+                                app.config().getInteger( "qiweb.http.port" ) );
         allChannels.add( bootstrap.bind().sync().channel() );
 
         LOG.debug( "[{}] Netty Activated", identity );

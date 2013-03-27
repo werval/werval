@@ -5,6 +5,7 @@ dependencies {
     compile libraries.slf4j
     compile libraries.jtoolbox
     compile libraries.qi4j_functional
+    compile libraries.typesafe_config
     compile libraries.netty_codec_http
     compile libraries.netty_example // TODO Remove me! cf. org.qiweb.runtime.http.experiments
     // compile "com.google.classpath-explorer:classpath-explorer:1.0" // Misko Every ClassPathExplorer // TODO Remove me!

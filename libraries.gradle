@@ -10,6 +10,7 @@ def v_logback = '1.0.9'
 def v_netty = '4.0.0.CR1'
 def v_qi4j = '2.0-SNAPSHOT'
 def v_slf4j = '1.7.2'
+def v_typesafe_config = '1.0.0'
 
 rootProject.ext {
     libraries = [
@@ -27,7 +28,8 @@ rootProject.ext {
         qi4j_bootstrap: "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
         qi4j_runtime: "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
         qi4j_test: "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
-        slf4j: "org.slf4j:slf4j-api:$v_slf4j"
+        slf4j: "org.slf4j:slf4j-api:$v_slf4j",
+        typesafe_config: "com.typesafe:config:$v_typesafe_config"
     ]
 }
 

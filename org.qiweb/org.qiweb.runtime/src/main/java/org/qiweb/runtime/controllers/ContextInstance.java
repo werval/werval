@@ -1,5 +1,6 @@
 package org.qiweb.runtime.controllers;
 
+import org.qiweb.api.Application;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.Request;
@@ -9,21 +10,29 @@ import org.qiweb.api.http.Session;
 /**
  * A HTTP Interaction Context instance.
  */
-public class ContextInstance
+public final class ContextInstance
     implements Context
 {
 
+    private final Application application;
     private final Session session;
     private final Request request;
     private final Response response;
     private final Flash flash;
 
-    public ContextInstance( Session session, Request request, Response response, Flash flash )
+    public ContextInstance( Application application, Session session, Request request, Response response, Flash flash )
     {
+        this.application = application;
         this.session = session;
         this.request = request;
         this.response = response;
         this.flash = flash;
+    }
+
+    @Override
+    public Application application()
+    {
+        return application;
     }
 
     @Override

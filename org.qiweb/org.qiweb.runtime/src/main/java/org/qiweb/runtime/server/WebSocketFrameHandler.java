@@ -3,7 +3,7 @@ package org.qiweb.runtime.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import org.qiweb.api.QiWebApplication;
+import org.qiweb.api.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +12,12 @@ public class WebSocketFrameHandler
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketFrameHandler.class );
-    private final QiWebApplication httpApp;
+    private final Application app;
 
-    public WebSocketFrameHandler( QiWebApplication httpApp )
+    public WebSocketFrameHandler( Application app )
     {
         super();
-        this.httpApp = httpApp;
+        this.app = app;
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 import org.codeartisans.java.toolbox.io.Files;
+import org.qiweb.api.Application;
 import org.qiweb.runtime.QiWebRuntimeException;
 import org.qiweb.runtime.util.FileByteBuff;
 import org.slf4j.Logger;
@@ -58,13 +59,15 @@ public class HttpOnDiskRequestAggregator
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpOnDiskRequestAggregator.class );
     private static final ByteBuf CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", UTF_8 );
+    private final Application app;
     private final int maxContentLength;
     private HttpRequest aggregatedRequestHeader;
     private File bodyFile;
     private OutputStream bodyOutputStream;
 
-    public HttpOnDiskRequestAggregator( int maxContentLength )
+    public HttpOnDiskRequestAggregator( Application app, int maxContentLength )
     {
+        this.app = app;
         this.maxContentLength = maxContentLength;
     }
 
@@ -98,7 +101,7 @@ public class HttpOnDiskRequestAggregator
         }
         else
         {
-            throw new QiWebRuntimeException( "Unknown message type: " + msg );
+            throw new QiWebRuntimeException( "Unexpected message type in Netty pipeline, something is broken: " + msg );
         }
     }
 
@@ -127,7 +130,7 @@ public class HttpOnDiskRequestAggregator
         removeTransferEncodingChunked( currentRequestHeader );
 
         aggregatedRequestHeader = currentRequestHeader;
-        bodyFile = new File( new File( System.getProperty( "java.io.tmpdir" ) ), UUID.randomUUID().toString() );
+        bodyFile = new File( app.tmpdir(), UUID.randomUUID().toString() );
         bodyOutputStream = new FileOutputStream( bodyFile, true );
 
         LOG.debug( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );

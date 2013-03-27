@@ -6,7 +6,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.qiweb.api.QiWebApplication;
+import org.qiweb.api.Application;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +21,18 @@ public class SubProtocolSwitchHandler
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
     private final EventExecutorGroup httpExecutors;
-    private final QiWebApplication httpApp;
+    private final Application app;
     private boolean inBoundMessageBufferUpdated = false;
-    private final DevShellSPI devSPI;
+    private final DevShellSPI devSpi;
 
-    public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors, QiWebApplication httpApp, DevShellSPI devSPI )
+    public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors,
+                                     Application app, DevShellSPI devSpi )
     {
         super();
         this.allChannels = allChannels;
         this.httpExecutors = httpExecutors;
-        this.httpApp = httpApp;
-        this.devSPI = devSPI;
+        this.app = app;
+        this.devSpi = devSpi;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class SubProtocolSwitchHandler
             rebuildIfNeeded();
             HttpRequest request = (HttpRequest) message;
             LOG.debug( "Switching to plain HTTP protocol" );
-            context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( httpApp ) );
+            context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( app ) );
             context.pipeline().remove( this );
             context.nextInboundMessageBuffer().add( request );
             inBoundMessageBufferUpdated = true;
@@ -71,7 +72,7 @@ public class SubProtocolSwitchHandler
             rebuildIfNeeded();
             WebSocketFrame frame = (WebSocketFrame) message;
             LOG.debug( "Switching to WebSocket protocol" );
-            context.pipeline().addLast( "router", new WebSocketFrameHandler( httpApp ) );
+            context.pipeline().addLast( "router", new WebSocketFrameHandler( app ) );
             context.pipeline().remove( this );
             frame.retain();
             context.nextInboundMessageBuffer().add( frame );
@@ -95,9 +96,9 @@ public class SubProtocolSwitchHandler
 
     private void rebuildIfNeeded()
     {
-        if( devSPI != null && devSPI.hasMainChanged() )
+        if( devSpi != null && devSpi.hasMainChanged() )
         {
-            devSPI.rebuildMain();
+            devSpi.rebuildMain();
         }
     }
 }

@@ -12,7 +12,9 @@ import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.qiweb.runtime.QiWebApplicationInstance;
+import org.qiweb.api.Application;
+import org.qiweb.runtime.ApplicationInstance;
+import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 
@@ -22,8 +24,6 @@ import static org.junit.Assert.assertThat;
 public class RouterTest
 {
 
-    private static final String LISTEN_ADDRESS = "127.0.0.1";
-    private static final int LISTEN_PORT = 23023;
     private static final String BASE_URL = "http://127.0.0.1:23023/";
     private HttpServerInstance httpServer;
 
@@ -51,10 +51,8 @@ public class RouterTest
             + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
             + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
             + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" );
-        httpServer = new HttpServerInstance(
-            "router-test",
-            LISTEN_ADDRESS, LISTEN_PORT,
-            new QiWebApplicationInstance( getClass().getClassLoader(), routesProvider ) );
+        Application app = new ApplicationInstance( new ConfigInstance(), getClass().getClassLoader(), routesProvider );
+        httpServer = new HttpServerInstance( "router-test", app );
         httpServer.activateService();
     }
 
