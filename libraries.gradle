@@ -7,7 +7,7 @@ def v_jtoolbox = '1.5'
 def v_jnotify = '0.94'
 def v_junit = '4.11'
 def v_logback = '1.0.9'
-def v_netty = '4.0.0.Beta3'
+def v_netty = '4.0.0.CR1'
 def v_qi4j = '2.0-SNAPSHOT'
 def v_slf4j = '1.7.2'
 

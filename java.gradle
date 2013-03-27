@@ -10,12 +10,13 @@ sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+// Adding dependencies here will add the dependencies to each subproject.
 dependencies {
-    // Adding dependencies here will add the dependencies to each subproject.
     runtime libraries.logback
     testCompile libraries.junit
 }
 
+// Create basic folder structure
 task createFolders(description: 'Creates the source folders if they do not exist.') doLast {
     sourceSets*.allSource*.srcDirs*.each { File srcDir ->
         if (!srcDir.isDirectory()) {
@@ -25,25 +26,41 @@ task createFolders(description: 'Creates the source folders if they do not exist
     }
 }
 
+// Filter resources
+//afterEvaluate {
+//    configure( allProcessResourcesTasks() ) {
+//        filter( ReplaceTokens, tokens: [
+//                'build.version': project.version, 
+//                'build.gradleVersion': project.gradle.gradleVersion
+//            ] )
+//    }
+//}
+//def allProcessResourcesTasks() {
+//    sourceSets.all.processResourcesTaskName.collect {
+//        tasks[it]
+//    }
+//}
+
+// Enable test output
 test {
     testLogging {
         showStandardStreams = true
-        // info {
-        //     exceptionFormat "full"
-        // }   
     }   
 }
 
+// Create sources JAR
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
+// Attach sources JAR
 artifacts {
     archives jar 
     archives sourcesJar
 }
 
+// POM Setup
 configure( install.repositories.mavenInstaller ) {
     pom.groupId = project.group
     pom.artifactId = project.name

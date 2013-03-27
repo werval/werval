@@ -16,8 +16,8 @@ import org.qi4j.functional.Specification;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.controllers.Outcome;
 
-import static org.qi4j.api.util.NullArgumentException.validateNotEmpty;
-import static org.qi4j.api.util.NullArgumentException.validateNotNull;
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotNull;
 import static org.qi4j.functional.Iterables.addAll;
 import static org.qi4j.functional.Iterables.filter;
 import static org.qi4j.functional.Iterables.iterable;
@@ -44,10 +44,10 @@ import static org.qi4j.functional.Specifications.in;
                    String controllerMethodName,
                    Map<String, Class<?>> controllerParams )
     {
-        validateNotNull( "HTTP Method", httpMethod );
-        validateNotEmpty( "Path", path );
-        validateNotNull( "Controller Type", controllerType );
-        validateNotEmpty( "Controller Method Name", controllerMethodName );
+        ensureNotNull( "HTTP Method", httpMethod );
+        ensureNotEmpty( "Path", path );
+        ensureNotNull( "Controller Type", controllerType );
+        ensureNotEmpty( "Controller Method Name", controllerMethodName );
         this.httpMethod = httpMethod;
         this.path = path;
         this.controllerType = controllerType;

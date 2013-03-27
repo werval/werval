@@ -1,8 +1,11 @@
 package org.qiweb.runtime.server;
 
-import org.qi4j.api.service.ServiceActivation;
-
 public interface HttpServer
-    extends ServiceActivation
 {
+
+    void activateService()
+        throws Exception;
+
+    void passivateService()
+        throws Exception;
 }
