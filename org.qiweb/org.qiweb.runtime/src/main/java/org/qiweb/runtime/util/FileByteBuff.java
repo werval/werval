@@ -15,7 +15,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
-import org.qiweb.runtime.QiWebRuntimeException;
+import org.qiweb.api.QiWebException;
 
 /**
  * Read-only ByteBuff wrapping a File.
@@ -49,7 +49,7 @@ public final class FileByteBuff
         }
         catch( FileNotFoundException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( "File " + file + " backing FileByteBuff disapeared! " + ex.getMessage(), ex );
         }
     }
 
@@ -61,7 +61,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( ex.getMessage(), ex );
         }
     }
 
@@ -75,7 +75,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( ex.getMessage(), ex );
         }
     }
 
@@ -89,7 +89,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( ex.getMessage(), ex );
         }
     }
 
@@ -109,7 +109,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( ex.getMessage(), ex );
         }
     }
 
@@ -123,7 +123,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( ex.getMessage(), ex );
         }
     }
 
@@ -216,7 +216,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebException( ex.getMessage(), ex );
         }
     }
 

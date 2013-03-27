@@ -38,7 +38,8 @@ public final class ControllerContext
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new QiWebRuntimeException( ex.getMessage(), ex );
+            throw new QiWebRuntimeException( "QiWeb API mismatch, unable to get Controller Context Thread Local, "
+                                             + "something is broken! " + ex.getMessage(), ex );
         }
     }
 }

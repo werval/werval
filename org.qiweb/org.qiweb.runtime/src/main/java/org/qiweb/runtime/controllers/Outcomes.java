@@ -12,9 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.qiweb.api.QiWebException;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.runtime.QiWebRuntimeException;
 import org.qiweb.runtime.http.HeadersInstance;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
@@ -373,7 +373,7 @@ public final class Outcomes
         }
         catch( UnsupportedEncodingException ex )
         {
-            throw new QiWebRuntimeException( "UTF-8 Charset is not supported oO", ex );
+            throw new QiWebException( "UTF-8 Charset is not supported oO", ex );
         }
     }
 

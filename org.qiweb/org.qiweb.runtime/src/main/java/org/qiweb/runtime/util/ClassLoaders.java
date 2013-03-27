@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.codeartisans.java.toolbox.Strings;
-import org.qiweb.runtime.QiWebRuntimeException;
 
 public final class ClassLoaders
 {
@@ -63,7 +62,7 @@ public final class ClassLoaders
         }
         catch( Exception ex )
         {
-            throw new QiWebRuntimeException( "Unable to print URLs from ClassLoaders hierarchy: " + ex.getMessage(), ex );
+            throw new RuntimeException( "Unable to print URLs from ClassLoaders hierarchy: " + ex.getMessage(), ex );
         }
     }
 
@@ -108,7 +107,7 @@ public final class ClassLoaders
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new QiWebRuntimeException( "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(), ex );
+            throw new RuntimeException( "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(), ex );
         }
     }
 

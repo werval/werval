@@ -35,7 +35,6 @@ import org.qiweb.api.http.RequestBody.Upload;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
-import org.qiweb.runtime.QiWebRuntimeException;
 import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.RequestBodyInstance.UploadInstance;
@@ -170,7 +169,7 @@ public final class HttpFactories
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
                            NotEnoughDataDecoderException | IOException ex )
                     {
-                        throw new QiWebRuntimeException( ex.getMessage(), ex );
+                        throw new QiWebException( ex.getMessage(), ex );
                     }
                 default:
                     body = new RequestBodyInstance( request.data() );

@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
+import org.qiweb.api.QiWebException;
 import org.qiweb.api.http.RequestBody;
-import org.qiweb.runtime.QiWebRuntimeException;
 import org.qiweb.runtime.util.FileByteBuff;
 
-public class RequestBodyInstance
+public final class RequestBodyInstance
     implements RequestBody
 {
 
@@ -162,7 +162,7 @@ public class RequestBodyInstance
             }
             catch( FileNotFoundException ex )
             {
-                throw new QiWebRuntimeException( ex.getMessage(), ex );
+                throw new QiWebException( ex.getMessage(), ex );
             }
         }
 
@@ -175,7 +175,7 @@ public class RequestBodyInstance
             }
             catch( IOException ex )
             {
-                throw new QiWebRuntimeException( ex.getMessage(), ex );
+                throw new QiWebException( ex.getMessage(), ex );
             }
         }
 
