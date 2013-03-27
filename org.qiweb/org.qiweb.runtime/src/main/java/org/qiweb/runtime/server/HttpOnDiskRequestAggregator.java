@@ -130,7 +130,8 @@ public class HttpOnDiskRequestAggregator
         removeTransferEncodingChunked( currentRequestHeader );
 
         aggregatedRequestHeader = currentRequestHeader;
-        bodyFile = new File( app.tmpdir(), UUID.randomUUID().toString() );
+        // TODO Generate request identity sooner so temporary files use the id in their name to ease debugging
+        bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
         bodyOutputStream = new FileOutputStream( bodyFile, true );
 
         LOG.debug( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
