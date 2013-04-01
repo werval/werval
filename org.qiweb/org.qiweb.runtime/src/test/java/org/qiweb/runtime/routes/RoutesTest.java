@@ -1,8 +1,5 @@
 package org.qiweb.runtime.routes;
 
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.Routes;
-import org.qiweb.api.routes.IllegalRouteException;
 import com.acme.app.FakeController;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -10,6 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.routes.IllegalRouteException;
+import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
@@ -78,8 +78,8 @@ public class RoutesTest
                 return params;
             }
         } ),
-        ANOTHER_ONE( "GET /foo/:id/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
-                     "GET", "/foo/:id/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
+        ANOTHER_ONE( "GET /foo/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
+                     "GET", "/foo/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
             public Map<String, Class<?>> params()

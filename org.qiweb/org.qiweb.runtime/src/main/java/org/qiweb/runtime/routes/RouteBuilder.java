@@ -1,8 +1,5 @@
 package org.qiweb.runtime.routes;
 
-import org.qiweb.api.routes.Routes;
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.IllegalRouteException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -13,6 +10,9 @@ import java.util.Map;
 import java.util.Scanner;
 import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
+import org.qiweb.api.routes.IllegalRouteException;
+import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.Routes;
 
 /**
  * Fluent builder to create new Route and Routes instances.
@@ -155,7 +155,6 @@ public final class RouteBuilder
             throw new IllegalRouteException( "null", "Unable to parse null or empty String, was I?" );
         }
         final String cleanRouteString = routeString.trim().replaceAll( "\\s+", " " );
-        // System.out.println( cleanRouteString );
         try
         {
             // Split route String
@@ -164,16 +163,11 @@ public final class RouteBuilder
             int controllerTypeEnd = cleanRouteString.lastIndexOf( '.' );
             int controllerMethodEnd = cleanRouteString.indexOf( '(', controllerTypeEnd );
             int controllerParamsEnd = cleanRouteString.lastIndexOf( ')' );
-            String method = cleanRouteString.substring( 0, methodEnd );
-            //System.out.println( "method = '" + method + "'" );
+            String httpMethod = cleanRouteString.substring( 0, methodEnd );
             String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
-            //System.out.println( "path = '" + path + "'" );
             String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
-            //System.out.println( "controller type = '" + controllerTypeName + "'" );
             String controllerMethodName = cleanRouteString.substring( controllerTypeEnd + 1, controllerMethodEnd );
-            //System.out.println( "controller method = '" + controllerMethod + "'" );
             String controllerMethodParams = cleanRouteString.substring( controllerMethodEnd + 1, controllerParamsEnd ).trim();
-            //System.out.println( "controller method params = '" + controllerMethodParams + "'" );
 
             // Parse controller type
             Class<?> controllerType = loader.loadClass( controllerTypeName );
@@ -213,11 +207,12 @@ public final class RouteBuilder
             {
                 String modifiersString = cleanRouteString.substring( controllerParamsEnd + 2 );
                 String[] modifiers = modifiersString.split( " " );
+                // TODO Implement route modifiers
                 System.out.println( "############# MODIFIERS! " + Arrays.toString( modifiers ) );
             }
 
             // Create new Route instance
-            return new RouteInstance( method, path, controllerType, controllerMethodName, controllerParams );
+            return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams );
         }
         catch( IllegalRouteException ex )
         {

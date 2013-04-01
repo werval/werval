@@ -5,6 +5,10 @@ import java.util.Map;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.runtime.controllers.Outcomes;
 
+/**
+ * Controller providing default outcomes.
+ * <p>Intended to be used in routes directly.</p>
+ */
 public class Default
 {
 

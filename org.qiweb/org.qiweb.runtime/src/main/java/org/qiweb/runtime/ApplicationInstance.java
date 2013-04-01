@@ -40,23 +40,23 @@ public final class ApplicationInstance
     }
 
     @Override
-    public final ClassLoader classLoader()
+    public ClassLoader classLoader()
     {
         return classLoader;
     }
 
     @Override
-    public final Routes routes()
+    public Routes routes()
     {
         return routesProvider.routes( classLoader );
     }
 
-    public final void changeClassLoader( ClassLoader classLoader )
+    public void changeClassLoader( ClassLoader classLoader )
     {
         this.classLoader = classLoader;
     }
 
-    public final void changeConfig( Config config )
+    public void changeConfig( Config config )
     {
         this.config = config;
         configurationChanged();

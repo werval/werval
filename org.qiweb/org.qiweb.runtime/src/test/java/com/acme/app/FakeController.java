@@ -16,4 +16,6 @@ public interface FakeController
     Outcome foo();
 
     Outcome bar();
+
+    Outcome wild( String path );
 }

@@ -1,7 +1,5 @@
 package org.qiweb.runtime.routes;
 
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.IllegalRouteException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,10 +9,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.qi4j.functional.Function;
 import org.qi4j.functional.Specification;
-import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.routes.IllegalRouteException;
+import org.qiweb.api.routes.Route;
 
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotNull;
@@ -38,6 +40,7 @@ import static org.qi4j.functional.Specifications.in;
     private Method controllerMethod;
     private final String controllerMethodName;
     private final Map<String, Class<?>> controllerParams;
+    private final Pattern pathRegex;
 
     /* package */ RouteInstance( String httpMethod, String path,
                    Class<?> controllerType,
@@ -53,10 +56,11 @@ import static org.qi4j.functional.Specifications.in;
         this.controllerType = controllerType;
         this.controllerMethodName = controllerMethodName;
         this.controllerParams = new LinkedHashMap<>( controllerParams );
-        validate();
+        validateRoute();
+        this.pathRegex = Pattern.compile( generatePathRegex() );
     }
 
-    private void validate()
+    private void validateRoute()
     {
         if( !path.startsWith( "/" ) )
         {
@@ -79,7 +83,7 @@ import static org.qi4j.functional.Specifications.in;
             @Override
             public boolean satisfiedBy( String pathSegment )
             {
-                return pathSegment.startsWith( ":" );
+                return pathSegment.startsWith( ":" ) || pathSegment.startsWith( "*" );
             }
         }, iterable( path.substring( 1 ).split( "/" ) ) ) );
 
@@ -118,36 +122,53 @@ import static org.qi4j.functional.Specifications.in;
         {
             throw new IllegalRouteException( toString(), "Controller Method '" + controllerType.getSimpleName()
                                                          + "#" + controllerMethodName
-                                                         + "( " + Arrays.toString( controllerParamsTypes )
-                                                         + " )' not found.", ex );
+                                                         + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
+                                                         + "not found.", ex );
         }
+    }
+
+    private String generatePathRegex()
+    {
+        StringBuilder regex = new StringBuilder( "/" );
+        String[] pathElements = path.substring( 1 ).split( "/" );
+        for( int idx = 0; idx < pathElements.length; idx++ )
+        {
+            String pathElement = pathElements[idx];
+            if( pathElement.length() > 1 )
+            {
+                switch( pathElement.substring( 0, 1 ) )
+                {
+                    case ":":
+                        regex.append( "(?<" ).append( pathElement.substring( 1 ) ).append( ">[^/]+)" );
+                        break;
+                    case "*":
+                        regex.append( "(?<" ).append( pathElement.substring( 1 ) ).append( ">.+)" );
+                        break;
+                    default:
+                        regex.append( pathElement );
+                        break;
+                }
+            }
+            else
+            {
+                regex.append( pathElement );
+            }
+            if( idx + 1 < pathElements.length )
+            {
+                regex.append( "/" );
+            }
+        }
+        return regex.toString();
     }
 
     @Override
     public boolean satisfiedBy( RequestHeader requestHeader )
     {
-        String requestMethod = requestHeader.method();
-        String requestPath = requestHeader.path();
-        String[] requestPathSegments = requestPath.substring( 1 ).split( "/" );
-        if( !httpMethod.equals( requestMethod ) )
+        if( !httpMethod.equals( requestHeader.method() ) )
         {
             return false;
         }
-        String[] routePathSegments = path.substring( 1 ).split( "/" );
-        if( routePathSegments.length != requestPathSegments.length )
-        {
-            return false;
-        }
-        for( int idx = 0; idx < routePathSegments.length; idx++ )
-        {
-            String routePathSegment = routePathSegments[idx];
-            String requestPathSegment = requestPathSegments[idx];
-            if( !routePathSegment.startsWith( ":" ) && !routePathSegment.equals( requestPathSegment ) )
-            {
-                return false;
-            }
-        }
-        return true;
+        return pathRegex.matcher( requestHeader.path() ).matches();
     }
 
     @Override
@@ -189,23 +210,17 @@ import static org.qi4j.functional.Specifications.in;
     @Override
     public String controllerParamPathValue( final String paramName, String path )
     {
-        String[] routePathSegments = this.path.split( "/" );
-        int segmentIndex = 0;
-        boolean segmentFound = false;
-        for( String routePathSegment : routePathSegments )
+        Matcher matcher = pathRegex.matcher( path );
+        if( !matcher.matches() )
         {
-            if( routePathSegment.equals( ":" + paramName ) )
-            {
-                segmentFound = true;
-                break;
-            }
-            segmentIndex++;
+            throw new IllegalArgumentException( "Route is not satified by path: " + path );
         }
-        if( !segmentFound )
+        String value = matcher.group( paramName );
+        if( value == null )
         {
             throw new IllegalArgumentException( "Parameter named '" + paramName + "' not found." );
         }
-        return path.split( "/" )[segmentIndex];
+        return value;
     }
 
     @Override
@@ -237,11 +252,12 @@ import static org.qi4j.functional.Specifications.in;
     public int hashCode()
     {
         int hash = 7;
-        hash = 59 * hash + ( this.httpMethod != null ? this.httpMethod.hashCode() : 0 );
-        hash = 59 * hash + ( this.path != null ? this.path.hashCode() : 0 );
-        hash = 59 * hash + ( this.controllerType != null ? this.controllerType.hashCode() : 0 );
-        hash = 59 * hash + ( this.controllerMethodName != null ? this.controllerMethodName.hashCode() : 0 );
-        hash = 59 * hash + ( this.controllerParams != null ? this.controllerParams.hashCode() : 0 );
+        int factor = 59;
+        hash = factor * hash + ( this.httpMethod != null ? this.httpMethod.hashCode() : 0 );
+        hash = factor * hash + ( this.path != null ? this.path.hashCode() : 0 );
+        hash = factor * hash + ( this.controllerType != null ? this.controllerType.hashCode() : 0 );
+        hash = factor * hash + ( this.controllerMethodName != null ? this.controllerMethodName.hashCode() : 0 );
+        hash = factor * hash + ( this.controllerParams != null ? this.controllerParams.hashCode() : 0 );
         return hash;
     }
 

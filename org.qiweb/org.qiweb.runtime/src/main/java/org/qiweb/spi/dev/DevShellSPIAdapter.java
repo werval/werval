@@ -2,6 +2,7 @@ package org.qiweb.spi.dev;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import org.qiweb.spi.dev.Watcher.ChangeListener;
@@ -38,10 +39,10 @@ public class DevShellSPIAdapter
         this.buildDir = buildDir;
         this.mainSources = mainSources;
         this.mainOutput = mainOutput;
-        this.mainClassPath = mainClassPath;
+        this.mainClassPath = Arrays.copyOf( mainClassPath, mainClassPath.length );
         this.testSources = testSources;
         this.testOutput = testOutput;
-        this.testClassPath = testClassPath;
+        this.testClassPath = Arrays.copyOf( testClassPath, testClassPath.length );
         this.watcher = watcher;
         activateWatcher();
     }

@@ -53,4 +53,10 @@ public class FakeControllerInstance
             as( "text/plain; charset=UTF-8" ).
             withEntity( "bazar" );
     }
+
+    @Override
+    public Outcome wild( String path )
+    {
+        return Outcomes.notImplemented();
+    }
 }
