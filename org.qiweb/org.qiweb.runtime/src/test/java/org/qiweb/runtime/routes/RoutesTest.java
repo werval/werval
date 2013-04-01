@@ -113,8 +113,10 @@ public class RoutesTest
                 return params;
             }
         } ),
-//        TEST_NO_PARENTHESIS( "  POST    /foo/bar    com.acme.app.FakeController.test",
-//                             "POST", "/foo/bar", FakeController.class, "test" ),
+        NO_PARENTHESIS_1( "  POST    /foo/bar    com.acme.app.FakeController.test",
+                          "POST", "/foo/bar", FakeController.class, "test" ),
+        NO_PARENTHESIS_2( "  POST    /foo/bar    com.acme.app.FakeController.test transient",
+                          "POST", "/foo/bar", FakeController.class, "test" ),
         WRONG_STRING_1( "WRONG /route", IllegalRouteException.class ),
         WRONG_STRING_2( "", IllegalRouteException.class ),
         WRONG_STRING_3( null, IllegalRouteException.class ),

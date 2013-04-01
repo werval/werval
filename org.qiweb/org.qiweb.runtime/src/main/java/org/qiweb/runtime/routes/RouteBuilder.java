@@ -165,13 +165,43 @@ public final class RouteBuilder
             int methodEnd = cleanRouteString.indexOf( ' ' );
             int pathEnd = cleanRouteString.indexOf( ' ', methodEnd + 1 );
             int controllerTypeEnd = cleanRouteString.lastIndexOf( '.' );
-            int controllerMethodEnd = cleanRouteString.indexOf( '(', controllerTypeEnd );
-            int controllerParamsEnd = cleanRouteString.lastIndexOf( ')' );
+            int controllerMethodEnd;
+            int controllerParamsEnd;
+            int modifiersEnd;
+            if( cleanRouteString.indexOf( '(', controllerTypeEnd ) > 0 )
+            {
+                // Parenthesis, with or without parameters or modifiers
+                controllerMethodEnd = cleanRouteString.indexOf( '(', controllerTypeEnd );
+                controllerParamsEnd = cleanRouteString.lastIndexOf( ')' );
+                modifiersEnd = cleanRouteString.length() > controllerParamsEnd + 1 ? cleanRouteString.length() : -1;
+            }
+            else if( cleanRouteString.indexOf( ' ', controllerTypeEnd ) > 0 )
+            {
+                // No parenthesis with modifiers
+                controllerMethodEnd = cleanRouteString.indexOf( ' ', controllerTypeEnd );
+                controllerParamsEnd = -1;
+                modifiersEnd = cleanRouteString.length();
+            }
+            else
+            {
+                // No parenthesis without modifiers
+                controllerMethodEnd = cleanRouteString.length();
+                controllerParamsEnd = -1;
+                modifiersEnd = -1;
+            }
             String httpMethod = cleanRouteString.substring( 0, methodEnd );
             String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
             String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
             String controllerMethodName = cleanRouteString.substring( controllerTypeEnd + 1, controllerMethodEnd );
-            String controllerMethodParams = cleanRouteString.substring( controllerMethodEnd + 1, controllerParamsEnd ).trim();
+            String controllerMethodParams;
+            if( controllerParamsEnd != -1 )
+            {
+                controllerMethodParams = cleanRouteString.substring( controllerMethodEnd + 1, controllerParamsEnd ).trim();
+            }
+            else
+            {
+                controllerMethodParams = "";
+            }
 
             // Parse controller type
             Class<?> controllerType = loader.loadClass( controllerTypeName );
@@ -207,10 +237,12 @@ public final class RouteBuilder
             }
 
             // Eventually parse modifiers
-            if( cleanRouteString.length() > controllerParamsEnd + 1 )
+            if( modifiersEnd != -1 )
             {
-                String modifiersString = cleanRouteString.substring( controllerParamsEnd + 2 );
-                String[] modifiers = modifiersString.split( " " );
+                String modifiersString = controllerParamsEnd != -1
+                                         ? cleanRouteString.substring( controllerParamsEnd + 2 )
+                                         : cleanRouteString.substring( controllerMethodEnd + 1 );
+                String[] modifiers = modifiersString.trim().split( " " );
                 // TODO Implement route modifiers
                 System.out.println( "############# MODIFIERS! " + Arrays.toString( modifiers ) );
             }
