@@ -90,8 +90,31 @@ public class RoutesTest
                 return params;
             }
         } ),
-        //        TEST_NO_PARENTHESIS( "  POST    /foo/bar    com.acme.app.FakeController.test",
-        //                             POST, "/foo/bar", FakeController.class, "test" ),
+        WILDCARDS_1( "GET /static/*path com.acme.app.FakeController.wild( String path )",
+                     "GET", "/static/*path", FakeController.class, "wild", new RoutesToTest.Params()
+        {
+            @Override
+            public Map<String, Class<?>> params()
+            {
+                Map<String, Class<?>> params = new LinkedHashMap<>();
+                params.put( "path", String.class );
+                return params;
+            }
+        } ),
+        WILDCARDS_2( "GET /d/*path/:slug com.acme.app.FakeController.another( String path, Integer slug )",
+                     "GET", "/d/*path/:slug", FakeController.class, "another", new RoutesToTest.Params()
+        {
+            @Override
+            public Map<String, Class<?>> params()
+            {
+                Map<String, Class<?>> params = new LinkedHashMap<>();
+                params.put( "path", String.class );
+                params.put( "slug", Integer.class );
+                return params;
+            }
+        } ),
+//        TEST_NO_PARENTHESIS( "  POST    /foo/bar    com.acme.app.FakeController.test",
+//                             "POST", "/foo/bar", FakeController.class, "test" ),
         WRONG_STRING_1( "WRONG /route", IllegalRouteException.class ),
         WRONG_STRING_2( "", IllegalRouteException.class ),
         WRONG_STRING_3( null, IllegalRouteException.class ),

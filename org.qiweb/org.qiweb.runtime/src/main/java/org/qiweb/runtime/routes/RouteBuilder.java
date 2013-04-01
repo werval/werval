@@ -31,7 +31,7 @@ import org.qiweb.api.routes.Routes;
  * <p>Here is a complete example using the API:</p>
  * <pre>
  * Route route = route( GET ).on( "/foo/:slug/bar/:id" ).
- *     to( MyController.class, new MethodRecorder<MyController>()
+ *     to( MyController.class, new MethodRecorder&lt;MyController&gt;()
  * {
  *     @Override
  *     protected void call( MyController ctrl )
@@ -50,6 +50,10 @@ import org.qiweb.api.routes.Routes;
  *     to( MyController.class, ctrl -> ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) ) ).
  *     newInstance();
  * </pre>
+ * <p>
+ *     <strong>Important:</strong> when using the fluent api to declare routes you can only use interfaces to declare
+ *     controllers.
+ * </p>
  */
 public final class RouteBuilder
 {
