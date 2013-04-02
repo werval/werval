@@ -1,5 +1,10 @@
 import org.gradle.api.artifacts.*
 
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'org.ajoberstar:gradle-jacoco:0.3.0' }
+}
+
 apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
 
 apply plugin: 'base' // To add "clean" task to the root project.
@@ -7,6 +12,7 @@ apply plugin: 'sonar-runner'
 
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
+    apply plugin: 'jacoco'
 }
 
 task mergedJavadoc( type: Javadoc, description: 'Creates Javadoc from all the projects.' ) {
