@@ -44,14 +44,14 @@ public class RoutesTest
             {
                 controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
             }
-        } ).newInstance();
+        } ).modifiedBy( "service", "foo" ).newInstance();
 
         // Java 8 - Lambda Expressions
         // Route route = route( GET ).on( "/foo/:id/bar/:slug" ).
         //     to( FakeController.class, { c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) } ).
-        //     newInstance();
+        //     modifiedBy( "service", "foo" ).newInstance();
 
-        assertThat( route.toString(), equalTo( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another( String id, Integer slug )" ) );
+        assertThat( route.toString(), equalTo( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another( String id, Integer slug ) service foo" ) );
     }
 
     /**
@@ -124,16 +124,21 @@ public class RoutesTest
         WRONG_STRING_2( "", IllegalRouteException.class ),
         WRONG_STRING_3( null, IllegalRouteException.class ),
         WRONG_STRING_4( "# GET / com.acme.app.FakeController.test()", IllegalRouteException.class ),
+        WRONG_STRING_5( "GET foo/bar com.acme.app.FakeController.test()", IllegalRouteException.class ),
         WRONG_CONTROLLER_1( "GET /foo /bar com.acme.Controller.method()", IllegalRouteException.class ),
         WRONG_CONTROLLER_2( "GET / unknown.Type.method()", IllegalRouteException.class ),
         WRONG_METHOD_1( "GET / com.acme.app.FakeController.unknownMethod()", IllegalRouteException.class ),
         WRONG_METHOD_2( "GET / com.acme.app.FakeController.test( WhatTheHeck param )", IllegalRouteException.class ),
+        WRONG_METHOD_3( "GET / com.acme.app.FakeController.noOutcome", IllegalRouteException.class ),
         WRONG_PARAMS_1( "GET /nothing/at/all com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
         WRONG_PARAMS_2( "GET /:wrong com.acme.app.FakeController.test()", IllegalRouteException.class ),
         WRONG_PARAMS_3( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
         WRONG_PARAMS_4( "GET /foo/:id/bar/:slug/cathedral/:bazar com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
         WRONG_PARAMS_5( "GET /foo/:id/bar/:slugf com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_6( "GET /foo/:idf/bar/:slug com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_6( "GET /foo/:idf/bar/:slug com.acme.app.FakeController.another( java.lang.String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_7( "GET /a/*path com.acme.app.FakeController.wild( path )", IllegalRouteException.class ),
+        WRONG_PARAMS_8( "GET /a/*path/:id/:slug com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
+        WRONG_PARAMS_9( "GET /a/:id com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
         WRONG_PARAMS_99( "", IllegalRouteException.class );
         private String routeString;
         private String httpMethod;

@@ -59,4 +59,10 @@ public class FakeControllerInstance
     {
         return Outcomes.notImplemented();
     }
+
+    @Override
+    public String noOutcome()
+    {
+        return "No Outcome";
+    }
 }

@@ -254,6 +254,19 @@ import static org.qi4j.functional.Specifications.in;
             sb.append( " " );
         }
         sb.append( ")" );
+        Iterator<String> modifiersIt = modifiers.iterator();
+        if( modifiersIt.hasNext() )
+        {
+            sb.append( " " );
+            while( modifiersIt.hasNext() )
+            {
+                sb.append( modifiersIt.next() );
+                if( modifiersIt.hasNext() )
+                {
+                    sb.append( " " );
+                }
+            }
+        }
         return sb.toString();
     }
 
@@ -267,6 +280,7 @@ import static org.qi4j.functional.Specifications.in;
         hash = factor * hash + ( this.controllerType != null ? this.controllerType.hashCode() : 0 );
         hash = factor * hash + ( this.controllerMethodName != null ? this.controllerMethodName.hashCode() : 0 );
         hash = factor * hash + ( this.controllerParams != null ? this.controllerParams.hashCode() : 0 );
+        hash = factor * hash + ( this.modifiers != null ? this.modifiers.hashCode() : 0 );
         return hash;
     }
 
@@ -300,6 +314,10 @@ import static org.qi4j.functional.Specifications.in;
             return false;
         }
         if( this.controllerParams != other.controllerParams && ( this.controllerParams == null || !this.controllerParams.equals( other.controllerParams ) ) )
+        {
+            return false;
+        }
+        if( this.modifiers != other.modifiers && ( this.modifiers == null || !this.modifiers.equals( other.modifiers ) ) )
         {
             return false;
         }
