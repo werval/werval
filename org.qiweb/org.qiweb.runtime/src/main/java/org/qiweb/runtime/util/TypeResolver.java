@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.util;
+package org.qiweb.runtime.util;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -144,7 +144,7 @@ public final class TypeResolver
         {
             ParameterizedType paramType = (ParameterizedType) genericType;
             Type[] arguments = paramType.getActualTypeArguments();
-            result = new Class[ arguments.length ];
+            result = new Class<?>[ arguments.length ];
             for( int i = 0; i < arguments.length; i++ )
             {
                 result[i] = resolveClass( arguments[i], targetType );
@@ -152,7 +152,7 @@ public final class TypeResolver
         }
         else if( genericType instanceof TypeVariable )
         {
-            result = new Class[ 1 ];
+            result = new Class<?>[ 1 ];
             result[0] = resolveClass( genericType, targetType );
         }
 

@@ -21,7 +21,7 @@ public class PathBindersTest
     @Test
     public void basicTest()
     {
-        PathBinder<Integer> binder = new PathBinder.Integer();
+        PathBinder<Integer> binder = new PathBindersInstance.Integer();
         assertThat( binder.accept( String.class ), is( false ) );
         assertThat( binder.accept( Number.class ), is( false ) );
         assertThat( binder.accept( Integer.class ), is( true ) );
@@ -32,16 +32,16 @@ public class PathBindersTest
     {
         List<PathBinder<?>> list = new ArrayList<>();
 
-        list.add( new PathBinder.String() );
-        list.add( new PathBinder.Boolean() );
-        list.add( new PathBinder.Short() );
-        list.add( new PathBinder.Integer() );
-        list.add( new PathBinder.Long() );
-        list.add( new PathBinder.Double() );
-        list.add( new PathBinder.Float() );
-        list.add( new PathBinder.BigInteger() );
-        list.add( new PathBinder.BigDecimal() );
-        list.add( new PathBinder.UUID() );
+        list.add( new PathBindersInstance.String() );
+        list.add( new PathBindersInstance.Boolean() );
+        list.add( new PathBindersInstance.Short() );
+        list.add( new PathBindersInstance.Integer() );
+        list.add( new PathBindersInstance.Long() );
+        list.add( new PathBindersInstance.Double() );
+        list.add( new PathBindersInstance.Float() );
+        list.add( new PathBindersInstance.BigInteger() );
+        list.add( new PathBindersInstance.BigDecimal() );
+        list.add( new PathBindersInstance.UUID() );
 
         PathBinders binders = new PathBindersInstance( list );
 

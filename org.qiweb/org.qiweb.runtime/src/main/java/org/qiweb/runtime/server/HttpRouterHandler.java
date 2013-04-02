@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
@@ -164,15 +163,14 @@ public final class HttpRouterHandler
             // Parse Request
             Request request = requestOf( requestHeader, nettyRequest );
 
-            // Parse Session & Flash
+            // Parse Session
             Session session = sessionOf( requestHeader );
-            Flash flash = null; // TODO Parse Flash
 
             // Prepare Response
             Response response = new ResponseInstance();
 
             // Set Controller Context
-            Context context = contextOf( app, session, request, response, flash );
+            Context context = contextOf( app, session, request, response );
             controllerContext.setOnCurrentThread( app.classLoader(), context );
 
             // Lookup Controller

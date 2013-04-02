@@ -54,7 +54,6 @@ public interface RequestHeader
      * <p>Computed from the X-Forwarded-For header value if this header is present and the local address is loopback.</p>
      * @return The HTTP Client Address or an empty String
      */
-    // TODO Limitation on the loopback local address should be turned off by configuration
     String remoteAddress();
 
     /**

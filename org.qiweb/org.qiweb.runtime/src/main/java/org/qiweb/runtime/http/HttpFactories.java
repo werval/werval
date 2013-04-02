@@ -25,7 +25,6 @@ import org.qiweb.api.QiWebException;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
-import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.http.QueryString;
@@ -201,9 +200,9 @@ public final class HttpFactories
         return new SessionInstance( sessionData );
     }
 
-    public static Context contextOf( Application application, Session session, Request request, Response response, Flash flash )
+    public static Context contextOf( Application application, Session session, Request request, Response response )
     {
-        return new ContextInstance( application, session, request, response, flash );
+        return new ContextInstance( application, session, request, response );
     }
 
     private HttpFactories()

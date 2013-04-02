@@ -102,6 +102,8 @@ public class RequestHeaderInstance
     @Override
     public String remoteAddress()
     {
+        // TODO Implement X-Forwarded-For
+        // Limitation on the loopback local address should be turned off by configuration
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 

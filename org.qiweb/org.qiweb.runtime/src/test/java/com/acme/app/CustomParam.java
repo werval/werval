@@ -23,8 +23,14 @@ public class CustomParam
     }
 
     public static class PathBinder
-        extends org.qiweb.api.routes.PathBinder.AbstractPathBinder<CustomParam>
+        implements org.qiweb.api.routes.PathBinder<CustomParam>
     {
+
+        @Override
+        public boolean accept( Class<?> type )
+        {
+            return CustomParam.class.equals( type );
+        }
 
         @Override
         public CustomParam bind( java.lang.String pathParamName, java.lang.String pathParamValue )
