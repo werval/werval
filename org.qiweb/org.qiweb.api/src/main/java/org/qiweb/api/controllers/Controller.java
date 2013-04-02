@@ -1,5 +1,6 @@
 package org.qiweb.api.controllers;
 
+import org.qiweb.api.Application;
 import org.qiweb.api.QiWebException;
 import org.qiweb.api.http.Flash;
 import org.qiweb.api.http.Request;
@@ -30,6 +31,15 @@ public class Controller
             throw new QiWebException( "No Context in this Thread (" + Thread.currentThread().getName() + ")" );
         }
         return context;
+    }
+
+    /**
+     * @return Current Application
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Application application()
+    {
+        return context().application();
     }
 
     /**

@@ -3,7 +3,10 @@ package org.qiweb.runtime;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.qiweb.api.Config;
 
 import static io.netty.util.CharsetUtil.UTF_8;
@@ -48,6 +51,17 @@ public class ConfigInstance
     public List<String> getStringList( String key )
     {
         return config.getStringList( key );
+    }
+
+    @Override
+    public Map<String, String> getStringMap( String key )
+    {
+        Map<String, String> entries = new HashMap<>();
+        for( Entry<String, com.typesafe.config.ConfigValue> entry : config.getObject( key ).entrySet() )
+        {
+            entries.put( entry.getKey(), entry.getValue().render() );
+        }
+        return entries;
     }
 
     @Override

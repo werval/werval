@@ -6,10 +6,12 @@ import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.QiWebException;
+import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.PathBinder;
 import org.qiweb.api.routes.PathBinderException;
 import org.qiweb.api.routes.PathBinders;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.routes.PathBindersInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
@@ -25,6 +27,7 @@ public final class ApplicationInstance
     private ClassLoader classLoader;
     private final RoutesProvider routesProvider;
     private PathBinders pathBinders;
+    private MimeTypes mimeTypes;
 
     public ApplicationInstance( Config config, ClassLoader classLoader, RoutesProvider routesProvider )
     {
@@ -64,6 +67,12 @@ public final class ApplicationInstance
         return pathBinders;
     }
 
+    @Override
+    public MimeTypes mimeTypes()
+    {
+        return mimeTypes;
+    }
+
     public void changeClassLoader( ClassLoader classLoader )
     {
         this.classLoader = classLoader;
@@ -79,6 +88,7 @@ public final class ApplicationInstance
     {
         configureTmpdir();
         configurePathBinders();
+        configureMimeTypes();
     }
 
     private void configureTmpdir()
@@ -110,5 +120,17 @@ public final class ApplicationInstance
             }
         }
         pathBinders = new PathBindersInstance( list );
+    }
+
+    private void configureMimeTypes()
+    {
+        if( config.has( "app.mimetypes" ) )
+        {
+            mimeTypes = new MimeTypesInstance( config.getStringMap( "app.mimetypes" ) );
+        }
+        else
+        {
+            mimeTypes = new MimeTypesInstance();
+        }
     }
 }
