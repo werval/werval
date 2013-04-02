@@ -69,6 +69,6 @@ public class FakeControllerInstance
     @Override
     public Outcome customParam( CustomParam param )
     {
-        return Outcomes.ok().withEntity( param.value() );
+        return Outcomes.ok().withEntity( param.computedValue() );
     }
 }

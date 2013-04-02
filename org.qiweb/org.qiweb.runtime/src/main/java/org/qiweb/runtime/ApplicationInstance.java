@@ -1,10 +1,16 @@
 package org.qiweb.runtime;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.QiWebException;
+import org.qiweb.api.routes.PathBinder;
+import org.qiweb.api.routes.PathBinderException;
+import org.qiweb.api.routes.PathBinders;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.routes.PathBindersInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
 /**
@@ -18,6 +24,7 @@ public final class ApplicationInstance
     private File tmpdir;
     private ClassLoader classLoader;
     private final RoutesProvider routesProvider;
+    private PathBinders pathBinders;
 
     public ApplicationInstance( Config config, ClassLoader classLoader, RoutesProvider routesProvider )
     {
@@ -51,6 +58,12 @@ public final class ApplicationInstance
         return routesProvider.routes( config, classLoader );
     }
 
+    @Override
+    public PathBinders pathBinders()
+    {
+        return pathBinders;
+    }
+
     public void changeClassLoader( ClassLoader classLoader )
     {
         this.classLoader = classLoader;
@@ -64,6 +77,12 @@ public final class ApplicationInstance
 
     private void configurationChanged()
     {
+        configureTmpdir();
+        configurePathBinders();
+    }
+
+    private void configureTmpdir()
+    {
         File tmpdirFile = config.getFile( "qiweb.fs.temp" );
         if( tmpdirFile.isFile() )
         {
@@ -73,6 +92,23 @@ public final class ApplicationInstance
         {
             throw new QiWebException( "Unable to create non existant tmpdir: " + tmpdirFile );
         }
-        this.tmpdir = tmpdirFile;
+        tmpdir = tmpdirFile;
+    }
+
+    private void configurePathBinders()
+    {
+        List<PathBinder<?>> list = new ArrayList<>();
+        for( String pathBinderClassName : config.getStringList( "qiweb.routes.path-binders" ) )
+        {
+            try
+            {
+                list.add( (PathBinder<?>) classLoader.loadClass( pathBinderClassName ).newInstance() );
+            }
+            catch( ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex )
+            {
+                throw new PathBinderException( "Unable to instanciate PathBinder: " + pathBinderClassName, ex );
+            }
+        }
+        pathBinders = new PathBindersInstance( list );
     }
 }

@@ -1,6 +1,7 @@
 package org.qiweb.api;
 
 import java.io.File;
+import org.qiweb.api.routes.PathBinders;
 import org.qiweb.api.routes.Routes;
 
 /**
@@ -28,4 +29,9 @@ public interface Application
      * @return Application Routes
      */
     Routes routes();
+
+    /**
+     * @return Application PathBinders
+     */
+    PathBinders pathBinders();
 }

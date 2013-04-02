@@ -240,7 +240,7 @@ public final class HttpRouterHandler
         }
     }
 
-    private static List<Object> pathParameters( RequestHeader requestHeader, Route route )
+    private List<Object> pathParameters( RequestHeader requestHeader, Route route )
     {
         List<Object> pathParams = new ArrayList<>();
         for( Entry<String, Class<?>> controllerParam : route.controllerParams().entrySet() )
@@ -248,14 +248,7 @@ public final class HttpRouterHandler
             String paramName = controllerParam.getKey();
             Class<?> paramType = controllerParam.getValue();
             String paramStringValue = route.controllerParamPathValue( paramName, requestHeader.path() );
-            if( Integer.class.isAssignableFrom( paramType ) )
-            {
-                pathParams.add( Integer.valueOf( paramStringValue ) );
-            }
-            else
-            {
-                pathParams.add( paramStringValue );
-            }
+            pathParams.add( app.pathBinders().bind( paramType, paramName, paramStringValue ) );
         }
         return pathParams;
     }
