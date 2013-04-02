@@ -105,6 +105,6 @@ task install(
 // Gradle Wrapper
 //
 task wrapper( type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.' ) {
-    gradleVersion = '1.5-rc-3'
+    gradleVersion = '1.5'
 }
 
