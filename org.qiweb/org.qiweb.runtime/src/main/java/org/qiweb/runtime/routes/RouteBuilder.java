@@ -7,14 +7,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
+import org.qiweb.api.Config;
 import org.qiweb.api.routes.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Fluent builder to create new Route and Routes instances.
@@ -60,6 +64,8 @@ import org.qiweb.api.routes.Routes;
 public final class RouteBuilder
 {
 
+    private static final Logger LOG = LoggerFactory.getLogger( RouteBuilder.class );
+
     /**
      * @param <T> the controller type
      */
@@ -104,12 +110,12 @@ public final class RouteBuilder
      * Parse a textual definition of multiple routes, one per line.
      * <p>Ignore lines that begins with a # or are empty.</p>
      */
-    public static Routes parseRoutes( String routesString )
+    public static Routes parseRoutes( Config config, String routesString )
     {
-        return parseRoutes( RouteBuilder.class.getClassLoader(), routesString );
+        return parseRoutes( config, RouteBuilder.class.getClassLoader(), routesString );
     }
 
-    public static Routes parseRoutes( ClassLoader loader, String routesString )
+    public static Routes parseRoutes( Config config, ClassLoader loader, String routesString )
     {
         RoutesInstance routes = new RoutesInstance();
         Scanner scanner = new Scanner( routesString );
@@ -118,7 +124,7 @@ public final class RouteBuilder
             String routeString = scanner.nextLine().trim().replaceAll( "\\s+", " " );
             if( !routeString.startsWith( "#" ) && routeString.length() > 0 )
             {
-                routes.add( parseRoute( loader, routeString ) );
+                routes.add( parseRoute( config, loader, routeString ) );
             }
         }
         return routes;
@@ -142,9 +148,9 @@ public final class RouteBuilder
      * @return a new Route instance
      * @throws IllegalRouteException when the textual route definition is invalid
      */
-    public static Route parseRoute( final String routeString )
+    public static Route parseRoute( Config config, String routeString )
     {
-        return parseRoute( RouteBuilder.class.getClassLoader(), routeString );
+        return parseRoute( config, RouteBuilder.class.getClassLoader(), routeString );
     }
 
     /**
@@ -154,7 +160,7 @@ public final class RouteBuilder
      * @return a new Route instance
      * @throws IllegalRouteException when the textual route definition is invalid
      */
-    public static Route parseRoute( ClassLoader loader, final String routeString )
+    public static Route parseRoute( Config config, ClassLoader loader, final String routeString )
     {
         if( Strings.isEmpty( routeString ) )
         {
@@ -164,22 +170,25 @@ public final class RouteBuilder
         try
         {
             // Split route String
-            int methodEnd = cleanRouteString.indexOf( ' ' );
-            int pathEnd = cleanRouteString.indexOf( ' ', methodEnd + 1 );
-            int controllerTypeEnd = cleanRouteString.lastIndexOf( '.' );
-            int controllerMethodEnd;
-            int controllerParamsEnd;
-            int modifiersEnd;
-            if( cleanRouteString.indexOf( '(', controllerTypeEnd ) > 0 )
+            // TODO Replace route string split with a single regex
+            final int methodEnd = cleanRouteString.indexOf( ' ' );
+            final int pathEnd = cleanRouteString.indexOf( ' ', methodEnd + 1 );
+            final int controllerTypeEnd;
+            final int controllerMethodEnd;
+            final int controllerParamsEnd;
+            final int modifiersEnd;
+            if( cleanRouteString.indexOf( '(', pathEnd + 1 ) > 0 )
             {
                 // Parenthesis, with or without parameters or modifiers
+                controllerTypeEnd = cleanRouteString.substring( 0, cleanRouteString.indexOf( '(', pathEnd ) ).lastIndexOf( '.' );
                 controllerMethodEnd = cleanRouteString.indexOf( '(', controllerTypeEnd );
                 controllerParamsEnd = cleanRouteString.lastIndexOf( ')' );
                 modifiersEnd = cleanRouteString.length() > controllerParamsEnd + 1 ? cleanRouteString.length() : -1;
             }
-            else if( cleanRouteString.indexOf( ' ', controllerTypeEnd ) > 0 )
+            else if( cleanRouteString.indexOf( ' ', pathEnd + 1 ) > 0 )
             {
                 // No parenthesis with modifiers
+                controllerTypeEnd = cleanRouteString.substring( 0, cleanRouteString.indexOf( ' ', pathEnd + 1 ) ).lastIndexOf( '.' );
                 controllerMethodEnd = cleanRouteString.indexOf( ' ', controllerTypeEnd );
                 controllerParamsEnd = -1;
                 modifiersEnd = cleanRouteString.length();
@@ -187,10 +196,27 @@ public final class RouteBuilder
             else
             {
                 // No parenthesis without modifiers
+                // eg. POST /foo/bar com.acme.app.FakeController.test
+                controllerTypeEnd = cleanRouteString.lastIndexOf( '.' );
                 controllerMethodEnd = cleanRouteString.length();
                 controllerParamsEnd = -1;
                 modifiersEnd = -1;
             }
+
+            if( LOG.isTraceEnabled() )
+            {
+                LOG.trace( "Parsing route string: {}\n"
+                           + "\tMethod end:             {}\n"
+                           + "\tPath end:               {}\n"
+                           + "\tController Type end:    {}\n"
+                           + "\tController Method end:  {}\n"
+                           + "\tController Params end:  {}",
+                           new Object[]
+                {
+                    cleanRouteString, methodEnd, pathEnd, controllerTypeEnd, controllerMethodEnd, controllerParamsEnd
+                } );
+            }
+
             String httpMethod = cleanRouteString.substring( 0, methodEnd );
             String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
             String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
@@ -203,6 +229,20 @@ public final class RouteBuilder
             else
             {
                 controllerMethodParams = "";
+            }
+
+            if( LOG.isTraceEnabled() )
+            {
+                LOG.trace( "Parsing route string: {}\n"
+                           + "\tMethod:             {}\n"
+                           + "\tPath:               {}\n"
+                           + "\tController Type:    {}\n"
+                           + "\tController Method:  {}\n"
+                           + "\tController Params:  {}",
+                           new Object[]
+                {
+                    cleanRouteString, httpMethod, path, controllerTypeName, controllerMethodName, controllerMethodParams
+                } );
             }
 
             // Parse controller type
@@ -223,18 +263,7 @@ public final class RouteBuilder
                     }
                     String paramName = splitted[1];
                     String paramTypeName = splitted[0];
-
-                    // Lookup parameter type
-                    Class<?> paramType;
-                    try
-                    {
-                        paramType = Class.forName( paramTypeName );
-                    }
-                    catch( ClassNotFoundException ex )
-                    {
-                        paramType = Class.forName( "java.lang." + paramTypeName );
-                    }
-                    controllerParams.put( paramName, paramType );
+                    controllerParams.put( paramName, lookupParamType( config, loader, paramTypeName ) );
                 }
             }
 
@@ -258,6 +287,33 @@ public final class RouteBuilder
         catch( Exception ex )
         {
             throw new IllegalRouteException( routeString, ex.getMessage(), ex );
+        }
+    }
+
+    private static Class<?> lookupParamType( Config config, ClassLoader loader, String paramTypeName )
+        throws ClassNotFoundException
+    {
+        try
+        {
+            // First try parameter FQCN
+            return loader.loadClass( paramTypeName );
+        }
+        catch( ClassNotFoundException originalException )
+        {
+            // Try in configured imported packages
+            List<String> importedPackages = config.getStringList( "qiweb.routes.imported-packages" );
+            for( String importedPackage : importedPackages )
+            {
+                try
+                {
+                    return loader.loadClass( importedPackage + "." + paramTypeName );
+                }
+                catch( ClassNotFoundException ignored )
+                {
+                    LOG.trace( "Param type {} not found in {}", paramTypeName, importedPackage, ignored );
+                }
+            }
+            throw originalException;
         }
     }
 

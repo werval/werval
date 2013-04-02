@@ -3,6 +3,7 @@ package org.qiweb.runtime;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import org.qiweb.api.Config;
 
 import static io.netty.util.CharsetUtil.UTF_8;
@@ -41,6 +42,12 @@ public class ConfigInstance
     public String getString( String key )
     {
         return config.getString( key );
+    }
+
+    @Override
+    public List<String> getStringList( String key )
+    {
+        return config.getStringList( key );
     }
 
     @Override

@@ -48,7 +48,7 @@ public final class ApplicationInstance
     @Override
     public Routes routes()
     {
-        return routesProvider.routes( classLoader );
+        return routesProvider.routes( config, classLoader );
     }
 
     public void changeClassLoader( ClassLoader classLoader )

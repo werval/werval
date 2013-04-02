@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
+import org.qiweb.api.Config;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
@@ -32,6 +34,8 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
  */
 public class RoutesTest
 {
+
+    private final Config config = new ConfigInstance();
 
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()
@@ -194,7 +198,7 @@ public class RoutesTest
             System.out.println( "Parsing route: " + refRoute.routeString );
             try
             {
-                Route route = RouteBuilder.parseRoute( refRoute.routeString );
+                Route route = RouteBuilder.parseRoute( config, refRoute.routeString );
                 System.out.println( "Parsed  route: " + route );
                 assertRoute( route, refRoute );
             }
@@ -211,7 +215,9 @@ public class RoutesTest
     @Test
     public void givenMultipleRoutesStringWhenParsingExpectCorrectRoutes()
     {
-        Routes routes = RouteBuilder.parseRoutes( "\n" + RoutesToTest.ANOTHER.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.TEST.routeString + "\n" );
+        Routes routes = RouteBuilder.parseRoutes(
+            config,
+            "\n" + RoutesToTest.ANOTHER.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.TEST.routeString + "\n" );
 
         assertThat( count( routes ), is( 2L ) );
 
@@ -225,10 +231,10 @@ public class RoutesTest
     @Test
     public void givenRoutesWhenMatchingExpectCorrectRoutes()
     {
-        Route index = RouteBuilder.parseRoute( "GET / " + FakeController.class.getName() + ".index()" );
-        Route foo = RouteBuilder.parseRoute( "GET /foo " + FakeController.class.getName() + ".foo()" );
-        Route bar = RouteBuilder.parseRoute( "GET /bar " + FakeController.class.getName() + ".bar()" );
-        Route another = RouteBuilder.parseRoute( "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
+        Route index = RouteBuilder.parseRoute( config, "GET / " + FakeController.class.getName() + ".index()" );
+        Route foo = RouteBuilder.parseRoute( config, "GET /foo " + FakeController.class.getName() + ".foo()" );
+        Route bar = RouteBuilder.parseRoute( config, "GET /bar " + FakeController.class.getName() + ".bar()" );
+        Route another = RouteBuilder.parseRoute( config, "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
 
         Routes routes = RouteBuilder.routes( index, foo, bar, another );
 

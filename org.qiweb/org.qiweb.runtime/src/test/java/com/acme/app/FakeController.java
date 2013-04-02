@@ -18,6 +18,8 @@ public interface FakeController
     Outcome bar();
 
     Outcome wild( String path );
-    
+
     String noOutcome();
+
+    Outcome customParam( CustomParam param );
 }

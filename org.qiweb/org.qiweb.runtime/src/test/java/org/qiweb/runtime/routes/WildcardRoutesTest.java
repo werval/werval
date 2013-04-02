@@ -2,8 +2,10 @@ package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
 import org.junit.Test;
+import org.qiweb.api.Config;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
@@ -17,6 +19,8 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
 
 public class WildcardRoutesTest
 {
+
+    private final Config config = new ConfigInstance();
 
     @Test
     public void testAPI()
@@ -38,6 +42,7 @@ public class WildcardRoutesTest
     public void testWildcardRoutes()
     {
         Route route = RouteBuilder.parseRoute(
+            config,
             "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )" );
         System.out.println( route );
         assertWilcardRoute( route );

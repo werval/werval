@@ -2,6 +2,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Application Config.
@@ -39,6 +40,12 @@ public interface Config
      * @return Config entry value as String
      */
     String getString( String key );
+
+    /**
+     * @param key Config entry key
+     * @return Config entry values as List of String
+     */
+    List<String> getStringList( String key );
 
     /**
      * @param key Config entry key
