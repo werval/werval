@@ -41,11 +41,13 @@ import static org.qi4j.functional.Specifications.in;
     private final String controllerMethodName;
     private final Map<String, Class<?>> controllerParams;
     private final Pattern pathRegex;
+    private final Set<String> modifiers;
 
     /* package */ RouteInstance( String httpMethod, String path,
                    Class<?> controllerType,
                    String controllerMethodName,
-                   Map<String, Class<?>> controllerParams )
+                   Map<String, Class<?>> controllerParams,
+                   Set<String> modifiers )
     {
         ensureNotNull( "HTTP Method", httpMethod );
         ensureNotEmpty( "Path", path );
@@ -58,6 +60,7 @@ import static org.qi4j.functional.Specifications.in;
         this.controllerParams = new LinkedHashMap<>( controllerParams );
         validateRoute();
         this.pathRegex = Pattern.compile( generatePathRegex() );
+        this.modifiers = new LinkedHashSet<>( modifiers );
     }
 
     private void validateRoute()
@@ -221,6 +224,12 @@ import static org.qi4j.functional.Specifications.in;
             throw new IllegalArgumentException( "Parameter named '" + paramName + "' not found." );
         }
         return value;
+    }
+
+    @Override
+    public Set<String> modifiers()
+    {
+        return Collections.unmodifiableSet( modifiers );
     }
 
     @Override

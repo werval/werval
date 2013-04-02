@@ -2,10 +2,12 @@ package org.qiweb.api.routes;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import org.qiweb.api.http.RequestHeader;
 
 /**
- * Route. HttpRequest satisfiedBy.
+ * Route.
+ * <p>HTTP RequestHeader satisfiedBy.</p>
  */
 public interface Route
 {
@@ -22,7 +24,9 @@ public interface Route
 
     Map<String, Class<?>> controllerParams();
 
-    String controllerParamPathValue( String paramName, String path );
-
     boolean satisfiedBy( RequestHeader requestHeader );
+
+    Set<String> modifiers();
+
+    String controllerParamPathValue( String paramName, String path );
 }

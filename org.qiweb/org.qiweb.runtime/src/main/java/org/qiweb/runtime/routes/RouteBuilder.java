@@ -6,8 +6,10 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.routes.IllegalRouteException;
@@ -237,18 +239,17 @@ public final class RouteBuilder
             }
 
             // Eventually parse modifiers
+            Set<String> modifiers = new LinkedHashSet<>();
             if( modifiersEnd != -1 )
             {
                 String modifiersString = controllerParamsEnd != -1
                                          ? cleanRouteString.substring( controllerParamsEnd + 2 )
                                          : cleanRouteString.substring( controllerMethodEnd + 1 );
-                String[] modifiers = modifiersString.trim().split( " " );
-                // TODO Implement route modifiers
-                System.out.println( "############# MODIFIERS! " + Arrays.toString( modifiers ) );
+                modifiers.addAll( Arrays.asList( modifiersString.trim().split( " " ) ) );
             }
 
             // Create new Route instance
-            return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams );
+            return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams, modifiers );
         }
         catch( IllegalRouteException ex )
         {
@@ -272,6 +273,7 @@ public final class RouteBuilder
     private Class<?> controllerType;
     private String controllerMethodName;
     private final Map<String, Class<?>> controllerParams = new LinkedHashMap<>();
+    private final Set<String> modifiers = new LinkedHashSet<>();
 
     private RouteBuilder( String httpMethod )
     {
@@ -325,12 +327,18 @@ public final class RouteBuilder
         return this;
     }
 
+    public RouteBuilder modifiedBy( String... modifiers )
+    {
+        this.modifiers.addAll( Arrays.asList( modifiers ) );
+        return this;
+    }
+
     /**
      * Create a new Route instance.
      * @return a new Route instance.
      */
     public Route newInstance()
     {
-        return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams );
+        return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams, modifiers );
     }
 }

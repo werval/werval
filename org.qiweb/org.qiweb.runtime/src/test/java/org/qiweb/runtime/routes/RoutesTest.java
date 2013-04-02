@@ -1,8 +1,11 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
@@ -59,9 +62,9 @@ public class RoutesTest
     {
 
         TRANSIENT( "GET / com.acme.app.FakeController.test() transient",
-                   "GET", "/", FakeController.class, "test" ),
+                   "GET", "/", FakeController.class, "test", Arrays.asList( "transient" ) ),
         SERVICE( "GET / com.acme.app.FakeController.test() service",
-                 "GET", "/", FakeController.class, "test" ),
+                 "GET", "/", FakeController.class, "test", Arrays.asList( "service" ) ),
         SIMPLEST( "GET / com.acme.app.FakeController.test()",
                   "GET", "/", FakeController.class, "test" ),
         TEST( "  POST    /foo/bar    com.acme.app.FakeController.test()",
@@ -116,7 +119,7 @@ public class RoutesTest
         NO_PARENTHESIS_1( "  POST    /foo/bar    com.acme.app.FakeController.test",
                           "POST", "/foo/bar", FakeController.class, "test" ),
         NO_PARENTHESIS_2( "  POST    /foo/bar    com.acme.app.FakeController.test transient",
-                          "POST", "/foo/bar", FakeController.class, "test" ),
+                          "POST", "/foo/bar", FakeController.class, "test", Arrays.asList( "transient" ) ),
         WRONG_STRING_1( "WRONG /route", IllegalRouteException.class ),
         WRONG_STRING_2( "", IllegalRouteException.class ),
         WRONG_STRING_3( null, IllegalRouteException.class ),
@@ -138,6 +141,7 @@ public class RoutesTest
         private Class<?> controllerType;
         private String controllerMethod;
         private Map<String, Class<?>> pathParams;
+        private List<String> modifiers;
         private Class<? extends Exception> expectedException;
 
         private RoutesToTest( String routeString, Class<? extends Exception> expectedException )
@@ -154,6 +158,13 @@ public class RoutesTest
             this.controllerType = controllerType;
             this.controllerMethod = controllerMethod;
             this.pathParams = Collections.emptyMap();
+            this.modifiers = Collections.emptyList();
+        }
+
+        private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, List<String> modifiers )
+        {
+            this( routeString, httpMethod, path, controllerType, controllerMethod );
+            this.modifiers = modifiers;
         }
 
         private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
@@ -216,13 +227,13 @@ public class RoutesTest
 
         Routes routes = RouteBuilder.routes( index, foo, bar, another );
 
-        assertThat( routes.route( requestHeaderForGetPath( "/" ) ), equalTo( index ) );
-        assertThat( routes.route( requestHeaderForGetPath( "/foo" ) ), equalTo( foo ) );
-        assertThat( routes.route( requestHeaderForGetPath( "/bar" ) ), equalTo( bar ) );
-        assertThat( routes.route( requestHeaderForGetPath( "/foo/1234567890/bar/42" ) ), equalTo( another ) );
+        assertThat( routes.route( reqHeadForGet( "/" ) ), equalTo( index ) );
+        assertThat( routes.route( reqHeadForGet( "/foo" ) ), equalTo( foo ) );
+        assertThat( routes.route( reqHeadForGet( "/bar" ) ), equalTo( bar ) );
+        assertThat( routes.route( reqHeadForGet( "/foo/1234567890/bar/42" ) ), equalTo( another ) );
     }
 
-    private RequestHeader requestHeaderForGetPath( String path )
+    private RequestHeader reqHeadForGet( String path )
     {
         return new RequestHeaderInstance( "identity", "HTTP/1.1",
                                           "GET", "http://localhost" + path, path,
@@ -236,6 +247,7 @@ public class RoutesTest
         assertThat( "Controller Type", route.controllerType().getName(), equalTo( refRoute.controllerType.getName() ) );
         assertThat( "Controller Method", route.controllerMethodName(), equalTo( refRoute.controllerMethod ) );
         assertThat( "Parameters Count", count( route.controllerParams().keySet() ), equalTo( count( refRoute.pathParams.keySet() ) ) );
+        assertThat( "Modifiers Count", count( route.modifiers() ), equalTo( count( refRoute.modifiers ) ) );
 
         Map<String, Class<?>> routeParameters = new LinkedHashMap<>( route.controllerParams() );
         Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.pathParams );
@@ -243,6 +255,14 @@ public class RoutesTest
         {
             String routeParamName = routeEntry.getKey();
             assertThat( "Parameter " + routeParamName, routeEntry.getValue().getName(), equalTo( refRouteParameters.get( routeParamName ).getName() ) );
+        }
+
+        List<String> routeModifiers = new ArrayList<>( route.modifiers() );
+        List<String> refRouteModifiers = new ArrayList<>( refRoute.modifiers );
+        for( int idx = 0; idx < routeModifiers.size(); idx++ )
+        {
+            String routeModifier = routeModifiers.get( idx );
+            assertThat( "Modifier " + routeModifier, routeModifier, equalTo( refRouteModifiers.get( idx ) ) );
         }
     }
 }

@@ -56,7 +56,7 @@ public class WildcardRoutesTest
 
     private RequestHeader reqHeadForGet( String path )
     {
-        return new RequestHeaderInstance( "abc", "1.1", "GET",
+        return new RequestHeaderInstance( "abc", "HTTP/1.1", "GET",
                                           "http://localhost" + path, path,
                                           new QueryStringInstance(), new HeadersInstance(), new CookiesInstance() );
     }
