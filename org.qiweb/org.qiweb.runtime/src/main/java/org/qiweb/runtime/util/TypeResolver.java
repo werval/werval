@@ -32,6 +32,7 @@ import java.util.WeakHashMap;
  * 
  * @author Jonathan Halterman
  */
+// CHECKSTYLE:OFF
 public final class TypeResolver
 {
 
@@ -375,3 +376,4 @@ public final class TypeResolver
         return bound == Object.class ? Unknown.class : bound;
     }
 }
+// CHECKSTYLE:ON

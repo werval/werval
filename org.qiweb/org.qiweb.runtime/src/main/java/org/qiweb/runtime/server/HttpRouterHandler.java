@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
+import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.RequestHeader;
@@ -25,8 +26,8 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.RouteNotFoundException;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.controllers.ControllerContext;
 import org.qiweb.runtime.controllers.Outcomes.ChunkedOutcome;
 import org.qiweb.runtime.controllers.Outcomes.SimpleOutcome;
@@ -47,7 +48,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERR
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
-import static org.qiweb.runtime.http.HttpFactories.contextOf;
 import static org.qiweb.runtime.http.HttpFactories.requestHeaderOf;
 import static org.qiweb.runtime.http.HttpFactories.requestOf;
 import static org.qiweb.runtime.http.HttpFactories.sessionOf;
@@ -67,28 +67,6 @@ import static org.qiweb.runtime.http.HttpFactories.sessionOf;
  * 
  * <p>TODO WebSocket</p>
  */
-// Assemble and activate a Qi4j Application
-//            Object qi4jRuntime = httpApp.classLoader().loadClass( "org.qi4j.runtime.Qi4jRuntimeImpl" ).newInstance();
-//            Application qi4jApp = new Energy4Java( (Qi4jRuntime) qi4jRuntime ).newApplication( new ApplicationAssembler()
-//            Application qi4jApp = new Energy4Java().newApplication( new ApplicationAssembler()
-//            {
-//                @Override
-//                public ApplicationAssembly assemble( ApplicationAssemblyFactory applicationFactory )
-//                    throws AssemblyException
-//                {
-//                    ApplicationAssembly assembly = applicationFactory.newApplicationAssembly();
-//                    assembly.layer( "main" ).module( "main" ).transients( route.controllerType() );
-//                    return assembly;
-//                }
-//            } );
-//            qi4jApp.activate();
-//            Module module = qi4jApp.findModule( "main", "main" );
-// Lookup Controller
-// Object controller = module.newTransient( route.controllerType() );
-// Object controller = module.findService( route.controllerType() ).get();
-// /* ... */
-// Passivate the Qi4j Application
-// qi4jApp.passivate();
 public final class HttpRouterHandler
     extends ChannelInboundMessageHandlerAdapter<FullHttpRequest>
 {
@@ -170,7 +148,7 @@ public final class HttpRouterHandler
             Response response = new ResponseInstance();
 
             // Set Controller Context
-            Context context = contextOf( app, session, request, response );
+            Context context = new ContextInstance( app, session, request, response );
             controllerContext.setOnCurrentThread( app.classLoader(), context );
 
             // Lookup Controller

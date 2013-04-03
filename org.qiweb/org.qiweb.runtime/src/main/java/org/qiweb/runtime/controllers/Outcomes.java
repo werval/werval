@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.qiweb.api.QiWebException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;

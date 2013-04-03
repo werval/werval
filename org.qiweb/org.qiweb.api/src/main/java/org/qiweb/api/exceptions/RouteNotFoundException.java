@@ -1,10 +1,10 @@
-package org.qiweb.api.routes;
+package org.qiweb.api.exceptions;
 
 /**
  * Thrown when no satisfying Route found.
  */
 public class RouteNotFoundException
-    extends RuntimeException
+    extends QiWebException
 {
 
     private static final long serialVersionUID = 1L;

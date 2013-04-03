@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.Config;
 import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.routes.IllegalRouteException;
+import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ConfigInstance;

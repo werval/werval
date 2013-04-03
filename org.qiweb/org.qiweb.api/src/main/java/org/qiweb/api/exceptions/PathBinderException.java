@@ -1,7 +1,8 @@
-package org.qiweb.api.routes;
+package org.qiweb.api.exceptions;
 
-import org.qiweb.api.QiWebException;
-
+/**
+ * Thrown when something goes wrong when using PathBinders.
+ */
 public class PathBinderException
     extends QiWebException
 {

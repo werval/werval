@@ -1,10 +1,10 @@
-package org.qiweb.api.routes;
+package org.qiweb.api.exceptions;
 
 /**
  * Thrown when trying to build a Route instance with an illegal route string.
  */
 public class IllegalRouteException
-    extends RuntimeException
+    extends QiWebException
 {
 
     private static final long serialVersionUID = 1L;

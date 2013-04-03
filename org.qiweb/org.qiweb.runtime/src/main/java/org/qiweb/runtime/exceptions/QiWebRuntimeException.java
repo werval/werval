@@ -1,7 +1,10 @@
-package org.qiweb.runtime;
+package org.qiweb.runtime.exceptions;
 
-import org.qiweb.api.QiWebException;
+import org.qiweb.api.exceptions.QiWebException;
 
+/**
+ * Thrown when an unexpected error occurs inside the QiWeb Runtime.
+ */
 public class QiWebRuntimeException
     extends QiWebException
 {

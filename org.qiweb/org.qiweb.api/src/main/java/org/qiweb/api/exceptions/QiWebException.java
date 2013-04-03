@@ -1,5 +1,8 @@
-package org.qiweb.api;
+package org.qiweb.api.exceptions;
 
+/**
+ * Base exception for all QiWeb errors.
+ */
 public class QiWebException
     extends RuntimeException
 {

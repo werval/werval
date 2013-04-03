@@ -1,7 +1,7 @@
 package org.qiweb.api.controllers;
 
 import org.qiweb.api.Application;
-import org.qiweb.api.QiWebException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;

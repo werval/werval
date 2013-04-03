@@ -15,13 +15,14 @@ import java.nio.ByteOrder;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
-import org.qiweb.api.QiWebException;
+import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * Read-only ByteBuff wrapping a File.
  * <p>Used by {@link HttpOnDiskRequestAggregator} to aggregate requests bodies.</p>
- * <p>used by {@link HttpRouterHandler} to parse requests bodies.</p>
+ * <p>Used by {@link HttpRouterHandler} to parse requests bodies.</p>
  */
+// CHECKSTYLE:OFF
 public final class FileByteBuff
     extends AbstractByteBuf
 {
@@ -368,3 +369,4 @@ public final class FileByteBuff
         return false;
     }
 }
+// CHECKSTYLE:ON

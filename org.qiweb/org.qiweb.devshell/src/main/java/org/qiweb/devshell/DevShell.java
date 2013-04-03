@@ -117,8 +117,9 @@ public final class DevShell
             {
                 String.class
             } ).
-                newInstance( new Object[] // Routes
+                newInstance( new Object[]
             {
+                // Routes
                 "GET /favicon.ico org.qiweb.controller.Default.notFound()\n"
                 + "GET / com.acme.app.FakeControllerInstance.index()"
             } );

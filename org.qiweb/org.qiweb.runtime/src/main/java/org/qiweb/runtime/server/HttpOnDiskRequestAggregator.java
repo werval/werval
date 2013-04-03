@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 import org.codeartisans.java.toolbox.io.Files;
 import org.qiweb.api.Application;
-import org.qiweb.runtime.QiWebRuntimeException;
+import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.util.FileByteBuff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

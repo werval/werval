@@ -1,6 +1,6 @@
 package org.qiweb.devshell;
 
-import org.qiweb.api.QiWebException;
+import org.qiweb.api.exceptions.QiWebException;
 
 public class QiWebDevShellException
     extends QiWebException

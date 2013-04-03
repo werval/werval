@@ -14,7 +14,7 @@ import java.util.Set;
 import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Config;
-import org.qiweb.api.routes.IllegalRouteException;
+import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.slf4j.Logger;

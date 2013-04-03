@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.codeartisans.java.toolbox.Strings;
+import org.qiweb.api.exceptions.QiWebException;
 
 public final class ClassLoaders
 {
@@ -25,12 +26,12 @@ public final class ClassLoaders
 
     public static void printURLs( ClassLoader classLoader, PrintWriter output )
     {
+        if( !( classLoader instanceof URLClassLoader ) )
+        {
+            throw new IllegalArgumentException( "ClassLoader is not an instance of URLClassLoader" );
+        }
         try
         {
-            if( !( classLoader instanceof URLClassLoader ) )
-            {
-                throw new IllegalArgumentException( "ClassLoader is not an instance of URLClassLoader" );
-            }
             URLClassLoader urlLoader = (URLClassLoader) classLoader;
             int idx = 0;
             while( urlLoader != null )
@@ -44,7 +45,8 @@ public final class ClassLoaders
                 ClassLoader parent = urlLoader.getParent();
                 if( parent == null )
                 {
-                    urlLoader = null; // break
+                    // break
+                    urlLoader = null;
                 }
                 else if( parent instanceof URLClassLoader )
                 {
@@ -53,19 +55,16 @@ public final class ClassLoaders
                 else
                 {
                     output.println( indent + TAB + "Not URLClassLoader parent: " + parent );
-                    urlLoader = null; // break
+                    // break
+                    urlLoader = null;
                 }
                 idx++;
             }
             output.flush();
         }
-        catch( IllegalArgumentException ex )
-        {
-            throw ex;
-        }
         catch( Exception ex )
         {
-            throw new RuntimeException( "Unable to print URLs from ClassLoaders hierarchy: " + ex.getMessage(), ex );
+            throw new QiWebException( "Unable to print URLs from ClassLoaders hierarchy: " + ex.getMessage(), ex );
         }
     }
 
@@ -111,7 +110,7 @@ public final class ClassLoaders
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new RuntimeException( "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(), ex );
+            throw new QiWebException( "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(), ex );
         }
     }
 

@@ -7,9 +7,12 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.logging.ByteLoggingHandler;
+import io.netty.handler.logging.LogLevel;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
+import java.util.Locale;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
@@ -55,8 +58,13 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
     {
         ChannelPipeline pipeline = channel.pipeline();
 
-        // Log Netty Bytes
-        // pipeline.addLast( "byte-logging", new ByteLoggingHandler());
+        if( app.config().getBoolean( "qiweb.http.log.low-level.enabled" ) )
+        {
+            // Log Netty Bytes
+            LogLevel level = LogLevel.valueOf(
+                app.config().getString( "qiweb.http.log.low-level.level" ).toUpperCase( Locale.US ) );
+            pipeline.addLast( "byte-logging", new ByteLoggingHandler( level ) );
+        }
 
         // HTTP Decoding / Encoding
         // HTTP decoders always generates multiple message objects per a single HTTP message:
@@ -72,11 +80,8 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         pipeline.addLast( "http-decompressor", new HttpContentDecompressor() );
 
         // Aggregate chunked HttpRequests to disk
-        // TODO Move this to SubProtocolSwitchHandler or ensure it won't mangle with WebSockets
+        // TODO Move the aggregator to SubProtocolSwitchHandler or ensure it won't mangle with WebSockets
         pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( app, -1 ) );
-
-        // Log Netty Messages
-        // pipeline.addLast( "message-logging", new MessageLoggingHandler() );
 
         // GZip compression support
         pipeline.addLast( "http-compressor", new HttpContentCompressor() );

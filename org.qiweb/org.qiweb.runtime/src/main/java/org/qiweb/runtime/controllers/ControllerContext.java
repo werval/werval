@@ -3,7 +3,7 @@ package org.qiweb.runtime.controllers;
 import java.lang.reflect.Field;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Controller;
-import org.qiweb.runtime.QiWebRuntimeException;
+import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
 public final class ControllerContext
 {

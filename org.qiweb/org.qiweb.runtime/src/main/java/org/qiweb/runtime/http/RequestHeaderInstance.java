@@ -11,6 +11,7 @@ import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
+import static org.qiweb.runtime.http.HttpConstants.*;
 
 public class RequestHeaderInstance
     implements RequestHeader
@@ -128,11 +129,11 @@ public class RequestHeaderInstance
             @Override
             public Integer map( Void from )
             {
-                String parse = uri.substring( 9 );
+                String parse = uri.substring( "https://".length() + 1 );
                 parse = parse.substring( 0, parse.indexOf( '/' ) );
                 int colIdx = parse.indexOf( ':' );
                 return colIdx < 0
-                       ? uri.startsWith( "https" ) ? 443 : 80
+                       ? uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT
                        : Integer.valueOf( parse.substring( colIdx + 1, parse.length() ) );
             }
         } );

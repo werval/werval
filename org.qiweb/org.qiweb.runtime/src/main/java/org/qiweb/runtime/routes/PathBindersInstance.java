@@ -3,15 +3,15 @@ package org.qiweb.runtime.routes;
 import java.util.ArrayList;
 import java.util.List;
 import org.qiweb.api.routes.PathBinder;
-import org.qiweb.api.routes.PathBinderException;
+import org.qiweb.api.exceptions.PathBinderException;
 import org.qiweb.api.routes.PathBinders;
 import org.qiweb.runtime.util.TypeResolver;
 
-public class PathBindersInstance
+public final class PathBindersInstance
     implements PathBinders
 {
 
-    /* package */ static abstract class StrictTypingPathBinder<T>
+    /* package */ abstract static class StrictTypingPathBinder<T>
         implements PathBinder<T>
     {
 

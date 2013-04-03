@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import org.qiweb.spi.dev.Watcher.ChangeListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
@@ -16,6 +18,7 @@ public class DevShellSPIAdapter
     implements DevShellSPI
 {
 
+    private static final Logger LOG = LoggerFactory.getLogger( DevShellSPIAdapter.class );
     private final String name;
     private final File rootDir;
     private final File buildDir;
@@ -54,7 +57,7 @@ public class DevShellSPIAdapter
             @Override
             public void onChange()
             {
-                System.out.println( "Main source changed!" );
+                LOG.info( "Main source changed!" );
                 mainChanged = true;
             }
         } );
@@ -63,7 +66,7 @@ public class DevShellSPIAdapter
             @Override
             public void onChange()
             {
-                System.out.println( "Test source changed!" );
+                LOG.info( "Test source changed!" );
                 testChanged = true;
             }
         } );

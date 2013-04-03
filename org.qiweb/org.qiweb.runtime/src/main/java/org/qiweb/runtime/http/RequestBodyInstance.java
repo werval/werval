@@ -14,10 +14,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
-import org.qiweb.api.QiWebException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.runtime.util.FileByteBuff;
 
+/**
+ * A RequestBody Instance.
+ */
 public final class RequestBodyInstance
     implements RequestBody
 {
@@ -36,6 +39,11 @@ public final class RequestBodyInstance
         this.uploads = Collections.emptyMap();
     }
 
+    /**
+     * Create a new RequestBody backed by a ByteBuf.
+     * 
+     * @param byteBuf Body data
+     */
     public RequestBodyInstance( ByteBuf byteBuf )
     {
         this.byteBuf = byteBuf;
@@ -43,6 +51,12 @@ public final class RequestBodyInstance
         this.uploads = Collections.emptyMap();
     }
 
+    /**
+     * Create a new RequestBody backed by form and upload data.
+     * 
+     * @param attributes Form attributes
+     * @param uploads Upload data
+     */
     public RequestBodyInstance( Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
     {
         this.byteBuf = null;

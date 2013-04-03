@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import org.qiweb.api.mime.MimeTypes;
-import org.qiweb.runtime.QiWebRuntimeException;
+import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
 public class MimeTypesInstance
     implements MimeTypes

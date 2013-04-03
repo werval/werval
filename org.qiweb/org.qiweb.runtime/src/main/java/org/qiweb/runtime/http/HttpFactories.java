@@ -20,9 +20,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
-import org.qiweb.api.Application;
-import org.qiweb.api.QiWebException;
-import org.qiweb.api.controllers.Context;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
@@ -32,9 +30,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestBody.Upload;
 import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
-import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.RequestBodyInstance.UploadInstance;
 import org.qiweb.runtime.util.Comparators;
@@ -47,6 +43,9 @@ import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static io.netty.util.CharsetUtil.UTF_8;
 
+/**
+ * Factory methods used by the server.
+ */
 public final class HttpFactories
 {
 
@@ -198,11 +197,6 @@ public final class HttpFactories
         Map<String, String> sessionData = new TreeMap<>( Comparators.LOWER_CASE );
         // TODO Parse Session Cookie
         return new SessionInstance( sessionData );
-    }
-
-    public static Context contextOf( Application application, Session session, Request request, Response response )
-    {
-        return new ContextInstance( application, session, request, response );
     }
 
     private HttpFactories()

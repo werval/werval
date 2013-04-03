@@ -15,7 +15,7 @@ import org.qi4j.functional.Function;
 import org.qi4j.functional.Specification;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.routes.IllegalRouteException;
+import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
@@ -273,21 +273,23 @@ import static org.qi4j.functional.Specifications.in;
     @Override
     public int hashCode()
     {
+        // CHECKSTYLE:OFF
         int hash = 7;
-        int factor = 59;
-        hash = factor * hash + ( this.httpMethod != null ? this.httpMethod.hashCode() : 0 );
-        hash = factor * hash + ( this.path != null ? this.path.hashCode() : 0 );
-        hash = factor * hash + ( this.controllerType != null ? this.controllerType.hashCode() : 0 );
-        hash = factor * hash + ( this.controllerMethodName != null ? this.controllerMethodName.hashCode() : 0 );
-        hash = factor * hash + ( this.controllerParams != null ? this.controllerParams.hashCode() : 0 );
-        hash = factor * hash + ( this.modifiers != null ? this.modifiers.hashCode() : 0 );
+        hash = 59 * hash + ( this.httpMethod != null ? this.httpMethod.hashCode() : 0 );
+        hash = 59 * hash + ( this.path != null ? this.path.hashCode() : 0 );
+        hash = 59 * hash + ( this.controllerType != null ? this.controllerType.hashCode() : 0 );
+        hash = 59 * hash + ( this.controllerMethodName != null ? this.controllerMethodName.hashCode() : 0 );
+        hash = 59 * hash + ( this.controllerParams != null ? this.controllerParams.hashCode() : 0 );
+        hash = 59 * hash + ( this.modifiers != null ? this.modifiers.hashCode() : 0 );
         return hash;
+        // CHECKSTYLE:ON
     }
 
     @Override
     @SuppressWarnings( "AccessingNonPublicFieldOfAnotherObject" )
     public boolean equals( Object obj )
     {
+        // CHECKSTYLE:OFF
         if( obj == null )
         {
             return false;
@@ -322,5 +324,6 @@ import static org.qi4j.functional.Specifications.in;
             return false;
         }
         return true;
+        // CHECKSTYLE:ON
     }
 }
