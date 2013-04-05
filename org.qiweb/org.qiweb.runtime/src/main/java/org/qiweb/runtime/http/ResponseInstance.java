@@ -17,12 +17,6 @@ public class ResponseInstance
         this.cookies = new CookiesInstance();
     }
 
-    public ResponseInstance( MutableHeaders headers, MutableCookies cookies )
-    {
-        this.headers = headers;
-        this.cookies = cookies;
-    }
-
     @Override
     public MutableHeaders headers()
     {

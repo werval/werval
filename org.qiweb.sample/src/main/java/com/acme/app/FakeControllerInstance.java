@@ -1,7 +1,6 @@
 package com.acme.app;
 
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.runtime.controllers.Outcomes;
 
 import static org.qiweb.api.controllers.Controller.*;
 
@@ -12,50 +11,55 @@ public class FakeControllerInstance
     @Override
     public Outcome test()
     {
-        return Outcomes.ok().
+        return outcomes().ok().
             withHeader( "controller-method", "test" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "Does your test work?" );
+            withBody( "Does your test work?" ).
+            build();
     }
 
     @Override
     public Outcome another( String id, Integer slug )
     {
-        return Outcomes.ok().
+        return outcomes().ok().
             withHeader( "controller-method", "another" ).
             withHeader( "controller-param-id", id ).
             withHeader( "controller-param-slug", slug.toString() ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "You sent an 'id' of " + id + " and the " + slug + " 'slug'!" );
+            withBody( "You sent an 'id' of " + id + " and the " + slug + " 'slug'!" ).
+            build();
     }
 
     @Override
     public Outcome index()
     {
         response().headers().with( "X-QiWeb-HTTP-Request-Identity", request().identity() );
-        return Outcomes.ok().
+        return outcomes().ok().
             withHeader( "X-QiWeb-Controller-Method", "index" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "It works!\nThis request had the following ID: " + request().identity()
-                        + "\n\nHeaders: " + request().headers()
-                        + "\n\nCookies: " + request().cookies() );
+            withBody( "It works!\nThis request had the following ID: " + request().identity()
+                      + "\n\nHeaders: " + request().headers()
+                      + "\n\nCookies: " + request().cookies() ).
+            build();
     }
 
     @Override
     public Outcome foo()
     {
-        return Outcomes.ok().
+        return outcomes().ok().
             withHeader( "controller-method", "foo" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "cathedral" );
+            withBody( "cathedral" ).
+            build();
     }
 
     @Override
     public Outcome bar()
     {
-        return Outcomes.ok().
+        return outcomes().ok().
             withHeader( "controller-method", "bar" ).
             as( "text/plain; charset=UTF-8" ).
-            withEntity( "bazar" );
+            withBody( "bazar" ).
+            build();
     }
 }

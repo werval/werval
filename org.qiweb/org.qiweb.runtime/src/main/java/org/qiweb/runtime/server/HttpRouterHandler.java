@@ -5,8 +5,10 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundMessageHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,10 +30,10 @@ import org.qiweb.api.http.Session;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.controllers.ContextInstance;
-import org.qiweb.runtime.controllers.ControllerContext;
-import org.qiweb.runtime.controllers.Outcomes.ChunkedOutcome;
-import org.qiweb.runtime.controllers.Outcomes.SimpleOutcome;
-import org.qiweb.runtime.controllers.Outcomes.StreamOutcome;
+import org.qiweb.runtime.controllers.ContextHelper;
+import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
+import org.qiweb.runtime.controllers.OutcomeBuilderInstance.SimpleOutcome;
+import org.qiweb.runtime.controllers.OutcomeBuilderInstance.StreamOutcome;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.slf4j.Logger;
@@ -42,8 +44,10 @@ import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
+import static io.netty.handler.codec.http.HttpHeaders.Values.CHUNKED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
+import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -126,7 +130,7 @@ public final class HttpRouterHandler
         Routes routes = app.routes();
 
         // Prepare Controller Context
-        ControllerContext controllerContext = new ControllerContext();
+        ContextHelper contextHelper = new ContextHelper();
         try
         {
             final Route route = routes.route( requestHeader );
@@ -135,8 +139,7 @@ public final class HttpRouterHandler
             // Parse route path parameters - TODO Finish this, return a 404 if failed
             List<Object> pathParams = pathParameters( requestHeader, route );
 
-            // Eventually UPGRADE to WebSocket
-            // TODO WebSocket
+            // TODO Eventually UPGRADE to WebSocket
 
             // Parse Request
             Request request = requestOf( requestHeader, nettyRequest );
@@ -149,7 +152,7 @@ public final class HttpRouterHandler
 
             // Set Controller Context
             Context context = new ContextInstance( app, session, request, response );
-            controllerContext.setOnCurrentThread( app.classLoader(), context );
+            contextHelper.setOnCurrentThread( app.classLoader(), context );
 
             // Lookup Controller
             Object controller = app.classLoader().loadClass( route.controllerType().getName() ).newInstance();
@@ -162,42 +165,50 @@ public final class HttpRouterHandler
 
             // Status
             HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( outcome.status() );
-            FullHttpResponse nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
 
-            // Headers
-            for( String headerName : response.headers().names() )
-            {
-                nettyResponse.headers().add( headerName, response.headers().valueOf( headerName ) );
-            }
-            for( String headerName : outcome.headers().names() )
-            {
-                nettyResponse.headers().add( headerName, outcome.headers().valueOf( headerName ) );
-            }
-            if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
-            {
-                nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
-            }
-
-            // Body
+            // Headers & Body output
+            final HttpResponse nettyResponse;
+            final ChannelFuture writeFuture;
             if( outcome instanceof ChunkedOutcome )
             {
                 ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
-                // TODO ChunkedOutcome
+                nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
+                // Headers
+                applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
+                // Body
+                nettyContext.write( nettyResponse );
+                writeFuture = nettyContext.write( chunkedOutcome.chunkedInput() );
             }
             else if( outcome instanceof StreamOutcome )
             {
                 StreamOutcome streamOutcome = (StreamOutcome) outcome;
-                nettyResponse.data().writeBytes( streamOutcome.bodyInputStream(), streamOutcome.contentLength() );
+                nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
+                // Headers
+                applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                // Body
+                ( (FullHttpResponse) nettyResponse ).data().
+                    writeBytes( streamOutcome.bodyInputStream(), streamOutcome.contentLength() );
+                writeFuture = nettyContext.write( nettyResponse );
             }
             else if( outcome instanceof SimpleOutcome )
             {
                 SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
+                nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
+                // Headers
+                applyHeaders( nettyResponse, response, outcome, nettyRequest );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.entity().readableBytes() );
-                nettyResponse.data().writeBytes( simpleOutcome.entity() );
+                // Body
+                ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.entity() );
+                writeFuture = nettyContext.write( nettyResponse );
             }
-
-            // Write response
-            ChannelFuture writeFuture = nettyContext.write( nettyResponse );
+            else
+            {
+                LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
+                nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
+                applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                writeFuture = nettyContext.write( nettyResponse );
+            }
 
             // Close the connection as soon as the response is sent if not keep alive
             if( true || !isKeepAlive( nettyRequest ) ) // FIXME We don't KEEP ALIVE
@@ -212,7 +223,7 @@ public final class HttpRouterHandler
         }
         finally
         {
-            controllerContext.clearCurrentThread();
+            contextHelper.clearCurrentThread();
         }
     }
 
@@ -227,6 +238,22 @@ public final class HttpRouterHandler
             pathParams.add( app.pathBinders().bind( paramType, paramName, paramStringValue ) );
         }
         return pathParams;
+    }
+
+    private void applyHeaders( HttpResponse nettyResponse, Response response, Outcome outcome, FullHttpRequest nettyRequest )
+    {
+        for( String headerName : response.headers().names() )
+        {
+            nettyResponse.headers().add( headerName, response.headers().valueOf( headerName ) );
+        }
+        for( String headerName : outcome.headers().names() )
+        {
+            nettyResponse.headers().add( headerName, outcome.headers().valueOf( headerName ) );
+        }
+        if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
+        {
+            nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
+        }
     }
 
     private static void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )

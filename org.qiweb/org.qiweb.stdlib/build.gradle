@@ -3,4 +3,6 @@ dependencies {
 
     compile project( ':org.qiweb.runtime' )
     
+    testCompile libraries.httpclient
+
 }

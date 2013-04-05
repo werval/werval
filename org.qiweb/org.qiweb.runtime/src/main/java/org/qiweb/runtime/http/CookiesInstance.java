@@ -22,7 +22,8 @@ public class CookiesInstance
 
     public CookiesInstance( Map<String, Cookie> cookies )
     {
-        this.cookies = cookies;
+        this();
+        this.cookies.putAll( cookies );
     }
 
     @Override

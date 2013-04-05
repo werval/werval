@@ -2,14 +2,15 @@ package org.qiweb.controller;
 
 import java.util.List;
 import java.util.Map;
+import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.runtime.controllers.Outcomes;
 
 /**
  * Controller providing default outcomes.
  * <p>Intended to be used in routes directly.</p>
  */
 public class Default
+    extends Controller
 {
 
     /**
@@ -17,7 +18,7 @@ public class Default
      */
     public Outcome notFound()
     {
-        return Outcomes.notFound();
+        return outcomes().notFound().build();
     }
 
     /**
@@ -25,7 +26,7 @@ public class Default
      */
     public Outcome found( String url )
     {
-        return Outcomes.noContent();
+        return outcomes().noContent().build();
     }
 
     /**
@@ -33,7 +34,7 @@ public class Default
      */
     public Outcome found( String url, Map<String, List<String>> queryString )
     {
-        return Outcomes.noContent();
+        return outcomes().noContent().build();
     }
 
     /**
@@ -41,7 +42,7 @@ public class Default
      */
     public Outcome seeOther( String url )
     {
-        return Outcomes.seeOther( url );
+        return outcomes().seeOther( url ).build();
     }
 
     /**
@@ -49,7 +50,7 @@ public class Default
      */
     public Outcome seeOther( String url, Map<String, List<String>> queryString )
     {
-        return Outcomes.seeOther( url, queryString );
+        return outcomes().seeOther( url, queryString ).build();
     }
 
     /**
@@ -57,7 +58,7 @@ public class Default
      */
     public Outcome internalServerError()
     {
-        return Outcomes.internalServerError();
+        return outcomes().internalServerError().build();
     }
 
     /**
@@ -65,6 +66,6 @@ public class Default
      */
     public Outcome notImplemented()
     {
-        return Outcomes.notImplemented();
+        return outcomes().notImplemented().build();
     }
 }

@@ -5,7 +5,10 @@ import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Controller;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
-public final class ControllerContext
+/**
+ * Controller Thread Context Helper.
+ */
+public final class ContextHelper
 {
 
     private ClassLoader previousLoader = null;

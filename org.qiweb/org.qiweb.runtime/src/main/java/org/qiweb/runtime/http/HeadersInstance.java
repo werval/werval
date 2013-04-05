@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
@@ -115,6 +116,26 @@ public class HeadersInstance
             headers.get( name ).clear();
         }
         headers.get( name ).add( value );
+        return this;
+    }
+
+    @Override
+    public MutableHeaders withAll( String name, String... values )
+    {
+        for( String value : values )
+        {
+            with( name, value );
+        }
+        return this;
+    }
+
+    @Override
+    public MutableHeaders withAll( Headers headers )
+    {
+        for( Entry<String, List<String>> header : headers.asMapAll().entrySet() )
+        {
+            withAll( header.getKey(), header.getValue().toArray( new String[ header.getValue().size() ] ) );
+        }
         return this;
     }
 

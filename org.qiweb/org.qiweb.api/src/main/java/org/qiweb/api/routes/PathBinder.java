@@ -14,7 +14,7 @@ public interface PathBinder<T>
      */
     boolean accept( Class<?> type );
 
-    T bind( java.lang.String name, java.lang.String value );
+    T bind( String name, String value );
 
-    java.lang.String unbind( java.lang.String name, T value );
+    String unbind( String name, T value );
 }

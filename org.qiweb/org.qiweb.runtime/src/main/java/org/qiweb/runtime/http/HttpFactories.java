@@ -13,11 +13,11 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDat
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.exceptions.QiWebException;
@@ -33,7 +33,7 @@ import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.RequestBodyInstance.UploadInstance;
-import org.qiweb.runtime.util.Comparators;
+import org.qiweb.runtime.util.URLs;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
@@ -64,7 +64,7 @@ public final class HttpFactories
 
     public static Cookies cookiesOf( HttpRequest nettyRequest )
     {
-        Map<String, Cookie> cookies = new TreeMap<>( Comparators.LOWER_CASE );
+        Map<String, Cookie> cookies = new HashMap<>();
         String cookieHeaderValue = nettyRequest.headers().get( COOKIE );
         if( !Strings.isEmpty( cookieHeaderValue ) )
         {
@@ -97,7 +97,7 @@ public final class HttpFactories
 
         // Path and QueryString
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), UTF_8 );
-        String requestPath = queryStringDecoder.path();
+        String requestPath = URLs.decode( queryStringDecoder.path() );
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
 
         // Headers
@@ -194,7 +194,7 @@ public final class HttpFactories
         {
             return new SessionInstance();
         }
-        Map<String, String> sessionData = new TreeMap<>( Comparators.LOWER_CASE );
+        Map<String, String> sessionData = new HashMap<>();
         // TODO Parse Session Cookie
         return new SessionInstance( sessionData );
     }

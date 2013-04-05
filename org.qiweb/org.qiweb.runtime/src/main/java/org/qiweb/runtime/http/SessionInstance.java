@@ -18,7 +18,8 @@ public class SessionInstance
 
     public SessionInstance( Map<String, String> session )
     {
-        this.session = session;
+        this();
+        this.session.putAll( session );
     }
 
     @Override

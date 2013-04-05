@@ -42,6 +42,15 @@ public class Controller
     }
 
     /**
+     * @return Current Request Session
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Session session()
+    {
+        return context().session();
+    }
+
+    /**
      * @return Current Request
      * @throws QiWebException if no Context in current Thread
      */
@@ -51,7 +60,7 @@ public class Controller
     }
 
     /**
-     * @return Current Response or null if no Context
+     * @return Current Response
      * @throws QiWebException if no Context in current Thread
      */
     public static Response response()
@@ -60,12 +69,12 @@ public class Controller
     }
 
     /**
-     * @return Current Request Session or null if no Context
+     * @return Current Outcome builder
      * @throws QiWebException if no Context in current Thread
      */
-    public static Session session()
+    public static Outcomes outcomes()
     {
-        return context().session();
+        return context().outcomes();
     }
 
     public Controller()

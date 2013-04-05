@@ -32,4 +32,19 @@ public interface MutableHeaders
      * @return This very MutableHeaders
      */
     MutableHeaders withSingle( String name, String value );
+
+    /**
+     * Add all HTTP Headers values.
+     * @param name The HTTP Header name
+     * @param values The HTTP Header values
+     * @return  This very MutableHeaders
+     */
+    MutableHeaders withAll( String name, String... values );
+
+    /**
+     * Add all HTTP Headers values.
+     * @param headers Headers to add
+     * @return  This very MutableHeaders
+     */
+    MutableHeaders withAll( Headers headers );
 }

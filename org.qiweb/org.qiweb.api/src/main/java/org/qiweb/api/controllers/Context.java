@@ -12,11 +12,28 @@ import org.qiweb.api.http.Session;
 public interface Context
 {
 
+    /**
+     * @return Current Application
+     */
     Application application();
 
+    /**
+     * @return Current Session
+     */
     Session session();
 
+    /**
+     * @return Current Request
+     */
     Request request();
 
+    /**
+     * @return Current Response
+     */
     Response response();
+
+    /**
+     * @return Current Outcome builder
+     */
+    Outcomes outcomes();
 }

@@ -25,12 +25,12 @@ public interface RequestHeader
     String method();
 
     /**
-     * @return The HTTP Request URI
+     * @return The HTTP Request URI, URL encoded
      */
     String uri();
 
     /**
-     * @return The HTTP Request Path
+     * @return The HTTP Request Path, URL decoded
      */
     String path();
 
