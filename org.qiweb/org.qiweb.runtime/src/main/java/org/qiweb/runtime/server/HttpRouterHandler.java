@@ -150,6 +150,9 @@ public final class HttpRouterHandler
             // Prepare Response
             Response response = new ResponseInstance();
 
+            // FIXME We don't KEEP ALIVE
+            response.headers().withSingle( CONNECTION, CLOSE );
+
             // Set Controller Context
             Context context = new ContextInstance( app, session, request, response );
             contextHelper.setOnCurrentThread( app.classLoader(), context );
@@ -211,7 +214,8 @@ public final class HttpRouterHandler
             }
 
             // Close the connection as soon as the response is sent if not keep alive
-            if( true || !isKeepAlive( nettyRequest ) ) // FIXME We don't KEEP ALIVE
+            // FIXME We don't KEEP ALIVE
+            if( true || !isKeepAlive( nettyRequest ) )
             {
                 writeFuture.addListener( ChannelFutureListener.CLOSE );
             }

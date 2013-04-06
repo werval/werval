@@ -15,13 +15,21 @@ import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.routes.PathBindersInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
+
 /**
  * An Application Instance.
+ * <p>Application Mode defaults to {@link Mode#test}.</p>
+ * <p>Application Config behaviour is the very same whatever the Mode is.</p>
+ * <p>Application ClassLoader defaults to the ClassLoader that defined the ApplicationInstance class.</p>
+ * <p>Application Routes are fetched from a given RoutesProvider.</p>
+ * <p>Others are based on Application Config and created by Application instances.</p>
  */
 public final class ApplicationInstance
     implements Application
 {
 
+    private final Mode mode;
     private Config config;
     private File tmpdir;
     private ClassLoader classLoader;
@@ -29,12 +37,32 @@ public final class ApplicationInstance
     private PathBinders pathBinders;
     private MimeTypes mimeTypes;
 
-    public ApplicationInstance( Config config, ClassLoader classLoader, RoutesProvider routesProvider )
+    /**
+     * Create a new Application instance in {@link Mode#test}.
+     * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
+     */
+    public ApplicationInstance( RoutesProvider routesProvider )
     {
+        this( Mode.test, new ConfigInstance(), ApplicationInstance.class.getClassLoader(), routesProvider );
+    }
+
+    public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
+    {
+        ensureNotNull( "Application Mode", mode );
+        ensureNotNull( "Application Config", config );
+        ensureNotNull( "Application ClassLoader", classLoader );
+        ensureNotNull( "Application RoutesProvider", routesProvider );
+        this.mode = mode;
         this.config = config;
         this.routesProvider = routesProvider;
         this.classLoader = classLoader;
         configurationChanged();
+    }
+
+    @Override
+    public Mode mode()
+    {
+        return mode;
     }
 
     @Override

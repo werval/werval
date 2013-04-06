@@ -37,7 +37,9 @@ public class FakeControllerInstance
         return outcomes().ok().
             withHeader( "X-QiWeb-Controller-Method", "index" ).
             as( "text/plain; charset=UTF-8" ).
-            withBody( "It works!\nThis request had the following ID: " + request().identity()
+            withBody( "It works!"
+                      + "\nApplication Mode is: " + application().mode()
+                      + "\nThis request had the following ID: " + request().identity()
                       + "\n\nHeaders: " + request().headers()
                       + "\n\nCookies: " + request().cookies() ).
             build();

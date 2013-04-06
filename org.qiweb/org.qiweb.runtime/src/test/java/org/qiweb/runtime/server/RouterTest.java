@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.runtime.ApplicationInstance;
-import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 
@@ -51,7 +50,7 @@ public class RouterTest
             + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
             + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
             + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" );
-        Application app = new ApplicationInstance( new ConfigInstance(), getClass().getClassLoader(), routesProvider );
+        Application app = new ApplicationInstance( routesProvider );
         httpServer = new HttpServerInstance( "router-test", app );
         httpServer.activateService();
     }

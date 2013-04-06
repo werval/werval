@@ -126,15 +126,19 @@ public final class DevShell
 
             // Application
             Class<?> appClass = appRealm.loadClass( "org.qiweb.api.Application" );
+            Class<?> modeClass = appRealm.loadClass( "org.qiweb.api.Application$Mode" );
             Object appInstance = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" ).
                 getConstructor( new Class<?>[]
             {
+                modeClass,
                 configClass,
                 ClassLoader.class,
                 routesProviderClass
             } ).
                 newInstance( new Object[]
             {
+                // Dev Mode
+                modeClass.getEnumConstants()[0],
                 configInstance,
                 appRealm,
                 routesProviderInstance
