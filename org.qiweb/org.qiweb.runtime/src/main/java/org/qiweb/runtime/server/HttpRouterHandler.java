@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -189,9 +190,11 @@ public final class HttpRouterHandler
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().
-                    writeBytes( streamOutcome.bodyInputStream(), streamOutcome.contentLength() );
+                    writeBytes( streamOutcome.bodyInputStream(),
+                                new BigDecimal( streamOutcome.contentLength() ).intValueExact() );
                 writeFuture = nettyContext.write( nettyResponse );
             }
             else if( outcome instanceof SimpleOutcome )
@@ -200,9 +203,9 @@ public final class HttpRouterHandler
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
-                nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.entity().readableBytes() );
+                nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
-                ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.entity() );
+                ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.body() );
                 writeFuture = nettyContext.write( nettyResponse );
             }
             else

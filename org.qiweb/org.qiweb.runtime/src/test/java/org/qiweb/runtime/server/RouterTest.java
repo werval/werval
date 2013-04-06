@@ -6,6 +6,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.util.EntityUtils;
@@ -66,33 +67,22 @@ public class RouterTest
     public void testRoutes()
         throws Exception
     {
+        assertRoute( new HttpGet( BASE_URL ), 200 );
+        assertRoute( new HttpPost( BASE_URL ), 404 );
+        assertRoute( new HttpGet( BASE_URL + "/foo" ), 200 );
+        assertRoute( new HttpGet( BASE_URL + "/bar" ), 200 );
+        assertRoute( new HttpGet( BASE_URL + "/bazar" ), 404 );
+        assertRoute( new HttpGet( BASE_URL + "/azertyuiop/1234" ), 200 );
+    }
+
+    private void assertRoute( HttpUriRequest request, int expectedStatus )
+        throws IOException
+    {
         HttpClient client = newHttpClientInstance();
 
-        HttpResponse response = client.execute( new HttpGet( BASE_URL ) );
+        HttpResponse response = client.execute( request );
         soutResponse( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-
-        response = client.execute( new HttpPost( BASE_URL ) );
-        soutResponse( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 404 ) );
-
-        response = client.execute( new HttpGet( BASE_URL + "/foo" ) );
-        soutResponse( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-
-        response = client.execute( new HttpGet( BASE_URL + "/bar" ) );
-        soutResponse( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-
-        response = client.execute( new HttpGet( BASE_URL + "/bazar" ) );
-        soutResponse( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 404 ) );
-
-        response = client.execute( new HttpGet( BASE_URL + "/azertyuiop/1234" ) );
-        soutResponse( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-
-        // Thread.sleep( Long.MAX_VALUE );
+        assertThat( response.getStatusLine().getStatusCode(), equalTo( expectedStatus ) );
     }
 
     private HttpClient newHttpClientInstance()

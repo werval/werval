@@ -28,5 +28,7 @@ dependencies {
 
     compile "org.qiweb:org.qiweb.stdlib:$version"
     compile libraries.qi4j_api
+
+    runtime webjars.bootstrap
     
 }

@@ -74,7 +74,7 @@ public class OutcomeBuilderInstance
         extends AbstractOutcome<SimpleOutcome>
     {
 
-        private ByteBuf entity = EMPTY_BUFFER;
+        private ByteBuf body = EMPTY_BUFFER;
 
         public SimpleOutcome( int status )
         {
@@ -86,26 +86,26 @@ public class OutcomeBuilderInstance
             super( status.code() );
         }
 
-        public ByteBuf entity()
+        public ByteBuf body()
         {
-            return entity;
+            return body;
         }
 
         public final SimpleOutcome withoutEntity()
         {
-            entity = EMPTY_BUFFER;
+            body = EMPTY_BUFFER;
             return this;
         }
 
-        public final SimpleOutcome withEntity( ByteBuf entity )
+        public final SimpleOutcome withEntity( ByteBuf body )
         {
-            this.entity = entity;
+            this.body = body;
             return this;
         }
 
-        public final SimpleOutcome withEntity( String entity )
+        public final SimpleOutcome withEntity( String body )
         {
-            this.entity = copiedBuffer( entity, UTF_8 );
+            this.body = copiedBuffer( body, UTF_8 );
             return this;
         }
 
@@ -122,9 +122,9 @@ public class OutcomeBuilderInstance
     {
 
         private final InputStream bodyInputStream;
-        private final int contentLength;
+        private final long contentLength;
 
-        public StreamOutcome( int status, InputStream bodyInputStream, int contentLength )
+        public StreamOutcome( int status, InputStream bodyInputStream, long contentLength )
         {
             super( status );
             this.bodyInputStream = bodyInputStream;
@@ -132,7 +132,7 @@ public class OutcomeBuilderInstance
             withHeader( CONTENT_LENGTH, String.valueOf( contentLength ) );
         }
 
-        private StreamOutcome( HttpResponseStatus status, InputStream input, int contentLength )
+        private StreamOutcome( HttpResponseStatus status, InputStream input, long contentLength )
         {
             this( status.code(), input, contentLength );
         }
@@ -142,7 +142,7 @@ public class OutcomeBuilderInstance
             return bodyInputStream;
         }
 
-        public final int contentLength()
+        public final long contentLength()
         {
             return contentLength;
         }
@@ -179,7 +179,7 @@ public class OutcomeBuilderInstance
     private final MutableHeaders headers;
     private final MutableCookies cookies;
     private Object body = EMPTY_BUFFER;
-    private int length = 0;
+    private long length = 0;
 
     /* package */ OutcomeBuilderInstance( int status, MutableHeaders headers, MutableCookies cookies )
     {
@@ -220,7 +220,7 @@ public class OutcomeBuilderInstance
     }
 
     @Override
-    public OutcomeBuilder withBody( InputStream bodyInputStream, int bodyLength )
+    public OutcomeBuilder withBody( InputStream bodyInputStream, long bodyLength )
     {
         body = bodyInputStream;
         length = bodyLength;

@@ -16,7 +16,7 @@ public interface OutcomeBuilder
 
     OutcomeBuilder withBody( InputStream body );
 
-    OutcomeBuilder withBody( InputStream body, int length );
+    OutcomeBuilder withBody( InputStream body, long length );
 
     Outcome build();
 }

@@ -147,7 +147,7 @@ public class HttpOnDiskRequestAggregator
 
         if( maxContentLength != -1 && bodyFile.length() > maxContentLength - chunk.data().readableBytes() )
         {
-            LOG.warn( "HTTP content length exceeded {} bytes.", maxContentLength );
+            LOG.warn( "Request Entity is too large, content length exceeded {} bytes.", maxContentLength );
             ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", UTF_8 );
             FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, REQUEST_ENTITY_TOO_LARGE, body );
             response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );

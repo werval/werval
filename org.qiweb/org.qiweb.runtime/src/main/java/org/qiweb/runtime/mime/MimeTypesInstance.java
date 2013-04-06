@@ -8,6 +8,11 @@ import java.util.Properties;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
+
+/**
+ * Application MimeType instance.
+ */
 public class MimeTypesInstance
     implements MimeTypes
 {
@@ -35,35 +40,41 @@ public class MimeTypesInstance
     @Override
     public String ofFile( File file )
     {
+        ensureNotNull( "File", file );
         return ofFilename( file.getName() );
     }
 
     @Override
     public String ofPath( String path )
     {
+        ensureNotEmpty( "Path", path );
         return ofFile( new File( path ) );
     }
 
     @Override
     public String ofFilename( String filename )
     {
+        ensureNotEmpty( "Filename", filename );
         int lastDotIndex = filename.lastIndexOf( '.' );
         if( lastDotIndex > 0 )
         {
             return ofExtension( filename.substring( lastDotIndex + 1 ) );
         }
-        return null;
+        return DEFAULT_MIME_TYPE;
     }
 
     @Override
     public String ofExtension( String extension )
     {
-        return extToType.getProperty( extension );
+        ensureNotEmpty( "Extension", extension );
+        String mimeType = extToType.getProperty( extension );
+        return mimeType == null ? DEFAULT_MIME_TYPE : mimeType;
     }
 
     @Override
     public boolean isTextual( String mimetype )
     {
+        ensureNotEmpty( "MimeType", mimetype );
         if( mimetype.startsWith( "text/" ) || mimetype.startsWith( "application/json" ) )
         {
             return true;

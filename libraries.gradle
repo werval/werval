@@ -1,5 +1,6 @@
-// Define libraries used accross QiWeb and their versions
+// Define libraries and webjars used accross QiWeb WDK and their versions
 
+// Libraries versions
 def v_classworlds = '2.4.2'
 def v_gradle_tooling = '1.4'
 def v_httpclient = '4.2.3'
@@ -12,24 +13,51 @@ def v_qi4j = '2.0-SNAPSHOT'
 def v_slf4j = '1.7.2'
 def v_typesafe_config = '1.0.0'
 
+// Libraries extension
 rootProject.ext {
     libraries = [
-        classworlds: "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
-        gradle_tooling: "org.gradle:gradle-tooling-api:$v_gradle_tooling",
-        httpclient: "org.apache.httpcomponents:httpclient:$v_httpclient",
-        jtoolbox: "org.codeartisans:java-toolbox:$v_jtoolbox",
-        jnotify: "net.contentobjects.jnotify:jnotify:$v_jnotify",
-        junit: "junit:junit:$v_junit",
-        logback: "ch.qos.logback:logback-classic:$v_logback",
-        netty_codec_http: "io.netty:netty-codec-http:$v_netty",
-        netty_example: "io.netty:netty-example:$v_netty",
-        qi4j_functional: "org.qi4j.core:org.qi4j.core.functional:$v_qi4j",
-        qi4j_api: "org.qi4j.core:org.qi4j.core.api:$v_qi4j",
-        qi4j_bootstrap: "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
-        qi4j_runtime: "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
-        qi4j_test: "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
-        slf4j: "org.slf4j:slf4j-api:$v_slf4j",
-        typesafe_config: "com.typesafe:config:$v_typesafe_config"
+        classworlds:        "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
+        gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
+        httpclient:         "org.apache.httpcomponents:httpclient:$v_httpclient",
+        jtoolbox:           "org.codeartisans:java-toolbox:$v_jtoolbox",
+        jnotify:            "net.contentobjects.jnotify:jnotify:$v_jnotify",
+        junit:              "junit:junit:$v_junit",
+        logback:            "ch.qos.logback:logback-classic:$v_logback",
+        netty_codec_http:   "io.netty:netty-codec-http:$v_netty",
+        netty_example:      "io.netty:netty-example:$v_netty",
+        qi4j_functional:    "org.qi4j.core:org.qi4j.core.functional:$v_qi4j",
+        qi4j_api:           "org.qi4j.core:org.qi4j.core.api:$v_qi4j",
+        qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
+        qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
+        qi4j_test:          "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
+        slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
+        typesafe_config:    "com.typesafe:config:$v_typesafe_config"
     ]
 }
 
+
+// WebJARs versions
+def v_bootstrap = '2.3.1'
+def v_chartjs = '26962ce'
+def v_choosen = '0.9.8'
+def v_flotcharts = '0.7'
+def v_fontawesome = '3.0.2'
+def v_less = '1.3.3'
+def v_momentjs = '2.0.0'
+def v_pdfjs = '0.5.5'
+def v_spinjs = '1.2.7'
+
+// WebJARs extension
+rootProject.ext {
+    webjars = [
+        bootstrap:          "org.webjars:bootstrap:$v_bootstrap",
+        chartjs:            "org.webjars:chartjs:$v_chartjs",
+        choosen:            "org.webjars:choosen:$v_choosen",
+        flotcharts:         "org.webjars:flot:$v_flotcharts",
+        fontawesome:        "org.webjars:font-awesome:$v_fontawesome",
+        less:               "org.webjars:less:$v_less",
+        momentjs:           "org.webjars:momentjs:$v_momentjs",
+        pdfjs:              "org.webjars:pdf-js:$v_pdfjs",
+        spinjs:             "org.webjars:spin-js:$v_spinjs"
+    ]
+}

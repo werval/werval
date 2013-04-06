@@ -7,10 +7,11 @@
         </encoder>
     </appender>
 
-    <root level="warn">
+    <root level="trace">
         <appender-ref ref="stdout" />
     </root>
 
+    <logger name="io.netty"     level="trace"/>
     <logger name="com.acme.app" level="trace"/>
     <logger name="org.qiweb"    level="trace"/>
 
