@@ -10,6 +10,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -96,16 +98,27 @@ public final class HttpRouterHandler
     @Override
     public void exceptionCaught( ChannelHandlerContext nettyContext, Throwable cause )
     {
-        LOG.warn( "{} Exception caught: {}( {} )",
-                  requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
-                  cause );
-        StringWriter sw = new StringWriter();
-        sw.append( "500 Internal Server Error\n" ).append( cause.getMessage() ).append( "\n" );
-        cause.printStackTrace( new PrintWriter( sw ) );
-        sw.append( "\n\nCurrent Thread Context ClassLoader state:\n\n" );
-        ClassLoaders.printLoadedClasses( Thread.currentThread().getContextClassLoader(), new PrintWriter( sw ) );
-        sw.append( "\n" );
-        sendError( nettyContext, INTERNAL_SERVER_ERROR, sw.toString() );
+        if( cause instanceof ReadTimeoutException )
+        {
+            LOG.debug( "Read timeout, connection has been closed." );
+        }
+        else if( cause instanceof WriteTimeoutException )
+        {
+            LOG.debug( "Write timeout, connection has been closed." );
+        }
+        else
+        {
+            LOG.warn( "{} Exception caught: {}( {} )",
+                      requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
+                      cause );
+            StringWriter sw = new StringWriter();
+            sw.append( "500 Internal Server Error\n" ).append( cause.getMessage() ).append( "\n" );
+            cause.printStackTrace( new PrintWriter( sw ) );
+            sw.append( "\n\nCurrent Thread Context ClassLoader state:\n\n" );
+            ClassLoaders.printLoadedClasses( Thread.currentThread().getContextClassLoader(), new PrintWriter( sw ) );
+            sw.append( "\n" );
+            sendError( nettyContext, INTERNAL_SERVER_ERROR, sw.toString() );
+        }
     }
 
     @Override
@@ -150,9 +163,6 @@ public final class HttpRouterHandler
 
             // Prepare Response
             Response response = new ResponseInstance();
-
-            // FIXME We don't KEEP ALIVE
-            response.headers().withSingle( CONNECTION, CLOSE );
 
             // Set Controller Context
             Context context = new ContextInstance( app, session, request, response );
@@ -217,8 +227,7 @@ public final class HttpRouterHandler
             }
 
             // Close the connection as soon as the response is sent if not keep alive
-            // FIXME We don't KEEP ALIVE
-            if( true || !isKeepAlive( nettyRequest ) )
+            if( !isKeepAlive( nettyRequest ) )
             {
                 writeFuture.addListener( ChannelFutureListener.CLOSE );
             }

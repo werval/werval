@@ -10,6 +10,8 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.ByteLoggingHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.util.Locale;
@@ -18,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
 import org.qiweb.spi.dev.DevShellSPI;
 
+import static java.util.concurrent.TimeUnit.*;
 import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
 
 /* package */ class HttpServerChannelInitializer
@@ -65,6 +68,12 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
                 app.config().getString( "qiweb.http.log.low-level.level" ).toUpperCase( Locale.US ) );
             pipeline.addLast( "byte-logging", new ByteLoggingHandler( level ) );
         }
+
+        // Read/Write Timeout
+        long readTimeout = app.config().getSeconds( "qiweb.http.timeout.read" );
+        long writeTimeout = app.config().getSeconds( "qiweb.http.timeout.write" );
+        pipeline.addLast( "read-timeout", new ReadTimeoutHandler( readTimeout, SECONDS ) );
+        pipeline.addLast( "write-timeout", new WriteTimeoutHandler( writeTimeout, SECONDS ) );
 
         // HTTP Decoding / Encoding
         // HTTP decoders always generates multiple message objects per a single HTTP message:

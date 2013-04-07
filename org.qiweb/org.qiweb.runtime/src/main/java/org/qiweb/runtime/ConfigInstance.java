@@ -98,6 +98,12 @@ public class ConfigInstance
     }
 
     @Override
+    public Long getSeconds( String key )
+    {
+        return getMilliseconds( key ) / 1000;
+    }
+
+    @Override
     public Long getMilliseconds( String key )
     {
         return config.getMilliseconds( key );

@@ -80,6 +80,12 @@ public interface Config
 
     /**
      * @param key Config entry key
+     * @return Config entry value as Long representing seconds
+     */
+    Long getSeconds( String key );
+
+    /**
+     * @param key Config entry key
      * @return Config entry value as Long representing milliseconds
      */
     Long getMilliseconds( String key );
