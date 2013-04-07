@@ -26,7 +26,7 @@ public final class ContextInstance
         this.session = session;
         this.request = request;
         this.response = response;
-        this.outcomes = new OutcomesInstance( response.headers(), response.cookies() );
+        this.outcomes = new OutcomesInstance( application.config(), response.headers(), response.cookies() );
     }
 
     @Override

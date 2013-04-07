@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
-import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.ByteLoggingHandler;
@@ -91,9 +90,6 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         // Aggregate chunked HttpRequests to disk
         // TODO Move the aggregator to SubProtocolSwitchHandler or ensure it won't mangle with WebSockets
         pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( app, -1 ) );
-
-        // GZip compression support
-        pipeline.addLast( "http-compressor", new HttpContentCompressor() );
 
         // Allow to send chunked data
         pipeline.addLast( "chunked-write-handler", new ChunkedWriteHandler() );

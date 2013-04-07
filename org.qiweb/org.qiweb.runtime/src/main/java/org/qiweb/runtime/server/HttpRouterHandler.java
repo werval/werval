@@ -8,8 +8,10 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.stream.ChunkedMessageInput;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
@@ -183,16 +185,20 @@ public final class HttpRouterHandler
             // Headers & Body output
             final HttpResponse nettyResponse;
             final ChannelFuture writeFuture;
+            final boolean forceClose;
             if( outcome instanceof ChunkedOutcome )
             {
                 ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
                 nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
                 // Body
                 nettyContext.write( nettyResponse );
-                writeFuture = nettyContext.write( chunkedOutcome.chunkedInput() );
+                ChunkedMessageInput<HttpContent> bodyEncoder = new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput(),
+                                                                                           chunkedOutcome.chunkSize() );
+                writeFuture = nettyContext.write( bodyEncoder );
             }
             else if( outcome instanceof StreamOutcome )
             {
@@ -200,6 +206,7 @@ public final class HttpRouterHandler
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().
@@ -213,6 +220,7 @@ public final class HttpRouterHandler
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.body() );
@@ -223,11 +231,12 @@ public final class HttpRouterHandler
                 LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
+                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
                 writeFuture = nettyContext.write( nettyResponse );
             }
 
             // Close the connection as soon as the response is sent if not keep alive
-            if( !isKeepAlive( nettyRequest ) )
+            if( forceClose || !isKeepAlive( nettyRequest ) )
             {
                 writeFuture.addListener( ChannelFutureListener.CLOSE );
             }
@@ -266,9 +275,30 @@ public final class HttpRouterHandler
         {
             nettyResponse.headers().add( headerName, outcome.headers().valueOf( headerName ) );
         }
-        if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
+    }
+
+    /**
+     * @return TRUE if the channel should be closed, otherwise return FALSE
+     */
+    private boolean applyKeepAliveHeaders( FullHttpRequest nettyRequest, Outcome outcome, HttpResponse nettyResponse )
+    {
+        switch( outcome.statusClass() )
         {
-            nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
+            case clientError:
+            case serverError:
+            case unknown:
+                if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
+                {
+                    nettyResponse.headers().set( CONNECTION, CLOSE );
+                }
+                // Always close on errors or unknown statuses
+                return true;
+            default:
+                if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
+                {
+                    nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
+                }
+                return false;
         }
     }
 

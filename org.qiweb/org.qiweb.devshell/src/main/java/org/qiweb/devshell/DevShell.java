@@ -121,7 +121,8 @@ public final class DevShell
             {
                 // Routes
                 "GET /favicon.ico org.qiweb.controller.Default.notFound()\n"
-                + "GET / com.acme.app.FakeControllerInstance.index()"
+                + "GET / com.acme.app.FakeControllerInstance.index()\n"
+                + "GET /resources/*path org.qiweb.controller.MetaInfResources.resource( String path )"
             } );
 
             // Application

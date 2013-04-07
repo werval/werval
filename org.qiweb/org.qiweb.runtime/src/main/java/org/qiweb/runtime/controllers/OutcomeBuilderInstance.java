@@ -1,11 +1,11 @@
 package org.qiweb.runtime.controllers;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.stream.ChunkedInput;
 import io.netty.handler.stream.ChunkedStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import org.qiweb.api.Config;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.controllers.OutcomeBuilder;
 import org.qiweb.api.http.Headers;
@@ -44,6 +44,12 @@ public class OutcomeBuilderInstance
         }
 
         @Override
+        public StatusClass statusClass()
+        {
+            return StatusClass.valueOf( status );
+        }
+
+        @Override
         public final Headers headers()
         {
             return headers;
@@ -76,14 +82,9 @@ public class OutcomeBuilderInstance
 
         private ByteBuf body = EMPTY_BUFFER;
 
-        public SimpleOutcome( int status )
+        /* package */ SimpleOutcome( int status )
         {
             super( status );
-        }
-
-        private SimpleOutcome( HttpResponseStatus status )
-        {
-            super( status.code() );
         }
 
         public ByteBuf body()
@@ -91,29 +92,10 @@ public class OutcomeBuilderInstance
             return body;
         }
 
-        public final SimpleOutcome withoutEntity()
-        {
-            body = EMPTY_BUFFER;
-            return this;
-        }
-
-        public final SimpleOutcome withEntity( ByteBuf body )
+        /* package */ final SimpleOutcome withEntity( ByteBuf body )
         {
             this.body = body;
             return this;
-        }
-
-        public final SimpleOutcome withEntity( String body )
-        {
-            this.body = copiedBuffer( body, UTF_8 );
-            return this;
-        }
-
-        public final ChunkedOutcome withEntity( InputStream input )
-        {
-            ChunkedOutcome outcome = new ChunkedOutcome( status() );
-            outcome.headers.withAll( headers );
-            return outcome.withEntity( input );
         }
     }
 
@@ -124,17 +106,12 @@ public class OutcomeBuilderInstance
         private final InputStream bodyInputStream;
         private final long contentLength;
 
-        public StreamOutcome( int status, InputStream bodyInputStream, long contentLength )
+        /* package */ StreamOutcome( int status, InputStream bodyInputStream, long contentLength )
         {
             super( status );
             this.bodyInputStream = bodyInputStream;
             this.contentLength = contentLength;
             withHeader( CONTENT_LENGTH, String.valueOf( contentLength ) );
-        }
-
-        private StreamOutcome( HttpResponseStatus status, InputStream input, long contentLength )
-        {
-            this( status.code(), input, contentLength );
         }
 
         public final InputStream bodyInputStream()
@@ -153,26 +130,23 @@ public class OutcomeBuilderInstance
     {
 
         private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( "".getBytes( UTF_8 ) ) );
+        private int chunkSize;
 
-        public ChunkedOutcome( int status )
+        /* package */ ChunkedOutcome( int status, InputStream input, int chunkSize )
         {
             super( status );
+            this.chunkSize = chunkSize;
+            this.input = new ChunkedStream( input, chunkSize );
         }
 
-        private ChunkedOutcome( HttpResponseStatus status )
+        public int chunkSize()
         {
-            super( status.code() );
+            return chunkSize;
         }
 
         public ChunkedInput<ByteBuf> chunkedInput()
         {
             return input;
-        }
-
-        /* package */ ChunkedOutcome withEntity( InputStream input )
-        {
-            this.input = new ChunkedStream( input );
-            return this;
         }
     }
     private final int status;
@@ -180,12 +154,15 @@ public class OutcomeBuilderInstance
     private final MutableCookies cookies;
     private Object body = EMPTY_BUFFER;
     private long length = 0;
+    private int chunkSize;
 
-    /* package */ OutcomeBuilderInstance( int status, MutableHeaders headers, MutableCookies cookies )
+
+    /* package */ OutcomeBuilderInstance( int status, Config config, MutableHeaders headers, MutableCookies cookies )
     {
         this.status = status;
         this.headers = headers;
         this.cookies = cookies;
+        this.chunkSize = config.getInteger( "qiweb.http.chunksize" );
     }
 
     @Override
@@ -220,6 +197,15 @@ public class OutcomeBuilderInstance
     }
 
     @Override
+    public OutcomeBuilder withBody( InputStream bodyInputStream, int overridenChunkSize )
+    {
+        body = bodyInputStream;
+        length = -1;
+        chunkSize = overridenChunkSize;
+        return this;
+    }
+
+    @Override
     public OutcomeBuilder withBody( InputStream bodyInputStream, long bodyLength )
     {
         body = bodyInputStream;
@@ -246,7 +232,7 @@ public class OutcomeBuilderInstance
             {
                 return new StreamOutcome( status, bodyInputStream, length );
             }
-            return new ChunkedOutcome( status ).withEntity( bodyInputStream );
+            return new ChunkedOutcome( status, bodyInputStream, chunkSize );
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }
