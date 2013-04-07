@@ -3,7 +3,7 @@ dependencies {
 
     compile project( ':org.qiweb.runtime' )
     
-    testCompile libraries.httpclient
+    testCompile project( ':org.qiweb.test' )
     testRuntime webjars.bootstrap
 
 }
