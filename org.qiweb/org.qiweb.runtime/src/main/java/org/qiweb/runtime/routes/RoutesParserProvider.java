@@ -1,6 +1,6 @@
 package org.qiweb.runtime.routes;
 
-import org.qiweb.api.Config;
+import org.qiweb.api.Application;
 import org.qiweb.api.routes.Routes;
 
 public class RoutesParserProvider
@@ -23,8 +23,8 @@ public class RoutesParserProvider
     }
 
     @Override
-    public Routes routes( Config config, ClassLoader loader )
+    public Routes routes( Application application )
     {
-        return RouteBuilder.parseRoutes( config, loader, routesString );
+        return RouteBuilder.parseRoutes( application, routesString );
     }
 }

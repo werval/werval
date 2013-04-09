@@ -19,16 +19,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
 import org.qiweb.api.Application.Mode;
-import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.exceptions.PathBinderException;
+import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
@@ -109,6 +108,11 @@ public final class HttpRouterHandler
         {
             LOG.debug( "Write timeout, connection has been closed." );
         }
+        else if( cause instanceof PathBinderException )
+        {
+            LOG.debug( "PathBinderException, will return 404." );
+            sendError( nettyContext, NOT_FOUND, cause.getMessage() );
+        }
         else
         {
             LOG.warn( "{} Exception caught: {}( {} )",
@@ -158,8 +162,8 @@ public final class HttpRouterHandler
             final Route route = routes.route( requestHeader );
             LOG.debug( "{} Will route request to: {}", requestIdentity, route );
 
-            // Parse route path parameters - TODO Finish this, return a 404 if failed
-            List<Object> pathParams = pathParameters( requestHeader, route );
+            // Bind route path
+            List<Object> pathParams = route.bindPath( app.pathBinders(), requestHeader.path() );
 
             // TODO Eventually UPGRADE to WebSocket
 
@@ -256,19 +260,6 @@ public final class HttpRouterHandler
         {
             contextHelper.clearCurrentThread();
         }
-    }
-
-    private List<Object> pathParameters( RequestHeader requestHeader, Route route )
-    {
-        List<Object> pathParams = new ArrayList<>();
-        for( Entry<String, Class<?>> controllerParam : route.controllerParams().entrySet() )
-        {
-            String paramName = controllerParam.getKey();
-            Class<?> paramType = controllerParam.getValue();
-            String paramStringValue = route.controllerParamPathValue( paramName, requestHeader.path() );
-            pathParams.add( app.pathBinders().bind( paramType, paramName, paramStringValue ) );
-        }
-        return pathParams;
     }
 
     private void applyHeaders( HttpResponse nettyResponse, Response response, Outcome outcome, FullHttpRequest nettyRequest )

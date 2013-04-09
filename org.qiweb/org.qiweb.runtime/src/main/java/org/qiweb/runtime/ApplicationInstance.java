@@ -86,7 +86,7 @@ public final class ApplicationInstance
     @Override
     public Routes routes()
     {
-        return routesProvider.routes( config, classLoader );
+        return routesProvider.routes( this );
     }
 
     @Override

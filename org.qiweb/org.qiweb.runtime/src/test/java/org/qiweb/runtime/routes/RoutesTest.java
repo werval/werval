@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
+import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
@@ -193,12 +196,13 @@ public class RoutesTest
     public void givenUnderTestRoutesWhenParsingExpectCorrectResult()
         throws Exception
     {
+        Application app = new ApplicationInstance( new RoutesParserProvider() );
         for( RoutesToTest refRoute : RoutesToTest.values() )
         {
             System.out.println( "Parsing route: " + refRoute.routeString );
             try
             {
-                Route route = RouteBuilder.parseRoute( config, refRoute.routeString );
+                Route route = RouteBuilder.parseRoute( app, refRoute.routeString );
                 System.out.println( "Parsed  route: " + route );
                 assertRoute( route, refRoute );
             }
@@ -215,14 +219,13 @@ public class RoutesTest
     @Test
     public void givenMultipleRoutesStringWhenParsingExpectCorrectRoutes()
     {
-        Routes routes = RouteBuilder.parseRoutes(
-            config,
-            "\n" + RoutesToTest.ANOTHER.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.TEST.routeString + "\n" );
+        Application app = new ApplicationInstance( new RoutesParserProvider(
+            "\n" + RoutesToTest.ANOTHER.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.TEST.routeString + "\n" ) );
 
-        assertThat( count( routes ), is( 2L ) );
+        assertThat( count( app.routes() ), is( 2L ) );
 
-        Route one = first( routes );
-        Route two = first( skip( 1, routes ) );
+        Route one = first( app.routes() );
+        Route two = first( skip( 1, app.routes() ) );
 
         assertRoute( one, RoutesToTest.ANOTHER );
         assertRoute( two, RoutesToTest.TEST );
@@ -231,10 +234,11 @@ public class RoutesTest
     @Test
     public void givenRoutesWhenMatchingExpectCorrectRoutes()
     {
-        Route index = RouteBuilder.parseRoute( config, "GET / " + FakeController.class.getName() + ".index()" );
-        Route foo = RouteBuilder.parseRoute( config, "GET /foo " + FakeController.class.getName() + ".foo()" );
-        Route bar = RouteBuilder.parseRoute( config, "GET /bar " + FakeController.class.getName() + ".bar()" );
-        Route another = RouteBuilder.parseRoute( config, "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
+        Application app = new ApplicationInstance( new RoutesParserProvider() );
+        Route index = RouteBuilder.parseRoute( app, "GET / " + FakeController.class.getName() + ".index()" );
+        Route foo = RouteBuilder.parseRoute( app, "GET /foo " + FakeController.class.getName() + ".foo()" );
+        Route bar = RouteBuilder.parseRoute( app, "GET /bar " + FakeController.class.getName() + ".bar()" );
+        Route another = RouteBuilder.parseRoute( app, "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
 
         Routes routes = RouteBuilder.routes( index, foo, bar, another );
 
@@ -257,15 +261,15 @@ public class RoutesTest
         assertThat( "URI/Path", route.path(), equalTo( refRoute.path ) );
         assertThat( "Controller Type", route.controllerType().getName(), equalTo( refRoute.controllerType.getName() ) );
         assertThat( "Controller Method", route.controllerMethodName(), equalTo( refRoute.controllerMethod ) );
-        assertThat( "Parameters Count", count( route.controllerParams().keySet() ), equalTo( count( refRoute.pathParams.keySet() ) ) );
+        assertThat( "Parameters Count", count( ( (RouteInstance) route ).controllerParams().names() ), equalTo( count( refRoute.pathParams.keySet() ) ) );
         assertThat( "Modifiers Count", count( route.modifiers() ), equalTo( count( refRoute.modifiers ) ) );
 
-        Map<String, Class<?>> routeParameters = new LinkedHashMap<>( route.controllerParams() );
+        ControllerParamsInstance routeParameters = (ControllerParamsInstance) ( (RouteInstance) route ).controllerParams();
         Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.pathParams );
-        for( Entry<String, Class<?>> routeEntry : routeParameters.entrySet() )
+        for( Entry<String, ControllerParam> routeEntry : routeParameters.asMap().entrySet() )
         {
             String routeParamName = routeEntry.getKey();
-            assertThat( "Parameter " + routeParamName, routeEntry.getValue().getName(), equalTo( refRouteParameters.get( routeParamName ).getName() ) );
+            assertThat( "Parameter " + routeParamName, routeEntry.getValue().type().getName(), equalTo( refRouteParameters.get( routeParamName ).getName() ) );
         }
 
         List<String> routeModifiers = new ArrayList<>( route.modifiers() );

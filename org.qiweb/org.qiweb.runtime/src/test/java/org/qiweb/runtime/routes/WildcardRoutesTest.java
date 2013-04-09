@@ -2,10 +2,11 @@ package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
 import org.junit.Test;
-import org.qiweb.api.Config;
+import org.qiweb.api.Application;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
-import org.qiweb.runtime.ConfigInstance;
+import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
@@ -20,43 +21,49 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
 public class WildcardRoutesTest
 {
 
-    private final Config config = new ConfigInstance();
-
     @Test
     public void testAPI()
     {
-        Route route = route( "GET" ).on( "/test/*path/as/file" ).
-            to( FakeController.class, new MethodRecorder<FakeController>()
+        Application application = new ApplicationInstance( new RoutesProvider()
         {
             @Override
-            protected void call( FakeController controller )
+            public Routes routes( Application application )
             {
-                controller.wild( p( "path", String.class ) );
+                return RouteBuilder.routes( route( "GET" ).on( "/test/*path/as/file" ).
+                    to( FakeController.class, new MethodRecorder<FakeController>()
+                {
+                    @Override
+                    protected void call( FakeController controller )
+                    {
+                        controller.wild( p( "path", String.class ) );
+                    }
+                } ).newInstance() );
             }
-        } ).newInstance();
+        } );
+        Route route = application.routes().iterator().next();
         System.out.println( route );
-        assertWilcardRoute( route );
+        assertWilcardRoute( application, route );
     }
 
     @Test
     public void testWildcardRoutes()
     {
-        Route route = RouteBuilder.parseRoute(
-            config,
-            "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )" );
+        Application application = new ApplicationInstance( new RoutesParserProvider(
+            "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )" ) );
+        Route route = application.routes().iterator().next();
         System.out.println( route );
-        assertWilcardRoute( route );
+        assertWilcardRoute( application, route );
     }
 
-    private void assertWilcardRoute( Route route )
+    private void assertWilcardRoute( Application application, Route route )
     {
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/as/file" ) ), is( false ) );
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/foo/as/file" ) ), is( true ) );
-        assertThat( route.controllerParamPathValue( "path", "/test/foo/as/file" ), equalTo( "foo" ) );
+        assertThat( (String) route.bindPath( application.pathBinders(), "/test/foo/as/file" ).get( 0 ), equalTo( "foo" ) );
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/foo/bar/as/file" ) ), is( true ) );
-        assertThat( route.controllerParamPathValue( "path", "/test/foo/bar/as/file" ), equalTo( "foo/bar" ) );
+        assertThat( (String) route.bindPath( application.pathBinders(), "/test/foo/bar/as/file" ).get( 0 ), equalTo( "foo/bar" ) );
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/as/file/test/bar/as/file" ) ), is( true ) );
-        assertThat( route.controllerParamPathValue( "path", "/test/as/file/test/bar/as/file" ), equalTo( "as/file/test/bar" ) );
+        assertThat( (String) route.bindPath( application.pathBinders(), "/test/as/file/test/bar/as/file" ).get( 0 ), equalTo( "as/file/test/bar" ) );
     }
 
     private RequestHeader reqHeadForGet( String path )

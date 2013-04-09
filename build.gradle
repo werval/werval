@@ -1,4 +1,4 @@
-// QiWeb Root Build
+// QiWeb WDK Root Build
 //
 // Simple Gradle build that provide quick tasks accross other builds in
 // subdirectories. It is also the holder of the Gradle Wrapper task.
