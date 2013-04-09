@@ -14,7 +14,6 @@ import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
  * <p>MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.</p>
  * <p>Log 404 at DEBUG level.</p>
  * <p>Log 200 at TRACE level.</p>
- * <p>Log directory traversal attempts at WARN level.</p>
  */
 public class MetaInfResources
     extends Controller
@@ -51,14 +50,14 @@ public class MetaInfResources
         InputStream input = application().classLoader().getResourceAsStream( fullPath );
         if( input == null )
         {
-            LOG.trace( "Requested resource '{}' not found at '{}'", path, fullPath );
+            LOG.debug( "Requested resource '{}' not found at '{}'", path, fullPath );
             return outcomes().
                 notFound().
                 as( "text/plain" ).
                 withBody( request().path() + " not found" ).
                 build();
         }
-        LOG.debug( "Will serve '{}' from '{}' with mimetype '{}'", path, fullPath, mimetype );
+        LOG.trace( "Will serve '{}' from '{}' with mimetype '{}'", path, fullPath, mimetype );
         return outcomes().ok().as( mimetype ).withBody( input ).build();
     }
 }
