@@ -3,6 +3,7 @@ package org.qiweb.runtime.routes;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -298,22 +299,26 @@ public final class RouteBuilder
             // First try parameter FQCN
             return loader.loadClass( paramTypeName );
         }
-        catch( ClassNotFoundException originalException )
+        catch( ClassNotFoundException fqcnNotFound )
         {
+            LOG.trace( "Param type {} not found", paramTypeName, fqcnNotFound );
+            List<String> typesTried = new ArrayList<>();
+            typesTried.add( paramTypeName );
             // Try in configured imported packages
             List<String> importedPackages = config.getStringList( "qiweb.routes.imported-packages" );
             for( String importedPackage : importedPackages )
             {
+                String fqcn = importedPackage + "." + paramTypeName;
                 try
                 {
-                    return loader.loadClass( importedPackage + "." + paramTypeName );
+                    return loader.loadClass( fqcn );
                 }
-                catch( ClassNotFoundException ignored )
+                catch( ClassNotFoundException importedNotFound )
                 {
-                    LOG.trace( "Param type {} not found in {}", paramTypeName, importedPackage, ignored );
+                    LOG.trace( "Param type {} not found in {}", paramTypeName, importedPackage, importedNotFound );
                 }
             }
-            throw originalException;
+            throw new ClassNotFoundException( "Param type not found, tried " + typesTried.toString() );
         }
     }
 
