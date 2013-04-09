@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
+import org.qiweb.api.Application.Mode;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
@@ -114,11 +115,16 @@ public final class HttpRouterHandler
                       requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
                       cause );
             StringWriter sw = new StringWriter();
-            sw.append( "500 Internal Server Error\n" ).append( cause.getMessage() ).append( "\n" );
-            cause.printStackTrace( new PrintWriter( sw ) );
-            sw.append( "\n\nCurrent Thread Context ClassLoader state:\n\n" );
-            ClassLoaders.printLoadedClasses( Thread.currentThread().getContextClassLoader(), new PrintWriter( sw ) );
-            sw.append( "\n" );
+            sw.append( "500 Internal Server Error\n" );
+            if( app.mode() == Mode.dev )
+            {
+                // In development mode we want stacktrace, thread context and classloaders state
+                sw.append( cause.getMessage() ).append( "\n" );
+                cause.printStackTrace( new PrintWriter( sw ) );
+                sw.append( "\n\nCurrent Thread Context ClassLoader state:\n\n" );
+                ClassLoaders.printLoadedClasses( Thread.currentThread().getContextClassLoader(), new PrintWriter( sw ) );
+                sw.append( "\n" );
+            }
             sendError( nettyContext, INTERNAL_SERVER_ERROR, sw.toString() );
         }
     }
