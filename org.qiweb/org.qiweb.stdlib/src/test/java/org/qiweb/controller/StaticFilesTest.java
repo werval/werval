@@ -38,6 +38,15 @@ public class StaticFilesTest
     }
 
     @Test
+    public void givenTreeStaticFileRouteWhenRequestingDirectoryExpectIndexFile()
+        throws Exception
+    {
+        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "tree/staticfiles/" ) );
+        soutResponseHead( response );
+        assertFileResponse( response, new File( ROOT, "staticfiles/index.html" ) );
+    }
+
+    @Test
     public void givenTreeStaticFilesRouteWhenRequestingExpectCorrectResult()
         throws Exception
     {

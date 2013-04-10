@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.qiweb.api.Config;
 import org.qiweb.api.controllers.OutcomeBuilder;
+import org.qiweb.api.controllers.Outcomes;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.runtime.util.URLs;
@@ -16,7 +17,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.*;
  * Outcomes instance.
  */
 public class OutcomesInstance
-    implements org.qiweb.api.controllers.Outcomes
+    implements Outcomes
 {
 
     private final Config config;

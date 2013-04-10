@@ -55,20 +55,6 @@ public class OutcomeBuilderInstance
             return headers;
         }
 
-        @SuppressWarnings( "unchecked" )
-        public final T withHeader( String name, String value )
-        {
-            headers.with( name, value );
-            return (T) this;
-        }
-
-        @SuppressWarnings( "unchecked" )
-        public final T as( String contentType )
-        {
-            headers.withSingle( CONTENT_TYPE, contentType );
-            return (T) this;
-        }
-
         @Override
         public String toString()
         {
@@ -111,7 +97,7 @@ public class OutcomeBuilderInstance
             super( status );
             this.bodyInputStream = bodyInputStream;
             this.contentLength = contentLength;
-            withHeader( CONTENT_LENGTH, String.valueOf( contentLength ) );
+            this.headers.with( CONTENT_LENGTH, String.valueOf( contentLength ) );
         }
 
         public final InputStream bodyInputStream()
@@ -135,18 +121,18 @@ public class OutcomeBuilderInstance
         /* package */ ChunkedOutcome( int status, InputStream input, int chunkSize )
         {
             super( status );
-            this.chunkSize = chunkSize;
             this.input = new ChunkedStream( input, chunkSize );
-        }
-
-        public int chunkSize()
-        {
-            return chunkSize;
+            this.chunkSize = chunkSize;
         }
 
         public ChunkedInput<ByteBuf> chunkedInput()
         {
             return input;
+        }
+
+        public int chunkSize()
+        {
+            return chunkSize;
         }
     }
     private final int status;
@@ -175,7 +161,7 @@ public class OutcomeBuilderInstance
     @Override
     public OutcomeBuilder as( String contentType )
     {
-        headers.withSingle( "Content-Type", contentType );
+        headers.withSingle( CONTENT_TYPE, contentType );
         return this;
     }
 

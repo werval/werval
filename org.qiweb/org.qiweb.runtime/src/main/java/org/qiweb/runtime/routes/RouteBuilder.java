@@ -356,7 +356,7 @@ public final class RouteBuilder
         }
         catch( ClassNotFoundException fqcnNotFound )
         {
-            LOG.trace( "Param type {} not found", paramTypeName, fqcnNotFound );
+            LOG.trace( "Lookup Param Type - {} not found", paramTypeName );
             List<String> typesTried = new ArrayList<>();
             typesTried.add( paramTypeName );
             // Try in configured imported packages
@@ -366,11 +366,13 @@ public final class RouteBuilder
                 String fqcn = importedPackage + "." + paramTypeName;
                 try
                 {
-                    return application.classLoader().loadClass( fqcn );
+                    Class<?> clazz = application.classLoader().loadClass( fqcn );
+                    LOG.trace( "Lookup Param Type - {} found", fqcn );
+                    return clazz;
                 }
                 catch( ClassNotFoundException importedNotFound )
                 {
-                    LOG.trace( "Param type {} not found in {}", paramTypeName, importedPackage, importedNotFound );
+                    LOG.trace( "Lookup Param Type - {} not found", fqcn );
                 }
             }
             throw new ClassNotFoundException( "Param type not found, tried " + typesTried.toString() );

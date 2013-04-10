@@ -49,6 +49,7 @@ import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.TRAILER;
 import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
 import static io.netty.handler.codec.http.HttpHeaders.Values.CHUNKED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
@@ -204,6 +205,7 @@ public final class HttpRouterHandler
                 applyHeaders( nettyResponse, response, outcome, nettyRequest );
                 forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
+                nettyResponse.headers().set( TRAILER, HttpChunkedBodyEncoder.CONTENT_LENGTH_TRAILER );
                 // Body
                 nettyContext.write( nettyResponse );
                 ChunkedMessageInput<HttpContent> bodyEncoder = new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput(),
