@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
+import static io.netty.util.CharsetUtil.*;
 import static org.codeartisans.java.toolbox.Strings.*;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
 
@@ -142,7 +143,7 @@ public class StaticFiles
             return outcomes().
                 badRequest().
                 as( "text/plain" ).
-                withBody( "Did you just attempted a directory traversal attack? Keep out." ).
+                withBody( "You just attempted a directory traversal attack, did you?" ).
                 build();
         }
         if( !file.isFile() )
@@ -212,13 +213,29 @@ public class StaticFiles
         mimetype = application().mimeTypes().isTextual( mimetype )
                    ? mimetype + "; charset=utf-8"
                    : mimetype;
+        response().headers().with( CONTENT_TYPE, mimetype );
+
+        // Disposition and filename
+        String filename = US_ASCII.newEncoder().canEncode( file.getName() )
+                          ? "; filename=\"" + file.getName() + "\""
+                          : "; filename*=utf-8; filename=\"" + file.getName() + "\"";
+        if( "application/octet-stream".equals( mimetype ) )
+        {
+            // Browser will prompt the user, we should provide a filename
+            response().headers().with( "Content-Disposition", "attachment" + filename );
+        }
+        else
+        {
+            // Tell the browser to attempt to display the file and provide a filename in case it cannot
+            response().headers().with( "Content-Disposition", "inline" + filename );
+        }
 
         // Service
         try
         {
             LOG.trace( "Outcome will stream '{}' as '{}'", file, mimetype );
-            return outcomes().ok().
-                as( mimetype ).
+            return outcomes().
+                ok().
                 withBody( new FileInputStream( file ), file.length() ).
                 build();
         }
