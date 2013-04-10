@@ -4,22 +4,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.runtime.util.Dates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.netty.handler.codec.http.HttpHeaders.Names.*;
+import static org.codeartisans.java.toolbox.Strings.*;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
 
 /**
  * Controller to serve static files or directory tree.
+ * <p>Cache behaviour can be tweeked with <code>qiweb.stdlib.staticfiles</code> config properties.</p>
  * <p>Always use streamed identity transfer encoding.</p>
  * <p>MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.</p>
  * <p>Log 404 at DEBUG level.</p>
  * <p>Log 200 at TRACE level.</p>
  */
-// TODO Add Cache handling in StaticFiles
 // TODO Add Range request support in StaticFiles
 public class StaticFiles
     extends Controller
@@ -144,10 +150,70 @@ public class StaticFiles
             LOG.debug( "Requested file '{}' not found", file );
             return outcomes().notFound().build();
         }
+
+        // Cache-Control
+        if( application().mode() == Mode.dev )
+        {
+            response().headers().with( CACHE_CONTROL, "no-cache" );
+        }
+        else
+        {
+            Long maxAge = application().config().getSeconds( "qiweb.stdlib.staticfiles.cache.maxage" );
+            if( maxAge.equals( 0L ) )
+            {
+                response().headers().with( CACHE_CONTROL, "no-cache" );
+            }
+            else
+            {
+                response().headers().with( CACHE_CONTROL, "max-age=" + maxAge );
+            }
+        }
+        // ETag
+        long lastModified = file.lastModified();
+        final String etag = "\"" + lastModified + "-" + file.hashCode() + "\"";
+        if( application().config().getBoolean( "qiweb.stdlib.staticfiles.cache.etag" ) )
+        {
+            response().headers().with( ETAG, etag );
+        }
+        // If-None-Match, If-Modified-Since & Last-Modified
+        boolean notModified = false;
+        if( request().headers().names().contains( IF_NONE_MATCH ) )
+        {
+            notModified = request().headers().valueOf( IF_NONE_MATCH ).equals( etag );
+        }
+        if( request().headers().names().contains( IF_MODIFIED_SINCE ) )
+        {
+            String ifModifiedSince = request().headers().valueOf( IF_MODIFIED_SINCE );
+            if( !isEmpty( ifModifiedSince ) )
+            {
+                try
+                {
+                    if( Dates.httpFormat().parse( ifModifiedSince ).getTime() >= lastModified )
+                    {
+                        notModified = true;
+                    }
+                }
+                catch( ParseException ex )
+                {
+                    LOG.warn( "Unable to parse HTTP date: " + ifModifiedSince, ex );
+                }
+            }
+        }
+
+        // 304 Not-Modified or 200 Last-Modified
+        if( notModified )
+        {
+            return outcomes().notModified().build();
+        }
+        response().headers().with( LAST_MODIFIED, Dates.httpFormat().format( new Date( lastModified ) ) );
+
+        // MimeType
         String mimetype = application().mimeTypes().ofFile( file );
         mimetype = application().mimeTypes().isTextual( mimetype )
                    ? mimetype + "; charset=utf-8"
                    : mimetype;
+
+        // Service
         try
         {
             LOG.trace( "Outcome will stream '{}' as '{}'", file, mimetype );
