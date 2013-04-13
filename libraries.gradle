@@ -10,28 +10,34 @@ def v_junit = '4.11'
 def v_logback = '1.0.9'
 def v_netty = '4.0.0.CR1'
 def v_qi4j = '2.0-SNAPSHOT'
+def v_selenium = '2.32.0'
 def v_slf4j = '1.7.2'
 def v_typesafe_config = '1.0.0'
 
 // Libraries extension
 rootProject.ext {
-    libraries = [
-        classworlds:        "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
-        gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
-        httpclient:         "org.apache.httpcomponents:httpclient:$v_httpclient",
+    libs = [
         jtoolbox:           "org.codeartisans:java-toolbox:$v_jtoolbox",
-        jnotify:            "net.contentobjects.jnotify:jnotify:$v_jnotify",
-        junit:              "junit:junit:$v_junit",
         logback:            "ch.qos.logback:logback-classic:$v_logback",
         netty_codec_http:   "io.netty:netty-codec-http:$v_netty",
         netty_example:      "io.netty:netty-example:$v_netty",
         qi4j_functional:    "org.qi4j.core:org.qi4j.core.functional:$v_qi4j",
+        slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
+        typesafe_config:    "com.typesafe:config:$v_typesafe_config",
+
+        // DevShell Only Libraries
+        classworlds:        "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
+        gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
+        jnotify:            "net.contentobjects.jnotify:jnotify:$v_jnotify",
+        
+        // Test Only Libraries
+        httpclient:         "org.apache.httpcomponents:httpclient:$v_httpclient",
+        junit:              "junit:junit:$v_junit",
         qi4j_api:           "org.qi4j.core:org.qi4j.core.api:$v_qi4j",
         qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
         qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
         qi4j_test:          "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
-        slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
-        typesafe_config:    "com.typesafe:config:$v_typesafe_config"
+        selenium:           "org.seleniumhq.selenium:selenium-java:$v_selenium",
     ]
 }
 
@@ -58,6 +64,6 @@ rootProject.ext {
         less:               "org.webjars:less:$v_less",
         momentjs:           "org.webjars:momentjs:$v_momentjs",
         pdfjs:              "org.webjars:pdf-js:$v_pdfjs",
-        spinjs:             "org.webjars:spin-js:$v_spinjs"
+        spinjs:             "org.webjars:spin-js:$v_spinjs",
     ]
 }

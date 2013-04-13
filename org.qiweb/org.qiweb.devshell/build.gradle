@@ -2,8 +2,8 @@
 dependencies {
 
     compile project( ":org.qiweb.stdlib" )
-    compile libraries.classworlds
-    compile libraries.jnotify
+    compile libs.classworlds
+    compile libs.jnotify
     
 }
 

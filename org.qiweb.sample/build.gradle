@@ -27,8 +27,11 @@ qiweb {
 dependencies {
 
     compile "org.qiweb:org.qiweb.stdlib:$version"
-    compile libraries.qi4j_api
+    compile libs.qi4j_api
 
     runtime webjars.bootstrap
-    
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.junit
+    // testCompile libs.selenium
 }

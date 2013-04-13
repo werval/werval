@@ -4,6 +4,8 @@ dependencies {
     compile project( ':org.qiweb.runtime' )
     
     testCompile project( ':org.qiweb.test' )
+    // testCompile libs.selenium
+    
     testRuntime webjars.bootstrap
 
 }

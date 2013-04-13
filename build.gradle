@@ -40,6 +40,37 @@ task clean(
     description: 'Clean org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
 
 
+// Check
+//
+task _check_org_qiweb( type: GradleBuild, description: 'Check org.qiweb' ) {
+    buildFile = 'org.qiweb/build.gradle'
+    tasks = [ 'check' ]
+}
+task _check_org_qiweb_gradle( type: GradleBuild, description: 'Check org.qiweb.gradle' ) {
+    buildFile = 'org.qiweb.gradle/build.gradle'
+    tasks = [ 'check' ]
+}
+task _check_org_qiweb_maven( type: Exec, description: 'Check org.qiweb.maven' ) {
+    commandLine = [ 'mvn', '-nsu', '-f', 'org.qiweb.maven/pom.xml', 'package' ]
+}
+task _check_org_qiweb_sample_gradle( type: GradleBuild, description: 'Check org.qiweb.sample using Gradle' ) {
+    buildFile = 'org.qiweb.sample/build.gradle'
+    tasks = [ 'check' ]
+}
+task _check_org_qiweb_sample_maven( type: Exec, description: 'Check org.qiweb.sample using Maven') {
+    commandLine = [ 'mvn', '-nsu', '-f', 'org.qiweb.sample/pom.xml', 'package' ]
+}
+task check( 
+    dependsOn: [ 
+        _check_org_qiweb, 
+        _check_org_qiweb_gradle, 
+        _check_org_qiweb_maven, 
+        _check_org_qiweb_sample_gradle, 
+        _check_org_qiweb_sample_maven 
+    ],
+    description: 'Check org.qiweb, org.qiweb.gradle and org.qiweb.sample' ) { }
+
+
 // Assemble
 //
 task _assemble_org_qiweb( type: GradleBuild, description: 'Assemble org.qiweb' ) {
