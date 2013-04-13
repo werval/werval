@@ -1,9 +1,7 @@
 package org.qiweb.test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
@@ -36,11 +34,12 @@ public abstract class AbstractQiWebTest
         throws Exception
     {
         httpServer.passivateService();
+        httpServer = null;
     }
 
     protected abstract String routesString();
 
-    protected final HttpClient newHttpClientInstance()
+    protected final DefaultHttpClient newHttpClientInstance()
     {
         DefaultHttpClient client = new DefaultHttpClient( new BasicClientConnectionManager() );
         client.setHttpRequestRetryHandler( new DefaultHttpRequestRetryHandler( 0, false ) );

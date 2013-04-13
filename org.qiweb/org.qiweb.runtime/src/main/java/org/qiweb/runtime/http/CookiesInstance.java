@@ -49,6 +49,23 @@ public class CookiesInstance
     }
 
     @Override
+    public MutableCookies set( String name, String value )
+    {
+        // TODO Implement serious Cookie handling
+        cookies.put( name, new CookieInstance( name, "", "", false, value, true ) );
+        return this;
+    }
+
+    @Override
+    public MutableCookies invalidate( String name )
+    {
+        // TODO Add expires NOW to remove the cookie from the browser asap
+        // See http://stackoverflow.com/questions/5285940/correct-way-to-delete-cookies-server-side
+        cookies.put( name, new CookieInstance( name, "", "", false, "", true ) );
+        return this;
+    }
+
+    @Override
     public Iterator<Cookie> iterator()
     {
         return Collections.unmodifiableCollection( cookies.values() ).iterator();

@@ -28,6 +28,8 @@ import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.PathBinderException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.Cookies.Cookie;
+import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
@@ -202,8 +204,7 @@ public final class HttpRouterHandler
                 ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
                 nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                applyHeaders( nettyResponse, response, outcome, nettyRequest );
-                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
                 nettyResponse.headers().set( TRAILER, HttpChunkedBodyEncoder.CONTENT_LENGTH_TRAILER );
                 // Body
@@ -217,8 +218,7 @@ public final class HttpRouterHandler
                 StreamOutcome streamOutcome = (StreamOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                applyHeaders( nettyResponse, response, outcome, nettyRequest );
-                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().
@@ -231,8 +231,7 @@ public final class HttpRouterHandler
                 SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                applyHeaders( nettyResponse, response, outcome, nettyRequest );
-                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.body() );
@@ -242,8 +241,7 @@ public final class HttpRouterHandler
             {
                 LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                applyHeaders( nettyResponse, response, outcome, nettyRequest );
-                forceClose = applyKeepAliveHeaders( nettyRequest, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
                 writeFuture = nettyContext.write( nettyResponse );
             }
 
@@ -264,22 +262,30 @@ public final class HttpRouterHandler
         }
     }
 
-    private void applyHeaders( HttpResponse nettyResponse, Response response, Outcome outcome, FullHttpRequest nettyRequest )
+    /**
+     * @return TRUE if the channel should be closed, otherwise return FALSE
+     */
+    private boolean applyResponseHeader( FullHttpRequest nettyRequest, Response response, Outcome outcome, HttpResponse nettyResponse )
     {
-        for( String headerName : response.headers().names() )
+        applyHttpHeaders( response.headers(), nettyResponse );
+        applyHttpHeaders( outcome.headers(), nettyResponse );
+        boolean forceClose = applyKeepAliveHttpHeaders( nettyRequest, outcome, nettyResponse );
+        applyCookies( response, nettyResponse );
+        return forceClose;
+    }
+
+    private void applyHttpHeaders( Headers headers, HttpResponse nettyResponse )
+    {
+        for( String name : headers.names() )
         {
-            nettyResponse.headers().add( headerName, response.headers().valueOf( headerName ) );
-        }
-        for( String headerName : outcome.headers().names() )
-        {
-            nettyResponse.headers().add( headerName, outcome.headers().valueOf( headerName ) );
+            nettyResponse.headers().add( name, headers.valueOf( name ) );
         }
     }
 
     /**
      * @return TRUE if the channel should be closed, otherwise return FALSE
      */
-    private boolean applyKeepAliveHeaders( FullHttpRequest nettyRequest, Outcome outcome, HttpResponse nettyResponse )
+    private boolean applyKeepAliveHttpHeaders( FullHttpRequest nettyRequest, Outcome outcome, HttpResponse nettyResponse )
     {
         switch( outcome.statusClass() )
         {
@@ -298,6 +304,15 @@ public final class HttpRouterHandler
                     nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
                 }
                 return false;
+        }
+    }
+
+    private void applyCookies( Response response, HttpResponse nettyResponse )
+    {
+        // TODO Implement serious Cookie handling
+        for( Cookie cookie : response.cookies() )
+        {
+            nettyResponse.headers().add( "Set-Cookie", cookie.name() + "=" + cookie.value() );
         }
     }
 
