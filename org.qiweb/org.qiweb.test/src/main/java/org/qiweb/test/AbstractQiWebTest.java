@@ -1,10 +1,12 @@
 package org.qiweb.test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
+import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Application;
@@ -13,18 +15,21 @@ import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.server.HttpServerInstance;
 
+import static io.netty.util.CharsetUtil.UTF_8;
+
 public abstract class AbstractQiWebTest
 {
 
     protected static final String BASE_URL = "http://127.0.0.1:23023/";
     private HttpServerInstance httpServer;
+    private Application app;
 
     @Before
     public final void beforeEachTest()
         throws Exception
     {
         RoutesProvider routesProvider = new RoutesParserProvider( routesString() );
-        Application app = new ApplicationInstance( routesProvider );
+        app = new ApplicationInstance( routesProvider );
         httpServer = new HttpServerInstance( "meta-inf-resources-test", app );
         httpServer.activateService();
     }
@@ -35,9 +40,15 @@ public abstract class AbstractQiWebTest
     {
         httpServer.passivateService();
         httpServer = null;
+        app = null;
     }
 
     protected abstract String routesString();
+
+    protected final Application application()
+    {
+        return app;
+    }
 
     protected final DefaultHttpClient newHttpClientInstance()
     {
@@ -50,5 +61,11 @@ public abstract class AbstractQiWebTest
     {
         System.out.println( "RESPONSE STATUS:  " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase() );
         System.out.println( "RESPONSE HEADERS: " + Arrays.toString( response.getAllHeaders() ) );
+    }
+
+    protected final String responseBodyAsString( HttpResponse response )
+        throws IOException
+    {
+        return EntityUtils.toString( response.getEntity(), UTF_8 );
     }
 }
