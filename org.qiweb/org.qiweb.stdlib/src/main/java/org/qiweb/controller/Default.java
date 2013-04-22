@@ -18,7 +18,7 @@ public class Default
      */
     public Outcome notFound()
     {
-        return outcomes().notFound().build();
+        return outcomes().notFound().withBody( "404 Not Found" ).build();
     }
 
     /**
@@ -58,7 +58,7 @@ public class Default
      */
     public Outcome internalServerError()
     {
-        return outcomes().internalServerError().build();
+        return outcomes().internalServerError().withBody( "500 Internal Server Error" ).build();
     }
 
     /**
@@ -66,6 +66,6 @@ public class Default
      */
     public Outcome notImplemented()
     {
-        return outcomes().notImplemented().build();
+        return outcomes().notImplemented().withBody( "501 Not Implemented" ).build();
     }
 }
