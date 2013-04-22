@@ -40,3 +40,4 @@ task updateMimeTypes( description: 'Upgrade mime.types from Apache source code' 
         if( output!=null ) output.close();
     }
 }
+updateMimeTypes.onlyIf { project.hasProperty('updateMimeTypes') }
