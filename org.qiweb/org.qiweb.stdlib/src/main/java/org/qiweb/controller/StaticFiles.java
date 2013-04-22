@@ -3,8 +3,6 @@ package org.qiweb.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Date;
@@ -47,7 +45,6 @@ public class StaticFiles
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome tree( String root, String path )
-        throws IOException
     {
         ensureNotEmpty( "Root", root );
         return tree( new File( root ), path );
@@ -64,7 +61,6 @@ public class StaticFiles
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome tree( Path root, String path )
-        throws IOException
     {
         ensureNotNull( "Root", root );
         return tree( root.toFile(), path );
@@ -81,7 +77,6 @@ public class StaticFiles
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome tree( File root, String path )
-        throws IOException
     {
         ensureNotNull( "Root", root );
         ensureNotNull( "Path", path );
@@ -113,7 +108,6 @@ public class StaticFiles
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome file( String file )
-        throws IOException
     {
         ensureNotEmpty( "File", file );
         return serveFile( new File( file ) );
@@ -125,7 +119,6 @@ public class StaticFiles
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome file( Path file )
-        throws IOException
     {
         ensureNotNull( "File", file );
         return serveFile( file.toFile() );
@@ -137,14 +130,12 @@ public class StaticFiles
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome file( File file )
-        throws IOException
     {
         ensureNotNull( "File", file );
         return serveFile( file );
     }
 
     private Outcome serveFile( File file )
-        throws IOException
     {
         if( file.getPath().contains( ".." ) )
         {
@@ -240,12 +231,12 @@ public class StaticFiles
         }
 
         // Service
-        LOG.trace( "Outcome will stream '{}' as '{}'", file, mimetype );
-        try( InputStream input = new FileInputStream( file ) )
+        try
         {
+            LOG.trace( "Outcome will stream '{}' as '{}'", file, mimetype );
             return outcomes().
                 ok().
-                withBody( input, file.length() ).
+                withBody( new FileInputStream( file ), file.length() ).
                 build();
         }
         catch( FileNotFoundException ex )
