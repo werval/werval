@@ -11,7 +11,9 @@
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="org.qiweb"  level="trace"/>
-    <logger name="io.netty"  level="trace"/>
+    <logger name="io.netty"                 level="trace"/>
+
+    <logger name="org.qiweb"                level="trace"/>
+    <logger name="org.qiweb.runtime.routes" level="debug"/>
 
 </configuration>

@@ -1,6 +1,7 @@
-package org.qiweb.runtime.http;
+package org.qiweb.runtime.server;
 
 import io.netty.handler.codec.http.CookieDecoder;
+import io.netty.handler.codec.http.DefaultCookie;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
@@ -30,9 +31,14 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestBody.Upload;
 import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.http.Session;
+import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
+import org.qiweb.runtime.http.HeadersInstance;
+import org.qiweb.runtime.http.QueryStringInstance;
+import org.qiweb.runtime.http.RequestBodyInstance;
 import org.qiweb.runtime.http.RequestBodyInstance.UploadInstance;
+import org.qiweb.runtime.http.RequestHeaderInstance;
+import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.util.URLs;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
@@ -46,10 +52,10 @@ import static io.netty.util.CharsetUtil.UTF_8;
 /**
  * Factory methods used by the server.
  */
-public final class HttpFactories
+public final class NettyHttpFactories
 {
 
-    public static MutableHeaders headersOf( HttpRequest request )
+    private static MutableHeaders headersOf( HttpRequest request )
     {
         MutableHeaders headers = new HeadersInstance();
         for( String name : request.headers().names() )
@@ -62,7 +68,7 @@ public final class HttpFactories
         return headers;
     }
 
-    public static Cookies cookiesOf( HttpRequest nettyRequest )
+    private static Cookies cookiesOf( HttpRequest nettyRequest )
     {
         Map<String, Cookie> cookies = new HashMap<>();
         String cookieHeaderValue = nettyRequest.headers().get( COOKIE );
@@ -71,13 +77,7 @@ public final class HttpFactories
             Set<io.netty.handler.codec.http.Cookie> nettyCookies = CookieDecoder.decode( cookieHeaderValue );
             for( io.netty.handler.codec.http.Cookie nettyCookie : nettyCookies )
             {
-                cookies.put( nettyCookie.getName(),
-                             new CookieInstance( nettyCookie.getName(),
-                                                 nettyCookie.getPath(),
-                                                 nettyCookie.getDomain(),
-                                                 nettyCookie.isSecure(),
-                                                 nettyCookie.getValue(),
-                                                 nettyCookie.isHttpOnly() ) );
+                cookies.put( nettyCookie.getName(), asQiWebCookie( nettyCookie ) );
             }
         }
         return new CookiesInstance( cookies );
@@ -186,20 +186,27 @@ public final class HttpFactories
         return new RequestInstance( header, bodyOf( header, nettyRequest ) );
     }
 
-    public static Session sessionOf( RequestHeader header )
+    public static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )
     {
-        String cookiePrefix = "QIWEB";
-        String session = header.cookies().valueOf( cookiePrefix + "_SESSION" );
-        if( Strings.isEmpty( session ) )
-        {
-            return new SessionInstance();
-        }
-        Map<String, String> sessionData = new HashMap<>();
-        // TODO Parse Session Cookie
-        return new SessionInstance( sessionData );
+        io.netty.handler.codec.http.Cookie nettyCookie = new DefaultCookie( cookie.name(), cookie.value() );
+        nettyCookie.setPath( cookie.path() );
+        nettyCookie.setDomain( cookie.domain() );
+        nettyCookie.setSecure( cookie.secure() );
+        nettyCookie.setHttpOnly( cookie.httpOnly() );
+        return nettyCookie;
     }
 
-    private HttpFactories()
+    public static Cookie asQiWebCookie( io.netty.handler.codec.http.Cookie nettyCookie )
+    {
+        return new CookieInstance( nettyCookie.getName(),
+                                   nettyCookie.getPath(),
+                                   nettyCookie.getDomain(),
+                                   nettyCookie.isSecure(),
+                                   nettyCookie.getValue(),
+                                   nettyCookie.isHttpOnly() );
+    }
+
+    private NettyHttpFactories()
     {
     }
 }

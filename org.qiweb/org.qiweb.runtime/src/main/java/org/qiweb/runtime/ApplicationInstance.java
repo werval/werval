@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
+import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.PathBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.mime.MimeTypes;
@@ -31,6 +32,7 @@ public final class ApplicationInstance
 
     private final Mode mode;
     private Config config;
+    private Crypto crypto;
     private File tmpdir;
     private ClassLoader classLoader;
     private final RoutesProvider routesProvider;
@@ -69,6 +71,12 @@ public final class ApplicationInstance
     public Config config()
     {
         return config;
+    }
+
+    @Override
+    public Crypto crypto()
+    {
+        return crypto;
     }
 
     @Override
@@ -114,9 +122,15 @@ public final class ApplicationInstance
 
     private void configurationChanged()
     {
+        configureCrypto();
         configureTmpdir();
         configurePathBinders();
         configureMimeTypes();
+    }
+
+    private void configureCrypto()
+    {
+        this.crypto = new CryptoInstance( config.getString( "app.secret" ) );
     }
 
     private void configureTmpdir()

@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.ServerCookieEncoder;
 import io.netty.handler.stream.ChunkedMessageInput;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
@@ -42,6 +43,7 @@ import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.SimpleOutcome;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.StreamOutcome;
 import org.qiweb.runtime.http.ResponseInstance;
+import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,7 @@ import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 import static io.netty.handler.codec.http.HttpHeaders.Names.TRAILER;
 import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
 import static io.netty.handler.codec.http.HttpHeaders.Values.CHUNKED;
@@ -60,9 +63,9 @@ import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERR
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
-import static org.qiweb.runtime.http.HttpFactories.requestHeaderOf;
-import static org.qiweb.runtime.http.HttpFactories.requestOf;
-import static org.qiweb.runtime.http.HttpFactories.sessionOf;
+import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
+import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
+import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
 
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
@@ -173,8 +176,10 @@ public final class HttpRouterHandler
             // Parse Request
             Request request = requestOf( requestHeader, nettyRequest );
 
-            // Parse Session
-            Session session = sessionOf( requestHeader );
+            // Parse Session Cookie
+            Session session = new SessionInstance(
+                app.config(), app.crypto(),
+                requestHeader.cookies().get( app.config().getString( "app.session.cookie.name" ) ) );
 
             // Prepare Response
             Response response = new ResponseInstance();
@@ -204,7 +209,7 @@ public final class HttpRouterHandler
                 ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
                 nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
                 nettyResponse.headers().set( TRAILER, HttpChunkedBodyEncoder.CONTENT_LENGTH_TRAILER );
                 // Body
@@ -218,7 +223,7 @@ public final class HttpRouterHandler
                 StreamOutcome streamOutcome = (StreamOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().
@@ -231,7 +236,7 @@ public final class HttpRouterHandler
                 SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.body() );
@@ -241,7 +246,7 @@ public final class HttpRouterHandler
             {
                 LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                forceClose = applyResponseHeader( nettyRequest, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 writeFuture = nettyContext.write( nettyResponse );
             }
 
@@ -265,11 +270,12 @@ public final class HttpRouterHandler
     /**
      * @return TRUE if the channel should be closed, otherwise return FALSE
      */
-    private boolean applyResponseHeader( FullHttpRequest nettyRequest, Response response, Outcome outcome, HttpResponse nettyResponse )
+    private boolean applyResponseHeader( FullHttpRequest nettyRequest, Session session, Response response, Outcome outcome, HttpResponse nettyResponse )
     {
         applyHttpHeaders( response.headers(), nettyResponse );
         applyHttpHeaders( outcome.headers(), nettyResponse );
         boolean forceClose = applyKeepAliveHttpHeaders( nettyRequest, outcome, nettyResponse );
+        applySession( session, nettyResponse );
         applyCookies( response, nettyResponse );
         return forceClose;
     }
@@ -307,12 +313,21 @@ public final class HttpRouterHandler
         }
     }
 
+    private void applySession( Session session, HttpResponse nettyResponse )
+    {
+        if( !app.config().getBoolean( "app.session.cookie.onlyIfChanged" ) || session.hasChanged() )
+        {
+            nettyResponse.headers().add( SET_COOKIE,
+                                         ServerCookieEncoder.encode( asNettyCookie( session.signedCookie() ) ) );
+        }
+    }
+
     private void applyCookies( Response response, HttpResponse nettyResponse )
     {
-        // TODO Implement serious Cookie handling
         for( Cookie cookie : response.cookies() )
         {
-            nettyResponse.headers().add( "Set-Cookie", cookie.name() + "=" + cookie.value() );
+            nettyResponse.headers().add( SET_COOKIE,
+                                         ServerCookieEncoder.encode( asNettyCookie( cookie ) ) );
         }
     }
 

@@ -15,29 +15,29 @@ dependencies {
 
 }
 
-task updateMimeTypes( description: 'Upgrade mime.types from Apache source code' ) {
-    URL url = new URL( "http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types" )
-    Properties props = new Properties();
-    InputStream input = url.openStream()
-    OutputStream output;
-    try {
-        Scanner scanner = new Scanner( input );
-        while( scanner.hasNextLine() ) {
-            String line = scanner.nextLine().trim().replaceAll( "\\s+", " " )
-            if( !line.startsWith( "#" ) && line.length() > 0 ) {
-                String[] segments = line.split( " " )
-                for( int idx = 1 ; idx < segments.length ; idx++ ) {
-                    props.setProperty( segments[idx], segments[0] );
-                }
-            }
-        }
-        File outputDir = new File( "${project.projectDir}/src/main/resources/org/qiweb/runtime/mime" )
-        outputDir.mkdirs()
-        File extToTypeFile = new File( outputDir, "mime-types-extensions.properties" )
-        props.store( extToTypeFile.newWriter(), null );
-    } finally {
-        input.close();
-        if( output!=null ) output.close();
-    }
-}
-updateMimeTypes.onlyIf { project.hasProperty('updateMimeTypes') }
+// task updateMimeTypes( description: 'Upgrade mime.types from Apache source code' ) {
+//     URL url = new URL( "http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types" )
+//     Properties props = new Properties();
+//     InputStream input = url.openStream()
+//     OutputStream output;
+//     try {
+//         Scanner scanner = new Scanner( input );
+//         while( scanner.hasNextLine() ) {
+//             String line = scanner.nextLine().trim().replaceAll( "\\s+", " " )
+//             if( !line.startsWith( "#" ) && line.length() > 0 ) {
+//                 String[] segments = line.split( " " )
+//                 for( int idx = 1 ; idx < segments.length ; idx++ ) {
+//                     props.setProperty( segments[idx], segments[0] );
+//                 }
+//             }
+//         }
+//         File outputDir = new File( "${project.projectDir}/src/main/resources/org/qiweb/runtime/mime" )
+//         outputDir.mkdirs()
+//         File extToTypeFile = new File( outputDir, "mime-types-extensions.properties" )
+//         props.store( extToTypeFile.newWriter(), null );
+//     } finally {
+//         input.close();
+//         if( output!=null ) output.close();
+//     }
+// }
+

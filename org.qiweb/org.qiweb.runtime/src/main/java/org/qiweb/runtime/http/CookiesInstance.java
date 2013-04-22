@@ -51,7 +51,7 @@ public class CookiesInstance
     @Override
     public MutableCookies set( String name, String value )
     {
-        // TODO Implement serious Cookie handling
+        // TODO Implement serious Cookie creation
         cookies.put( name, new CookieInstance( name, "", "", false, value, true ) );
         return this;
     }

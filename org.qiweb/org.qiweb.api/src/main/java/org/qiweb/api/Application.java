@@ -64,6 +64,13 @@ public interface Application
     Config config();
 
     /**
+     * Application {@link Crypto}.
+     * <p>Don't hold references to the Crypto instance in order to make your code {@link Mode#dev} friendly.</p>
+     * @return Application {@link Crypto}
+     */
+    Crypto crypto();
+
+    /**
      * Application temporary directory {@link File}.
      * <p>Don't hold references to the File instance in order to make your code {@link Mode#dev} friendly.</p>
      * @return Application temporary directory {@link File}
