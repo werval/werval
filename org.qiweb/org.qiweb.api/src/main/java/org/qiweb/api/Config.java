@@ -22,71 +22,71 @@ public interface Config
      * @param key Config entry key
      * @return Config entry value as Boolean
      */
-    Boolean getBoolean( String key );
+    Boolean bool( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as Integer
      */
-    Integer getInteger( String key );
+    Integer intNumber( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as Double
      */
-    Double getDouble( String key );
+    Double doubleNumber( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as String
      */
-    String getString( String key );
+    String string( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry values as List of String
      */
-    List<String> getStringList( String key );
+    List<String> stringList( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry keys and values as Map of String and String
      */
-    Map<String, String> getStringMap( String key );
+    Map<String, String> stringMap( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as char[]
      */
-    char[] getChars( String key );
+    char[] chars( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as UTF-8 bytes
      */
-    byte[] getUtf8Bytes( String key );
+    byte[] utf8Bytes( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as URL
      */
-    URL getURL( String key );
+    URL url( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as File
      */
-    File getFile( String key );
+    File file( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as Long representing seconds
      */
-    Long getSeconds( String key );
+    Long seconds( String key );
 
     /**
      * @param key Config entry key
      * @return Config entry value as Long representing milliseconds
      */
-    Long getMilliseconds( String key );
+    Long milliseconds( String key );
 }

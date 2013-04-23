@@ -360,7 +360,7 @@ public final class RouteBuilder
             List<String> typesTried = new ArrayList<>();
             typesTried.add( paramTypeName );
             // Try in configured imported packages
-            List<String> importedPackages = application.config().getStringList( "qiweb.routes.imported-packages" );
+            List<String> importedPackages = application.config().stringList( "qiweb.routes.imported-packages" );
             for( String importedPackage : importedPackages )
             {
                 String fqcn = importedPackage + "." + paramTypeName;

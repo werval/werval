@@ -88,7 +88,7 @@ public class StaticFiles
         File file = new File( root, path );
         if( file.isDirectory() )
         {
-            List<String> indexFileNames = application().config().getStringList( "qiweb.stdlib.staticfiles.index" );
+            List<String> indexFileNames = application().config().stringList( "qiweb.stdlib.staticfiles.index" );
             for( String indexFileName : indexFileNames )
             {
                 File indexFile = new File( file, indexFileName );
@@ -159,7 +159,7 @@ public class StaticFiles
         }
         else
         {
-            Long maxAge = application().config().getSeconds( "qiweb.stdlib.staticfiles.cache.maxage" );
+            Long maxAge = application().config().seconds( "qiweb.stdlib.staticfiles.cache.maxage" );
             if( maxAge.equals( 0L ) )
             {
                 response().headers().with( CACHE_CONTROL, "no-cache" );
@@ -172,7 +172,7 @@ public class StaticFiles
         // ETag
         long lastModified = file.lastModified();
         final String etag = "\"" + lastModified + "-" + file.hashCode() + "\"";
-        if( application().config().getBoolean( "qiweb.stdlib.staticfiles.cache.etag" ) )
+        if( application().config().bool( "qiweb.stdlib.staticfiles.cache.etag" ) )
         {
             response().headers().with( ETAG, etag );
         }

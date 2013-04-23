@@ -24,37 +24,37 @@ public class ConfigInstance
     }
 
     @Override
-    public Boolean getBoolean( String key )
+    public Boolean bool( String key )
     {
         return config.getBoolean( key );
     }
 
     @Override
-    public Integer getInteger( String key )
+    public Integer intNumber( String key )
     {
         return config.getInt( key );
     }
 
     @Override
-    public Double getDouble( String key )
+    public Double doubleNumber( String key )
     {
         return config.getDouble( key );
     }
 
     @Override
-    public String getString( String key )
+    public String string( String key )
     {
         return config.getString( key );
     }
 
     @Override
-    public List<String> getStringList( String key )
+    public List<String> stringList( String key )
     {
         return config.getStringList( key );
     }
 
     @Override
-    public Map<String, String> getStringMap( String key )
+    public Map<String, String> stringMap( String key )
     {
         Map<String, String> entries = new HashMap<>();
         for( Entry<String, com.typesafe.config.ConfigValue> entry : config.getObject( key ).entrySet() )
@@ -65,19 +65,19 @@ public class ConfigInstance
     }
 
     @Override
-    public char[] getChars( String key )
+    public char[] chars( String key )
     {
         return config.getString( key ).toCharArray();
     }
 
     @Override
-    public byte[] getUtf8Bytes( String key )
+    public byte[] utf8Bytes( String key )
     {
         return config.getString( key ).getBytes( UTF_8 );
     }
 
     @Override
-    public URL getURL( String key )
+    public URL url( String key )
     {
         String urlString = config.getString( key );
         try
@@ -92,19 +92,19 @@ public class ConfigInstance
     }
 
     @Override
-    public File getFile( String key )
+    public File file( String key )
     {
         return new File( config.getString( key ) );
     }
 
     @Override
-    public Long getSeconds( String key )
+    public Long seconds( String key )
     {
-        return getMilliseconds( key ) / 1000;
+        return milliseconds( key ) / 1000;
     }
 
     @Override
-    public Long getMilliseconds( String key )
+    public Long milliseconds( String key )
     {
         return config.getMilliseconds( key );
     }

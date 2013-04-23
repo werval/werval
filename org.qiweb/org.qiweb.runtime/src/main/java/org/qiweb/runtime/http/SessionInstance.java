@@ -137,11 +137,11 @@ public class SessionInstance
         String sessionData = URLs.encode( sb.toString() );
         String signedCookieValue = crypto.hexHmacSha1( sessionData ) + "-" + sessionData;
         return new CookieInstance(
-            config.getString( "app.session.cookie.name" ),
-            config.getString( "app.session.cookie.path" ),
-            config.has( "app.session.cookie.domain" ) ? config.getString( "app.session.cookie.domain" ) : null,
-            config.getBoolean( "app.session.cookie.secure" ),
+            config.string( "app.session.cookie.name" ),
+            config.string( "app.session.cookie.path" ),
+            config.has( "app.session.cookie.domain" ) ? config.string( "app.session.cookie.domain" ) : null,
+            config.bool( "app.session.cookie.secure" ),
             signedCookieValue,
-            config.getBoolean( "app.session.cookie.httpOnly" ) );
+            config.bool( "app.session.cookie.httpOnly" ) );
     }
 }

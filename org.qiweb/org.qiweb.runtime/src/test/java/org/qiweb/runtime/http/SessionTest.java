@@ -60,7 +60,7 @@ public class SessionTest
     @Before
     public void beforeSessionTest()
     {
-        sessionCookieName = application().config().getString( "app.session.cookie.name" );
+        sessionCookieName = application().config().string( "app.session.cookie.name" );
     }
 
     @Test

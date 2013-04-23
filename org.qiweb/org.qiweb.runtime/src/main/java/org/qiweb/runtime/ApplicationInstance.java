@@ -130,12 +130,12 @@ public final class ApplicationInstance
 
     private void configureCrypto()
     {
-        this.crypto = new CryptoInstance( config.getString( "app.secret" ) );
+        this.crypto = new CryptoInstance( config.string( "app.secret" ) );
     }
 
     private void configureTmpdir()
     {
-        File tmpdirFile = config.getFile( "qiweb.fs.temp" );
+        File tmpdirFile = config.file( "qiweb.fs.temp" );
         if( tmpdirFile.isFile() )
         {
             throw new QiWebException( "tmpdir already exist but is a file: " + tmpdirFile );
@@ -150,7 +150,7 @@ public final class ApplicationInstance
     private void configurePathBinders()
     {
         List<PathBinder<?>> list = new ArrayList<>();
-        for( String pathBinderClassName : config.getStringList( "qiweb.routes.path-binders" ) )
+        for( String pathBinderClassName : config.stringList( "qiweb.routes.path-binders" ) )
         {
             try
             {
@@ -168,7 +168,7 @@ public final class ApplicationInstance
     {
         if( config.has( "app.mimetypes" ) )
         {
-            mimeTypes = new MimeTypesInstance( config.getStringMap( "app.mimetypes" ) );
+            mimeTypes = new MimeTypesInstance( config.stringMap( "app.mimetypes" ) );
         }
         else
         {

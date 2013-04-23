@@ -148,7 +148,7 @@ public class OutcomeBuilderInstance
         this.status = status;
         this.headers = headers;
         this.cookies = cookies;
-        this.chunkSize = config.getInteger( "qiweb.http.chunksize" );
+        this.chunkSize = config.intNumber( "qiweb.http.chunksize" );
     }
 
     @Override

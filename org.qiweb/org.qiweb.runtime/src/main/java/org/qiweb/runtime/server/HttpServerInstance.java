@@ -49,10 +49,10 @@ public class HttpServerInstance
         // I/O Event Loops.
         // The first is used to handle the accept of new connections and the second will serve the IO of them.
         int acceptors = app.config().has( "qiweb.http.acceptors" )
-                        ? app.config().getInteger( "qiweb.http.acceptors" )
+                        ? app.config().intNumber( "qiweb.http.acceptors" )
                         : DEFAULT_POOL_SIZE;
         int iothreads = app.config().has( "qiweb.http.iothreads" )
-                        ? app.config().getInteger( "qiweb.http.iothreads" )
+                        ? app.config().intNumber( "qiweb.http.iothreads" )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group( new NioEventLoopGroup( devSpi == null ? acceptors : 1 ),
                          new NioEventLoopGroup( devSpi == null ? iothreads : 1 ) );
@@ -67,8 +67,8 @@ public class HttpServerInstance
         bootstrap.option( SO_KEEPALIVE, true );
 
         // Bind
-        String address = app.config().getString( "qiweb.http.address" );
-        int port = app.config().getInteger( "qiweb.http.port" );
+        String address = app.config().string( "qiweb.http.address" );
+        int port = app.config().intNumber( "qiweb.http.port" );
         try
         {
             bootstrap.localAddress( address, port );

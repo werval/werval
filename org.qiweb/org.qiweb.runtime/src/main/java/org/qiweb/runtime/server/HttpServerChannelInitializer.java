@@ -49,7 +49,7 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         this.app = httpApp;
         this.devSpi = devSpi;
         int executors = app.config().has( "qiweb.http.executors" )
-                        ? app.config().getInteger( "qiweb.http.executors" )
+                        ? app.config().intNumber( "qiweb.http.executors" )
                         : DEFAULT_POOL_SIZE;
         this.httpExecutors = new DefaultEventExecutorGroup( devSpi == null ? executors : 1,
                                                             new ExecutorsThreadFactory() );
@@ -60,17 +60,17 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
     {
         ChannelPipeline pipeline = channel.pipeline();
 
-        if( app.config().getBoolean( "qiweb.http.log.low-level.enabled" ) )
+        if( app.config().bool( "qiweb.http.log.low-level.enabled" ) )
         {
             // Log Netty Bytes
             LogLevel level = LogLevel.valueOf(
-                app.config().getString( "qiweb.http.log.low-level.level" ).toUpperCase( Locale.US ) );
+                app.config().string( "qiweb.http.log.low-level.level" ).toUpperCase( Locale.US ) );
             pipeline.addLast( "byte-logging", new ByteLoggingHandler( level ) );
         }
 
         // Read/Write Timeout
-        long readTimeout = app.config().getSeconds( "qiweb.http.timeout.read" );
-        long writeTimeout = app.config().getSeconds( "qiweb.http.timeout.write" );
+        long readTimeout = app.config().seconds( "qiweb.http.timeout.read" );
+        long writeTimeout = app.config().seconds( "qiweb.http.timeout.write" );
         pipeline.addLast( "read-timeout", new ReadTimeoutHandler( readTimeout, SECONDS ) );
         pipeline.addLast( "write-timeout", new WriteTimeoutHandler( writeTimeout, SECONDS ) );
 

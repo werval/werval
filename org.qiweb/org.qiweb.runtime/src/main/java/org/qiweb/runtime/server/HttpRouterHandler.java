@@ -177,7 +177,7 @@ public final class HttpRouterHandler
             // Parse Session Cookie
             Session session = new SessionInstance(
                 app.config(), app.crypto(),
-                requestHeader.cookies().get( app.config().getString( "app.session.cookie.name" ) ) );
+                requestHeader.cookies().get( app.config().string( "app.session.cookie.name" ) ) );
 
             // Parse Request
             Request request = requestOf( requestHeader, pathParams, nettyRequest );
@@ -313,7 +313,7 @@ public final class HttpRouterHandler
 
     private void applySession( Session session, HttpResponse nettyResponse )
     {
-        if( !app.config().getBoolean( "app.session.cookie.onlyIfChanged" ) || session.hasChanged() )
+        if( !app.config().bool( "app.session.cookie.onlyIfChanged" ) || session.hasChanged() )
         {
             nettyResponse.headers().add( SET_COOKIE,
                                          ServerCookieEncoder.encode( asNettyCookie( session.signedCookie() ) ) );
