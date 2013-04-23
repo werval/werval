@@ -26,19 +26,17 @@ public abstract class AbstractQiWebTest
 
     @Before
     public final void beforeEachTest()
-        throws Exception
     {
         RoutesProvider routesProvider = new RoutesParserProvider( routesString() );
         app = new ApplicationInstance( routesProvider );
         httpServer = new HttpServerInstance( "meta-inf-resources-test", app );
-        httpServer.activateService();
+        httpServer.activate();
     }
 
     @After
     public final void afterEachTest()
-        throws Exception
     {
-        httpServer.passivateService();
+        httpServer.passivate();
         httpServer = null;
         app = null;
     }

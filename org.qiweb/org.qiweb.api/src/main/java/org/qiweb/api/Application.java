@@ -44,6 +44,9 @@ public interface Application
             this.displayName = displayName;
         }
 
+        /**
+         * @return The display name of this Application Mode
+         */
         @Override
         public String toString()
         {

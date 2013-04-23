@@ -1,7 +1,7 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
-import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
@@ -37,9 +37,9 @@ public class ParamForcedValueParsingTest
         } );
         Route route = application.routes().iterator().next();
         assertThat( route.toString(), equalTo( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug = '42' ) service foo" ) );
-        List<Object> boundParams = route.bindPath( application.pathBinders(), "/foo/bazar/bar" );
-        assertThat( (String) boundParams.get( 0 ), equalTo( "bazar" ) );
-        assertThat( (Integer) boundParams.get( 1 ), equalTo( 42 ) );
+        Map<String, Object> boundParams = route.bindPath( application.pathBinders(), "/foo/bazar/bar" );
+        assertThat( (String) boundParams.get( "id" ), equalTo( "bazar" ) );
+        assertThat( (Integer) boundParams.get( "slug" ), equalTo( 42 ) );
     }
 
     @Test
@@ -49,8 +49,8 @@ public class ParamForcedValueParsingTest
             "GET / com.acme.app.FakeControllerInstance.wild( String path = '/default/value' )" ) );
         Route route = application.routes().iterator().next();
         System.out.println( route );
-        List<Object> boundParams = route.bindPath( application.pathBinders(), "/" );
-        assertThat( (String) boundParams.get( 0 ), equalTo( "/default/value" ) );
+        Map<String, Object> boundParams = route.bindPath( application.pathBinders(), "/" );
+        assertThat( (String) boundParams.get( "path" ), equalTo( "/default/value" ) );
     }
 
     @Test
@@ -60,8 +60,8 @@ public class ParamForcedValueParsingTest
             "GET /*path com.acme.app.FakeControllerInstance.another( String path, Integer num = '42' )" ) );
         Route route = application.routes().iterator().next();
         System.out.println( route );
-        List<Object> boundParams = route.bindPath( application.pathBinders(), "/cathedral" );
-        assertThat( (String) boundParams.get( 0 ), equalTo( "cathedral" ) );
-        assertThat( (Integer) boundParams.get( 1 ), equalTo( 42 ) );
+        Map<String, Object> boundParams = route.bindPath( application.pathBinders(), "/cathedral" );
+        assertThat( (String) boundParams.get( "path" ), equalTo( "cathedral" ) );
+        assertThat( (Integer) boundParams.get( "num" ), equalTo( 42 ) );
     }
 }

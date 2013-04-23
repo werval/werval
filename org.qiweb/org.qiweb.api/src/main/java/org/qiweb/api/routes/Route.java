@@ -1,7 +1,7 @@
 package org.qiweb.api.routes;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.qiweb.api.http.RequestHeader;
 
@@ -26,5 +26,5 @@ public interface Route
 
     Set<String> modifiers();
 
-    List<Object> bindPath( PathBinders pathBinders, String path );
+    Map<String, Object> bindPath( PathBinders pathBinders, String path );
 }

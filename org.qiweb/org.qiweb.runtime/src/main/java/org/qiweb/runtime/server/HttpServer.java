@@ -1,11 +1,22 @@
 package org.qiweb.runtime.server;
 
+import org.qiweb.api.exceptions.QiWebException;
+
+/**
+ * QiWeb Http Server.
+ */
 public interface HttpServer
 {
 
-    void activateService()
-        throws Exception;
+    /**
+     * Activate the QiWeb Http Server.
+     */
+    void activate()
+        throws QiWebException;
 
-    void passivateService()
-        throws Exception;
+    /**
+     * Passivate the QiWeb Http Server.
+     */
+    void passivate()
+        throws QiWebException;
 }

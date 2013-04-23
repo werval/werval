@@ -53,14 +53,14 @@ public class RouterTest
             + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" );
         Application app = new ApplicationInstance( routesProvider );
         httpServer = new HttpServerInstance( "router-test", app );
-        httpServer.activateService();
+        httpServer.activate();
     }
 
     @After
     public void afterRouterTests()
         throws Exception
     {
-        httpServer.passivateService();
+        httpServer.passivate();
     }
 
     @Test

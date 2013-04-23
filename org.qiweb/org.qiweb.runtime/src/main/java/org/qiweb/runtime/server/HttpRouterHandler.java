@@ -20,7 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
@@ -42,6 +42,7 @@ import org.qiweb.runtime.controllers.ContextHelper;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.SimpleOutcome;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.StreamOutcome;
+import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.util.ClassLoaders;
@@ -169,31 +170,28 @@ public final class HttpRouterHandler
             LOG.debug( "{} Will route request to: {}", requestIdentity, route );
 
             // Bind route path
-            List<Object> pathParams = route.bindPath( app.pathBinders(), requestHeader.path() );
+            Map<String, Object> pathParams = route.bindPath( app.pathBinders(), requestHeader.path() );
 
             // TODO Eventually UPGRADE to WebSocket
-
-            // Parse Request
-            Request request = requestOf( requestHeader, nettyRequest );
 
             // Parse Session Cookie
             Session session = new SessionInstance(
                 app.config(), app.crypto(),
                 requestHeader.cookies().get( app.config().getString( "app.session.cookie.name" ) ) );
 
+            // Parse Request
+            Request request = requestOf( requestHeader, pathParams, nettyRequest );
+
             // Prepare Response
             Response response = new ResponseInstance();
 
             // Set Controller Context
-            Context context = new ContextInstance( app, session, request, response );
+            Context context = new ContextInstance( app, session, route, request, response );
             contextHelper.setOnCurrentThread( app.classLoader(), context );
 
-            // Lookup Controller
-            Object controller = app.classLoader().loadClass( route.controllerType().getName() ).newInstance();
-
-            // Invoke Controller
+            // Invoke Controller FilterChain, ended by Controller Method Invokation
             LOG.debug( "{} Will invoke controller method: {}", requestIdentity, route.controllerMethod() );
-            Outcome outcome = (Outcome) route.controllerMethod().invoke( controller, pathParams.toArray() );
+            Outcome outcome = new FilterChainFactory().buildFilterChain( route ).next( context );
 
             // == Build the response
 

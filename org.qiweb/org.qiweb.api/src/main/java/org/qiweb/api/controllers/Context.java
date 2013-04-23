@@ -4,6 +4,7 @@ import org.qiweb.api.Application;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.routes.Route;
 
 /**
  * HTTP Interaction Context.
@@ -21,6 +22,11 @@ public interface Context
      * @return Current Session
      */
     Session session();
+
+    /**
+     * @return Current Route
+     */
+    Route route();
 
     /**
      * @return Current Request

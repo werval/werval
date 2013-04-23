@@ -1,12 +1,12 @@
 package org.qiweb.runtime.routes;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -213,19 +213,19 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public List<Object> bindPath( PathBinders pathBinders, String path )
+    public Map<String, Object> bindPath( PathBinders pathBinders, String path )
     {
         Matcher matcher = pathRegex.matcher( path );
         if( !matcher.matches() )
         {
             throw new IllegalArgumentException( "Unable to bind, Route is not satified by path: " + path );
         }
-        List<Object> boundParams = new ArrayList<>();
+        Map<String, Object> boundParams = new LinkedHashMap<>();
         for( ControllerParam param : controllerParams )
         {
             if( param.hasForcedValue() )
             {
-                boundParams.add( param.forcedValue() );
+                boundParams.put( param.name(), param.forcedValue() );
             }
             else
             {
@@ -234,7 +234,7 @@ import static org.qi4j.functional.Specifications.in;
                 {
                     throw new IllegalArgumentException( "Parameter named '" + param.name() + "' not found in path." );
                 }
-                boundParams.add( pathBinders.bind( param.type(), param.name(), unboundValue ) );
+                boundParams.put( param.name(), pathBinders.bind( param.type(), param.name(), unboundValue ) );
             }
         }
         return boundParams;

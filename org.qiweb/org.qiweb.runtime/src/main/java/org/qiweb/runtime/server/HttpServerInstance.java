@@ -6,6 +6,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiweb.api.Application;
+import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,9 @@ public class HttpServerInstance
     }
 
     @Override
-    public void activateService()
-        throws InterruptedException
+    public void activate()
+        throws QiWebRuntimeException
     {
-        LOG.debug( "[{}] Netty Activation", identity );
-
         // Netty Bootstrap
         bootstrap = new ServerBootstrap();
 
@@ -68,19 +67,28 @@ public class HttpServerInstance
         bootstrap.option( SO_KEEPALIVE, true );
 
         // Bind
-        bootstrap.localAddress( app.config().getString( "qiweb.http.address" ),
-                                app.config().getInteger( "qiweb.http.port" ) );
-        allChannels.add( bootstrap.bind().sync().channel() );
+        String address = app.config().getString( "qiweb.http.address" );
+        int port = app.config().getInteger( "qiweb.http.port" );
+        try
+        {
+            bootstrap.localAddress( address, port );
+            allChannels.add( bootstrap.bind().sync().channel() );
+        }
+        catch( InterruptedException ex )
+        {
+            throw new QiWebRuntimeException( "Unable to bind to http(s)://" + address + ":" + port + "/ "
+                                             + "Port already in use?", ex );
+        }
 
-        LOG.debug( "[{}] Netty Activated", identity );
+        LOG.debug( "[{}] Http Service Listening on http(s)://{}:{}", identity, address, port );
     }
 
     @Override
-    public void passivateService()
+    public void passivate()
     {
-        LOG.debug( "[{}] Netty Passivation", identity );
+        // Unbind Netty
         bootstrap.shutdown();
         allChannels.clear();
-        LOG.debug( "[{}] Netty Passivated", identity );
+        LOG.debug( "[{}] Http Service Passivated", identity );
     }
 }

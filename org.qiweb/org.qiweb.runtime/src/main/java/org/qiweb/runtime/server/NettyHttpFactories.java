@@ -181,9 +181,9 @@ public final class NettyHttpFactories
         return body;
     }
 
-    public static Request requestOf( RequestHeader header, FullHttpRequest nettyRequest )
+    public static Request requestOf( RequestHeader header, Map<String, Object> pathParams, FullHttpRequest nettyRequest )
     {
-        return new RequestInstance( header, bodyOf( header, nettyRequest ) );
+        return new RequestInstance( header, pathParams, bodyOf( header, nettyRequest ) );
     }
 
     public static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )

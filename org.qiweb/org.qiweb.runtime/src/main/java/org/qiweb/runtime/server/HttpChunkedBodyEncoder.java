@@ -38,7 +38,6 @@ public class HttpChunkedBodyEncoder
 
     @Override
     public boolean isEndOfInput()
-        throws Exception
     {
         return isLastChunkSent;
     }

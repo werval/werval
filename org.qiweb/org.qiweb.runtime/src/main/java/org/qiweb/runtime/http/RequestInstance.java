@@ -1,5 +1,7 @@
 package org.qiweb.runtime.http;
 
+import java.util.Collections;
+import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.QueryString;
@@ -12,11 +14,13 @@ public class RequestInstance
 {
 
     private final RequestHeader header;
+    private final Map<String, Object> pathParams;
     private final RequestBody body;
 
-    public RequestInstance( RequestHeader header, RequestBody body )
+    public RequestInstance( RequestHeader header, Map<String, Object> pathParams, RequestBody body )
     {
         this.header = header;
+        this.pathParams = pathParams;
         this.body = body;
     }
 
@@ -102,6 +106,12 @@ public class RequestInstance
     public Cookies cookies()
     {
         return header.cookies();
+    }
+
+    @Override
+    public Map<String, Object> pathParams()
+    {
+        return Collections.unmodifiableMap( pathParams );
     }
 
     @Override
