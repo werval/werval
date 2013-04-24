@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.Application;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
@@ -37,6 +36,7 @@ import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.controllers.ContextHelper;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
@@ -95,10 +95,10 @@ public final class HttpRouterHandler
     {
         return REQUEST_IDENTITY_PREFIX + REQUEST_IDENTITY_COUNT.getAndIncrement();
     }
-    private final Application app;
+    private final ApplicationInstance app;
     private String requestIdentity;
 
-    public HttpRouterHandler( Application app )
+    public HttpRouterHandler( ApplicationInstance app )
     {
         super();
         this.app = app;
@@ -191,7 +191,7 @@ public final class HttpRouterHandler
 
             // Invoke Controller FilterChain, ended by Controller Method Invokation
             LOG.debug( "{} Will invoke controller method: {}", requestIdentity, route.controllerMethod() );
-            Outcome outcome = new FilterChainFactory().buildFilterChain( route ).next( context );
+            Outcome outcome = new FilterChainFactory().buildFilterChain( app.global(), context ).next( context );
 
             // == Build the response
 

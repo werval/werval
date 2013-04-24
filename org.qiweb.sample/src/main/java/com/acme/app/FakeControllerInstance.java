@@ -39,6 +39,9 @@ public class FakeControllerInstance
         response().headers().with( "X-QiWeb-HTTP-Request-Identity", request().identity() );
         StringBuilder sb = new StringBuilder( "It works!\n" );
         sb.append( "Application Mode is: " ).append( application().mode() ).append( "\n" );
+        sb.append( "Config Property app.foo is: " ).append( application().config().has( "app.foo" )
+                                                            ? application().config().string( "app.foo" )
+                                                            : "absent" ).append( "\n" );
         sb.append( "Request identity is: " ).append( request().identity() ).append( "\n" );
         sb.append( "Request path is: " ).append( request().path() ).append( "\n" );
         sb.append( "\nRequest Headers:\n" );

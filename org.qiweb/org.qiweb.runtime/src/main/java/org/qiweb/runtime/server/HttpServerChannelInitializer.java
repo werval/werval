@@ -16,7 +16,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import java.util.Locale;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.Application;
+import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static java.util.concurrent.TimeUnit.*;
@@ -39,11 +39,11 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
         }
     }
     private final ChannelGroup allChannels;
-    private final Application app;
+    private final ApplicationInstance app;
     private final DevShellSPI devSpi;
     private final EventExecutorGroup httpExecutors;
 
-    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, Application httpApp, DevShellSPI devSpi )
+    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, ApplicationInstance httpApp, DevShellSPI devSpi )
     {
         this.allChannels = allChannels;
         this.app = httpApp;

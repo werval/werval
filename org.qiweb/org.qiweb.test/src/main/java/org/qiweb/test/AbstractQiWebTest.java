@@ -22,7 +22,7 @@ public abstract class AbstractQiWebTest
 
     protected static final String BASE_URL = "http://127.0.0.1:23023/";
     private HttpServerInstance httpServer;
-    private Application app;
+    private ApplicationInstance app;
 
     @Before
     public final void beforeEachTest()

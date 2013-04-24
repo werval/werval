@@ -15,7 +15,17 @@ public class ConfigInstance
     implements Config
 {
 
-    private com.typesafe.config.Config config = com.typesafe.config.ConfigFactory.load();
+    private com.typesafe.config.Config config;
+
+    public ConfigInstance()
+    {
+        this( ConfigInstance.class.getClassLoader() );
+    }
+
+    public ConfigInstance( ClassLoader loader )
+    {
+        config = com.typesafe.config.ConfigFactory.load( loader );
+    }
 
     @Override
     public boolean has( String key )

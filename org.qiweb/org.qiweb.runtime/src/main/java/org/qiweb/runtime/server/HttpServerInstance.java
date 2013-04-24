@@ -5,7 +5,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.qiweb.api.Application;
+import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -21,17 +21,17 @@ public class HttpServerInstance
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
     private final String identity;
-    private final Application app;
+    private final ApplicationInstance app;
     private final DevShellSPI devSpi;
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
 
-    public HttpServerInstance( String identity, Application app )
+    public HttpServerInstance( String identity, ApplicationInstance app )
     {
         this( identity, app, null );
     }
 
-    public HttpServerInstance( String identity, Application app, DevShellSPI devSpi )
+    public HttpServerInstance( String identity, ApplicationInstance app, DevShellSPI devSpi )
     {
         this.identity = identity;
         this.app = app;
@@ -43,6 +43,8 @@ public class HttpServerInstance
     public void activate()
         throws QiWebRuntimeException
     {
+        app.global().beforeHttpBind( app );
+
         // Netty Bootstrap
         bootstrap = new ServerBootstrap();
 
@@ -81,14 +83,21 @@ public class HttpServerInstance
         }
 
         LOG.debug( "[{}] Http Service Listening on http(s)://{}:{}", identity, address, port );
+
+        app.global().afterHttpBind( app );
     }
 
     @Override
     public void passivate()
     {
+        app.global().beforeHttpUnbind( app );
+
         // Unbind Netty
         bootstrap.shutdown();
         allChannels.clear();
+
         LOG.debug( "[{}] Http Service Passivated", identity );
+
+        app.global().afterHttpUnbind( app );
     }
 }

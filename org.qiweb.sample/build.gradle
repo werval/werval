@@ -12,7 +12,7 @@ buildscript {
         }   
     }
     dependencies {
-        classpath "org.qiweb:org.qiweb.gradle:$version"
+        classpath "org.qiweb:org.qiweb.gradle:0"
     }
 }
 
@@ -20,7 +20,7 @@ apply plugin: 'qiweb'
 
 qiweb {
     
-    mainRebuildTask = "compileJava"
+    mainRebuildTask = "classes"
     
 }
 

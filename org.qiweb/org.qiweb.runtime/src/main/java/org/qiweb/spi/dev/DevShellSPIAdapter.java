@@ -29,8 +29,8 @@ public class DevShellSPIAdapter
     private final File testOutput;
     private final URL[] testClassPath;
     private final Watcher watcher;
-    private boolean mainChanged = false;
-    private boolean testChanged = false;
+    private boolean mainChanged = true;
+    private boolean testChanged = true;
 
     public DevShellSPIAdapter( String name, File rootDir, File buildDir,
                                Set<File> mainSources, File mainOutput, URL[] mainClassPath,

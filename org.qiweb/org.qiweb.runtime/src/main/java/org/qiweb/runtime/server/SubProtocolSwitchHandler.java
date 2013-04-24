@@ -6,7 +6,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.qiweb.api.Application;
+import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +21,12 @@ public class SubProtocolSwitchHandler
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
     private final EventExecutorGroup httpExecutors;
-    private final Application app;
+    private final ApplicationInstance app;
     private boolean inBoundMessageBufferUpdated = false;
     private final DevShellSPI devSpi;
 
     public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors,
-                                     Application app, DevShellSPI devSpi )
+                                     ApplicationInstance app, DevShellSPI devSpi )
     {
         super();
         this.allChannels = allChannels;
@@ -44,7 +44,8 @@ public class SubProtocolSwitchHandler
     @Override
     public void channelInactive( ChannelHandlerContext context )
     {
-        // TODO Request Complete!
+        // TODO Invoke Global.onHttpRequestComplete!
+        // We probably need to eventually attach the RequestHeader to the channel
     }
 
     @Override

@@ -50,7 +50,7 @@ public final class DevShell
                 {
                     super.rebuildMain();
                     reSetupApplicationRealm();
-                    httpAppInstance.getClass().getMethod( "changeClassLoader", new Class<?>[]
+                    httpAppInstance.getClass().getMethod( "reload", new Class<?>[]
                     {
                         ClassLoader.class
                     } ).
@@ -93,9 +93,6 @@ public final class DevShell
         white( ">> QiWeb DevShell for " + spi.name() + " starting..." );
         try
         {
-            purple( "Compiling..." );
-            spi.rebuildMain();
-
             cyan( "Isolating worlds..." );
             yellow( "DevShell Class ClassLoader is: " + getClass().getClassLoader() );
             yellow( "Current Thread Context ClassLoader is: " + originalLoader );
@@ -108,7 +105,13 @@ public final class DevShell
 
             // Config
             Class<?> configClass = appRealm.loadClass( "org.qiweb.api.Config" );
-            Object configInstance = appRealm.loadClass( "org.qiweb.runtime.ConfigInstance" ).newInstance();
+            Object configInstance = appRealm.loadClass( "org.qiweb.runtime.ConfigInstance" ).getConstructor( new Class<?>[]
+            {
+                ClassLoader.class
+            } ).newInstance( new Object[]
+            {
+                appRealm
+            } );
 
             // RoutesProvider
             Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
@@ -126,10 +129,9 @@ public final class DevShell
             } );
 
             // Application
-            Class<?> appClass = appRealm.loadClass( "org.qiweb.api.Application" );
+            Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );
             Class<?> modeClass = appRealm.loadClass( "org.qiweb.api.Application$Mode" );
-            Object appInstance = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" ).
-                getConstructor( new Class<?>[]
+            Object appInstance = appClass.getConstructor( new Class<?>[]
             {
                 modeClass,
                 configClass,
@@ -153,12 +155,10 @@ public final class DevShell
             } ).
                 newInstance( new Object[]
             {
-                "devshell-httpserver",
-                appInstance,
-                new DevShellSPIDecorator( spi, appInstance )
+                "devshell-httpserver", appInstance, new DevShellSPIDecorator( spi, appInstance )
             } );
 
-            httpServer.getClass().getMethod( "activateService" ).invoke( httpServer );
+            httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
 
             // ---------------------------------------------------------------------------------------------------------
 

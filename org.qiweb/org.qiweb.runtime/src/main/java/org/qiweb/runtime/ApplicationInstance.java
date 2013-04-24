@@ -6,6 +6,7 @@ import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
+import org.qiweb.api.Global;
 import org.qiweb.api.exceptions.PathBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.mime.MimeTypes;
@@ -32,6 +33,7 @@ public final class ApplicationInstance
 
     private final Mode mode;
     private Config config;
+    private Global global;
     private Crypto crypto;
     private File tmpdir;
     private ClassLoader classLoader;
@@ -45,7 +47,10 @@ public final class ApplicationInstance
      */
     public ApplicationInstance( RoutesProvider routesProvider )
     {
-        this( Mode.test, new ConfigInstance(), ApplicationInstance.class.getClassLoader(), routesProvider );
+        this( Mode.test,
+              new ConfigInstance( ApplicationInstance.class.getClassLoader() ),
+              ApplicationInstance.class.getClassLoader(),
+              routesProvider );
     }
 
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
@@ -71,6 +76,11 @@ public final class ApplicationInstance
     public Config config()
     {
         return config;
+    }
+
+    public Global global()
+    {
+        return global;
     }
 
     @Override
@@ -109,23 +119,33 @@ public final class ApplicationInstance
         return mimeTypes;
     }
 
-    public void changeClassLoader( ClassLoader classLoader )
+    public void reload( ClassLoader newClassLoader )
     {
-        this.classLoader = classLoader;
-    }
-
-    public void changeConfig( Config config )
-    {
-        this.config = config;
+        this.classLoader = newClassLoader;
+        this.config = new ConfigInstance( newClassLoader );
         configurationChanged();
     }
 
     private void configurationChanged()
     {
+        configureGlobal();
         configureCrypto();
         configureTmpdir();
         configurePathBinders();
         configureMimeTypes();
+    }
+
+    private void configureGlobal()
+    {
+        String globalClassName = config.string( "app.global" );
+        try
+        {
+            this.global = (Global) classLoader.loadClass( globalClassName ).newInstance();
+        }
+        catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
+        {
+            throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
+        }
     }
 
     private void configureCrypto()

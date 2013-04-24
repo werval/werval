@@ -1,12 +1,10 @@
 package org.qiweb.runtime.filters;
 
+import org.qiweb.api.Global;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
-import org.qiweb.spi.controllers.ControllerInstanceProvider;
-import org.qiweb.spi.controllers.ControllerMethodInvoker;
 
 /**
  * Instance of FilterChain.
@@ -22,28 +20,27 @@ import org.qiweb.spi.controllers.ControllerMethodInvoker;
         implements FilterChain
     {
 
-        private final ControllerInstanceProvider controllerInstanceProvider;
-        private final ControllerMethodInvoker controllerMethodInvoker;
+        private final Global global;
 
-        /* package */ FilterChainControllerTail(
-            ControllerInstanceProvider controllerInstanceProvider,
-            ControllerMethodInvoker controllerMethodInvoker )
+        /* package */ FilterChainControllerTail( Global global )
         {
-            this.controllerInstanceProvider = controllerInstanceProvider;
-            this.controllerMethodInvoker = controllerMethodInvoker;
+            this.global = global;
         }
 
         @Override
         public Outcome next( Context context )
         {
-            return controllerMethodInvoker.invoke( controllerInstanceProvider.get( context ), context );
+            Object controller = global.controllerInstanciation().get( context.route().controllerType() );
+            return global.controllerMethodInvocation().invoke( context, controller );
         }
     }
+    private final Global global;
     private final Class<? extends Filter> filterType;
     private final FilterChain next;
 
-    /* package */ FilterChainInstance( Class<? extends Filter> filterType, FilterChain next )
+    /* package */ FilterChainInstance( Global global, Class<? extends Filter> filterType, FilterChain next )
     {
+        this.global = global;
         this.filterType = filterType;
         this.next = next;
     }
@@ -51,14 +48,7 @@ import org.qiweb.spi.controllers.ControllerMethodInvoker;
     @Override
     public Outcome next( Context context )
     {
-        // TODO Implement Filters Instanciation by Application Code
-        try
-        {
-            return filterType.newInstance().filter( next, context );
-        }
-        catch( InstantiationException | IllegalAccessException ex )
-        {
-            throw new QiWebException( "Unable to instanciate Filter " + filterType, ex );
-        }
+        Filter filter = global.filterInstanciation().get( filterType );
+        return filter.filter( next, context );
     }
 }
