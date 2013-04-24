@@ -2,7 +2,10 @@ import org.gradle.api.artifacts.*
 
 buildscript {
     repositories { mavenCentral() }
-    dependencies { classpath 'org.ajoberstar:gradle-jacoco:0.3.0' }
+    dependencies { 
+        classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.6.0'
+    }
 }
 
 apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
@@ -12,6 +15,16 @@ apply plugin: 'sonar-runner'
 
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
+    apply plugin: 'license'
+    license {
+        header new File( "$rootProject.projectDir.absolutePath/../src/license/header.txt" )
+        strictCheck true
+        mapping {
+            conf="DOUBLESLASH_STYLE"
+        }
+        ext.year = Calendar.getInstance().get( Calendar.YEAR )
+        ext.name = "the original author or authors"
+    }
     apply plugin: 'jacoco'
 }
 

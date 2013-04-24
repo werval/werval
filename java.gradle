@@ -68,18 +68,27 @@ configure( install.repositories.mavenInstaller ) {
     pom.project {
         description = project.description
         url = "http://qiweb.org"
+        inceptionYear '2013'
         licenses {
             license {
                 name 'The Apache Software License, Version 2.0'
                 url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
             }
+        }
+        scm {
+            url 'https://github.com/qiweb/qiweb'
+            connection 'scm:git:https://github.com/qiweb/qiweb.git'
+            developerConnection 'scm:git:git@github.com/qiweb/qiweb.git'
         }
         developers {
             developer {
                 id = "eskatos"
                 name = "Paul Merlin"
                 email = "paul@nosphere.org"
+                timezone = "CET"
+                roles {
+                    role 'Core Team'
+                }
             }
         }
     }   

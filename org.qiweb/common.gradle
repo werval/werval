@@ -1,5 +1,5 @@
 //
-// This file is to be applied to every org.qiweb framework subproject.
+// This file is to be applied to every org.qiweb submodules.
 //
 
 apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
