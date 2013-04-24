@@ -8,10 +8,8 @@ import org.qiweb.api.http.Cookies.Cookie;
 import static org.qiweb.api.controllers.Controller.*;
 
 public class FakeControllerInstance
-    implements FakeController
 {
 
-    @Override
     public Outcome test()
     {
         return outcomes().ok().
@@ -21,7 +19,6 @@ public class FakeControllerInstance
             build();
     }
 
-    @Override
     public Outcome another( String id, Integer slug )
     {
         return outcomes().ok().
@@ -33,7 +30,6 @@ public class FakeControllerInstance
             build();
     }
 
-    @Override
     public Outcome index()
     {
         response().headers().with( "X-QiWeb-HTTP-Request-Identity", request().identity() );
@@ -60,7 +56,6 @@ public class FakeControllerInstance
             build();
     }
 
-    @Override
     public Outcome foo()
     {
         return outcomes().ok().
@@ -70,7 +65,6 @@ public class FakeControllerInstance
             build();
     }
 
-    @Override
     public Outcome bar()
     {
         return outcomes().ok().

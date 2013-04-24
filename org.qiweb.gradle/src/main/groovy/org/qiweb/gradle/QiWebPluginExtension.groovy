@@ -5,8 +5,8 @@ package org.qiweb.gradle
  */
 class QiWebPluginExtension {
 
-    def String mainRebuildTask = "classes"
+    def String main = "org.qiweb.runtime.Main"
     
-    def String testRebuildTask = "testClasses"
-
+    def String rebuildTask = "classes"
+    
 }

@@ -47,7 +47,12 @@ public final class ApplicationInstance
      */
     public ApplicationInstance( RoutesProvider routesProvider )
     {
-        this( Mode.test,
+        this( Mode.test, routesProvider );
+    }
+
+    public ApplicationInstance( Mode mode, RoutesProvider routesProvider )
+    {
+        this( mode,
               new ConfigInstance( ApplicationInstance.class.getClassLoader() ),
               ApplicationInstance.class.getClassLoader(),
               routesProvider );

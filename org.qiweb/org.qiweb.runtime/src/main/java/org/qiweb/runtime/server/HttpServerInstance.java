@@ -78,7 +78,7 @@ public class HttpServerInstance
         }
         catch( InterruptedException ex )
         {
-            throw new QiWebRuntimeException( "Unable to bind to http(s)://" + address + ":" + port + "/ "
+            throw new QiWebRuntimeException( "Unable to bind to http://" + address + ":" + port + "/ "
                                              + "Port already in use?", ex );
         }
 

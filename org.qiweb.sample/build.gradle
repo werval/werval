@@ -16,18 +16,14 @@ buildscript {
     }
 }
 
+apply plugin: 'application'
 apply plugin: 'qiweb'
 
-qiweb {
-    
-    mainRebuildTask = "classes"
-    
-}
+mainClassName = "org.qiweb.runtime.Main"
 
 dependencies {
 
     compile "org.qiweb:org.qiweb.stdlib:$version"
-    compile libs.qi4j_api
 
     runtime webjars.bootstrap
 

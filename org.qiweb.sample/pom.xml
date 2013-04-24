@@ -46,17 +46,12 @@
             <artifactId>bootstrap</artifactId>
             <version>2.3.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.qi4j.core</groupId>
-            <artifactId>org.qi4j.core.api</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
         
         <!-- Runtime -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.9</version>
+            <version>1.0.11</version>
             <scope>runtime</scope>
         </dependency>
         
@@ -87,6 +82,10 @@
         </dependency-->
 
     </dependencies>
+    
+    <properties>
+        <mainClassName>org.qiweb.runtime.Main</mainClassName>
+    </properties>
 
     <build>
         <plugins>
@@ -94,6 +93,36 @@
                 <groupId>org.qiweb</groupId>
                 <artifactId>org.qiweb.maven</artifactId>
                 <version>${project.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>${mainClassName}</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.3.1</version>
+                <configuration>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <repositoryName>lib</repositoryName>
+                    <programs>
+                        <program>
+                            <name>${project.artifactId}</name>
+                            <mainClass>${mainClassName}</mainClass>
+                        </program>
+                    </programs>
+                </configuration>
             </plugin>
         </plugins>
     </build>

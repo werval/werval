@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Paul Merlin.
+ * Copyright (c) 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JNotifyWatcher;
-import org.qiweb.spi.dev.DevShellSPI;
 
 /**
  * @goal devshell
@@ -41,6 +40,10 @@ public class DevShellMojo
      * @readonly
      */
     private MavenProject project;
+    /**
+     * @parameter default-value="compile"
+     */
+    private String rebuildPhase;
 
     @Override
     public void execute()
@@ -50,47 +53,29 @@ public class DevShellMojo
 
         try
         {
-            String projectName = project.getArtifactId();
             File rootDir = project.getBasedir();
-            File buildDir = new File( rootDir, "target" );
 
-            Set<File> mainSources = new LinkedHashSet<File>();
-            for( String compileSourceRoot : project.getCompileSourceRoots() )
+            // Classpath
+            Set<URL> classPathSet = new LinkedHashSet<URL>();
+            classPathSet.add( new File( rootDir, "target/classes" ).toURI().toURL() );
+            for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
             {
-                mainSources.add( new File( compileSourceRoot ) );
+                classPathSet.add( new URL( "file://" + runtimeClassPathElement ) );
             }
-            File mainOutput = new File( buildDir, "classes" );
-            Set<URL> mainClassPathSet = new LinkedHashSet<URL>();
-            mainClassPathSet.add( mainOutput.toURI().toURL() );
-            for( String compileClassPathElement : project.getCompileClasspathElements() )
-            {
-                mainClassPathSet.add( new URL( "file://" + compileClassPathElement ) );
-            }
-            URL[] mainClassPath = mainClassPathSet.toArray( new URL[ mainClassPathSet.size() ] );
+            URL[] classPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
 
-            Set<File> testSources = new LinkedHashSet<File>();
-            for( String compileTestSourceRoot : project.getTestCompileSourceRoots() )
+            // Sources
+            Set<File> sources = new LinkedHashSet<File>();
+            for( String sourceRoot : project.getCompileSourceRoots() )
             {
-                testSources.add( new File( compileTestSourceRoot ) );
+                sources.add( new File( sourceRoot ) );
             }
-            File testOutput = new File( buildDir, "test/classes" );
-            Set<URL> testClassPathSet = new LinkedHashSet<URL>();
-            testClassPathSet.add( testOutput.toURI().toURL() );
-            for( String testClassPathElement : project.getTestClasspathElements() )
-            {
-                testClassPathSet.add( new URL( "file://" + testClassPathElement ) );
-            }
-            URL[] testClassPath = testClassPathSet.toArray( new URL[ testClassPathSet.size() ] );
 
             // Deploy JNotify            
-            JNotifyWatcher.deployNativeLibraries( buildDir );
+            JNotifyWatcher.deployNativeLibraries( new File( rootDir, "target" ) );
 
-            DevShellSPI devSPI = new MavenDevShellSPI( projectName, rootDir, buildDir,
-                                                       mainSources, mainOutput, mainClassPath,
-                                                       testSources, testOutput, testClassPath,
-                                                       new JNotifyWatcher() );
-
-            final DevShell devShell = new DevShell( devSPI );
+            final DevShell devShell = new DevShell( new MavenDevShellSPI( classPath, sources, new JNotifyWatcher(),
+                                                                          rootDir, rebuildPhase ) );
 
             Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
             {
@@ -99,7 +84,7 @@ public class DevShellMojo
                 {
                     devShell.stop();
                 }
-            }, "Maven DevShell Shutdown Hook Thread" ) );
+            }, "qiweb-devshell-shutdown" ) );
 
             devShell.start();
         }

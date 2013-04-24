@@ -1,8 +1,6 @@
 package org.qiweb.spi.dev;
 
-import java.io.File;
 import java.net.URL;
-import java.util.Set;
 
 public class DevShellSPIWrapper
     implements DevShellSPI
@@ -21,80 +19,20 @@ public class DevShellSPIWrapper
     }
 
     @Override
-    public String name()
+    public URL[] classPath()
     {
-        return wrapped.name();
+        return wrapped.classPath();
     }
 
     @Override
-    public File rootDir()
+    public boolean isSourceChanged()
     {
-        return wrapped.rootDir();
+        return wrapped.isSourceChanged();
     }
 
     @Override
-    public File buildDir()
+    public void rebuild()
     {
-        return wrapped.buildDir();
-    }
-
-    @Override
-    public Set<File> mainSources()
-    {
-        return wrapped.mainSources();
-    }
-
-    @Override
-    public File mainOutput()
-    {
-        return wrapped.mainOutput();
-    }
-
-    @Override
-    public URL[] mainClassPath()
-    {
-        return wrapped.mainClassPath();
-    }
-
-    @Override
-    public boolean hasMainChanged()
-    {
-        return wrapped.hasMainChanged();
-    }
-
-    @Override
-    public void rebuildMain()
-    {
-        wrapped.rebuildMain();
-    }
-
-    @Override
-    public Set<File> testSources()
-    {
-        return wrapped.testSources();
-    }
-
-    @Override
-    public File testOutput()
-    {
-        return wrapped.testOutput();
-    }
-
-    @Override
-    public URL[] testClassPath()
-    {
-        return wrapped.testClassPath();
-    }
-
-    @Override
-    public boolean hasTestChanged()
-    {
-        return wrapped.hasTestChanged();
-    }
-
-    @Override
-    public void rebuildTest()
-    {
-        wrapped.rebuildTest();
+        wrapped.rebuild();
     }
 }

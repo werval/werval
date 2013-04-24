@@ -42,13 +42,13 @@ public final class DevShell
         }
 
         @Override
-        public synchronized void rebuildMain()
+        public synchronized void rebuild()
         {
-            if( hasMainChanged() )
+            if( isSourceChanged() )
             {
                 try
                 {
-                    super.rebuildMain();
+                    super.rebuild();
                     reSetupApplicationRealm();
                     httpAppInstance.getClass().getMethod( "reload", new Class<?>[]
                     {
@@ -90,7 +90,7 @@ public final class DevShell
     @SuppressWarnings( "unchecked" )
     public void start()
     {
-        white( ">> QiWeb DevShell for " + spi.name() + " starting..." );
+        white( ">> QiWeb DevShell starting..." );
         try
         {
             cyan( "Isolating worlds..." );
@@ -182,7 +182,7 @@ public final class DevShell
     {
         try
         {
-            white( ">> QiWeb DevShell for " + spi.name() + " stopping..." );
+            white( ">> QiWeb DevShell stopping..." );
             disposeRealms();
         }
         catch( Exception ex )
@@ -204,7 +204,7 @@ public final class DevShell
         // Dependencies Realm contains all Application dependencies JARs
         // and import QiWeb DevShell and Dev SPI packages from current ClassLoader (The Build Plugin One)
         ClassRealm depRealm = classWorld.newRealm( DEPENDENCIES_REALM_ID, null );
-        for( URL jarUrl : jars( spi.mainClassPath() ) )
+        for( URL jarUrl : jars( spi.classPath() ) )
         {
             depRealm.addURL( jarUrl );
         }
@@ -214,7 +214,7 @@ public final class DevShell
         // Application Realm contains all Application compiler output directories
         // and it check itself first and then check Dependencies Realm
         ClassRealm appRealm = classWorld.newRealm( nextApplicationRealmID(), null );
-        for( URL dirUrl : directories( spi.mainClassPath() ) )
+        for( URL dirUrl : directories( spi.classPath() ) )
         {
             appRealm.addURL( dirUrl );
         }
@@ -226,7 +226,7 @@ public final class DevShell
     {
         classWorld.disposeRealm( currentApplicationRealmID() );
         ClassRealm appRealm = classWorld.newRealm( nextApplicationRealmID(), null );
-        for( URL dirUrl : directories( spi.mainClassPath() ) )
+        for( URL dirUrl : directories( spi.classPath() ) )
         {
             appRealm.addURL( dirUrl );
         }

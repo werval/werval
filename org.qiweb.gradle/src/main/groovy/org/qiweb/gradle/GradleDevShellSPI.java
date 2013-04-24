@@ -17,54 +17,30 @@ public class GradleDevShellSPI
 {
 
     /**
-     * Name of the Gradle task to run to rebuild the main sources.
-     */
-    private final String mainRebuildTask;
-    /**
-     * Name of the Gradle task to run to rebuild the test sources.
-     */
-    private final String testRebuildTask;
-    /**
      * Gradle Tooling API Connector.
      */
     private final GradleConnector connector = GradleConnector.newConnector();
+    /**
+     * Name of the Gradle task to run to rebuild the sources.
+     */
+    private final String rebuildTask;
 
-    public GradleDevShellSPI(
-        String name, File rootDir, File buildDir,
-        Set<File> mainSources, File mainOutput, URL[] mainClassPath, String mainRebuildTask,
-        Set<File> testSources, File testOutput, URL[] testClassPath, String testRebuildTask,
-        Watcher watcher )
+    public GradleDevShellSPI( Set<File> sources, URL[] classPath, Watcher watcher,
+                              File rootDir, String rebuildTask )
     {
-        super( name, rootDir, buildDir, mainSources, mainOutput, mainClassPath, testSources, testOutput, testClassPath, watcher );
-        this.mainRebuildTask = mainRebuildTask;
-        this.testRebuildTask = testRebuildTask;
+        super( classPath, sources, watcher );
         this.connector.forProjectDirectory( rootDir );
+        this.rebuildTask = rebuildTask;
     }
 
     @Override
-    protected void doRebuildMain()
+    protected void doRebuild()
     {
         ProjectConnection connection = connector.connect();
         try
         {
             connection.newBuild().
-                forTasks( mainRebuildTask ).
-                run();
-        }
-        finally
-        {
-            connection.close();
-        }
-    }
-
-    @Override
-    protected void doRebuildTest()
-    {
-        ProjectConnection connection = connector.connect();
-        try
-        {
-            connection.newBuild().
-                forTasks( testRebuildTask ).
+                forTasks( rebuildTask ).
                 run();
         }
         finally

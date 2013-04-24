@@ -97,9 +97,9 @@ public class SubProtocolSwitchHandler
 
     private void rebuildIfNeeded()
     {
-        if( devSpi != null && devSpi.hasMainChanged() )
+        if( devSpi != null && devSpi.isSourceChanged() )
         {
-            devSpi.rebuildMain();
+            devSpi.rebuild();
         }
     }
 }

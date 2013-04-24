@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Paul Merlin.
+ * Copyright (c) 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,38 +27,33 @@ public class MavenDevShellSPI
     extends DevShellSPIAdapter
 {
 
-    public MavenDevShellSPI(
-        String name, File rootDir, File buildDir,
-        Set<File> mainSources, File mainOutput, URL[] mainClassPath,
-        Set<File> testSources, File testOutput, URL[] testClassPath,
-        Watcher watcher )
+    private final DefaultExecutor executor;
+    private final CommandLine cmdLine;
+
+    public MavenDevShellSPI( URL[] classPath, Set<File> sources, Watcher watcher, File rootDir, String rebuildPhase )
     {
-        super( name, rootDir, buildDir,
-               mainSources, mainOutput, mainClassPath,
-               testSources, testOutput, testClassPath,
-               watcher );
+        super( classPath, sources, watcher );
+        executor = new DefaultExecutor();
+        cmdLine = new CommandLine( "mvn" );
+        cmdLine.addArgument( "-f" );
+        cmdLine.addArgument( new File( rootDir, "pom.xml" ).getAbsolutePath() );
+        cmdLine.addArgument( rebuildPhase );
     }
 
     @Override
-    protected void doRebuildMain()
+    protected void doRebuild()
     {
-        System.out.println( "-------------------------------------------------------" );
-        System.out.println( "REBUILD MAIN" );
         try
         {
-            CommandLine cmdLine = new CommandLine( "mvn" );
-            cmdLine.addArgument( "-f" );
-            cmdLine.addArgument( new File( rootDir(), "pom.xml" ).getAbsolutePath() );
-            // cmdLine.addArgument( "clean");
-            cmdLine.addArgument( "compile" );
-            DefaultExecutor executor = new DefaultExecutor();
             int exitValue = executor.execute( cmdLine );
+            if( exitValue != 0 )
+            {
+                System.out.println( "Maven Rebuild existed with a non-zero status: " + exitValue );
+            }
         }
         catch( Exception ex )
         {
             throw new RuntimeException( ex.getMessage(), ex );
         }
-
-        System.out.println( "-------------------------------------------------------" );
     }
 }
