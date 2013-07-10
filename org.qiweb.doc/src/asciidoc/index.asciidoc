@@ -1,0 +1,46 @@
+= ﻿QiWeb - HTTP Development Kit
+
+Java, Netty, HTTP, WebSockets, DevMode, Build System Agnostic, Readable and Hacking Friendly CodeBase.
+
+
+== Hello HTTP World
+
+As a starting point we'll see how to build a "Hello World" style example. As QiWeb is Build System Agnostic the
+framework don't provide one thus the simplest example involve build related content so is not close to a "one-liner".
+However we've packed examples for various Build Systems, even a fully hand-made one based on simple shell scripts. We
+hope you'll find your way through.
+
+For the code-impatients, our https://github.com/qiweb/org.qiweb.samples[samples repository] contains the code presented
+in theses sections plus a bunch of usefull samples.
+
+include::hello/hello-sh.asciidoc[]
+include::hello/hello-makefile.asciidoc[]
+include::hello/hello-ant.asciidoc[]
+include::hello/hello-gradle.asciidoc[]
+include::hello/hello-maven.asciidoc[]
+
+
+== Manual
+
+The QiWeb manuel is intended to be a comprehensive guide to the development kit.
+
+include::manual/manual.asciidoc[]
+
+
+== Guides
+
+In this section you'll find guides for frequent and practical development use cases like build to deployment including
+Qi4j, Guice and Spring integrations and many more.
+
+include::guides/build-sh.asciidoc[]
+include::guides/build-gradle.asciidoc[]
+include::guides/build-maven.asciidoc[]
+include::guides/ide-support.asciidoc[]
+include::guides/deploy-unix.asciidoc[]
+include::guides/deploy-heroku.asciidoc[]
+include::guides/qi4j.asciidoc[]
+include::guides/guice.asciidoc[]
+include::guides/spring.asciidoc[]
+include::guides/files-from-filesystem.asciidoc[]
+include::guides/files-from-classpath.asciidoc[]
+

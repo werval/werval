@@ -10,6 +10,10 @@ import org.qiweb.api.routes.Route;
  * HTTP Interaction Context.
  * <p>Accessible using {@link Controller#context()} and other helpers in {@link Controller}.</p>
  */
+// TODO Add Context MetaInfo
+// TODO Add shortcut Context methods app() ses() req() res() out()
+// TODO Ensure that the runtime only use non-shortcut methods ?
+// Architecture Rules?
 public interface Context
 {
 
@@ -42,4 +46,11 @@ public interface Context
      * @return Current Outcome builder
      */
     Outcomes outcomes();
+    // TODO State on Context ThreadFactory in API
+    // ThreadFactory that carry the current context to another thread
+    // Maybe somewhere else ...
+    // Could be useful for small needs or bigger integrations
+    // How to share a ThreadLocal to the new thread?
+    // All context objects should then be made thread safe!
+    // ThreadFactory threadFactory();
 }

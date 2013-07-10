@@ -1,0 +1,48 @@
+// QiWeb Documentation
+
+apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
+apply plugin: 'base'
+
+task html( type: Exec, description: 'Generate HTML documentation' ) {
+    commandLine = [ 
+        'asciidoctor', '--compact', 
+        '-b', 'html5', '-a', 'toc', 
+        '-o', '../../build/docs/html/index.html', 
+        'src/asciidoc/index.asciidoc'
+    ]
+}
+html.doFirst {
+    new File('build/docs/html').mkdirs()
+}
+
+task docbook( type: Exec, description: 'Generate DocBook documentation' ) {
+    commandLine = [ 
+        'asciidoctor', '--compact', 
+        '-b', 'docbook', '-a', 'toc', 
+        '-o', '../../build/docs/docbook/index.xml', 
+        'src/asciidoc/index.asciidoc'
+    ]
+}
+docbook.doFirst {
+    new File('build/docs/docbook').mkdirs()
+}
+
+task pdf( type: Exec, description: 'Generate PDF documentation', dependsOn: docbook ) {
+    commandLine = [
+        'a2x', '-k', '-fpdf', '--fop', 'build/docs/pdf/index.xml'
+    ]
+}
+pdf.doFirst {
+    new File('build/docs/pdf').mkdirs()
+    copy {
+        from 'build/docs/docbook/index.xml'
+        into 'build/docs/pdf'
+    }
+}
+pdf.doLast {
+    new File('build/docs/pdf/index.xml').delete()
+    new File('build/docs/pdf/index.fo').delete()
+}
+
+task doc( description: 'Generate HTML and PDF documentation', dependsOn: [ html, pdf ] ) {}
+

@@ -1,0 +1,16 @@
+
+=== Hello Ant QiWeb - Ants everywhere!
+
+We'll use a single HTTP route:
+
+    GET / com.acme.Controller.index
+
+That points to this controller method:
+
+    public Outcome index()
+    {
+        return outcomes().ok( "Hello QiWeb" );
+    }
+
+
+
