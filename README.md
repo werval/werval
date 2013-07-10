@@ -3,7 +3,8 @@
 > This is a work in progress!
 
     ./gradlew clean
-    ./gradlew test
+    ./gradlew check
+    ./gradlew assemble
     ./gradlew install
 
 By default version number `0` is used.
