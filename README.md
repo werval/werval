@@ -17,5 +17,5 @@ You can then depend on the following artifacts:
 
 The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the Development Shell.
 
-The gradle plugin is `org.qiweb.org.qiweb.gradle:0`, is applied using `apply: 'qiweb'` and has a `devshell` task.
+The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using `apply: 'qiweb'` and has a `devshell` task.
 
