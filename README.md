@@ -7,7 +7,7 @@
     ./gradlew assemble
     ./gradlew install
 
-By default version number `0` is used, overide with `-Dversion=WHATEVER`
+By default version number `0` is used, override with `-Dversion=WHATEVER`
 
 You can then depend on the following artifacts:
 
