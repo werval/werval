@@ -13,6 +13,7 @@ You can then depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
 - `org.qiweb:org.qiweb.runtime:0` to run `org.qiweb.runtime.Main` class
+- `org.qiweb:org.qiweb.test:0` in your test code
 
 The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the Development Shell.
 
