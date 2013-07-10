@@ -6,7 +6,7 @@
     ./gradlew test
     ./gradlew install
 
-By default version number 0 is used.
+By default version number `0` is used.
 
 You can then depend on the following artifacts:
 
