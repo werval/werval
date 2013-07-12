@@ -199,11 +199,6 @@ public class HttpOnDiskRequestAggregator
 
             out.add( fullRequest );
         }
-        else
-        {
-            // Continue
-            return;
-        }
     }
 
     @Override
