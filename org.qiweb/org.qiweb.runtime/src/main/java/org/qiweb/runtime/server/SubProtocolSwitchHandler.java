@@ -1,7 +1,7 @@
 package org.qiweb.runtime.server;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * Distinguish HttpRequests and WebSocketFrames.
  */
 public class SubProtocolSwitchHandler
-    extends ChannelInboundMessageHandlerAdapter<Object>
+    extends SimpleChannelInboundHandler<Object>
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
@@ -49,14 +49,14 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    public boolean beginMessageReceived( ChannelHandlerContext context )
+    protected void beginMessageReceived( ChannelHandlerContext context )
     {
         inBoundMessageBufferUpdated = false;
-        return true;
     }
 
     @Override
-    public void messageReceived( ChannelHandlerContext context, Object message )
+    protected void messageReceived( ChannelHandlerContext context, Object message )
+        throws Exception
     {
         if( message instanceof HttpRequest )
         {
@@ -65,7 +65,7 @@ public class SubProtocolSwitchHandler
             LOG.debug( "Switching to plain HTTP protocol" );
             context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( app ) );
             context.pipeline().remove( this );
-            context.nextInboundMessageBuffer().add( request );
+            context.fireMessageReceived( request );
             inBoundMessageBufferUpdated = true;
         }
         else if( message instanceof WebSocketFrame )
@@ -76,7 +76,7 @@ public class SubProtocolSwitchHandler
             context.pipeline().addLast( "router", new WebSocketFrameHandler( app ) );
             context.pipeline().remove( this );
             frame.retain();
-            context.nextInboundMessageBuffer().add( frame );
+            context.fireMessageReceived( frame );
             inBoundMessageBufferUpdated = true;
         }
         else
@@ -85,13 +85,13 @@ public class SubProtocolSwitchHandler
             context.channel().close();
         }
     }
-
+    
     @Override
     public void endMessageReceived( ChannelHandlerContext context )
     {
         if( inBoundMessageBufferUpdated )
         {
-            context.fireInboundBufferUpdated();
+            // context.fireInboundBufferUpdated();
         }
     }
 

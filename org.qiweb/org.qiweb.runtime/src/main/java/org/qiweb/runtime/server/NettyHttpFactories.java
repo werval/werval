@@ -119,7 +119,7 @@ public final class NettyHttpFactories
     public static RequestBody bodyOf( RequestHeader requestHeader, FullHttpRequest request )
     {
         RequestBody body;
-        if( request.data().readableBytes() > 0
+        if( request.content().readableBytes() > 0
             && ( POST.equals( request.getMethod() )
                  || PUT.equals( request.getMethod() )
                  || PATCH.equals( request.getMethod() ) ) )
@@ -170,7 +170,7 @@ public final class NettyHttpFactories
                         throw new QiWebException( ex.getMessage(), ex );
                     }
                 default:
-                    body = new RequestBodyInstance( request.data() );
+                    body = new RequestBodyInstance( request.content() );
                     break;
             }
         }

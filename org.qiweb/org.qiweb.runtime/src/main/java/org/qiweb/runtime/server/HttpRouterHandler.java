@@ -3,7 +3,7 @@ package org.qiweb.runtime.server;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -84,7 +84,7 @@ import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
  * <p>TODO WebSocket</p>
  */
 public final class HttpRouterHandler
-    extends ChannelInboundMessageHandlerAdapter<FullHttpRequest>
+    extends SimpleChannelInboundHandler<FullHttpRequest>
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpRouterHandler.class );
@@ -141,11 +141,10 @@ public final class HttpRouterHandler
     }
 
     @Override
-    public boolean beginMessageReceived( ChannelHandlerContext nettyContext )
+    protected void beginMessageReceived( ChannelHandlerContext nettyContext )
     {
         // Generate a unique identifier per request
         requestIdentity = generateNewRequestIdentity();
-        return true;
     }
 
     @Override
@@ -224,7 +223,7 @@ public final class HttpRouterHandler
                 forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
-                ( (FullHttpResponse) nettyResponse ).data().
+                ( (FullHttpResponse) nettyResponse ).content().
                     writeBytes( streamOutcome.bodyInputStream(),
                                 new BigDecimal( streamOutcome.contentLength() ).intValueExact() );
                 writeFuture = nettyContext.write( nettyResponse );
@@ -237,7 +236,7 @@ public final class HttpRouterHandler
                 forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
-                ( (FullHttpResponse) nettyResponse ).data().writeBytes( simpleOutcome.body() );
+                ( (FullHttpResponse) nettyResponse ).content().writeBytes( simpleOutcome.body() );
                 writeFuture = nettyContext.write( nettyResponse );
             }
             else
@@ -333,7 +332,7 @@ public final class HttpRouterHandler
     {
         FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, UTF_8 ) );
         response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );
-        response.headers().set( CONTENT_LENGTH, response.data().readableBytes() );
+        response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );
         context.write( response ).addListener( ChannelFutureListener.CLOSE );
     }

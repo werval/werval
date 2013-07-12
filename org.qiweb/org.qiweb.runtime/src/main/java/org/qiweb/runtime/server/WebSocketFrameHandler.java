@@ -1,14 +1,14 @@
 package org.qiweb.runtime.server;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.qiweb.api.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WebSocketFrameHandler
-    extends ChannelInboundMessageHandlerAdapter<WebSocketFrame>
+    extends SimpleChannelInboundHandler<WebSocketFrame>
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketFrameHandler.class );
@@ -19,7 +19,7 @@ public class WebSocketFrameHandler
         super();
         this.app = app;
     }
-
+    
     @Override
     public void exceptionCaught( ChannelHandlerContext context, Throwable cause )
     {

@@ -1,7 +1,6 @@
 package org.qiweb.runtime.server;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.MessageBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
@@ -11,6 +10,7 @@ import io.netty.handler.stream.ChunkedInput;
 import io.netty.handler.stream.ChunkedMessageInput;
 
 import static io.netty.buffer.Unpooled.*;
+import io.netty.channel.MessageList;
 
 /**
  * Encode a ChunkedInput&lt;ByteBuf&gt; into HTTP chunks.
@@ -50,7 +50,7 @@ public class HttpChunkedBodyEncoder
     }
 
     @Override
-    public boolean readChunk( MessageBuf<HttpContent> buffer )
+    public boolean readChunk( MessageList<HttpContent> buffer )
         throws Exception
     {
         if( isLastChunkSent )

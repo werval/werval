@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
-import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
 
 public class HttpServerInstance
     implements HttpServer
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;
     private final String identity;
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;
@@ -36,7 +36,7 @@ public class HttpServerInstance
         this.identity = identity;
         this.app = app;
         this.devSpi = devSpi;
-        this.allChannels = new DefaultChannelGroup( identity );
+        this.allChannels = new DefaultChannelGroup(identity,null);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class HttpServerInstance
         app.global().beforeHttpUnbind( app );
 
         // Unbind Netty
-        bootstrap.shutdown();
+        bootstrap.group().shutdownGracefully();
         allChannels.clear();
 
         LOG.debug( "[{}] Http Service Passivated", identity );

@@ -6,8 +6,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.logging.ByteLoggingHandler;
 import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -20,11 +20,12 @@ import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static java.util.concurrent.TimeUnit.*;
-import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POOL_SIZE;
 
 /* package */ class HttpServerChannelInitializer
     extends ChannelInitializer<Channel>
 {
+
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;
 
     private static class ExecutorsThreadFactory
         implements ThreadFactory
@@ -59,13 +60,13 @@ import static io.netty.util.concurrent.MultithreadEventExecutorGroup.DEFAULT_POO
     public void initChannel( Channel channel )
     {
         ChannelPipeline pipeline = channel.pipeline();
-
+        
         if( app.config().bool( "qiweb.http.log.low-level.enabled" ) )
         {
             // Log Netty Bytes
             LogLevel level = LogLevel.valueOf(
                 app.config().string( "qiweb.http.log.low-level.level" ).toUpperCase( Locale.US ) );
-            pipeline.addLast( "byte-logging", new ByteLoggingHandler( level ) );
+            pipeline.addLast( "byte-logging", new LoggingHandler( level ) );
         }
 
         // Read/Write Timeout

@@ -328,18 +328,6 @@ public final class FileByteBuff
     }
 
     @Override
-    public ByteBuf suspendIntermediaryDeallocations()
-    {
-        throw new UnsupportedOperationException( NOT_SUPPORTED );
-    }
-
-    @Override
-    public ByteBuf resumeIntermediaryDeallocations()
-    {
-        throw new UnsupportedOperationException( NOT_SUPPORTED );
-    }
-
-    @Override
     public ByteBuf retain( int increment )
     {
         return this;
@@ -367,6 +355,11 @@ public final class FileByteBuff
     public boolean release( int decrement )
     {
         return false;
+    }
+
+    @Override
+    public ByteBuffer internalNioBuffer(int index, int length) {
+        throw new UnsupportedOperationException( NOT_SUPPORTED );
     }
 }
 // CHECKSTYLE:ON

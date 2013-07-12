@@ -4,7 +4,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundMessageHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -27,7 +27,7 @@ public class DumbHttpServer
 {
 
     private static class DumbHandler
-        extends ChannelInboundMessageHandlerAdapter<FullHttpRequest>
+        extends SimpleChannelInboundHandler<FullHttpRequest>
     {
 
         @Override
@@ -36,7 +36,7 @@ public class DumbHttpServer
             FullHttpResponse response = new DefaultFullHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.OK );
             StringWriter sw = new StringWriter();
             sw.append( "Dumb!" );
-            response.data().writeBytes( copiedBuffer( sw.toString(), UTF_8 ) );
+            response.content().writeBytes( copiedBuffer( sw.toString(), UTF_8 ) );
             ctx.write( response ).addListener( ChannelFutureListener.CLOSE );
         }
     }
@@ -75,6 +75,6 @@ public class DumbHttpServer
 
     public void stop()
     {
-        bootstrap.shutdown();
+        bootstrap.group().shutdownGracefully();
     }
 }

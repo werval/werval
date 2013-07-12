@@ -1,9 +1,9 @@
 package org.qiweb.runtime.server;
 
-import io.netty.buffer.BufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.MessageList;
 import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
@@ -72,8 +72,8 @@ public class HttpOnDiskRequestAggregator
     }
 
     @Override
-    protected Object decode( ChannelHandlerContext context, HttpObject msg )
-        throws IOException
+    protected void decode( ChannelHandlerContext context, HttpObject msg, MessageList<Object> out )
+        throws Exception
     {
         // Handle this HttpObject or not?
         boolean skip = true;
@@ -88,16 +88,16 @@ public class HttpOnDiskRequestAggregator
         if( skip )
         {
             // Nothing to do with this message
-            return msg;
+            return;
         }
 
         if( msg instanceof HttpRequest )
         {
-            return handleHttpRequest( context, (HttpRequest) msg );
+            handleHttpRequest( context, (HttpRequest) msg, out );
         }
         else if( msg instanceof HttpContent )
         {
-            return handleHttpContent( context, (HttpContent) msg );
+            handleHttpContent( context, (HttpContent) msg, out );
         }
         else
         {
@@ -105,7 +105,7 @@ public class HttpOnDiskRequestAggregator
         }
     }
 
-    private Object handleHttpRequest( ChannelHandlerContext context, HttpRequest newRequestHeader )
+    private void handleHttpRequest( ChannelHandlerContext context, HttpRequest newRequestHeader, MessageList<Object> out )
         throws IOException
     {
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
@@ -120,8 +120,9 @@ public class HttpOnDiskRequestAggregator
         {
             removeTransferEncodingChunked( newRequestHeader );
             aggregatedRequestHeader = null;
-            BufUtil.retain( newRequestHeader );
-            return newRequestHeader;
+            // BufUtil.retain( newRequestHeader );
+            out.add( newRequestHeader );
+            return;
         }
         currentRequestHeader = new DefaultHttpRequest( newRequestHeader.getProtocolVersion(),
                                                        newRequestHeader.getMethod(),
@@ -135,32 +136,30 @@ public class HttpOnDiskRequestAggregator
         bodyOutputStream = new FileOutputStream( bodyFile, true );
 
         LOG.debug( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
-
-        return null;
     }
 
-    private Object handleHttpContent( ChannelHandlerContext context, HttpContent chunk )
+    private void handleHttpContent( ChannelHandlerContext context, HttpContent chunk, MessageList<Object> out )
         throws IOException
     {
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
         assert currentRequestHeader != null;
 
-        if( maxContentLength != -1 && bodyFile.length() > maxContentLength - chunk.data().readableBytes() )
+        if( maxContentLength != -1 && bodyFile.length() > maxContentLength - chunk.content().readableBytes() )
         {
             LOG.warn( "Request Entity is too large, content length exceeded {} bytes.", maxContentLength );
             ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", UTF_8 );
             FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, REQUEST_ENTITY_TOO_LARGE, body );
             response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );
-            response.headers().set( CONTENT_LENGTH, response.data().readableBytes() );
+            response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
             context.write( response ).addListener( ChannelFutureListener.CLOSE );
-            return null;
+            return;
         }
 
         // Append chunk data to aggregated File
-        if( chunk.data().isReadable() )
+        if( chunk.content().isReadable() )
         {
-            chunk.data().readBytes( bodyOutputStream, chunk.data().readableBytes() );
+            chunk.content().readBytes( bodyOutputStream, chunk.content().readableBytes() );
         }
 
         // Last Chunk?
@@ -199,12 +198,12 @@ public class HttpOnDiskRequestAggregator
             aggregatedRequestHeader = null;
             bodyOutputStream = null;
 
-            return fullRequest;
+            out.add( fullRequest );
         }
         else
         {
             // Continue
-            return null;
+            return;
         }
     }
 
