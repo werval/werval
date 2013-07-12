@@ -22,7 +22,6 @@ public class SubProtocolSwitchHandler
     private final ChannelGroup allChannels;
     private final EventExecutorGroup httpExecutors;
     private final ApplicationInstance app;
-    private boolean inBoundMessageBufferUpdated = false;
     private final DevShellSPI devSpi;
 
     public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors,
@@ -49,12 +48,6 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    protected void beginMessageReceived( ChannelHandlerContext context )
-    {
-        inBoundMessageBufferUpdated = false;
-    }
-
-    @Override
     protected void messageReceived( ChannelHandlerContext context, Object message )
         throws Exception
     {
@@ -66,7 +59,6 @@ public class SubProtocolSwitchHandler
             context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( app ) );
             context.pipeline().remove( this );
             context.fireMessageReceived( request );
-            inBoundMessageBufferUpdated = true;
         }
         else if( message instanceof WebSocketFrame )
         {
@@ -77,21 +69,11 @@ public class SubProtocolSwitchHandler
             context.pipeline().remove( this );
             frame.retain();
             context.fireMessageReceived( frame );
-            inBoundMessageBufferUpdated = true;
         }
         else
         {
             LOG.warn( "Received a message of an unknown type ({}), channel will be closed.", message.getClass() );
             context.channel().close();
-        }
-    }
-    
-    @Override
-    public void endMessageReceived( ChannelHandlerContext context )
-    {
-        if( inBoundMessageBufferUpdated )
-        {
-            // context.fireInboundBufferUpdated();
         }
     }
 

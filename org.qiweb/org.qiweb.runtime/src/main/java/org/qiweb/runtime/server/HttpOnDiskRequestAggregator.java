@@ -120,7 +120,6 @@ public class HttpOnDiskRequestAggregator
         {
             removeTransferEncodingChunked( newRequestHeader );
             aggregatedRequestHeader = null;
-            // BufUtil.retain( newRequestHeader );
             out.add( newRequestHeader );
             return;
         }
