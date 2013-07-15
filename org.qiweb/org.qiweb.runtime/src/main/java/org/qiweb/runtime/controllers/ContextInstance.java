@@ -1,6 +1,7 @@
 package org.qiweb.runtime.controllers;
 
 import org.qiweb.api.Application;
+import org.qiweb.api.MetaData;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcomes;
 import org.qiweb.api.http.Request;
@@ -21,6 +22,7 @@ public final class ContextInstance
     private final Request request;
     private final Response response;
     private final Outcomes outcomes;
+    private final MetaData metaData;
 
     public ContextInstance( Application application, Session session, Route route, Request request, Response response )
     {
@@ -30,6 +32,7 @@ public final class ContextInstance
         this.request = request;
         this.response = response;
         this.outcomes = new OutcomesInstance( application.config(), response.headers(), response.cookies() );
+        this.metaData = new MetaData();
     }
 
     @Override
@@ -66,5 +69,11 @@ public final class ContextInstance
     public Outcomes outcomes()
     {
         return outcomes;
+    }
+
+    @Override
+    public MetaData metaData()
+    {
+        return metaData;
     }
 }

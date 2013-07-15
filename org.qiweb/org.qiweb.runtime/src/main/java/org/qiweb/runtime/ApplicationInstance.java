@@ -7,6 +7,7 @@ import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.Global;
+import org.qiweb.api.MetaData;
 import org.qiweb.api.exceptions.PathBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.mime.MimeTypes;
@@ -44,6 +45,7 @@ public final class ApplicationInstance
     private ReverseRoutes reverseRoutes;
     private PathBinders pathBinders;
     private MimeTypes mimeTypes;
+    private final MetaData metaData;
 
     /**
      * Create a new Application instance in {@link Mode#test}.
@@ -72,6 +74,7 @@ public final class ApplicationInstance
         this.config = config;
         this.routesProvider = routesProvider;
         this.classLoader = classLoader;
+        this.metaData = new MetaData();
         configurationChanged();
     }
 
@@ -132,6 +135,12 @@ public final class ApplicationInstance
     public MimeTypes mimeTypes()
     {
         return mimeTypes;
+    }
+
+    @Override
+    public MetaData metaData()
+    {
+        return metaData;
     }
 
     public void reload( ClassLoader newClassLoader )

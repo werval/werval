@@ -115,4 +115,11 @@ public interface Application
      * @return Application {@link MimeTypes}
      */
     MimeTypes mimeTypes();
+
+    /**
+     * Application {@link MetaData}.
+     * <p>Don't hold references to the MetaData instance in order to make your code {@link Mode#dev} friendly.</p>
+     * @return Application {@link MetaData}
+     */
+    MetaData metaData();
 }
