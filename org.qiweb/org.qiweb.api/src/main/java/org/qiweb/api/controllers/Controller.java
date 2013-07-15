@@ -10,8 +10,8 @@ import org.qiweb.api.routes.ReverseRoutes;
 /**
  * Controller.
  * <p>
- *     This class only provide static helpers backed by a ThreadLocal<Context> so you can extend it or not,
- *     as you like.
+ *     This class only provide static helpers backed by a ThreadLocal&lt;Context&gt; so you can extend it
+ *     <strong>or not</strong>, as you like.
  * </p>
  */
 public class Controller
