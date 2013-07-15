@@ -26,6 +26,7 @@ import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
  * <p>MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.</p>
  * <p>Log 404 at DEBUG level.</p>
  * <p>Log 200 at TRACE level.</p>
+ * <p><strong>Keep in mind that not all deployment strategies will be compatible with the use of this controller.</strong></p>
  */
 // TODO Add Range request support in StaticFiles
 public class StaticFiles
