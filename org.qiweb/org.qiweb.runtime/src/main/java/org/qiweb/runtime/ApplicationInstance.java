@@ -12,9 +12,11 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.PathBinder;
 import org.qiweb.api.routes.PathBinders;
+import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.routes.PathBindersInstance;
+import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
@@ -38,6 +40,8 @@ public final class ApplicationInstance
     private File tmpdir;
     private ClassLoader classLoader;
     private final RoutesProvider routesProvider;
+    private Routes routes;
+    private ReverseRoutes reverseRoutes;
     private PathBinders pathBinders;
     private MimeTypes mimeTypes;
 
@@ -109,7 +113,13 @@ public final class ApplicationInstance
     @Override
     public Routes routes()
     {
-        return routesProvider.routes( this );
+        return routes;
+    }
+
+    @Override
+    public ReverseRoutes reverseRoutes()
+    {
+        return reverseRoutes;
     }
 
     @Override
@@ -138,6 +148,13 @@ public final class ApplicationInstance
         configureTmpdir();
         configurePathBinders();
         configureMimeTypes();
+        loadRoutes();
+    }
+
+    private void loadRoutes()
+    {
+        routes = routesProvider.routes( this );
+        reverseRoutes = new ReverseRoutesInstance( this );
     }
 
     private void configureGlobal()

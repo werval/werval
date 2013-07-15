@@ -1,4 +1,5 @@
 
 dependencies {
-
+    // TODO Move me to runtime!!!
+    compile libs.javassist
 }

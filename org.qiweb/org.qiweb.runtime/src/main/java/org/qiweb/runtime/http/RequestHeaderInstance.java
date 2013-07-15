@@ -130,7 +130,12 @@ public class RequestHeaderInstance
             public Integer map( Void from )
             {
                 String parse = uri.substring( "https://".length() + 1 );
-                parse = parse.substring( 0, parse.indexOf( '/' ) );
+                int slashIdx = parse.indexOf( '/' );
+                if( slashIdx < 0 )
+                {
+                    return uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
+                }
+                parse = parse.substring( 0, slashIdx );
                 int colIdx = parse.indexOf( ':' );
                 return colIdx < 0
                        ? uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT

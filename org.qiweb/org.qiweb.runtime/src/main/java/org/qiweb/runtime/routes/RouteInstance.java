@@ -240,6 +240,48 @@ import static org.qi4j.functional.Specifications.in;
         return boundParams;
     }
 
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public String unbindPath( PathBinders pathBinders, Map<String, Object> parameters )
+    {
+        StringBuilder unboundPath = new StringBuilder( "/" );
+        String[] pathElements = path.substring( 1 ).split( "/" );
+        for( int idx = 0; idx < pathElements.length; idx++ )
+        {
+            String pathElement = pathElements[idx];
+            if( pathElement.length() > 1 )
+            {
+                switch( pathElement.substring( 0, 1 ) )
+                {
+                    case ":":
+                    case "*":
+                        ControllerParam controllerParam = controllerParams.get( pathElement.substring( 1 ) );
+                        Object value = controllerParam.hasForcedValue()
+                                       ? controllerParam.forcedValue()
+                                       : parameters.get( controllerParam.name() );
+                        // QUID is this class cast legal?
+                        unboundPath.append( pathBinders.unbind( (Class<Object>) controllerParam.type(),
+                                                                controllerParam.name(),
+                                                                value ) );
+                        break;
+                    default:
+                        unboundPath.append( pathElement );
+                        break;
+                }
+            }
+            else
+            {
+                unboundPath.append( pathElement );
+            }
+            if( idx + 1 < pathElements.length )
+            {
+                unboundPath.append( "/" );
+            }
+
+        }
+        return unboundPath.toString();
+    }
+
     public ControllerParams controllerParams()
     {
         return controllerParams;

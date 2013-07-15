@@ -4,6 +4,7 @@
 def v_classworlds = '2.4.2'
 def v_gradle_tooling = '1.4'
 def v_httpclient = '4.2.5'
+def v_javassist = '3.18.0-GA' // Same version as the one brought by Netty
 def v_jtoolbox = '1.5'
 def v_jnotify = '0.94'
 def v_junit = '4.11'
@@ -17,6 +18,8 @@ def v_typesafe_config = '1.0.2'
 // Libraries extension
 rootProject.ext {
     libs = [
+        // Runtime Libraries
+        javassist:          "org.javassist:javassist:$v_javassist",
         jtoolbox:           "org.codeartisans:java-toolbox:$v_jtoolbox",
         logback:            "ch.qos.logback:logback-classic:$v_logback",
         netty_codec_http:   "io.netty:netty-codec-http:$v_netty",

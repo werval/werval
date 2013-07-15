@@ -5,6 +5,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.routes.ReverseRoutes;
 
 /**
  * Controller.
@@ -39,6 +40,15 @@ public class Controller
     public static Application application()
     {
         return context().application();
+    }
+
+    /**
+     * @return Current ReverseRoutes
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static ReverseRoutes reverseRoutes()
+    {
+        return context().application().reverseRoutes();
     }
 
     /**

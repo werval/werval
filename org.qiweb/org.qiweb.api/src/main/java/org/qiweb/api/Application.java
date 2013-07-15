@@ -3,6 +3,7 @@ package org.qiweb.api;
 import java.io.File;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.PathBinders;
+import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
 
 /**
@@ -93,6 +94,13 @@ public interface Application
      * @return Application {@link Routes}
      */
     Routes routes();
+
+    /**
+     * Application {@link ReverseRoutes}.
+     * <p>Don't hold references to the ReverseRoutes instance in order to make your code {@link Mode#dev} friendly.</p>
+     * @return Application {@link ReverseRoutes}
+     */
+    ReverseRoutes reverseRoutes();
 
     /**
      * Application {@link PathBinders}.
