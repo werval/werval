@@ -3,7 +3,6 @@ package org.qiweb.runtime.server;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.MessageList;
 import io.netty.handler.codec.DecoderResult;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
@@ -19,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.UUID;
 import org.codeartisans.java.toolbox.io.Files;
 import org.qiweb.api.Application;
@@ -72,7 +72,7 @@ public class HttpOnDiskRequestAggregator
     }
 
     @Override
-    protected void decode( ChannelHandlerContext context, HttpObject msg, MessageList<Object> out )
+    protected void decode( ChannelHandlerContext context, HttpObject msg, List<Object> out )
         throws Exception
     {
         // Handle this HttpObject or not?
@@ -105,7 +105,7 @@ public class HttpOnDiskRequestAggregator
         }
     }
 
-    private void handleHttpRequest( ChannelHandlerContext context, HttpRequest newRequestHeader, MessageList<Object> out )
+    private void handleHttpRequest( ChannelHandlerContext context, HttpRequest newRequestHeader, List<Object> out )
         throws IOException
     {
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
@@ -137,7 +137,7 @@ public class HttpOnDiskRequestAggregator
         LOG.debug( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
     }
 
-    private void handleHttpContent( ChannelHandlerContext context, HttpContent chunk, MessageList<Object> out )
+    private void handleHttpContent( ChannelHandlerContext context, HttpContent chunk, List<Object> out )
         throws IOException
     {
         HttpRequest currentRequestHeader = aggregatedRequestHeader;

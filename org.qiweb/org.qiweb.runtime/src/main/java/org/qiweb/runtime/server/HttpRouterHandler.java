@@ -8,11 +8,9 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.ServerCookieEncoder;
-import io.netty.handler.stream.ChunkedMessageInput;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
@@ -141,18 +139,14 @@ public final class HttpRouterHandler
     }
 
     @Override
-    protected void beginMessageReceived( ChannelHandlerContext nettyContext )
-    {
-        // Generate a unique identifier per request
-        requestIdentity = generateNewRequestIdentity();
-    }
-
-    @Override
-    public void messageReceived( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest )
+    protected void channelRead0( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest )
         throws ClassNotFoundException, InstantiationException,
                IllegalAccessException, InvocationTargetException,
                IOException
     {
+        // Generate a unique identifier per request
+        requestIdentity = generateNewRequestIdentity();
+
         LOG.debug( "{} Received a FullHttpRequest: {}", requestIdentity, nettyRequest );
 
         // Parse RequestHeader
@@ -211,9 +205,7 @@ public final class HttpRouterHandler
                 nettyResponse.headers().set( TRAILER, HttpChunkedBodyEncoder.CONTENT_LENGTH_TRAILER );
                 // Body
                 nettyContext.write( nettyResponse );
-                ChunkedMessageInput<HttpContent> bodyEncoder = new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput(),
-                                                                                           chunkedOutcome.chunkSize() );
-                writeFuture = nettyContext.write( bodyEncoder );
+                writeFuture = nettyContext.writeAndFlush( new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput() ) );
             }
             else if( outcome instanceof StreamOutcome )
             {
@@ -226,7 +218,7 @@ public final class HttpRouterHandler
                 ( (FullHttpResponse) nettyResponse ).content().
                     writeBytes( streamOutcome.bodyInputStream(),
                                 new BigDecimal( streamOutcome.contentLength() ).intValueExact() );
-                writeFuture = nettyContext.write( nettyResponse );
+                writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
             else if( outcome instanceof SimpleOutcome )
             {
@@ -237,14 +229,14 @@ public final class HttpRouterHandler
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).content().writeBytes( simpleOutcome.body() );
-                writeFuture = nettyContext.write( nettyResponse );
+                writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
             else
             {
                 LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
-                writeFuture = nettyContext.write( nettyResponse );
+                writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
 
             // Close the connection as soon as the response is sent if not keep alive
@@ -334,6 +326,6 @@ public final class HttpRouterHandler
         response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );
         response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );
-        context.write( response ).addListener( ChannelFutureListener.CLOSE );
+        context.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
     }
 }

@@ -116,23 +116,16 @@ public class OutcomeBuilderInstance
     {
 
         private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( "".getBytes( UTF_8 ) ) );
-        private int chunkSize;
 
         /* package */ ChunkedOutcome( int status, InputStream input, int chunkSize )
         {
             super( status );
             this.input = new ChunkedStream( input, chunkSize );
-            this.chunkSize = chunkSize;
         }
 
         public ChunkedInput<ByteBuf> chunkedInput()
         {
             return input;
-        }
-
-        public int chunkSize()
-        {
-            return chunkSize;
         }
     }
     private final int status;

@@ -1,45 +1,37 @@
 package org.qiweb.runtime.server;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedInput;
-import io.netty.handler.stream.ChunkedMessageInput;
 
-import static io.netty.buffer.Unpooled.*;
-import io.netty.channel.MessageList;
+import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
 
 /**
  * Encode a ChunkedInput&lt;ByteBuf&gt; into HTTP chunks.
- * <p>
- *     Please note that it should use the very same chunk size as the provided ChunkedInput, otherwise behaviour is not
- *     guaranteed.
- * </p>
  */
 public class HttpChunkedBodyEncoder
-    implements ChunkedMessageInput<HttpContent>
+    implements ChunkedInput<HttpContent>
 {
 
     public static final String CONTENT_LENGTH_TRAILER = "X-QiWeb-Content-Length";
     private final ChunkedInput<ByteBuf> chunkedBody;
-    private final int chunkSize;
     private boolean isLastChunk = false;
-    private boolean isLastChunkSent = false;
+    private boolean isLastChunkRead = false;
     private long contentLength = 0;
 
-    public HttpChunkedBodyEncoder( ChunkedInput<ByteBuf> chunkedBody, int chunkSize )
+    public HttpChunkedBodyEncoder( ChunkedInput<ByteBuf> chunkedBody )
     {
         this.chunkedBody = chunkedBody;
-        this.chunkSize = chunkSize;
     }
 
     @Override
     public boolean isEndOfInput()
     {
-        return isLastChunkSent;
+        return isLastChunkRead;
     }
 
     @Override
@@ -50,32 +42,31 @@ public class HttpChunkedBodyEncoder
     }
 
     @Override
-    public boolean readChunk( MessageList<HttpContent> buffer )
+    public HttpContent readChunk( ChannelHandlerContext context )
         throws Exception
     {
-        if( isLastChunkSent )
+        if( isLastChunkRead )
         {
-            return false;
+            return null;
         }
         else
         {
-            buffer.add( nextChunk() );
-            return true;
+            return nextChunk( context );
         }
     }
 
-    private HttpContent nextChunk()
+    private HttpContent nextChunk( ChannelHandlerContext context )
         throws Exception
     {
         if( isLastChunk )
         {
-            isLastChunkSent = true;
+            isLastChunkRead = true;
             LastHttpContent lastChunk = new DefaultLastHttpContent( EMPTY_BUFFER );
             lastChunk.trailingHeaders().add( CONTENT_LENGTH_TRAILER, contentLength );
             return lastChunk;
         }
-        ByteBuf buffer = Unpooled.buffer( chunkSize );
-        if( !chunkedBody.readChunk( buffer ) )
+        ByteBuf buffer = chunkedBody.readChunk( context );
+        if( chunkedBody.isEndOfInput() )
         {
             isLastChunk = true;
         }

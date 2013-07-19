@@ -28,7 +28,7 @@ public class WebSocketFrameHandler
     }
 
     @Override
-    public void messageReceived( ChannelHandlerContext context, WebSocketFrame frame )
+    protected void channelRead0( ChannelHandlerContext context, WebSocketFrame frame )
     {
         LOG.debug( "Received a WebSocketFrame: {}", frame );
         context.channel().close();

@@ -48,7 +48,7 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    protected void messageReceived( ChannelHandlerContext context, Object message )
+    protected void channelRead0( ChannelHandlerContext context, Object message )
         throws Exception
     {
         if( message instanceof HttpRequest )
@@ -58,7 +58,7 @@ public class SubProtocolSwitchHandler
             LOG.debug( "Switching to plain HTTP protocol" );
             context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( app ) );
             context.pipeline().remove( this );
-            context.fireMessageReceived( request );
+            context.fireChannelRead( request );
         }
         else if( message instanceof WebSocketFrame )
         {
@@ -68,7 +68,7 @@ public class SubProtocolSwitchHandler
             context.pipeline().addLast( "router", new WebSocketFrameHandler( app ) );
             context.pipeline().remove( this );
             frame.retain();
-            context.fireMessageReceived( frame );
+            context.fireChannelRead( frame );
         }
         else
         {
