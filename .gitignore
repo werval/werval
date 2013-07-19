@@ -2,3 +2,10 @@
 .gradletasknamecache
 build
 target
+.nb-gradle
+.nb-gradle-properties
+
+# TODO Remove me!
+qiweb-temp
+
+
