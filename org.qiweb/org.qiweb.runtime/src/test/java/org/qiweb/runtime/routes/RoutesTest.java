@@ -10,14 +10,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.Application;
-import org.qiweb.api.Config;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
-import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
@@ -37,8 +35,6 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
  */
 public class RoutesTest
 {
-
-    private final Config config = new ConfigInstance();
 
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()

@@ -31,13 +31,20 @@ public class ReverseRoutesTest
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).simpleMethod( param ) );
             return outcomes().ok( reverseRoute.httpUrl( false ) ).build();
         }
+
+        public Outcome wild( String card )
+        {
+            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).wild( card ) );
+            return outcomes().ok( reverseRoute.httpUrl( false ) ).build();
+        }
     }
 
     @Override
     protected String routesString()
     {
         return "GET /simpleMethod org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
-               + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )";
+               + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
+               + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )";
     }
 
     @Test
@@ -57,6 +64,17 @@ public class ReverseRoutesTest
     {
         HttpClient client = newHttpClientInstance();
         String httpUrl = BASE_URL + "simpleMethod/test/foo";
+        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
+        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
+        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+    }
+
+    @Test
+    public void testWildcard()
+        throws Exception
+    {
+        HttpClient client = newHttpClientInstance();
+        String httpUrl = BASE_URL + "wild/wild/wild/card";
         HttpResponse response = client.execute( new HttpGet( httpUrl ) );
         assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
         assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );

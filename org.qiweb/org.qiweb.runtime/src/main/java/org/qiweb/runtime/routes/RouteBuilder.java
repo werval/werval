@@ -41,14 +41,11 @@ import org.slf4j.LoggerFactory;
  * <p>Here is a complete example using the API:</p>
  * <pre>
  * Route route = route( GET ).on( "/foo/:slug/bar/:id" ).
- *     to( MyController.class, new MethodRecorder&lt;MyController&gt;()
- * {
- *     @Override
- *     protected void call( MyController ctrl )
- *     {
- *         ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) );
- *     }
- * } ).newInstance();
+ *     to( MyController.class, new MethodRecorder&lt;MyController&gt;() {
+ *         protected void call( MyController ctrl ) {
+ *             ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) );
+ *         }
+ *     } ).newInstance();
  * 
  * System.out.println( route.toString() );
  * </pre>
@@ -166,7 +163,7 @@ public final class RouteBuilder
     {
         if( Strings.isEmpty( routeString ) )
         {
-            throw new IllegalRouteException( "null", "Unable to parse null or empty String, was I?" );
+            throw new IllegalRouteException( "null", "Unable to parse null or empty String." );
         }
         final String cleanRouteString = routeString.trim().replaceAll( "\\s+", " " );
         try
@@ -206,7 +203,7 @@ public final class RouteBuilder
 
             if( LOG.isTraceEnabled() )
             {
-                LOG.trace( "Parsing route string: {}\n"
+                LOG.trace( "Parsing route string, indices: {}\n"
                            + "\tMethod end:             {}\n"
                            + "\tPath end:               {}\n"
                            + "\tController Type end:    {}\n"
@@ -234,7 +231,7 @@ public final class RouteBuilder
 
             if( LOG.isTraceEnabled() )
             {
-                LOG.trace( "Parsing route string: {}\n"
+                LOG.trace( "Parsing route string, values: {}\n"
                            + "\tMethod:             {}\n"
                            + "\tPath:               {}\n"
                            + "\tController Type:    {}\n"
