@@ -23,19 +23,19 @@ public class ReverseRoutesTest
         public Outcome simpleMethod()
         {
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).simpleMethod() );
-            return outcomes().ok( reverseRoute.httpUrl( false ) ).build();
+            return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome simpleMethod( String param )
         {
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).simpleMethod( param ) );
-            return outcomes().ok( reverseRoute.httpUrl( false ) ).build();
+            return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome wild( String card )
         {
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).wild( card ) );
-            return outcomes().ok( reverseRoute.httpUrl( false ) ).build();
+            return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
     }
 

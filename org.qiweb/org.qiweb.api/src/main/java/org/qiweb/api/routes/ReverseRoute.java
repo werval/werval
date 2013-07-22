@@ -17,14 +17,24 @@ public interface ReverseRoute
     String uri();
 
     /**
+     * @return Absolute HTTP URL
+     */
+    String httpUrl();
+
+    /**
      * @param secure is the URL secure?
      * @return Absolute HTTP(s) URL
      */
     String httpUrl( boolean secure );
 
     /**
-     * @param secure is the URL secure?
      * @return Absolute WebSocket URL
+     */
+    String webSocketUrl();
+
+    /**
+     * @param secure is the URL secure?
+     * @return Absolute WebSocket(SSL) URL
      */
     String webSocketUrl( boolean secure );
 }

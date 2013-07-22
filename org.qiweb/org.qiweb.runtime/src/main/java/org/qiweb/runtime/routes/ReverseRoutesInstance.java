@@ -94,9 +94,21 @@ public class ReverseRoutesInstance
         }
 
         @Override
+        public String httpUrl()
+        {
+            return httpUrl( false );
+        }
+
+        @Override
         public String httpUrl( boolean secure )
         {
             return absoluteUrl( "http", secure );
+        }
+
+        @Override
+        public String webSocketUrl()
+        {
+            return webSocketUrl( false );
         }
 
         @Override
