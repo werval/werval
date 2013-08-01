@@ -27,14 +27,14 @@ public class URLsTest
         data.get( "foo" ).add( "bar" );
         assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar" ) );
 
-        data.get( "foo" ).add( "bazar" );
-        assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar&foo=bazar" ) );
+        data.get( "foo" ).add( "bazar zogzog" );
+        assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar&foo=bazar+zogzog" ) );
 
         url = "http://acme.com/foo?foo=bar";
-        assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar&foo=bar&foo=bazar" ) );
+        assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar&foo=bar&foo=bazar+zogzog" ) );
 
         url = "http://acme.com/foo?foo=bar#cathedral";
-        assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar&foo=bar&foo=bazar#cathedral" ) );
+        assertThat( URLs.appendQueryString( url, data ), equalTo( "http://acme.com/foo?foo=bar&foo=bar&foo=bazar+zogzog#cathedral" ) );
 
     }
 }
