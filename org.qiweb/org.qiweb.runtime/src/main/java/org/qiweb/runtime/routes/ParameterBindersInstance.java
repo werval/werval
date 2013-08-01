@@ -2,17 +2,17 @@ package org.qiweb.runtime.routes;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.qiweb.api.routes.PathBinder;
-import org.qiweb.api.exceptions.PathBinderException;
-import org.qiweb.api.routes.PathBinders;
+import org.qiweb.api.exceptions.ParameterBinderException;
+import org.qiweb.api.routes.ParameterBinder;
+import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.runtime.util.TypeResolver;
 
-public final class PathBindersInstance
-    implements PathBinders
+public final class ParameterBindersInstance
+    implements ParameterBinders
 {
 
-    /* package */ abstract static class StrictTypingPathBinder<T>
-        implements PathBinder<T>
+    /* package */ abstract static class StrictTypingParameterBinder<T>
+        implements ParameterBinder<T>
     {
 
         static
@@ -24,12 +24,12 @@ public final class PathBindersInstance
         @Override
         public final boolean accept( Class<?> type )
         {
-            return type.equals( TypeResolver.resolveArgument( getClass(), PathBinder.class ) );
+            return type.equals( TypeResolver.resolveArgument( getClass(), ParameterBinder.class ) );
         }
     }
 
     public static final class String
-        extends StrictTypingPathBinder<java.lang.String>
+        extends StrictTypingParameterBinder<java.lang.String>
     {
 
         @Override
@@ -46,7 +46,7 @@ public final class PathBindersInstance
     }
 
     public static final class Boolean
-        extends StrictTypingPathBinder<java.lang.Boolean>
+        extends StrictTypingParameterBinder<java.lang.Boolean>
     {
 
         @Override
@@ -63,7 +63,7 @@ public final class PathBindersInstance
     }
 
     public static final class Short
-        extends StrictTypingPathBinder<java.lang.Short>
+        extends StrictTypingParameterBinder<java.lang.Short>
     {
 
         @Override
@@ -80,7 +80,7 @@ public final class PathBindersInstance
     }
 
     public static final class Integer
-        extends StrictTypingPathBinder<java.lang.Integer>
+        extends StrictTypingParameterBinder<java.lang.Integer>
     {
 
         @Override
@@ -97,7 +97,7 @@ public final class PathBindersInstance
     }
 
     public static final class Long
-        extends StrictTypingPathBinder<java.lang.Long>
+        extends StrictTypingParameterBinder<java.lang.Long>
     {
 
         @Override
@@ -114,7 +114,7 @@ public final class PathBindersInstance
     }
 
     public static final class Double
-        extends StrictTypingPathBinder<java.lang.Double>
+        extends StrictTypingParameterBinder<java.lang.Double>
     {
 
         @Override
@@ -131,7 +131,7 @@ public final class PathBindersInstance
     }
 
     public static final class Float
-        extends StrictTypingPathBinder<java.lang.Float>
+        extends StrictTypingParameterBinder<java.lang.Float>
     {
 
         @Override
@@ -148,7 +148,7 @@ public final class PathBindersInstance
     }
 
     public static final class BigInteger
-        extends StrictTypingPathBinder<java.math.BigInteger>
+        extends StrictTypingParameterBinder<java.math.BigInteger>
     {
 
         @Override
@@ -165,7 +165,7 @@ public final class PathBindersInstance
     }
 
     public static final class BigDecimal
-        extends StrictTypingPathBinder<java.math.BigDecimal>
+        extends StrictTypingParameterBinder<java.math.BigDecimal>
     {
 
         @Override
@@ -182,7 +182,7 @@ public final class PathBindersInstance
     }
 
     public static final class UUID
-        extends StrictTypingPathBinder<java.util.UUID>
+        extends StrictTypingParameterBinder<java.util.UUID>
     {
 
         @Override
@@ -197,42 +197,42 @@ public final class PathBindersInstance
             return value.toString();
         }
     }
-    private final List<PathBinder<?>> pathBinders = new ArrayList<>();
+    private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
 
-    public PathBindersInstance()
+    public ParameterBindersInstance()
     {
     }
 
-    public PathBindersInstance( List<PathBinder<?>> pathBinders )
+    public ParameterBindersInstance( List<ParameterBinder<?>> parameterBinders )
     {
-        this.pathBinders.addAll( pathBinders );
-    }
-
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public <T> T bind( Class<T> type, java.lang.String pathParamName, java.lang.String pathParamValue )
-    {
-        for( PathBinder<?> pathBinder : pathBinders )
-        {
-            if( pathBinder.accept( type ) )
-            {
-                return (T) pathBinder.bind( pathParamName, pathParamValue );
-            }
-        }
-        throw new PathBinderException( "No PathBinder found for type: " + type );
+        this.parameterBinders.addAll( parameterBinders );
     }
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public <T> java.lang.String unbind( Class<T> type, java.lang.String pathParamName, T pathParamValue )
+    public <T> T bind( Class<T> type, java.lang.String paramName, java.lang.String paramValue )
     {
-        for( PathBinder<?> pathBinder : pathBinders )
+        for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
-            if( pathBinder.accept( type ) )
+            if( parameterBinder.accept( type ) )
             {
-                return ( (PathBinder<T>) pathBinder ).unbind( pathParamName, pathParamValue );
+                return (T) parameterBinder.bind( paramName, paramValue );
             }
         }
-        throw new PathBinderException( "No PathBinder found for type: " + type );
+        throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public <T> java.lang.String unbind( Class<T> type, java.lang.String paramName, T paramValue )
+    {
+        for( ParameterBinder<?> parameterBinder : parameterBinders )
+        {
+            if( parameterBinder.accept( type ) )
+            {
+                return ( (ParameterBinder<T>) parameterBinder ).unbind( paramName, paramValue );
+            }
+        }
+        throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
     }
 }

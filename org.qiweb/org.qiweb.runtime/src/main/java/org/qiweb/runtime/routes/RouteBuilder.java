@@ -16,8 +16,7 @@ import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
-import org.qiweb.api.routes.ControllerParams;
-import org.qiweb.api.routes.ControllerParams.ControllerParam;
+import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.routes.ControllerParamsInstance.ControllerParamInstance;
@@ -295,7 +294,7 @@ public final class RouteBuilder
                             substring( 1, forcedValueString.length() - 1 ).
                             replaceAll( "\\'", "'" );
                     }
-                    Object forcedValue = application.pathBinders().bind( type, name, forcedValueString );
+                    Object forcedValue = application.parameterBinders().bind( type, name, forcedValueString );
                     controllerParams.put( name, new ControllerParamInstance( name, type, forcedValue ) );
                 }
                 else

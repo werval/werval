@@ -33,8 +33,8 @@ public interface ControllerMethodInvocation
             try
             {
                 Method method = context.route().controllerMethod();
-                Object[] arguments = context.request().pathParams().values().toArray();
-                return (Outcome) method.invoke( controller, arguments );
+                Object[] parameters = context.request().parameters().values().toArray();
+                return (Outcome) method.invoke( controller, parameters );
             }
             catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex )
             {

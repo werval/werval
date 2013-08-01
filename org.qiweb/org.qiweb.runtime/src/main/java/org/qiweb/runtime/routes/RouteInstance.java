@@ -15,9 +15,8 @@ import org.qi4j.functional.Specification;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
-import org.qiweb.api.routes.ControllerParams;
-import org.qiweb.api.routes.ControllerParams.ControllerParam;
-import org.qiweb.api.routes.PathBinders;
+import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
+import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
@@ -213,7 +212,7 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public Map<String, Object> bindPath( PathBinders pathBinders, String path )
+    public Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path )
     {
         Matcher matcher = pathRegex.matcher( path );
         if( !matcher.matches() )
@@ -234,7 +233,7 @@ import static org.qi4j.functional.Specifications.in;
                 {
                     throw new IllegalArgumentException( "Parameter named '" + param.name() + "' not found in path." );
                 }
-                boundParams.put( param.name(), pathBinders.bind( param.type(), param.name(), unboundValue ) );
+                boundParams.put( param.name(), parameterBinders.bind( param.type(), param.name(), unboundValue ) );
             }
         }
         return boundParams;
@@ -242,7 +241,7 @@ import static org.qi4j.functional.Specifications.in;
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public String unbindPath( PathBinders pathBinders, Map<String, Object> parameters )
+    public String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters )
     {
         StringBuilder unboundPath = new StringBuilder( "/" );
         String[] pathElements = path.substring( 1 ).split( "/" );
@@ -260,9 +259,9 @@ import static org.qi4j.functional.Specifications.in;
                                        ? controllerParam.forcedValue()
                                        : parameters.get( controllerParam.name() );
                         // QUID is this class cast legal?
-                        unboundPath.append( pathBinders.unbind( (Class<Object>) controllerParam.type(),
-                                                                controllerParam.name(),
-                                                                value ) );
+                        unboundPath.append( parameterBinders.unbind( (Class<Object>) controllerParam.type(),
+                                                                     controllerParam.name(),
+                                                                     value ) );
                         break;
                     default:
                         unboundPath.append( pathElement );

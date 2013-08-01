@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.qi4j.functional.Function;
-import org.qiweb.api.routes.ControllerParams;
 
 import static org.qi4j.functional.Iterables.*;
 

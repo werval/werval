@@ -59,11 +59,11 @@ public class WildcardRoutesTest
     {
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/as/file" ) ), is( false ) );
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/foo/as/file" ) ), is( true ) );
-        assertThat( (String) route.bindPath( application.pathBinders(), "/test/foo/as/file" ).get( "path" ), equalTo( "foo" ) );
+        assertThat( (String) route.bindParameters( application.parameterBinders(), "/test/foo/as/file" ).get( "path" ), equalTo( "foo" ) );
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/foo/bar/as/file" ) ), is( true ) );
-        assertThat( (String) route.bindPath( application.pathBinders(), "/test/foo/bar/as/file" ).get( "path" ), equalTo( "foo/bar" ) );
+        assertThat( (String) route.bindParameters( application.parameterBinders(), "/test/foo/bar/as/file" ).get( "path" ), equalTo( "foo/bar" ) );
         assertThat( route.satisfiedBy( reqHeadForGet( "/test/as/file/test/bar/as/file" ) ), is( true ) );
-        assertThat( (String) route.bindPath( application.pathBinders(), "/test/as/file/test/bar/as/file" ).get( "path" ), equalTo( "as/file/test/bar" ) );
+        assertThat( (String) route.bindParameters( application.parameterBinders(), "/test/as/file/test/bar/as/file" ).get( "path" ), equalTo( "as/file/test/bar" ) );
     }
 
     private RequestHeader reqHeadForGet( String path )

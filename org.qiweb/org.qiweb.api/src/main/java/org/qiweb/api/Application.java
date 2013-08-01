@@ -2,7 +2,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import org.qiweb.api.mime.MimeTypes;
-import org.qiweb.api.routes.PathBinders;
+import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
 
@@ -103,11 +103,11 @@ public interface Application
     ReverseRoutes reverseRoutes();
 
     /**
-     * Application {@link PathBinders}.
-     * <p>Don't hold references to the PathBinders instance in order to make your code {@link Mode#dev} friendly.</p>
-     * @return Application {@link PathBinders}
+     * Application {@link ParameterBinders}.
+     * <p>Don't hold references to the ParameterBinders instance in order to make your code {@link Mode#dev} friendly.</p>
+     * @return Application {@link ParameterBinders}
      */
-    PathBinders pathBinders();
+    ParameterBinders parameterBinders();
 
     /**
      * Application {@link MimeTypes}.

@@ -9,7 +9,7 @@ public interface Request
     extends RequestHeader
 {
 
-    Map<String, Object> pathParams();
+    Map<String, Object> parameters();
 
     RequestBody body();
 }

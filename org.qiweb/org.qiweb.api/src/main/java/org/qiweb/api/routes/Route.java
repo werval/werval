@@ -26,7 +26,7 @@ public interface Route
 
     Set<String> modifiers();
 
-    Map<String, Object> bindPath( PathBinders pathBinders, String path );
+    Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path );
 
-    String unbindPath( PathBinders pathBinders, Map<String, Object> parameters );
+    String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters );
 }

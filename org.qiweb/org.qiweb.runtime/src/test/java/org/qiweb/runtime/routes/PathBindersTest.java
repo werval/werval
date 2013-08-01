@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import org.junit.Test;
-import org.qiweb.api.routes.PathBinder;
-import org.qiweb.api.routes.PathBinders;
+import org.qiweb.api.routes.ParameterBinder;
+import org.qiweb.api.routes.ParameterBinders;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -21,7 +21,7 @@ public class PathBindersTest
     @Test
     public void basicTest()
     {
-        PathBinder<Integer> binder = new PathBindersInstance.Integer();
+        ParameterBinder<Integer> binder = new ParameterBindersInstance.Integer();
         assertThat( binder.accept( String.class ), is( false ) );
         assertThat( binder.accept( Number.class ), is( false ) );
         assertThat( binder.accept( Integer.class ), is( true ) );
@@ -30,20 +30,20 @@ public class PathBindersTest
     @Test
     public void testPathBinders()
     {
-        List<PathBinder<?>> list = new ArrayList<>();
+        List<ParameterBinder<?>> list = new ArrayList<>();
 
-        list.add( new PathBindersInstance.String() );
-        list.add( new PathBindersInstance.Boolean() );
-        list.add( new PathBindersInstance.Short() );
-        list.add( new PathBindersInstance.Integer() );
-        list.add( new PathBindersInstance.Long() );
-        list.add( new PathBindersInstance.Double() );
-        list.add( new PathBindersInstance.Float() );
-        list.add( new PathBindersInstance.BigInteger() );
-        list.add( new PathBindersInstance.BigDecimal() );
-        list.add( new PathBindersInstance.UUID() );
+        list.add( new ParameterBindersInstance.String() );
+        list.add( new ParameterBindersInstance.Boolean() );
+        list.add( new ParameterBindersInstance.Short() );
+        list.add( new ParameterBindersInstance.Integer() );
+        list.add( new ParameterBindersInstance.Long() );
+        list.add( new ParameterBindersInstance.Double() );
+        list.add( new ParameterBindersInstance.Float() );
+        list.add( new ParameterBindersInstance.BigInteger() );
+        list.add( new ParameterBindersInstance.BigDecimal() );
+        list.add( new ParameterBindersInstance.UUID() );
 
-        PathBinders binders = new PathBindersInstance( list );
+        ParameterBinders binders = new ParameterBindersInstance( list );
 
         // String
         assertThat( binders.bind( String.class, "name", "foo" ), equalTo( "foo" ) );
@@ -82,7 +82,7 @@ public class PathBindersTest
     @Test
     public void testCustom()
     {
-        PathBinders binders = new PathBindersInstance( Collections.<PathBinder<?>>singletonList( new CustomParam.PathBinder() ) );
+        ParameterBinders binders = new ParameterBindersInstance( Collections.<ParameterBinder<?>>singletonList( new CustomParam.ParameterBinder() ) );
         assertThat( binders.bind( CustomParam.class, "name", "1234" ), equalTo( new CustomParam( "1234" ) ) );
         assertThat( binders.unbind( CustomParam.class, "name", new CustomParam( "1234" ) ), equalTo( "1234" ) );
     }

@@ -37,7 +37,7 @@ public class ParamForcedValueParsingTest
         } );
         Route route = application.routes().iterator().next();
         assertThat( route.toString(), equalTo( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug = '42' ) service foo" ) );
-        Map<String, Object> boundParams = route.bindPath( application.pathBinders(), "/foo/bazar/bar" );
+        Map<String, Object> boundParams = route.bindParameters( application.parameterBinders(), "/foo/bazar/bar" );
         assertThat( (String) boundParams.get( "id" ), equalTo( "bazar" ) );
         assertThat( (Integer) boundParams.get( "slug" ), equalTo( 42 ) );
     }
@@ -49,7 +49,7 @@ public class ParamForcedValueParsingTest
             "GET / com.acme.app.FakeControllerInstance.wild( String path = '/default/value' )" ) );
         Route route = application.routes().iterator().next();
         System.out.println( route );
-        Map<String, Object> boundParams = route.bindPath( application.pathBinders(), "/" );
+        Map<String, Object> boundParams = route.bindParameters( application.parameterBinders(), "/" );
         assertThat( (String) boundParams.get( "path" ), equalTo( "/default/value" ) );
     }
 
@@ -60,7 +60,7 @@ public class ParamForcedValueParsingTest
             "GET /*path com.acme.app.FakeControllerInstance.another( String path, Integer num = '42' )" ) );
         Route route = application.routes().iterator().next();
         System.out.println( route );
-        Map<String, Object> boundParams = route.bindPath( application.pathBinders(), "/cathedral" );
+        Map<String, Object> boundParams = route.bindParameters( application.parameterBinders(), "/cathedral" );
         assertThat( (String) boundParams.get( "path" ), equalTo( "cathedral" ) );
         assertThat( (Integer) boundParams.get( "num" ), equalTo( 42 ) );
     }

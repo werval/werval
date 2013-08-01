@@ -14,13 +14,13 @@ public class RequestInstance
 {
 
     private final RequestHeader header;
-    private final Map<String, Object> pathParams;
+    private final Map<String, Object> parameters;
     private final RequestBody body;
 
-    public RequestInstance( RequestHeader header, Map<String, Object> pathParams, RequestBody body )
+    public RequestInstance( RequestHeader header, Map<String, Object> parameters, RequestBody body )
     {
         this.header = header;
-        this.pathParams = pathParams;
+        this.parameters = parameters;
         this.body = body;
     }
 
@@ -109,9 +109,9 @@ public class RequestInstance
     }
 
     @Override
-    public Map<String, Object> pathParams()
+    public Map<String, Object> parameters()
     {
-        return Collections.unmodifiableMap( pathParams );
+        return Collections.unmodifiableMap( parameters );
     }
 
     @Override

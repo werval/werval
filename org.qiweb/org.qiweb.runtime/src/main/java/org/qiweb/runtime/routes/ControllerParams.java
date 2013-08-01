@@ -1,6 +1,6 @@
-package org.qiweb.api.routes;
+package org.qiweb.runtime.routes;
 
-import org.qiweb.api.routes.ControllerParams.ControllerParam;
+import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 
 /**
  * Route Controller Params.

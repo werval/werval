@@ -22,8 +22,8 @@ public class CustomParam
         return internalValue;
     }
 
-    public static class PathBinder
-        implements org.qiweb.api.routes.PathBinder<CustomParam>
+    public static class ParameterBinder
+        implements org.qiweb.api.routes.ParameterBinder<CustomParam>
     {
 
         @Override
@@ -33,15 +33,15 @@ public class CustomParam
         }
 
         @Override
-        public CustomParam bind( java.lang.String pathParamName, java.lang.String pathParamValue )
+        public CustomParam bind( java.lang.String paramName, java.lang.String paramValue )
         {
-            return new CustomParam( pathParamValue.intern() );
+            return new CustomParam( paramValue.intern() );
         }
 
         @Override
-        public java.lang.String unbind( java.lang.String pathParamName, CustomParam pathParamValue )
+        public java.lang.String unbind( java.lang.String paramName, CustomParam paramValue )
         {
-            return pathParamValue.internalValue().intern();
+            return paramValue.internalValue().intern();
         }
     }
 

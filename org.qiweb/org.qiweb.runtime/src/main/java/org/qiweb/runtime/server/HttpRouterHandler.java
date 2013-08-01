@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.exceptions.PathBinderException;
+import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
@@ -113,9 +113,9 @@ public final class HttpRouterHandler
         {
             LOG.debug( "Write timeout, connection has been closed." );
         }
-        else if( cause instanceof PathBinderException )
+        else if( cause instanceof ParameterBinderException )
         {
-            LOG.debug( "PathBinderException, will return 404." );
+            LOG.debug( "ParameterBinderException, will return 404." );
             sendError( nettyContext, NOT_FOUND, cause.getMessage() );
         }
         else
@@ -162,8 +162,8 @@ public final class HttpRouterHandler
             final Route route = routes.route( requestHeader );
             LOG.debug( "{} Will route request to: {}", requestIdentity, route );
 
-            // Bind route path
-            Map<String, Object> pathParams = route.bindPath( app.pathBinders(), requestHeader.path() );
+            // Bind parameters
+            Map<String, Object> parameters = route.bindParameters( app.parameterBinders(), requestHeader.path() );
 
             // TODO Eventually UPGRADE to WebSocket
 
@@ -173,7 +173,7 @@ public final class HttpRouterHandler
                 requestHeader.cookies().get( app.config().string( "app.session.cookie.name" ) ) );
 
             // Parse Request
-            Request request = requestOf( requestHeader, pathParams, nettyRequest );
+            Request request = requestOf( requestHeader, parameters, nettyRequest );
 
             // Prepare Response
             Response response = new ResponseInstance();

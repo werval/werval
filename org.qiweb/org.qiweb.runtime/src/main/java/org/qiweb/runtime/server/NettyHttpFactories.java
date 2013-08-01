@@ -181,9 +181,9 @@ import static io.netty.util.CharsetUtil.UTF_8;
         return body;
     }
 
-    /* package */ static Request requestOf( RequestHeader header, Map<String, Object> pathParams, FullHttpRequest nettyRequest )
+    /* package */ static Request requestOf( RequestHeader header, Map<String, Object> parameters, FullHttpRequest nettyRequest )
     {
-        return new RequestInstance( header, pathParams, bodyOf( header, nettyRequest ) );
+        return new RequestInstance( header, parameters, bodyOf( header, nettyRequest ) );
     }
 
     /* package */ static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )

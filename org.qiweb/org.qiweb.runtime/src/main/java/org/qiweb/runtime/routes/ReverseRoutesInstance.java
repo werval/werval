@@ -58,7 +58,7 @@ public class ReverseRoutesInstance
                     parameters.put( paramName, reverseOutcome.parameters().get( idx ) );
                     idx++;
                 }
-                String unboundPath = route.unbindPath( application.pathBinders(), parameters );
+                String unboundPath = route.unbindParameters( application.parameterBinders(), parameters );
                 return new ReverseRouteInstance( reverseOutcome.httpMethod(), unboundPath );
             }
         }

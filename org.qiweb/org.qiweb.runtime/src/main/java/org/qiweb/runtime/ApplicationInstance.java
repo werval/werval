@@ -8,15 +8,15 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.Global;
 import org.qiweb.api.MetaData;
-import org.qiweb.api.exceptions.PathBinderException;
+import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.mime.MimeTypes;
-import org.qiweb.api.routes.PathBinder;
-import org.qiweb.api.routes.PathBinders;
+import org.qiweb.api.routes.ParameterBinder;
+import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.mime.MimeTypesInstance;
-import org.qiweb.runtime.routes.PathBindersInstance;
+import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
@@ -43,7 +43,7 @@ public final class ApplicationInstance
     private final RoutesProvider routesProvider;
     private Routes routes;
     private ReverseRoutes reverseRoutes;
-    private PathBinders pathBinders;
+    private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
     private final MetaData metaData;
 
@@ -126,9 +126,9 @@ public final class ApplicationInstance
     }
 
     @Override
-    public PathBinders pathBinders()
+    public ParameterBinders parameterBinders()
     {
-        return pathBinders;
+        return parameterBinders;
     }
 
     @Override
@@ -155,7 +155,7 @@ public final class ApplicationInstance
         configureGlobal();
         configureCrypto();
         configureTmpdir();
-        configurePathBinders();
+        configureParameterBinders();
         configureMimeTypes();
         loadRoutes();
     }
@@ -198,21 +198,21 @@ public final class ApplicationInstance
         tmpdir = tmpdirFile;
     }
 
-    private void configurePathBinders()
+    private void configureParameterBinders()
     {
-        List<PathBinder<?>> list = new ArrayList<>();
-        for( String pathBinderClassName : config.stringList( "qiweb.routes.path-binders" ) )
+        List<ParameterBinder<?>> list = new ArrayList<>();
+        for( String parameterBinderClassName : config.stringList( "qiweb.routes.parameter-binders" ) )
         {
             try
             {
-                list.add( (PathBinder<?>) classLoader.loadClass( pathBinderClassName ).newInstance() );
+                list.add( (ParameterBinder<?>) classLoader.loadClass( parameterBinderClassName ).newInstance() );
             }
             catch( ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex )
             {
-                throw new PathBinderException( "Unable to instanciate PathBinder: " + pathBinderClassName, ex );
+                throw new ParameterBinderException( "Unable to instanciate ParameterBinders: " + parameterBinderClassName, ex );
             }
         }
-        pathBinders = new PathBindersInstance( list );
+        parameterBinders = new ParameterBindersInstance( list );
     }
 
     private void configureMimeTypes()
