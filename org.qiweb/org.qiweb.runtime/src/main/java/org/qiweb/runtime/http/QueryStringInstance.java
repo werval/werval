@@ -34,7 +34,7 @@ public class QueryStringInstance
     @Override
     public Set<String> keys()
     {
-        return parameters.keySet();
+        return Collections.unmodifiableSet( parameters.keySet() );
     }
 
     @Override
@@ -54,7 +54,7 @@ public class QueryStringInstance
         {
             return Collections.emptyList();
         }
-        return parameters.get( key );
+        return Collections.unmodifiableList( parameters.get( key ) );
     }
 
     @Override
