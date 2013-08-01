@@ -52,7 +52,7 @@ import static io.netty.util.CharsetUtil.UTF_8;
 /**
  * Factory methods used by the server.
  */
-public final class NettyHttpFactories
+/* package */ final class NettyHttpFactories
 {
 
     private static MutableHeaders headersOf( HttpRequest request )
@@ -83,7 +83,7 @@ public final class NettyHttpFactories
         return new CookiesInstance( cookies );
     }
 
-    public static RequestHeader requestHeaderOf( String identity, HttpRequest request )
+    /* package */ static RequestHeader requestHeaderOf( String identity, HttpRequest request )
     {
         NullArgumentException.ensureNotEmpty( "Request Identity", identity );
         NullArgumentException.ensureNotNull( "Netty HttpRequest", request );
@@ -116,7 +116,7 @@ public final class NettyHttpFactories
                                           cookies );
     }
 
-    public static RequestBody bodyOf( RequestHeader requestHeader, FullHttpRequest request )
+    /* package */ static RequestBody bodyOf( RequestHeader requestHeader, FullHttpRequest request )
     {
         RequestBody body;
         if( request.content().readableBytes() > 0
@@ -181,12 +181,12 @@ public final class NettyHttpFactories
         return body;
     }
 
-    public static Request requestOf( RequestHeader header, Map<String, Object> pathParams, FullHttpRequest nettyRequest )
+    /* package */ static Request requestOf( RequestHeader header, Map<String, Object> pathParams, FullHttpRequest nettyRequest )
     {
         return new RequestInstance( header, pathParams, bodyOf( header, nettyRequest ) );
     }
 
-    public static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )
+    /* package */ static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )
     {
         io.netty.handler.codec.http.Cookie nettyCookie = new DefaultCookie( cookie.name(), cookie.value() );
         nettyCookie.setPath( cookie.path() );
@@ -196,7 +196,7 @@ public final class NettyHttpFactories
         return nettyCookie;
     }
 
-    public static Cookie asQiWebCookie( io.netty.handler.codec.http.Cookie nettyCookie )
+    /* package */ static Cookie asQiWebCookie( io.netty.handler.codec.http.Cookie nettyCookie )
     {
         return new CookieInstance( nettyCookie.getName(),
                                    nettyCookie.getPath(),

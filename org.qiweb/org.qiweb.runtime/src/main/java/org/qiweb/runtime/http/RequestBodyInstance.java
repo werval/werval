@@ -79,51 +79,51 @@ public final class RequestBodyInstance
     @Override
     public InputStream asStream()
     {
-        if( byteBuf != null )
+        if( byteBuf == null )
         {
-            if( byteBuf instanceof FileByteBuff )
-            {
-                return ( (FileByteBuff) byteBuf ).getInputStream();
-            }
-            return new ByteBufInputStream( byteBuf );
+            return new ByteArrayInputStream( new byte[ 0 ] );
         }
-        return new ByteArrayInputStream( new byte[ 0 ] );
+        if( byteBuf instanceof FileByteBuff )
+        {
+            return ( (FileByteBuff) byteBuf ).getInputStream();
+        }
+        return new ByteBufInputStream( byteBuf );
     }
 
     @Override
     public byte[] asBytes()
     {
-        if( byteBuf != null )
+        if( byteBuf == null )
         {
-            if( byteBuf instanceof FileByteBuff )
-            {
-                return ( (FileByteBuff) byteBuf ).readAllBytes();
-            }
-            byte[] bytes = new byte[ byteBuf.readableBytes() ];
-            byteBuf.readBytes( bytes, 0, byteBuf.readableBytes() );
-            return bytes;
+            return new byte[ 0 ];
         }
-        return new byte[ 0 ];
+        if( byteBuf instanceof FileByteBuff )
+        {
+            return ( (FileByteBuff) byteBuf ).readAllBytes();
+        }
+        byte[] bytes = new byte[ byteBuf.readableBytes() ];
+        byteBuf.readBytes( bytes, 0, byteBuf.readableBytes() );
+        return bytes;
     }
 
     @Override
     public String asString()
     {
-        if( byteBuf != null )
+        if( byteBuf == null )
         {
-            return byteBuf.toString( Charset.forName( "UTF-8" ) );
+            return Strings.EMPTY;
         }
-        return Strings.EMPTY;
+        return byteBuf.toString( Charset.forName( "UTF-8" ) );
     }
 
     @Override
     public String asString( Charset charset )
     {
-        if( byteBuf != null )
+        if( byteBuf == null )
         {
-            return byteBuf.toString( charset );
+            return Strings.EMPTY;
         }
-        return Strings.EMPTY;
+        return byteBuf.toString( charset );
     }
 
     public static class UploadInstance
