@@ -33,6 +33,7 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
 /**
  * Assert that Routes and Route types behave correctly and that RouteBuilder is able to parse all routes definitions.
  */
+// TODO Add test of QueryString params
 public class RoutesTest
 {
 
@@ -64,16 +65,19 @@ public class RoutesTest
     public static enum RoutesToTest
     {
 
-        TRANSIENT( "GET / com.acme.app.FakeController.test() transient",
-                   "GET", "/", FakeController.class, "test", Arrays.asList( "transient" ) ),
-        SERVICE( "GET / com.acme.app.FakeController.test() service",
-                 "GET", "/", FakeController.class, "test", Arrays.asList( "service" ) ),
-        SIMPLEST( "GET / com.acme.app.FakeController.test()",
+        // Simple routes
+        SIMPLE_1( "GET / com.acme.app.FakeController.test()",
                   "GET", "/", FakeController.class, "test" ),
-        TEST( "  POST    /foo/bar    com.acme.app.FakeController.test()",
-              "POST", "/foo/bar", FakeController.class, "test" ),
-        ANOTHER( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another(String    id ,Integer slug   )",
-                 "GET", "/foo/:id/bar/:slug", FakeController.class, "another", new RoutesToTest.Params()
+        SIMPLE_2( "  POST    /foo/bar    com.acme.app.FakeController.test()",
+                  "POST", "/foo/bar", FakeController.class, "test" ),
+        // Modifiers
+        MODIFIER_TRANSIENT( "GET / com.acme.app.FakeController.test() transient",
+                            "GET", "/", FakeController.class, "test", Arrays.asList( "transient" ) ),
+        MODIFIER_SERVICE( "GET / com.acme.app.FakeController.test() service",
+                          "GET", "/", FakeController.class, "test", Arrays.asList( "service" ) ),
+        // Controller params
+        CONTROLLER_PARAMS_1( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another(String    id ,Integer slug   )",
+                             "GET", "/foo/:id/bar/:slug", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
             public Map<String, Class<?>> params()
@@ -84,8 +88,8 @@ public class RoutesTest
                 return params;
             }
         } ),
-        ANOTHER_ONE( "GET /foo/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
-                     "GET", "/foo/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
+        CONTROLLER_PARAMS_2( "GET /foo/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
+                             "GET", "/foo/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
         {
             @Override
             public Map<String, Class<?>> params()
@@ -96,6 +100,7 @@ public class RoutesTest
                 return params;
             }
         } ),
+        // Wildcards
         WILDCARDS_1( "GET /static/*path com.acme.app.FakeController.wild( String path )",
                      "GET", "/static/*path", FakeController.class, "wild", new RoutesToTest.Params()
         {
@@ -119,30 +124,55 @@ public class RoutesTest
                 return params;
             }
         } ),
+        // Query string
+        QUERY_STRING_1( "GET /nothing/at/all com.acme.app.FakeController.another( String id, Integer slug )",
+                        IllegalRouteException.class ),
+        QUERY_STRING_2( "GET /foo/:id/bar/:slug/cathedral/:bazar com.acme.app.FakeController.another( String id, Integer slug )",
+                        IllegalRouteException.class ),
+        QUERY_STRING_3( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )",
+                        IllegalRouteException.class ),
+        // No parenthesis
         NO_PARENTHESIS_1( "  POST    /foo/bar    com.acme.app.FakeController.test",
                           "POST", "/foo/bar", FakeController.class, "test" ),
         NO_PARENTHESIS_2( "  POST    /foo/bar    com.acme.app.FakeController.test transient",
                           "POST", "/foo/bar", FakeController.class, "test", Arrays.asList( "transient" ) ),
-        WRONG_STRING_1( "WRONG /route", IllegalRouteException.class ),
-        WRONG_STRING_2( "", IllegalRouteException.class ),
-        WRONG_STRING_3( null, IllegalRouteException.class ),
-        WRONG_STRING_4( "# GET / com.acme.app.FakeController.test()", IllegalRouteException.class ),
-        WRONG_STRING_5( "GET foo/bar com.acme.app.FakeController.test()", IllegalRouteException.class ),
-        WRONG_CONTROLLER_1( "GET /foo /bar com.acme.Controller.method()", IllegalRouteException.class ),
-        WRONG_CONTROLLER_2( "GET / unknown.Type.method()", IllegalRouteException.class ),
-        WRONG_METHOD_1( "GET / com.acme.app.FakeController.unknownMethod()", IllegalRouteException.class ),
-        WRONG_METHOD_2( "GET / com.acme.app.FakeController.test( WhatTheHeck param )", IllegalRouteException.class ),
-        WRONG_METHOD_3( "GET / com.acme.app.FakeController.noOutcome", IllegalRouteException.class ),
-        WRONG_PARAMS_1( "GET /nothing/at/all com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_2( "GET /:wrong com.acme.app.FakeController.test()", IllegalRouteException.class ),
-        WRONG_PARAMS_3( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_4( "GET /foo/:id/bar/:slug/cathedral/:bazar com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_5( "GET /foo/:id/bar/:slugf com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_6( "GET /foo/:idf/bar/:slug com.acme.app.FakeController.another( java.lang.String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_7( "GET /a/*path com.acme.app.FakeController.wild( path )", IllegalRouteException.class ),
-        WRONG_PARAMS_8( "GET /a/*path/:id/:slug com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_9( "GET /a/:id com.acme.app.FakeController.another( String id, Integer slug )", IllegalRouteException.class ),
-        WRONG_PARAMS_99( "", IllegalRouteException.class );
+        // Wrong route strings
+        WRONG_STRING_1( "WRONG /route",
+                        IllegalRouteException.class ),
+        WRONG_STRING_2( "",
+                        IllegalRouteException.class ),
+        WRONG_STRING_3( null,
+                        IllegalRouteException.class ),
+        WRONG_STRING_4( "# GET / com.acme.app.FakeController.test()",
+                        IllegalRouteException.class ),
+        WRONG_STRING_5( "GET foo/bar com.acme.app.FakeController.test()",
+                        IllegalRouteException.class ),
+        // Wrong controllers
+        WRONG_CONTROLLER_1( "GET /foo /bar com.acme.Controller.method()",
+                            IllegalRouteException.class ),
+        WRONG_CONTROLLER_2( "GET / unknown.Type.method()",
+                            IllegalRouteException.class ),
+        // Wrong methods
+        WRONG_METHOD_1( "GET / com.acme.app.FakeController.unknownMethod()",
+                        IllegalRouteException.class ),
+        WRONG_METHOD_2( "GET / com.acme.app.FakeController.test( WhatTheHeck param )",
+                        IllegalRouteException.class ),
+        WRONG_METHOD_3( "GET / com.acme.app.FakeController.noOutcome",
+                        IllegalRouteException.class ),
+        // Wrong parameters
+        WRONG_PARAMS_1( "GET /foo/:id/bar/:slugf com.acme.app.FakeController.another( String id, Integer slug )",
+                        IllegalRouteException.class ),
+        WRONG_PARAMS_2( "GET /foo/:idf/bar/:slug com.acme.app.FakeController.another( java.lang.String id, Integer slug )",
+                        IllegalRouteException.class ),
+        WRONG_PARAMS_3( "GET /:wrong com.acme.app.FakeController.test()",
+                        IllegalRouteException.class ),
+        WRONG_PARAMS_4( "GET /a/*path/:id/:slug com.acme.app.FakeController.another( String id, Integer slug )",
+                        IllegalRouteException.class ),
+        WRONG_PARAMS_5( "GET /a/*path com.acme.app.FakeController.wild( path )",
+                        IllegalRouteException.class ), // Parameter is missing type info
+        WRONG_PARAMS_99( "",
+                         IllegalRouteException.class );
+        // Members
         private String routeString;
         private String httpMethod;
         private String path;
@@ -216,15 +246,15 @@ public class RoutesTest
     public void givenMultipleRoutesStringWhenParsingExpectCorrectRoutes()
     {
         Application app = new ApplicationInstance( new RoutesParserProvider(
-            "\n" + RoutesToTest.ANOTHER.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.TEST.routeString + "\n" ) );
+            "\n" + RoutesToTest.SIMPLE_1.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.SIMPLE_2.routeString + "\n" ) );
 
         assertThat( count( app.routes() ), is( 2L ) );
 
         Route one = first( app.routes() );
         Route two = first( skip( 1, app.routes() ) );
 
-        assertRoute( one, RoutesToTest.ANOTHER );
-        assertRoute( two, RoutesToTest.TEST );
+        assertRoute( one, RoutesToTest.SIMPLE_1 );
+        assertRoute( two, RoutesToTest.SIMPLE_2 );
     }
 
     @Test
@@ -253,19 +283,40 @@ public class RoutesTest
 
     private void assertRoute( Route route, RoutesToTest refRoute )
     {
-        assertThat( "HTTP Method", route.httpMethod(), equalTo( refRoute.httpMethod ) );
-        assertThat( "URI/Path", route.path(), equalTo( refRoute.path ) );
-        assertThat( "Controller Type", route.controllerType().getName(), equalTo( refRoute.controllerType.getName() ) );
-        assertThat( "Controller Method", route.controllerMethodName(), equalTo( refRoute.controllerMethod ) );
-        assertThat( "Parameters Count", count( ( (RouteInstance) route ).controllerParams().names() ), equalTo( count( refRoute.pathParams.keySet() ) ) );
-        assertThat( "Modifiers Count", count( route.modifiers() ), equalTo( count( refRoute.modifiers ) ) );
+        String messageSuffix = " of " + refRoute.name() + "[" + route + "]";
+
+        assertThat( "HTTP Method" + messageSuffix,
+                    route.httpMethod(),
+                    equalTo( refRoute.httpMethod ) );
+
+        assertThat( "URI/Path" + messageSuffix,
+                    route.path(),
+                    equalTo( refRoute.path ) );
+
+        assertThat( "Controller Type" + messageSuffix,
+                    route.controllerType().getName(),
+                    equalTo( refRoute.controllerType.getName() ) );
+
+        assertThat( "Controller Method" + messageSuffix,
+                    route.controllerMethodName(),
+                    equalTo( refRoute.controllerMethod ) );
+
+        assertThat( "Parameters Count" + messageSuffix,
+                    count( ( (RouteInstance) route ).controllerParams().names() ),
+                    equalTo( count( refRoute.pathParams.keySet() ) ) );
+
+        assertThat( "Modifiers Count" + messageSuffix,
+                    count( route.modifiers() ),
+                    equalTo( count( refRoute.modifiers ) ) );
 
         ControllerParamsInstance routeParameters = (ControllerParamsInstance) ( (RouteInstance) route ).controllerParams();
         Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.pathParams );
         for( Entry<String, ControllerParam> routeEntry : routeParameters.asMap().entrySet() )
         {
             String routeParamName = routeEntry.getKey();
-            assertThat( "Parameter " + routeParamName, routeEntry.getValue().type().getName(), equalTo( refRouteParameters.get( routeParamName ).getName() ) );
+            assertThat( "Parameter " + routeParamName + messageSuffix,
+                        routeEntry.getValue().type().getName(),
+                        equalTo( refRouteParameters.get( routeParamName ).getName() ) );
         }
 
         List<String> routeModifiers = new ArrayList<>( route.modifiers() );
@@ -273,7 +324,9 @@ public class RoutesTest
         for( int idx = 0; idx < routeModifiers.size(); idx++ )
         {
             String routeModifier = routeModifiers.get( idx );
-            assertThat( "Modifier " + routeModifier, routeModifier, equalTo( refRouteModifiers.get( idx ) ) );
+            assertThat( "Modifier " + routeModifier + messageSuffix,
+                        routeModifier,
+                        equalTo( refRouteModifiers.get( idx ) ) );
         }
     }
 }
