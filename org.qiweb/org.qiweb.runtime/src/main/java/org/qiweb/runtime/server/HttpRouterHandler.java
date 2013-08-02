@@ -163,7 +163,9 @@ public final class HttpRouterHandler
             LOG.debug( "{} Will route request to: {}", requestIdentity, route );
 
             // Bind parameters
-            Map<String, Object> parameters = route.bindParameters( app.parameterBinders(), requestHeader.path() );
+            Map<String, Object> parameters = route.bindParameters( app.parameterBinders(),
+                                                                   requestHeader.path(),
+                                                                   requestHeader.queryString() );
 
             // TODO Eventually UPGRADE to WebSocket
 

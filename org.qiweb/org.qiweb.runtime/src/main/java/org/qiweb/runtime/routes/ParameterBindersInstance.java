@@ -35,13 +35,13 @@ public final class ParameterBindersInstance
         @Override
         public java.lang.String bind( java.lang.String name, java.lang.String value )
         {
-            return value.intern();
+            return value;
         }
 
         @Override
         public java.lang.String unbind( java.lang.String name, java.lang.String value )
         {
-            return value.intern();
+            return value;
         }
     }
 

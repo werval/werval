@@ -57,19 +57,39 @@ public class WildcardRoutesTest
 
     private void assertWilcardRoute( Application application, Route route )
     {
-        assertThat( route.satisfiedBy( reqHeadForGet( "/test/as/file" ) ), is( false ) );
-        assertThat( route.satisfiedBy( reqHeadForGet( "/test/foo/as/file" ) ), is( true ) );
-        assertThat( (String) route.bindParameters( application.parameterBinders(), "/test/foo/as/file" ).get( "path" ), equalTo( "foo" ) );
-        assertThat( route.satisfiedBy( reqHeadForGet( "/test/foo/bar/as/file" ) ), is( true ) );
-        assertThat( (String) route.bindParameters( application.parameterBinders(), "/test/foo/bar/as/file" ).get( "path" ), equalTo( "foo/bar" ) );
-        assertThat( route.satisfiedBy( reqHeadForGet( "/test/as/file/test/bar/as/file" ) ), is( true ) );
-        assertThat( (String) route.bindParameters( application.parameterBinders(), "/test/as/file/test/bar/as/file" ).get( "path" ), equalTo( "as/file/test/bar" ) );
+        assertThat(
+            route.satisfiedBy( reqHeadForGet( "/test/as/file" ) ),
+            is( false ) );
+
+        assertThat(
+            route.satisfiedBy( reqHeadForGet( "/test/foo/as/file" ) ),
+            is( true ) );
+
+        assertThat(
+            (String) route.bindParameters( application.parameterBinders(), "/test/foo/as/file", QueryStringInstance.EMPTY ).get( "path" ),
+            equalTo( "foo" ) );
+
+        assertThat(
+            route.satisfiedBy( reqHeadForGet( "/test/foo/bar/as/file" ) ),
+            is( true ) );
+
+        assertThat(
+            (String) route.bindParameters( application.parameterBinders(), "/test/foo/bar/as/file", QueryStringInstance.EMPTY ).get( "path" ),
+            equalTo( "foo/bar" ) );
+
+        assertThat(
+            route.satisfiedBy( reqHeadForGet( "/test/as/file/test/bar/as/file" ) ),
+            is( true ) );
+
+        assertThat(
+            (String) route.bindParameters( application.parameterBinders(), "/test/as/file/test/bar/as/file", QueryStringInstance.EMPTY ).get( "path" ),
+            equalTo( "as/file/test/bar" ) );
     }
 
     private RequestHeader reqHeadForGet( String path )
     {
         return new RequestHeaderInstance( "abc", "HTTP/1.1", "GET",
                                           "http://localhost" + path, path,
-                                          new QueryStringInstance(), new HeadersInstance(), new CookiesInstance() );
+                                          QueryStringInstance.EMPTY, new HeadersInstance(), new CookiesInstance() );
     }
 }

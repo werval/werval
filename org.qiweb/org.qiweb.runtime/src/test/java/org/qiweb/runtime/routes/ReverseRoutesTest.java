@@ -37,6 +37,12 @@ public class ReverseRoutesTest
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).wild( card ) );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
+
+        public Outcome qstring( String path, String qsOne, String qsTwo )
+        {
+            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).qstring( path, qsOne, qsTwo ) );
+            return outcomes().ok( reverseRoute.httpUrl() ).build();
+        }
     }
 
     @Override
@@ -44,7 +50,8 @@ public class ReverseRoutesTest
     {
         return "GET /simpleMethod org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
                + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
-               + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )";
+               + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"
+               + "GET /query/:path/string org.qiweb.runtime.routes.ReverseRoutesTest$Controller.qstring( String path, String qsOne, String qsTwo )";
     }
 
     @Test
@@ -75,6 +82,17 @@ public class ReverseRoutesTest
     {
         HttpClient client = newHttpClientInstance();
         String httpUrl = BASE_URL + "wild/wild/wild/card";
+        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
+        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
+        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+    }
+
+    @Test
+    public void testQueryString()
+        throws Exception
+    {
+        HttpClient client = newHttpClientInstance();
+        String httpUrl = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bazar";
         HttpResponse response = client.execute( new HttpGet( httpUrl ) );
         assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
         assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );

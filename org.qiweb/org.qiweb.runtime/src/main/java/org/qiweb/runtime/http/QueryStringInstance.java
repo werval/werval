@@ -15,6 +15,7 @@ public class QueryStringInstance
     implements QueryString
 {
 
+    public static final QueryString EMPTY = new QueryStringInstance();
     private final Map<String, List<String>> parameters;
 
     public QueryStringInstance()

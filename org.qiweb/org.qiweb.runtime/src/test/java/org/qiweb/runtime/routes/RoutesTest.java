@@ -33,7 +33,6 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
 /**
  * Assert that Routes and Route types behave correctly and that RouteBuilder is able to parse all routes definitions.
  */
-// TODO Add test of QueryString params
 public class RoutesTest
 {
 
@@ -126,11 +125,29 @@ public class RoutesTest
         } ),
         // Query string
         QUERY_STRING_1( "GET /nothing/at/all com.acme.app.FakeController.another( String id, Integer slug )",
-                        IllegalRouteException.class ),
-        QUERY_STRING_2( "GET /foo/:id/bar/:slug/cathedral/:bazar com.acme.app.FakeController.another( String id, Integer slug )",
-                        IllegalRouteException.class ),
-        QUERY_STRING_3( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )",
-                        IllegalRouteException.class ),
+                        "GET", "/nothing/at/all", FakeController.class, "another", new RoutesToTest.Params()
+        {
+            @Override
+            public Map<String, Class<?>> params()
+            {
+                Map<String, Class<?>> params = new LinkedHashMap<>();
+                params.put( "id", String.class );
+                params.put( "slug", Integer.class );
+                return params;
+            }
+        } ),
+        QUERY_STRING_2( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )",
+                        "GET", "/foo/:id/bar", FakeController.class, "another", new RoutesToTest.Params()
+        {
+            @Override
+            public Map<String, Class<?>> params()
+            {
+                Map<String, Class<?>> params = new LinkedHashMap<>();
+                params.put( "id", String.class );
+                params.put( "slug", Integer.class );
+                return params;
+            }
+        } ),
         // No parenthesis
         NO_PARENTHESIS_1( "  POST    /foo/bar    com.acme.app.FakeController.test",
                           "POST", "/foo/bar", FakeController.class, "test" ),
@@ -178,7 +195,7 @@ public class RoutesTest
         private String path;
         private Class<?> controllerType;
         private String controllerMethod;
-        private Map<String, Class<?>> pathParams;
+        private Map<String, Class<?>> parameters;
         private List<String> modifiers;
         private Class<? extends Exception> expectedException;
 
@@ -195,7 +212,7 @@ public class RoutesTest
             this.path = path;
             this.controllerType = controllerType;
             this.controllerMethod = controllerMethod;
-            this.pathParams = Collections.emptyMap();
+            this.parameters = Collections.emptyMap();
             this.modifiers = Collections.emptyList();
         }
 
@@ -208,7 +225,7 @@ public class RoutesTest
         private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
         {
             this( routeString, httpMethod, path, controllerType, controllerMethod );
-            this.pathParams = params.params();
+            this.parameters = params.params();
         }
 
         public static interface Params
@@ -303,14 +320,14 @@ public class RoutesTest
 
         assertThat( "Parameters Count" + messageSuffix,
                     count( ( (RouteInstance) route ).controllerParams().names() ),
-                    equalTo( count( refRoute.pathParams.keySet() ) ) );
+                    equalTo( count( refRoute.parameters.keySet() ) ) );
 
         assertThat( "Modifiers Count" + messageSuffix,
                     count( route.modifiers() ),
                     equalTo( count( refRoute.modifiers ) ) );
 
         ControllerParamsInstance routeParameters = (ControllerParamsInstance) ( (RouteInstance) route ).controllerParams();
-        Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.pathParams );
+        Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.parameters );
         for( Entry<String, ControllerParam> routeEntry : routeParameters.asMap().entrySet() )
         {
             String routeParamName = routeEntry.getKey();

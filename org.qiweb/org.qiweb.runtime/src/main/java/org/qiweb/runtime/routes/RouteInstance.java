@@ -6,15 +6,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.qi4j.functional.Function;
+import org.qi4j.functional.Iterables;
 import org.qi4j.functional.Specification;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.http.QueryString;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
@@ -73,6 +76,7 @@ import static org.qi4j.functional.Specifications.in;
 
         // Ensure all parameters in path are bound to controller parameters and "vice et versa".
         // Allow multiple occurences of a single parameter name in the path
+        // Allow not bound params that should come form QueryString
 
         Iterable<String> controllerParamsNames = controllerParams.names();
         Iterable<String> pathParamsNames = map( new Function<String, String>()
@@ -101,11 +105,6 @@ import static org.qi4j.functional.Specifications.in;
                 throw new IllegalRouteException( toString(),
                                                  "Parameter '" + paramName + "' is present in path but not bound." );
             }
-            if( !controllerParams.get( paramName ).hasForcedValue() && !matchesAny( in( paramName ), pathParamsNames ) )
-            {
-                throw new IllegalRouteException( toString(),
-                                                 "Parameter '" + paramName + "' is not present in path." );
-            }
         }
 
         // Ensure controller method exists and return an Outcome
@@ -131,6 +130,9 @@ import static org.qi4j.functional.Specifications.in;
         }
     }
 
+    /**
+     * @return Regex for parameter extraction from path with one named group per path parameter
+     */
     private String generatePathRegex()
     {
         StringBuilder regex = new StringBuilder( "/" );
@@ -212,7 +214,7 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
-    public Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path )
+    public Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path, QueryString queryString )
     {
         Matcher matcher = pathRegex.matcher( path );
         if( !matcher.matches() )
@@ -228,10 +230,21 @@ import static org.qi4j.functional.Specifications.in;
             }
             else
             {
-                String unboundValue = matcher.group( param.name() );
+                String unboundValue = null;
+                try
+                {
+                    unboundValue = matcher.group( param.name() );
+                }
+                catch( IllegalArgumentException noMatchingGroupInPath )
+                {
+                    if( queryString.keys().contains( param.name() ) )
+                    {
+                        unboundValue = queryString.valueOf( param.name() );
+                    }
+                }
                 if( unboundValue == null )
                 {
-                    throw new IllegalArgumentException( "Parameter named '" + param.name() + "' not found in path." );
+                    throw new IllegalArgumentException( "Parameter named '" + param.name() + "' not found in path or query string." );
                 }
                 boundParams.put( param.name(), parameterBinders.bind( param.type(), param.name(), unboundValue ) );
             }
@@ -243,7 +256,10 @@ import static org.qi4j.functional.Specifications.in;
     @SuppressWarnings( "unchecked" )
     public String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters )
     {
+        List<String> paramsToUnbind = Iterables.toList( controllerParams.names() );
         StringBuilder unboundPath = new StringBuilder( "/" );
+
+        // Unbinding path
         String[] pathElements = path.substring( 1 ).split( "/" );
         for( int idx = 0; idx < pathElements.length; idx++ )
         {
@@ -258,10 +274,10 @@ import static org.qi4j.functional.Specifications.in;
                         Object value = controllerParam.hasForcedValue()
                                        ? controllerParam.forcedValue()
                                        : parameters.get( controllerParam.name() );
-                        // QUID is this class cast legal?
                         unboundPath.append( parameterBinders.unbind( (Class<Object>) controllerParam.type(),
                                                                      controllerParam.name(),
                                                                      value ) );
+                        paramsToUnbind.remove( controllerParam.name() );
                         break;
                     default:
                         unboundPath.append( pathElement );
@@ -276,8 +292,31 @@ import static org.qi4j.functional.Specifications.in;
             {
                 unboundPath.append( "/" );
             }
-
         }
+
+        // Unbinding query string
+        if( !paramsToUnbind.isEmpty() )
+        {
+            unboundPath.append( "?" );
+            Iterator<String> qsit = paramsToUnbind.iterator();
+            while( qsit.hasNext() )
+            {
+                String qsParam = qsit.next();
+                ControllerParam controllerParam = controllerParams.get( qsParam );
+                Object value = controllerParam.hasForcedValue()
+                               ? controllerParam.forcedValue()
+                               : parameters.get( controllerParam.name() );
+                unboundPath.append( qsParam ).append( "=" );
+                unboundPath.append( parameterBinders.unbind( (Class<Object>) controllerParam.type(),
+                                                             controllerParam.name(),
+                                                             value ) );
+                if( qsit.hasNext() )
+                {
+                    unboundPath.append( "&" );
+                }
+            }
+        }
+
         return unboundPath.toString();
     }
 

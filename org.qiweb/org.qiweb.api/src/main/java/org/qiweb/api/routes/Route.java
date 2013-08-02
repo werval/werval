@@ -3,6 +3,7 @@ package org.qiweb.api.routes;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
+import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
 
 /**
@@ -26,7 +27,7 @@ public interface Route
 
     Set<String> modifiers();
 
-    Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path );
+    Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path, QueryString queryString );
 
     String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters );
 }
