@@ -44,7 +44,7 @@ public class HeadersInstance
     @Override
     public Set<String> names()
     {
-        return headers.keySet();
+        return Collections.unmodifiableSet( headers.keySet() );
     }
 
     @Override
@@ -64,7 +64,7 @@ public class HeadersInstance
         {
             return Collections.emptyList();
         }
-        return headers.get( name );
+        return Collections.unmodifiableList( headers.get( name ) );
     }
 
     @Override
