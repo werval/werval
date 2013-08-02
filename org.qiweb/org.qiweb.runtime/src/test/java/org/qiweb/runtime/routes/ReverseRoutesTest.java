@@ -43,6 +43,18 @@ public class ReverseRoutesTest
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).qstring( path, qsOne, qsTwo ) );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
+
+        public Outcome appendedQueryString()
+        {
+            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).appendedQueryString() ).appendQueryString( request().queryString().asMapAll() );
+            return outcomes().ok( reverseRoute.httpUrl() ).build();
+        }
+
+        public Outcome fragmentIdentifier()
+        {
+            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).fragmentIdentifier() ).withFragmentIdentifier( "bazar" );
+            return outcomes().ok( reverseRoute.httpUrl() ).build();
+        }
     }
 
     @Override
@@ -51,7 +63,9 @@ public class ReverseRoutesTest
         return "GET /simpleMethod org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
                + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
                + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"
-               + "GET /query/:path/string org.qiweb.runtime.routes.ReverseRoutesTest$Controller.qstring( String path, String qsOne, String qsTwo )";
+               + "GET /query/:path/string org.qiweb.runtime.routes.ReverseRoutesTest$Controller.qstring( String path, String qsOne, String qsTwo )\n"
+               + "GET /appended/qs org.qiweb.runtime.routes.ReverseRoutesTest$Controller.appendedQueryString\n"
+               + "GET /fragment/identifier org.qiweb.runtime.routes.ReverseRoutesTest$Controller.fragmentIdentifier";
     }
 
     @Test
@@ -96,5 +110,27 @@ public class ReverseRoutesTest
         HttpResponse response = client.execute( new HttpGet( httpUrl ) );
         assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
         assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+    }
+
+    @Test
+    public void testAppendedQueryString()
+        throws Exception
+    {
+        HttpClient client = newHttpClientInstance();
+        String httpUrl = BASE_URL + "appended/qs?bar=bazar&foo=bar&foo=baz";
+        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
+        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
+        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+    }
+
+    @Test
+    public void testFragmentIdentifier()
+        throws Exception
+    {
+        HttpClient client = newHttpClientInstance();
+        String httpUrl = BASE_URL + "fragment/identifier";
+        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
+        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
+        assertThat( responseBodyAsString( response ), equalTo( httpUrl + "#bazar" ) );
     }
 }

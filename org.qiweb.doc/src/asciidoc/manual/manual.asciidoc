@@ -83,6 +83,9 @@ above.
 
 === Routes
 
+Request URI Path and QueryString are the source of Controller Parameters.
+Fragment identifier is considered as useful only on the client side and hence is not taken into account when routing.
+However, the reverse routing API allow you to append a fragment identifier to generated URIs.
 
 === Controllers
 
