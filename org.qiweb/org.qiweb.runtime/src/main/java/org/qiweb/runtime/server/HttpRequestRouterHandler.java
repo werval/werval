@@ -81,11 +81,11 @@ import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
  * 
  * <p>TODO WebSocket</p>
  */
-public final class HttpRouterHandler
+public final class HttpRequestRouterHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger( HttpRouterHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HttpRequestRouterHandler.class );
     private static final String REQUEST_IDENTITY_PREFIX = UUID.randomUUID().toString() + "-";
     private static final AtomicLong REQUEST_IDENTITY_COUNT = new AtomicLong();
 
@@ -96,7 +96,7 @@ public final class HttpRouterHandler
     private final ApplicationInstance app;
     private String requestIdentity;
 
-    public HttpRouterHandler( ApplicationInstance app )
+    public HttpRequestRouterHandler( ApplicationInstance app )
     {
         super();
         this.app = app;

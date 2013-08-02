@@ -56,7 +56,7 @@ public class SubProtocolSwitchHandler
             rebuildIfNeeded();
             HttpRequest request = (HttpRequest) message;
             LOG.debug( "Switching to plain HTTP protocol" );
-            context.pipeline().addLast( httpExecutors, "router", new HttpRouterHandler( app ) );
+            context.pipeline().addLast( httpExecutors, "router", new HttpRequestRouterHandler( app ) );
             context.pipeline().remove( this );
             context.fireChannelRead( request );
         }
@@ -65,7 +65,7 @@ public class SubProtocolSwitchHandler
             rebuildIfNeeded();
             WebSocketFrame frame = (WebSocketFrame) message;
             LOG.debug( "Switching to WebSocket protocol" );
-            context.pipeline().addLast( "router", new WebSocketFrameHandler( app ) );
+            context.pipeline().addLast( "router", new WebSocketRouterHandler( app ) );
             context.pipeline().remove( this );
             frame.retain();
             context.fireChannelRead( frame );

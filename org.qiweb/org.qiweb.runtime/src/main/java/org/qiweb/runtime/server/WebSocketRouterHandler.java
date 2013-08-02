@@ -7,19 +7,19 @@ import org.qiweb.api.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebSocketFrameHandler
+public class WebSocketRouterHandler
     extends SimpleChannelInboundHandler<WebSocketFrame>
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger( WebSocketFrameHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WebSocketRouterHandler.class );
     private final Application app;
 
-    public WebSocketFrameHandler( Application app )
+    public WebSocketRouterHandler( Application app )
     {
         super();
         this.app = app;
     }
-    
+
     @Override
     public void exceptionCaught( ChannelHandlerContext context, Throwable cause )
     {
