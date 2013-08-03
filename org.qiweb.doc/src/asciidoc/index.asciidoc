@@ -22,15 +22,15 @@ include::hello/hello-maven.asciidoc[]
 
 == Manual
 
-The QiWeb manuel is intended to be a comprehensive guide to the development kit.
+The QiWeb manual is intended to be a comprehensive guide to the development kit.
 
 include::manual/manual.asciidoc[]
 
 
 == Guides
 
-In this section you'll find guides for frequent and practical development use cases like build to deployment including
-Qi4j, Guice and Spring integrations and many more.
+In this section you'll find guides for frequent and practical development use cases from build to deployment including
+Qi4j, Guice, Spring integrations and many more.
 
 include::guides/build-sh.asciidoc[]
 include::guides/build-gradle.asciidoc[]
@@ -43,4 +43,3 @@ include::guides/guice.asciidoc[]
 include::guides/spring.asciidoc[]
 include::guides/files-from-filesystem.asciidoc[]
 include::guides/files-from-classpath.asciidoc[]
-
