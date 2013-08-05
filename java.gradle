@@ -41,6 +41,55 @@ task createFolders(description: 'Creates the source folders if they do not exist
 //    }
 //}
 
+// Generate Version Class
+apply plugin: VersionClass
+
+class VersionClass implements Plugin<Project>
+{
+    def void apply( Project project )
+    {
+        def generatedSrcDir = new File( project.buildDir, 'generated-src/version' )
+        def genVersionClassTask = project.task( 'genVersionClass' ) << {
+            def dateFormat = new java.text.SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US )
+            dateFormat.setTimeZone( TimeZone.getTimeZone( "GMT" ) )
+            def now = dateFormat.format( new Date() )
+            def outFile = new File( generatedSrcDir, "java/" + project.name.replace( '.', '/' ) + "/BuildVersion.java" )
+            outFile.getParentFile().mkdirs()
+            outFile.write( """
+package """ + project.name.replace( '-', '_' ) + """;
+
+/**
+ * Generated class that store the version derived from the build system.
+ */
+public interface BuildVersion
+{
+    /** The last commit hash from the git history. */
+    String COMMIT = \"""" + "git rev-parse --short HEAD".execute().text.trim() + """\";
+
+    /** The version of the project from the gradle build. */
+    String VERSION = \"""" + project.version + """\";
+
+    /** The name of the project from the gradle build. */
+    String NAME = \"""" + project.name + """\";
+
+    /** The group of the project from the gradle build. */
+    String GROUP = \"""" + project.group + """\";
+
+    /** The date this file was generated, usually the last date that the project was modified. */
+    String DATE = \"""" + now + """\";
+
+    /** The full details of the version, including the build date. */
+    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " " + DATE;
+}\n
+""" )
+        }
+        genVersionClassTask.outputs.files generatedSrcDir
+        project.getTasks().getByName( 'compileJava' ).source genVersionClassTask.outputs.files, project.sourceSets.main.java
+    }
+}
+
+
+
 // Enable test output
 test {
     testLogging {
