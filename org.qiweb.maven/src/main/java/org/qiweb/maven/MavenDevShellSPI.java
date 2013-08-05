@@ -48,7 +48,7 @@ public class MavenDevShellSPI
             int exitValue = executor.execute( cmdLine );
             if( exitValue != 0 )
             {
-                System.out.println( "Maven Rebuild existed with a non-zero status: " + exitValue );
+                System.out.println( "Maven Rebuild exited with a non-zero status: " + exitValue );
             }
         }
         catch( Exception ex )

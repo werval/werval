@@ -18,6 +18,15 @@ public final class ClassLoaders
 
     private static final String TAB = "    ";
 
+    public static List<URL> urlsOf( ClassLoader classLoader )
+    {
+        if( !( classLoader instanceof URLClassLoader ) )
+        {
+            throw new IllegalArgumentException( "ClassLoader is not an instance of URLClassLoader" );
+        }
+        return new ArrayList<>( Arrays.asList( ( (URLClassLoader) classLoader ).getURLs() ) );
+    }
+
     public static void printURLs( ClassLoader classLoader )
     {
         printURLs( classLoader, new PrintWriter( new OutputStreamWriter( System.out,

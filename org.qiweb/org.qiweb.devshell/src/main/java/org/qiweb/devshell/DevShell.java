@@ -162,7 +162,7 @@ public final class DevShell
 
             // ---------------------------------------------------------------------------------------------------------
 
-            printRealms();
+            // printRealms();
 
             white( ">> Ready for requests!" );
             Thread.sleep( Long.MAX_VALUE );
@@ -172,9 +172,14 @@ public final class DevShell
                IllegalAccessException | IllegalArgumentException | InvocationTargetException |
                InterruptedException ex )
         {
-            String msg = "Unable to start QiWeb DevShell: " + ex.getMessage();
+            Throwable cause = ex;
+            if( ex instanceof InvocationTargetException )
+            {
+                cause = ex.getCause();
+            }
+            String msg = "Unable to start QiWeb DevShell: " + cause.getClass().getSimpleName() + " " + cause.getMessage();
             red( msg );
-            throw new QiWebDevShellException( msg, ex );
+            throw new QiWebDevShellException( msg, cause );
         }
     }
 

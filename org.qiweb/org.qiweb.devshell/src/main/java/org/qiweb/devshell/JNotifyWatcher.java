@@ -87,7 +87,7 @@ public class JNotifyWatcher
                 JarEntry entry = entries.nextElement();
                 if( entry.getName().startsWith( startsWith ) )
                 {
-                    File target = new File( targetDir + java.io.File.separator + entry.getName() );
+                    File target = new File( targetDir + File.separator + entry.getName() );
                     if( entry.isDirectory() )
                     {
                         if( !target.mkdirs() )

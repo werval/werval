@@ -7,7 +7,6 @@ dependencies {
     compile libs.qi4j_functional
     compile libs.typesafe_config
     compile libs.netty_codec_http
-    compile libs.netty_example // TODO Remove me! cf. org.qiweb.runtime.http.experiments
     
     testCompile project( ":org.qiweb.test" )
     testCompile libs.qi4j_api
