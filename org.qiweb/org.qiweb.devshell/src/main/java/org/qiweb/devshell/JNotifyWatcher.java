@@ -66,6 +66,11 @@ public class JNotifyWatcher
 
     private static File jNotifyJar( URLClassLoader loader )
     {
+        if( loader.getURLs().length == 1 )
+        {
+            // We should be in a single fat jar
+            return new File( loader.getURLs()[0].getFile() );
+        }
         for( URL url : loader.getURLs() )
         {
             if( url.getFile().contains( "/jnotify" ) )
