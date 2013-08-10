@@ -1,1 +1,1 @@
-=== Build QiWeb Applications with Maven
+=== Build Applications with Maven

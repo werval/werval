@@ -1,1 +1,0 @@
-=== Build QiWeb Applications with shell scripts

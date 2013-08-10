@@ -1,1 +1,1 @@
-=== Build QiWeb Applications with Gradle
+=== Build Applications with Gradle

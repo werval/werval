@@ -1,5 +1,7 @@
 
-=== Hello Gradle QiWeb - Automation evolved
+=== Hello Gradle QiWeb
+
+> Automation evolved
 
 Dans ce court tutoriel nous allons écrire notre première application QiWeb construite à l'aide de
 http://gradle.org[Gradle].
@@ -10,8 +12,26 @@ We'll use a single HTTP route:
 
 That points to this controller method:
 
-    public Outcome index()
-    {
-        return outcomes().ok( "Hello QiWeb" );
-    }
+[source,java]
+----
+public Outcome index()
+{
+    return outcomes().ok( "Hello QiWeb" ).build();
+}
+----
+
+Here is the project tree:
+
+    .
+    ├── build.gradle                                <= Gradle Build File
+    └── src
+        └── main
+            ├── java
+            │   └── com
+            │       └── acme
+            │           └── app
+            │               └── Controller.java     <= Controller Java Class
+            └── resources
+                ├── application.conf                <= QiWeb Application Configuration
+                └── routes.conf                     <= QiWeb Routes
 

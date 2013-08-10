@@ -1,5 +1,11 @@
 # QiWeb - Zen and Energy for Web Development
 
+    _____ _ _ _ _     _      ____          _____ _ _
+   |     |_| | | |___| |_   |    \ ___ _ _|  |  |_| |_
+   |  |  | | | | | -_| . |  |  |  | -_| | |    -| |  _|
+   |__  _|_|_____|___|___|  |____/|___|\_/|__|__|_|_|
+      |__|
+
 > This is a work in progress!
 
 QiWeb is not published yet. If you read this, feel lucky :-)
@@ -25,8 +31,8 @@ By default version number `0` is used, override with `-Dversion=WHATEVER`
 You can then depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
-- `org.qiweb:org.qiweb.runtime:0` to run `org.qiweb.runtime.Main` class
-- `org.qiweb:org.qiweb.test:0` in your test code
+- `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main` class
+- `org.qiweb:org.qiweb.test:0` in your test code to get a test environment easily
 
 The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the Development Shell.
 

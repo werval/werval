@@ -3,11 +3,24 @@
 apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
 apply plugin: 'base'
 
-task html( type: Exec, description: 'Generate HTML documentation' ) {
+task copyHtmlFiles( type: Copy ) {
+    from 'src/static'
+    into 'build/docs/html'
+}
+
+task html( type: Exec, description: 'Generate HTML documentation', dependsOn: copyHtmlFiles ) {
     commandLine = [ 
-        'asciidoctor', '--compact', 
-        '-b', 'html5', '-a', 'toc', 
-        '-o', '../../build/docs/html/index.html', 
+        'asciidoctor',
+        '-b', 'html5',
+        '--compact',
+        '-n',
+        '-a', 'toc2',
+        //'-a', 'copycss',
+        //'-a', 'linkcss!',
+        //'-a', 'data-uri',
+        '-a', 'stylesheet=stylesheets/foundation.css',
+        '-a', 'source-highlighter=highlightjs',
+        '-o', 'build/docs/html/index.html', 
         'src/asciidoc/index.asciidoc'
     ]
 }
@@ -19,7 +32,7 @@ task docbook( type: Exec, description: 'Generate DocBook documentation' ) {
     commandLine = [ 
         'asciidoctor', '--compact', 
         '-b', 'docbook', '-a', 'toc', 
-        '-o', '../../build/docs/docbook/index.xml', 
+        '-o', 'build/docs/docbook/index.xml', 
         'src/asciidoc/index.asciidoc'
     ]
 }
