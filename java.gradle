@@ -50,6 +50,10 @@ class VersionClass implements Plugin<Project>
     {
         def generatedSrcDir = new File( project.buildDir, 'generated-src/version' )
         def genVersionClassTask = project.task( 'genVersionClass' ) << {
+            def commit = "git rev-parse --short HEAD".execute().text.trim()
+            def dirtyProc = "git diff --no-ext-diff --quiet".execute()
+            dirtyProc.waitFor()
+            def dirty = dirtyProc.exitValue() != 0
             def dateFormat = new java.text.SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US )
             dateFormat.setTimeZone( TimeZone.getTimeZone( "GMT" ) )
             def now = dateFormat.format( new Date() )
@@ -64,7 +68,10 @@ package """ + project.name.replace( '-', '_' ) + """;
 public interface BuildVersion
 {
     /** The last commit hash from the git history. */
-    String COMMIT = \"""" + "git rev-parse --short HEAD".execute().text.trim() + """\";
+    String COMMIT = \"""" + commit + """\";
+
+    /** True if they were local changes when built. */
+    boolean DIRTY = """+ dirty + """;
 
     /** The version of the project from the gradle build. */
     String VERSION = \"""" + project.version + """\";
@@ -79,7 +86,7 @@ public interface BuildVersion
     String DATE = \"""" + now + """\";
 
     /** The full details of the version, including the build date. */
-    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " " + DATE;
+    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " " + COMMIT + " " + DATE;
 }\n
 """ )
         }
