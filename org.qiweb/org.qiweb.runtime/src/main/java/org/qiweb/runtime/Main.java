@@ -1,13 +1,7 @@
 package org.qiweb.runtime;
 
-import io.netty.util.CharsetUtil;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application.Mode;
-import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.server.HttpServer;
 import org.qiweb.runtime.server.HttpServerInstance;
@@ -18,38 +12,41 @@ import org.qiweb.runtime.server.HttpServerInstance;
 public final class Main
 {
 
+    private static class ShutdownHook
+        implements Runnable
+    {
+
+        private final HttpServer server;
+
+        private ShutdownHook( HttpServer server )
+        {
+            this.server = server;
+        }
+
+        @Override
+        public void run()
+        {
+            server.passivate();
+        }
+    }
+
     public static void main( String[] args )
     {
         System.out.println( "QiWeb!" );
-        URL routesUrl = Main.class.getClassLoader().getResource( "routes.conf" );
-        if( routesUrl == null )
+        try
         {
-            System.err.println( "No routes.conf file found at classpath root." );
-            System.exit( 1 );
-        }
-        try( InputStream input = routesUrl.openStream() )
-        {
-            RoutesProvider routesProvider = new RoutesParserProvider(
-                Strings.toString( new InputStreamReader( input, CharsetUtil.UTF_8 ) ) );
-            final HttpServer server = new HttpServerInstance( "qiweb-http-server",
-                                                              new ApplicationInstance( Mode.prod, routesProvider ) );
-            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    server.passivate();
-                }
-            }, "qiweb-shutdown" ) );
+            RoutesProvider routesProvider = new RoutesConfProvider();
+            ApplicationInstance application = new ApplicationInstance( Mode.prod, routesProvider );
+            final HttpServer server = new HttpServerInstance( "qiweb-http-server", application );
+            Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( server ), "qiweb-shutdown" ) );
             server.activate();
         }
-        catch( IOException ex )
+        catch( Exception ex )
         {
-            System.err.println( "Unable to read routes.conf." );
+            System.err.println( "Unable to start application." );
             ex.printStackTrace( System.err );
             System.exit( 2 );
         }
-
     }
 
     private Main()

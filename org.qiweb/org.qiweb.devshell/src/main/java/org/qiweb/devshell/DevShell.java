@@ -115,18 +115,7 @@ public final class DevShell
 
             // RoutesProvider
             Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
-            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesParserProvider" ).
-                getConstructor( new Class<?>[]
-            {
-                String.class
-            } ).
-                newInstance( new Object[]
-            {
-                // Routes
-                "GET /favicon.ico org.qiweb.controller.Default.notFound()\n"
-                + "GET / com.acme.app.FakeControllerInstance.index()\n"
-                + "GET /resources/*path org.qiweb.controller.MetaInfResources.resource( String path )"
-            } );
+            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesConfProvider" ).newInstance();
 
             // Application
             Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );
@@ -203,11 +192,11 @@ public final class DevShell
     {
         classWorld = new ClassWorld();
 
-        // DevShell Realm delegates to the original ClassLoader (The Build Plugin One)
+        // DevShell Realm delegates to the original ClassLoader (Either the CLI or the Build Plugin One)
         ClassRealm devRealm = classWorld.newRealm( DEVSHELL_REALM_ID, originalLoader );
 
         // Dependencies Realm contains all Application dependencies JARs
-        // and import QiWeb DevShell and Dev SPI packages from current ClassLoader (The Build Plugin One)
+        // and import QiWeb DevShell and Dev SPI packages from current ClassLoader (Either the CLI or the Build Plugin One)
         ClassRealm depRealm = classWorld.newRealm( DEPENDENCIES_REALM_ID, null );
         for( URL jarUrl : jars( spi.classPath() ) )
         {
