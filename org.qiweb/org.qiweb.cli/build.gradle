@@ -1,0 +1,10 @@
+
+apply plugin:'application'
+
+mainClassName = "org.qiweb.cli.DamnSmallDevShell"
+
+dependencies {
+    compile project( ":org.qiweb.devshell" )
+    compile libs.cli
+    compile libs.exec
+}
