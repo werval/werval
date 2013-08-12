@@ -1,5 +1,5 @@
 
-=== Support des IDE
+=== IDE Support
 
 QiWeb ne dépendant pas d'une chaine de construction en particulier, il suffit que votre IDE supporte celle que vous
 avez choisi.

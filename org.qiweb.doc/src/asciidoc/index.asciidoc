@@ -1,5 +1,7 @@
 = ﻿QiWeb - HTTP Development Kit
 
+image:images/logo.png[QiWeb,120]
+
 Java, Netty, HTTP, WebSockets, DevMode, Build System Agnostic, Readable and Hacking Friendly CodeBase.
 
 
@@ -19,10 +21,16 @@ include::hello/hello-cli.asciidoc[]
 include::hello/hello-gradle.asciidoc[]
 include::hello/hello-maven.asciidoc[]
 
+== Tutorial
+
+The QiWeb Tutorial will guide you through making a full blown bookmarking application, "à là" delic.io.us.
+
+include::tutorial/tutorial.asciidoc[]
+
 
 == Manual
 
-The QiWeb manual is intended to be a comprehensive guide to the development kit.
+The QiWeb Manual is intended to be a comprehensive guide to the development kit.
 
 include::manual/manual.asciidoc[]
 

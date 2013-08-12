@@ -11,8 +11,7 @@ Autrement dit, QiWeb n'impose aucun choix technique quand au système de stockag
 application ni sur la façon dont vous voulez construire vos vues.
 Il vous laisse le champ libre pour choisir la solution qui vous convient.
 
-
-TIP: TODO Faire un schema un peu comme pour Qi4j Core
+image::images/overview.png[Overview,640]
 
 
 === Application Structure
@@ -85,7 +84,13 @@ specified using one of the System Properties described above.
 
 ==== Instanciation
 
+- Controllers
+- Filters
+
 ==== Invocation
+
+- Controllers
+- Filters
 
 
 === Routes

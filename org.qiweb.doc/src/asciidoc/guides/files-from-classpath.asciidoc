@@ -1,1 +1,1 @@
-=== Servir des fichiers depuis le classpath de votre application
+=== Serve files from the application classpath

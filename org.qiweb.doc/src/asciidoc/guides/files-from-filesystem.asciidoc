@@ -1,1 +1,1 @@
-=== Servir des fichiers depuis le système de fichiers
+=== Serve files from the filesystem
