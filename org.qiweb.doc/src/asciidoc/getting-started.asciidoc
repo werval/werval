@@ -1,0 +1,15 @@
+== Getting Started
+
+As a starting point we'll see how to build a "Hello World" style example.
+As QiWeb is Build System Agnostic the framework don't provide one thus the simplest example involve build related
+content so is not close to a "one-liner".
+However we've packed examples for various Build Systems, even a fully hand-made one based on a simple command line
+interface.
+We hope you'll find your way through.
+
+For the code-impatients, our https://github.com/qiweb/org.qiweb.samples[samples repository] contains the code presented
+in theses sections plus a bunch of usefull samples.
+
+include::getting-started/hello-cli.asciidoc[]
+include::getting-started/hello-gradle.asciidoc[]
+include::getting-started/hello-maven.asciidoc[]

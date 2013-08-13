@@ -1,0 +1,26 @@
+== Librairies
+
+=== Standard Library
+==== Default Controller
+==== META-INF Resources & WebJars
+==== Static Files
+
+=== Qi4j Integration
+
+=== Guice Integration
+
+=== CDI Integration
+
+=== Spring Integration
+
+=== Markdown support
+
+=== Web Forms
+
+=== HTTP Client
+
+=== JavaScript Reverse Routing
+
+=== Password Hashing
+
+=== Serious i18n

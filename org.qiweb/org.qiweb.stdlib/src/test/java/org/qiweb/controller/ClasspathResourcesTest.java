@@ -11,14 +11,14 @@ import org.qiweb.test.AbstractQiWebTest;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class MetaInfResourcesTest
+public class ClasspathResourcesTest
     extends AbstractQiWebTest
 {
 
     @Override
     protected String routesString()
     {
-        return "GET /*path org.qiweb.controller.MetaInfResources.resource( String path )";
+        return "GET /*path org.qiweb.controller.ClasspathResources.metainf( String path )";
     }
 
     @Test

@@ -1,15 +1,14 @@
 // QiWeb Documentation
 
-apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
-apply plugin: 'base'
+apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
 
 task copyHtmlFiles( type: Copy ) {
-    from 'src/static'
+    from 'src/assets'
     into 'build/docs/html'
 }
 
-task html( type: Exec, description: 'Generate HTML documentation', dependsOn: copyHtmlFiles ) {
-    commandLine = [ 
+def _htmlCommandLine( section ) {
+    [
         'asciidoctor',
         '-b', 'html5',
         '--compact',
@@ -20,19 +19,26 @@ task html( type: Exec, description: 'Generate HTML documentation', dependsOn: co
         //'-a', 'data-uri',
         '-a', 'stylesheet=stylesheets/foundation.css',
         '-a', 'source-highlighter=highlightjs',
-        '-o', 'build/docs/html/index.html', 
-        'src/asciidoc/index.asciidoc'
+        '-o', "build/docs/html/${section}.html",
+        "src/asciidoc/${section}.asciidoc"
     ]
 }
-html.doFirst {
-    new File('build/docs/html').mkdirs()
+
+task _htmlGettingStarted( type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'getting-started' ) }
+task _htmlTutorial(       type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'tutorial' ) }
+task _htmlManual(         type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'manual' ) }
+task _htmlGuides(         type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'guides' ) }
+task _htmlLibraries(      type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'libraries' ) }
+
+task html( description: 'Generate HTML documentation',
+    dependsOn: [ _htmlGettingStarted, _htmlTutorial, _htmlManual, _htmlGuides, _htmlLibraries ] ) {
 }
 
 task docbook( type: Exec, description: 'Generate DocBook documentation' ) {
     commandLine = [ 
-        'asciidoctor', '--compact', 
-        '-b', 'docbook', '-a', 'toc', 
-        '-o', 'build/docs/docbook/index.xml', 
+        'asciidoctor', '--compact',
+        '-b', 'docbook', '-a', 'toc',
+        '-o', 'build/docs/docbook/index.xml',
         'src/asciidoc/index.asciidoc'
     ]
 }
@@ -59,3 +65,9 @@ pdf.doLast {
 
 task doc( description: 'Generate HTML and PDF documentation', dependsOn: [ html, pdf ] ) {}
 
+task htmlResources( type: Copy, dependsOn: [ html, genVersionClass ] ) {
+    from 'build/docs/html'
+    into 'build/classes/main/org/qiweb/doc/html'
+}
+
+compileJava.dependsOn( htmlResources )

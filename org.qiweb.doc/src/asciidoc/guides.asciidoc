@@ -1,0 +1,11 @@
+== Guides
+
+In this section you'll find guides for frequent and practical development use cases from build to deployment including
+Qi4j, Guice, Spring integrations and many more.
+
+include::guides/build-cli.asciidoc[]
+include::guides/build-gradle.asciidoc[]
+include::guides/build-maven.asciidoc[]
+include::guides/ide-support.asciidoc[]
+include::guides/deploy-unix.asciidoc[]
+include::guides/deploy-heroku.asciidoc[]
