@@ -2,6 +2,8 @@
 
 // Libraries versions
 def v_classworlds = '2.4.2'
+def v_cli = '1.2'
+def v_exec = '1.1'
 def v_gradle_tooling = '1.4'
 def v_httpclient = '4.2.5'
 def v_javassist = '3.18.0-GA' // Same version as the one brought by Netty
@@ -13,6 +15,7 @@ def v_netty = '4.0.7.Final'
 def v_qi4j = '2.0'
 def v_selenium = '2.33.0'
 def v_slf4j = '1.7.5'
+def v_threeten_backport = '0.8.1'
 def v_typesafe_config = '1.0.2'
 
 // Libraries extension
@@ -26,12 +29,17 @@ rootProject.ext {
         netty_example:      "io.netty:netty-example:$v_netty",
         qi4j_functional:    "org.qi4j.core:org.qi4j.core.functional:$v_qi4j",
         slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
+        threeten_backport:  "org.threeten:threetenbp:$v_threeten_backport",
         typesafe_config:    "com.typesafe:config:$v_typesafe_config",
 
         // DevShell Only Libraries
         classworlds:        "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
         gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
         jnotify:            "net.contentobjects.jnotify:jnotify:$v_jnotify",
+
+        // CLI Only Libraries
+        cli:                "commons-cli:commons-cli:$v_cli",
+        exec:               "org.apache.commons:commons-exec:$v_exec",
         
         // Test Only Libraries
         httpclient:         "org.apache.httpcomponents:httpclient:$v_httpclient",

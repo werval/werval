@@ -3,9 +3,75 @@
 
 > Keep It Simple Stupid
 
+To get started we will build a simple Hello World style example using the QiWeb CLI.
+
+TIP TODO How to install `org.qiweb.cli`???
+
+Here is the `org.qiweb.cli` help:
+
+[source,bash]
+----
+user@host $ org.qiweb.cli --help
+ _____ _ _ _ _     _      ____          _____ _       _ _
+|     |_| | | |___| |_   |    \ ___ _ _|   __| |_ ___| | |
+|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |
+|__  _|_|_____|___|___|  |____/|___|\_/|_____|_|_|___|_|_|
+   |__|
+
+usage: org.qiweb.cli [options] [command(s)]
+
+  The Damn Small QiWeb DevShell
+  - do not manage dependencies ;
+  - do not allow you to extend the build ;
+  - do not assemble applications.
+
+  Meaning you have to manage your application dependencies and assembly
+  yourself. Theses limitations make this DevShell suitable for quick prototyping
+  only. Prefer the Gradle or Maven build systems integration.
+
+  org.qiweb.cli is part of the QiWeb Development Kit - http://qiweb.org
+
+Commands:
+
+  new [appdir]  Create a new skeleton application in the 'appdir' directory.
+  clean         Delete devshell temporary directory, see 'tmpdir' option.
+  run           Run the QiWeb Development Shell.
+
+  If no command is specified, 'run' is assumed.
+
+Options:
+
+  -c,--classpath <element>      Set application classpath element. Use this
+                                option several times to declare a full
+                                classpath. Defaults to 'lib' in current
+                                directory.
+  -s,--sources <directory>      Set application sources directories. Use this
+                                option several times to declare multiple sources
+                                directories. Defaults to 'src/main/java' and
+                                'src/main/resources' in current directory.
+  -t,--tmpdir <directory>       Set temporary directory. Defaults to
+                                'build/devshell.tmp' in current directory.
+  -D,--define <property=value>  Define a system property. Use this option
+                                several times to define multiple system
+                                properties. Particularly convenient when used to
+                                override application configuration.
+  -d,--debug                    Enable debug output.
+     --version                  Display version information.
+     --help                     Display help information.
+
+  All paths are relative to the current working directory, except if they are
+  absolute of course.
+
+  Licensed under the Apache License Version 2.0,
+  http://www.apache.org/licenses/LICENSE-2.0
+----
+
 We'll use a single HTTP route:
 
-    GET / com.acme.Controller.index
+[source,routes]
+----
+GET / com.acme.Controller.index
+----
 
 That points to this controller method:
 

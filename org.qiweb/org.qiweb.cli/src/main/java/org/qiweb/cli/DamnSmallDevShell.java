@@ -53,6 +53,8 @@ import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 import org.qiweb.spi.dev.Watcher;
 
+import static io.netty.util.CharsetUtil.UTF_8;
+
 /**
  * Damn Small QiWeb DevShell.
  */
@@ -116,12 +118,10 @@ public final class DamnSmallDevShell
                                        + "|     |_| | | |___| |_   |    \\ ___ _ _|   __| |_ ___| | |\n"
                                        + "|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |\n"
                                        + "|__  _|_|_____|___|___|  |____/|___|\\_/|_____|_|_|___|_|_|\n"
-                                       + "   |__|                                QiWeb v" + BuildVersion.VERSION + "-" + BuildVersion.COMMIT + "\n";
+                                       + "   |__|                                QiWeb v" + BuildVersion.VERSION + "-" + BuildVersion.COMMIT + ( BuildVersion.DIRTY ? " (DIRTY)" : "" ) + "\n";
 
     public static void main( String[] args )
     {
-        System.out.println( LOGO );
-
         Options options = declareOptions();
 
         CommandLineParser parser = new PosixParser();
@@ -142,114 +142,200 @@ public final class DamnSmallDevShell
             if( cmd.hasOption( "version" ) )
             {
                 System.out.println(
-                    "Damn Small QiWeb DevShell v" + BuildVersion.VERSION + "\n"
+                    "QiWeb CLI v" + BuildVersion.VERSION + "\n"
                     + "Git commit: " + BuildVersion.COMMIT + ( BuildVersion.DIRTY ? " (DIRTY)" : "" ) + ", built on: " + BuildVersion.DATE + "\n"
+                    + "Licence: Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0\n"
                     + "Java version: " + System.getProperty( "java.version" ) + ", vendor: " + System.getProperty( "java.vendor" ) + "\n"
                     + "Java home: " + System.getProperty( "java.home" ) + "\n"
-                    + "Default locale: " + Locale.getDefault().toLanguageTag() + ", platform encoding: " + System.getProperty( "file.encoding" ) + "\n"
+                    + "Default locale: " + Locale.getDefault().toString() + ", platform encoding: " + System.getProperty( "file.encoding" ) + "\n"
                     + "OS name: " + System.getProperty( "os.name" ) + ", version: " + System.getProperty( "os.version" ) + ", arch: " + System.getProperty( "os.arch" ) );
                 System.exit( 0 );
             }
 
+            // Debug
+            final boolean debug = cmd.hasOption( 'd' );
+
+            // Temporary directory
+            final File tmpDir = new File( cmd.getOptionValue( 't', "build/devshell.tmp" ) );
+            if( debug )
+            {
+                System.out.println( "Temporary directory set to '" + tmpDir.getAbsolutePath() + "'." );
+            }
+
             // Handle commands
+            @SuppressWarnings( "unchecked" )
             List<String> commands = cmd.getArgList();
             if( commands.isEmpty() )
             {
                 commands = Collections.singletonList( "run" );
             }
-            System.out.println( "COMMANDS: " + commands );
-            Iterator<String> it = commands.iterator();
-            while( it.hasNext() )
+            // TODO Check if all commands are recognized before executing
+            if( debug )
             {
-                String command = it.next();
+                System.out.println( "Commands to be executed: " + commands );
+            }
+            Iterator<String> commandsIterator = commands.iterator();
+            while( commandsIterator.hasNext() )
+            {
+                String command = commandsIterator.next();
                 switch( command )
                 {
                     case "new":
+                        System.out.println( LOGO );
+                        newCommand( "qiweb-application", cmd );
                         break;
                     case "clean":
+                        cleanCommand( debug, tmpDir );
                         break;
                     case "run":
+                        System.out.println( LOGO );
+                        runCommand( debug, tmpDir, cmd );
+                        break;
                     default:
+                        PrintWriter out = new PrintWriter( System.err );
+                        System.err.println( "Unknown command: '" + command + "'" );
+                        printHelp( options, out );
+                        out.flush();
+                        System.exit( 1 );
                         break;
                 }
             }
-
-            // Temporary directory
-            final File tmpDir = new File( cmd.getOptionValue( 't', "build/devshell.tmp" ) );
-            final File classesDir = new File( tmpDir, "classes" );
-            Files.createDirectories( classesDir.toPath() );
-
-            // Sources
-            String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
-            {
-                "src/main/java",
-                "src/main/resources"
-            };
-            Set<File> sources = new LinkedHashSet<>();
-            for( String sourcePath : sourcesPaths )
-            {
-                sources.add( new File( sourcePath ) );
-            }
-
-            // Classpath
-            List<URL> classpathList = new ArrayList<>();
-            // First, current classpath
-            classpathList.addAll( ClassLoaders.urlsOf( DamnSmallDevShell.class.getClassLoader() ) );
-            // Then either command line provided or defaults
-            if( cmd.hasOption( 'c' ) )
-            {
-                for( String url : cmd.getOptionValues( 'c' ) )
-                {
-                    classpathList.add( new URL( url ) );
-                }
-            }
-            else
-            {
-                classpathList.add( new File( "lib" ).toURI().toURL() );
-            }
-            // Append Application sources
-            for( File source : sources )
-            {
-                classpathList.add( source.toURI().toURL() );
-            }
-            // Append compilation output
-            classpathList.add( classesDir.toURI().toURL() );
-            URL[] classpath = classpathList.toArray( new URL[ classpathList.size() ] );
-
-            // Apply System Properties
-            Properties systemProperties = cmd.getOptionProperties( "D" );
-            for( Map.Entry entry : systemProperties.entrySet() )
-            {
-                System.setProperty( entry.getKey().toString(), entry.getValue().toString() );
-            }
-
-            System.out.println( "Loading..." );
-
-            // Deploy JNotify
-            JNotifyWatcher.deployNativeLibraries( tmpDir );
-            Watcher watcher = new JNotifyWatcher();
-
-            // First build
-            rebuild( classpath, sources, classesDir );
-
-            // Run DevShell
-            final DevShell devShell = new DevShell( new SPI( classpath, sources, watcher, classesDir ) );
-            Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" ) );
-            devShell.start();
         }
         catch( IllegalArgumentException | ParseException | IOException ex )
         {
             PrintWriter out = new PrintWriter( System.err );
             printHelp( options, out );
             out.flush();
-            System.exit( -1 );
+            System.exit( 1 );
         }
         catch( QiWebException ex )
         {
             ex.printStackTrace( System.err );
             System.err.flush();
-            System.exit( -1 );
+            System.exit( 1 );
         }
+    }
+
+    private static void newCommand( String name, CommandLine cmd )
+        throws IOException
+    {
+        File baseDir = new File( name );
+        File ctrlDir = new File( baseDir, "src/main/java/controllers" );
+        File rsrcDir = new File( baseDir, "src/main/resources" );
+        Files.createDirectories( ctrlDir.toPath() );
+        Files.createDirectories( rsrcDir.toPath() );
+
+        // Generate secret
+        String conf = "\napp.secret = 1234567890\n";
+        Files.write( new File( rsrcDir, "application.conf" ).toPath(), conf.getBytes( UTF_8 ) );
+
+        // Generate controller
+        String controller = "package controllers;\n\n"
+                            + "import org.qiweb.api.controllers.Outcome;\n\n"
+                            + "public class Application {\n\n"
+                            + "    public Outcome index() {\n"
+                            + "        return new org.qiweb.runtime.controllers.Welcome().welcome();\n"
+                            + "    }\n\n"
+                            + "}\n";
+        Files.write( new File( ctrlDir, "Application.java" ).toPath(), controller.getBytes( UTF_8 ) );
+
+        // Generate routes
+        String routes = "\nGET / controllers.Application.index\n";
+        Files.write( new File( rsrcDir, "routes.conf" ).toPath(), routes.getBytes( UTF_8 ) );
+
+        // Inform user
+        System.out.println( "New QiWeb Application generated in '" + baseDir.getAbsolutePath() + "'." );
+    }
+
+    private static void cleanCommand( boolean debug, File tmpDir )
+    {
+        // Clean
+        org.codeartisans.java.toolbox.io.Files.deleteSilently( tmpDir );
+        // Inform user
+        System.out.println( "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted." );
+    }
+
+    private static void runCommand( boolean debug, File tmpDir, CommandLine cmd )
+        throws IOException
+    {
+        // Classes directory
+        final File classesDir = new File( tmpDir, "classes" );
+        Files.createDirectories( classesDir.toPath() );
+        if( debug )
+        {
+            System.out.println( "Classes directory is: " + classesDir.getAbsolutePath() );
+        }
+
+        // Sources
+        String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
+        {
+            "src/main/java",
+            "src/main/resources"
+        };
+        Set<File> sources = new LinkedHashSet<>();
+        for( String sourcePath : sourcesPaths )
+        {
+            sources.add( new File( sourcePath ) );
+        }
+        if( debug )
+        {
+            System.out.println( "Sources directories are: " + sources );
+        }
+
+        // Classpath
+        List<URL> classpathList = new ArrayList<>();
+        // First, current classpath
+        classpathList.addAll( ClassLoaders.urlsOf( DamnSmallDevShell.class.getClassLoader() ) );
+        // Then either command line provided or defaults
+        if( cmd.hasOption( 'c' ) )
+        {
+            for( String url : cmd.getOptionValues( 'c' ) )
+            {
+                classpathList.add( new URL( url ) );
+            }
+        }
+        else
+        {
+            classpathList.add( new File( "lib" ).toURI().toURL() );
+        }
+        // Append Application sources
+        for( File source : sources )
+        {
+            classpathList.add( source.toURI().toURL() );
+        }
+        // Append compilation output
+        classpathList.add( classesDir.toURI().toURL() );
+        URL[] classpath = classpathList.toArray( new URL[ classpathList.size() ] );
+        if( debug )
+        {
+            System.out.println( "Classpath is: " + classpathList );
+        }
+
+        // Apply System Properties
+        Properties systemProperties = cmd.getOptionProperties( "D" );
+        for( Iterator<Map.Entry<Object, Object>> it = systemProperties.entrySet().iterator(); it.hasNext(); )
+        {
+            Map.Entry<?, ?> entry = it.next();
+            System.setProperty( entry.getKey().toString(), entry.getValue().toString() );
+        }
+        if( debug )
+        {
+            System.out.println( "Applied System Properties are: " + systemProperties );
+        }
+
+        System.out.println( "Loading..." );
+
+        // Deploy JNotify
+        JNotifyWatcher.deployNativeLibraries( tmpDir );
+        Watcher watcher = new JNotifyWatcher();
+
+        // First build
+        rebuild( classpath, sources, classesDir );
+
+        // Run DevShell
+        final DevShell devShell = new DevShell( new SPI( classpath, sources, watcher, classesDir ) );
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" ) );
+        devShell.start();
     }
     private static final DefaultExecutor executor = new DefaultExecutor();
 
@@ -405,7 +491,7 @@ public final class DamnSmallDevShell
     {
         HelpFormatter help = new HelpFormatter();
         help.setOptionComparator( new OptionsComparator() );
-        help.printUsage( out, 80, "devshell [options] [command(s)]" );
+        help.printUsage( out, 80, "org.qiweb.cli [options] [command(s)]" );
         out.print( "\n"
                    + "  The Damn Small QiWeb DevShell\n"
                    + "  - do not manage dependencies ;\n"
@@ -419,7 +505,7 @@ public final class DamnSmallDevShell
         out.println( "\n  org.qiweb.cli is part of the QiWeb Development Kit - http://qiweb.org" );
         out.println( "\n"
                      + "Commands:\n\n"
-                     + "  new [appdir]  Create a new skeleton application in the 'appdir' directory.\n"
+                     + "  new <appdir>  Create a new skeleton application in the 'appdir' directory.\n"
                      + "  clean         Delete devshell temporary directory, see 'tmpdir' option.\n"
                      + "  run           Run the QiWeb Development Shell.\n"
                      + "\n"
@@ -432,5 +518,9 @@ public final class DamnSmallDevShell
                            "\n"
                            + "All paths are relative to the current working directory, "
                            + "except if they are absolute of course." );
+        help.printWrapped( out, 80, 2,
+                           "\n"
+                           + "Licensed under the Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0" );
+        out.println();
     }
 }
