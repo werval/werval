@@ -1,6 +1,6 @@
 // QiWeb Documentation
 
-apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
+// apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
 
 task copyHtmlFiles( type: Copy ) {
     from 'src/assets'

@@ -27,11 +27,16 @@ import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import static io.netty.util.CharsetUtil.UTF_8;
 
 /**
- * Routes Provider using 'routes.conf' from the Application classpath root.
+ * Routes Provider using 'routes.conf' from the Application classpath root and add Documentation at /@doc.
  */
-public class RoutesConfProvider
+public class DevShellRoutesProvider
     implements RoutesProvider
 {
+
+    private static final String DEVSHELL_ROUTES =
+                                "\n"
+                                + "GET /@doc org.qiweb.controller.Default.seeOther( String url = '/@doc/index.html' )\n"
+                                + "GET /@doc/*path org.qiweb.controller.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n";
 
     @Override
     public Routes routes( Application application )
@@ -39,12 +44,12 @@ public class RoutesConfProvider
         URL routesUrl = application.classLoader().getResource( "routes.conf" );
         if( routesUrl == null )
         {
-            return RouteBuilder.parseRoutes( application, Strings.EMPTY );
+            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             String routes = Strings.toString( new InputStreamReader( input, UTF_8 ) );
-            return RouteBuilder.parseRoutes( application, routes );
+            return RouteBuilder.parseRoutes( application, routes + DEVSHELL_ROUTES );
         }
         catch( IOException ex )
         {

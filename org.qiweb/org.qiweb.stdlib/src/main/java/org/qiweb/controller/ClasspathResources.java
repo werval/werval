@@ -50,8 +50,20 @@ public class ClasspathResources
 
     /**
      * Serve static files from resources in classpath.
-     * 
+     *
+     * @param basepath Base path of the requested resources, relative to the classpath root
      * @param path Path of the requested resources, relative to the basePath parameter
+     * @return A Chunked Outcome if found, 404 otherwise
+     */
+    public Outcome resource( String basepath, String path )
+    {
+        return resource( basepath + path );
+    }
+
+    /**
+     * Serve static files from resources in classpath.
+     * 
+     * @param path Path of the requested resources, relative to the classpath root
      * @return A Chunked Outcome if found, 404 otherwise
      */
     public Outcome resource( String path )

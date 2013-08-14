@@ -29,8 +29,12 @@ import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
-import static org.qiweb.devshell.Color.*;
-import static org.qiweb.runtime.util.ClassLoaders.*;
+import static org.qiweb.devshell.Color.cyan;
+import static org.qiweb.devshell.Color.red;
+import static org.qiweb.devshell.Color.white;
+import static org.qiweb.devshell.Color.yellow;
+import static org.qiweb.runtime.util.ClassLoaders.printLoadedClasses;
+import static org.qiweb.runtime.util.ClassLoaders.printURLs;
 
 /**
  * QiWeb DevShell.
@@ -130,7 +134,7 @@ public final class DevShell
 
             // RoutesProvider
             Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
-            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesConfProvider" ).newInstance();
+            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.DevShellRoutesProvider" ).newInstance();
 
             // Application
             Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );
