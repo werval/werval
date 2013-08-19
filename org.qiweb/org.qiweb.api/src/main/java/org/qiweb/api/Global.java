@@ -61,14 +61,6 @@ public class Global
     }
 
     /**
-     * Invoked when each request is complete.
-     * <p>Default to NOOP.</p>
-     */
-    public void onHttpRequestComplete( RequestHeader requestHeader )
-    {
-    }
-
-    /**
      * Controller Filter Instanciation.
      * <p>Default to {@link Instanciation.FilterInstanciation.Default}.</p>
      * @return A Controller Filter Instanciation
@@ -96,5 +88,13 @@ public class Global
     public ControllerMethodInvocation controllerMethodInvocation()
     {
         return new ControllerMethodInvocation.Default();
+    }
+
+    /**
+     * Invoked when a request completed successfully.
+     * <p>Default to NOOP.</p>
+     */
+    public void onHttpRequestComplete( RequestHeader requestHeader )
+    {
     }
 }

@@ -56,13 +56,6 @@ public class SubProtocolSwitchHandler
     }
 
     @Override
-    public void channelInactive( ChannelHandlerContext context )
-    {
-        // TODO Invoke Global.onHttpRequestComplete!
-        // We probably need to eventually attach the RequestHeader to the channel
-    }
-
-    @Override
     protected void channelRead0( ChannelHandlerContext context, Object message )
         throws Exception
     {

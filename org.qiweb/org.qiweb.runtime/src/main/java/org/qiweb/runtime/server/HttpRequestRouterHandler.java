@@ -108,6 +108,28 @@ public final class HttpRequestRouterHandler
     {
         return REQUEST_IDENTITY_PREFIX + REQUEST_IDENTITY_COUNT.getAndIncrement();
     }
+
+    private class HttpRequestCompleteChannelFutureListener
+        implements ChannelFutureListener
+    {
+
+        private final RequestHeader requestHeader;
+
+        private HttpRequestCompleteChannelFutureListener( RequestHeader requestHeader )
+        {
+            this.requestHeader = requestHeader;
+        }
+
+        @Override
+        public void operationComplete( ChannelFuture future )
+            throws Exception
+        {
+            if( future.isSuccess() )
+            {
+                app.global().onHttpRequestComplete( requestHeader );
+            }
+        }
+    }
     private final ApplicationInstance app;
     private String requestIdentity;
 
@@ -255,6 +277,9 @@ public final class HttpRequestRouterHandler
                 forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
+
+            // Listen to request completion
+            writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
 
             // Close the connection as soon as the response is sent if not keep alive
             if( forceClose || !isKeepAlive( nettyRequest ) )
