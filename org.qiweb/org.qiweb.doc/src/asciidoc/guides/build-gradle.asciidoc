@@ -1,1 +1,33 @@
 === Build Applications with Gradle
+
+build.gradle
+
+[source,groovy]
+----
+apply plugin: 'java'
+
+repositories {
+    // Add repositories
+}
+
+dependencies {
+    // Add application dependencies
+}
+
+apply plugin: 'application'
+
+mainClassName = 'org.qiweb.runtime.Main'
+applicationName = 'app'
+----
+
+To run locally:
+
+[source,bash]
+----
+user@host $ gradle installApp
+# [Removed output]
+
+BUILD SUCCESSFUL
+
+user@host $ ./build/install/app/bin/app
+----
