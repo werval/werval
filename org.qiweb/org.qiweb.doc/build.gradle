@@ -13,6 +13,7 @@ def _htmlCommandLine( section ) {
         '-b', 'html5',
         '--compact',
         '-n',
+        '-a', "qiweb-version=${version}",
         '-a', 'toc2',
         //'-a', 'copycss',
         //'-a', 'linkcss!',
@@ -35,9 +36,12 @@ task html( description: 'Generate HTML documentation',
 }
 
 task docbook( type: Exec, description: 'Generate DocBook documentation' ) {
-    commandLine = [ 
-        'asciidoctor', '--compact',
-        '-b', 'docbook', '-a', 'toc',
+    commandLine = [
+        'asciidoctor',
+        '--compact',
+        '-b', 'docbook',
+        '-a', "qiweb-version=${version}",
+        '-a', 'toc',
         '-o', 'build/docs/docbook/index.xml',
         'src/asciidoc/index.asciidoc'
     ]
@@ -70,4 +74,5 @@ task htmlResources( type: Copy, dependsOn: [ html, genVersionClass ] ) {
     into 'build/classes/main/org/qiweb/doc/html'
 }
 
+// Only include HTML version of documentation in the JAR
 compileJava.dependsOn( htmlResources )

@@ -29,16 +29,22 @@ Heroku définit le port à utiliser dans la variable d'environnement `PORT`.
 
 build.gradle
 
-[source,groovy]
+["source","groovy",subs="attributes"]
 ----
 apply plugin: 'java'
 
-repositories {
-    // Add repositories
-}
-
 dependencies {
-    // Add application dependencies
+
+    compile "org.qiweb:org.qiweb.api:{qiweb-version}"
+    compile "org.qiweb:org.qiweb.stdlib:{qiweb-version}"
+    // Add application compile dependencies
+
+    runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}"
+    // Add application runtime dependencies
+
+    test "org.qiweb:org.qiweb.test:{qiweb-version}"
+    // Add application test dependencies
+
 }
 
 apply plugin: 'application'
@@ -51,7 +57,7 @@ task stage( dependsOn: [ 'clean', 'installApp' ] )
 
 To test locally:
 
-[source,bash]
+[source,shell]
 ----
 user@host $ gradle stage
 # [Removed output]
@@ -63,7 +69,7 @@ user@host $ ./build/install/app/bin/app
 
 Procfile
 
-[source,bash]
+[source,shell]
 ----
 web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
 ----

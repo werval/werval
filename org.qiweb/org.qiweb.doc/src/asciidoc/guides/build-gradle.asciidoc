@@ -1,17 +1,25 @@
 === Build Applications with Gradle
 
+==== Generate executable distribution
+
 build.gradle
 
-[source,groovy]
+["source","groovy",subs="attributes"]
 ----
 apply plugin: 'java'
 
-repositories {
-    // Add repositories
-}
-
 dependencies {
-    // Add application dependencies
+
+    compile "org.qiweb:org.qiweb.api:{qiweb-version}"
+    compile "org.qiweb:org.qiweb.stdlib:{qiweb-version}"
+    // Add application compile dependencies
+
+    runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}"
+    // Add application runtime dependencies
+
+    test "org.qiweb:org.qiweb.test:{qiweb-version}"
+    // Add application test dependencies
+
 }
 
 apply plugin: 'application'
@@ -22,7 +30,7 @@ applicationName = 'app'
 
 To run locally:
 
-[source,bash]
+[source,shell]
 ----
 user@host $ gradle installApp
 # [Removed output]
@@ -31,3 +39,5 @@ BUILD SUCCESSFUL
 
 user@host $ ./build/install/app/bin/app
 ----
+
+==== Use QiWeb Development Shell
