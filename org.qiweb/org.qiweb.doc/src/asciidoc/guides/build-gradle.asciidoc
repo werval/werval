@@ -30,7 +30,7 @@ applicationName = 'app'
 
 To run locally:
 
-[source,shell]
+[source,bash]
 ----
 user@host $ gradle installApp
 # [Removed output]

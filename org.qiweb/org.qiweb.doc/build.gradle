@@ -1,6 +1,8 @@
 // QiWeb Documentation
 
-// apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
+// TODO Rewrite using asciidoc gradle plugin or java integration so that no gem install is needed ???
+// See if it still is really slower ...
+// Update README accordingly
 
 task copyHtmlFiles( type: Copy ) {
     from 'src/assets'

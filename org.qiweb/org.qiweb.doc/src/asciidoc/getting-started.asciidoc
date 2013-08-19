@@ -13,3 +13,12 @@ in theses sections plus a bunch of usefull samples.
 include::getting-started/hello-cli.asciidoc[]
 include::getting-started/hello-gradle.asciidoc[]
 include::getting-started/hello-maven.asciidoc[]
+
+=== Using the DevShell
+
+==== Instant feedback
+
+==== Embedded documentation
+
+==== Introspection resources
+

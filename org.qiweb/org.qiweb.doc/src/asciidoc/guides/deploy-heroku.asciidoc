@@ -57,7 +57,7 @@ task stage( dependsOn: [ 'clean', 'installApp' ] )
 
 To test locally:
 
-[source,shell]
+[source,bash]
 ----
 user@host $ gradle stage
 # [Removed output]
@@ -69,7 +69,7 @@ user@host $ ./build/install/app/bin/app
 
 Procfile
 
-[source,shell]
+[source,bash]
 ----
 web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
 ----
