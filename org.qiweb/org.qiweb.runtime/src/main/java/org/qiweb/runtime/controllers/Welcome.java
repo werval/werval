@@ -15,14 +15,37 @@
  */
 package org.qiweb.runtime.controllers;
 
-import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
 
+import static org.qiweb.api.Application.Mode.dev;
+import static org.qiweb.api.controllers.Controller.application;
+import static org.qiweb.api.controllers.Controller.outcomes;
+
+/**
+ * Welcome Controller.
+ * <p>Set to default route of new Applications created by the QiWeb CLI 'new' command.</p>
+ * <p>The served QiWeb Welcome Page depends on the {@link Application.Mode}.</p>
+ * <p>In production and test modes, the page display a simple welcome message.</p>
+ * <p>
+ *     In development mode, links are provided to the DevShell embedded services like hosted documentation and
+ *     debugging tools.
+ * </p>
+ */
 public class Welcome
 {
 
+    /**
+     * @return The QiWeb Welcome Page according to the {@link Application.Mode}.
+     */
     public Outcome welcome()
     {
-        return Controller.outcomes().ok( "Welcome!" ).build();
+        String path = application().mode() == dev
+                      ? "org/qiweb/runtime/controllers/welcome_dev.html"
+                      : "org/qiweb/runtime/controllers/welcome.html";
+        return outcomes().
+            ok().
+            as( "text/html; charset=utf-8" ).
+            withBody( application().classLoader().getResourceAsStream( path ) ).
+            build();
     }
 }
