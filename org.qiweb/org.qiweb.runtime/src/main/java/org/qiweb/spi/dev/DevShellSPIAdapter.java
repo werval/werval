@@ -16,9 +16,17 @@
 package org.qiweb.spi.dev;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Set;
+import org.codeartisans.java.toolbox.ObjectHolder;
 import org.qiweb.spi.dev.Watcher.ChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +64,46 @@ public class DevShellSPIAdapter
     public final URL[] classPath()
     {
         return classPath;
+    }
+
+    @Override
+    public String sourceURL( final String fileName, int lineNumber )
+    {
+        for( URL path : classPath )
+        {
+            try
+            {
+                File root = new File( path.toURI() );
+                if( root.isDirectory() )
+                {
+                    final ObjectHolder<File> found = new ObjectHolder<>();
+                    Files.walkFileTree( root.toPath(), new SimpleFileVisitor<Path>()
+                    {
+                        @Override
+                        public FileVisitResult visitFile( Path path, BasicFileAttributes attrs )
+                            throws IOException
+                        {
+                            File file = path.toFile();
+                            if( fileName.equals( file.getName() ) )
+                            {
+                                found.setHolded( file );
+                                return FileVisitResult.TERMINATE;
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    } );
+                    if( found.getHolded() != null )
+                    {
+                        return "file://" + found.getHolded().getAbsolutePath() + "#L" + lineNumber;
+                    }
+                }
+            }
+            catch( URISyntaxException | IOException ex )
+            {
+                throw new RuntimeException( ex.getMessage(), ex );
+            }
+        }
+        return null;
     }
 
     @Override

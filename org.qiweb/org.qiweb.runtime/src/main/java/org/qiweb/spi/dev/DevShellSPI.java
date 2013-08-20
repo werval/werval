@@ -17,12 +17,28 @@ package org.qiweb.spi.dev;
 
 import java.net.URL;
 
+/**
+ * Development Shell Service Provider Interface.
+ * <p>Methods of this class are used as extension points by the QiWeb Runtime in Development Mode.</p>
+ */
 public interface DevShellSPI
 {
 
     URL[] classPath();
 
+    /**
+     * Build Application source file URL if it exists.
+     * @return URL to the Application source file or null if not present.
+     */
+    String sourceURL( String fileName, int lineNumber );
+
+    /**
+     * @return Return true if source has changed since last call to {@link #rebuild()}, false otherwise
+     */
     boolean isSourceChanged();
 
+    /**
+     * Rebuild the Application sources.
+     */
     void rebuild();
 }

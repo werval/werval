@@ -19,6 +19,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.qiweb.api.Application;
+import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +29,13 @@ public class WebSocketRouterHandler
 
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketRouterHandler.class );
     private final Application app;
+    private final DevShellSPI devSpi;
 
-    public WebSocketRouterHandler( Application app )
+    public WebSocketRouterHandler( Application app, DevShellSPI devSpi )
     {
         super();
         this.app = app;
+        this.devSpi = devSpi;
     }
 
     @Override

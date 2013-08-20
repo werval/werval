@@ -29,7 +29,6 @@ import io.netty.handler.codec.http.ServerCookieEncoder;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -40,6 +39,7 @@ import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.ParameterBinderException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
@@ -58,7 +58,8 @@ import org.qiweb.runtime.controllers.OutcomeBuilderInstance.StreamOutcome;
 import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.http.SessionInstance;
-import org.qiweb.runtime.util.ClassLoaders;
+import org.qiweb.runtime.util.Stacktraces;
+import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +95,7 @@ import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
  * 
  * <h4>WebSocket UPGRADE Requests</h4>
  * 
- * <p>TODO WebSocket</p>
+ * <p>TODO WebSocket UPGRADE</p>
  */
 public final class HttpRequestRouterHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
@@ -131,12 +132,14 @@ public final class HttpRequestRouterHandler
         }
     }
     private final ApplicationInstance app;
+    private final DevShellSPI devSpi;
     private String requestIdentity;
 
-    public HttpRequestRouterHandler( ApplicationInstance app )
+    public HttpRequestRouterHandler( ApplicationInstance app, DevShellSPI devSpi )
     {
         super();
         this.app = app;
+        this.devSpi = devSpi;
     }
 
     @Override
@@ -153,15 +156,17 @@ public final class HttpRequestRouterHandler
         else if( cause instanceof RouteNotFoundException )
         {
             LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
-            String body = "404 Route Not Found\n";
+            StringWriter body = new StringWriter();
+            body.append( "404 Route Not Found\n" );
             if( app.mode() == Mode.dev )
             {
-                body += "Tried:\n" + app.routes().toString() + "\n\n";
+                body.append( "Tried:\n" ).append( app.routes().toString() ).append( "\n\n" );
             }
-            sendError( nettyContext, NOT_FOUND, body );
+            sendError( nettyContext, NOT_FOUND, body.toString() );
         }
         else if( cause instanceof ParameterBinderException )
         {
+            // QUID BadRequest instead?
             LOG.warn( "{} ParameterBinderException, will return 404.", requestIdentity, cause );
             sendError( nettyContext, NOT_FOUND, cause.getMessage() );
         }
@@ -170,18 +175,28 @@ public final class HttpRequestRouterHandler
             LOG.warn( "{} Exception caught: {}( {} )",
                       requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
                       cause );
-            StringWriter sw = new StringWriter();
-            sw.append( "500 Internal Server Error\n" );
+            StringWriter body = new StringWriter();
+            body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
             if( app.mode() == Mode.dev )
             {
-                // In development mode we want stacktrace, thread context and classloaders state
-                sw.append( cause.getMessage() ).append( "\n" );
-                cause.printStackTrace( new PrintWriter( sw ) );
-                sw.append( "\n\nCurrent Thread Context ClassLoader state:\n\n" );
-                ClassLoaders.printLoadedClasses( Thread.currentThread().getContextClassLoader(), new PrintWriter( sw ) );
-                sw.append( "\n" );
+                // In development mode we want nice stack traces
+                if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
+                {
+                    // WARN This depends on and work only with DefaultControllerInvocation!
+                    cause = cause.getCause().getCause();
+                }
+                body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
+                {
+                    @Override
+                    public String urlFor( String filename, int line )
+                    {
+                        return devSpi.sourceURL( filename, line );
+                    }
+                } ) );
+
+                body.append( "</body></html>\n" );
             }
-            sendError( nettyContext, INTERNAL_SERVER_ERROR, sw.toString() );
+            sendError( nettyContext, INTERNAL_SERVER_ERROR, body.toString() );
         }
     }
 
@@ -370,7 +385,7 @@ public final class HttpRequestRouterHandler
     private static void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
     {
         FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, UTF_8 ) );
-        response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );
+        response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
         response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );
         context.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );

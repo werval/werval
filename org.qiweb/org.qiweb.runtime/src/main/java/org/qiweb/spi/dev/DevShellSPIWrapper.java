@@ -17,6 +17,9 @@ package org.qiweb.spi.dev;
 
 import java.net.URL;
 
+/**
+ * Development Shell SPI Wrapper.
+ */
 public class DevShellSPIWrapper
     implements DevShellSPI
 {
@@ -37,6 +40,12 @@ public class DevShellSPIWrapper
     public URL[] classPath()
     {
         return wrapped.classPath();
+    }
+
+    @Override
+    public String sourceURL( String fileName, int lineNumber )
+    {
+        return wrapped.sourceURL( fileName, lineNumber );
     }
 
     @Override

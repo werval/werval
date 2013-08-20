@@ -18,6 +18,9 @@ package org.qiweb.spi.dev;
 import java.io.File;
 import java.util.Set;
 
+/**
+ * File watching abstraction.
+ */
 public interface Watcher
 {
 
