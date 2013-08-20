@@ -144,15 +144,25 @@ public final class HttpRequestRouterHandler
     {
         if( cause instanceof ReadTimeoutException )
         {
-            LOG.debug( "Read timeout, connection has been closed." );
+            LOG.debug( "{} Read timeout, connection has been closed.", requestIdentity );
         }
         else if( cause instanceof WriteTimeoutException )
         {
-            LOG.debug( "Write timeout, connection has been closed." );
+            LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
+        }
+        else if( cause instanceof RouteNotFoundException )
+        {
+            LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
+            String body = "404 Route Not Found\n";
+            if( app.mode() == Mode.dev )
+            {
+                body += "Tried:\n" + app.routes().toString() + "\n\n";
+            }
+            sendError( nettyContext, NOT_FOUND, body );
         }
         else if( cause instanceof ParameterBinderException )
         {
-            LOG.debug( "ParameterBinderException, will return 404." );
+            LOG.warn( "{} ParameterBinderException, will return 404.", requestIdentity, cause );
             sendError( nettyContext, NOT_FOUND, cause.getMessage() );
         }
         else
@@ -286,11 +296,6 @@ public final class HttpRequestRouterHandler
             {
                 writeFuture.addListener( ChannelFutureListener.CLOSE );
             }
-        }
-        catch( RouteNotFoundException ex )
-        {
-            LOG.trace( "{} " + ex.getMessage() + " will return a 404 Not Found error", requestIdentity );
-            sendError( nettyContext, NOT_FOUND, "404 Route Not Found\nTried:\n" + routes.toString() + "\n\n" );
         }
         finally
         {
