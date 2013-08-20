@@ -27,10 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 import org.codeartisans.java.toolbox.ObjectHolder;
 import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
@@ -426,27 +429,54 @@ public final class RouteBuilder
      * @param methodRecorder a {@link MethodRecorder}
      * @return this RouteBuilder
      */
+    @SuppressWarnings( "unchecked" )
     public <T> RouteBuilder to( final Class<T> controllerType, MethodRecorder<T> methodRecorder )
     {
         final ObjectHolder<String> methodNameHolder = new ObjectHolder<>();
-        Class<?>[] types = new Class<?>[]
+        T controllerProxy;
+        if( controllerType.isInterface() )
         {
-            controllerType
-        };
-        @SuppressWarnings( "unchecked" )
-        T controller = (T) Proxy.newProxyInstance( Thread.currentThread().getContextClassLoader(),
-                                                   types,
-                                                   new InvocationHandler()
-        {
-            @Override
-            public Object invoke( Object proxy, Method method, Object[] args )
+            controllerProxy = (T) Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]
             {
-                methodNameHolder.setHolded( method.getName() );
-                return null;
+                controllerType
+            },
+                new InvocationHandler()
+            {
+                @Override
+                public Object invoke( Object proxy, Method method, Object[] args )
+                {
+                    methodNameHolder.setHolded( method.getName() );
+                    return null;
+                }
+            } );
+        }
+        else
+        {
+            try
+            {
+                ProxyFactory proxyFactory = new ProxyFactory();
+                proxyFactory.setSuperclass( controllerType );
+                controllerProxy = (T) proxyFactory.createClass().newInstance();
+                ( (javassist.util.proxy.Proxy) controllerProxy ).setHandler( new MethodHandler()
+                {
+                    @Override
+                    public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
+                        throws Throwable
+                    {
+                        methodNameHolder.setHolded( controllerMethod.getName() );
+                        return null;
+                    }
+                } );
             }
-        } );
+            catch( InstantiationException | IllegalAccessException ex )
+            {
+                throw new QiWebException( "Unable to record controller method in RouteBuilder", ex );
+            }
+        }
 
-        methodRecorder.call( controller );
+        methodRecorder.call( controllerProxy );
 
         this.controllerType = controllerType;
         this.controllerMethodName = methodNameHolder.getHolded();
