@@ -20,6 +20,7 @@ import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.controllers.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.qiweb.api.controllers.Controller.*;
 
 /**
