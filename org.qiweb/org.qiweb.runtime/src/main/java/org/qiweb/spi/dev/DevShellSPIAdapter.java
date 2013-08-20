@@ -27,6 +27,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Set;
 import org.codeartisans.java.toolbox.ObjectHolder;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.spi.dev.Watcher.ChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,7 @@ public class DevShellSPIAdapter
             }
             catch( URISyntaxException | IOException ex )
             {
-                throw new RuntimeException( ex.getMessage(), ex );
+                throw new QiWebException( ex.getMessage(), ex );
             }
         }
         return null;

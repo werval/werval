@@ -27,7 +27,7 @@ import org.qiweb.runtime.server.HttpServerInstance;
 public final class Main
 {
 
-    private static class ShutdownHook
+    private static final class ShutdownHook
         implements Runnable
     {
 
@@ -51,7 +51,7 @@ public final class Main
         try
         {
             RoutesProvider routesProvider = new RoutesConfProvider();
-            ApplicationInstance application = new ApplicationInstance( Mode.prod, routesProvider );
+            ApplicationInstance application = new ApplicationInstance( Mode.PROD, routesProvider );
             final HttpServer server = new HttpServerInstance( "qiweb-http-server", application );
             Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( server ), "qiweb-shutdown" ) );
             server.activate();

@@ -70,5 +70,5 @@ public interface Context
     // Could be useful for small needs or bigger integrations
     // How to share a ThreadLocal to the new thread?
     // All context objects should then be made thread safe!
-    // ThreadFactory threadFactory();
+    // Could be someting like: ThreadFactory threadFactory()
 }

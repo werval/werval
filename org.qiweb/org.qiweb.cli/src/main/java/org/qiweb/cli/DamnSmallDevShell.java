@@ -62,7 +62,7 @@ import static io.netty.util.CharsetUtil.UTF_8;
 public final class DamnSmallDevShell
 {
 
-    private static class SPI
+    private static final class SPI
         extends DevShellSPIAdapter
     {
 
@@ -87,12 +87,12 @@ public final class DamnSmallDevShell
             }
             catch( Exception ex )
             {
-                throw new RuntimeException( ex.getMessage(), ex );
+                throw new QiWebException( ex.getMessage(), ex );
             }
         }
     }
 
-    private static class ShutdownHook
+    private static final class ShutdownHook
         implements Runnable
     {
 
@@ -337,7 +337,7 @@ public final class DamnSmallDevShell
         Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" ) );
         devShell.start();
     }
-    private static final DefaultExecutor executor = new DefaultExecutor();
+    private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
 
     /* package */ static void rebuild( URL[] classpath, Set<File> sources, File classesDir )
     {
@@ -358,8 +358,8 @@ public final class DamnSmallDevShell
                     findJava.addArgument( "-iname" );
                     findJava.addArgument( "*.java" );
 
-                    executor.setStreamHandler( new PumpStreamHandler( findJavaOutput ) );
-                    executor.execute( findJava );
+                    EXECUTOR.setStreamHandler( new PumpStreamHandler( findJavaOutput ) );
+                    EXECUTOR.execute( findJava );
                 }
             }
             // Write list in a temporary file
@@ -389,8 +389,8 @@ public final class DamnSmallDevShell
                 javac.addArgument( Strings.join( classpathStrings, ":" ) );
                 javac.addArgument( "@" + javaListFile.getAbsolutePath() );
 
-                executor.setStreamHandler( new PumpStreamHandler( javacOutput ) );
-                executor.execute( javac );
+                EXECUTOR.setStreamHandler( new PumpStreamHandler( javacOutput ) );
+                EXECUTOR.execute( javac );
             }
         }
         catch( IOException | URISyntaxException ex )
@@ -463,11 +463,11 @@ public final class DamnSmallDevShell
         return options;
     }
 
-    private static class OptionsComparator
+    private static final class OptionsComparator
         implements Comparator<Option>
     {
 
-        private static final List<String> optionsOrder = Arrays.asList( new String[]
+        private static final List<String> OPTIONS_ORDER = Arrays.asList( new String[]
         {
             "classpath",
             "sources",
@@ -481,23 +481,24 @@ public final class DamnSmallDevShell
         @Override
         public int compare( Option o1, Option o2 )
         {
-            Integer o1idx = optionsOrder.indexOf( o1.getLongOpt() );
-            Integer o2idx = optionsOrder.indexOf( o2.getLongOpt() );
+            Integer o1idx = OPTIONS_ORDER.indexOf( o1.getLongOpt() );
+            Integer o2idx = OPTIONS_ORDER.indexOf( o2.getLongOpt() );
             return o1idx.compareTo( o2idx );
         }
     }
+    private static final int WIDTH = 80;
 
     private static void printHelp( Options options, PrintWriter out )
     {
         HelpFormatter help = new HelpFormatter();
         help.setOptionComparator( new OptionsComparator() );
-        help.printUsage( out, 80, "org.qiweb.cli [options] [command(s)]" );
+        help.printUsage( out, WIDTH, "org.qiweb.cli [options] [command(s)]" );
         out.print( "\n"
                    + "  The Damn Small QiWeb DevShell\n"
                    + "  - do not manage dependencies ;\n"
                    + "  - do not allow you to extend the build ;\n"
                    + "  - do not assemble applications.\n" );
-        help.printWrapped( out, 80, 2,
+        help.printWrapped( out, WIDTH, 2,
                            "\n"
                            + "Meaning you have to manage your application dependencies and assembly yourself. "
                            + "Theses limitations make this DevShell suitable for quick prototyping only. "
@@ -513,14 +514,18 @@ public final class DamnSmallDevShell
         out.println( "\n"
                      + "Options:"
                      + "\n" );
-        help.printOptions( out, 80, options, 2, 2 );
-        help.printWrapped( out, 80, 2,
+        help.printOptions( out, WIDTH, options, 2, 2 );
+        help.printWrapped( out, WIDTH, 2,
                            "\n"
                            + "All paths are relative to the current working directory, "
                            + "except if they are absolute of course." );
-        help.printWrapped( out, 80, 2,
+        help.printWrapped( out, WIDTH, 2,
                            "\n"
                            + "Licensed under the Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0" );
         out.println();
+    }
+
+    private DamnSmallDevShell()
+    {
     }
 }

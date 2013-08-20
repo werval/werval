@@ -32,63 +32,65 @@ public interface Outcome
         /**
          * 1xx Informational.
          */
-        informational,
+        INFORMATIONAL,
         /**
          * 2xx Success.
          */
-        success,
+        SUCCESS,
         /**
          * 3xx Redirection.
          */
-        redirection,
+        REDIRECTION,
         /**
          * 4xx Client Error.
          */
-        clientError,
+        CLIENT_ERROR,
         /**
          * 5xx Server Error.
          */
-        serverError,
+        SERVER_ERROR,
         /**
          * 0xx or >= 6xx Unknown
          */
-        unknown;
+        UNKNOWN;
 
+        // CHECKSTYLE:OFF
         public static StatusClass valueOf( int status )
         {
             if( status < 100 )
             {
                 // 0xx
-                return unknown;
+                return UNKNOWN;
             }
             if( status < 200 )
             {
                 // 1xx
-                return informational;
+                return INFORMATIONAL;
             }
             if( status < 300 )
             {
                 // 2xx
-                return success;
+                return SUCCESS;
             }
             if( status < 400 )
             {
                 // 3xx
-                return redirection;
+                return REDIRECTION;
             }
             if( status < 500 )
             {
                 // 4xx
-                return clientError;
+                return CLIENT_ERROR;
             }
             if( status < 600 )
             {
                 // 5xx
-                return serverError;
+                return SERVER_ERROR;
             }
             // >= 6xx
-            return unknown;
+            return UNKNOWN;
         }
+        // CHECKSTYLE:ON
     }
 
     int status();

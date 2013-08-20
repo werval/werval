@@ -30,7 +30,7 @@ public final class Stacktraces
 
     private static final Pattern LINKS_PATTERN = Pattern.compile( "(?<left>.+\\()(?<file>.+\\..+):(?<line>[0-9]+)\\)" );
 
-    public static interface FileURLGenerator
+    public interface FileURLGenerator
     {
 
         String urlFor( String filename, int line );

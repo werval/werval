@@ -56,7 +56,6 @@ public class HttpServerInstance
 
     @Override
     public void activate()
-        throws QiWebRuntimeException
     {
         app.global().beforeHttpBind( app );
 

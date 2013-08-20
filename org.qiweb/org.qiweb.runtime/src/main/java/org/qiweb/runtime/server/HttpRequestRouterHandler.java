@@ -110,7 +110,7 @@ public final class HttpRequestRouterHandler
         return REQUEST_IDENTITY_PREFIX + REQUEST_IDENTITY_COUNT.getAndIncrement();
     }
 
-    private class HttpRequestCompleteChannelFutureListener
+    private final class HttpRequestCompleteChannelFutureListener
         implements ChannelFutureListener
     {
 
@@ -158,7 +158,7 @@ public final class HttpRequestRouterHandler
             LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
             StringWriter body = new StringWriter();
             body.append( "404 Route Not Found\n" );
-            if( app.mode() == Mode.dev )
+            if( app.mode() == Mode.DEV )
             {
                 body.append( "Tried:\n" ).append( app.routes().toString() ).append( "\n\n" );
             }
@@ -177,7 +177,7 @@ public final class HttpRequestRouterHandler
                       cause );
             StringWriter body = new StringWriter();
             body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
-            if( app.mode() == Mode.dev )
+            if( app.mode() == Mode.DEV )
             {
                 // In development mode we want nice stack traces
                 if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
@@ -346,9 +346,9 @@ public final class HttpRequestRouterHandler
     {
         switch( outcome.statusClass() )
         {
-            case clientError:
-            case serverError:
-            case unknown:
+            case CLIENT_ERROR:
+            case SERVER_ERROR:
+            case UNKNOWN:
                 if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
                 {
                     nettyResponse.headers().set( CONNECTION, CLOSE );

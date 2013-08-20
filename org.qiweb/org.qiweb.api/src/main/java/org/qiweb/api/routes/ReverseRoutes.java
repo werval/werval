@@ -85,7 +85,6 @@ public abstract class ReverseRoutes
                 {
                     @Override
                     public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
-                        throws Throwable
                     {
                         return new ReverseOutcome( httpMethod, controllerType, controllerMethod, Arrays.asList( args ) );
                     }

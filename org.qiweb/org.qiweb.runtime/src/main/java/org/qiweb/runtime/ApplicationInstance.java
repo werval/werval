@@ -68,7 +68,7 @@ public final class ApplicationInstance
      */
     public ApplicationInstance( RoutesProvider routesProvider )
     {
-        this( Mode.test, routesProvider );
+        this( Mode.TEST, routesProvider );
     }
 
     public ApplicationInstance( Mode mode, RoutesProvider routesProvider )

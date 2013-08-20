@@ -17,7 +17,7 @@ package org.qiweb.runtime.controllers;
 
 import org.qiweb.api.controllers.Outcome;
 
-import static org.qiweb.api.Application.Mode.dev;
+import static org.qiweb.api.Application.Mode.DEV;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 
@@ -39,7 +39,7 @@ public class Welcome
      */
     public Outcome welcome()
     {
-        String path = application().mode() == dev
+        String path = application().mode() == DEV
                       ? "org/qiweb/runtime/controllers/welcome_dev.html"
                       : "org/qiweb/runtime/controllers/welcome.html";
         return outcomes().

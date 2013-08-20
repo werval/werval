@@ -42,17 +42,17 @@ public interface Application
          * Development Mode.
          * <p>Source is watched, Application is reloaded on-demand.</p>
          */
-        dev( "Development" ),
+        DEV( "Development" ),
         /**
          * Test Mode.
          * <p>Intended to be used in unit tests, almost equivalent to {@link #prod} Mode.</p>
          */
-        test( "Test" ),
+        TEST( "Test" ),
         /**
          * Production Mode.
          * <p>Run from binaries only, nothing gets reloaded.</p>
          */
-        prod( "Production" );
+        PROD( "Production" );
         private final String displayName;
 
         private Mode( String displayName )

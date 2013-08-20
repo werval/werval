@@ -463,7 +463,6 @@ public final class RouteBuilder
                 {
                     @Override
                     public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
-                        throws Throwable
                     {
                         methodNameHolder.setHolded( controllerMethod.getName() );
                         return null;

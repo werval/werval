@@ -169,7 +169,7 @@ public class StaticFiles
         }
 
         // Cache-Control
-        if( application().mode() == Mode.dev )
+        if( application().mode() == Mode.DEV )
         {
             response().headers().with( CACHE_CONTROL, "no-cache" );
         }

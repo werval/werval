@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
+import org.qiweb.api.exceptions.QiWebException;
 
 import static io.netty.util.CharsetUtil.*;
 
@@ -56,7 +57,7 @@ public class CryptoInstance
         }
         catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e )
         {
-            throw new RuntimeException( e );
+            throw new QiWebException( "Unable to HMAC message", e );
         }
     }
 }
