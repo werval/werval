@@ -7,8 +7,8 @@ NOTE: Even if you plan to use Gradle, Maven or any other build system, continue 
 accustomed to the way QiWeb applications are layed out and will learn how to generate skeleton applications
 quickly.
 
-For the code-impatients, our https://github.com/qiweb/org.qiweb.getting-started[getting-started repository] contains
-the code presented in theses sections.
+// For the code-impatients, our https://github.com/qiweb/org.qiweb.getting-started[getting-started repository] contains
+// the code presented in theses sections.
 
 After that we'll take a look at the QiWeb development shell features.
 We hope you'll find your way through.
