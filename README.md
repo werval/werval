@@ -20,11 +20,6 @@ QiWeb is built using [Gradle](http://www.gradle.org/).
 You don't need to install anything except a JVM.
 The `gradlew` script that can be found at the projects root will download and bootstrap Gradle for you.
 
-The above is mostly true ...
-The Gradle based build depend on both `asciidoctor` and the `asciidoc` toolchain to be installed.
-We are working towards removing theses dependencies thus having a straight forward build process.
-For now, you have to install them both beforehand.
-
 To get you started, here are some usefull commands:
 
     ./gradlew clean     # Clean up the project tree
@@ -44,4 +39,9 @@ The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the De
 
 The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using `apply: 'qiweb'` and has a `devshell` task.
 
-Add `./org.qiweb/org.qiweb.cli/build/install/qiweb-cli/bin` to your `PATH` and use the `qiweb-cli`.
+If you want to test drive the `qiweb-cli`, first do:
+
+    ./gradlew -p org.qiweb/org.qiweb.cli installApp
+
+This install the `qiweb-cli` tool in the project build directory.
+Then, add `./org.qiweb/org.qiweb.cli/build/install/qiweb-cli/bin` to your `PATH` and use the `qiweb-cli` command.

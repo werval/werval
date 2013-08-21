@@ -1,80 +1,43 @@
 // QiWeb Documentation
 
-// TODO Rewrite using asciidoc gradle plugin or java integration so that no gem install is needed ???
-// See if it still is really slower ...
-// Update README accordingly
-
-task copyHtmlFiles( type: Copy ) {
-    from 'src/assets'
-    into 'build/docs/html'
-}
-
-def _htmlCommandLine( section ) {
-    [
-        'asciidoctor',
-        '-b', 'html5',
-        '--compact',
-        '-n',
-        '-a', "qiweb-version=${version}",
-        '-a', 'toc2',
-        //'-a', 'copycss',
-        //'-a', 'linkcss!',
-        //'-a', 'data-uri',
-        '-a', 'stylesheet=stylesheets/foundation.css',
-        '-a', 'source-highlighter=highlightjs',
-        '-o', "build/docs/html/${section}.html",
-        "src/asciidoc/${section}.adoc"
-    ]
-}
-
-task _htmlGettingStarted( type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'getting-started' ) }
-task _htmlTutorial(       type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'tutorial' ) }
-task _htmlManual(         type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'manual' ) }
-task _htmlGuides(         type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'guides' ) }
-task _htmlLibraries(      type: Exec, dependsOn: copyHtmlFiles ) { commandLine = _htmlCommandLine( 'libraries' ) }
-
-task html( description: 'Generate HTML documentation',
-    dependsOn: [ _htmlGettingStarted, _htmlTutorial, _htmlManual, _htmlGuides, _htmlLibraries ] ) {
-}
-
-task docbook( type: Exec, description: 'Generate DocBook documentation' ) {
-    commandLine = [
-        'asciidoctor',
-        '--compact',
-        '-b', 'docbook',
-        '-a', "qiweb-version=${version}",
-        '-a', 'toc',
-        '-o', 'build/docs/docbook/index.xml',
-        'src/asciidoc/index.adoc'
-    ]
-}
-docbook.doFirst {
-    new File('build/docs/docbook').mkdirs()
-}
-
-task pdf( type: Exec, description: 'Generate PDF documentation', dependsOn: docbook ) {
-    commandLine = [
-        'a2x', '-k', '-fpdf', '--fop', 'build/docs/pdf/index.xml'
-    ]
-}
-pdf.doFirst {
-    new File('build/docs/pdf').mkdirs()
-    copy {
-        from 'build/docs/docbook/index.xml'
-        into 'build/docs/pdf'
+buildscript {
+    repositories {
+        mavenRepo name: 'Bintray Asciidoctor repo', url: 'http://dl.bintray.com/content/aalmiray/asciidoctor'
+        mavenRepo name: 'Bintray JCenter', url: 'http://jcenter.bintray.com'
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.5.0'
     }
 }
-pdf.doLast {
-    new File('build/docs/pdf/index.xml').delete()
-    new File('build/docs/pdf/index.fo').delete()
+
+apply plugin: 'asciidoctor'
+
+task copyAssets( type: Copy ) {
+    from 'src/assets'
+    into 'build/asciidoc'
 }
 
-task doc( description: 'Generate HTML and PDF documentation', dependsOn: [ html, pdf ] ) {}
+asciidoctor {
+    sourceDir = file( "src/asciidoc" )
+    outputDir = file( "build/asciidoc" )
+    backend = 'html5'
+    options = [
+        compact: true,
+        attributes: [
+            'qiweb-version': version,
+            'toc2': '',
+            'stylesheet': 'stylesheets/foundation.css',
+            'docinfo1': '',
+        ]
+    ]
+    logDocuments = true
+}
 
-task htmlResources( type: Copy, dependsOn: [ html, genVersionClass ] ) {
-    from 'build/docs/html'
+asciidoctor.dependsOn( copyAssets )
+
+task docResources( type: Copy, dependsOn: [ asciidoctor, genVersionClass ] ) {
+    from 'build/asciidoc'
     into 'build/classes/main/org/qiweb/doc/html'
 }
 
-// Only include HTML version of documentation in the JAR
-compileJava.dependsOn( htmlResources )
+compileJava.dependsOn( docResources )
