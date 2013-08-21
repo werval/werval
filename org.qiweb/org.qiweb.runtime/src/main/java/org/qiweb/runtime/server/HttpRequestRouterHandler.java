@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
@@ -130,6 +131,7 @@ public final class HttpRequestRouterHandler
         {
             if( future.isSuccess() )
             {
+                LOG.debug( "{} Request completed successfully", requestIdentity );
                 app.global().onHttpRequestComplete( requestHeader );
             }
         }
@@ -146,64 +148,6 @@ public final class HttpRequestRouterHandler
     }
 
     @Override
-    public void exceptionCaught( ChannelHandlerContext nettyContext, Throwable cause )
-    {
-        if( cause instanceof ReadTimeoutException )
-        {
-            LOG.debug( "{} Read timeout, connection has been closed.", requestIdentity );
-        }
-        else if( cause instanceof WriteTimeoutException )
-        {
-            LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
-        }
-        else if( cause instanceof RouteNotFoundException )
-        {
-            LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
-            StringWriter body = new StringWriter();
-            body.append( "404 Route Not Found\n" );
-            if( app.mode() == Mode.DEV )
-            {
-                body.append( "Tried:\n" ).append( app.routes().toString() ).append( "\n\n" );
-            }
-            sendError( nettyContext, NOT_FOUND, body.toString() );
-        }
-        else if( cause instanceof ParameterBinderException )
-        {
-            // QUID BadRequest instead?
-            LOG.warn( "{} ParameterBinderException, will return 404.", requestIdentity, cause );
-            sendError( nettyContext, NOT_FOUND, cause.getMessage() );
-        }
-        else
-        {
-            LOG.warn( "{} Exception caught: {}( {} )",
-                      requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
-                      cause );
-            StringWriter body = new StringWriter();
-            body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
-            if( app.mode() == Mode.DEV )
-            {
-                // In development mode we want nice stack traces
-                if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
-                {
-                    // WARN This depends on and work only with DefaultControllerInvocation!
-                    cause = cause.getCause().getCause();
-                }
-                body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
-                {
-                    @Override
-                    public String urlFor( String filename, int line )
-                    {
-                        return devSpi.sourceURL( filename, line );
-                    }
-                } ) );
-
-                body.append( "</body></html>\n" );
-            }
-            sendError( nettyContext, INTERNAL_SERVER_ERROR, body.toString() );
-        }
-    }
-
-    @Override
     protected void channelRead0( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest )
         throws ClassNotFoundException, InstantiationException,
                IllegalAccessException, InvocationTargetException,
@@ -211,8 +155,8 @@ public final class HttpRequestRouterHandler
     {
         // Generate a unique identifier per request
         requestIdentity = generateNewRequestIdentity();
-
-        LOG.debug( "{} Received a FullHttpRequest: {}", requestIdentity, nettyRequest );
+        LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity,
+                   Strings.indentTwoSpaces( nettyRequest.toString(), 2 ) );
 
         // Parse RequestHeader
         RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest );
@@ -225,7 +169,7 @@ public final class HttpRequestRouterHandler
         try
         {
             final Route route = routes.route( requestHeader );
-            LOG.debug( "{} Will route request to: {}", requestIdentity, route );
+            LOG.debug( "{} Routing request to: {}", requestIdentity, route );
 
             // Bind parameters
             Map<String, Object> parameters = route.bindParameters( app.parameterBinders(),
@@ -250,7 +194,7 @@ public final class HttpRequestRouterHandler
             contextHelper.setOnCurrentThread( app.classLoader(), context );
 
             // Invoke Controller FilterChain, ended by Controller Method Invokation
-            LOG.debug( "{} Will invoke controller method: {}", requestIdentity, route.controllerMethod() );
+            LOG.trace( "{} Invoking controller method: {}", requestIdentity, route.controllerMethod() );
             Outcome outcome = new FilterChainFactory().buildFilterChain( app.global(), context ).next( context );
 
             // == Build the response
@@ -388,6 +332,64 @@ public final class HttpRequestRouterHandler
         {
             nettyResponse.headers().add( SET_COOKIE,
                                          ServerCookieEncoder.encode( asNettyCookie( cookie ) ) );
+        }
+    }
+
+    @Override
+    public void exceptionCaught( ChannelHandlerContext nettyContext, Throwable cause )
+    {
+        if( cause instanceof ReadTimeoutException )
+        {
+            LOG.debug( "{} Read timeout, connection has been closed.", requestIdentity );
+        }
+        else if( cause instanceof WriteTimeoutException )
+        {
+            LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
+        }
+        else if( cause instanceof RouteNotFoundException )
+        {
+            LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
+            StringWriter body = new StringWriter();
+            body.append( "404 Route Not Found\n" );
+            if( app.mode() == Mode.DEV )
+            {
+                body.append( "Tried:\n" ).append( app.routes().toString() ).append( "\n\n" );
+            }
+            sendError( nettyContext, NOT_FOUND, body.toString() );
+        }
+        else if( cause instanceof ParameterBinderException )
+        {
+            // QUID BadRequest instead?
+            LOG.warn( "{} ParameterBinderException, will return 404.", requestIdentity, cause );
+            sendError( nettyContext, NOT_FOUND, cause.getMessage() );
+        }
+        else
+        {
+            LOG.error( "{} Exception caught: {}( {} )",
+                       requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
+                       cause );
+            StringWriter body = new StringWriter();
+            body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
+            if( app.mode() == Mode.DEV )
+            {
+                // In development mode we want nice stack traces
+                if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
+                {
+                    // WARN This depends on and work only with DefaultControllerInvocation!
+                    cause = cause.getCause().getCause();
+                }
+                body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
+                {
+                    @Override
+                    public String urlFor( String filename, int line )
+                    {
+                        return devSpi.sourceURL( filename, line );
+                    }
+                } ) );
+
+                body.append( "</body></html>\n" );
+            }
+            sendError( nettyContext, INTERNAL_SERVER_ERROR, body.toString() );
         }
     }
 

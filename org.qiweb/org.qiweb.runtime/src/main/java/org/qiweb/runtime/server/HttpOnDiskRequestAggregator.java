@@ -149,7 +149,7 @@ public class HttpOnDiskRequestAggregator
         bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
         bodyOutputStream = new FileOutputStream( bodyFile, true );
 
-        LOG.debug( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
+        LOG.trace( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
     }
 
     private void handleHttpContent( ChannelHandlerContext context, HttpContent chunk, List<Object> out )
