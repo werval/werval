@@ -1,4 +1,20 @@
 
 <link rel="stylesheet" href="highlightjs/default.min.css">
-<script src="highlightjs/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad()</script>
+<script type="text/javascript" src="highlightjs/highlight.min.js"></script>
+<script type="text/javascript" src="javascripts/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+    $( document ).ready( function() {
+        // Open external user links in a new window/tab
+        $("a.ulink[href^='http:']").attr('target','_blank');
+        $("a.ulink[href^='https:']").attr('target','_blank');
+    } );
+</script>
+<style type="text/css">
+    .imageblock {
+        padding: 1em 0;
+        border-top: 1px solid lightgray;
+        border-bottom: 1px solid lightgray;
+    }
+</style>
+
