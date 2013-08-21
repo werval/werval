@@ -10,9 +10,9 @@ We hope you'll find your way through.
 For the code-impatients, our https://github.com/qiweb/org.qiweb.samples[samples repository] contains the code presented
 in theses sections plus a bunch of usefull samples.
 
-include::getting-started/hello-cli.asciidoc[]
-include::getting-started/hello-gradle.asciidoc[]
-include::getting-started/hello-maven.asciidoc[]
+include::getting-started/hello-cli.adoc[]
+include::getting-started/hello-gradle.adoc[]
+include::getting-started/hello-maven.adoc[]
 
 === Using the DevShell
 

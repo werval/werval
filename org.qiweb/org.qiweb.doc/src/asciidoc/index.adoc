@@ -4,8 +4,8 @@ image:images/logo.png[QiWeb,120]
 
 Java, Netty, HTTP, WebSockets, DevMode, Build System Agnostic, Readable and Hacking Friendly CodeBase.
 
-include::getting-started.asciidoc[]
-include::tutorial.asciidoc[]
-include::manual.asciidoc[]
-include::guides.asciidoc[]
-include::libraries.asciidoc[]
+include::getting-started.adoc[]
+include::tutorial.adoc[]
+include::manual.adoc[]
+include::guides.adoc[]
+include::libraries.adoc[]

@@ -23,7 +23,7 @@ def _htmlCommandLine( section ) {
         '-a', 'stylesheet=stylesheets/foundation.css',
         '-a', 'source-highlighter=highlightjs',
         '-o', "build/docs/html/${section}.html",
-        "src/asciidoc/${section}.asciidoc"
+        "src/asciidoc/${section}.adoc"
     ]
 }
 
@@ -45,7 +45,7 @@ task docbook( type: Exec, description: 'Generate DocBook documentation' ) {
         '-a', "qiweb-version=${version}",
         '-a', 'toc',
         '-o', 'build/docs/docbook/index.xml',
-        'src/asciidoc/index.asciidoc'
+        'src/asciidoc/index.adoc'
     ]
 }
 docbook.doFirst {

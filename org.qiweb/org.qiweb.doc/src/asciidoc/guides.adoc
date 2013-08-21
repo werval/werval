@@ -1,0 +1,19 @@
+== Guides
+
+In this section you'll find guides for frequent and practical development use cases from build to deployment including
+Qi4j, Guice, Spring integrations and many more.
+
+include::guides/build-cli.adoc[]
+include::guides/build-gradle.adoc[]
+include::guides/build-maven.adoc[]
+include::guides/ide-support.adoc[]
+include::guides/http-file-uploads.adoc[]
+include::guides/http-security.adoc[]
+include::guides/json-jackson.adoc[]
+include::guides/xml-org-w3c.adoc[]
+include::guides/sql-bonecp.adoc[]
+include::guides/nosql-mongodb.adoc[]
+include::guides/email-apache.adoc[]
+include::guides/deploy-unix.adoc[]
+include::guides/deploy-heroku.adoc[]
+
