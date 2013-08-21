@@ -32,6 +32,12 @@ import org.qiweb.runtime.util.URLs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_DOMAIN;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_HTTPONLY;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_PATH;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_SECURE;
+
 public class SessionInstance
     implements Session
 {
@@ -152,11 +158,11 @@ public class SessionInstance
         String sessionData = URLs.encode( sb.toString() );
         String signedCookieValue = crypto.hexHmacSha1( sessionData ) + "-" + sessionData;
         return new CookieInstance(
-            config.string( "app.session.cookie.name" ),
-            config.string( "app.session.cookie.path" ),
-            config.has( "app.session.cookie.domain" ) ? config.string( "app.session.cookie.domain" ) : null,
-            config.bool( "app.session.cookie.secure" ),
+            config.string( APP_SESSION_COOKIE_NAME ),
+            config.string( APP_SESSION_COOKIE_PATH ),
+            config.has( APP_SESSION_COOKIE_DOMAIN ) ? config.string( APP_SESSION_COOKIE_DOMAIN ) : null,
+            config.bool( APP_SESSION_COOKIE_SECURE ),
             signedCookieValue,
-            config.bool( "app.session.cookie.httpOnly" ) );
+            config.bool( APP_SESSION_COOKIE_HTTPONLY ) );
     }
 }

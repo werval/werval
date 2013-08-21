@@ -36,6 +36,11 @@ import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
+import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
+import static org.qiweb.runtime.ConfigKeys.APP_MIMETYPES;
+import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_FS_TEMP;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
 
 /**
  * An Application Instance.
@@ -183,7 +188,7 @@ public final class ApplicationInstance
 
     private void configureGlobal()
     {
-        String globalClassName = config.string( "app.global" );
+        String globalClassName = config.string( APP_GLOBAL );
         try
         {
             this.global = (Global) classLoader.loadClass( globalClassName ).newInstance();
@@ -196,12 +201,12 @@ public final class ApplicationInstance
 
     private void configureCrypto()
     {
-        this.crypto = new CryptoInstance( config.string( "app.secret" ) );
+        this.crypto = new CryptoInstance( config.string( APP_SECRET ) );
     }
 
     private void configureTmpdir()
     {
-        File tmpdirFile = config.file( "qiweb.fs.temp" );
+        File tmpdirFile = config.file( QIWEB_FS_TEMP );
         if( tmpdirFile.isFile() )
         {
             throw new QiWebException( "tmpdir already exist but is a file: " + tmpdirFile );
@@ -216,7 +221,7 @@ public final class ApplicationInstance
     private void configureParameterBinders()
     {
         List<ParameterBinder<?>> list = new ArrayList<>();
-        for( String parameterBinderClassName : config.stringList( "qiweb.routes.parameter-binders" ) )
+        for( String parameterBinderClassName : config.stringList( QIWEB_ROUTES_PARAMETERBINDERS ) )
         {
             try
             {
@@ -232,9 +237,9 @@ public final class ApplicationInstance
 
     private void configureMimeTypes()
     {
-        if( config.has( "app.mimetypes" ) )
+        if( config.has( APP_MIMETYPES ) )
         {
-            mimeTypes = new MimeTypesInstance( config.stringMap( "app.mimetypes" ) );
+            mimeTypes = new MimeTypesInstance( config.stringMap( APP_MIMETYPES ) );
         }
         else
         {

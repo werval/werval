@@ -21,6 +21,7 @@ import org.qiweb.test.AbstractQiWebTest;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 
 public class SessionTest
     extends AbstractQiWebTest
@@ -60,7 +61,7 @@ public class SessionTest
     @Before
     public void beforeSessionTest()
     {
-        sessionCookieName = application().config().string( "app.session.cookie.name" );
+        sessionCookieName = application().config().string( APP_SESSION_COOKIE_NAME );
     }
 
     @Test

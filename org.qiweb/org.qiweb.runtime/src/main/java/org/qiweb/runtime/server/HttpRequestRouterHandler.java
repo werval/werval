@@ -41,6 +41,7 @@ import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
@@ -78,6 +79,8 @@ import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERR
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
@@ -234,7 +237,7 @@ public final class HttpRequestRouterHandler
             // Parse Session Cookie
             Session session = new SessionInstance(
                 app.config(), app.crypto(),
-                requestHeader.cookies().get( app.config().string( "app.session.cookie.name" ) ) );
+                requestHeader.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) ) );
 
             // Parse Request
             Request request = requestOf( requestHeader, parameters, nettyRequest );
@@ -327,7 +330,7 @@ public final class HttpRequestRouterHandler
         applyHttpHeaders( outcome.headers(), nettyResponse );
         boolean forceClose = applyKeepAliveHttpHeaders( nettyRequest, outcome, nettyResponse );
         applySession( session, nettyResponse );
-        applyCookies( response, nettyResponse );
+        applyCookies( response.cookies(), nettyResponse );
         return forceClose;
     }
 
@@ -349,33 +352,39 @@ public final class HttpRequestRouterHandler
             case CLIENT_ERROR:
             case SERVER_ERROR:
             case UNKNOWN:
+                // Apply Keep-Alive response headers if needed
                 if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
                 {
                     nettyResponse.headers().set( CONNECTION, CLOSE );
                 }
                 // Always close on errors or unknown statuses
                 return true;
+            case INFORMATIONAL:
+            case SUCCESS:
+            case REDIRECTION:
             default:
+                // Apply Keep-Alive response headers if needed
                 if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
                 {
                     nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
                 }
+                // Don't close on informational, success or redirection statuses
                 return false;
         }
     }
 
     private void applySession( Session session, HttpResponse nettyResponse )
     {
-        if( !app.config().bool( "app.session.cookie.onlyIfChanged" ) || session.hasChanged() )
+        if( !app.config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
         {
             nettyResponse.headers().add( SET_COOKIE,
                                          ServerCookieEncoder.encode( asNettyCookie( session.signedCookie() ) ) );
         }
     }
 
-    private void applyCookies( Response response, HttpResponse nettyResponse )
+    private void applyCookies( Cookies cookies, HttpResponse nettyResponse )
     {
-        for( Cookie cookie : response.cookies() )
+        for( Cookie cookie : cookies )
         {
             nettyResponse.headers().add( SET_COOKIE,
                                          ServerCookieEncoder.encode( asNettyCookie( cookie ) ) );

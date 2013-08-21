@@ -41,6 +41,8 @@ import org.qiweb.runtime.routes.ControllerParamsInstance.ControllerParamInstance
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
+
 /**
  * Fluent builder to create new Route and Routes instances.
  * <p>
@@ -374,7 +376,7 @@ public final class RouteBuilder
             List<String> typesTried = new ArrayList<>();
             typesTried.add( paramTypeName );
             // Try in configured imported packages
-            List<String> importedPackages = application.config().stringList( "qiweb.routes.imported-packages" );
+            List<String> importedPackages = application.config().stringList( QIWEB_ROUTES_IMPORTEDPACKAGES );
             for( String importedPackage : importedPackages )
             {
                 String fqcn = importedPackage + "." + paramTypeName;

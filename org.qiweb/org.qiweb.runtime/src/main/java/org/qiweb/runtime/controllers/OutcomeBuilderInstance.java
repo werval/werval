@@ -32,6 +32,7 @@ import static io.netty.buffer.Unpooled.*;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 
 /**
  * Outcome Builder instance.
@@ -156,7 +157,7 @@ public class OutcomeBuilderInstance
         this.status = status;
         this.headers = headers;
         this.cookies = cookies;
-        this.chunkSize = config.intNumber( "qiweb.http.chunksize" );
+        this.chunkSize = config.intNumber( QIWEB_HTTP_CHUNKSIZE );
     }
 
     @Override

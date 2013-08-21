@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 public class HttpServerInstance
     implements HttpServer
@@ -64,11 +68,11 @@ public class HttpServerInstance
 
         // I/O Event Loops.
         // The first is used to handle the accept of new connections and the second will serve the IO of them.
-        int acceptors = app.config().has( "qiweb.http.acceptors" )
-                        ? app.config().intNumber( "qiweb.http.acceptors" )
+        int acceptors = app.config().has( QIWEB_HTTP_ACCEPTORS )
+                        ? app.config().intNumber( QIWEB_HTTP_ACCEPTORS )
                         : DEFAULT_POOL_SIZE;
-        int iothreads = app.config().has( "qiweb.http.iothreads" )
-                        ? app.config().intNumber( "qiweb.http.iothreads" )
+        int iothreads = app.config().has( QIWEB_HTTP_IOTHREADS )
+                        ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group( new NioEventLoopGroup( devSpi == null ? acceptors : 1 ),
                          new NioEventLoopGroup( devSpi == null ? iothreads : 1 ) );
@@ -83,8 +87,8 @@ public class HttpServerInstance
         bootstrap.option( SO_KEEPALIVE, true );
 
         // Bind
-        String address = app.config().string( "qiweb.http.address" );
-        int port = app.config().intNumber( "qiweb.http.port" );
+        String address = app.config().string( QIWEB_HTTP_ADDRESS );
+        int port = app.config().intNumber( QIWEB_HTTP_PORT );
         try
         {
             bootstrap.localAddress( address, port );

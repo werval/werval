@@ -28,13 +28,18 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-import java.util.Locale;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.spi.dev.DevShellSPI;
 
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.Locale.US;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_EXECUTORS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_LOG_LOWLEVEL_ENABLED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_LOG_LOWLEVEL_LEVEL;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_READ;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
 
 /* package */ class HttpServerChannelInitializer
     extends ChannelInitializer<Channel>
@@ -64,8 +69,8 @@ import static java.util.concurrent.TimeUnit.*;
         this.allChannels = allChannels;
         this.app = httpApp;
         this.devSpi = devSpi;
-        int executors = app.config().has( "qiweb.http.executors" )
-                        ? app.config().intNumber( "qiweb.http.executors" )
+        int executors = app.config().has( QIWEB_HTTP_EXECUTORS )
+                        ? app.config().intNumber( QIWEB_HTTP_EXECUTORS )
                         : DEFAULT_POOL_SIZE;
         this.httpExecutors = new DefaultEventExecutorGroup( devSpi == null ? executors : 1,
                                                             new ExecutorsThreadFactory() );
@@ -76,17 +81,16 @@ import static java.util.concurrent.TimeUnit.*;
     {
         ChannelPipeline pipeline = channel.pipeline();
 
-        if( app.config().bool( "qiweb.http.log.low-level.enabled" ) )
+        if( app.config().bool( QIWEB_HTTP_LOG_LOWLEVEL_ENABLED ) )
         {
             // Log Netty Bytes
-            LogLevel level = LogLevel.valueOf(
-                app.config().string( "qiweb.http.log.low-level.level" ).toUpperCase( Locale.US ) );
+            LogLevel level = LogLevel.valueOf( app.config().string( QIWEB_HTTP_LOG_LOWLEVEL_LEVEL ).toUpperCase( US ) );
             pipeline.addLast( "byte-logging", new LoggingHandler( level ) );
         }
 
         // Read/Write Timeout
-        long readTimeout = app.config().seconds( "qiweb.http.timeout.read" );
-        long writeTimeout = app.config().seconds( "qiweb.http.timeout.write" );
+        long readTimeout = app.config().seconds( QIWEB_HTTP_TIMEOUT_READ );
+        long writeTimeout = app.config().seconds( QIWEB_HTTP_TIMEOUT_WRITE );
         pipeline.addLast( "read-timeout", new ReadTimeoutHandler( readTimeout, SECONDS ) );
         pipeline.addLast( "write-timeout", new WriteTimeoutHandler( writeTimeout, SECONDS ) );
 
