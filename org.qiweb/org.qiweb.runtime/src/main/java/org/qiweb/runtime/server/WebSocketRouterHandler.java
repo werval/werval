@@ -48,7 +48,16 @@ public class WebSocketRouterHandler
     @Override
     protected void channelRead0( ChannelHandlerContext context, WebSocketFrame frame )
     {
+        rebuildIfNeeded();
         LOG.debug( "Received a WebSocketFrame: {}", frame );
         context.channel().close();
+    }
+
+    private void rebuildIfNeeded()
+    {
+        if( devSpi != null && devSpi.isSourceChanged() )
+        {
+            devSpi.rebuild();
+        }
     }
 }

@@ -153,6 +153,8 @@ public final class HttpRequestRouterHandler
                IllegalAccessException, InvocationTargetException,
                IOException
     {
+        rebuildIfNeeded();
+
         // Generate a unique identifier per request
         requestIdentity = generateNewRequestIdentity();
         LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity,
@@ -262,6 +264,14 @@ public final class HttpRequestRouterHandler
         finally
         {
             contextHelper.clearCurrentThread();
+        }
+    }
+
+    private void rebuildIfNeeded()
+    {
+        if( devSpi != null && devSpi.isSourceChanged() )
+        {
+            devSpi.rebuild();
         }
     }
 

@@ -61,7 +61,6 @@ public class SubProtocolSwitchHandler
     {
         if( message instanceof HttpRequest )
         {
-            rebuildIfNeeded();
             HttpRequest request = (HttpRequest) message;
             LOG.trace( "Switching to plain HTTP protocol" );
             context.pipeline().addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
@@ -70,7 +69,6 @@ public class SubProtocolSwitchHandler
         }
         else if( message instanceof WebSocketFrame )
         {
-            rebuildIfNeeded();
             WebSocketFrame frame = (WebSocketFrame) message;
             LOG.trace( "Switching to WebSocket protocol" );
             context.pipeline().addLast( "router", new WebSocketRouterHandler( app, devSpi ) );
@@ -82,14 +80,6 @@ public class SubProtocolSwitchHandler
         {
             LOG.warn( "Received a message of an unknown type ({}), channel will be closed.", message.getClass() );
             context.channel().close();
-        }
-    }
-
-    private void rebuildIfNeeded()
-    {
-        if( devSpi != null && devSpi.isSourceChanged() )
-        {
-            devSpi.rebuild();
         }
     }
 }
