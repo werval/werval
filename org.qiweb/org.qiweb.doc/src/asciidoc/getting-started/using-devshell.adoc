@@ -1,0 +1,25 @@
+=== Using the DevShell
+
+// Run the DevShell using CLI, Gradle, Maven
+
+==== Instant feedback
+
+// Add compilation error
+// See trace, click on link to file
+// Add failing code
+// See trace, click on link to file
+// Add new feature
+// See success
+
+==== Embedded documentation
+
+// Open /@doc
+
+==== Introspection resources
+
+// /@config
+// /@logs
+// /@classpath
+// /@etc...
+
+

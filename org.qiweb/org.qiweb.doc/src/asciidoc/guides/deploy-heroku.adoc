@@ -27,8 +27,7 @@ Heroku définit le port à utiliser dans la variable d'environnement `PORT`.
 
 ==== Using Gradle
 
-build.gradle
-
+.`build.gradle`
 ["source","groovy",subs="attributes"]
 ----
 apply plugin: 'java'
