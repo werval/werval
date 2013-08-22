@@ -24,8 +24,8 @@ import org.qiweb.api.routes.Routes;
 /**
  * Application.
  * <p>
- *     An Application instance can run in different {@link Mode}s, default Mode is {@link Mode#test}. For your code to
- *     be {@link Mode#dev} friendly, don't hold references to instances returned by an Application instance.
+ *     An Application instance can run in different {@link Mode}s, default Mode is {@link Mode#TEST}. For your code to
+ *     be {@link Mode#DEV} friendly, don't hold references to instances returned by an Application instance.
  * </p>
  */
 public interface Application
@@ -33,7 +33,7 @@ public interface Application
 
     /**
      * {@link Application} Mode.
-     * <p>Default is {@link #test} Mode.</p>
+     * <p>Default is {@link #TEST} Mode.</p>
      */
     enum Mode
     {
@@ -71,69 +71,69 @@ public interface Application
     }
 
     /**
-     * @return Application {@link Mode}, defaults to {@link Mode#test}.
+     * @return Application {@link Mode}, defaults to {@link Mode#TEST}.
      */
     Mode mode();
 
     /**
      * Application {@link Config}.
-     * <p>Don't hold references to the Config instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the Config instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link Config}
      */
     Config config();
 
     /**
      * Application {@link Crypto}.
-     * <p>Don't hold references to the Crypto instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the Crypto instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link Crypto}
      */
     Crypto crypto();
 
     /**
      * Application temporary directory {@link File}.
-     * <p>Don't hold references to the File instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the File instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application temporary directory {@link File}
      */
     File tmpdir();
 
     /**
      * Application {@link ClassLoader}.
-     * <p>Don't hold references to the ClassLoader instance to prevent memory leaks in {@link Mode#dev}.</p>
+     * <p>Don't hold references to the ClassLoader instance to prevent memory leaks in {@link Mode#DEV}.</p>
      * @return Application {@link ClassLoader}
      */
     ClassLoader classLoader();
 
     /**
      * Application {@link Routes}.
-     * <p>Don't hold references to the Routes instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the Routes instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link Routes}
      */
     Routes routes();
 
     /**
      * Application {@link ReverseRoutes}.
-     * <p>Don't hold references to the ReverseRoutes instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the ReverseRoutes instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link ReverseRoutes}
      */
     ReverseRoutes reverseRoutes();
 
     /**
      * Application {@link ParameterBinders}.
-     * <p>Don't hold references to the ParameterBinders instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the ParameterBinders instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link ParameterBinders}
      */
     ParameterBinders parameterBinders();
 
     /**
      * Application {@link MimeTypes}.
-     * <p>Don't hold references to the MimeTypes instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the MimeTypes instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link MimeTypes}
      */
     MimeTypes mimeTypes();
 
     /**
      * Application {@link MetaData}.
-     * <p>Don't hold references to the MetaData instance in order to make your code {@link Mode#dev} friendly.</p>
+     * <p>Don't hold references to the MetaData instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link MetaData}
      */
     MetaData metaData();

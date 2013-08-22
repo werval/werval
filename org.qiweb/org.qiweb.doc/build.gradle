@@ -33,11 +33,39 @@ asciidoctor {
     logDocuments = true
 }
 
-asciidoctor.dependsOn( copyAssets )
+asciidoctor.dependsOn copyAssets
 
 task docResources( type: Copy, dependsOn: [ asciidoctor, genVersionClass ] ) {
     from 'build/asciidoc'
     into 'build/classes/main/org/qiweb/doc/html'
 }
 
-compileJava.dependsOn( docResources )
+compileJava.dependsOn docResources
+
+
+
+
+// Embedded Javadoc
+def embeddedJavadocProjects() {
+    rootProject.subprojects.findAll { p -> p.name == 'org.qiweb.api' || p.name == 'org.qiweb.stdlib' }
+}
+task embeddedJavadoc( type: Javadoc, dependsOn: genVersionClass ) {
+    title = 'QiWeb API Documentation'
+    source = embeddedJavadocProjects().collect { p ->
+        p.sourceSets.main.allJava
+    }
+    classpath = files( embeddedJavadocProjects().collect { p ->
+        p.sourceSets.main.compileClasspath
+    })
+    destinationDir = file( 'build/classes/main/org/qiweb/doc/html/api/' )
+    options.encoding = 'UTF-8'
+    options.overview = file( 'src/javadoc/overview.html' )
+    options.docFilesSubDirs = true
+    options.links( "http://docs.oracle.com/javase/7/docs/api/" )
+    options.group( [ "QiWeb API": [ "org.qiweb.api", "org.qiweb.api.*" ],
+                     "QiWeb Standard Library": [ "org.qiweb.controller" ] ] )
+}
+jar.dependsOn embeddedJavadoc
+
+
+
