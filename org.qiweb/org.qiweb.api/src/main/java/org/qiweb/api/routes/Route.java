@@ -24,6 +24,8 @@ import org.qiweb.api.http.RequestHeader;
 /**
  * Route.
  * <p>HTTP RequestHeader satisfiedBy.</p>
+ *
+ * @navassoc - - - ParameterBinders
  */
 public interface Route
 {

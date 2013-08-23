@@ -15,6 +15,13 @@
  */
 package org.qiweb.api.http;
 
+/**
+ * Response.
+ *
+ * @composed 1 - 1 Headers
+ * @composed 1 - 1 Cookies
+ * @navassoc - - - org.qiweb.api.controllers.Outcome
+ */
 public interface Response
 {
 

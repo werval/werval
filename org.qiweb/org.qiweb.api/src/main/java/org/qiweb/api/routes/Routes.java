@@ -19,6 +19,8 @@ import org.qiweb.api.http.RequestHeader;
 
 /**
  * Routes.
+ *
+ * @composed 1 - * Route
  */
 public interface Routes
     extends Iterable<Route>

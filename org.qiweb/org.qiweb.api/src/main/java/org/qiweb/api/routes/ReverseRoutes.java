@@ -29,6 +29,8 @@ import org.qiweb.api.http.Headers;
 
 /**
  * Reverse Routes.
+ *
+ * @composed 1 - * ReverseRoute
  */
 // TODO Remove Javassist dependency in API!
 public abstract class ReverseRoutes
@@ -98,6 +100,9 @@ public abstract class ReverseRoutes
         return controllerProxy;
     }
 
+    /**
+     * @hidden
+     */
     public static final class ReverseOutcome
         implements Outcome
     {

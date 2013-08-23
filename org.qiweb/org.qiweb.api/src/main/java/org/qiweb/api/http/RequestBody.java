@@ -21,6 +21,11 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Request Body.
+ *
+ * @composed 1 - * Upload
+ */
 public interface RequestBody
 {
 

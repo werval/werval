@@ -22,6 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to declare Filters on Controller types and methods.
+ *
+ * @navassoc - - - Filter
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target(

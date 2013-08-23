@@ -20,6 +20,8 @@ import org.qiweb.api.controllers.Outcome;
 
 /**
  * Chain of Filters.
+ *
+ * @composed 1 <chain> * Filter
  */
 public interface FilterChain
 {

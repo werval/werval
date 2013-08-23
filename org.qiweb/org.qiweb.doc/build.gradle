@@ -40,6 +40,8 @@ jar.dependsOn asciidoctor
 
 
 // Embedded Javadoc
+configurations { umlgraphDoclet }
+dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p -> p.name == 'org.qiweb.api' || p.name == 'org.qiweb.stdlib' }
 }
@@ -53,6 +55,8 @@ task embeddedJavadoc( type: Javadoc ) {
     options.docFilesSubDirs = true
     options.links( "http://docs.oracle.com/javase/7/docs/api/", "http://www.slf4j.org/apidocs/" )
     options.group( [ "QiWeb API": [ "org.qiweb.api", "org.qiweb.api.*" ], "QiWeb Standard Library": [ "org.qiweb.controller" ] ] )
+    options.docletpath = configurations.umlgraphDoclet.files.asType( List )
+    options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
 }
 embeddedJavadoc.dependsOn copyAssets
 jar.dependsOn embeddedJavadoc

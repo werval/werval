@@ -27,6 +27,15 @@ import org.qiweb.api.routes.Routes;
  *     An Application instance can run in different {@link Mode}s, default Mode is {@link Mode#TEST}. For your code to
  *     be {@link Mode#DEV} friendly, don't hold references to instances returned by an Application instance.
  * </p>
+ *
+ * @navassoc - - - Application.Mode
+ * @navassoc - - - Config
+ * @navassoc - - - MetaData
+ * @navassoc - - - Crypto
+ *
+ * @depend - - - Global
+ * @depend - - - Instanciation.ControllerInstanciation
+ * @depend - - - Instanciation.FilterInstanciation
  */
 public interface Application
 {

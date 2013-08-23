@@ -19,6 +19,8 @@ import org.qiweb.api.http.Headers;
 
 /**
  * Outcome of a HTTP Request processing.
+ *
+ * @navassoc - <has> - StatusClass
  */
 public interface Outcome
 {

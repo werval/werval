@@ -20,6 +20,8 @@ import org.qiweb.api.http.Cookies.Cookie;
 
 /**
  * HTTP Cookies.
+ *
+ * @composed 1 - * Cookie
  */
 public interface Cookies
     extends Iterable<Cookie>

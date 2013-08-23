@@ -18,6 +18,11 @@ package org.qiweb.api.http;
 import java.util.Map;
 import org.qiweb.api.http.Cookies.Cookie;
 
+/**
+ * Session.
+ *
+ * @composed 1 - * Cookie
+ */
 public interface Session
 {
 

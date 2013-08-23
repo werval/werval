@@ -28,6 +28,8 @@ import org.qiweb.api.routes.ReverseRoutes;
  *     This class only provide static helpers backed by a ThreadLocal&lt;Context&gt; so you can extend it
  *     <strong>or not</strong>, as you like.
  * </p>
+ *
+ * @navassoc - - - Context
  */
 public class Controller
 {

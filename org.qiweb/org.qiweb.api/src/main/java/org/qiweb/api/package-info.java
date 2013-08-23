@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * QiWeb API.
- *
- * @apiviz.uses org.qiweb.api.controllers
  */
 package org.qiweb.api;

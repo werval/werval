@@ -15,6 +15,11 @@
  */
 package org.qiweb.api.routes;
 
+/**
+ * Parameter Binders.
+ *
+ * @composed 1 - * ParameterBinder
+ */
 public interface ParameterBinders
 {
 

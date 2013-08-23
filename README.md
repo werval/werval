@@ -20,6 +20,10 @@ QiWeb is built using [Gradle](http://www.gradle.org/).
 You don't need to install anything except a JVM.
 The `gradlew` script that can be found at the projects root will download and bootstrap Gradle for you.
 
+Please note that if you want to get UML diagrams generated in Javadocs you'll need to have
+[GraphViz](http://www.graphviz.org/) installed.
+The build will pass without though.
+
 To get you started, here are some usefull commands:
 
     ./gradlew clean     # Clean up the project tree

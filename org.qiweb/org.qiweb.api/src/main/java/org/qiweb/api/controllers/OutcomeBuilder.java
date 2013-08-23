@@ -19,6 +19,8 @@ import java.io.InputStream;
 
 /**
  * Builder for Outcomes.
+ *
+ * @navassoc - <build> - Outcome
  */
 public interface OutcomeBuilder
 {

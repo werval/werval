@@ -20,6 +20,8 @@ import org.qiweb.api.filters.Filter;
 
 /**
  * Instanciation.
+ *
+ * @hidden
  */
 public interface Instanciation
 {
@@ -41,6 +43,8 @@ public interface Instanciation
         /**
          * Default Controller Instanciation.
          * <p>Simple {@link Class#newInstance()} instanciation without any cache.</p>
+         *
+         * @hidden
          */
         class Default
             implements ControllerInstanciation
@@ -79,6 +83,8 @@ public interface Instanciation
         /**
          * Default Filter Instanciation.
          * <p>Simple {@link Class#newInstance()} instanciation without any cache.</p>
+         *
+         * @hidden
          */
         class Default
             implements FilterInstanciation

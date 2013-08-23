@@ -21,6 +21,8 @@ import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * Invoke Controller Method.
+ *
+ * @navassoc - <invoke> - Controller
  */
 public interface ControllerMethodInvocation
 {
@@ -37,6 +39,8 @@ public interface ControllerMethodInvocation
     /**
      * Default Controller Method Invocation.
      * <p>Simple {@link Method#invoke(java.lang.Object, java.lang.Object[])}.</p>
+     * 
+     * @hidden
      */
     class Default
         implements ControllerMethodInvocation

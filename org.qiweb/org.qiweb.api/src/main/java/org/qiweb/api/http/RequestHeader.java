@@ -20,6 +20,10 @@ package org.qiweb.api.http;
  * 
  * <p>No Entity.</p>
  * <p>Helper methods.</p>
+ *
+ * @composed 1 - 1 QueryString
+ * @composed 1 - 1 Headers
+ * @composed 1 - 1 Cookies
  */
 public interface RequestHeader
 {

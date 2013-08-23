@@ -17,6 +17,8 @@ package org.qiweb.api.exceptions;
 
 /**
  * Thrown when trying to build a Route instance with an illegal route string.
+ *
+ * @extends QiWebException
  */
 public class IllegalRouteException
     extends QiWebException

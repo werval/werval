@@ -17,6 +17,8 @@ package org.qiweb.api.exceptions;
 
 /**
  * Thrown when something goes wrong when using ParameterBinders.
+ *
+ * @extends QiWebException
  */
 public class ParameterBinderException
     extends QiWebException

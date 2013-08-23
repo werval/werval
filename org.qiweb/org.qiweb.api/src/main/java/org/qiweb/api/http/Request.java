@@ -19,6 +19,8 @@ import java.util.Map;
 
 /**
  * A Request is a RequestHeader plus a RequestBody.
+ *
+ * @composed 1 - 1 RequestBody
  */
 public interface Request
     extends RequestHeader
