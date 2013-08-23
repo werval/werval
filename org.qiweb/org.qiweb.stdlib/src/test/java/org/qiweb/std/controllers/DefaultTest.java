@@ -1,4 +1,4 @@
-package org.qiweb.controller;
+package org.qiweb.std.controllers;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,9 +15,9 @@ public class DefaultTest
     @Override
     protected String routesString()
     {
-        return "GET /notFound org.qiweb.controller.Default.notFound\n"
-               + "GET /internalServerError org.qiweb.controller.Default.internalServerError\n"
-               + "GET /notImplemented org.qiweb.controller.Default.notImplemented";
+        return "GET /notFound org.qiweb.std.controllers.Default.notFound\n"
+               + "GET /internalServerError org.qiweb.std.controllers.Default.internalServerError\n"
+               + "GET /notImplemented org.qiweb.std.controllers.Default.notImplemented";
     }
 
     @Test

@@ -54,7 +54,8 @@ task embeddedJavadoc( type: Javadoc ) {
     options.overview = file( 'src/javadoc/overview.html' )
     options.docFilesSubDirs = true
     options.links( "http://docs.oracle.com/javase/7/docs/api/", "http://www.slf4j.org/apidocs/" )
-    options.group( [ "QiWeb API": [ "org.qiweb.api", "org.qiweb.api.*" ], "QiWeb Standard Library": [ "org.qiweb.controller" ] ] )
+    options.group( [ "QiWeb API":               [ "org.qiweb.api", "org.qiweb.api.*" ],
+                     "QiWeb Standard Library":  [ "org.qiweb.std", "org.qiweb.std.*" ] ] )
     options.docletpath = configurations.umlgraphDoclet.files.asType( List )
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
 }

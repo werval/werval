@@ -35,9 +35,9 @@ public class DevShellRoutesProvider
 
     private static final String DEVSHELL_ROUTES =
                                 "\n"
-                                + "GET /@doc org.qiweb.controller.Default.seeOther( String url = '/@doc/index.html' )\n"
-                                + "GET /@doc/api org.qiweb.controller.Default.seeOther( String url = '/@doc/api/index.html' )\n"
-                                + "GET /@doc/*path org.qiweb.controller.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n";
+                                + "GET /@doc org.qiweb.std.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
+                                + "GET /@doc/api org.qiweb.std.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
+                                + "GET /@doc/*path org.qiweb.std.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n";
 
     @Override
     public Routes routes( Application application )

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.controller;
+package org.qiweb.std.controllers;
 
 import java.io.InputStream;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;

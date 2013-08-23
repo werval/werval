@@ -1,4 +1,4 @@
-package org.qiweb.controller;
+package org.qiweb.std.controllers;
 
 import java.io.IOException;
 import org.apache.http.HttpResponse;
@@ -18,7 +18,7 @@ public class ClasspathResourcesTest
     @Override
     protected String routesString()
     {
-        return "GET /*path org.qiweb.controller.ClasspathResources.metainf( String path )";
+        return "GET /*path org.qiweb.std.controllers.ClasspathResources.metainf( String path )";
     }
 
     @Test
