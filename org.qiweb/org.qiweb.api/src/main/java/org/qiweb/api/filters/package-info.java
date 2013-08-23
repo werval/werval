@@ -13,26 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api;
-
-import java.util.LinkedHashMap;
 
 /**
- * Meta-Data.
+ * Filters API.
  */
-public final class MetaData
-    extends LinkedHashMap<String, Object>
-{
-
-    private static final long serialVersionUID = 1L;
-
-    public <T> T get( Class<T> type, String key )
-    {
-        Object value = get( key );
-        if( value == null )
-        {
-            return null;
-        }
-        return type.cast( value );
-    }
-}
+package org.qiweb.api.filters;

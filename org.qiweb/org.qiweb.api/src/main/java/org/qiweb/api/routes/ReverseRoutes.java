@@ -36,7 +36,7 @@ public abstract class ReverseRoutes
 
     /**
      * Get the ReverseRoute of a Controller call.
-     * <p>See {@link Plop}.</p>
+     * 
      * @param reverseOutcome Reverse Outcome
      * @return a ReverseRoute
      * @throws IllegalArgumentException when the given Outcome is not appropriate

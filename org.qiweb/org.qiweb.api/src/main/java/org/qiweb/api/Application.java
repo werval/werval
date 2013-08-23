@@ -45,7 +45,7 @@ public interface Application
         DEV( "Development" ),
         /**
          * Test Mode.
-         * <p>Intended to be used in unit tests, almost equivalent to {@link #prod} Mode.</p>
+         * <p>Intended to be used in unit tests, almost equivalent to {@link #PROD} Mode.</p>
          */
         TEST( "Test" ),
         /**

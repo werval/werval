@@ -1,5 +1,15 @@
 // QiWeb Documentation
 
+def htmlTarget = 'build/classes/main/org/qiweb/doc/html'
+
+// Static assets
+task copyAssets( type: Copy ) {
+    from 'src/assets'
+    into htmlTarget
+}
+
+
+// Asciidoc processing
 buildscript {
     repositories {
         mavenRepo name: 'Bintray Asciidoctor repo', url: 'http://dl.bintray.com/content/aalmiray/asciidoctor'
@@ -9,17 +19,10 @@ buildscript {
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.5.0'
     }
 }
-
 apply plugin: 'asciidoctor'
-
-task copyAssets( type: Copy ) {
-    from 'src/assets'
-    into 'build/asciidoc'
-}
-
 asciidoctor {
     sourceDir = file( "src/asciidoc" )
-    outputDir = file( "build/asciidoc" )
+    outputDir = file( htmlTarget )
     backend = 'html5'
     options = [
         compact: true,
@@ -32,40 +35,24 @@ asciidoctor {
     ]
     logDocuments = true
 }
-
 asciidoctor.dependsOn copyAssets
-
-task docResources( type: Copy, dependsOn: [ asciidoctor, genVersionClass ] ) {
-    from 'build/asciidoc'
-    into 'build/classes/main/org/qiweb/doc/html'
-}
-
-compileJava.dependsOn docResources
-
-
+jar.dependsOn asciidoctor
 
 
 // Embedded Javadoc
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p -> p.name == 'org.qiweb.api' || p.name == 'org.qiweb.stdlib' }
 }
-task embeddedJavadoc( type: Javadoc, dependsOn: genVersionClass ) {
-    title = 'QiWeb API Documentation'
-    source = embeddedJavadocProjects().collect { p ->
-        p.sourceSets.main.allJava
-    }
-    classpath = files( embeddedJavadocProjects().collect { p ->
-        p.sourceSets.main.compileClasspath
-    })
-    destinationDir = file( 'build/classes/main/org/qiweb/doc/html/api/' )
+task embeddedJavadoc( type: Javadoc ) {
+    title = "QiWeb API Reference (${version})"
+    source = embeddedJavadocProjects().collect { p -> p.sourceSets.main.allJava }
+    classpath = files( embeddedJavadocProjects().collect { p -> p.sourceSets.main.compileClasspath } )
+    destinationDir = file( "${htmlTarget}/api" )
     options.encoding = 'UTF-8'
     options.overview = file( 'src/javadoc/overview.html' )
     options.docFilesSubDirs = true
-    options.links( "http://docs.oracle.com/javase/7/docs/api/" )
-    options.group( [ "QiWeb API": [ "org.qiweb.api", "org.qiweb.api.*" ],
-                     "QiWeb Standard Library": [ "org.qiweb.controller" ] ] )
+    options.links( "http://docs.oracle.com/javase/7/docs/api/", "http://www.slf4j.org/apidocs/" )
+    options.group( [ "QiWeb API": [ "org.qiweb.api", "org.qiweb.api.*" ], "QiWeb Standard Library": [ "org.qiweb.controller" ] ] )
 }
+embeddedJavadoc.dependsOn copyAssets
 jar.dependsOn embeddedJavadoc
-
-
-

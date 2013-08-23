@@ -18,6 +18,9 @@ package org.qiweb.api;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.filters.Filter;
 
+/**
+ * Instanciation.
+ */
 public interface Instanciation
 {
 

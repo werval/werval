@@ -25,7 +25,7 @@ import java.util.List;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.runtime.util.Dates;
+import org.qiweb.api.util.Dates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

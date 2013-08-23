@@ -71,9 +71,9 @@ public class Global
     }
 
     /**
-     * A Provider of Controller Instances.
-     * <p>Default to {@link ControllerInstanceProvider.Default}.</p>
-     * @return A Provider of Controller Instances
+     * Controller Instanciation.
+     * <p>Default to {@link Instanciation.ControllerInstanciation.Default}.</p>
+     * @return A Controller Instanciation
      */
     public ControllerInstanciation controllerInstanciation()
     {
@@ -81,9 +81,9 @@ public class Global
     }
 
     /**
-     * A Controller Method Invoker.
-     * <p>Default to {@link ControllerMethodInvoker.Default}.</p>
-     * @return A Controller Method Invoker
+     * A Controller Method Invocation.
+     * <p>Default to {@link org.qiweb.api.controllers.ControllerMethodInvocation.Default}.</p>
+     * @return A Controller Method Invocation
      */
     public ControllerMethodInvocation controllerMethodInvocation()
     {

@@ -15,6 +15,9 @@
  */
 package org.qiweb.api;
 
+/**
+ * Cryptography service.
+ */
 public interface Crypto
 {
 
