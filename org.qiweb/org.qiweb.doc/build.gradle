@@ -43,7 +43,7 @@ jar.dependsOn asciidoctor
 configurations { umlgraphDoclet }
 dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 def embeddedJavadocProjects() {
-    rootProject.subprojects.findAll { p -> p.name == 'org.qiweb.api' || p.name == 'org.qiweb.stdlib' }
+    rootProject.subprojects.findAll { p -> p.name == 'org.qiweb.api' || p.name == 'org.qiweb.std' }
 }
 task embeddedJavadoc( type: Javadoc ) {
     title = "QiWeb API Reference (${version})"

@@ -43,7 +43,7 @@ Create a `pom.xml` file at the application root with the following content:
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.stdlib</artifactId>
+            <artifactId>org.qiweb.std</artifactId>
             <version>{qiweb-version}</version>
         </dependency>
         
