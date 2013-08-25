@@ -16,12 +16,14 @@
 package org.qiweb.lib.controllers;
 
 import java.io.InputStream;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.controllers.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.controllers.Controller.*;
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.controllers.Controller.application;
+import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.controllers.Controller.request;
 
 /**
  * Classpath Resources Controller.
@@ -69,7 +71,7 @@ public class ClasspathResources
      */
     public Outcome resource( String path )
     {
-        NullArgumentException.ensureNotEmpty( "Path", path );
+        ensureNotEmpty( "Path", path );
         if( path.contains( ".." ) )
         {
             LOG.warn( "Directory traversal attempt: '{}'", path );

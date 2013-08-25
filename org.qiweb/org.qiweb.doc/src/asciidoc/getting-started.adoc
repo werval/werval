@@ -18,3 +18,15 @@ include::getting-started/hello-gradle.adoc[]
 include::getting-started/hello-maven.adoc[]
 include::getting-started/using-devshell.adoc[]
 
+=== Next steps
+
+// TODO Write short Next Steps after Getting Started
+// Links to
+
+// - Tutorial
+// - Manual
+// - API Docs
+// - Guides
+
+
+

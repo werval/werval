@@ -17,15 +17,15 @@ package org.qiweb.lib.controllers;
 
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
+
+import static org.qiweb.api.controllers.Controller.outcomes;
 
 /**
  * Controller providing default outcomes.
  * <p>Intended to be used in routes directly.</p>
  */
 public class Default
-    extends Controller
 {
 
     /**

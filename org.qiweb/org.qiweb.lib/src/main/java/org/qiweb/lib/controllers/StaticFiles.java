@@ -22,17 +22,26 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application.Mode;
-import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.util.Dates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static io.netty.util.CharsetUtil.*;
-import static org.codeartisans.java.toolbox.Strings.*;
-import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CACHE_CONTROL;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.ETAG;
+import static io.netty.handler.codec.http.HttpHeaders.Names.IF_MODIFIED_SINCE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.IF_NONE_MATCH;
+import static io.netty.handler.codec.http.HttpHeaders.Names.LAST_MODIFIED;
+import static io.netty.util.CharsetUtil.US_ASCII;
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.controllers.Controller.application;
+import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.controllers.Controller.response;
 
 /**
  * Controller to serve static files or directory tree.
@@ -45,7 +54,6 @@ import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
  */
 // TODO Add Range request support in StaticFiles
 public class StaticFiles
-    extends Controller
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( StaticFiles.class );
@@ -201,7 +209,7 @@ public class StaticFiles
         if( request().headers().names().contains( IF_MODIFIED_SINCE ) )
         {
             String ifModifiedSince = request().headers().valueOf( IF_MODIFIED_SINCE );
-            if( !isEmpty( ifModifiedSince ) )
+            if( !Strings.isEmpty( ifModifiedSince ) )
             {
                 try
                 {
