@@ -24,24 +24,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
-import org.codeartisans.java.toolbox.ObjectHolder;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.spi.dev.Watcher.ChangeListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
- * <p>Extend and override to your will.</p>
- * <p>Note that this is not the DevShellSPI responsibility to trigger rebuilds.</p>
+ * <p>Extend and override {@link #doRebuild()} method to your will.</p>
+ * <p>Note that this is the QiWeb Runtime responsibility to trigger rebuilds.</p>
  */
 public class DevShellSPIAdapter
     implements DevShellSPI
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger( DevShellSPIAdapter.class );
     private final URL[] classPath;
     private boolean sourceChanged = true;
 
@@ -54,7 +52,7 @@ public class DevShellSPIAdapter
             @Override
             public void onChange()
             {
-                LOG.info( "Source changed!" );
+                System.out.println( "Source changed!" );
                 sourceChanged = true;
             }
         } );
@@ -77,7 +75,7 @@ public class DevShellSPIAdapter
                 File root = new File( path.toURI() );
                 if( root.isDirectory() )
                 {
-                    final ObjectHolder<File> found = new ObjectHolder<>();
+                    final List<File> found = new ArrayList<>( 1 );
                     Files.walkFileTree( root.toPath(), new SimpleFileVisitor<Path>()
                     {
                         @Override
@@ -87,15 +85,15 @@ public class DevShellSPIAdapter
                             File file = path.toFile();
                             if( fileName.equals( file.getName() ) )
                             {
-                                found.setHolded( file );
+                                found.add( file );
                                 return FileVisitResult.TERMINATE;
                             }
                             return FileVisitResult.CONTINUE;
                         }
                     } );
-                    if( found.getHolded() != null )
+                    if( !found.isEmpty() )
                     {
-                        return "file://" + found.getHolded().getAbsolutePath() + "#L" + lineNumber;
+                        return "file://" + found.get( 0 ).getAbsolutePath() + "#L" + lineNumber;
                     }
                 }
             }

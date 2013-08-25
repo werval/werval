@@ -20,21 +20,35 @@ import java.util.Set;
 
 /**
  * File watching abstraction.
+ * <p>Allow DevShell implementations to choose their file watching implementation.</p>
  */
 public interface Watcher
 {
 
+    /**
+     * Listener for source changes.
+     */
     interface ChangeListener
     {
 
         void onChange();
     }
 
+    /**
+     * Watch allowing to stop watching.
+     */
     interface Watch
     {
 
         void unwatch();
     }
 
+    /**
+     * Watch a set of directories.
+     *
+     * @param directories Set of directories to watch
+     * @param listener Listener to notify on change
+     * @return A handle to unwatch when done
+     */
     Watch watch( Set<File> directories, ChangeListener listener );
 }
