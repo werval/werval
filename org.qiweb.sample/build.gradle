@@ -23,7 +23,7 @@ mainClassName = "org.qiweb.runtime.Main"
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.std:$version"
+    compile "org.qiweb:org.qiweb.lib:$version"
 
     runtime webjars.bootstrap
 

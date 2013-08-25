@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.std.controllers;
+package org.qiweb.lib.controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
 
 /**
  * Controller to serve static files or directory tree.
- * <p>Cache behaviour can be tweeked with <code>qiweb.std.staticfiles</code> config properties.</p>
+ * <p>Cache behaviour can be tweeked with <code>qiweb.lib.staticfiles</code> config properties.</p>
  * <p>Always use streamed identity transfer encoding.</p>
  * <p>MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.</p>
  * <p>Log 404 at DEBUG level.</p>
@@ -53,7 +53,7 @@ public class StaticFiles
     /**
      * Serve a filesystem directory as read-only resources.
      * <p>
-     *     If a directory is requested, filenames set in the <code>qiweb.std.staticfiles.index</code> config property is
+     *     If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
      *     used to find an index file. Default value is <code>index.html</code> only.
      * </p>
      * @param root Root of the file tree to serve
@@ -69,7 +69,7 @@ public class StaticFiles
     /**
      * Serve a filesystem directory as read-only resources.
      * <p>
-     *     If a directory is requested, filenames set in the <code>qiweb.std.staticfiles.index</code> config property is
+     *     If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
      *     used to find an index file. Default value is <code>index.html</code> only.
      * </p>
      * @param root Root of the file tree to serve
@@ -85,7 +85,7 @@ public class StaticFiles
     /**
      * Serve a filesystem directory as read-only resources.
      * <p>
-     *     If a directory is requested, filenames set in the <code>qiweb.std.staticfiles.index</code> config property is
+     *     If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
      *     used to find an index file. Default value is <code>index.html</code> only.
      * </p>
      * @param root Root of the file tree to serve
@@ -104,7 +104,7 @@ public class StaticFiles
         File file = new File( root, path );
         if( file.isDirectory() )
         {
-            List<String> indexFileNames = application().config().stringList( "qiweb.std.staticfiles.index" );
+            List<String> indexFileNames = application().config().stringList( "qiweb.lib.staticfiles.index" );
             for( String indexFileName : indexFileNames )
             {
                 File indexFile = new File( file, indexFileName );
@@ -175,7 +175,7 @@ public class StaticFiles
         }
         else
         {
-            Long maxAge = application().config().seconds( "qiweb.std.staticfiles.cache.maxage" );
+            Long maxAge = application().config().seconds( "qiweb.lib.staticfiles.cache.maxage" );
             if( maxAge.equals( 0L ) )
             {
                 response().headers().with( CACHE_CONTROL, "no-cache" );
@@ -188,7 +188,7 @@ public class StaticFiles
         // ETag
         long lastModified = file.lastModified();
         final String etag = "\"" + lastModified + "-" + file.hashCode() + "\"";
-        if( application().config().bool( "qiweb.std.staticfiles.cache.etag" ) )
+        if( application().config().bool( "qiweb.lib.staticfiles.cache.etag" ) )
         {
             response().headers().with( ETAG, etag );
         }

@@ -1,4 +1,4 @@
-package org.qiweb.std.controllers;
+package org.qiweb.lib.controllers;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -24,8 +24,8 @@ public class StaticFilesTest
     @Override
     protected String routesString()
     {
-        return "GET /single org.qiweb.std.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
-               + "GET /tree/*path org.qiweb.std.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )";
+        return "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
+               + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )";
     }
 
     @Test

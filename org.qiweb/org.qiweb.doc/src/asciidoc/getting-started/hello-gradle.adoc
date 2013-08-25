@@ -27,7 +27,7 @@ repositories {
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:{qiweb-version}" // <2>
-    compile "org.qiweb:org.qiweb.std:{qiweb-version}" // <3>
+    compile "org.qiweb:org.qiweb.lib:{qiweb-version}" // <3>
     // Add application compile dependencies
 
     runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}" // <4>

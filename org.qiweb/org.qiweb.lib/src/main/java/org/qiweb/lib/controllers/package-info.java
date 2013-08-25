@@ -17,4 +17,4 @@
 /**
  * Standard Library Controllers.
  */
-package org.qiweb.controller;
+package org.qiweb.lib.controllers;

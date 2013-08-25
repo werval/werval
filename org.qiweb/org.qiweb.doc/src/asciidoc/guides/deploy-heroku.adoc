@@ -35,7 +35,7 @@ apply plugin: 'java'
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:{qiweb-version}"
-    compile "org.qiweb:org.qiweb.std:{qiweb-version}"
+    compile "org.qiweb:org.qiweb.lib:{qiweb-version}"
     // Add application compile dependencies
 
     runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}"
