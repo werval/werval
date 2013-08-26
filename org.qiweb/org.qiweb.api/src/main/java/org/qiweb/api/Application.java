@@ -34,8 +34,6 @@ import org.qiweb.api.routes.Routes;
  * @navassoc - - - Crypto
  *
  * @depend - - - Global
- * @depend - - - Instanciation.ControllerInstanciation
- * @depend - - - Instanciation.FilterInstanciation
  */
 public interface Application
 {

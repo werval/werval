@@ -45,7 +45,7 @@ import org.qiweb.api.filters.FilterChain;
         @Override
         public Outcome next( Context context )
         {
-            Object controller = global.controllerInstanciation().get( context.route().controllerType() );
+            Object controller = global.getControllerInstance( context.route().controllerType() );
             return global.controllerMethodInvocation().invoke( context, controller );
         }
     }
@@ -63,7 +63,7 @@ import org.qiweb.api.filters.FilterChain;
     @Override
     public Outcome next( Context context )
     {
-        Filter filter = global.filterInstanciation().get( filterType );
+        Filter filter = global.getFilterInstance( filterType );
         return filter.filter( next, context );
     }
 }

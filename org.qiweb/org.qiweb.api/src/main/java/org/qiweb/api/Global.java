@@ -15,9 +15,8 @@
  */
 package org.qiweb.api;
 
-import org.qiweb.api.Instanciation.ControllerInstanciation;
-import org.qiweb.api.Instanciation.FilterInstanciation;
 import org.qiweb.api.controllers.ControllerMethodInvocation;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
 
 /**
@@ -61,23 +60,43 @@ public class Global
     }
 
     /**
-     * Controller Filter Instanciation.
-     * <p>Default to {@link Instanciation.FilterInstanciation.Default}.</p>
-     * @return A Controller Filter Instanciation
+     * Get Filter instance.
+     * <p>Default to {@link Class#newInstance()} instanciation without any cache.</p>
+     * 
+     * @param <T> Filter Parameterized Type
+     * @param filterType Filter Type
+     * @return Filter Instance
      */
-    public FilterInstanciation filterInstanciation()
+    public <T> T getFilterInstance( Class<T> filterType )
     {
-        return new FilterInstanciation.Default();
+        try
+        {
+            return filterType.newInstance();
+        }
+        catch( InstantiationException | IllegalAccessException ex )
+        {
+            throw new QiWebException( "Unable to instanciate Filter Type.", ex );
+        }
     }
 
     /**
-     * Controller Instanciation.
-     * <p>Default to {@link Instanciation.ControllerInstanciation.Default}.</p>
-     * @return A Controller Instanciation
+     * Get Controller instance.
+     * <p>Default to {@link Class#newInstance()} instanciation without any cache.</p>
+     *
+     * @param <T> Controller Parameterized Type
+     * @param controllerType Controller Type
+     * @return Controller Instance
      */
-    public ControllerInstanciation controllerInstanciation()
+    public <T> T getControllerInstance( Class<T> controllerType )
     {
-        return new ControllerInstanciation.Default();
+        try
+        {
+            return controllerType.newInstance();
+        }
+        catch( InstantiationException | IllegalAccessException ex )
+        {
+            throw new QiWebException( "Unable to instanciate Controller Type.", ex );
+        }
     }
 
     /**
