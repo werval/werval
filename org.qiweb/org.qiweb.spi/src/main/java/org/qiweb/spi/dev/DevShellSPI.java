@@ -61,7 +61,19 @@ public interface DevShellSPI
         void unwatch();
     }
 
-    URL[] classPath();
+    /**
+     * Application Classpath.
+     * <p>Typically build output directories.</p>
+     * @return Application Classpath elements
+     */
+    URL[] applicationClassPath();
+
+    /**
+     * Runtime Classpath.
+     * <p>Typically application dependencies, including QiWeb.</p>
+     * @return Runtime Classpath elements
+     */
+    URL[] runtimeClassPath();
 
     /**
      * Build Application source file URL if it exists.

@@ -66,14 +66,16 @@ public final class DamnSmallDevShell
         extends DevShellSPIAdapter
     {
 
-        private final URL[] classpath;
+        private final URL[] applicationClasspath;
+        private final URL[] runtimeClasspath;
         private final Set<File> sources;
         private final File classesDir;
 
-        private SPI( URL[] classPath, Set<File> sources, SourceWatcher watcher, File classesDir )
+        private SPI( URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, SourceWatcher watcher, File classesDir )
         {
-            super( classPath, sources, watcher );
-            this.classpath = classPath;
+            super( applicationClasspath, runtimeClasspath, sources, watcher );
+            this.applicationClasspath = applicationClasspath;
+            this.runtimeClasspath = runtimeClasspath;
             this.sources = sources;
             this.classesDir = classesDir;
         }
@@ -83,7 +85,7 @@ public final class DamnSmallDevShell
         {
             try
             {
-                DamnSmallDevShell.rebuild( classpath, sources, classesDir );
+                DamnSmallDevShell.rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
             }
             catch( Exception ex )
             {
@@ -299,12 +301,19 @@ public final class DamnSmallDevShell
         {
             classpathList.add( source.toURI().toURL() );
         }
-        // Append compilation output
-        classpathList.add( classesDir.toURI().toURL() );
-        URL[] classpath = classpathList.toArray( new URL[ classpathList.size() ] );
+        URL[] runtimeClasspath = classpathList.toArray( new URL[ classpathList.size() ] );
         if( debug )
         {
-            System.out.println( "Classpath is: " + classpathList );
+            System.out.println( "Runtime Classpath is: " + classpathList );
+        }
+        // Then Application classpath
+        URL[] applicationClasspath = new URL[]
+        {
+            classesDir.toURI().toURL()
+        };
+        if( debug )
+        {
+            System.out.println( "Application Classpath is: " + applicationClasspath );
         }
 
         // Apply System Properties
@@ -326,16 +335,16 @@ public final class DamnSmallDevShell
         SourceWatcher watcher = new JNotifyWatcher();
 
         // First build
-        rebuild( classpath, sources, classesDir );
+        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
 
         // Run DevShell
-        final DevShell devShell = new DevShell( new SPI( classpath, sources, watcher, classesDir ) );
+        final DevShell devShell = new DevShell( new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir ) );
         Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" ) );
         devShell.start();
     }
     private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
 
-    /* package */ static void rebuild( URL[] classpath, Set<File> sources, File classesDir )
+    /* package */ static void rebuild( URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, File classesDir )
     {
         System.out.println( "Compiling Application..." );
         ByteArrayOutputStream javacOutput = new ByteArrayOutputStream();
@@ -377,10 +386,10 @@ public final class DamnSmallDevShell
                 javac.addArgument( "-d" );
                 javac.addArgument( classesDir.getAbsolutePath() );
                 javac.addArgument( "-classpath" );
-                String[] classpathStrings = new String[ classpath.length ];
-                for( int idx = 0; idx < classpath.length; idx++ )
+                String[] classpathStrings = new String[ runtimeClasspath.length ];
+                for( int idx = 0; idx < runtimeClasspath.length; idx++ )
                 {
-                    classpathStrings[idx] = classpath[idx].toURI().toASCIIString();
+                    classpathStrings[idx] = runtimeClasspath[idx].toURI().toASCIIString();
                 }
                 javac.addArgument( Strings.join( classpathStrings, ":" ) );
                 javac.addArgument( "@" + javaListFile.getAbsolutePath() );

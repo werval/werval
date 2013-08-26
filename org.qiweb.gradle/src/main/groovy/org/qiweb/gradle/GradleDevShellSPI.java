@@ -25,10 +25,11 @@ public class GradleDevShellSPI
      */
     private final String rebuildTask;
 
-    public GradleDevShellSPI( Set<File> sources, URL[] classPath, SourceWatcher watcher,
+    public GradleDevShellSPI( URL[] applicationClassPath, URL[] runtimeClassPath,
+                              Set<File> sources, SourceWatcher watcher,
                               File rootDir, String rebuildTask )
     {
-        super( classPath, sources, watcher );
+        super( applicationClassPath, runtimeClassPath, sources, watcher );
         this.connector.forProjectDirectory( rootDir );
         this.rebuildTask = rebuildTask;
     }

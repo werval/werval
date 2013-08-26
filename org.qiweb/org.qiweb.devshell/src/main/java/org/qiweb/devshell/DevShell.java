@@ -15,13 +15,10 @@
  */
 package org.qiweb.devshell;
 
-import java.io.File;
 import org.qiweb.spi.dev.DevShellSPI;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -217,9 +214,9 @@ public final class DevShell
         // Dependencies Realm contains all Application dependencies JARs
         // and import QiWeb DevShell and Dev SPI packages from current ClassLoader (Either the CLI or the Build Plugin One)
         ClassRealm depRealm = classWorld.newRealm( DEPENDENCIES_REALM_ID, null );
-        for( URL jarUrl : jars( spi.classPath() ) )
+        for( URL runtimeClasspathElement : spi.runtimeClassPath() )
         {
-            depRealm.addURL( jarUrl );
+            depRealm.addURL( runtimeClasspathElement );
         }
         depRealm.importFrom( devRealm, "org.qiweb.devshell.*" );
         depRealm.importFrom( devRealm, "org.qiweb.spi.dev.*" );
@@ -227,9 +224,9 @@ public final class DevShell
         // Application Realm contains all Application compiler output directories
         // and it check itself first and then check Dependencies Realm
         ClassRealm appRealm = classWorld.newRealm( nextApplicationRealmID(), null );
-        for( URL dirUrl : directories( spi.classPath() ) )
+        for( URL applicationClasspathElement : spi.applicationClassPath() )
         {
-            appRealm.addURL( dirUrl );
+            appRealm.addURL( applicationClasspathElement );
         }
         appRealm.setParentRealm( depRealm );
     }
@@ -239,9 +236,9 @@ public final class DevShell
     {
         classWorld.disposeRealm( currentApplicationRealmID() );
         ClassRealm appRealm = classWorld.newRealm( nextApplicationRealmID(), null );
-        for( URL dirUrl : directories( spi.classPath() ) )
+        for( URL applicationClasspathElement : spi.applicationClassPath() )
         {
-            appRealm.addURL( dirUrl );
+            appRealm.addURL( applicationClasspathElement );
         }
         appRealm.setParentRealm( classWorld.getRealm( DEPENDENCIES_REALM_ID ) );
     }
@@ -274,36 +271,5 @@ public final class DevShell
         yellow( "Application ClassLoader" );
         printURLs( appRealm );
         printLoadedClasses( appRealm );
-    }
-
-    private URL[] directories( URL[] urls )
-    {
-        Set<URL> set = new LinkedHashSet<>();
-        for( URL url : urls )
-        {
-            if( !url.toString().endsWith( ".jar" ) )
-            {
-                File dir = new File( url.getFile() );
-                if( !dir.exists() && !dir.mkdirs() )
-                {
-                    throw new QiWebDevShellException( "Unable to create inexistant classpath directory: " + dir );
-                }
-                set.add( url );
-            }
-        }
-        return set.toArray( new URL[ set.size() ] );
-    }
-
-    private URL[] jars( URL[] urls )
-    {
-        Set<URL> set = new LinkedHashSet<>();
-        for( URL url : urls )
-        {
-            if( url.toString().endsWith( ".jar" ) )
-            {
-                set.add( url );
-            }
-        }
-        return set.toArray( new URL[ set.size() ] );
     }
 }

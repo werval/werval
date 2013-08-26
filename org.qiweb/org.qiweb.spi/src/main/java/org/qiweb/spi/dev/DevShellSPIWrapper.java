@@ -37,9 +37,15 @@ public class DevShellSPIWrapper
     }
 
     @Override
-    public URL[] classPath()
+    public URL[] applicationClassPath()
     {
-        return wrapped.classPath();
+        return wrapped.applicationClassPath();
+    }
+
+    @Override
+    public URL[] runtimeClassPath()
+    {
+        return wrapped.runtimeClassPath();
     }
 
     @Override

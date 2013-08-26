@@ -39,12 +39,14 @@ public class DevShellSPIAdapter
     implements DevShellSPI
 {
 
-    private final URL[] classPath;
+    private final URL[] applicationClassPath;
+    private final URL[] runtimeClassPath;
     private boolean sourceChanged = true;
 
-    public DevShellSPIAdapter( URL[] classPath, Set<File> sources, SourceWatcher watcher )
+    public DevShellSPIAdapter( URL[] applicationClassPath, URL[] runtimeClassPath, Set<File> sources, SourceWatcher watcher )
     {
-        this.classPath = Arrays.copyOf( classPath, classPath.length );
+        this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
+        this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
         // TODO Unwatch sources on DevShell passivation
         watcher.watch( sources, new SourceChangeListener()
         {
@@ -59,15 +61,22 @@ public class DevShellSPIAdapter
 
     @Override
     @SuppressWarnings( "ReturnOfCollectionOrArrayField" )
-    public final URL[] classPath()
+    public final URL[] applicationClassPath()
     {
-        return classPath;
+        return applicationClassPath;
+    }
+
+    @Override
+    @SuppressWarnings( "ReturnOfCollectionOrArrayField" )
+    public final URL[] runtimeClassPath()
+    {
+        return runtimeClassPath;
     }
 
     @Override
     public String sourceURL( final String fileName, int lineNumber )
     {
-        for( URL path : classPath )
+        for( URL path : runtimeClassPath )
         {
             try
             {

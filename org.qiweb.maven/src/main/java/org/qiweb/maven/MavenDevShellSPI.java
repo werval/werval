@@ -30,9 +30,9 @@ public class MavenDevShellSPI
     private final DefaultExecutor executor;
     private final CommandLine cmdLine;
 
-    public MavenDevShellSPI( URL[] classPath, Set<File> sources, SourceWatcher watcher, File rootDir, String rebuildPhase )
+    public MavenDevShellSPI( URL[] applicationClassPath, URL[] runtimeClassPath, Set<File> sources, SourceWatcher watcher, File rootDir, String rebuildPhase )
     {
-        super( classPath, sources, watcher );
+        super( applicationClassPath, runtimeClassPath, sources, watcher );
         executor = new DefaultExecutor();
         cmdLine = new CommandLine( "mvn" );
         cmdLine.addArgument( "-f" );

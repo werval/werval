@@ -25,7 +25,13 @@ class QiWebPlugin implements Plugin<Project> {
             // == Gather build info
             
             def sources = project.sourceSets*.allSource*.srcDirs[0]
-            def classPath = project.sourceSets.main.runtimeClasspath.files.collect { f -> f.toURI().toURL() }
+            def applicationClasspath = [
+                project.sourceSets.main.output.classesDir.toURI().toURL(),
+                project.sourceSets.main.output.resourcesDir.toURI().toURL()
+            ]
+            def runtimeClasspath = project.sourceSets.main.runtimeClasspath.files.collect { f -> 
+                f.toURI().toURL()
+            }
 
             // == Deploy JNotify Native Librairies
             
@@ -34,7 +40,8 @@ class QiWebPlugin implements Plugin<Project> {
             // == Start the DevShell
             
             def devShellSPI = new org.qiweb.gradle.GradleDevShellSPI(
-                sources, classPath as URL[], new JNotifyWatcher(),
+                applicationClasspath as URL[], runtimeClasspath as URL[],
+                sources,new JNotifyWatcher(),
                 project.getProjectDir(), project.qiweb.rebuildTask )
             
             def final devShell = new DevShell( devShellSPI )

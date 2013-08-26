@@ -57,12 +57,11 @@ public class DevShellMojo
 
             // Classpath
             Set<URL> classPathSet = new LinkedHashSet<URL>();
-            classPathSet.add( new File( rootDir, "target/classes" ).toURI().toURL() );
             for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
             {
                 classPathSet.add( new URL( "file://" + runtimeClassPathElement ) );
             }
-            URL[] classPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
+            URL[] runtimeClassPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
 
             // Sources
             Set<File> sources = new LinkedHashSet<File>();
@@ -74,7 +73,13 @@ public class DevShellMojo
             // Deploy JNotify            
             JNotifyWatcher.deployNativeLibraries( new File( rootDir, "target" ) );
 
-            final DevShell devShell = new DevShell( new MavenDevShellSPI( classPath, sources, new JNotifyWatcher(),
+            // Run DevShell
+            URL[] applicationClasspath = new URL[]
+            {
+                new File( rootDir, "target/classes" ).toURI().toURL()
+            };
+            final DevShell devShell = new DevShell( new MavenDevShellSPI( applicationClasspath, runtimeClassPath,
+                                                                          sources, new JNotifyWatcher(),
                                                                           rootDir, rebuildPhase ) );
 
             Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
