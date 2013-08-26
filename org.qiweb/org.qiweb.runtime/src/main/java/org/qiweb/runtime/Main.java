@@ -27,24 +27,6 @@ import org.qiweb.runtime.server.HttpServerInstance;
 public final class Main
 {
 
-    private static final class ShutdownHook
-        implements Runnable
-    {
-
-        private final HttpServer server;
-
-        private ShutdownHook( HttpServer server )
-        {
-            this.server = server;
-        }
-
-        @Override
-        public void run()
-        {
-            server.passivate();
-        }
-    }
-
     public static void main( String[] args )
     {
         System.out.println( "QiWeb!" );
@@ -52,8 +34,8 @@ public final class Main
         {
             RoutesProvider routesProvider = new RoutesConfProvider();
             ApplicationInstance application = new ApplicationInstance( Mode.PROD, routesProvider );
-            final HttpServer server = new HttpServerInstance( "qiweb-http-server", application );
-            Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( server ), "qiweb-shutdown" ) );
+            HttpServer server = new HttpServerInstance( "qiweb-http-server", application );
+            server.registerPassivationShutdownHook();
             server.activate();
         }
         catch( Exception ex )

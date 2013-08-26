@@ -55,6 +55,7 @@ public final class ApplicationInstance
 {
 
     private final Mode mode;
+    private boolean started;
     private Config config;
     private Global global;
     private Crypto crypto;
@@ -163,6 +164,7 @@ public final class ApplicationInstance
         return metaData;
     }
 
+    // Called reflectively by org.qiweb.devshell.DevShell
     public void reload( ClassLoader newClassLoader )
     {
         this.classLoader = newClassLoader;
@@ -172,18 +174,19 @@ public final class ApplicationInstance
 
     private void configurationChanged()
     {
+        if( started )
+        {
+            global.onStop( this );
+            started = false;
+        }
         configureGlobal();
         configureCrypto();
         configureTmpdir();
         configureParameterBinders();
         configureMimeTypes();
         loadRoutes();
-    }
-
-    private void loadRoutes()
-    {
-        routes = routesProvider.routes( this );
-        reverseRoutes = new ReverseRoutesInstance( this );
+        global.onStart( this );
+        started = true;
     }
 
     private void configureGlobal()
@@ -245,5 +248,11 @@ public final class ApplicationInstance
         {
             mimeTypes = new MimeTypesInstance();
         }
+    }
+
+    private void loadRoutes()
+    {
+        routes = routesProvider.routes( this );
+        reverseRoutes = new ReverseRoutesInstance( this );
     }
 }

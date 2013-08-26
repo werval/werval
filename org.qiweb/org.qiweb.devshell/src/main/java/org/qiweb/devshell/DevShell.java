@@ -163,6 +163,7 @@ public final class DevShell
                 "devshell-httpserver", appInstance, new DevShellSPIDecorator( spi, appInstance )
             } );
 
+            httpServer.getClass().getMethod( "registerPassivationShutdownHook" ).invoke( httpServer );
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
 
             // ---------------------------------------------------------------------------------------------------------

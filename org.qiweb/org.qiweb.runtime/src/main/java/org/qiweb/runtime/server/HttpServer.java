@@ -15,8 +15,6 @@
  */
 package org.qiweb.runtime.server;
 
-import org.qiweb.api.exceptions.QiWebException;
-
 /**
  * QiWeb Http Server.
  */
@@ -25,13 +23,22 @@ public interface HttpServer
 
     /**
      * Activate the QiWeb Http Server.
+     * 
+     * @throws QiWebException if unable to activate HttpServer
      */
-    void activate()
-        throws QiWebException;
+    void activate();
 
     /**
      * Passivate the QiWeb Http Server.
+     *
+     * @throws QiWebException if unable to passivate HttpServer
      */
-    void passivate()
-        throws QiWebException;
+    void passivate();
+
+    /**
+     * Register a JVM shutdown hook to passivate the HttpServer.
+     * <p>This method can be called ony once.</p>
+     * @throws IllegalStateException when the passivation shutdown hook has already been registered
+     */
+    void registerPassivationShutdownHook();
 }

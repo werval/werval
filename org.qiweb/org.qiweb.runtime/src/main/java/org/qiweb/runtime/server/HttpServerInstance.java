@@ -37,12 +37,30 @@ public class HttpServerInstance
     implements HttpServer
 {
 
+    private static final class ShutdownHook
+        implements Runnable
+    {
+
+        private final HttpServer server;
+
+        private ShutdownHook( HttpServer server )
+        {
+            this.server = server;
+        }
+
+        @Override
+        public void run()
+        {
+            server.passivate();
+        }
+    }
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
     private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;
     private final String identity;
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;
     private final ChannelGroup allChannels;
+    private final Thread shutdownHook;
     private ServerBootstrap bootstrap;
 
     public HttpServerInstance( String identity, ApplicationInstance app )
@@ -56,6 +74,7 @@ public class HttpServerInstance
         this.app = app;
         this.devSpi = devSpi;
         this.allChannels = new DefaultChannelGroup( identity, null );
+        this.shutdownHook = new Thread( new ShutdownHook( this ), "qiweb-shutdown" );
     }
 
     @Override
@@ -117,5 +136,19 @@ public class HttpServerInstance
         LOG.debug( "[{}] Http Service Passivated", identity );
 
         app.global().afterHttpUnbind( app );
+        app.global().onStop( app );
+    }
+
+    @Override
+    public void registerPassivationShutdownHook()
+    {
+        try
+        {
+            Runtime.getRuntime().addShutdownHook( shutdownHook );
+        }
+        catch( IllegalArgumentException ex )
+        {
+            throw new IllegalStateException( "HttpServer passivation hook previously registered", ex );
+        }
     }
 }

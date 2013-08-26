@@ -31,8 +31,26 @@ public class Global
 {
 
     /**
+     * Invoked on Application start.
+     * @param application Application
+     */
+    public void onStart( Application application )
+    {
+    }
+
+    /**
+     * Invoked on Application stop.
+     * @param application Application
+     */
+    public void onStop( Application application )
+    {
+    }
+
+    /**
      * Invoked before binding Http Server.
+     * <p>Invoked after {@link #onStart(org.qiweb.api.Application)}.</p>
      * <p>Default to NOOP.</p>
+     * <p>Reloads occuring in development mode do not trigger this call.</p>
      *
      * @param application Application
      */
@@ -43,6 +61,7 @@ public class Global
     /**
      * Invoked after binding Http Server.
      * <p>Default to NOOP.</p>
+     * <p>Reloads occuring in development mode do not trigger this call.</p>
      *
      * @param application Application
      */
@@ -53,6 +72,7 @@ public class Global
     /**
      * Invoked before unbinding Http Server.
      * <p>Default to NOOP.</p>
+     * <p>Reloads occuring in development mode do not trigger this call.</p>
      *
      * @param application Application
      */
@@ -62,7 +82,9 @@ public class Global
 
     /**
      * Invoked after unbinding Http Server.
+     * <p>Invoked before {@link #onStop(org.qiweb.api.Application)}.</p>
      * <p>Default to NOOP.</p>
+     * <p>Reloads occuring in development mode do not trigger this call.</p>
      *
      * @param application Application
      */
