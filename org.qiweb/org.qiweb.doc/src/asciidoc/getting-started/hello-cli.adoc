@@ -17,6 +17,8 @@ Meaning you have to manage your application dependencies and assembly yourself.
 Theses limitations make this DevShell suitable for quick prototyping only.
 Prefer the Gradle or Maven build systems integration.
 
+TIP: Invoke `qiweb-cli --help` to get a comprehensive help on each commands and options.
+
 ==== Create a new application
 
 To create a new QiWeb application, use the `new` command of `qiweb-cli`:
