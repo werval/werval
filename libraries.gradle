@@ -1,7 +1,7 @@
-// Define libraries and webjars used accross QiWeb WDK and their versions
+// Define libraries and webjars used accross QiWeb projects and their versions
 
 // Libraries versions
-def v_classworlds = '2.4.2'
+def v_classworlds = '2.5.1'
 def v_cli = '1.2'
 def v_exec = '1.1'
 def v_gradle_tooling = '1.4'
@@ -13,7 +13,7 @@ def v_junit = '4.11'
 def v_logback = '1.0.13'
 def v_netty = '4.0.7.Final'
 def v_qi4j = '2.0'
-def v_selenium = '2.33.0'
+def v_selenium = '2.35.0'
 def v_slf4j = '1.7.5'
 def v_threeten_backport = '0.8.1'
 def v_typesafe_config = '1.0.2'
@@ -54,9 +54,9 @@ rootProject.ext {
 
 
 // WebJARs versions
-def v_bootstrap = '2.3.2'
+def v_bootstrap = '3.0.0'
 def v_chartjs = '26962ce'
-def v_choosen = '0.9.12'
+def v_chosen = '0.9.12'
 def v_flotcharts = '0.8.0-1'
 def v_fontawesome = '3.2.1'
 def v_less = '1.3.3'
@@ -69,7 +69,7 @@ rootProject.ext {
     webjars = [
         bootstrap:          "org.webjars:bootstrap:$v_bootstrap",
         chartjs:            "org.webjars:chartjs:$v_chartjs",
-        choosen:            "org.webjars:choosen:$v_choosen",
+        chosen:             "org.webjars:chosen:$v_chosen",
         flotcharts:         "org.webjars:flot:$v_flotcharts",
         fontawesome:        "org.webjars:font-awesome:$v_fontawesome",
         less:               "org.webjars:less:$v_less",
