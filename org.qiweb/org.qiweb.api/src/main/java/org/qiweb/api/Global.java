@@ -15,7 +15,10 @@
  */
 package org.qiweb.api;
 
-import org.qiweb.api.controllers.ControllerMethodInvocation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import org.qiweb.api.controllers.Context;
+import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
 
@@ -30,6 +33,8 @@ public class Global
     /**
      * Invoked before binding Http Server.
      * <p>Default to NOOP.</p>
+     *
+     * @param application Application
      */
     public void beforeHttpBind( Application application )
     {
@@ -38,6 +43,8 @@ public class Global
     /**
      * Invoked after binding Http Server.
      * <p>Default to NOOP.</p>
+     *
+     * @param application Application
      */
     public void afterHttpBind( Application application )
     {
@@ -46,6 +53,8 @@ public class Global
     /**
      * Invoked before unbinding Http Server.
      * <p>Default to NOOP.</p>
+     *
+     * @param application Application
      */
     public void beforeHttpUnbind( Application application )
     {
@@ -54,6 +63,8 @@ public class Global
     /**
      * Invoked after unbinding Http Server.
      * <p>Default to NOOP.</p>
+     *
+     * @param application Application
      */
     public void afterHttpUnbind( Application application )
     {
@@ -100,18 +111,32 @@ public class Global
     }
 
     /**
-     * A Controller Method Invocation.
-     * <p>Default to {@link org.qiweb.api.controllers.ControllerMethodInvocation.Default}.</p>
-     * @return A Controller Method Invocation
+     * Invoke Controller Method.
+     * <p>Default to {@link Method#invoke(java.lang.Object, java.lang.Object[])}.</p>
+     * 
+     * @param context Request Context
+     * @param controller Controller Instance
+     * @return Invocation Outcome
      */
-    public ControllerMethodInvocation controllerMethodInvocation()
+    public Outcome invokeControllerMethod( Context context, Object controller )
     {
-        return new ControllerMethodInvocation.Default();
+        try
+        {
+            Method method = context.route().controllerMethod();
+            Object[] parameters = context.request().parameters().values().toArray();
+            return (Outcome) method.invoke( controller, parameters );
+        }
+        catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex )
+        {
+            throw new QiWebException( "Unable to invoke Controller Method.", ex );
+        }
     }
 
     /**
      * Invoked when a request completed successfully.
      * <p>Default to NOOP.</p>
+     * 
+     * @param requestHeader Request Header
      */
     public void onHttpRequestComplete( RequestHeader requestHeader )
     {

@@ -46,7 +46,7 @@ import org.qiweb.api.filters.FilterChain;
         public Outcome next( Context context )
         {
             Object controller = global.getControllerInstance( context.route().controllerType() );
-            return global.controllerMethodInvocation().invoke( context, controller );
+            return global.invokeControllerMethod( context, controller );
         }
     }
     private final Global global;
