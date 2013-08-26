@@ -5,8 +5,8 @@ import java.net.URL;
 import java.util.Set;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
+import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
-import org.qiweb.spi.dev.Watcher;
 
 /**
  * Gradle DevShellSPI implementation.
@@ -25,7 +25,7 @@ public class GradleDevShellSPI
      */
     private final String rebuildTask;
 
-    public GradleDevShellSPI( Set<File> sources, URL[] classPath, Watcher watcher,
+    public GradleDevShellSPI( Set<File> sources, URL[] classPath, SourceWatcher watcher,
                               File rootDir, String rebuildTask )
     {
         super( classPath, sources, watcher );

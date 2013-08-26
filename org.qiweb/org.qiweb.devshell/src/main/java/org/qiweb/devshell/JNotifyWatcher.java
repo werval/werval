@@ -15,7 +15,6 @@
  */
 package org.qiweb.devshell;
 
-import org.qiweb.spi.dev.Watcher;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,9 +31,12 @@ import java.util.jar.JarFile;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
+import org.qiweb.spi.dev.DevShellSPI.SourceChangeListener;
+import org.qiweb.spi.dev.DevShellSPI.SourceWatch;
+import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 
 public class JNotifyWatcher
-    implements Watcher
+    implements SourceWatcher
 {
 
     private static boolean nativeLibsDeployed = false;
@@ -133,9 +135,9 @@ public class JNotifyWatcher
         implements JNotifyListener
     {
 
-        private final ChangeListener listener;
+        private final SourceChangeListener listener;
 
-        public ListenerWrapper( ChangeListener listener )
+        private ListenerWrapper( SourceChangeListener listener )
         {
             this.listener = listener;
         }
@@ -166,7 +168,7 @@ public class JNotifyWatcher
     }
 
     @Override
-    public Watch watch( final Set<File> directories, final ChangeListener listener )
+    public SourceWatch watch( final Set<File> directories, final SourceChangeListener listener )
     {
         try
         {
@@ -176,7 +178,7 @@ public class JNotifyWatcher
             {
                 watches.add( JNotify.addWatch( dir.getAbsolutePath(), JNotify.FILE_ANY, true, jNotifyListener ) );
             }
-            return new Watch()
+            return new SourceWatch()
             {
                 @Override
                 public void unwatch()

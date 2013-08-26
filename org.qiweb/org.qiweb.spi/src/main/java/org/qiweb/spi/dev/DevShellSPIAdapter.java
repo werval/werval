@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.spi.dev.Watcher.ChangeListener;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
@@ -43,11 +42,11 @@ public class DevShellSPIAdapter
     private final URL[] classPath;
     private boolean sourceChanged = true;
 
-    public DevShellSPIAdapter( URL[] classPath, Set<File> sources, Watcher watcher )
+    public DevShellSPIAdapter( URL[] classPath, Set<File> sources, SourceWatcher watcher )
     {
         this.classPath = Arrays.copyOf( classPath, classPath.length );
         // TODO Unwatch sources on DevShell passivation
-        watcher.watch( sources, new ChangeListener()
+        watcher.watch( sources, new SourceChangeListener()
         {
             @Override
             public void onChange()

@@ -15,7 +15,9 @@
  */
 package org.qiweb.spi.dev;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Set;
 
 /**
  * Development Shell Service Provider Interface.
@@ -23,6 +25,41 @@ import java.net.URL;
  */
 public interface DevShellSPI
 {
+
+    /**
+     * File watching abstraction.
+     * <p>Allow DevShell implementations to choose their file watching implementation.</p>
+     */
+    public interface SourceWatcher
+    {
+
+        /**
+         * Watch a set of directories.
+         *
+         * @param directories Set of directories to watch
+         * @param listener Listener to notify on change
+         * @return A handle to unwatch when done
+         */
+        SourceWatch watch( Set<File> directories, SourceChangeListener listener );
+    }
+
+    /**
+     * Listener for source changes.
+     */
+    interface SourceChangeListener
+    {
+
+        void onChange();
+    }
+
+    /**
+     * Watch allowing to stop watching.
+     */
+    interface SourceWatch
+    {
+
+        void unwatch();
+    }
 
     URL[] classPath();
 

@@ -20,8 +20,8 @@ import java.net.URL;
 import java.util.Set;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
-import org.qiweb.spi.dev.Watcher;
 
 public class MavenDevShellSPI
     extends DevShellSPIAdapter
@@ -30,7 +30,7 @@ public class MavenDevShellSPI
     private final DefaultExecutor executor;
     private final CommandLine cmdLine;
 
-    public MavenDevShellSPI( URL[] classPath, Set<File> sources, Watcher watcher, File rootDir, String rebuildPhase )
+    public MavenDevShellSPI( URL[] classPath, Set<File> sources, SourceWatcher watcher, File rootDir, String rebuildPhase )
     {
         super( classPath, sources, watcher );
         executor = new DefaultExecutor();

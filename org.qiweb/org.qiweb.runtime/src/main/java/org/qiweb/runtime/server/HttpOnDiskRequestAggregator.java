@@ -68,6 +68,7 @@ import static io.netty.util.CharsetUtil.UTF_8;
  * </p>
  */
 // TODO Add in-memory buffering and overflow to disk according to a threshold
+// TODO Remove temporary files !
 public class HttpOnDiskRequestAggregator
     extends MessageToMessageDecoder<HttpObject>
 {

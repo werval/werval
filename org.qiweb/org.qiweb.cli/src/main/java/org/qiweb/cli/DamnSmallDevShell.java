@@ -50,8 +50,8 @@ import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JNotifyWatcher;
 import org.qiweb.devshell.QiWebDevShellException;
 import org.qiweb.runtime.util.ClassLoaders;
+import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
-import org.qiweb.spi.dev.Watcher;
 
 import static io.netty.util.CharsetUtil.UTF_8;
 
@@ -70,7 +70,7 @@ public final class DamnSmallDevShell
         private final Set<File> sources;
         private final File classesDir;
 
-        private SPI( URL[] classPath, Set<File> sources, Watcher watcher, File classesDir )
+        private SPI( URL[] classPath, Set<File> sources, SourceWatcher watcher, File classesDir )
         {
             super( classPath, sources, watcher );
             this.classpath = classPath;
@@ -327,7 +327,7 @@ public final class DamnSmallDevShell
 
         // Deploy JNotify
         JNotifyWatcher.deployNativeLibraries( tmpDir );
-        Watcher watcher = new JNotifyWatcher();
+        SourceWatcher watcher = new JNotifyWatcher();
 
         // First build
         rebuild( classpath, sources, classesDir );
