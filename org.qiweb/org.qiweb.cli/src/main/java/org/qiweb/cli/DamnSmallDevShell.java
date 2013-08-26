@@ -294,10 +294,6 @@ public final class DamnSmallDevShell
                 classpathList.add( new URL( url ) );
             }
         }
-        else
-        {
-            classpathList.add( new File( "lib" ).toURI().toURL() );
-        }
         // Append Application sources
         for( File source : sources )
         {
@@ -407,8 +403,7 @@ public final class DamnSmallDevShell
             .withArgName( "element" )
             .hasArgs()
             .withDescription( "Set application classpath element. "
-                              + "Use this option several times to declare a full classpath. "
-                              + "Defaults to 'lib' in current directory." )
+                              + "Use this option several times to declare a full classpath. " )
             .withLongOpt( "classpath" )
             .create( 'c' );
 
