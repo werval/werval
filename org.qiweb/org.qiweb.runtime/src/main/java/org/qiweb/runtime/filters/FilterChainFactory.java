@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
+import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.filters.Filter;
@@ -29,7 +30,7 @@ import org.qiweb.runtime.filters.FilterChainInstance.FilterChainControllerTail;
 public class FilterChainFactory
 {
 
-    public FilterChain buildFilterChain( Global global, Context context )
+    public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
         Set<Class<? extends Filter>> uniqueFilters = new LinkedHashSet<>();
         uniqueFilters.addAll( findFilterWithOnType( context.route().controllerType() ) );
@@ -40,19 +41,19 @@ public class FilterChainFactory
         }
         Stack<Class<? extends Filter>> filtersStack = new Stack<>();
         filtersStack.addAll( uniqueFilters );
-        return buildFilterChain( global, filtersStack, context );
+        return buildFilterChain( app, global, filtersStack, context );
     }
 
-    private FilterChain buildFilterChain( Global global, Stack<Class<? extends Filter>> filters, Context context )
+    private FilterChain buildFilterChain( Application app, Global global, Stack<Class<? extends Filter>> filters, Context context )
     {
 
         if( filters.isEmpty() )
         {
-            return new FilterChainControllerTail( global );
+            return new FilterChainControllerTail( app, global );
         }
         else
         {
-            return new FilterChainInstance( global, filters.pop(), buildFilterChain( global, filters, context ) );
+            return new FilterChainInstance( app, global, filters.pop(), buildFilterChain( app, global, filters, context ) );
         }
     }
 

@@ -132,7 +132,7 @@ public final class HttpRequestRouterHandler
             if( future.isSuccess() )
             {
                 LOG.debug( "{} Request completed successfully", requestIdentity );
-                app.global().onHttpRequestComplete( requestHeader );
+                app.global().onHttpRequestComplete( app, requestHeader );
             }
         }
     }
@@ -197,7 +197,7 @@ public final class HttpRequestRouterHandler
 
             // Invoke Controller FilterChain, ended by Controller Method Invokation
             LOG.trace( "{} Invoking controller method: {}", requestIdentity, route.controllerMethod() );
-            Outcome outcome = new FilterChainFactory().buildFilterChain( app.global(), context ).next( context );
+            Outcome outcome = new FilterChainFactory().buildFilterChain( app, app.global(), context ).next( context );
 
             // == Build the response
 

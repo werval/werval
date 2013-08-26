@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.filters;
 
+import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
@@ -35,26 +36,30 @@ import org.qiweb.api.filters.FilterChain;
         implements FilterChain
     {
 
+        private final Application app;
         private final Global global;
 
-        /* package */ FilterChainControllerTail( Global global )
+        /* package */ FilterChainControllerTail( Application app, Global global )
         {
+            this.app = app;
             this.global = global;
         }
 
         @Override
         public Outcome next( Context context )
         {
-            Object controller = global.getControllerInstance( context.route().controllerType() );
+            Object controller = global.getControllerInstance( app, context.route().controllerType() );
             return global.invokeControllerMethod( context, controller );
         }
     }
+    private final Application app;
     private final Global global;
     private final Class<? extends Filter> filterType;
     private final FilterChain next;
 
-    /* package */ FilterChainInstance( Global global, Class<? extends Filter> filterType, FilterChain next )
+    /* package */ FilterChainInstance( Application app, Global global, Class<? extends Filter> filterType, FilterChain next )
     {
+        this.app = app;
         this.global = global;
         this.filterType = filterType;
         this.next = next;
@@ -63,7 +68,7 @@ import org.qiweb.api.filters.FilterChain;
     @Override
     public Outcome next( Context context )
     {
-        Filter filter = global.getFilterInstance( filterType );
+        Filter filter = global.getFilterInstance( app, filterType );
         return filter.filter( next, context );
     }
 }

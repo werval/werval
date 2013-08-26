@@ -25,7 +25,10 @@ import org.qiweb.api.http.RequestHeader;
 /**
  * Application Global Object.
  * <p>Provide lifecycle, instanciation and invocation hooks.</p>
- * <p>You are encouraged to subclass it in your Application code.</p>
+ * <p>
+ *     You are encouraged to subclass it in your Application code by setting the <code>app.global</code> configuration
+ *     property to the FQCN of your Global implementation.
+ * </p>
  */
 public class Global
 {
@@ -97,10 +100,11 @@ public class Global
      * <p>Default to {@link Class#newInstance()} instanciation without any cache.</p>
      * 
      * @param <T> Filter Parameterized Type
+     * @param application Application
      * @param filterType Filter Type
      * @return Filter Instance
      */
-    public <T> T getFilterInstance( Class<T> filterType )
+    public <T> T getFilterInstance( Application application, Class<T> filterType )
     {
         try
         {
@@ -117,10 +121,11 @@ public class Global
      * <p>Default to {@link Class#newInstance()} instanciation without any cache.</p>
      *
      * @param <T> Controller Parameterized Type
+     * @param application Application
      * @param controllerType Controller Type
      * @return Controller Instance
      */
-    public <T> T getControllerInstance( Class<T> controllerType )
+    public <T> T getControllerInstance( Application application, Class<T> controllerType )
     {
         try
         {
@@ -158,9 +163,10 @@ public class Global
      * Invoked when a request completed successfully.
      * <p>Default to NOOP.</p>
      * 
+     * @param application Application
      * @param requestHeader Request Header
      */
-    public void onHttpRequestComplete( RequestHeader requestHeader )
+    public void onHttpRequestComplete( Application application, RequestHeader requestHeader )
     {
     }
 }
