@@ -44,7 +44,7 @@ configurations { umlgraphDoclet }
 dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p ->
-        p.name == 'org.qiweb.api' || p.name == 'org.qiweb.lib' || p.name == 'org.qiweb.spi'
+        p.name == 'org.qiweb.api' || p.name == 'org.qiweb.lib' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test'
     }
 }
 task embeddedJavadoc( type: Javadoc ) {
@@ -55,10 +55,17 @@ task embeddedJavadoc( type: Javadoc ) {
     options.encoding = 'UTF-8'
     options.overview = file( 'src/javadoc/overview.html' )
     options.docFilesSubDirs = true
-    options.links( "http://docs.oracle.com/javase/7/docs/api/", "http://www.slf4j.org/apidocs/" )
-    options.group( [ "QiWeb API":               [ "org.qiweb.api", "org.qiweb.api.*" ],
-                     "QiWeb Standard Library":  [ "org.qiweb.lib", "org.qiweb.lib.*" ],
-                     "QiWeb SPI":               [ "org.qiweb.spi", "org.qiweb.spi.*" ] ] )
+    options.links(
+        "http://docs.oracle.com/javase/7/docs/api/",
+        "http://www.slf4j.org/apidocs/",
+        "http://junit.sourceforge.net/javadoc/"
+    )
+    options.group( [
+            "QiWeb API":               [ "org.qiweb.api",   "org.qiweb.api.*"   ],
+            "QiWeb Standard Library":  [ "org.qiweb.lib",   "org.qiweb.lib.*"   ],
+            "QiWeb Test Support":      [ "org.qiweb.test",  "org.qiweb.test.*"  ],
+            "QiWeb SPI":               [ "org.qiweb.spi",   "org.qiweb.spi.*"   ]
+        ] )
     options.docletpath = configurations.umlgraphDoclet.files.asType( List )
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
 }
