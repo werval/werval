@@ -110,10 +110,33 @@ task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from 
     from sourceSets.main.allSource
 }
 
+// Create javadoc JAR
+javadoc {
+    title = "${project.name} (${version})"
+    options.encoding = 'UTF-8'
+    options.docFilesSubDirs = true
+    options.links(
+        "http://docs.oracle.com/javase/7/docs/api/",
+        "http://www.slf4j.org/apidocs/",
+        "http://junit.sourceforge.net/javadoc/"
+    )
+    doLast {
+        copy {
+            from 'src/main/javadoc'
+            into "${buildDir}/docs/javadoc"
+        }
+    }
+}
+task javadocJar(type: Jar, dependsOn:javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 // Attach sources JAR
 artifacts {
     archives jar 
     archives sourcesJar
+    archives javadocJar
 }
 
 // POM Setup
