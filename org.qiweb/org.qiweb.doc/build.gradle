@@ -68,6 +68,17 @@ task embeddedJavadoc( type: Javadoc ) {
         ] )
     options.docletpath = configurations.umlgraphDoclet.files.asType( List )
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
+    doLast {
+        copy {
+            from 'src/assets/images'
+            into "${htmlTarget}/api/images"
+        }
+    }
+    doLast {
+        copy {
+            from embeddedJavadocProjects().collect { p -> p.file( 'src/main/javadoc' ) }
+            into "${htmlTarget}/api"
+        }
+    }
 }
-embeddedJavadoc.dependsOn copyAssets
 jar.dependsOn embeddedJavadoc
