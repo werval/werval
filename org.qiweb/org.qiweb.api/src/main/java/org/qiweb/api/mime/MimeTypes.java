@@ -19,8 +19,28 @@ import java.io.File;
 
 /**
  * MimeTypes registry.
+ * 
  * <p>Mime Type lookups always succeed and thus never return null.</p>
  * <p>If unable to detect, {@link #DEFAULT_MIME_TYPE} is returned.</p>
+ * <p>The known Mime Types are extracted from Apache HTTP Server source code by the QiWeb Build System.</p>
+ * <p><img src="doc-files/apache-httpd.jpg"/></p>
+ * <p>
+ *     You can add Mime Type definitions in <code>application.conf</code> at the <code>app.mimetypes</code> config
+ *     property.
+ * </p>
+ * <p>Here is an example defining two more Mime Types:</p>
+ * <pre>
+ * app: {
+ *     mimetypes = {
+ *         foo: "application/vnd.acme.foo",
+ *         bar: "application/vnd.acme.bar"
+ *     }
+ * }
+ * </pre>
+ * <p>
+ *     Files with a <code>foo</code> or <code>bar</code> extension will then be respectively served with a
+ *     <code>application/vnd.acme.foo</code> or <code>application/vnd.acme.bar</code> Mime Type.
+ * </p>
  */
 public interface MimeTypes
 {
