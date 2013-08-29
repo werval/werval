@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,6 +40,7 @@ import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.controllers.Outcome.StatusClass;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
@@ -70,6 +72,7 @@ import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.RETRY_AFTER;
 import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
 import static io.netty.handler.codec.http.HttpHeaders.Names.TRAILER;
 import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
@@ -78,10 +81,12 @@ import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
 import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
@@ -153,6 +158,25 @@ public final class HttpRequestRouterHandler
                IllegalAccessException, InvocationTargetException,
                IOException
     {
+        if( nettyContext.executor().isShuttingDown() )
+        {
+            // Return 503 to request incoming while shutting down
+            FullHttpResponse response = new DefaultFullHttpResponse(
+                HTTP_1_1, SERVICE_UNAVAILABLE,
+                copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", UTF_8 ) );
+            response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
+            response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
+            response.headers().set( CONNECTION, CLOSE );
+            // By default, no Retry-After, only if defined in configuration
+            if( app.config().has( QIWEB_SHUTDOWN_RETRYAFTER ) )
+            {
+                response.headers().set( RETRY_AFTER, String.valueOf( app.config().seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
+            }
+            nettyContext.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
+            return;
+        }
+
+        // In development mode, rebuild application source if needed
         rebuildIfNeeded();
 
         // Generate a unique identifier per request
@@ -213,7 +237,7 @@ public final class HttpRequestRouterHandler
                 ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
                 nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
                 nettyResponse.headers().set( TRAILER, HttpChunkedBodyEncoder.CONTENT_LENGTH_TRAILER );
                 // Body
@@ -225,7 +249,7 @@ public final class HttpRequestRouterHandler
                 StreamOutcome streamOutcome = (StreamOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).content().
@@ -238,7 +262,7 @@ public final class HttpRequestRouterHandler
                 SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
                 ( (FullHttpResponse) nettyResponse ).content().writeBytes( simpleOutcome.body() );
@@ -248,7 +272,7 @@ public final class HttpRequestRouterHandler
             {
                 LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                forceClose = applyResponseHeader( nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
 
@@ -278,11 +302,13 @@ public final class HttpRequestRouterHandler
     /**
      * @return TRUE if the channel should be closed, otherwise return FALSE
      */
-    private boolean applyResponseHeader( FullHttpRequest nettyRequest, Session session, Response response, Outcome outcome, HttpResponse nettyResponse )
+    private boolean applyResponseHeader( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest,
+                                         Session session, Response response, Outcome outcome,
+                                         HttpResponse nettyResponse )
     {
         applyHttpHeaders( response.headers(), nettyResponse );
         applyHttpHeaders( outcome.headers(), nettyResponse );
-        boolean forceClose = applyKeepAliveHttpHeaders( nettyRequest, outcome, nettyResponse );
+        boolean forceClose = applyKeepAliveHttpHeaders( nettyContext, nettyRequest, outcome, nettyResponse );
         applySession( session, nettyResponse );
         applyCookies( response.cookies(), nettyResponse );
         return forceClose;
@@ -297,34 +323,33 @@ public final class HttpRequestRouterHandler
     }
 
     /**
-     * @return TRUE if the channel should be closed, otherwise return FALSE
+     * Apply HTTP 1.1 Keep-Alive headers.
+     * @return TRUE if the channel should be force closed, otherwise return FALSE
      */
-    private boolean applyKeepAliveHttpHeaders( FullHttpRequest nettyRequest, Outcome outcome, HttpResponse nettyResponse )
+    private boolean applyKeepAliveHttpHeaders( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest,
+                                               Outcome outcome,
+                                               HttpResponse nettyResponse )
     {
-        switch( outcome.statusClass() )
+        final EnumSet<StatusClass> forceCloseStatuses = EnumSet.of( StatusClass.CLIENT_ERROR,
+                                                                    StatusClass.SERVER_ERROR,
+                                                                    StatusClass.UNKNOWN );
+        if( nettyContext.executor().isShuttingDown() || forceCloseStatuses.contains( outcome.statusClass() ) )
         {
-            case CLIENT_ERROR:
-            case SERVER_ERROR:
-            case UNKNOWN:
-                // Apply Keep-Alive response headers if needed
-                if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
-                {
-                    nettyResponse.headers().set( CONNECTION, CLOSE );
-                }
-                // Always close on errors or unknown statuses
-                return true;
-            case INFORMATIONAL:
-            case SUCCESS:
-            case REDIRECTION:
-            default:
-                // Apply Keep-Alive response headers if needed
-                if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
-                {
-                    nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
-                }
-                // Don't close on informational, success or redirection statuses
-                return false;
+            // Apply Keep-Alive response headers if needed
+            if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
+            {
+                nettyResponse.headers().set( CONNECTION, CLOSE );
+            }
+            // Always close on errors, unknown statuses or when shutting down
+            return true;
         }
+        // Apply Keep-Alive response headers if needed
+        if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
+        {
+            nettyResponse.headers().set( CONNECTION, KEEP_ALIVE );
+        }
+        // Don't close on informational, success or redirection statuses
+        return false;
     }
 
     private void applySession( Session session, HttpResponse nettyResponse )

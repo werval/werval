@@ -37,6 +37,9 @@ public interface ConfigKeys
     // Framework configuration keys
     //
     String QIWEB_FS_TEMP = "qiweb.fs.temp";
+    String QIWEB_SHUTDOWN_QUIETPERIOD = "qiweb.shutdown.quiet-period";
+    String QIWEB_SHUTDOWN_TIMEOUT = "qiweb.shutdown.timeout";
+    String QIWEB_SHUTDOWN_RETRYAFTER = "qiweb.shutdown.retry-after";
     String QIWEB_HTTP_ADDRESS = "qiweb.http.address";
     String QIWEB_HTTP_PORT = "qiweb.http.port";
     String QIWEB_HTTP_ACCEPTORS = "qiweb.http.acceptors";

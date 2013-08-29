@@ -20,6 +20,9 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import java.util.concurrent.TimeUnit;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.spi.dev.DevShellSPI;
@@ -32,6 +35,8 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
 
 public class HttpServerInstance
     implements HttpServer
@@ -129,14 +134,24 @@ public class HttpServerInstance
     {
         app.global().beforeHttpUnbind( app );
 
-        // Unbind Netty
-        bootstrap.group().shutdownGracefully();
-        allChannels.clear();
+        Future<?> shutdownFuture = bootstrap.group().shutdownGracefully(
+            app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD ),
+            app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT ),
+            TimeUnit.MILLISECONDS );
+        shutdownFuture.addListener( new GenericFutureListener<Future<Object>>()
+        {
+            @Override
+            public void operationComplete( Future<Object> future )
+                throws Exception
+            {
+                allChannels.clear();
 
-        LOG.debug( "[{}] Http Service Passivated", identity );
+                LOG.debug( "[{}] Http Service Passivated", identity );
 
-        app.global().afterHttpUnbind( app );
-        app.global().onStop( app );
+                app.global().afterHttpUnbind( app );
+                app.global().onStop( app );
+            }
+        } );
     }
 
     @Override
