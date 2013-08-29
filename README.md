@@ -10,30 +10,34 @@
 
 QiWeb is not published yet. If you read this, feel lucky :-)
 
-If you want to try QiWeb you'll have to :
-
-- build the code from source ;
-- build the documentation from source ;
-- read unit tests and the mini-sample to get a glimpse at how all this works.
+If you want to try QiWeb you'll have to build the code and documentation from source.
 
 QiWeb is built using [Gradle](http://www.gradle.org/).
 You don't need to install anything except a JVM.
 The `gradlew` script that can be found at the projects root will download and bootstrap Gradle for you.
+If you are interested in this Gradle feature, check the
+[Gradle Wrapper](http://www.gradle.org/docs/current/userguide/gradle_wrapper.html) documentation.
 
 Please note that if you want to get UML diagrams generated in Javadocs you'll need to have
 [GraphViz](http://www.graphviz.org/) installed.
 The build will pass without though.
+But with less fun.
 
 To get you started, here are some usefull commands:
 
-    ./gradlew clean     # Clean up the project tree
-    ./gradlew check     # Run tests
-    ./gradlew assemble  # Assemble all qiweb artifacts
-    ./gradlew install   # Install all qiweb artifacts in local maven repository (~/.m2/repository)
+    ./gradlew clean             # Clean up the whole project tree
+    ./gradlew install           # Install all qiweb artifacts
+    ./gradlew install check     # Run all tests
 
-By default version number `0` is used, override with `-Dversion=WHATEVER`
+Artifacts produced by the build are installed in your local maven repository (`~/.m2/repository`).
 
-You can then depend on the following artifacts:
+To run all tests you must `install` first as build plugins are tested along the way and they need to be installed in
+order to be used by the tests and samples.
+This is why the command to run tests call the `install` and `check` tasks.
+
+By default version number `0` is used, you can override this with `-Dversion=WHATEVER`.
+
+Once qiweb artifacts are installed in your local maven repository you can depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
 - `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main` class
@@ -43,9 +47,12 @@ The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the De
 
 The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using `apply: 'qiweb'` and has a `devshell` task.
 
-If you want to test drive the `qiweb-cli`, first do:
+If you want to test drive the `qiweb-cli` command-line app-skeleton generator and development shell, the following
+commands will install it:
 
-    ./gradlew -p org.qiweb/org.qiweb.cli installApp
-
-This install the `qiweb-cli` tool in the project build directory.
-Then, add `./org.qiweb/org.qiweb.cli/build/install/qiweb-cli/bin` to your `PATH` and use the `qiweb-cli` command.
+    # Create ~/opt if it does not exist
+    if [ ! -d ~/opt ] ; then mkdir -p ~/opt ; fi
+    # Unzip qiweb-cli distribution in ~/opt
+    unzip -l ~/.m2/repository/org/qiweb/org.qiweb.cli/0/org.qiweb.cli-0-dist.zip -d ~/opt
+    # Add qiweb-cli to your $PATH
+    export PATH=~/opt/qiweb-cli-0/bin:$PATH
