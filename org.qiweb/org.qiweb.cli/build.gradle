@@ -9,3 +9,11 @@ apply plugin: 'application'
 
 mainClassName = 'org.qiweb.cli.DamnSmallDevShell'
 applicationName = 'qiweb-cli'
+
+distZip {
+    classifier = 'dist'
+}
+
+artifacts {
+    archives distZip
+}
