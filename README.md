@@ -10,18 +10,19 @@
 
 QiWeb is not published yet. If you read this, feel lucky :-)
 
-If you want to try QiWeb you'll have to build the code and documentation from source.
+If you want to try QiWeb you'll have to build the code and documentation from
+source.
 
-QiWeb is built using [Gradle](http://www.gradle.org/).
-You don't need to install anything except a JVM.
-The `gradlew` script that can be found at the projects root will download and bootstrap Gradle for you.
-If you are interested in this Gradle feature, check the
-[Gradle Wrapper](http://www.gradle.org/docs/current/userguide/gradle_wrapper.html) documentation.
+QiWeb is built using Gradle (http://www.gradle.org/). You don't need to
+install anything except a JVM. The `gradlew` script that can be found at the
+projects root will download and bootstrap Gradle for you. If you are
+interested in this Gradle feature, check the Gradle Wrapper
+(http://www.gradle.org/docs/current/userguide/gradle_wrapper.html)
+documentation.
 
-Please note that if you want to get UML diagrams generated in Javadocs you'll need to have
-[GraphViz](http://www.graphviz.org/) installed.
-The build will pass without though.
-But with less fun.
+Please note that if you want to get UML diagrams generated in Javadocs you'll
+need to have GraphViz (http://www.graphviz.org/) installed. The build will pass
+without though. But with less fun.
 
 To get you started, here are some usefull commands:
 
@@ -29,26 +30,31 @@ To get you started, here are some usefull commands:
     ./gradlew install           # Install all qiweb artifacts
     ./gradlew install check     # Run all tests
 
-Artifacts produced by the build are installed in your local maven repository (`~/.m2/repository`).
+Artifacts produced by the build are installed in your local maven repository
+(`~/.m2/repository`).
 
-To run all tests you must `install` first as build plugins are tested along the way and they need to be installed in
-order to be used by the tests and samples.
+To run all tests you must `install` first as build plugins are tested along the
+way and they need to be installed in order to be used by the tests and samples.
 This is why the command to run tests call the `install` and `check` tasks.
 
-By default version number `0` is used, you can override this with `-Dversion=WHATEVER`.
+By default version number `0` is used, you can override this with
+`-Dversion=WHATEVER`.
 
-Once qiweb artifacts are installed in your local maven repository you can depend on the following artifacts:
+Once qiweb artifacts are installed in your local maven repository you can
+depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
-- `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main` class
-- `org.qiweb:org.qiweb.test:0` in your test code to get a test environment easily
+- `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main`
+- `org.qiweb:org.qiweb.test:0` in your test code to get a test environment
 
-The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the Development Shell.
+The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the
+Development Shell.
 
-The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using `apply: 'qiweb'` and has a `devshell` task.
+The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using
+`apply: 'qiweb'` and has a `devshell` task.
 
-If you want to test drive the `qiweb-cli` command-line app-skeleton generator and development shell, the following
-commands will install it:
+If you want to test drive the `qiweb-cli` command-line app-skeleton generator
+and development shell, the following commands will install it:
 
     # Create ~/opt if it does not exist
     if [ ! -d ~/opt ] ; then mkdir -p ~/opt ; fi
