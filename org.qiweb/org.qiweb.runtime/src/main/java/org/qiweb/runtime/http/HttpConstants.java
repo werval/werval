@@ -20,4 +20,6 @@ public interface HttpConstants
 
     int DEFAULT_HTTP_PORT = 80;
     int DEFAULT_HTTPS_PORT = 443;
+    String QIWEB_HEADER_CONTENT_LENGTH_TRAILER = "X-QiWeb-Content-Length";
+    String QIWEB_HEADER_REQUEST_ID = "X-QiWeb-Request-ID";
 }

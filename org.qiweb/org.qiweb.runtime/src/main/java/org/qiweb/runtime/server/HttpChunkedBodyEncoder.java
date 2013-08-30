@@ -24,6 +24,7 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedInput;
 
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
+import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_CONTENT_LENGTH_TRAILER;
 
 /**
  * Encode a ChunkedInput&lt;ByteBuf&gt; into HTTP chunks.
@@ -32,7 +33,6 @@ public class HttpChunkedBodyEncoder
     implements ChunkedInput<HttpContent>
 {
 
-    public static final String CONTENT_LENGTH_TRAILER = "X-QiWeb-Content-Length";
     private final ChunkedInput<ByteBuf> chunkedBody;
     private boolean isLastChunk = false;
     private boolean isLastChunkRead = false;
@@ -77,7 +77,7 @@ public class HttpChunkedBodyEncoder
         {
             isLastChunkRead = true;
             LastHttpContent lastChunk = new DefaultLastHttpContent( EMPTY_BUFFER );
-            lastChunk.trailingHeaders().add( CONTENT_LENGTH_TRAILER, contentLength );
+            lastChunk.trailingHeaders().add( QIWEB_HEADER_CONTENT_LENGTH_TRAILER, contentLength );
             return lastChunk;
         }
         ByteBuf buffer = chunkedBody.readChunk( context );

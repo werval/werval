@@ -84,6 +84,8 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_CONTENT_LENGTH_TRAILER;
+import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_REQUEST_ID;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
@@ -158,12 +160,18 @@ public final class HttpRequestRouterHandler
                IllegalAccessException, InvocationTargetException,
                IOException
     {
+        // Generate a unique identifier per request
+        requestIdentity = generateNewRequestIdentity();
+        LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity,
+                   Strings.indentTwoSpaces( nettyRequest.toString(), 2 ) );
+
+        // Return 503 to request incoming while shutting down
         if( nettyContext.executor().isShuttingDown() )
         {
-            // Return 503 to request incoming while shutting down
             FullHttpResponse response = new DefaultFullHttpResponse(
                 HTTP_1_1, SERVICE_UNAVAILABLE,
                 copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", UTF_8 ) );
+            response.headers().set( QIWEB_HEADER_REQUEST_ID, requestIdentity );
             response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
@@ -178,11 +186,6 @@ public final class HttpRequestRouterHandler
 
         // In development mode, rebuild application source if needed
         rebuildIfNeeded();
-
-        // Generate a unique identifier per request
-        requestIdentity = generateNewRequestIdentity();
-        LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity,
-                   Strings.indentTwoSpaces( nettyRequest.toString(), 2 ) );
 
         // Parse RequestHeader
         RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest );
@@ -239,7 +242,7 @@ public final class HttpRequestRouterHandler
                 // Headers
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
-                nettyResponse.headers().set( TRAILER, HttpChunkedBodyEncoder.CONTENT_LENGTH_TRAILER );
+                nettyResponse.headers().set( TRAILER, QIWEB_HEADER_CONTENT_LENGTH_TRAILER );
                 // Body
                 nettyContext.write( nettyResponse );
                 writeFuture = nettyContext.writeAndFlush( new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput() ) );
@@ -311,6 +314,7 @@ public final class HttpRequestRouterHandler
         boolean forceClose = applyKeepAliveHttpHeaders( nettyContext, nettyRequest, outcome, nettyResponse );
         applySession( session, nettyResponse );
         applyCookies( response.cookies(), nettyResponse );
+        nettyResponse.headers().set( QIWEB_HEADER_REQUEST_ID, requestIdentity );
         return forceClose;
     }
 
@@ -428,9 +432,10 @@ public final class HttpRequestRouterHandler
         }
     }
 
-    private static void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
+    private void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
     {
         FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, UTF_8 ) );
+        response.headers().set( QIWEB_HEADER_REQUEST_ID, requestIdentity );
         response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
         response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );
