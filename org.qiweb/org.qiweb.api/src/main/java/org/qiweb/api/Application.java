@@ -47,7 +47,7 @@ public interface Application
 
         /**
          * Development Mode.
-         * <p>Source is watched, Application is reloaded on-demand.</p>
+         * <p>Source is watched, Application is reloaded on-demand, stacktraces are disclosed in responses.</p>
          */
         DEV( "Development" ),
         /**

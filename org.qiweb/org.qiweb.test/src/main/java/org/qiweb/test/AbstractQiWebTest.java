@@ -32,6 +32,9 @@ import org.qiweb.runtime.server.HttpServerInstance;
 
 import static io.netty.util.CharsetUtil.UTF_8;
 
+/**
+ * Base QiWeb Test.
+ */
 public abstract class AbstractQiWebTest
 {
 
@@ -39,15 +42,21 @@ public abstract class AbstractQiWebTest
     private HttpServerInstance httpServer;
     private ApplicationInstance app;
 
+    /**
+     * Activate HttpServer.
+     */
     @Before
     public final void beforeEachTest()
     {
         RoutesProvider routesProvider = new RoutesParserProvider( routesString() );
         app = new ApplicationInstance( routesProvider );
-        httpServer = new HttpServerInstance( "meta-inf-resources-test", app );
+        httpServer = new HttpServerInstance( "qiweb-test", app );
         httpServer.activate();
     }
 
+    /**
+     * Passivate HttpServer.
+     */
     @After
     public final void afterEachTest()
     {
@@ -58,11 +67,17 @@ public abstract class AbstractQiWebTest
 
     protected abstract String routesString();
 
+    /**
+     * @return Application
+     */
     protected final Application application()
     {
         return app;
     }
 
+    /**
+     * @return New HttpClient instance
+     */
     protected final DefaultHttpClient newHttpClientInstance()
     {
         DefaultHttpClient client = new DefaultHttpClient( new BasicClientConnectionManager() );
