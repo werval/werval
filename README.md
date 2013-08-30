@@ -44,6 +44,7 @@ Once qiweb artifacts are installed in your local maven repository you can
 depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
+- `org.qiweb:org.qiweb.lib:0` in your app code, this is the standard library
 - `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main`
 - `org.qiweb:org.qiweb.test:0` in your test code to get a test environment
 
