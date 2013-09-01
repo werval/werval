@@ -144,4 +144,11 @@ public interface Application
      * @return Application {@link MetaData}
      */
     MetaData metaData();
+
+    /**
+     * Application {@link Errors}.
+     * <p>Don't hold references to the Errors instance in order to make your code {@link Mode#DEV} friendly.</p>
+     * @return Application {@link Errors}
+     */
+    Errors errors();
 }

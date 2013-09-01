@@ -38,6 +38,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application.Mode;
+import org.qiweb.api.Error;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.controllers.Outcome.StatusClass;
@@ -54,6 +55,7 @@ import org.qiweb.api.http.Session;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
+import org.qiweb.runtime.ErrorsInstance;
 import org.qiweb.runtime.controllers.ContextInstance;
 import org.qiweb.runtime.controllers.ContextHelper;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
@@ -407,16 +409,19 @@ public final class HttpRequestRouterHandler
             LOG.error( "{} Exception caught: {}( {} )",
                        requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
                        cause );
+
+            // We want nice stack traces
+            if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
+            {
+                // WARN This depends on and work only with DefaultControllerInvocation!
+                cause = cause.getCause().getCause();
+            }
+
+            // Build body
             StringWriter body = new StringWriter();
             body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
             if( app.mode() == Mode.DEV )
             {
-                // In development mode we want nice stack traces
-                if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
-                {
-                    // WARN This depends on and work only with DefaultControllerInvocation!
-                    cause = cause.getCause().getCause();
-                }
                 body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
                 {
                     @Override
@@ -428,7 +433,16 @@ public final class HttpRequestRouterHandler
 
                 body.append( "</body></html>\n" );
             }
-            sendError( nettyContext, INTERNAL_SERVER_ERROR, body.toString() );
+            String bodyString = body.toString();
+
+            // Record Error
+            Error error = ( (ErrorsInstance) app.errors() ).record( requestIdentity, bodyString, cause );
+
+            // Notifies Application's Global
+            app.global().onHttpRequestError( app, error );
+
+            // Send Error to client
+            sendError( nettyContext, INTERNAL_SERVER_ERROR, bodyString );
         }
     }
 

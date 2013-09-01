@@ -24,6 +24,7 @@ public interface ConfigKeys
     //
     // Application configuration keys
     //
+    String APP_ERRORS_RECORD_MAX = "app.errors.record.max";
     String APP_GLOBAL = "app.global";
     String APP_MIMETYPES = "app.mimetypes";
     String APP_SECRET = "app.secret";

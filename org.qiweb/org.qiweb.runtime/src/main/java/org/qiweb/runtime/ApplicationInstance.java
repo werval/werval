@@ -21,6 +21,7 @@ import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
+import org.qiweb.api.Errors;
 import org.qiweb.api.Global;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.exceptions.ParameterBinderException;
@@ -67,6 +68,7 @@ public final class ApplicationInstance
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
     private final MetaData metaData;
+    private final Errors errors;
 
     /**
      * Create a new Application instance in {@link Mode#test}.
@@ -96,6 +98,7 @@ public final class ApplicationInstance
         this.routesProvider = routesProvider;
         this.classLoader = classLoader;
         this.metaData = new MetaData();
+        this.errors = new ErrorsInstance( config );
         configurationChanged();
     }
 
@@ -162,6 +165,12 @@ public final class ApplicationInstance
     public MetaData metaData()
     {
         return metaData;
+    }
+
+    @Override
+    public Errors errors()
+    {
+        return errors;
     }
 
     // Called reflectively by org.qiweb.devshell.DevShell

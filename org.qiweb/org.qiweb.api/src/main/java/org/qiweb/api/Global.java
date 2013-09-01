@@ -169,4 +169,15 @@ public class Global
     public void onHttpRequestComplete( Application application, RequestHeader requestHeader )
     {
     }
+
+    /**
+     * Invoked when an exception pops out of the Application.
+     * <p>Default to NOOP.</p>
+     *
+     * @param requestHeader Request Header
+     * @param error Error
+     */
+    public void onHttpRequestError( Application application, Error error )
+    {
+    }
 }
