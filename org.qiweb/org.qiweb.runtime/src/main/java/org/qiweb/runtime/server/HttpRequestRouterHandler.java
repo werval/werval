@@ -83,6 +83,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
 import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
@@ -400,9 +401,8 @@ public final class HttpRequestRouterHandler
         }
         else if( cause instanceof ParameterBinderException )
         {
-            // QUID BadRequest instead?
-            LOG.warn( "{} ParameterBinderException, will return 404.", requestIdentity, cause );
-            sendError( nettyContext, NOT_FOUND, cause.getMessage() );
+            LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, cause );
+            sendError( nettyContext, BAD_REQUEST, cause.getMessage() );
         }
         else
         {
