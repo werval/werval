@@ -16,7 +16,9 @@
 package org.qiweb.api.util;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -26,19 +28,64 @@ import java.util.TimeZone;
 public final class Dates
 {
 
-    private static ThreadLocal<DateFormat> httpFormat = new ThreadLocal<>();
-
-    /**
-     * @return HTTP DateFormat
-     */
-    public static DateFormat httpFormat()
+    public static final class HTTP
     {
-        if( httpFormat.get() == null )
+
+        private static final ThreadLocal<DateFormat> HTTP_DATE_FORMAT = new ThreadLocal<DateFormat>()
         {
-            httpFormat.set( new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US ) );
-            httpFormat.get().setTimeZone( TimeZone.getTimeZone( "GMT" ) );
+            @Override
+            protected DateFormat initialValue()
+            {
+                DateFormat dateFormat = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US );
+                dateFormat.setTimeZone( TimeZone.getTimeZone( "GMT" ) );
+                return dateFormat;
+            }
+        };
+
+        public static String format( Date date )
+        {
+            return HTTP_DATE_FORMAT.get().format( date );
         }
-        return httpFormat.get();
+
+        public static Date parse( String httpFormatDateString )
+            throws ParseException
+        {
+            return HTTP_DATE_FORMAT.get().parse( httpFormatDateString );
+        }
+
+        public static String now()
+        {
+            return format( new Date() );
+        }
+
+        public static String yesterday()
+        {
+            return format( Dates.yesterday() );
+        }
+
+        public static String tomorrow()
+        {
+            return format( Dates.tomorrow() );
+        }
+
+        private HTTP()
+        {
+        }
+    }
+
+    public static Date now()
+    {
+        return new Date();
+    }
+
+    public static Date yesterday()
+    {
+        return new Date( System.currentTimeMillis() - 24 * 60 * 60 );
+    }
+
+    public static Date tomorrow()
+    {
+        return new Date( System.currentTimeMillis() + 24 * 60 * 60 );
     }
 
     private Dates()

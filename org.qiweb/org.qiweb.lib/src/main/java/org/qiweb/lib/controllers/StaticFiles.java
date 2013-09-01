@@ -213,7 +213,7 @@ public class StaticFiles
             {
                 try
                 {
-                    if( Dates.httpFormat().parse( ifModifiedSince ).getTime() >= lastModified )
+                    if( Dates.HTTP.parse( ifModifiedSince ).getTime() >= lastModified )
                     {
                         notModified = true;
                     }
@@ -230,7 +230,7 @@ public class StaticFiles
         {
             return outcomes().notModified().build();
         }
-        response().headers().with( LAST_MODIFIED, Dates.httpFormat().format( new Date( lastModified ) ) );
+        response().headers().with( LAST_MODIFIED, Dates.HTTP.format( new Date( lastModified ) ) );
 
         // MimeType
         String mimetype = application().mimeTypes().ofFile( file );
