@@ -17,9 +17,11 @@ package org.qiweb.runtime;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -38,7 +40,7 @@ public class ErrorsInstance
 {
 
     private static final class ErrorInstance
-        implements Error, Comparable<Error>
+        implements Error
     {
 
         final Long timestamp;
@@ -87,31 +89,82 @@ public class ErrorsInstance
         }
 
         @Override
-        public int compareTo( Error o )
-        {
-            return timestamp.compareTo( o.timestamp() );
-        }
-
-        @Override
         public String toString()
         {
             return "Error( " + errorId + ", " + requestId + ", " + cause.getClass().getSimpleName() + " )";
         }
-    }
-    private static final String ERROR_IDENTITY_PREFIX = UUID.randomUUID().toString() + "-";
-    private static final AtomicLong ERROR_IDENTITY_COUNT = new AtomicLong();
 
-    private static String generateNewErrorIdentity()
-    {
-        return ERROR_IDENTITY_PREFIX + ERROR_IDENTITY_COUNT.getAndIncrement();
+        @Override
+        public int hashCode()
+        {
+            int hash = 3;
+            hash = 79 * hash + Objects.hashCode( this.errorId );
+            return hash;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( obj == null )
+            {
+                return false;
+            }
+            if( getClass() != obj.getClass() )
+            {
+                return false;
+            }
+            final ErrorInstance other = (ErrorInstance) obj;
+            if( !Objects.equals( this.errorId, other.errorId ) )
+            {
+                return false;
+            }
+            return true;
+        }
     }
     private final Config config;
     private final Map<String, Error> errors;
+    private String errorIdentityPrefix;
+    private AtomicLong errorIdentityCount;
 
     public ErrorsInstance( Config config )
     {
         this.config = config;
-        this.errors = new TreeMap<>();
+        this.errors = new TreeMap<>( new Comparator<String>()
+        {
+            @Override
+            public int compare( String o1, String o2 )
+            {
+                return o2.compareTo( o1 );
+            }
+        } );
+        resetErrorIdentity();
+    }
+
+    private void resetErrorIdentity()
+    {
+        errorIdentityPrefix = UUID.randomUUID().toString() + "-";
+        errorIdentityCount = new AtomicLong();
+    }
+
+    private String generateNewErrorIdentity()
+    {
+        // Left pad incremented error count with zeroes
+        // Pad size is max recorded error length + 1
+        return errorIdentityPrefix
+               + String.format( "%0" + ( config.string( APP_ERRORS_RECORD_MAX ).length() + 1 ) + "d",
+                                errorIdentityCount.getAndIncrement() );
+    }
+
+    @Override
+    public Iterator<Error> iterator()
+    {
+        return errors.values().iterator();
+    }
+
+    @Override
+    public List<Error> asList()
+    {
+        return Collections.unmodifiableList( new ArrayList<>( errors.values() ) );
     }
 
     @Override
@@ -122,21 +175,23 @@ public class ErrorsInstance
         errors.put( errorId, error );
         while( errors.size() > config.intNumber( APP_ERRORS_RECORD_MAX ) )
         {
-            errors.remove( errors.keySet().iterator().next() );
+            List<String> keys = new ArrayList<>( errors.keySet() );
+            errors.remove( keys.get( keys.size() - 1 ) );
         }
         return error;
     }
 
     @Override
-    public int size()
+    public int count()
     {
         return errors.size();
     }
 
     @Override
-    public void clear()
+    public synchronized void clear()
     {
         errors.clear();
+        resetErrorIdentity();
     }
 
     @Override
@@ -146,8 +201,22 @@ public class ErrorsInstance
     }
 
     @Override
+    public Error last()
+    {
+        if( errors.isEmpty() )
+        {
+            return null;
+        }
+        return errors.get( errors.keySet().iterator().next() );
+    }
+
+    @Override
     public List<Error> ofRequest( String requestId )
     {
+        if( errors.isEmpty() )
+        {
+            return Collections.emptyList();
+        }
         List<Error> requestErrors = new ArrayList<>();
         for( Map.Entry<String, Error> entry : errors.entrySet() )
         {
@@ -157,13 +226,21 @@ public class ErrorsInstance
                 requestErrors.add( error );
             }
         }
-        Collections.reverse( requestErrors );
         return Collections.unmodifiableList( requestErrors );
     }
 
     @Override
-    public Iterator<Error> iterator()
+    public Error lastOfRequest( String requestIdentity )
     {
-        return errors.values().iterator();
+        if( errors.isEmpty() )
+        {
+            return null;
+        }
+        List<Error> ofRequest = ofRequest( requestIdentity );
+        if( ofRequest.isEmpty() )
+        {
+            return null;
+        }
+        return ofRequest.get( 0 );
     }
 }

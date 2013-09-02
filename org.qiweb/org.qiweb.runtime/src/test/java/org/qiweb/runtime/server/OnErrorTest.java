@@ -31,6 +31,9 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_REQUEST_ID;
 
+/**
+ * Assert that Application errors triggers the right code paths.
+ */
 public class OnErrorTest
     extends AbstractQiWebTest
 {
@@ -71,7 +74,7 @@ public class OnErrorTest
         HttpClient client = newHttpClientInstance();
         HttpResponse response = client.execute( new HttpGet( BASE_URL + "success" ) );
         assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( application().errors().size(), is( 0 ) );
+        assertThat( application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -81,7 +84,7 @@ public class OnErrorTest
         HttpClient client = newHttpClientInstance();
         HttpResponse response = client.execute( new HttpGet( BASE_URL + "internalServerError" ) );
         assertThat( response.getStatusLine().getStatusCode(), is( 500 ) );
-        assertThat( application().errors().size(), is( 0 ) );
+        assertThat( application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -96,7 +99,7 @@ public class OnErrorTest
         String requestId = response.getLastHeader( QIWEB_HEADER_REQUEST_ID ).getValue();
         assertThat( requestId, notNullValue() );
 
-        assertThat( application().errors().size(), is( 1 ) );
+        assertThat( application().errors().count(), is( 1 ) );
 
         List<Error> requestErrors = application().errors().ofRequest( requestId );
         assertThat( requestErrors.size(), is( 1 ) );
