@@ -1,16 +1,14 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.CustomParam;
+import org.codeartisans.java.toolbox.Collections;
 import org.junit.Test;
 import org.qiweb.api.Application;
-import org.qiweb.api.Config;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
-import org.qiweb.runtime.ConfigInstance;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.qi4j.functional.Iterables.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Assert that controller method parameters types lookup is working as expected.
@@ -18,14 +16,12 @@ import static org.qi4j.functional.Iterables.*;
 public class ParamTypeLookupTest
 {
 
-    private final Config config = new ConfigInstance();
-
     @Test
     public void givenFullyQualifiedCustomParamTypeWhenLookupExpectFound()
     {
         Application app = new ApplicationInstance( new RoutesParserProvider(
             "GET /:custom com.acme.app.FakeController.customParam( com.acme.app.CustomParam custom )" ) );
-        Route route = first( app.routes() );
+        Route route = Collections.firstElementOrNull( app.routes() );
         System.out.println( route );
         assertThat( ( (RouteInstance) route ).controllerParams().get( "custom" ).type().getName(), equalTo( CustomParam.class.getName() ) );
     }
@@ -35,7 +31,7 @@ public class ParamTypeLookupTest
     {
         Application app = new ApplicationInstance( new RoutesParserProvider(
             "GET /:custom com.acme.app.FakeController.customParam( CustomParam custom )" ) );
-        Route route = first( app.routes() );
+        Route route = Collections.firstElementOrNull( app.routes() );
         System.out.println( route );
         assertThat( ( (RouteInstance) route ).controllerParams().get( "custom" ).type().getName(), equalTo( CustomParam.class.getName() ) );
     }

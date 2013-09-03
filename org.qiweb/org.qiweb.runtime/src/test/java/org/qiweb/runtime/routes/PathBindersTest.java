@@ -12,8 +12,9 @@ import org.junit.Test;
 import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class PathBindersTest
 {

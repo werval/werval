@@ -15,11 +15,9 @@
  */
 package org.qiweb.runtime.server;
 
+import com.jayway.restassured.response.Response;
 import java.io.IOException;
 import java.util.List;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.Test;
 import org.qiweb.api.Error;
 import org.qiweb.api.controllers.Controller;
@@ -27,8 +25,11 @@ import org.qiweb.api.controllers.Outcome;
 import org.qiweb.runtime.TestGlobal;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_REQUEST_ID;
 
 /**
@@ -71,9 +72,10 @@ public class OnErrorTest
     public void testSuccess()
         throws IOException
     {
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "success" ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
+        expect().
+            statusCode( 200 ).
+            when().
+            get( BASE_URL + "success" );
         assertThat( application().errors().count(), is( 0 ) );
     }
 
@@ -81,9 +83,10 @@ public class OnErrorTest
     public void testInternalServerError()
         throws IOException
     {
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "internalServerError" ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 500 ) );
+        expect().
+            statusCode( 500 ).
+            when().
+            get( BASE_URL + "internalServerError" );
         assertThat( application().errors().count(), is( 0 ) );
     }
 
@@ -91,12 +94,13 @@ public class OnErrorTest
     public void testException()
         throws IOException
     {
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "exception" ) );
+        Response response = expect().
+            statusCode( 500 ).
+            when().
+            get( BASE_URL + "exception" );
+        assertThat( response.statusCode(), is( 500 ) );
 
-        assertThat( response.getStatusLine().getStatusCode(), is( 500 ) );
-
-        String requestId = response.getLastHeader( QIWEB_HEADER_REQUEST_ID ).getValue();
+        String requestId = response.header( QIWEB_HEADER_REQUEST_ID );
         assertThat( requestId, notNullValue() );
 
         assertThat( application().errors().count(), is( 1 ) );
@@ -118,10 +122,11 @@ public class OnErrorTest
         TestGlobal testGlobal = TestGlobal.ofApplication( application() );
         assertThat( testGlobal.httpRequestErrorCount, is( 0 ) );
 
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "exception" ) );
-
-        assertThat( response.getStatusLine().getStatusCode(), is( 500 ) );
+        Response response = expect().
+            statusCode( 500 ).
+            when().
+            get( BASE_URL + "exception" );
+        assertThat( response.statusCode(), is( 500 ) );
 
         assertThat( testGlobal.httpRequestErrorCount, is( 1 ) );
         assertThat( testGlobal.lastError.cause().getClass().getName(), equalTo( IOException.class.getName() ) );
