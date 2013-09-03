@@ -18,15 +18,21 @@ package org.qiweb.runtime.routes;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.qiweb.api.controllers.Controller.*;
-import static org.qiweb.api.routes.ReverseRoutes.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.controllers.Controller.reverseRoutes;
+import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class ReverseRoutesTest
     extends AbstractQiWebTest
@@ -87,44 +93,48 @@ public class ReverseRoutesTest
     public void testSimpleMethod()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        String httpUrl = BASE_URL + "simpleMethod";
-        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+        String url = BASE_URL + "simpleMethod";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( url ) ).
+            when().
+            get( url );
     }
 
     @Test
     public void testSimpleMethodWithParam()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        String httpUrl = BASE_URL + "simpleMethod/test/foo";
-        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+        String url = BASE_URL + "simpleMethod/test/foo";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( url ) ).
+            when().
+            get( url );
     }
 
     @Test
     public void testWildcard()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        String httpUrl = BASE_URL + "wild/wild/wild/card";
-        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+        String url = BASE_URL + "wild/wild/wild/card";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( url ) ).
+            when().
+            get( url );
     }
 
     @Test
     public void testQueryString()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        String httpUrl = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bazar";
-        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bazar";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( url ) ).
+            when().
+            get( url );
     }
 
     @Test
@@ -142,10 +152,11 @@ public class ReverseRoutesTest
     public void testFragmentIdentifier()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        String httpUrl = BASE_URL + "fragment/identifier";
-        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( httpUrl + "#bazar" ) );
+        String url = BASE_URL + "fragment/identifier";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( url + "#bazar" ) ).
+            when().
+            get( url );
     }
 }
