@@ -14,6 +14,7 @@ def v_junit = '4.11'
 def v_logback = '1.0.13'
 def v_netty = '4.0.7.Final'
 def v_qi4j = '2.0'
+def v_rest_assured = '1.8.1'
 def v_selenium = '2.35.0'
 def v_slf4j = '1.7.5'
 def v_threeten_backport = '0.8.1'
@@ -52,6 +53,7 @@ rootProject.ext {
         qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
         qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
         qi4j_test:          "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
+        rest_assured:       "com.jayway.restassured:rest-assured:$v_rest_assured",
         selenium:           "org.seleniumhq.selenium:selenium-java:$v_selenium",
     ]
 }
