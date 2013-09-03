@@ -15,14 +15,12 @@
  */
 package org.qiweb.lib.controllers;
 
+import com.jayway.restassured.response.Response;
 import java.io.IOException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.qiweb.test.AbstractQiWebTest;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -38,55 +36,59 @@ public class ClasspathResourcesTest
 
     @Test
     public void givenNonExistentResourceWhenRequestingExpectNotFound()
-        throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "qiweb/donotexists.yet" ) );
-        soutResponseHead( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 404 ) );
+        expect().
+            statusCode( 404 ).
+            when().
+            get( BASE_URL + "qiweb/donotexists.yet" );
     }
 
     @Test
     public void givenResourceSmallerThanOneChunkWhenRequestingExpectCorrectResult()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "qiweb/666B" ) );
-        soutResponseHead( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-        assertThat( response.getLastHeader( "Transfer-Encoding" ).getValue(), equalTo( "chunked" ) );
-        assertThat( response.getLastHeader( "Content-Type" ).getValue(), equalTo( "application/octet-stream" ) );
-        assertThat( EntityUtils.toByteArray( response.getEntity() ).length, equalTo( 666 ) );
+        Response response = expect().
+            statusCode( 200 ).
+            header( "Transfer-Encoding", "chunked" ).
+            header( "Content-Type", "application/octet-stream" ).
+            // Trailers are not accessible in HttpClient API
+            // See http://httpcomponents.10934.n7.nabble.com/HTTP-Trailers-in-HttpClient-4-0-1-td15030.html
+            // header( "X-QiWeb-Content-Length", "666" ).
+            when().
+            get( BASE_URL + "qiweb/666B" );
+        assertThat( response.asByteArray().length, equalTo( 666 ) );
     }
 
     @Test
     public void givenResourceSpanningSeveralCompleteChunksWhenRequestingExpectCorrectResult()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "qiweb/32KB" ) );
-        soutResponseHead( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-        assertThat( response.getLastHeader( "Transfer-Encoding" ).getValue(), equalTo( "chunked" ) );
-        assertThat( response.getLastHeader( "Content-Type" ).getValue(), equalTo( "application/octet-stream" ) );
-        assertThat( EntityUtils.toByteArray( response.getEntity() ).length, equalTo( 32768 ) );
+        Response response = expect().
+            statusCode( 200 ).
+            header( "Transfer-Encoding", "chunked" ).
+            header( "Content-Type", "application/octet-stream" ).
+            // Trailers are not accessible in HttpClient API
+            // See http://httpcomponents.10934.n7.nabble.com/HTTP-Trailers-in-HttpClient-4-0-1-td15030.html
+            // header( "X-QiWeb-Content-Length", "32768" ).
+            when().
+            get( BASE_URL + "qiweb/32KB" );
+        assertThat( response.asByteArray().length, equalTo( 32768 ) );
     }
 
     @Test
     public void givenResourceSpanningOneChunkAndABitMoreWhenRequestingExpectCorrectResult()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "qiweb/8858B" ) );
-        soutResponseHead( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-        assertThat( response.getLastHeader( "Transfer-Encoding" ).getValue(), equalTo( "chunked" ) );
-        assertThat( response.getLastHeader( "Content-Type" ).getValue(), equalTo( "application/octet-stream" ) );
-        assertThat( EntityUtils.toByteArray( response.getEntity() ).length, equalTo( 8858 ) );
+        Response response = expect().
+            statusCode( 200 ).
+            header( "Transfer-Encoding", "chunked" ).
+            header( "Content-Type", "application/octet-stream" ).
+            // Trailers are not accessible in HttpClient API
+            // See http://httpcomponents.10934.n7.nabble.com/HTTP-Trailers-in-HttpClient-4-0-1-td15030.html
+            // header( "X-QiWeb-Content-Length", "32768" ).
+            when().
+            get( BASE_URL + "qiweb/8858B" );
+        assertThat( response.asByteArray().length, equalTo( 8858 ) );
     }
 
     @Test
@@ -120,9 +122,9 @@ public class ClasspathResourcesTest
     private void assertDirectoryTraversalAttemptFailed( String path )
         throws IOException
     {
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + path ) );
-        soutResponseHead( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 400 ) );
+        expect().
+            statusCode( 400 ).
+            when().
+            get( BASE_URL + path );
     }
 }

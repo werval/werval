@@ -15,16 +15,15 @@
  */
 package org.qiweb.lib.controllers;
 
+import com.jayway.restassured.response.Response;
 import java.io.File;
 import java.math.BigDecimal;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Assert that the StaticFiles controller behave correctly.
@@ -45,43 +44,53 @@ public class StaticFilesTest
 
     @Test
     public void givenSingleStaticFileRouteWhenRequestingExpectCorrectResult()
-        throws Exception
     {
-        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "single" ) );
-        soutResponseHead( response );
-        assertFileResponse( response, new File( ROOT, "logback.xml" ) );
+        int expectedLength = fileLength( "logback.xml" );
+        Response response = expect().
+            statusCode( 200 ).
+            header( "Content-Length", String.valueOf( expectedLength ) ).
+            when().
+            get( BASE_URL + "single" );
+        assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
     }
 
     @Test
     public void givenTreeStaticFileRouteWhenRequestingDirectoryExpectIndexFile()
         throws Exception
     {
-        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "tree/staticfiles/" ) );
-        soutResponseHead( response );
-        assertFileResponse( response, new File( ROOT, "staticfiles/index.html" ) );
+        int expectedLength = fileLength( "staticfiles/index.html" );
+        Response response = expect().
+            statusCode( 200 ).
+            header( "Content-Length", String.valueOf( expectedLength ) ).
+            when().
+            get( BASE_URL + "tree/staticfiles/" );
+        assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
+    }
+
+    @Test
+    public void givenTreeStaticFilesRouteWhenRequestingNotPresentExpectNotFound()
+    {
+        expect().
+            statusCode( 404 ).
+            when().
+            get( BASE_URL + "tree/not.found" );
     }
 
     @Test
     public void givenTreeStaticFilesRouteWhenRequestingExpectCorrectResult()
         throws Exception
     {
-        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "tree/not.found" ) );
-        soutResponseHead( response );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 404 ) );
-
-        response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "tree/logback.xml" ) );
-        soutResponseHead( response );
-        assertFileResponse( response, new File( ROOT, "logback.xml" ) );
+        int expectedLength = fileLength( "logback.xml" );
+        Response response = expect().
+            statusCode( 200 ).
+            header( "Content-Length", String.valueOf( expectedLength ) ).
+            when().
+            get( BASE_URL + "tree/logback.xml" );
+        assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
     }
 
-    private void assertFileResponse( HttpResponse response, File file )
-        throws Exception
+    private int fileLength( String relativePath )
     {
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 200 ) );
-        long length = file.length();
-        assertThat( response.getLastHeader( "Content-Length" ).getValue(),
-                    equalTo( String.valueOf( length ) ) );
-        byte[] body = EntityUtils.toByteArray( response.getEntity() );
-        assertThat( body.length, equalTo( new BigDecimal( length ).intValueExact() ) );
+        return new BigDecimal( new File( ROOT, relativePath ).length() ).intValueExact();
     }
 }

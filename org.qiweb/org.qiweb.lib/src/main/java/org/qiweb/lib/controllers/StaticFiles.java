@@ -204,11 +204,11 @@ public class StaticFiles
         boolean notModified = false;
         if( request().headers().names().contains( IF_NONE_MATCH ) )
         {
-            notModified = request().headers().valueOf( IF_NONE_MATCH ).equals( etag );
+            notModified = request().headers().singleValueOf( IF_NONE_MATCH ).equals( etag );
         }
         if( request().headers().names().contains( IF_MODIFIED_SINCE ) )
         {
-            String ifModifiedSince = request().headers().valueOf( IF_MODIFIED_SINCE );
+            String ifModifiedSince = request().headers().singleValueOf( IF_MODIFIED_SINCE );
             if( !Strings.isEmpty( ifModifiedSince ) )
             {
                 try

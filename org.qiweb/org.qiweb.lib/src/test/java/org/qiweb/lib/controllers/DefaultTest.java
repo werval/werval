@@ -15,13 +15,10 @@
  */
 package org.qiweb.lib.controllers;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.Test;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static com.jayway.restassured.RestAssured.expect;
 
 public class DefaultTest
     extends AbstractQiWebTest
@@ -39,23 +36,29 @@ public class DefaultTest
     public void givenNotFoundRouteWhenRequestingExpectNotFound()
         throws Exception
     {
-        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "notFound" ) );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 404 ) );
+        expect().
+            statusCode( 404 ).
+            when().
+            get( BASE_URL + "notFound" );
     }
 
     @Test
     public void givenInternalServerErrorRouteWhenRequestingExpectInternalServerError()
         throws Exception
     {
-        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "internalServerError" ) );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 500 ) );
+        expect().
+            statusCode( 500 ).
+            when().
+            get( BASE_URL + "internalServerError" );
     }
 
     @Test
     public void givenNotImplementedRouteWhenRequestingExpectNotImplemented()
         throws Exception
     {
-        HttpResponse response = newHttpClientInstance().execute( new HttpGet( BASE_URL + "notImplemented" ) );
-        assertThat( response.getStatusLine().getStatusCode(), equalTo( 501 ) );
+        expect().
+            statusCode( 501 ).
+            when().
+            get( BASE_URL + "notImplemented" );
     }
 }

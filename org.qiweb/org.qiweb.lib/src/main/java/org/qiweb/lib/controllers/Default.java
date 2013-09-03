@@ -41,7 +41,7 @@ public class Default
      */
     public Outcome found( String url )
     {
-        return outcomes().noContent().build();
+        return outcomes().found( url ).build();
     }
 
     /**
@@ -49,7 +49,7 @@ public class Default
      */
     public Outcome found( String url, Map<String, List<String>> queryString )
     {
-        return outcomes().noContent().build();
+        return outcomes().found( url, queryString ).build();
     }
 
     /**

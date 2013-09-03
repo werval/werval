@@ -7,7 +7,7 @@ dependencies {
     compile libs.netty_codec_http // TODO Remove Me!
     
     testCompile project( ':org.qiweb.test' )
-    // testCompile libs.selenium
+    testCompile libs.rest_assured
     
     testRuntime webjars.bootstrap
 
