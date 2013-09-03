@@ -37,7 +37,11 @@ public class DevShellRoutesProvider
                                 "\n"
                                 + "GET /@doc org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
                                 + "GET /@doc/api org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
-                                + "GET /@doc/*path org.qiweb.lib.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n";
+                                + "GET /@doc/*path org.qiweb.lib.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n"
+                                + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
+                                + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
+                                + "GET /@classpath org.qiweb.lib.controllers.Introspect.classpath\n"
+                                + "GET /@logs org.qiweb.lib.controllers.Introspect.logs\n";
 
     @Override
     public Routes routes( Application application )

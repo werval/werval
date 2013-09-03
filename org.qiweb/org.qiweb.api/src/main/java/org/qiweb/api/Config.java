@@ -104,4 +104,11 @@ public interface Config
      * @return Config entry value as Long representing milliseconds
      */
     Long milliseconds( String key );
+
+    /**
+     * Render resolved configuration as JSON.
+     * @return Resolved configuration as a JSON String.
+     */
+    @Override
+    String toString();
 }

@@ -134,6 +134,12 @@ public class ConfigInstance
         return config.getMilliseconds( key );
     }
 
+    @Override
+    public String toString()
+    {
+        return config.root().render( com.typesafe.config.ConfigRenderOptions.concise() );
+    }
+
     public final void refresh()
     {
         config = com.typesafe.config.ConfigFactory.load();
