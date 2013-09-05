@@ -7,10 +7,6 @@ QiWeb is not a full stack framework.
 In other words, QiWeb don't compell you to use any persistence mechanism nor templating engine.
 You are free to choose whatever may suit your needs.
 
-Autrement dit, QiWeb n'impose aucun choix technique quand au système de stockage de données utilisé par votre
-application ni sur la façon dont vous voulez construire vos vues.
-Il vous laisse le champ libre pour choisir la solution qui vous convient.
-
 image::images/overview.png[Overview,640]
 
 
@@ -25,10 +21,10 @@ The minimal requirement is a configuration file named `application.conf` contain
 
 The QiWeb Runtime use http://slf4j.org/[SLF4J] and http://logback.qos.ch/[Logback] logging and do not do anything
 special regarding its configuration.
-This means that you have full controll of Logback configuration.
+This means that you have full control of Logback configuration.
 Therefore you are encouraged to read the official http://logback.qos.ch/documentation.html[Logback documentation].
 
-All QiWeb loggers are present in the `org.qiweb` namespace.
+All QiWeb loggers are present in the `org.qiweb` namespace according to code packages.
 Here are the most useful:
 
 - `org.qiweb.runtime.server` QiWeb Http Server
@@ -41,7 +37,7 @@ Here are the most useful:
 === Configuration
 
 INFO: QiWeb configuration use the https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON format] ("Human
-Optimized Config Object Notation"). It is parsed using Typesafe https://github.com/typesafehub/config[Config].
+Optimized Config Object Notation"). It is parsed using https://github.com/typesafehub/config[Typesafe Config].
 
 The `application.conf` file must be present at the root of your classpath and must at least contain one single entry:
 `app.secret` which is the secret key your application will use to sign session cookies.
@@ -56,16 +52,23 @@ All configuration properties are available to your controllers and filters via t
 
 [source,java]
 ----
-public Outcome aControllerMethod()
-{
-    String configValue = application().config().getString( "your.custom.config.key" );
-    // ...
-    return outcomes().ok().build();
+import static org.qiweb.api.controllers.Controller.*;
+public MyController {
+  public Outcome aControllerMethod() {
+    String configValue = application().config().getString("your.custom.config.key");
+    // Do what you have to do according to the configuration value
+    return outcomes().ok("whatever").build();
+  }
 }
 ----
 
 All configuration properties can be overriden by defining System Properties.
 This means that you can easily provide all configuration on the command line.
+
+TIP: Every system property is also present in the configuration.
+For example, the `java.home` System Property is automatically present in the configuration at the `java.home` key.
+In other words, and if you need it, keep in mind that you can use configuration properties from the command line without
+defining a default value in any configuration file.
 
 Moreover, some special System Properties allow to use an alternate config file:
 
@@ -78,7 +81,7 @@ You still can leverage the inclusion mechanism of HOCON to include your `applica
 specified using one of the System Properties described above.
 
 
-=== Lifecycle and the Global object
+=== Lifecycle
 
 ==== Startup explained
 
@@ -99,10 +102,10 @@ You can set the `qiweb.shutdown.retry-after` configuration property so that a `R
 responses.
 
 If your application is running on multiple nodes behind a balancer you can lower this value to 0, yes *zero*, allowing
-your clients to reconnect immediatly to another node.
+your clients to reconnect immediatly to another node. Pretty useful for zero-downtime upgrades.
 
 
-==== Application events
+==== The Global object
 
 ==== Instanciation
 
@@ -117,9 +120,27 @@ your clients to reconnect immediatly to another node.
 
 === Routes
 
+Routes are defined by:
+
+- a HTTP method ;
+- a path expression ;
+- a fully qualified method name ;
+- optionaly a method parameters definition ;
+- and finaly optional modifiers.
+
+Teh default QiWeb router allows for textual representation of routes definition.
+
+    http-method path-expression controller-fqcn.method-name[(parameters)] [modifiers]
+
+You can also express routes definitions in code using the Routes API.
+
 Request URI Path and QueryString are the source of Controller Parameters.
-Fragment identifier is considered as useful only on the client side and hence is not taken into account when routing.
+
+
+
+TIP: URI Fragment identifier is considered as useful only on the client side and hence is not taken into account when routing.
 However, the reverse routing API allow you to append a fragment identifier to generated URIs.
+
 
 === Controllers
 
