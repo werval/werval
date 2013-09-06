@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_REQUEST_ID;
+import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 
 /**
  * Assert that Application errors triggers the right code paths.
@@ -100,7 +100,7 @@ public class OnErrorTest
             get( BASE_URL + "exception" );
         assertThat( response.statusCode(), is( 500 ) );
 
-        String requestId = response.header( QIWEB_HEADER_REQUEST_ID );
+        String requestId = response.header( X_QIWEB_REQUEST_ID );
         assertThat( requestId, notNullValue() );
 
         assertThat( application().errors().count(), is( 1 ) );

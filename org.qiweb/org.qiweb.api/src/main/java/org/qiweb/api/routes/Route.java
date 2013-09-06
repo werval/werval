@@ -44,7 +44,22 @@ public interface Route
 
     Set<String> modifiers();
 
+    /**
+     * Bind route parameters from path and query string to a Map&lt;String,Object&gt;.
+     *
+     * @param parameterBinders Parameter binders
+     * @param path Path
+     * @param queryString Query String
+     * @return Map of bound parameters
+     */
     Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path, QueryString queryString );
 
+    /**
+     * Unbind route URI (path and query string) from parameters values Map.
+     *
+     * @param parameterBinders Parameter binders
+     * @param parameters Parameters values Map
+     * @return String representation to a URI of this route with the given parameters values
+     */
     String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters );
 }

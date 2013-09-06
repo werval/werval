@@ -63,13 +63,39 @@ public class HeadersInstance
     }
 
     @Override
-    public String valueOf( String name )
+    public String singleValueOf( String name )
+    {
+        if( !headers.containsKey( name ) )
+        {
+            return Strings.EMPTY;
+        }
+        List<String> values = headers.get( name );
+        if( values.size() != 1 )
+        {
+            throw new IllegalStateException( "Header " + name + " has multiple values" );
+        }
+        return values.get( 0 );
+    }
+
+    @Override
+    public String firstValueOf( String name )
     {
         if( !headers.containsKey( name ) )
         {
             return Strings.EMPTY;
         }
         return headers.get( name ).get( 0 );
+    }
+
+    @Override
+    public String lastValueOf( String name )
+    {
+        if( !headers.containsKey( name ) )
+        {
+            return Strings.EMPTY;
+        }
+        List<String> values = headers.get( name );
+        return values.get( values.size() - 1 );
     }
 
     @Override

@@ -33,6 +33,7 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -71,26 +72,27 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.RETRY_AFTER;
-import static io.netty.handler.codec.http.HttpHeaders.Names.SET_COOKIE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.TRAILER;
-import static io.netty.handler.codec.http.HttpHeaders.Names.TRANSFER_ENCODING;
-import static io.netty.handler.codec.http.HttpHeaders.Values.CHUNKED;
-import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
-import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
-import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_CONTENT_LENGTH_TRAILER;
-import static org.qiweb.runtime.http.HttpConstants.QIWEB_HEADER_REQUEST_ID;
+import static org.qiweb.api.http.Headers.Names.CONNECTION;
+import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
+import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
+import static org.qiweb.api.http.Headers.Names.TRAILER;
+import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
+import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
+import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static org.qiweb.api.http.Headers.Values.CHUNKED;
+import static org.qiweb.api.http.Headers.Values.CLOSE;
+import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
@@ -174,7 +176,7 @@ public final class HttpRequestRouterHandler
             FullHttpResponse response = new DefaultFullHttpResponse(
                 HTTP_1_1, SERVICE_UNAVAILABLE,
                 copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", UTF_8 ) );
-            response.headers().set( QIWEB_HEADER_REQUEST_ID, requestIdentity );
+            response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
             response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
@@ -191,7 +193,8 @@ public final class HttpRequestRouterHandler
         rebuildIfNeeded();
 
         // Parse RequestHeader
-        RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest );
+        RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest,
+                                                       app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ) );
 
         // Route the request
         Routes routes = app.routes();
@@ -245,7 +248,7 @@ public final class HttpRequestRouterHandler
                 // Headers
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
-                nettyResponse.headers().set( TRAILER, QIWEB_HEADER_CONTENT_LENGTH_TRAILER );
+                nettyResponse.headers().set( TRAILER, X_QIWEB_CONTENT_LENGTH );
                 // Body
                 nettyContext.write( nettyResponse );
                 writeFuture = nettyContext.writeAndFlush( new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput() ) );
@@ -317,7 +320,7 @@ public final class HttpRequestRouterHandler
         boolean forceClose = applyKeepAliveHttpHeaders( nettyContext, nettyRequest, outcome, nettyResponse );
         applySession( session, nettyResponse );
         applyCookies( response.cookies(), nettyResponse );
-        nettyResponse.headers().set( QIWEB_HEADER_REQUEST_ID, requestIdentity );
+        nettyResponse.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
         return forceClose;
     }
 
@@ -325,7 +328,7 @@ public final class HttpRequestRouterHandler
     {
         for( String name : headers.names() )
         {
-            nettyResponse.headers().add( name, headers.valueOf( name ) );
+            nettyResponse.headers().add( name, headers.valuesOf( name ) );
         }
     }
 
@@ -392,11 +395,22 @@ public final class HttpRequestRouterHandler
         {
             LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
             StringWriter body = new StringWriter();
-            body.append( "404 Route Not Found\n" );
+            body.append( "<html>\n<head><title>404 Route Not Found</title></head>\n<body>\n<h1>404 Route Not Found</h1>\n" );
             if( app.mode() == Mode.DEV )
             {
-                body.append( "Tried:\n" ).append( app.routes().toString() ).append( "\n\n" );
+                body.append( "<p>Tried:</p>\n<pre>\n" );
+                Iterator<Route> it = app.routes().iterator();
+                while( it.hasNext() )
+                {
+                    Route route = it.next();
+                    if( !route.path().startsWith( "/@" ) )
+                    {
+                        body.append( route.toString() ).append( "\n" );
+                    }
+                }
+                body.append( "</pre>\n" );
             }
+            body.append( "</body>\n</html>\n" );
             sendError( nettyContext, NOT_FOUND, body.toString() );
         }
         else if( cause instanceof ParameterBinderException )
@@ -430,9 +444,8 @@ public final class HttpRequestRouterHandler
                         return devSpi.sourceURL( filename, line );
                     }
                 } ) );
-
-                body.append( "</body></html>\n" );
             }
+            body.append( "</body></html>\n" );
             String bodyString = body.toString();
 
             // Record Error
@@ -449,7 +462,7 @@ public final class HttpRequestRouterHandler
     private void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
     {
         FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, UTF_8 ) );
-        response.headers().set( QIWEB_HEADER_REQUEST_ID, requestIdentity );
+        response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
         response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
         response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );

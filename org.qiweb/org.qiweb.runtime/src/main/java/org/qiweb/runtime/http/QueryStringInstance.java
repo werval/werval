@@ -35,15 +35,36 @@ public class QueryStringInstance
 
     public QueryStringInstance()
     {
-        this.parameters = new TreeMap<>( Comparators.LOWER_CASE );
+        this( Collections.<String, List<String>>emptyMap() );
+    }
+
+    public QueryStringInstance( boolean allowMultiValuedParameters )
+    {
+        this( allowMultiValuedParameters, Collections.<String, List<String>>emptyMap() );
     }
 
     public QueryStringInstance( Map<String, List<String>> parameters )
     {
-        this();
+        this( false, parameters );
+    }
+
+    public QueryStringInstance( boolean allowMultiValuedParameters, Map<String, List<String>> parameters )
+    {
+        this.parameters = new TreeMap<>( Comparators.LOWER_CASE );
         for( Entry<String, List<String>> entry : parameters.entrySet() )
         {
-            this.parameters.put( entry.getKey(), new ArrayList<>( entry.getValue() ) );
+            String key = entry.getKey();
+            if( !this.parameters.containsKey( key ) )
+            {
+                this.parameters.put( key, new ArrayList<String>() );
+            }
+            List<String> values = entry.getValue();
+            if( !allowMultiValuedParameters && ( !this.parameters.get( key ).isEmpty() || values.size() > 1 ) )
+            {
+                // TODO Make this lead to a 400 BadRequest, but how?
+                throw new IllegalStateException( "Multi-valued query string parameters are not allowed" );
+            }
+            this.parameters.get( key ).addAll( entry.getValue() );
         }
     }
 
@@ -54,13 +75,39 @@ public class QueryStringInstance
     }
 
     @Override
-    public String valueOf( String key )
+    public String singleValueOf( String name )
     {
-        if( !parameters.containsKey( key ) )
+        if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
         }
-        return parameters.get( key ).get( 0 );
+        List<String> values = parameters.get( name );
+        if( values.size() != 1 )
+        {
+            throw new IllegalStateException( "QueryString parameter '" + name + "' has multiple values" );
+        }
+        return values.get( 0 );
+    }
+
+    @Override
+    public String firstValueOf( String name )
+    {
+        if( !parameters.containsKey( name ) )
+        {
+            return Strings.EMPTY;
+        }
+        return parameters.get( name ).get( 0 );
+    }
+
+    @Override
+    public String lastValueOf( String name )
+    {
+        if( !parameters.containsKey( name ) )
+        {
+            return Strings.EMPTY;
+        }
+        List<String> values = parameters.get( name );
+        return values.get( values.size() - 1 );
     }
 
     @Override

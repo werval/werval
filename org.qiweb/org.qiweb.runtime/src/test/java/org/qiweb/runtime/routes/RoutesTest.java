@@ -1,6 +1,7 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.http.QueryString;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
@@ -21,7 +23,9 @@ import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
+import org.qiweb.runtime.util.URLs;
 
+import static io.netty.util.CharsetUtil.UTF_8;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -187,6 +191,8 @@ public class RoutesTest
                         IllegalRouteException.class ),
         WRONG_PARAMS_5( "GET /a/*path com.acme.app.FakeController.wild( path )",
                         IllegalRouteException.class ), // Parameter is missing type info
+        WRONG_PARAMS_6( "GET /foo/:slug/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
+                        IllegalRouteException.class ),
         WRONG_PARAMS_99( "",
                          IllegalRouteException.class );
         // Members
@@ -282,20 +288,28 @@ public class RoutesTest
         Route foo = RouteBuilder.parseRoute( app, "GET /foo " + FakeController.class.getName() + ".foo()" );
         Route bar = RouteBuilder.parseRoute( app, "GET /bar " + FakeController.class.getName() + ".bar()" );
         Route another = RouteBuilder.parseRoute( app, "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
+        Route anotherOne = RouteBuilder.parseRoute( app, "GET /zeng/:id " + FakeController.class.getName() + ".another(String id,Integer slug)" );
 
-        Routes routes = RouteBuilder.routes( index, foo, bar, another );
+        Routes routes = RouteBuilder.routes( index, foo, bar, another, anotherOne );
 
         assertThat( routes.route( reqHeadForGet( "/" ) ), equalTo( index ) );
+        assertThat( routes.route( reqHeadForGet( "/?a=b" ) ), equalTo( index ) );
         assertThat( routes.route( reqHeadForGet( "/foo" ) ), equalTo( foo ) );
         assertThat( routes.route( reqHeadForGet( "/bar" ) ), equalTo( bar ) );
         assertThat( routes.route( reqHeadForGet( "/foo/1234567890/bar/42" ) ), equalTo( another ) );
+        assertThat( routes.route( reqHeadForGet( "/foo/1234567890/bar/42?a=b" ) ), equalTo( another ) );
+        assertThat( routes.route( reqHeadForGet( "/zeng/123?slug=qs" ) ), equalTo( anotherOne ) );
+        assertThat( routes.route( reqHeadForGet( "/zeng/123?slug=qs&a=b" ) ), equalTo( anotherOne ) );
     }
 
-    private RequestHeader reqHeadForGet( String path )
+    private RequestHeader reqHeadForGet( String requestUri )
     {
+        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( requestUri, UTF_8 );
+        String requestPath = URLs.decode( queryStringDecoder.path() );
+        QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
         return new RequestHeaderInstance( "identity", "HTTP/1.1",
-                                          "GET", "http://localhost" + path, path,
-                                          new QueryStringInstance(), new HeadersInstance(), new CookiesInstance() );
+                                          "GET", requestUri, requestPath,
+                                          queryString, new HeadersInstance(), new CookiesInstance() );
     }
 
     private void assertRoute( Route route, RoutesToTest refRoute )

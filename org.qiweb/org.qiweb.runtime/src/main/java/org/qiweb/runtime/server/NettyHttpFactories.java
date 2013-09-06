@@ -56,13 +56,14 @@ import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.util.URLs;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.http.Headers.Names.COOKIE;
+import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
 
 /**
  * Factory methods used by the server.
@@ -98,22 +99,23 @@ import static io.netty.util.CharsetUtil.UTF_8;
         return new CookiesInstance( cookies );
     }
 
-    /* package */ static RequestHeader requestHeaderOf( String identity, HttpRequest request )
+    /* package */ static RequestHeader requestHeaderOf( String identity, HttpRequest request,
+                                          boolean allowMultiValuedQueryStringParameters )
     {
         NullArgumentException.ensureNotEmpty( "Request Identity", identity );
         NullArgumentException.ensureNotNull( "Netty HttpRequest", request );
 
         // Method
         String method = request.getMethod().name();
-        if( request.headers().get( "X-HTTP-Method-Override" ) != null )
+        if( request.headers().get( X_HTTP_METHOD_OVERRIDE ) != null )
         {
-            method = request.headers().get( "X-HTTP-Method-Override" );
+            method = request.headers().get( X_HTTP_METHOD_OVERRIDE );
         }
 
         // Path and QueryString
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), UTF_8 );
         String requestPath = URLs.decode( queryStringDecoder.path() );
-        QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
+        QueryString queryString = new QueryStringInstance( allowMultiValuedQueryStringParameters, queryStringDecoder.parameters() );
 
         // Headers
         Headers headers = headersOf( request );

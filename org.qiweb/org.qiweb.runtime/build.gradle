@@ -10,8 +10,9 @@ dependencies {
     compile libs.netty_codec_http
     
     testCompile project( ":org.qiweb.test" )
-    testCompile libs.rest_assured
+    testCompile libs.jackson_core
     testCompile libs.qi4j_api
+    testCompile libs.rest_assured
 
 }
 

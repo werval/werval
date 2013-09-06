@@ -21,9 +21,32 @@ Read it many times.
 What was the question already?
 
 
+=== Why choose Java as implementation language?
+
+    widespread
+    getting old and well known but still moving
+    really, really good developer tooling
+    JVM feels like a good platform of choice
+    my language of choice is java
+    but the JVM is not tight to Java anymore, it can run scala, ruby, python, javascript and many more
+
+
+=== Can I write my application code in {put.your.language.here}?
+
+As long as it runs on the JVM, yes!
+
+There are some guides for specific languages but the idea is pretty simple and applicable to any.
+The Global object allows you take control of controllers and filters instanciation and invocation.
+You just have to write some glue code.
+Ah, I see your Global object is already in Groovy, cool.
+
+Development mode should work in most situations provided your build system is set up correctly.
+
+
 === Is it possible to embedd the QiWeb Runtime?
 
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
 This way of running a QiWeb Application can be seen as embedding QiWeb.
 
 See the XXX section of the QiWeb manual to get some know-how.
+

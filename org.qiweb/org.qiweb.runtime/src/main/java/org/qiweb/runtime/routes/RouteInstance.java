@@ -44,6 +44,7 @@ import static org.qi4j.functional.Iterables.filter;
 import static org.qi4j.functional.Iterables.iterable;
 import static org.qi4j.functional.Iterables.map;
 import static org.qi4j.functional.Iterables.matchesAny;
+import static org.qi4j.functional.Iterables.toList;
 import static org.qi4j.functional.Specifications.in;
 
 /**
@@ -89,12 +90,8 @@ import static org.qi4j.functional.Specifications.in;
             throw new IllegalRouteException( toString(), "Invalid path: " + path );
         }
 
-        // Ensure all parameters in path are bound to controller parameters and "vice et versa".
-        // Allow multiple occurences of a single parameter name in the path
-        // Allow not bound params that should come form QueryString
-
         Iterable<String> controllerParamsNames = controllerParams.names();
-        Iterable<String> pathParamsNames = map( new Function<String, String>()
+        List<String> pathParamsNames = toList( map( new Function<String, String>()
         {
             @Override
             public String map( String from )
@@ -108,8 +105,20 @@ import static org.qi4j.functional.Specifications.in;
             {
                 return pathSegment.startsWith( ":" ) || pathSegment.startsWith( "*" );
             }
-        }, iterable( path.substring( 1 ).split( "/" ) ) ) );
+        }, iterable( path.substring( 1 ).split( "/" ) ) ) ) );
 
+        // Disallow multiple occurences of a single parameter name in the path
+        for( String paramName : pathParamsNames )
+        {
+            if( Collections.frequency( pathParamsNames, paramName ) > 1 )
+            {
+                throw new IllegalRouteException( toString(),
+                                                 "Parameter '" + paramName + "' is present several times in path." );
+            }
+        }
+
+        // Ensure all parameters in path are bound to controller parameters and "vice et versa".
+        // Allow params absent from path that should come form QueryString
         Set<String> allParamsNames = new LinkedHashSet<>();
         addAll( allParamsNames, controllerParamsNames );
         addAll( allParamsNames, pathParamsNames );
@@ -123,7 +132,6 @@ import static org.qi4j.functional.Specifications.in;
         }
 
         // Ensure controller method exists and return an Outcome
-
         Class<?>[] controllerParamsTypes = controllerParams.types();
         try
         {
@@ -234,7 +242,7 @@ import static org.qi4j.functional.Specifications.in;
         Matcher matcher = pathRegex.matcher( path );
         if( !matcher.matches() )
         {
-            throw new IllegalArgumentException( "Unable to bind, Route is not satified by path: " + path );
+            throw new IllegalArgumentException( "Unable to bind, Route is not satisfied by path: " + path );
         }
         Map<String, Object> boundParams = new LinkedHashMap<>();
         for( ControllerParam param : controllerParams )
@@ -254,12 +262,13 @@ import static org.qi4j.functional.Specifications.in;
                 {
                     if( queryString.keys().contains( param.name() ) )
                     {
-                        unboundValue = queryString.valueOf( param.name() );
+                        unboundValue = queryString.singleValueOf( param.name() );
                     }
                 }
                 if( unboundValue == null )
                 {
-                    throw new IllegalArgumentException( "Parameter named '" + param.name() + "' not found in path or query string." );
+                    throw new IllegalArgumentException( "Parameter named '" + param.name()
+                                                        + "' not found in path nor in query string." );
                 }
                 boundParams.put( param.name(), parameterBinders.bind( param.type(), param.name(), unboundValue ) );
             }

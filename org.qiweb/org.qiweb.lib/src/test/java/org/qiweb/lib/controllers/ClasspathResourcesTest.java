@@ -21,7 +21,9 @@ import org.junit.Test;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.either;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ClasspathResourcesTest
@@ -123,7 +125,7 @@ public class ClasspathResourcesTest
         throws IOException
     {
         expect().
-            statusCode( 400 ).
+            statusCode( either( is( 400 ) ).or( is( 404 ) ) ).
             when().
             get( BASE_URL + path );
     }

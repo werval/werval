@@ -51,6 +51,7 @@ public interface ConfigKeys
     String QIWEB_HTTP_CHUNKSIZE = "qiweb.http.chunksize";
     String QIWEB_HTTP_LOG_LOWLEVEL_ENABLED = "qiweb.http.log.low-level.enabled";
     String QIWEB_HTTP_LOG_LOWLEVEL_LEVEL = "qiweb.http.log.low-level.level";
+    String QIWEB_HTTP_QUERYSTRING_MULTIVALUED = "qiweb.http.query-string.multi-valued";
     String QIWEB_ROUTES_IMPORTEDPACKAGES = "qiweb.routes.imported-packages";
     String QIWEB_ROUTES_PARAMETERBINDERS = "qiweb.routes.parameter-binders";
 }

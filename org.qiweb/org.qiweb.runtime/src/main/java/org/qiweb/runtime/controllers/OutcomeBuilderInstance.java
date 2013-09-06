@@ -29,9 +29,9 @@ import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.runtime.http.HeadersInstance;
 
 import static io.netty.buffer.Unpooled.*;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 
 /**

@@ -43,15 +43,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
 import static io.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static io.netty.handler.codec.http.HttpHeaders.removeTransferEncodingChunked;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.http.Headers.Names.CONNECTION;
+import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.http.Headers.Values.CLOSE;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.

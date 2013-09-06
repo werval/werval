@@ -15,10 +15,6 @@
  */
 package org.qiweb.runtime.routes;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
@@ -27,8 +23,6 @@ import org.qiweb.test.AbstractQiWebTest;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.reverseRoutes;
@@ -138,14 +132,54 @@ public class ReverseRoutesTest
     }
 
     @Test
+    public void testQueryStringWithNoValueParam()
+        throws Exception
+    {
+        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( url ) ).
+            when().
+            get( url );
+    }
+
+    @Test
+    public void testQueryStringWithNoValueParamSeveralTimes()
+        throws Exception
+    {
+        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
+        expect().
+            statusCode( 200 ).
+            when().
+            body( equalTo( BASE_URL + "query/foo/string?qsOne=bar&qsTwo=" ) ).
+            get( url );
+    }
+
+    @Test
+    public void testQueryStringWithSameValueParamSeveralTimes()
+        throws Exception
+    {
+        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
+        expect().
+            statusCode( 200 ).
+            body( equalTo( BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bar" ) ).
+            when().
+            get( url );
+    }
+
+    @Test
     public void testAppendedQueryString()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        String httpUrl = BASE_URL + "appended/qs?bar=bazar&foo=bar&foo=baz";
-        HttpResponse response = client.execute( new HttpGet( httpUrl ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( httpUrl ) );
+        String url = BASE_URL + "appended/qs";
+        given().
+            queryParam( "bar", "bazar" ).
+            queryParam( "foo", "bar" ).
+            expect().
+            statusCode( 200 ).
+            body( equalTo( url + "?bar=bazar&foo=bar" ) ).
+            when().
+            get( url );
     }
 
     @Test

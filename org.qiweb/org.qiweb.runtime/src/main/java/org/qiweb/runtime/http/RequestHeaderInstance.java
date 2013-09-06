@@ -19,19 +19,26 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
-import org.qi4j.functional.Function;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static org.qiweb.runtime.http.HttpConstants.*;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.http.Headers.Names.HOST;
+import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
+import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 
 public class RequestHeaderInstance
     implements RequestHeader
 {
 
+    private static interface Lazy<T>
+    {
+
+        T get()
+            throws IllegalStateException;
+    }
     private final String identity;
     private final String version;
     private final String method;
@@ -43,11 +50,11 @@ public class RequestHeaderInstance
     private Map<String, Object> lazyValues = new HashMap<>();
 
     @SuppressWarnings( "unchecked" )
-    private synchronized <T> T lazy( String key, Function<Void, T> function )
+    private synchronized <T> T lazy( String key, Lazy<T> function )
     {
         if( !lazyValues.containsKey( key ) )
         {
-            lazyValues.put( key, function.map( null ) );
+            lazyValues.put( key, function.get() );
         }
         return (T) lazyValues.get( key );
     }
@@ -126,12 +133,12 @@ public class RequestHeaderInstance
     @Override
     public String host()
     {
-        return lazy( "host", new Function<Void, String>()
+        return lazy( "host", new Lazy<String>()
         {
             @Override
-            public String map( Void from )
+            public String get()
             {
-                return headers.valueOf( HOST );
+                return headers.singleValueOf( HOST );
             }
         } );
     }
@@ -139,10 +146,10 @@ public class RequestHeaderInstance
     @Override
     public int port()
     {
-        return lazy( "port", new Function<Void, Integer>()
+        return lazy( "port", new Lazy< Integer>()
         {
             @Override
-            public Integer map( Void from )
+            public Integer get()
             {
                 String parse = uri.substring( "https://".length() + 1 );
                 int slashIdx = parse.indexOf( '/' );
@@ -162,12 +169,12 @@ public class RequestHeaderInstance
     @Override
     public String domain()
     {
-        return lazy( "domain", new Function<Void, String>()
+        return lazy( "domain", new Lazy<String>()
         {
             @Override
-            public String map( Void from )
+            public String get()
             {
-                return headers.valueOf( HOST ).split( ":" )[0];
+                return headers.singleValueOf( HOST ).split( ":" )[0];
             }
         } );
     }
@@ -175,12 +182,12 @@ public class RequestHeaderInstance
     @Override
     public String contentType()
     {
-        return lazy( "contentType", new Function<Void, String>()
+        return lazy( "contentType", new Lazy< String>()
         {
             @Override
-            public String map( Void from )
+            public String get()
             {
-                return headers.valueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
+                return headers.singleValueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
             }
         } );
     }
@@ -188,12 +195,12 @@ public class RequestHeaderInstance
     @Override
     public String charset()
     {
-        return lazy( "charset", new Function<Void, String>()
+        return lazy( "charset", new Lazy<String>()
         {
             @Override
-            public String map( Void from )
+            public String get()
             {
-                String[] split = headers.valueOf( CONTENT_TYPE ).split( ";" );
+                String[] split = headers.singleValueOf( CONTENT_TYPE ).split( ";" );
                 if( split.length <= 1 )
                 {
                     return Strings.EMPTY;
@@ -206,7 +213,7 @@ public class RequestHeaderInstance
                         return option.split( "=" )[1];
                     }
                 }
-                return headers.valueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
+                return headers.singleValueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
             }
         } );
     }

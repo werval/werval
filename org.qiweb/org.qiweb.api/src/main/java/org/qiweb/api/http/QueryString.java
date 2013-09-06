@@ -33,7 +33,32 @@ public interface QueryString
     /**
      * @return  First String value from the query string for the given key or an empty String.
      */
-    String valueOf( String key );
+    /**
+     * Get single query parameter value, ensuring it has only one value.
+     * <p>
+     *     See <a href="https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf"
+     *     target="_blank">HTTP Parameter Pollution</a> at OWASP.
+     * </p>
+     *
+     * @param name Name of the query string parameter
+     * @return  Value for this query string parameter name or an empty String
+     * @throws IllegalStateException if there is multiple values for this query string paramter
+     */
+    String singleValueOf( String name );
+
+    /**
+     * Get first query string paramter value.
+     * @param name Name of the query string paramter
+     * @return  First value for this query string paramter name or an empty String
+     */
+    String firstValueOf( String name );
+
+    /**
+     * Get last query string paramter value.
+     * @param name Name of the query string paramter
+     * @return  Last value for this query string paramter name or an empty String
+     */
+    String lastValueOf( String name );
 
     /**
      * @return  All String values from the query string for the given key as immutable List&lt;String&gt;,
