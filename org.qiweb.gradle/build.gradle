@@ -1,5 +1,5 @@
 
-apply from: "$rootProject.projectDir.absolutePath/../java.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
 apply plugin: 'groovy'
 apply plugin: 'sonar-runner'
 

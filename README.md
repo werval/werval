@@ -30,18 +30,22 @@ To get you started, here are some usefull commands:
     ./gradlew install           # Install all qiweb artifacts
     ./gradlew install check     # Run all tests
 
-Artifacts produced by the build are installed in your local maven repository
-(`~/.m2/repository`).
+It is recommended to run all tests first, giving you confidence that the whole
+thing work on your computer.
 
 To run all tests you must `install` first as build plugins are tested along the
 way and they need to be installed in order to be used by the tests and samples.
 This is why the command to run tests call the `install` and `check` tasks.
 
-By default version number `0` is used, you can override this with
-`-Dversion=WHATEVER`.
+QiWeb do not have much dependencies but the build system and the tests do.
+As a consequence, a vast amount of code is downloaded the first time you
+run a build. Theses downloads are cached, at the time of writing running a
+full build with every dependencies in cache take less than two minutes.
 
-Once qiweb artifacts are installed in your local maven repository you can
-depend on the following artifacts:
+QiWeb artifacts produced by the build are installed in your local maven
+repository (`~/.m2/repository`).
+
+Once installed you can depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
 - `org.qiweb:org.qiweb.lib:0` in your app code, this is the standard library
@@ -63,3 +67,10 @@ and development shell, the following commands will install it:
     unzip -l ~/.m2/repository/org/qiweb/org.qiweb.cli/0/org.qiweb.cli-0-dist.zip -d ~/opt
     # Add qiweb-cli to your $PATH
     export PATH=~/opt/qiweb-cli-0/bin:$PATH
+
+By default version number `0` is used, you can override this with
+`-Dversion=WHATEVER`.
+
+If you encounter any problem, please fill an issue at
+https://scm.codeartisans.org/paul/qiweb/issues with the output of the build
+process.

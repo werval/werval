@@ -1,10 +1,10 @@
-apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
 
 apply plugin: 'java'
 apply plugin: 'maven'
 
-apply from: "$rootProject.projectDir.absolutePath/../repositories.gradle"
-apply from: "$rootProject.projectDir.absolutePath/../libraries.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'

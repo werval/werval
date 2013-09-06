@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-apply from: "$rootProject.projectDir.absolutePath/../common.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
 
 apply plugin: 'base' // To add "clean" task to the root project.
 apply plugin: 'sonar-runner'
@@ -17,7 +17,7 @@ subprojects {
     apply from: rootProject.file( 'common.gradle' )
     apply plugin: 'license'
     license {
-        header new File( "$rootProject.projectDir.absolutePath/../src/license/header.txt" )
+        header new File( "$rootProject.projectDir.absolutePath/../gradle/header.txt" )
         strictCheck true
         mapping {
             conf="DOUBLESLASH_STYLE"
