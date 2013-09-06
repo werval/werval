@@ -15,13 +15,7 @@
  */
 package org.qiweb.test;
 
-import java.io.IOException;
-import java.util.Arrays;
-import org.apache.http.HttpResponse;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.conn.BasicClientConnectionManager;
-import org.apache.http.util.EntityUtils;
+import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Application;
@@ -30,7 +24,8 @@ import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.server.HttpServerInstance;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 /**
  * Base QiWeb Test.
@@ -38,7 +33,6 @@ import static io.netty.util.CharsetUtil.UTF_8;
 public abstract class AbstractQiWebTest
 {
 
-    protected static final String BASE_URL = "http://127.0.0.1:23023/";
     private HttpServerInstance httpServer;
     private ApplicationInstance app;
 
@@ -52,6 +46,20 @@ public abstract class AbstractQiWebTest
         app = new ApplicationInstance( routesProvider );
         httpServer = new HttpServerInstance( "qiweb-test", app );
         httpServer.activate();
+
+        // Setup RestAssured if present
+        try
+        {
+            Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
+            restAssuredPortField.set( null, app.config().intNumber( QIWEB_HTTP_PORT ) );
+            Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
+            restAssuredBaseURLField.set( null, "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) );
+        }
+        catch( ClassNotFoundException | NoSuchFieldException |
+               IllegalArgumentException | IllegalAccessException noRestAssured )
+        {
+            // RestAssured is not present, we simply don't configure it.
+        }
     }
 
     /**
@@ -75,25 +83,8 @@ public abstract class AbstractQiWebTest
         return app;
     }
 
-    /**
-     * @return New HttpClient instance
-     */
-    protected final DefaultHttpClient newHttpClientInstance()
+    protected final String baseHttpUrl()
     {
-        DefaultHttpClient client = new DefaultHttpClient( new BasicClientConnectionManager() );
-        client.setHttpRequestRetryHandler( new DefaultHttpRequestRetryHandler( 0, false ) );
-        return client;
-    }
-
-    protected final void soutResponseHead( HttpResponse response )
-    {
-        System.out.println( "RESPONSE STATUS:  " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase() );
-        System.out.println( "RESPONSE HEADERS: " + Arrays.toString( response.getAllHeaders() ) );
-    }
-
-    protected final String responseBodyAsString( HttpResponse response )
-        throws IOException
-    {
-        return EntityUtils.toString( response.getEntity(), UTF_8 );
+        return "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) + ":" + app.config().string( QIWEB_HTTP_PORT );
     }
 }

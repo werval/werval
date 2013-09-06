@@ -57,7 +57,7 @@ public class QueryStringTest
             statusCode( 200 ).
             body( equalTo( "{}" ) ).
             when().
-            get( BASE_URL + "echo" );
+            get( "/echo" );
     }
 
     @Test
@@ -71,7 +71,7 @@ public class QueryStringTest
             body( "foo[0]", equalTo( "bar" ) ).
             body( "baz[0]", equalTo( "" ) ).
             when().
-            get( BASE_URL + "echo" );
+            get( "/echo" );
     }
 
     @Test
@@ -83,6 +83,6 @@ public class QueryStringTest
             expect().
             statusCode( 500 ). // TODO Change to 400 once proper error handling is done
             when().
-            get( BASE_URL + "echo" );
+            get( "/echo" );
     }
 }

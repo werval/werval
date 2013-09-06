@@ -87,7 +87,7 @@ public class ReverseRoutesTest
     public void testSimpleMethod()
         throws Exception
     {
-        String url = BASE_URL + "simpleMethod";
+        String url = baseHttpUrl() + "/simpleMethod";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -99,7 +99,7 @@ public class ReverseRoutesTest
     public void testSimpleMethodWithParam()
         throws Exception
     {
-        String url = BASE_URL + "simpleMethod/test/foo";
+        String url = baseHttpUrl() + "/simpleMethod/test/foo";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -111,7 +111,7 @@ public class ReverseRoutesTest
     public void testWildcard()
         throws Exception
     {
-        String url = BASE_URL + "wild/wild/wild/card";
+        String url = baseHttpUrl() + "/wild/wild/wild/card";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -123,7 +123,7 @@ public class ReverseRoutesTest
     public void testQueryString()
         throws Exception
     {
-        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bazar";
+        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bazar";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -135,7 +135,7 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParam()
         throws Exception
     {
-        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=";
+        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -147,11 +147,11 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParamSeveralTimes()
         throws Exception
     {
-        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
+        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
         expect().
             statusCode( 200 ).
             when().
-            body( equalTo( BASE_URL + "query/foo/string?qsOne=bar&qsTwo=" ) ).
+            body( equalTo( baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=" ) ).
             get( url );
     }
 
@@ -159,10 +159,10 @@ public class ReverseRoutesTest
     public void testQueryStringWithSameValueParamSeveralTimes()
         throws Exception
     {
-        String url = BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
+        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
         expect().
             statusCode( 200 ).
-            body( equalTo( BASE_URL + "query/foo/string?qsOne=bar&qsTwo=bar" ) ).
+            body( equalTo( baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar" ) ).
             when().
             get( url );
     }
@@ -171,7 +171,7 @@ public class ReverseRoutesTest
     public void testAppendedQueryString()
         throws Exception
     {
-        String url = BASE_URL + "appended/qs";
+        String url = baseHttpUrl() + "/appended/qs";
         given().
             queryParam( "bar", "bazar" ).
             queryParam( "foo", "bar" ).
@@ -186,7 +186,7 @@ public class ReverseRoutesTest
     public void testFragmentIdentifier()
         throws Exception
     {
-        String url = BASE_URL + "fragment/identifier";
+        String url = baseHttpUrl() + "/fragment/identifier";
         expect().
             statusCode( 200 ).
             body( equalTo( url + "#bazar" ) ).

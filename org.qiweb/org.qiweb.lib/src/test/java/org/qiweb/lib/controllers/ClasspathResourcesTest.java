@@ -42,7 +42,7 @@ public class ClasspathResourcesTest
         expect().
             statusCode( 404 ).
             when().
-            get( BASE_URL + "qiweb/donotexists.yet" );
+            get( "/qiweb/donotexists.yet" );
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ClasspathResourcesTest
             // See http://httpcomponents.10934.n7.nabble.com/HTTP-Trailers-in-HttpClient-4-0-1-td15030.html
             // header( "X-QiWeb-Content-Length", "666" ).
             when().
-            get( BASE_URL + "qiweb/666B" );
+            get( "/qiweb/666B" );
         assertThat( response.asByteArray().length, equalTo( 666 ) );
     }
 
@@ -73,7 +73,7 @@ public class ClasspathResourcesTest
             // See http://httpcomponents.10934.n7.nabble.com/HTTP-Trailers-in-HttpClient-4-0-1-td15030.html
             // header( "X-QiWeb-Content-Length", "32768" ).
             when().
-            get( BASE_URL + "qiweb/32KB" );
+            get( "/qiweb/32KB" );
         assertThat( response.asByteArray().length, equalTo( 32768 ) );
     }
 
@@ -89,7 +89,7 @@ public class ClasspathResourcesTest
             // See http://httpcomponents.10934.n7.nabble.com/HTTP-Trailers-in-HttpClient-4-0-1-td15030.html
             // header( "X-QiWeb-Content-Length", "32768" ).
             when().
-            get( BASE_URL + "qiweb/8858B" );
+            get( "/qiweb/8858B" );
         assertThat( response.asByteArray().length, equalTo( 8858 ) );
     }
 
@@ -99,26 +99,26 @@ public class ClasspathResourcesTest
     {
         // Simple directory traversal
 
-        assertDirectoryTraversalAttemptFailed( "qiweb/../../../shadow" );
-        assertDirectoryTraversalAttemptFailed( "../shadow" );
+        assertDirectoryTraversalAttemptFailed( "/qiweb/../../../shadow" );
+        assertDirectoryTraversalAttemptFailed( "/../shadow" );
 
         // URI encoded directory traversal
 
-        assertDirectoryTraversalAttemptFailed( "%2e%2e%2fshadow" );
-        assertDirectoryTraversalAttemptFailed( "%2e%2e%5cshadow" );
-        assertDirectoryTraversalAttemptFailed( "%2e%2e/shadow" );
-        assertDirectoryTraversalAttemptFailed( "%2e./shadow" );
-        assertDirectoryTraversalAttemptFailed( ".%2e/shadow" );
-        assertDirectoryTraversalAttemptFailed( "..%2fshadow" );
-        assertDirectoryTraversalAttemptFailed( "..%5cshadow" );
+        assertDirectoryTraversalAttemptFailed( "/%2e%2e%2fshadow" );
+        assertDirectoryTraversalAttemptFailed( "/%2e%2e%5cshadow" );
+        assertDirectoryTraversalAttemptFailed( "/%2e%2e/shadow" );
+        assertDirectoryTraversalAttemptFailed( "/%2e./shadow" );
+        assertDirectoryTraversalAttemptFailed( "/.%2e/shadow" );
+        assertDirectoryTraversalAttemptFailed( "/..%2fshadow" );
+        assertDirectoryTraversalAttemptFailed( "/..%5cshadow" );
 
         // Unicode / UTF-8 encoded directory traversal
 
-        assertDirectoryTraversalAttemptFailed( "\u002e\u002e\u002fshadow" );
-        assertDirectoryTraversalAttemptFailed( "\u002e.\u002fshadow" );
-        assertDirectoryTraversalAttemptFailed( ".\u002e\u002fshadow" );
-        assertDirectoryTraversalAttemptFailed( "..\u002fshadow" );
-        assertDirectoryTraversalAttemptFailed( "\u002e\u002e/shadow" );
+        assertDirectoryTraversalAttemptFailed( "/\u002e\u002e\u002fshadow" );
+        assertDirectoryTraversalAttemptFailed( "/\u002e.\u002fshadow" );
+        assertDirectoryTraversalAttemptFailed( "/.\u002e\u002fshadow" );
+        assertDirectoryTraversalAttemptFailed( "/..\u002fshadow" );
+        assertDirectoryTraversalAttemptFailed( "/\u002e\u002e/shadow" );
     }
 
     private void assertDirectoryTraversalAttemptFailed( String path )
@@ -127,6 +127,6 @@ public class ClasspathResourcesTest
         expect().
             statusCode( either( is( 400 ) ).or( is( 404 ) ) ).
             when().
-            get( BASE_URL + path );
+            get( path );
     }
 }

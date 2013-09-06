@@ -51,6 +51,6 @@ public class FiltersTest
             statusCode( 200 ).
             header( "X-QiWeb-Filtered", equalTo( "true" ) ).
             when().
-            get( BASE_URL );
+            get( "/" );
     }
 }

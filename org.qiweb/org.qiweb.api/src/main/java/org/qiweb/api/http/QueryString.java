@@ -31,9 +31,6 @@ public interface QueryString
     Set<String> keys();
 
     /**
-     * @return  First String value from the query string for the given key or an empty String.
-     */
-    /**
      * Get single query parameter value, ensuring it has only one value.
      * <p>
      *     See <a href="https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf"

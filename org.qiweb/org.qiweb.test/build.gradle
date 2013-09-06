@@ -2,7 +2,6 @@
 dependencies {
 
     compile project( ':org.qiweb.runtime' )
-    compile libs.httpclient
     compile libs.junit
 
 }

@@ -39,7 +39,7 @@ public class DefaultTest
         expect().
             statusCode( 404 ).
             when().
-            get( BASE_URL + "notFound" );
+            get( "/notFound" );
     }
 
     @Test
@@ -49,7 +49,7 @@ public class DefaultTest
         expect().
             statusCode( 500 ).
             when().
-            get( BASE_URL + "internalServerError" );
+            get( "/internalServerError" );
     }
 
     @Test
@@ -59,6 +59,6 @@ public class DefaultTest
         expect().
             statusCode( 501 ).
             when().
-            get( BASE_URL + "notImplemented" );
+            get( "/notImplemented" );
     }
 }

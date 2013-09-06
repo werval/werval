@@ -75,7 +75,7 @@ public class OnErrorTest
         expect().
             statusCode( 200 ).
             when().
-            get( BASE_URL + "success" );
+            get( "/success" );
         assertThat( application().errors().count(), is( 0 ) );
     }
 
@@ -86,7 +86,7 @@ public class OnErrorTest
         expect().
             statusCode( 500 ).
             when().
-            get( BASE_URL + "internalServerError" );
+            get( "/internalServerError" );
         assertThat( application().errors().count(), is( 0 ) );
     }
 
@@ -97,7 +97,7 @@ public class OnErrorTest
         Response response = expect().
             statusCode( 500 ).
             when().
-            get( BASE_URL + "exception" );
+            get( "/exception" );
         assertThat( response.statusCode(), is( 500 ) );
 
         String requestId = response.header( X_QIWEB_REQUEST_ID );
@@ -125,7 +125,7 @@ public class OnErrorTest
         Response response = expect().
             statusCode( 500 ).
             when().
-            get( BASE_URL + "exception" );
+            get( "/exception" );
         assertThat( response.statusCode(), is( 500 ) );
 
         assertThat( testGlobal.httpRequestErrorCount, is( 1 ) );

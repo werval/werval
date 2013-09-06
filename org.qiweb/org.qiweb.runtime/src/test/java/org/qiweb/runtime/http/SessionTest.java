@@ -1,26 +1,18 @@
 package org.qiweb.runtime.http;
 
 import java.util.Collections;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.expect;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 
 public class SessionTest
@@ -66,98 +58,45 @@ public class SessionTest
 
     @Test
     public void testSetSession()
-        throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "set/foo/bar" ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        Header[] setCookieHeaders = response.getHeaders( "Set-Cookie" );
-        assertTrue( setCookieHeaders.length > 0 );
-        String sessionCookie = null;
-        for( Header setCookieHeader : setCookieHeaders )
-        {
-            if( setCookieHeader.getValue().startsWith( sessionCookieName + "=" ) )
-            {
-                sessionCookie = setCookieHeader.getValue().substring( ( sessionCookieName + "=" ).length() );
-                sessionCookie = sessionCookie.substring( 0, sessionCookie.indexOf( ";" ) );
-            }
-        }
-        assertThat( sessionCookie, notNullValue() );
-        Session session = new SessionInstance( application().config(), application().crypto(), new CookieInstance( sessionCookieName, "/", null, false, sessionCookie, true ) );
-        assertThat( session, notNullValue() );
+        String cookieValue = expect().when().get( "/set/foo/bar" ).cookie( sessionCookieName );
+        Cookie sessionCookie = new CookieInstance( sessionCookieName, "/", null, false, cookieValue, true );
+        Session session = new SessionInstance( application().config(), application().crypto(), sessionCookie );
         assertThat( session.get( "foo" ), equalTo( "bar" ) );
     }
 
     @Test
-    public void testValidSession()
-        throws Exception
+    public void testValidSessionAssured()
     {
         String signedSession = new SessionInstance( application().config(),
                                                     application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
-        DefaultHttpClient client = newHttpClientInstance();
-        CookieStore clientCookieStore = new BasicCookieStore();
-        BasicClientCookie sessionCookie = new BasicClientCookie( sessionCookieName, signedSession );
-        sessionCookie.setVersion( 0 );
-        sessionCookie.setDomain( "127.0.0.1" );
-        sessionCookie.setPath( "/" );
-        clientCookieStore.addCookie( sessionCookie );
-
-        HttpContext clientContext = new BasicHttpContext();
-        clientContext.setAttribute( ClientContext.COOKIE_STORE, clientCookieStore );
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "show" ), clientContext );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( "{foo=bar}" ) );
+        given().cookie( sessionCookieName, signedSession ).
+            expect().body( equalTo( "{foo=bar}" ) ).
+            when().get( "/show" );
     }
 
     @Test
-    public void testInvalidSession()
-        throws Exception
+    public void testInvalidSessionAssured()
     {
         String signedSession = new SessionInstance( application().config(),
                                                     application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
-
         // Invalidate Session Data
         signedSession = signedSession.substring( 1 );
-
-        DefaultHttpClient client = newHttpClientInstance();
-        CookieStore clientCookieStore = new BasicCookieStore();
-        BasicClientCookie sessionCookie = new BasicClientCookie( sessionCookieName, signedSession );
-        sessionCookie.setVersion( 0 );
-        sessionCookie.setDomain( "127.0.0.1" );
-        sessionCookie.setPath( "/" );
-        clientCookieStore.addCookie( sessionCookie );
-
-        HttpContext clientContext = new BasicHttpContext();
-        clientContext.setAttribute( ClientContext.COOKIE_STORE, clientCookieStore );
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "show" ), clientContext );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( "{}" ) );
+        given().cookie( sessionCookieName, signedSession ).
+            expect().body( equalTo( "{}" ) ).
+            when().get( "/show" );
     }
 
     @Test
-    public void testClearSession()
-        throws Exception
+    public void testClearSessionAssured()
     {
         String signedSession = new SessionInstance( application().config(),
                                                     application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
-        DefaultHttpClient client = newHttpClientInstance();
-        CookieStore clientCookieStore = new BasicCookieStore();
-        BasicClientCookie sessionCookie = new BasicClientCookie( sessionCookieName, signedSession );
-        sessionCookie.setVersion( 0 );
-        sessionCookie.setDomain( "127.0.0.1" );
-        sessionCookie.setPath( "/" );
-        clientCookieStore.addCookie( sessionCookie );
-
-        HttpContext clientContext = new BasicHttpContext();
-        clientContext.setAttribute( ClientContext.COOKIE_STORE, clientCookieStore );
-
-        HttpResponse response = client.execute( new HttpGet( BASE_URL + "clear" ), clientContext );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( responseBodyAsString( response ), equalTo( "{}" ) );
+        given().cookie( sessionCookieName, signedSession ).
+            expect().body( equalTo( "{}" ) ).
+            when().get( "/clear" );
     }
 }

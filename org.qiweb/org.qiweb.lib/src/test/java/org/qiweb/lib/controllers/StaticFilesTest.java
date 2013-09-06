@@ -50,7 +50,7 @@ public class StaticFilesTest
             statusCode( 200 ).
             header( "Content-Length", String.valueOf( expectedLength ) ).
             when().
-            get( BASE_URL + "single" );
+            get( "/single" );
         assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
     }
 
@@ -63,7 +63,7 @@ public class StaticFilesTest
             statusCode( 200 ).
             header( "Content-Length", String.valueOf( expectedLength ) ).
             when().
-            get( BASE_URL + "tree/staticfiles/" );
+            get( "/tree/staticfiles/" );
         assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
     }
 
@@ -73,7 +73,7 @@ public class StaticFilesTest
         expect().
             statusCode( 404 ).
             when().
-            get( BASE_URL + "tree/not.found" );
+            get( "/tree/not.found" );
     }
 
     @Test
@@ -85,7 +85,7 @@ public class StaticFilesTest
             statusCode( 200 ).
             header( "Content-Length", String.valueOf( expectedLength ) ).
             when().
-            get( BASE_URL + "tree/logback.xml" );
+            get( "/tree/logback.xml" );
         assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
     }
 

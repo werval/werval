@@ -48,7 +48,7 @@ public class IntrospectTest
             contentType( "application/json" ).
             body( "app.secret", notNullValue() ).
             when().
-            get( BASE_URL + "@config" );
+            get( "/@config" );
     }
 
     @Test
@@ -64,7 +64,7 @@ public class IntrospectTest
             body( "dirty", either( is( false ) ).or( is( true ) ) ).
             body( "date", notNullValue() ).
             when().
-            get( BASE_URL + "@version" );
+            get( "/@version" );
     }
 
     @Test
@@ -77,6 +77,6 @@ public class IntrospectTest
             statusCode( 200 ).
             contentType( "text/html" ).
             when().
-            get( BASE_URL + "@version" );
+            get( "/@version" );
     }
 }

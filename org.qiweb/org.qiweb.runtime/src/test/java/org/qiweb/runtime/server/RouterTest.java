@@ -25,26 +25,26 @@ public class RouterTest
         expect().
             statusCode( 200 ).
             when().
-            get( BASE_URL );
+            get( "/" );
         expect().
             statusCode( 404 ).
             when().
-            post( BASE_URL );
+            post( "/" );
         expect().
             statusCode( 200 ).
             when().
-            get( BASE_URL + "foo" );
+            get( "/foo" );
         expect().
             statusCode( 200 ).
             when().
-            get( BASE_URL + "bar" );
+            get( "/bar" );
         expect().
             statusCode( 404 ).
             when().
-            get( BASE_URL + "bazar" );
+            get( "/bazar" );
         expect().
             statusCode( 200 ).
             when().
-            get( BASE_URL + "azertyuiop/1234" );
+            get( "/azertyuiop/1234" );
     }
 }
