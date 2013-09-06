@@ -17,7 +17,7 @@ import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class CookiesTest

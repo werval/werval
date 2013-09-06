@@ -6,9 +6,10 @@ import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.MutableHeaders;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.http.Headers.Names.HOST;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 
 public class HttpRequestHeaderTest
 {

@@ -1,8 +1,5 @@
 package org.qiweb.runtime.filters;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.Test;
 import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
@@ -10,8 +7,8 @@ import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.test.AbstractQiWebTest;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static org.hamcrest.Matchers.equalTo;
 
 public class FiltersTest
     extends AbstractQiWebTest
@@ -50,9 +47,10 @@ public class FiltersTest
     public void testFilters()
         throws Exception
     {
-        HttpClient client = newHttpClientInstance();
-        HttpResponse response = client.execute( new HttpGet( BASE_URL ) );
-        assertThat( response.getStatusLine().getStatusCode(), is( 200 ) );
-        assertThat( response.getHeaders( "X-QiWeb-Filtered" )[0].getValue(), equalTo( "true" ) );
+        expect().
+            statusCode( 200 ).
+            header( "X-QiWeb-Filtered", equalTo( "true" ) ).
+            when().
+            get( BASE_URL );
     }
 }
