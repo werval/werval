@@ -52,7 +52,7 @@ Once installed you can depend on the following artifacts:
 - `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main`
 - `org.qiweb:org.qiweb.test:0` in your test code to get a test environment
 
-The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `devshell` to run the
+The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `qiweb:devshell` to run the
 Development Shell.
 
 The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using

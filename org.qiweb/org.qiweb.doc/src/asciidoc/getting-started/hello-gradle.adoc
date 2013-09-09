@@ -57,6 +57,9 @@ applicationName = 'hello-qiweb' // <8>
 And that's it!
 You can now use Gradle to compile, develop, test, assemble and run your application.
 
+TIP: If you did'nt use `qiweb-cli` to generate an application skeleton you miss an application secret.
+You can generate a new one by typing `gradle secret` on the command line.
+
 .Run in development mode
 [source]
 ----

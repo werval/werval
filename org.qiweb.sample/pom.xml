@@ -49,6 +49,11 @@
         
         <!-- Runtime -->
         <dependency>
+            <groupId>org.qiweb</groupId>
+            <artifactId>org.qiweb.runtime</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.0.11</version>
