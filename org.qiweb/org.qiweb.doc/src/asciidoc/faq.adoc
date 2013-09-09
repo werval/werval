@@ -23,12 +23,25 @@ What was the question already?
 
 === Why choose Java as implementation language?
 
-    widespread
-    getting old and well known but still moving
-    really, really good developer tooling
-    JVM feels like a good platform of choice
-    my language of choice is java
-    but the JVM is not tight to Java anymore, it can run scala, ruby, python, javascript and many more
+First, the Java programming language is widely used and well known by a lot of developpers.
+It emerged in the early 90s, that is more than 20 years ago.
+So it is old enough to be considered as mature.
+With an eventful history, it keeps moving.
+
+Second, the main Java running platform, a.k.a the JVM, is quite ubiquitous on the x86 architecture, supported on almost
+every operating system and cloud provider.
+It is now open-source and already available to ARM architectures as a
+https://jdk8.java.net/download.html[JDK8 Early Access Release].
+
+Third, Java:
+
+- has excellent developer tooling (IDEs with automated complex refactorings, continuous integration, static code
+analysis etc...) ;
+- comes with a large choice of 3rd party libraries ;
+- is hugely specified and documented.
+
+And last but not least, the JVM is not tight to the Java programming language as it can run code written in
+https://en.wikipedia.org/wiki/List_of_JVM_languages[over 50 languages].
 
 
 === Can I write my application code in {put.your.language.here}?
