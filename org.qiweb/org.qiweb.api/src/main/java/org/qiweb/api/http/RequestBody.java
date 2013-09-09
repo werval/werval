@@ -15,51 +15,43 @@
  */
 package org.qiweb.api.http;
 
-import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Request Body.
- *
- * @composed 1 - * Upload
  */
 public interface RequestBody
 {
 
-    Map<String, List<String>> formAttributes();
+    /**
+     * @return Request Form Attributes
+     */
+    FormAttributes formAttributes();
 
-    Map<String, List<Upload>> formUploads();
+    /**
+     * @return Request Form Uploads
+     */
+    FormUploads formUploads();
 
+    /**
+     * @return InputStream to the body data
+     */
     InputStream asStream();
 
+    /**
+     * @return Body data bytes
+     */
     byte[] asBytes();
 
+    /**
+     * @return Body data as a String
+     */
     String asString();
 
+    /**
+     * @param charset Charset to use
+     * @return Body data as a String
+     */
     String asString( Charset charset );
-
-    interface Upload
-    {
-
-        String contentType();
-
-        Charset charset();
-
-        String filename();
-
-        long length();
-
-        InputStream asStream();
-
-        byte[] asBytes();
-
-        String asString();
-
-        String asString( Charset charset );
-
-        boolean renameTo( File destination );
-    }
 }

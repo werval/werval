@@ -328,7 +328,7 @@ public final class HttpRequestRouterHandler
     {
         for( String name : headers.names() )
         {
-            nettyResponse.headers().add( name, headers.valuesOf( name ) );
+            nettyResponse.headers().add( name, headers.values( name ) );
         }
     }
 

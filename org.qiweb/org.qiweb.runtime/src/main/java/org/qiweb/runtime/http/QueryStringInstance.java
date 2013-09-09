@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
+import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.runtime.util.Comparators;
 
@@ -53,30 +54,44 @@ public class QueryStringInstance
         this.parameters = new TreeMap<>( Comparators.LOWER_CASE );
         for( Entry<String, List<String>> entry : parameters.entrySet() )
         {
-            String key = entry.getKey();
-            if( !this.parameters.containsKey( key ) )
+            String name = entry.getKey();
+            if( !this.parameters.containsKey( name ) )
             {
-                this.parameters.put( key, new ArrayList<String>() );
+                this.parameters.put( name, new ArrayList<String>() );
             }
             List<String> values = entry.getValue();
-            if( !allowMultiValuedParameters && ( !this.parameters.get( key ).isEmpty() || values.size() > 1 ) )
+            if( !allowMultiValuedParameters && ( !this.parameters.get( name ).isEmpty() || values.size() > 1 ) )
             {
                 // TODO Make this lead to a 400 BadRequest, but how?
                 throw new IllegalStateException( "Multi-valued query string parameters are not allowed" );
             }
-            this.parameters.get( key ).addAll( entry.getValue() );
+            this.parameters.get( name ).addAll( entry.getValue() );
         }
     }
 
     @Override
-    public Set<String> keys()
+    public boolean isEmpty()
+    {
+        return parameters.isEmpty();
+    }
+
+    @Override
+    public boolean has( String name )
+    {
+        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        return parameters.containsKey( name );
+    }
+
+    @Override
+    public Set<String> names()
     {
         return Collections.unmodifiableSet( parameters.keySet() );
     }
 
     @Override
-    public String singleValueOf( String name )
+    public String singleValue( String name )
     {
+        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -84,14 +99,15 @@ public class QueryStringInstance
         List<String> values = parameters.get( name );
         if( values.size() != 1 )
         {
-            throw new IllegalStateException( "QueryString parameter '" + name + "' has multiple values" );
+            throw new IllegalStateException( "QueryString Parameter '" + name + "' has multiple values" );
         }
         return values.get( 0 );
     }
 
     @Override
-    public String firstValueOf( String name )
+    public String firstValue( String name )
     {
+        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -100,8 +116,9 @@ public class QueryStringInstance
     }
 
     @Override
-    public String lastValueOf( String name )
+    public String lastValue( String name )
     {
+        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -111,30 +128,51 @@ public class QueryStringInstance
     }
 
     @Override
-    public List<String> valuesOf( String key )
+    public List<String> values( String name )
     {
-        if( !parameters.containsKey( key ) )
+        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        if( !parameters.containsKey( name ) )
         {
             return Collections.emptyList();
         }
-        return Collections.unmodifiableList( parameters.get( key ) );
+        return Collections.unmodifiableList( parameters.get( name ) );
     }
 
     @Override
-    public Map<String, String> asMap()
+    public Map<String, String> singleValues()
     {
         Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( Map.Entry<String, List<String>> entry : parameters.entrySet() )
+        for( String name : parameters.keySet() )
         {
-            String key = entry.getKey();
-            List<String> values = entry.getValue();
-            map.put( key, values.get( 0 ) );
+            map.put( name, singleValue( name ) );
         }
         return Collections.unmodifiableMap( map );
     }
 
     @Override
-    public Map<String, List<String>> asMapAll()
+    public Map<String, String> firstValues()
+    {
+        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
+        for( String name : parameters.keySet() )
+        {
+            map.put( name, firstValue( name ) );
+        }
+        return Collections.unmodifiableMap( map );
+    }
+
+    @Override
+    public Map<String, String> lastValues()
+    {
+        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
+        for( String name : parameters.keySet() )
+        {
+            map.put( name, lastValue( name ) );
+        }
+        return Collections.unmodifiableMap( map );
+    }
+
+    @Override
+    public Map<String, List<String>> allValues()
     {
         return Collections.unmodifiableMap( parameters );
     }

@@ -28,6 +28,17 @@ public interface Cookies
 {
 
     /**
+     * @return TRUE if there's no cookie, FALSE otherwise
+     */
+    boolean isEmpty();
+
+    /**
+     * @param name Name of the cookie
+     * @return TRUE if there's an cookie with the given name
+     */
+    boolean has( String name );
+
+    /**
      * @return The Set of HTTP Cookie names.
      */
     Set<String> names();
@@ -42,7 +53,7 @@ public interface Cookies
      * @param name Name of the HTTP Cookie
      * @return Value for this HTTP Cookie name or an empty String
      */
-    String valueOf( String name );
+    String value( String name );
 
     /**
      * HTTP Cookie.
@@ -50,16 +61,34 @@ public interface Cookies
     interface Cookie
     {
 
+        /**
+         * @return Name of the cookie
+         */
         String name();
 
+        /**
+         * @return Path of the cookie
+         */
         String path();
 
+        /**
+         * @return Domain of the cookie
+         */
         String domain();
 
+        /**
+         * @return TRUE if the cookie is secure, FALSE otherwise
+         */
         boolean secure();
 
+        /**
+         * @return The value of the cookie
+         */
         String value();
 
+        /**
+         * @return TRUE if the cookie is httpOnly, FALSE otherwise
+         */
         boolean httpOnly();
     }
 }

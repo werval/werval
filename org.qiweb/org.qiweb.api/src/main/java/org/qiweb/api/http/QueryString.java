@@ -26,52 +26,85 @@ public interface QueryString
 {
 
     /**
-     * @return  All query string keys as immutable Set&lt;String&gt;.
+     * @return TRUE if there's no query string parameter, FALSE otherwise
      */
-    Set<String> keys();
+    boolean isEmpty();
+
+    /**
+     * @param name Name of the query string parameter
+     * @return TRUE if there's a query string parameter with the given name
+     */
+    boolean has( String name );
+
+    /**
+     * @return  All query string parameter names as immutable Set&lt;String&gt;.
+     */
+    Set<String> names();
 
     /**
      * Get single query parameter value, ensuring it has only one value.
-     * <p>
-     *     See <a href="https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf"
-     *     target="_blank">HTTP Parameter Pollution</a> at OWASP.
-     * </p>
      *
      * @param name Name of the query string parameter
      * @return  Value for this query string parameter name or an empty String
-     * @throws IllegalStateException if there is multiple values for this query string paramter
+     * @throws IllegalStateException if there is multiple values for this query string parameter
      */
-    String singleValueOf( String name );
+    String singleValue( String name );
 
     /**
-     * Get first query string paramter value.
-     * @param name Name of the query string paramter
-     * @return  First value for this query string paramter name or an empty String
+     * Get first query string parameter value.
+     *
+     * @param name Name of the query string parameter
+     * @return  First value for this query string parameter name or an empty String
      */
-    String firstValueOf( String name );
+    String firstValue( String name );
 
     /**
-     * Get last query string paramter value.
-     * @param name Name of the query string paramter
-     * @return  Last value for this query string paramter name or an empty String
+     * Get last query string parameter value.
+     *
+     * @param name Name of the query string parameter
+     * @return  Last value for this query string parameter name or an empty String
      */
-    String lastValueOf( String name );
+    String lastValue( String name );
 
     /**
-     * @return  All String values from the query string for the given key as immutable List&lt;String&gt;,
+     * Get all query string parameter values.
+     *
+     * @param name Name of the query string parameter
+     * @return  All String values from the query string for the given name as immutable List&lt;String&gt;,
      *          or an immutable empty one.
      */
-    List<String> valuesOf( String key );
+    List<String> values( String name );
 
     /**
-     * @return  First String values from the query string for all keys as immutable Map&lt;String,String&gt;,
-     *          or an empty immutable one.
+     * Get all query string parameters single values, ensuring each has only one value.
+     *
+     * @return  Every single value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
+     *          immutable one.
+     * @throws IllegalStateException if there is multiple values for a parameter
      */
-    Map<String, String> asMap();
+    Map<String, String> singleValues();
 
     /**
-     * @return  All String values from the query string for all keys as immutable Map&lt;String,String&gt;,
+     * Get all query string parameters first values.
+     *
+     * @return  Every first value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
+     *          immutable one.
+     */
+    Map<String, String> firstValues();
+
+    /**
+     * Get all query string parameters last values.
+     *
+     * @return  Every last value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
+     *          immutable one.
+     */
+    Map<String, String> lastValues();
+
+    /**
+     * Get all query string parameters values.
+     *
+     * @return  Every values of each query string parameter as immutable Map&lt;String,List&lt;String&gt;&gt;,
      *          or an empty immutable one.
      */
-    Map<String, List<String>> asMapAll();
+    Map<String, List<String>> allValues();
 }

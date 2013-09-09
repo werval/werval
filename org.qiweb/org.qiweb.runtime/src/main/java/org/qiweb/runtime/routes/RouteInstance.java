@@ -260,9 +260,10 @@ import static org.qi4j.functional.Specifications.in;
                 }
                 catch( IllegalArgumentException noMatchingGroupInPath )
                 {
-                    if( queryString.keys().contains( param.name() ) )
+                    if( queryString.names().contains( param.name() ) )
                     {
-                        unboundValue = queryString.singleValueOf( param.name() );
+                        // FIXME first or last value!
+                        unboundValue = queryString.singleValue( param.name() );
                     }
                 }
                 if( unboundValue == null )

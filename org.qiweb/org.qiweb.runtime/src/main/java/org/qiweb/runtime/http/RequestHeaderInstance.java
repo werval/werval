@@ -138,7 +138,7 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                return headers.singleValueOf( HOST );
+                return headers.singleValue( HOST );
             }
         } );
     }
@@ -174,7 +174,7 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                return headers.singleValueOf( HOST ).split( ":" )[0];
+                return headers.singleValue( HOST ).split( ":" )[0];
             }
         } );
     }
@@ -187,7 +187,7 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                return headers.singleValueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
+                return headers.singleValue( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
             }
         } );
     }
@@ -200,7 +200,7 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                String[] split = headers.singleValueOf( CONTENT_TYPE ).split( ";" );
+                String[] split = headers.singleValue( CONTENT_TYPE ).split( ";" );
                 if( split.length <= 1 )
                 {
                     return Strings.EMPTY;
@@ -213,7 +213,7 @@ public class RequestHeaderInstance
                         return option.split( "=" )[1];
                     }
                 }
-                return headers.singleValueOf( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
+                return headers.singleValue( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
             }
         } );
     }

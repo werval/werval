@@ -39,7 +39,7 @@ public class QueryStringTest
         public Outcome echo()
             throws JsonProcessingException
         {
-            String json = JSON_MAPPER.writeValueAsString( request().queryString().asMapAll() );
+            String json = JSON_MAPPER.writeValueAsString( request().queryString().allValues() );
             return outcomes().ok( json ).as( "application/json" ).build();
         }
     }

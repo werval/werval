@@ -41,7 +41,7 @@ public class FakeControllerInstance
         sb.append( "Request identity is: " ).append( request().identity() ).append( "\n" );
         sb.append( "Request path is: " ).append( request().path() ).append( "\n" );
         sb.append( "\nRequest Headers:\n" );
-        for( Entry<String, List<String>> header : request().headers().asMapAll().entrySet() )
+        for( Entry<String, List<String>> header : request().headers().allValues().entrySet() )
         {
             sb.append( "\t" ).append( header.getKey() ).append( ": " ).append( header.getValue() ).append( ",\n" );
         }

@@ -26,53 +26,83 @@ public interface Headers
 {
 
     /**
+     * @return TRUE if there's no header, FALSE otherwise
+     */
+    boolean isEmpty();
+
+    /**
+     * @param name Name of the header
+     * @return TRUE if there's a header with the given name
+     */
+    boolean has( String name );
+
+    /**
      * @return  All HTTP Header names as immutable Set&lt;String&gt;.
      */
     Set<String> names();
 
     /**
      * Get single header value, ensuring it has only one value.
-     * <p>
-     *     See <a href="https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf"
-     *     target="_blank">HTTP Parameter Pollution</a> at OWASP.
-     * </p>
      * 
      * @param name Name of the HTTP Header
      * @return  Value for this HTTP Header name or an empty String
      * @throws IllegalStateException if there is multiple values for this header
      */
-    String singleValueOf( String name );
+    String singleValue( String name );
 
     /**
      * Get first header value.
+     *
      * @param name Name of the HTTP Header
      * @return  First value for this HTTP Header name or an empty String
      */
-    String firstValueOf( String name );
+    String firstValue( String name );
 
     /**
      * Get last header value.
+     * 
      * @param name Name of the HTTP Header
      * @return  Last value for this HTTP Header name or an empty String
      */
-    String lastValueOf( String name );
+    String lastValue( String name );
 
     /**
+     * Get all header values.
+     * 
      * @param name Name of the HTTP Header
      * @return  All first values for this HTTP Header name as immutable List&lt;String&gt;, or an empty immutable one.
      */
-    List<String> valuesOf( String name );
+    List<String> values( String name );
 
     /**
+     * Get all headers single values, ensuring each has only one value.
+     *
+     * @return  Every single value of each HTTP Header as immutable Map&lt;String,String&gt;, or an empty immutable one.
+     * @throws IllegalStateException if there is multiple values for a header
+     */
+    Map<String, String> singleValues();
+
+    /**
+     * Get all headers first values.
+     *
      * @return  Every first value of each HTTP Header as immutable Map&lt;String,String&gt;, or an empty immutable one.
      */
-    Map<String, String> asMap();
+    Map<String, String> firstValues();
 
     /**
+     * Get all headers last values.
+     *
+     * @return  Every last value of each HTTP Header as immutable Map&lt;String,String&gt;, or an empty immutable one.
+     */
+    Map<String, String> lastValues();
+
+    /**
+     * Get all headers values.
+     * 
      * @return  Every values of each HTTP Header as immutable Map&lt;String,List&lt;String&gt;&gt;,
      *          or an empty immutable one.
      */
-    Map<String, List<String>> asMapAll();
+    Map<String, List<String>> allValues();
 
     /**
      * HTTP Header Names.

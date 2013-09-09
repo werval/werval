@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
+import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.runtime.util.Comparators;
 
@@ -42,6 +43,19 @@ public class CookiesInstance
     }
 
     @Override
+    public boolean isEmpty()
+    {
+        return cookies.isEmpty();
+    }
+
+    @Override
+    public boolean has( String name )
+    {
+        NullArgumentException.ensureNotEmpty( "Cookie Name", name );
+        return cookies.containsKey( name );
+    }
+
+    @Override
     public Set<String> names()
     {
         return Collections.unmodifiableSet( cookies.keySet() );
@@ -50,12 +64,14 @@ public class CookiesInstance
     @Override
     public Cookie get( String name )
     {
+        NullArgumentException.ensureNotEmpty( "Cookie Name", name );
         return cookies.get( name );
     }
 
     @Override
-    public String valueOf( String name )
+    public String value( String name )
     {
+        NullArgumentException.ensureNotEmpty( "Cookie Name", name );
         if( cookies.containsKey( name ) )
         {
             return cookies.get( name ).value();
@@ -66,17 +82,19 @@ public class CookiesInstance
     @Override
     public MutableCookies set( String name, String value )
     {
+        NullArgumentException.ensureNotEmpty( "Cookie Name", name );
         // TODO Implement serious Cookie creation
-        cookies.put( name, new CookieInstance( name, "", "", false, value, true ) );
+        cookies.put( name, new CookieInstance( name, "", "", false, value == null ? Strings.EMPTY : value, true ) );
         return this;
     }
 
     @Override
     public MutableCookies invalidate( String name )
     {
+        NullArgumentException.ensureNotEmpty( "Cookie Name", name );
         // TODO Add expires NOW to remove the cookie from the browser asap
         // See http://stackoverflow.com/questions/5285940/correct-way-to-delete-cookies-server-side
-        cookies.put( name, new CookieInstance( name, "", "", false, "", true ) );
+        cookies.put( name, new CookieInstance( name, Strings.EMPTY, Strings.EMPTY, false, Strings.EMPTY, true ) );
         return this;
     }
 

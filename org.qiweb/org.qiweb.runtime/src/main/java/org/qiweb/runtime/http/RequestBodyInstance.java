@@ -30,8 +30,13 @@ import java.util.List;
 import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.http.FormAttributes;
+import org.qiweb.api.http.FormUploads;
+import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.runtime.util.FileByteBuff;
+
+import static io.netty.util.CharsetUtil.UTF_8;
 
 /**
  * A RequestBody Instance.
@@ -41,8 +46,8 @@ public final class RequestBodyInstance
 {
 
     private final ByteBuf byteBuf;
-    private final Map<String, List<String>> attributes;
-    private final Map<String, List<Upload>> uploads;
+    private final FormAttributes attributes;
+    private final FormUploads uploads;
 
     /**
      * Create a new EMPTY RequestBody.
@@ -50,8 +55,8 @@ public final class RequestBodyInstance
     public RequestBodyInstance()
     {
         this.byteBuf = null;
-        this.attributes = Collections.emptyMap();
-        this.uploads = Collections.emptyMap();
+        this.attributes = new FormAttributesInstance( Collections.<String, List<String>>emptyMap() );
+        this.uploads = new FormUploadsInstance( Collections.<String, List<Upload>>emptyMap() );
     }
 
     /**
@@ -62,8 +67,8 @@ public final class RequestBodyInstance
     public RequestBodyInstance( ByteBuf byteBuf )
     {
         this.byteBuf = byteBuf;
-        this.attributes = Collections.emptyMap();
-        this.uploads = Collections.emptyMap();
+        this.attributes = new FormAttributesInstance( Collections.<String, List<String>>emptyMap() );
+        this.uploads = new FormUploadsInstance( Collections.<String, List<Upload>>emptyMap() );
     }
 
     /**
@@ -75,20 +80,20 @@ public final class RequestBodyInstance
     public RequestBodyInstance( Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
     {
         this.byteBuf = null;
-        this.attributes = attributes;
-        this.uploads = uploads;
+        this.attributes = new FormAttributesInstance( attributes );
+        this.uploads = new FormUploadsInstance( uploads );
     }
 
     @Override
-    public Map<String, List<String>> formAttributes()
+    public FormAttributes formAttributes()
     {
-        return Collections.unmodifiableMap( attributes );
+        return attributes;
     }
 
     @Override
-    public Map<String, List<Upload>> formUploads()
+    public FormUploads formUploads()
     {
-        return Collections.unmodifiableMap( uploads );
+        return uploads;
     }
 
     @Override
@@ -128,7 +133,7 @@ public final class RequestBodyInstance
         {
             return Strings.EMPTY;
         }
-        return byteBuf.toString( Charset.forName( "UTF-8" ) );
+        return byteBuf.toString( UTF_8 );
     }
 
     @Override
@@ -139,91 +144,5 @@ public final class RequestBodyInstance
             return Strings.EMPTY;
         }
         return byteBuf.toString( charset );
-    }
-
-    public static class UploadInstance
-        implements Upload
-    {
-
-        private final String contentType;
-        private final Charset charset;
-        private final String filename;
-        private final File temporaryFile;
-
-        public UploadInstance( String contentType, Charset charset, String filename, File temporaryFile )
-        {
-            this.contentType = contentType;
-            this.charset = charset;
-            this.filename = filename;
-            this.temporaryFile = temporaryFile;
-        }
-
-        @Override
-        public String contentType()
-        {
-            return contentType;
-        }
-
-        @Override
-        public Charset charset()
-        {
-            return charset;
-        }
-
-        @Override
-        public String filename()
-        {
-            return filename;
-        }
-
-        @Override
-        public long length()
-        {
-            return temporaryFile.length();
-        }
-
-        @Override
-        public InputStream asStream()
-        {
-            try
-            {
-                return new FileInputStream( temporaryFile );
-            }
-            catch( FileNotFoundException ex )
-            {
-                throw new QiWebException( ex.getMessage(), ex );
-            }
-        }
-
-        @Override
-        public byte[] asBytes()
-        {
-            try
-            {
-                return Files.readAllBytes( temporaryFile.toPath() );
-            }
-            catch( IOException ex )
-            {
-                throw new QiWebException( ex.getMessage(), ex );
-            }
-        }
-
-        @Override
-        public String asString()
-        {
-            return new String( asBytes(), Charset.forName( "UTF-8" ) );
-        }
-
-        @Override
-        public String asString( Charset charset )
-        {
-            return new String( asBytes(), charset );
-        }
-
-        @Override
-        public boolean renameTo( File destination )
-        {
-            return temporaryFile.renameTo( destination );
-        }
     }
 }

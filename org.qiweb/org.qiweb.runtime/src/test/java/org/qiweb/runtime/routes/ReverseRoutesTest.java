@@ -61,7 +61,7 @@ public class ReverseRoutesTest
 
         public Outcome appendedQueryString()
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).appendedQueryString() ).appendQueryString( request().queryString().asMapAll() );
+            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).appendedQueryString() ).appendQueryString( request().queryString().allValues() );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
