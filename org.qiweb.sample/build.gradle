@@ -25,6 +25,7 @@ dependencies {
 
     compile "org.qiweb:org.qiweb.lib:$version"
 
+    runtime "org.qiweb:org.qiweb.runtime:$version"
     runtime webjars.bootstrap
 
     testCompile "org.qiweb:org.qiweb.test:$version"
