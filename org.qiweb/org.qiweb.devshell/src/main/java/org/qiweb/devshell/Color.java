@@ -15,6 +15,8 @@
  */
 package org.qiweb.devshell;
 
+import java.util.Locale;
+
 /* package */ final class Color
 {
 
@@ -75,7 +77,19 @@ package org.qiweb.devshell;
 
     private static void output( String message, String color )
     {
-        System.out.println( ANSI_RESET + color + message + ANSI_RESET );
+        if( colorSupported() )
+        {
+            System.out.println( ANSI_RESET + color + message + ANSI_RESET );
+        }
+        else
+        {
+            System.out.println( message );
+        }
+    }
+
+    private static boolean colorSupported()
+    {
+        return !System.getProperty( "os.name" ).toLowerCase( Locale.US ).contains( "windows" );
     }
 
     private Color()
