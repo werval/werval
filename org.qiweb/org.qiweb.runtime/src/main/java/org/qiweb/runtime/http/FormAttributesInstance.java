@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.FormAttributes;
+import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
 public class FormAttributesInstance
@@ -31,9 +33,23 @@ public class FormAttributesInstance
 
     private final Map<String, List<String>> attributes;
 
-    public FormAttributesInstance( Map<String, List<String>> formAttributes )
+    public FormAttributesInstance( boolean allowMultiValuedAttributes, Map<String, List<String>> attributes )
     {
-        this.attributes = formAttributes;
+        this.attributes = new TreeMap<>( Comparators.LOWER_CASE );
+        for( Map.Entry<String, List<String>> entry : attributes.entrySet() )
+        {
+            String name = entry.getKey();
+            if( !this.attributes.containsKey( name ) )
+            {
+                this.attributes.put( name, new ArrayList<String>() );
+            }
+            List<String> values = entry.getValue();
+            if( !allowMultiValuedAttributes && ( !this.attributes.get( name ).isEmpty() || values.size() > 1 ) )
+            {
+                throw new BadRequestException( "Multi-valued attributes are not allowed" );
+            }
+            this.attributes.get( name ).addAll( entry.getValue() );
+        }
     }
 
     @Override
@@ -66,7 +82,7 @@ public class FormAttributesInstance
         List<String> values = attributes.get( name );
         if( values.size() != 1 )
         {
-            throw new IllegalStateException( "Form Attribute " + name + " has multiple values" );
+            throw new BadRequestException( "Form Attribute " + name + " has multiple values" );
         }
         return values.get( 0 );
     }

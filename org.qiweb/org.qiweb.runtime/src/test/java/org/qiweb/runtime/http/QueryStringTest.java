@@ -81,7 +81,7 @@ public class QueryStringTest
             queryParam( "foo", "bar" ).
             queryParam( "baz", "cathedral", "bazar" ).
             expect().
-            statusCode( 500 ). // TODO Change to 400 once proper error handling is done
+            statusCode( 400 ).
             when().
             get( "/echo" );
     }

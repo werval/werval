@@ -28,7 +28,7 @@ public class HttpRequestHeaderTest
     @Test
     public void testDomain()
     {
-        MutableHeaders headers = new HeadersInstance();
+        MutableHeaders headers = new HeadersInstance( false );
         assertThat( withHeaders( headers.withSingle( HOST, "qiweb.org" ) ).domain(), equalTo( "qiweb.org" ) );
         assertThat( withHeaders( headers.withSingle( HOST, "qiweb.org:23023" ) ).domain(), equalTo( "qiweb.org" ) );
     }
@@ -36,7 +36,7 @@ public class HttpRequestHeaderTest
     @Test
     public void testContentType()
     {
-        MutableHeaders headers = new HeadersInstance();
+        MutableHeaders headers = new HeadersInstance( false );
         assertThat( withHeaders( headers.withSingle( CONTENT_TYPE, "application/json" ) ).contentType(), equalTo( "application/json" ) );
         assertThat( withHeaders( headers.withSingle( CONTENT_TYPE, "application/json;charset=utf-8" ) ).contentType(), equalTo( "application/json" ) );
     }
@@ -44,7 +44,7 @@ public class HttpRequestHeaderTest
     @Test
     public void testCharset()
     {
-        MutableHeaders headers = new HeadersInstance();
+        MutableHeaders headers = new HeadersInstance( false );
         assertThat( withHeaders( headers.withSingle( CONTENT_TYPE, "application/json" ) ).charset(), equalTo( Strings.EMPTY ) );
         assertThat( withHeaders( headers.withSingle( CONTENT_TYPE, "application/json;charset=utf-8" ) ).charset(), equalTo( "utf-8" ) );
         assertThat( withHeaders( headers.withSingle( CONTENT_TYPE, "application/json;charset=utf-8;foo=bar" ) ).charset(), equalTo( "utf-8" ) );

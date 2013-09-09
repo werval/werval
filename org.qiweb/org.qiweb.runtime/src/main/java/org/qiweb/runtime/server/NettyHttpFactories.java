@@ -71,9 +71,9 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
 /* package */ final class NettyHttpFactories
 {
 
-    private static MutableHeaders headersOf( HttpRequest request )
+    private static MutableHeaders headersOf( HttpRequest request, boolean allowMultiValuedHeaders )
     {
-        MutableHeaders headers = new HeadersInstance();
+        MutableHeaders headers = new HeadersInstance( allowMultiValuedHeaders );
         for( String name : request.headers().names() )
         {
             for( String value : request.headers().getAll( name ) )
@@ -100,7 +100,8 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
     }
 
     /* package */ static RequestHeader requestHeaderOf( String identity, HttpRequest request,
-                                          boolean allowMultiValuedQueryStringParameters )
+                                          boolean allowMultiValuedQueryStringParameters,
+                                          boolean allowMultiValuedHeaders )
     {
         NullArgumentException.ensureNotEmpty( "Request Identity", identity );
         NullArgumentException.ensureNotNull( "Netty HttpRequest", request );
@@ -118,7 +119,7 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
         QueryString queryString = new QueryStringInstance( allowMultiValuedQueryStringParameters, queryStringDecoder.parameters() );
 
         // Headers
-        Headers headers = headersOf( request );
+        Headers headers = headersOf( request, allowMultiValuedHeaders );
 
         // Cookies
         Cookies cookies = cookiesOf( request );
@@ -133,7 +134,9 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
                                           cookies );
     }
 
-    /* package */ static RequestBody bodyOf( RequestHeader requestHeader, FullHttpRequest request )
+    /* package */ static RequestBody bodyOf(
+        RequestHeader requestHeader, FullHttpRequest request,
+        boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
     {
         RequestBody body;
         if( request.content().readableBytes() > 0
@@ -178,7 +181,7 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
                                     break;
                             }
                         }
-                        body = new RequestBodyInstance( attributes, uploads );
+                        body = new RequestBodyInstance( allowMultiValuedFormAttributes, allowMultiValuedUploads, attributes, uploads );
                         break;
                     }
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
@@ -187,20 +190,25 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
                         throw new QiWebException( ex.getMessage(), ex );
                     }
                 default:
-                    body = new RequestBodyInstance( request.content() );
+                    body = new RequestBodyInstance( allowMultiValuedFormAttributes, allowMultiValuedUploads, request.content() );
                     break;
             }
         }
         else
         {
-            body = new RequestBodyInstance();
+            body = new RequestBodyInstance( allowMultiValuedFormAttributes, allowMultiValuedUploads );
         }
         return body;
     }
 
-    /* package */ static Request requestOf( RequestHeader header, Map<String, Object> parameters, FullHttpRequest nettyRequest )
+    /* package */ static Request requestOf(
+        RequestHeader header, Map<String, Object> parameters, FullHttpRequest nettyRequest,
+        boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
     {
-        return new RequestInstance( header, parameters, bodyOf( header, nettyRequest ) );
+        return new RequestInstance( header,
+                                    parameters,
+                                    bodyOf( header, nettyRequest,
+                                            allowMultiValuedHeaders, allowMultiValuedFormAttributes, allowMultiValuedUploads ) );
     }
 
     /* package */ static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )

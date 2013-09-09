@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.TreeMap;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.FormUploads;
+import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
 import static io.netty.util.CharsetUtil.UTF_8;
@@ -40,9 +42,23 @@ public class FormUploadsInstance
 
     private final Map<String, List<Upload>> uploads;
 
-    public FormUploadsInstance( Map<String, List<Upload>> attributes )
+    public FormUploadsInstance( boolean allowMultiValuedUploads, Map<String, List<Upload>> uploads )
     {
-        this.uploads = attributes;
+        this.uploads = new TreeMap<>( Comparators.LOWER_CASE );
+        for( Map.Entry<String, List<Upload>> entry : uploads.entrySet() )
+        {
+            String name = entry.getKey();
+            if( !this.uploads.containsKey( name ) )
+            {
+                this.uploads.put( name, new ArrayList<Upload>() );
+            }
+            List<Upload> values = entry.getValue();
+            if( !allowMultiValuedUploads && ( !this.uploads.get( name ).isEmpty() || values.size() > 1 ) )
+            {
+                throw new BadRequestException( "Multi-valued uploads are not allowed" );
+            }
+            this.uploads.get( name ).addAll( entry.getValue() );
+        }
     }
 
     @Override
@@ -75,7 +91,7 @@ public class FormUploadsInstance
         List<Upload> values = uploads.get( name );
         if( values.size() != 1 )
         {
-            throw new IllegalStateException( "Form Upload " + name + " has multiple values" );
+            throw new BadRequestException( "Form Upload " + name + " has multiple values" );
         }
         return values.get( 0 );
     }

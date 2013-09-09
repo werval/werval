@@ -26,35 +26,35 @@ import org.codeartisans.java.toolbox.Strings;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
 /**
  * Instance of HTTP Headers.
  */
-public class HeadersInstance
+public final class HeadersInstance
     implements MutableHeaders
 {
 
+    private final boolean allowMultiValuedHeaders;
     private final Map<String, List<String>> headers;
 
     /**
      * Create new empty Headers instance.
      */
-    public HeadersInstance()
+    public HeadersInstance( boolean allowMultiValuedHeaders )
     {
+        this.allowMultiValuedHeaders = allowMultiValuedHeaders;
         this.headers = new TreeMap<>( Comparators.LOWER_CASE );
     }
 
     /**
      * Deep-copy constructor.
      */
-    public HeadersInstance( Headers headers )
+    public HeadersInstance( boolean allowMultiValuedHeaders, Headers headers )
     {
-        this();
-        for( String name : headers.names() )
-        {
-            this.headers.put( name, new ArrayList<>( headers.values( name ) ) );
-        }
+        this( allowMultiValuedHeaders );
+        withAll( headers );
     }
 
     @Override
@@ -87,7 +87,7 @@ public class HeadersInstance
         List<String> values = headers.get( name );
         if( values.size() != 1 )
         {
-            throw new IllegalStateException( "Header " + name + " has multiple values" );
+            throw new BadRequestException( "Header " + name + " has multiple values" );
         }
         return values.get( 0 );
     }
@@ -180,6 +180,10 @@ public class HeadersInstance
         if( headers.get( name ) == null )
         {
             headers.put( name, new ArrayList<String>() );
+        }
+        else if( !allowMultiValuedHeaders && headers.get( name ).size() > 0 )
+        {
+            throw new BadRequestException( "Multi-valued headers are not allowed" );
         }
         headers.get( name ).add( value == null ? Strings.EMPTY : value );
         return this;

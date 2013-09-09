@@ -13,34 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.http;
+package org.qiweb.runtime.exceptions;
 
-import org.qiweb.api.http.MutableCookies;
-import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.http.Response;
+import org.qiweb.api.exceptions.QiWebException;
 
-public class ResponseInstance
-    implements Response
+public class BadRequestException
+    extends QiWebException
 {
 
-    private final MutableHeaders headers;
-    private final MutableCookies cookies;
+    private static final long serialVersionUID = 1L;
 
-    public ResponseInstance( boolean allowMultiValuedHeaders )
+    public BadRequestException( String message )
     {
-        this.headers = new HeadersInstance( allowMultiValuedHeaders );
-        this.cookies = new CookiesInstance();
+        super( message );
     }
 
-    @Override
-    public MutableHeaders headers()
+    public BadRequestException( Throwable cause )
     {
-        return headers;
+        super( cause );
     }
 
-    @Override
-    public MutableCookies cookies()
+    public BadRequestException( String message, Throwable cause )
     {
-        return cookies;
+        super( message, cause );
     }
 }

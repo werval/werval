@@ -309,7 +309,7 @@ public class RoutesTest
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
         return new RequestHeaderInstance( "identity", "HTTP/1.1",
                                           "GET", requestUri, requestPath,
-                                          queryString, new HeadersInstance(), new CookiesInstance() );
+                                          queryString, new HeadersInstance( false ), new CookiesInstance() );
     }
 
     private void assertRoute( Route route, RoutesToTest refRoute )

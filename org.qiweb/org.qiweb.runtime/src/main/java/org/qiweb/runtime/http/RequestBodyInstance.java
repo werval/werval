@@ -18,18 +18,12 @@ package org.qiweb.runtime.http;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.codeartisans.java.toolbox.Strings;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.FormAttributes;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.FormUploads.Upload;
@@ -52,11 +46,11 @@ public final class RequestBodyInstance
     /**
      * Create a new EMPTY RequestBody.
      */
-    public RequestBodyInstance()
+    public RequestBodyInstance( boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads )
     {
         this.byteBuf = null;
-        this.attributes = new FormAttributesInstance( Collections.<String, List<String>>emptyMap() );
-        this.uploads = new FormUploadsInstance( Collections.<String, List<Upload>>emptyMap() );
+        this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
+        this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
     }
 
     /**
@@ -64,11 +58,11 @@ public final class RequestBodyInstance
      * 
      * @param byteBuf Body data
      */
-    public RequestBodyInstance( ByteBuf byteBuf )
+    public RequestBodyInstance( boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads, ByteBuf byteBuf )
     {
         this.byteBuf = byteBuf;
-        this.attributes = new FormAttributesInstance( Collections.<String, List<String>>emptyMap() );
-        this.uploads = new FormUploadsInstance( Collections.<String, List<Upload>>emptyMap() );
+        this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
+        this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
     }
 
     /**
@@ -77,11 +71,11 @@ public final class RequestBodyInstance
      * @param attributes Form attributes
      * @param uploads Upload data
      */
-    public RequestBodyInstance( Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
+    public RequestBodyInstance( boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads, Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
     {
         this.byteBuf = null;
-        this.attributes = new FormAttributesInstance( attributes );
-        this.uploads = new FormUploadsInstance( uploads );
+        this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, attributes );
+        this.uploads = new FormUploadsInstance( allowMultiValuedUploads, uploads );
     }
 
     @Override

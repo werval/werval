@@ -26,7 +26,6 @@ import org.qiweb.api.controllers.OutcomeBuilder;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.runtime.http.HeadersInstance;
 
 import static io.netty.buffer.Unpooled.*;
 import static io.netty.util.CharsetUtil.UTF_8;
@@ -45,11 +44,12 @@ public class OutcomeBuilderInstance
         implements Outcome
     {
 
+        protected final MutableHeaders headers;
         private final int status;
-        protected final MutableHeaders headers = new HeadersInstance();
 
-        private AbstractOutcome( int status )
+        private AbstractOutcome( int status, MutableHeaders headers )
         {
+            this.headers = headers;
             this.status = status;
         }
 
@@ -84,9 +84,9 @@ public class OutcomeBuilderInstance
 
         private ByteBuf body = EMPTY_BUFFER;
 
-        /* package */ SimpleOutcome( int status )
+        /* package */ SimpleOutcome( int status, MutableHeaders headers )
         {
-            super( status );
+            super( status, headers );
         }
 
         public ByteBuf body()
@@ -108,9 +108,9 @@ public class OutcomeBuilderInstance
         private final InputStream bodyInputStream;
         private final long contentLength;
 
-        /* package */ StreamOutcome( int status, InputStream bodyInputStream, long contentLength )
+        /* package */ StreamOutcome( int status, MutableHeaders headers, InputStream bodyInputStream, long contentLength )
         {
-            super( status );
+            super( status, headers );
             this.bodyInputStream = bodyInputStream;
             this.contentLength = contentLength;
             this.headers.with( CONTENT_LENGTH, String.valueOf( contentLength ) );
@@ -133,9 +133,9 @@ public class OutcomeBuilderInstance
 
         private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( "".getBytes( UTF_8 ) ) );
 
-        /* package */ ChunkedOutcome( int status, InputStream input, int chunkSize )
+        /* package */ ChunkedOutcome( int status, MutableHeaders headers, InputStream input, int chunkSize )
         {
-            super( status );
+            super( status, headers );
             this.input = new ChunkedStream( input, chunkSize );
         }
 
@@ -213,21 +213,21 @@ public class OutcomeBuilderInstance
     {
         if( body == null )
         {
-            return new SimpleOutcome( status );
+            return new SimpleOutcome( status, headers );
         }
         if( body instanceof ByteBuf )
         {
             ByteBuf bodyByteBuf = (ByteBuf) body;
-            return new SimpleOutcome( status ).withEntity( bodyByteBuf );
+            return new SimpleOutcome( status, headers ).withEntity( bodyByteBuf );
         }
         if( body instanceof InputStream )
         {
             InputStream bodyInputStream = (InputStream) body;
             if( length != -1 )
             {
-                return new StreamOutcome( status, bodyInputStream, length );
+                return new StreamOutcome( status, headers, bodyInputStream, length );
             }
-            return new ChunkedOutcome( status, bodyInputStream, chunkSize );
+            return new ChunkedOutcome( status, headers, bodyInputStream, chunkSize );
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }

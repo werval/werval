@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import org.codeartisans.java.toolbox.Strings;
 import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.QueryString;
+import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
 public class QueryStringInstance
@@ -62,8 +63,7 @@ public class QueryStringInstance
             List<String> values = entry.getValue();
             if( !allowMultiValuedParameters && ( !this.parameters.get( name ).isEmpty() || values.size() > 1 ) )
             {
-                // TODO Make this lead to a 400 BadRequest, but how?
-                throw new IllegalStateException( "Multi-valued query string parameters are not allowed" );
+                throw new BadRequestException( "Multi-valued query string parameters are not allowed" );
             }
             this.parameters.get( name ).addAll( entry.getValue() );
         }
@@ -99,7 +99,7 @@ public class QueryStringInstance
         List<String> values = parameters.get( name );
         if( values.size() != 1 )
         {
-            throw new IllegalStateException( "QueryString Parameter '" + name + "' has multiple values" );
+            throw new BadRequestException( "QueryString Parameter '" + name + "' has multiple values" );
         }
         return values.get( 0 );
     }

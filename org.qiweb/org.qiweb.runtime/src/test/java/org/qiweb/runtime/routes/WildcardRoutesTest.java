@@ -90,6 +90,6 @@ public class WildcardRoutesTest
     {
         return new RequestHeaderInstance( "abc", "HTTP/1.1", "GET",
                                           "http://localhost" + path, path,
-                                          QueryStringInstance.EMPTY, new HeadersInstance(), new CookiesInstance() );
+                                          QueryStringInstance.EMPTY, new HeadersInstance( false ), new CookiesInstance() );
     }
 }

@@ -62,6 +62,7 @@ import org.qiweb.runtime.controllers.ContextHelper;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.SimpleOutcome;
 import org.qiweb.runtime.controllers.OutcomeBuilderInstance.StreamOutcome;
+import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.http.SessionInstance;
@@ -92,7 +93,10 @@ import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
@@ -194,7 +198,8 @@ public final class HttpRequestRouterHandler
 
         // Parse RequestHeader
         RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest,
-                                                       app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ) );
+                                                       app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
+                                                       app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
 
         // Route the request
         Routes routes = app.routes();
@@ -219,10 +224,13 @@ public final class HttpRequestRouterHandler
                 requestHeader.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) ) );
 
             // Parse Request
-            Request request = requestOf( requestHeader, parameters, nettyRequest );
+            Request request = requestOf( requestHeader, parameters, nettyRequest,
+                                         app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
+                                         app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
+                                         app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED ) );
 
             // Prepare Response
-            Response response = new ResponseInstance();
+            Response response = new ResponseInstance( app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
 
             // Set Controller Context
             Context context = new ContextInstance( app, session, route, request, response );
@@ -416,6 +424,11 @@ public final class HttpRequestRouterHandler
         else if( cause instanceof ParameterBinderException )
         {
             LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, cause );
+            sendError( nettyContext, BAD_REQUEST, cause.getMessage() );
+        }
+        else if( cause instanceof BadRequestException )
+        {
+            LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, cause );
             sendError( nettyContext, BAD_REQUEST, cause.getMessage() );
         }
         else
