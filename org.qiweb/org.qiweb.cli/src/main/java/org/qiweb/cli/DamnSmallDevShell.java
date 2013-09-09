@@ -49,6 +49,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JNotifyWatcher;
 import org.qiweb.devshell.QiWebDevShellException;
+import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
@@ -193,6 +194,9 @@ public final class DamnSmallDevShell
                         System.out.println( LOGO );
                         runCommand( debug, tmpDir, cmd );
                         break;
+                    case "secret":
+                        secretCommand();
+                        break;
                     default:
                         PrintWriter out = new PrintWriter( System.err );
                         System.err.println( "Unknown command: '" + command + "'" );
@@ -228,7 +232,7 @@ public final class DamnSmallDevShell
         Files.createDirectories( rsrcDir.toPath() );
 
         // Generate secret
-        String conf = "\napp.secret = 1234567890\n";
+        String conf = "\napp.secret = " + CryptoInstance.genRandom256bitsHexSecret() + "\n";
         Files.write( new File( rsrcDir, "application.conf" ).toPath(), conf.getBytes( UTF_8 ) );
 
         // Generate controller
@@ -341,6 +345,11 @@ public final class DamnSmallDevShell
         final DevShell devShell = new DevShell( new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir ) );
         Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" ) );
         devShell.start();
+    }
+
+    private static void secretCommand()
+    {
+        System.out.println( CryptoInstance.genRandom256bitsHexSecret() );
     }
     private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
 
@@ -511,6 +520,7 @@ public final class DamnSmallDevShell
         out.println( "\n"
                      + "Commands:\n\n"
                      + "  new <appdir>  Create a new skeleton application in the 'appdir' directory.\n"
+                     + "  secret        Generate a new application secret.\n"
                      + "  clean         Delete devshell temporary directory, see 'tmpdir' option.\n"
                      + "  run           Run the QiWeb Development Shell.\n"
                      + "\n"

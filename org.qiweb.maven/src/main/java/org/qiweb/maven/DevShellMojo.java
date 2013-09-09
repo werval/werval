@@ -35,7 +35,7 @@ public class DevShellMojo
 {
 
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */

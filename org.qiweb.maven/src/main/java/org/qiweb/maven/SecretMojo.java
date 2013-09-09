@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api;
+package org.qiweb.maven;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Cryptography service.
+ * @goal secret
  */
-public interface Crypto
+public class SecretMojo
+    extends AbstractMojo
 {
 
-    String genNew256bitsHexSecret();
-
-    String hexHmacSha256( String message );
-
-    String hexHmacSha256( String message, String secret );
+    @Override
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        getLog().info( "New Application Secret: " + org.qiweb.runtime.CryptoInstance.genRandom256bitsHexSecret() );
+    }
 }

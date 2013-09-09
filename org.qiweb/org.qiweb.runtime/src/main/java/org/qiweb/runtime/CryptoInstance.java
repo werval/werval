@@ -17,47 +17,120 @@ package org.qiweb.runtime;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.QiWebException;
 
-import static io.netty.util.CharsetUtil.*;
+import static io.netty.util.CharsetUtil.UTF_8;
 
+/**
+ * Cryptography service instance.
+ */
 public class CryptoInstance
     implements Crypto
 {
 
-    private final byte[] keyBytes;
+    private final byte[] secretBytes;
 
     public CryptoInstance( String secret )
     {
-        this.keyBytes = secret.getBytes( UTF_8 );
+        this.secretBytes = decodeHex( secret.toCharArray() );
+        if( this.secretBytes.length < 32 )
+        {
+            throw new QiWebException( "Wrong Application Secret: must be at least 256bits long" );
+        }
     }
 
     @Override
-    public String hexHmacSha1( String message )
+    public String genNew256bitsHexSecret()
+    {
+        return genRandom256bitsHexSecret();
+    }
+
+    public static String genRandom256bitsHexSecret()
+    {
+        byte[] seed = new byte[ 32 ]; // 256bits
+        new SecureRandom().nextBytes( seed );
+        SecureRandom random = new SecureRandom( seed );
+        random.nextBytes( seed );
+        return new String( encodeHex( seed ) );
+    }
+
+    @Override
+    public String hexHmacSha256( String message )
+    {
+        return hexHmacSha256( message, secretBytes );
+    }
+
+    @Override
+    public String hexHmacSha256( String message, String secret )
+    {
+        return hexHmacSha256( message, decodeHex( secret.toCharArray() ) );
+    }
+
+    private String hexHmacSha256( String message, byte[] secret )
     {
         try
         {
-            SecretKeySpec signingKey = new SecretKeySpec( keyBytes, "HmacSHA1" );
-
-            Mac mac = Mac.getInstance( "HmacSHA1" );
+            SecretKeySpec signingKey = new SecretKeySpec( secret, "HmacSHA256" );
+            Mac mac = Mac.getInstance( "HmacSHA256" );
             mac.init( signingKey );
-
             byte[] rawHmac = mac.doFinal( message.getBytes( UTF_8 ) );
-
-            // To Hex
-            StringBuilder sb = new StringBuilder();
-            for( byte b : rawHmac )
-            {
-                sb.append( String.format( "%02x", b ) );
-            }
-            return sb.toString();
+            return new String( encodeHex( rawHmac ) );
         }
         catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e )
         {
             throw new QiWebException( "Unable to HMAC message", e );
         }
+    }
+    private static final char[] HEX_DIGITS =
+    {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+
+    private static byte[] decodeHex( char[] data )
+    {
+        int len = data.length;
+        if( ( len & 0x01 ) != 0 )
+        {
+            throw new QiWebException( "Wrong Secret: Odd number of characters in hex encoded." );
+        }
+        byte[] out = new byte[ len >> 1 ];
+        // two characters form the hex value.
+        for( int i = 0, j = 0; j < len; i++ )
+        {
+            int f = toDigit( data[j], j ) << 4;
+            j++;
+            f |= toDigit( data[j], j );
+            j++;
+            out[i] = (byte) ( f & 0xFF );
+        }
+        return out;
+    }
+
+    private static int toDigit( char ch, int index )
+    {
+        int digit = Character.digit( ch, 16 );
+        if( digit == -1 )
+        {
+            throw new QiWebException( "Wrong Secret: Illegal hexadecimal character " + ch + " at index " + index );
+        }
+        return digit;
+    }
+
+    @SuppressWarnings( "ValueOfIncrementOrDecrementUsed" )
+    private static char[] encodeHex( byte[] data )
+    {
+        int l = data.length;
+        char[] out = new char[ l << 1 ];
+        // two characters form the hex value.
+        for( int i = 0, j = 0; i < l; i++ )
+        {
+            out[j++] = HEX_DIGITS[( 0xF0 & data[i] ) >>> 4];
+            out[j++] = HEX_DIGITS[ 0x0F & data[i]];
+        }
+        return out;
     }
 }

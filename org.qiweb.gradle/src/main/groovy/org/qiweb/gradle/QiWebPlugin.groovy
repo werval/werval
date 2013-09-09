@@ -48,6 +48,11 @@ class QiWebPlugin implements Plugin<Project> {
             addShutdownHook { devShell.stop() }
             devShell.start()
         }
+
+        project.task( "secret", description: 'Generate a new Application Secret.' ) << {
+            project.logger.lifecycle "New Application Secret: " + org.qiweb.runtime.CryptoInstance.genRandom256bitsHexSecret()
+        }
+
     }
 
 }
