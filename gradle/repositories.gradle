@@ -3,9 +3,13 @@ repositories {
     mavenLocal();
     mavenCentral();
     maven {
-        url "https://repository-qi4j.forge.cloudbees.com/release/"
-        url "http://repo.gradle.org/gradle/libs-releases-local/"
+        url "http://repository-qi4j.forge.cloudbees.com/release"
+    }
+    maven {
+        url "http://repo.gradle.org/gradle/libs-releases-local"
+    }
+    maven {
         url "http://repo.typesafe.com/typesafe/releases"
-    }   
+    }
 }
 
