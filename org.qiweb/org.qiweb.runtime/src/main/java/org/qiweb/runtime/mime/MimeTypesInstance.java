@@ -75,7 +75,7 @@ public class MimeTypesInstance
         {
             return ofExtension( filename.substring( lastDotIndex + 1 ) );
         }
-        return DEFAULT_MIME_TYPE;
+        return APPLICATION_OCTET_STREAM;
     }
 
     @Override
@@ -83,14 +83,14 @@ public class MimeTypesInstance
     {
         ensureNotEmpty( "Extension", extension );
         String mimeType = extToType.getProperty( extension );
-        return mimeType == null ? DEFAULT_MIME_TYPE : mimeType;
+        return mimeType == null ? APPLICATION_OCTET_STREAM : mimeType;
     }
 
     @Override
     public boolean isTextual( String mimetype )
     {
         ensureNotEmpty( "MimeType", mimetype );
-        if( mimetype.startsWith( "text/" ) || mimetype.startsWith( "application/json" ) )
+        if( mimetype.startsWith( "text/" ) || mimetype.startsWith( APPLICATION_JSON ) )
         {
             return true;
         }

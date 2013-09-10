@@ -21,7 +21,7 @@ import java.io.File;
  * MimeTypes registry.
  * 
  * <p>Mime Type lookups always succeed and thus never return null.</p>
- * <p>If unable to detect, {@link #DEFAULT_MIME_TYPE} is returned.</p>
+ * <p>If unable to detect, {@link #APPLICATION_OCTET_STREAM} is returned.</p>
  * <p>The known Mime Types are extracted from Apache HTTP Server source code by the QiWeb Build System.</p>
  * <p><img src="doc-files/apache-httpd.jpg"/></p>
  * <p>
@@ -43,12 +43,8 @@ import java.io.File;
  * </p>
  */
 public interface MimeTypes
+    extends MimeTypesNames
 {
-
-    /**
-     * Default Mime Type: application/octet-stream.
-     */
-    String DEFAULT_MIME_TYPE = "application/octet-stream";
 
     /**
      * @return MimeType of a File
