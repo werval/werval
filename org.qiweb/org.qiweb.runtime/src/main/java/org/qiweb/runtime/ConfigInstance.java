@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.qiweb.api.Config;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 public class ConfigInstance
     implements Config

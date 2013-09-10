@@ -24,7 +24,7 @@ import org.qiweb.api.Application;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Routes Provider using 'routes.conf' from the Application classpath root.

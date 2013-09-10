@@ -32,8 +32,8 @@ import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.util.Comparators;
 
-import static io.netty.util.CharsetUtil.UTF_8;
 import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 

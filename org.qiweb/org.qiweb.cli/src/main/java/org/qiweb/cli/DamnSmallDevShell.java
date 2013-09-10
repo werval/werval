@@ -54,7 +54,7 @@ import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Damn Small QiWeb DevShell.

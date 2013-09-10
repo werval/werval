@@ -61,9 +61,9 @@ import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
-import static io.netty.util.CharsetUtil.UTF_8;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Factory methods used by the server.

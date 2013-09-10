@@ -25,13 +25,13 @@ import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 import org.qiweb.runtime.util.URLs;
 
-import static io.netty.util.CharsetUtil.UTF_8;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.qi4j.functional.Iterables.count;
 import static org.qi4j.functional.Iterables.first;
 import static org.qi4j.functional.Iterables.skip;
+import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.routes.RouteBuilder.route;
 
 /**

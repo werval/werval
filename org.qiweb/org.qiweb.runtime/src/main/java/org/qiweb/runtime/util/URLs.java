@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.qiweb.api.exceptions.QiWebException;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * URL related utility methods.

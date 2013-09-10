@@ -35,13 +35,13 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.ETAG;
 import static io.netty.handler.codec.http.HttpHeaders.Names.IF_MODIFIED_SINCE;
 import static io.netty.handler.codec.http.HttpHeaders.Names.IF_NONE_MATCH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.LAST_MODIFIED;
-import static io.netty.util.CharsetUtil.US_ASCII;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.response;
+import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
  * Controller to serve static files or directory tree.

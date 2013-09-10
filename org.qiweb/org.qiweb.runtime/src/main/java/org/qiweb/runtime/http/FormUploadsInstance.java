@@ -34,7 +34,7 @@ import org.qiweb.api.http.FormUploads;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 public class FormUploadsInstance
     implements FormUploads

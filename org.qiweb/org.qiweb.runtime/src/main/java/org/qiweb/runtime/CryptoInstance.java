@@ -23,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.QiWebException;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Cryptography service instance.

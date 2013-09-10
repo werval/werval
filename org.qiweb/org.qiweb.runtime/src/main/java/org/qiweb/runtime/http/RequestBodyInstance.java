@@ -30,7 +30,7 @@ import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.runtime.util.FileByteBuff;
 
-import static io.netty.util.CharsetUtil.UTF_8;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * A RequestBody Instance.
