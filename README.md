@@ -10,8 +10,9 @@
 
 QiWeb is not published yet. If you read this, feel lucky :-)
 
-If you want to try QiWeb you'll have to build the code and documentation from
-source.
+If you want to try QiWeb you'll have to build the code from source.
+The documentation is not published online yet but is embedded in the QiWeb
+Development Mode at the /@doc path.
 
 QiWeb is built using Gradle (http://www.gradle.org/).
 You don't need to install anything except a JVM (>=7).
