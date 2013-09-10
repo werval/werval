@@ -13,10 +13,11 @@ QiWeb is not published yet. If you read this, feel lucky :-)
 If you want to try QiWeb you'll have to build the code and documentation from
 source.
 
-QiWeb is built using Gradle (http://www.gradle.org/). You don't need to
-install anything except a JVM. The `gradlew` script that can be found at the
-projects root will download and bootstrap Gradle for you. If you are
-interested in this Gradle feature, check the Gradle Wrapper
+QiWeb is built using Gradle (http://www.gradle.org/).
+You don't need to install anything except a JVM (>=7).
+The `gradlew` script that can be found at the projects root will download and
+bootstrap Gradle for you.
+If you are interested in this Gradle feature, check the Gradle Wrapper
 (http://www.gradle.org/docs/current/userguide/gradle_wrapper.html)
 documentation.
 
@@ -39,8 +40,9 @@ This is why the command to run tests call the `install` and `check` tasks.
 
 QiWeb do not have much dependencies but the build system and the tests do.
 As a consequence, a vast amount of code is downloaded the first time you
-run a build. Theses downloads are cached, at the time of writing running a
-full build with every dependencies in cache take less than two minutes.
+run a build.
+Theses downloads are cached, at the time of writing running a full build with
+every dependencies in cache take less than a minute.
 
 QiWeb artifacts produced by the build are installed in your local maven
 repository (`~/.m2/repository`).
@@ -74,3 +76,4 @@ By default version number `0` is used, you can override this with
 If you encounter any problem, please fill an issue at
 https://scm.codeartisans.org/paul/qiweb/issues with the output of the build
 process.
+
