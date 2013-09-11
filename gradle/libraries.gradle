@@ -44,7 +44,7 @@ rootProject.ext {
         cli:                "commons-cli:commons-cli:$v_cli",
         exec:               "org.apache.commons:commons-exec:$v_exec",
         
-        // Test Only Libraries
+        // Test and Samples Only Libraries
         httpclient: [
                                 "org.apache.httpcomponents:httpclient:$v_httpclient",
                                 "commons-logging:commons-logging:1.1.3"
