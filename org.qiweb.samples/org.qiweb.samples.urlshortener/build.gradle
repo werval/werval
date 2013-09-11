@@ -1,6 +1,3 @@
-
-apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
-
 buildscript {
     repositories {
         mavenLocal();
@@ -27,12 +24,15 @@ mainClassName = "org.qiweb.runtime.Main"
 
 dependencies {
 
+    compile "org.qiweb:org.qiweb.api:$version"
     compile "org.qiweb:org.qiweb.lib:$version"
 
     runtime "org.qiweb:org.qiweb.runtime:$version"
     runtime webjars.bootstrap
+    runtime webjars.jquery
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.junit
-    // testCompile libs.selenium
+    testCompile libs.rest_assured
 }
+

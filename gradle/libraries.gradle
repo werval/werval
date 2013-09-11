@@ -71,6 +71,7 @@ def v_chartjs = '26962ce'
 def v_chosen = '0.9.12'
 def v_flotcharts = '0.8.0-1'
 def v_fontawesome = '3.2.1'
+def v_jquery = '2.0.3'
 def v_less = '1.3.3'
 def v_momentjs = '2.1.0'
 def v_pdfjs = '0.5.5'
@@ -84,6 +85,7 @@ rootProject.ext {
         chosen:             "org.webjars:chosen:$v_chosen",
         flotcharts:         "org.webjars:flot:$v_flotcharts",
         fontawesome:        "org.webjars:font-awesome:$v_fontawesome",
+        jquery:             "org.webjars:jquery:$v_jquery",
         less:               "org.webjars:less:$v_less",
         momentjs:           "org.webjars:momentjs:$v_momentjs",
         pdfjs:              "org.webjars:pdf-js:$v_pdfjs",

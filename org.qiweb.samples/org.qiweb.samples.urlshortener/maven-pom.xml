@@ -8,8 +8,8 @@
         <version>6</version>
     </parent>
 
-    <groupId>org.qiweb</groupId>
-    <artifactId>org.qiweb.sample</artifactId>
+    <groupId>org.qiweb.samples</groupId>
+    <artifactId>org.qiweb.samples.urlshortener</artifactId>
     <version>0</version>
 
     <name>${project.artifactId}</name>
