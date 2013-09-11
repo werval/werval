@@ -28,7 +28,7 @@ import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.util.Comparators;
-import org.qiweb.runtime.util.URLs;
+import org.qiweb.api.util.URLs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

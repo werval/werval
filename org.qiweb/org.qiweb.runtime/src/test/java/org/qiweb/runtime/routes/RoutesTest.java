@@ -23,7 +23,7 @@ import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
-import org.qiweb.runtime.util.URLs;
+import org.qiweb.api.util.URLs;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;

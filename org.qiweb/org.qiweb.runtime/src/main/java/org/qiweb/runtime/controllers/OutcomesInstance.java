@@ -23,7 +23,7 @@ import org.qiweb.api.controllers.OutcomeBuilder;
 import org.qiweb.api.controllers.Outcomes;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.runtime.util.URLs;
+import org.qiweb.api.util.URLs;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.qiweb.api.http.Headers.Names.LOCATION;

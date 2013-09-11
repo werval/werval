@@ -54,7 +54,7 @@ import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestBodyInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.RequestInstance;
-import org.qiweb.runtime.util.URLs;
+import org.qiweb.api.util.URLs;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
