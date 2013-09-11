@@ -45,7 +45,10 @@ rootProject.ext {
         exec:               "org.apache.commons:commons-exec:$v_exec",
         
         // Test Only Libraries
-        httpclient:         "org.apache.httpcomponents:httpclient:$v_httpclient",
+        httpclient: [
+                                "org.apache.httpcomponents:httpclient:$v_httpclient",
+                                "commons-logging:commons-logging:1.1.3"
+        ],
         jackson_core: [
                             "com.fasterxml.jackson.core:jackson-core:$v_jackson",
                             "com.fasterxml.jackson.core:jackson-annotations:$v_jackson",
