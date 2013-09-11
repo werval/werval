@@ -19,6 +19,8 @@ import com.jayway.restassured.response.Response;
 import java.io.File;
 import java.math.BigDecimal;
 import org.junit.Test;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -36,10 +38,11 @@ public class StaticFilesTest
     private static final File ROOT = new File( "src/test/resources" );
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
-               + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )";
+        return new RoutesParserProvider(
+            "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
+            + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )" );
     }
 
     @Test

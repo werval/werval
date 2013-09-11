@@ -25,12 +25,6 @@ public class CryptoTest
     extends AbstractQiWebTest
 {
 
-    @Override
-    protected String routesString()
-    {
-        return "";
-    }
-
     @Test
     public void testGenerateNewSecret()
     {

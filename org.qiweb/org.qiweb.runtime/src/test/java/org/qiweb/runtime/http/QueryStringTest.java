@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -45,9 +47,9 @@ public class QueryStringTest
     }
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET /echo org.qiweb.runtime.http.QueryStringTest$Controller.echo";
+        return new RoutesParserProvider( "GET /echo org.qiweb.runtime.http.QueryStringTest$Controller.echo" );
     }
 
     @Test

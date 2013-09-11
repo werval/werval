@@ -17,6 +17,8 @@ package org.qiweb.lib.controllers;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -29,13 +31,13 @@ public class IntrospectTest
 {
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return ""
-               + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-               + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
-               + "GET /@classpath org.qiweb.lib.controllers.Introspect.classpath\n"
-               + "GET /@logs org.qiweb.lib.controllers.Introspect.logs\n";
+        return new RoutesParserProvider(
+            "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
+            + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
+            + "GET /@classpath org.qiweb.lib.controllers.Introspect.classpath\n"
+            + "GET /@logs org.qiweb.lib.controllers.Introspect.logs\n" );
     }
 
     @Test

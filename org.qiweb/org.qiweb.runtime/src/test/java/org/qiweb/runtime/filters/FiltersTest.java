@@ -5,6 +5,8 @@ import org.qiweb.api.controllers.Context;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -38,9 +40,9 @@ public class FiltersTest
     }
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET / org.qiweb.runtime.filters.FiltersTest$Controller.filtered";
+        return new RoutesParserProvider( "GET / org.qiweb.runtime.filters.FiltersTest$Controller.filtered" );
     }
 
     @Test

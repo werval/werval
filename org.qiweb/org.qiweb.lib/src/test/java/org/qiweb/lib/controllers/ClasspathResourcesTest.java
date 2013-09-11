@@ -18,6 +18,8 @@ package org.qiweb.lib.controllers;
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
 import org.junit.Test;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -31,9 +33,10 @@ public class ClasspathResourcesTest
 {
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET /*path org.qiweb.lib.controllers.ClasspathResources.metainf( String path )";
+        return new RoutesParserProvider(
+            "GET /*path org.qiweb.lib.controllers.ClasspathResources.metainf( String path )" );
     }
 
     @Test

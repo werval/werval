@@ -19,8 +19,9 @@ import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Application;
+import org.qiweb.api.Application.Mode;
 import org.qiweb.runtime.ApplicationInstance;
-import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.server.HttpServerInstance;
 
@@ -29,6 +30,13 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 /**
  * Base QiWeb Test.
+ * 
+ * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
+ * <p>Configuration is loaded from classpath, like in development or production mode.</p>
+ * <p>
+ *     By default, routes are loaded from the <code>routes.conf</code> file.
+ *     Override the {@link #routesProvider()} method to provide your own test routes.
+ * </p>
  */
 public abstract class AbstractQiWebTest
 {
@@ -42,8 +50,8 @@ public abstract class AbstractQiWebTest
     @Before
     public final void beforeEachTest()
     {
-        RoutesProvider routesProvider = new RoutesParserProvider( routesString() );
-        app = new ApplicationInstance( routesProvider );
+        RoutesProvider routesProvider = routesProvider();
+        app = new ApplicationInstance( Mode.TEST, routesProvider );
         httpServer = new HttpServerInstance( "qiweb-test", app );
         httpServer.activate();
 
@@ -73,7 +81,13 @@ public abstract class AbstractQiWebTest
         app = null;
     }
 
-    protected abstract String routesString();
+    /**
+     * Override to provide your own routes.
+     */
+    protected RoutesProvider routesProvider()
+    {
+        return new RoutesConfProvider();
+    }
 
     /**
      * @return Application
@@ -83,6 +97,9 @@ public abstract class AbstractQiWebTest
         return app;
     }
 
+    /**
+     * @return Base HTTP URL based on QiWeb listening address and port Configuration.
+     */
     protected final String baseHttpUrl()
     {
         return "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) + ":" + app.config().string( QIWEB_HTTP_PORT );

@@ -23,6 +23,8 @@ import org.qiweb.api.Error;
 import org.qiweb.api.controllers.Controller;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.runtime.TestGlobal;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -60,12 +62,12 @@ public class OnErrorTest
     }
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return ""
-               + "GET /success org.qiweb.runtime.server.OnErrorTest$Ctrl.success\n"
-               + "GET /internalServerError org.qiweb.runtime.server.OnErrorTest$Ctrl.internalServerError\n"
-               + "GET /exception org.qiweb.runtime.server.OnErrorTest$Ctrl.exception\n";
+        return new RoutesParserProvider(
+            "GET /success org.qiweb.runtime.server.OnErrorTest$Ctrl.success\n"
+            + "GET /internalServerError org.qiweb.runtime.server.OnErrorTest$Ctrl.internalServerError\n"
+            + "GET /exception org.qiweb.runtime.server.OnErrorTest$Ctrl.exception" );
     }
 
     @Test

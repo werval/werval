@@ -16,6 +16,8 @@
 package org.qiweb.lib.controllers;
 
 import org.junit.Test;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -25,11 +27,12 @@ public class DefaultTest
 {
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET /notFound org.qiweb.lib.controllers.Default.notFound\n"
-               + "GET /internalServerError org.qiweb.lib.controllers.Default.internalServerError\n"
-               + "GET /notImplemented org.qiweb.lib.controllers.Default.notImplemented";
+        return new RoutesParserProvider(
+            "GET /notFound org.qiweb.lib.controllers.Default.notFound\n"
+            + "GET /internalServerError org.qiweb.lib.controllers.Default.internalServerError\n"
+            + "GET /notImplemented org.qiweb.lib.controllers.Default.notImplemented" );
     }
 
     @Test

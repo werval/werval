@@ -3,6 +3,8 @@ package org.qiweb.runtime.http;
 import org.junit.Test;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Cookies.Cookie;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -39,11 +41,12 @@ public class CookiesTest
     }
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET /set/:name/:value org.qiweb.runtime.http.CookiesTest$Controller.setCookie( String name, String value )\n"
-               + "GET /remove/:name org.qiweb.runtime.http.CookiesTest$Controller.removeCookie( String name )\n"
-               + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies";
+        return new RoutesParserProvider(
+            "GET /set/:name/:value org.qiweb.runtime.http.CookiesTest$Controller.setCookie( String name, String value )\n"
+            + "GET /remove/:name org.qiweb.runtime.http.CookiesTest$Controller.removeCookie( String name )\n"
+            + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies" );
     }
 
     @Test

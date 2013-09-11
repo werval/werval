@@ -7,6 +7,8 @@ import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -43,11 +45,12 @@ public class SessionTest
     private String sessionCookieName;
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET /set/:name/:value org.qiweb.runtime.http.SessionTest$Controller.set( String name, String value )\n"
-               + "GET /clear org.qiweb.runtime.http.SessionTest$Controller.clear\n"
-               + "GET /show org.qiweb.runtime.http.SessionTest$Controller.show";
+        return new RoutesParserProvider(
+            "GET /set/:name/:value org.qiweb.runtime.http.SessionTest$Controller.set( String name, String value )\n"
+            + "GET /clear org.qiweb.runtime.http.SessionTest$Controller.clear\n"
+            + "GET /show org.qiweb.runtime.http.SessionTest$Controller.show" );
     }
 
     @Before

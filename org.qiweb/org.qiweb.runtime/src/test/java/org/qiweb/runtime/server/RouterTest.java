@@ -1,6 +1,8 @@
 package org.qiweb.runtime.server;
 
 import org.junit.Test;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -10,12 +12,13 @@ public class RouterTest
 {
 
     @Override
-    protected String routesString()
+    protected RoutesProvider routesProvider()
     {
-        return "GET / com.acme.app.FakeControllerInstance.index()\n"
-               + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
-               + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
-               + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )";
+        return new RoutesParserProvider(
+            "GET / com.acme.app.FakeControllerInstance.index()\n"
+            + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
+            + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
+            + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" );
     }
 
     @Test
