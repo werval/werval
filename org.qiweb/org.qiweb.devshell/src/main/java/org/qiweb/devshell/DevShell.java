@@ -131,7 +131,7 @@ public final class DevShell
 
             // RoutesProvider
             Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
-            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.routes.DevShellRoutesProvider" ).newInstance();
+            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.dev.DevShellRoutesProvider" ).newInstance();
 
             // Application
             Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );

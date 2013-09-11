@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.routes;
+package org.qiweb.runtime.dev;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,11 +23,17 @@ import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.qiweb.runtime.routes.RouteBuilder;
+import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
- * Routes Provider using 'routes.conf' from the Application classpath root and add Documentation at /@doc.
+ * Development Mode Routes Provider.
+ * <p>
+ *     Use 'routes.conf' from the Application classpath root and add Documentation at /@doc plus various introspection
+ *     resources.
+ * </p>
  */
 public class DevShellRoutesProvider
     implements RoutesProvider
