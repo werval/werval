@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.devshell;
+package org.qiweb.runtime.util;
 
-import java.util.Locale;
+import static java.util.Locale.US;
 
-/* package */ final class Color
+public final class AnsiColor
 {
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -29,70 +29,63 @@ import java.util.Locale;
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
+    private static final boolean SUPPORTED = !System.getProperty( "os.name" ).toLowerCase( US ).contains( "windows" );
 
-    public static void normal( String message )
+    public static String normal( String message )
     {
-        output( message, "" );
+        return color( message, "" );
     }
 
-    public static void black( String message )
+    public static String black( String message )
     {
-        output( message, ANSI_BLACK );
+        return color( message, ANSI_BLACK );
     }
 
-    public static void red( String message )
+    public static String red( String message )
     {
-        output( message, ANSI_RED );
+        return color( message, ANSI_RED );
     }
 
-    public static void green( String message )
+    public static String green( String message )
     {
-        output( message, ANSI_GREEN );
+        return color( message, ANSI_GREEN );
     }
 
-    public static void yellow( String message )
+    public static String yellow( String message )
     {
-        output( message, ANSI_YELLOW );
+        return color( message, ANSI_YELLOW );
     }
 
-    public static void blue( String message )
+    public static String blue( String message )
     {
-        output( message, ANSI_BLUE );
+        return color( message, ANSI_BLUE );
     }
 
-    public static void purple( String message )
+    public static String purple( String message )
     {
-        output( message, ANSI_PURPLE );
+        return color( message, ANSI_PURPLE );
     }
 
-    public static void cyan( String message )
+    public static String cyan( String message )
     {
-        output( message, ANSI_CYAN );
+        return color( message, ANSI_CYAN );
     }
 
-    public static void white( String message )
+    public static String white( String message )
     {
-        output( message, ANSI_WHITE );
+        return color( message, ANSI_WHITE );
     }
 
-    private static void output( String message, String color )
+    private static String color( String message, String color )
     {
-        if( colorSupported() )
+        if( SUPPORTED )
         {
-            System.out.println( ANSI_RESET + color + message + ANSI_RESET );
+            return ANSI_RESET + color + message + ANSI_RESET;
         }
-        else
-        {
-            System.out.println( message );
-        }
+        return message;
     }
 
-    private static boolean colorSupported()
-    {
-        return !System.getProperty( "os.name" ).toLowerCase( Locale.US ).contains( "windows" );
-    }
-
-    private Color()
+    private AnsiColor()
     {
     }
 }

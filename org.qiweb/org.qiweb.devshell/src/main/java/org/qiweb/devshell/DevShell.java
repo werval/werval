@@ -26,10 +26,10 @@ import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
-import static org.qiweb.devshell.Color.cyan;
-import static org.qiweb.devshell.Color.red;
-import static org.qiweb.devshell.Color.white;
-import static org.qiweb.devshell.Color.yellow;
+import static org.qiweb.runtime.util.AnsiColor.cyan;
+import static org.qiweb.runtime.util.AnsiColor.red;
+import static org.qiweb.runtime.util.AnsiColor.white;
+import static org.qiweb.runtime.util.AnsiColor.yellow;
 import static org.qiweb.runtime.util.ClassLoaders.printLoadedClasses;
 import static org.qiweb.runtime.util.ClassLoaders.printURLs;
 
@@ -106,12 +106,12 @@ public final class DevShell
     @SuppressWarnings( "unchecked" )
     public void start()
     {
-        white( ">> QiWeb DevShell starting..." );
+        System.out.println( white( ">> QiWeb DevShell starting..." ) );
         try
         {
-            cyan( "Isolating worlds..." );
-            yellow( "DevShell Class ClassLoader is: " + getClass().getClassLoader() );
-            yellow( "Current Thread Context ClassLoader is: " + originalLoader );
+            System.out.println( cyan( "Isolating worlds..." ) );
+            System.out.println( yellow( "DevShell Class ClassLoader is: " + getClass().getClassLoader() ) );
+            System.out.println( yellow( "Current Thread Context ClassLoader is: " + originalLoader ) );
 
             setupRealms();
 
@@ -170,7 +170,7 @@ public final class DevShell
 
             // printRealms();
 
-            white( ">> Ready for requests!" );
+            System.out.println( white( ">> Ready for requests!" ) );
             Thread.sleep( Long.MAX_VALUE );
         }
         catch( DuplicateRealmException | NoSuchRealmException | ClassNotFoundException |
@@ -184,7 +184,7 @@ public final class DevShell
                 cause = ex.getCause();
             }
             String msg = "Unable to start QiWeb DevShell: " + cause.getClass().getSimpleName() + " " + cause.getMessage();
-            red( msg );
+            System.out.println( red( msg ) );
             throw new QiWebDevShellException( msg, cause );
         }
     }
@@ -193,13 +193,13 @@ public final class DevShell
     {
         try
         {
-            white( ">> QiWeb DevShell stopping..." );
+            System.out.println( white( ">> QiWeb DevShell stopping..." ) );
             disposeRealms();
         }
         catch( Exception ex )
         {
             String msg = "Unable to stop QiWeb DevShell: " + ex.getMessage();
-            red( msg );
+            System.out.println( red( msg ) );
             throw new QiWebDevShellException( msg, ex );
         }
     }
@@ -259,17 +259,17 @@ public final class DevShell
         ClassRealm devRealm = classWorld.getRealm( DEVSHELL_REALM_ID );
         ClassRealm depRealm = classWorld.getRealm( DEPENDENCIES_REALM_ID );
         ClassRealm appRealm = classWorld.getRealm( currentApplicationRealmID() );
-        white( "Realms / ClassLoaders" );
-        yellow( "Original ClassLoader" );
+        System.out.println( white( "Realms / ClassLoaders" ) );
+        System.out.println( yellow( "Original ClassLoader" ) );
         printURLs( originalLoader );
         printLoadedClasses( originalLoader );
-        yellow( "DevShell ClassLoader" );
+        System.out.println( yellow( "DevShell ClassLoader" ) );
         printURLs( devRealm );
         printLoadedClasses( devRealm );
-        yellow( "Dependencies ClassLoader" );
+        System.out.println( yellow( "Dependencies ClassLoader" ) );
         printURLs( depRealm );
         printLoadedClasses( depRealm );
-        yellow( "Application ClassLoader" );
+        System.out.println( yellow( "Application ClassLoader" ) );
         printURLs( appRealm );
         printLoadedClasses( appRealm );
     }
