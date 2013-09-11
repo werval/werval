@@ -18,12 +18,16 @@ package controllers;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class Shortener
 {
 
     public static final Shortener INSTANCE = new Shortener();
+    private static final int LENGTH = 4;
+    private static final char[] CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
     private final Map<String, String> shortened = new HashMap<>();
+    private final Random rng = new Random();
 
     public Map<String, String> list()
     {
@@ -32,22 +36,44 @@ public class Shortener
 
     public String shorten( String longUrl )
     {
-        return null;
+        String hash = generateNewHash();
+        shortened.put( hash, longUrl );
+        return hash;
     }
 
-    public String expandUrl( String shortUrl )
+    public String expand( String hash )
     {
-        return null;
-    }
-
-    public String expandHash( String hash )
-    {
-        return null;
+        return shortened.get( hash );
     }
 
     public String lookup( String longUrl )
     {
+        for( Map.Entry<String, String> entry : shortened.entrySet() )
+        {
+            if( entry.getValue().equals( longUrl ) )
+            {
+                return entry.getKey();
+            }
+        }
         return null;
+    }
+
+    private String generateNewHash()
+    {
+        while( true )
+        {
+            StringBuilder sb = new StringBuilder();
+            for( int idx = 0; idx < LENGTH; idx++ )
+            {
+                sb.append( CHARS[rng.nextInt( CHARS.length )] );
+
+            }
+            String hash = sb.toString();
+            if( !shortened.containsKey( hash ) )
+            {
+                return hash;
+            }
+        }
     }
 
     private Shortener()

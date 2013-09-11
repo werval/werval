@@ -15,16 +15,83 @@
  */
 package urlshortener;
 
+import com.jayway.restassured.response.Response;
+import java.util.Map;
 import org.qiweb.test.AbstractQiWebTest;
+import org.junit.Test;
+
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
 
 public class APITest
     extends AbstractQiWebTest
 {
 
-    @Override
-    protected String routesString()
+    @Test
+    @SuppressWarnings( "unchecked" )
+    public void testUrlShortenerAPI()
     {
-        // TODO Testing should load default routes by default !!!!
-        throw new UnsupportedOperationException( "Not supported yet." ); //To change body of generated methods, choose Tools | Templates.
+        // Assert list is empty
+        expect().
+            statusCode( 200 ).
+            body( equalTo( "{}" ) ).
+            when().
+            get( "/api/list" );
+
+        String longUrl = "http://www.w3.org/";
+
+        // Assert can shorten URL
+        Response response = given().
+            queryParam( "longUrl", longUrl ).
+            expect().
+            statusCode( 200 ).
+            body( "hash", notNullValue() ).
+            body( "short_url", startsWith( "http://" ) ).
+            when().
+            get( "/api/shorten" );
+
+        Map<String, String> data = response.as( Map.class );
+        String hash = data.get( "hash" );
+        String shortUrl = data.get( "short_url" );
+
+        // Assert presence in list
+        expect().
+            statusCode( 200 ).
+            body( hash, equalTo( longUrl ) ).
+            when().
+            get( "/api/list" );
+
+        // Assert expand to correct URL
+        response = given().
+            queryParam( "hash", hash ).
+            expect().
+            statusCode( 200 ).
+            body( "long_url", startsWith( "http://" ) ).
+            when().
+            get( "/api/expand" );
+        data = response.as( Map.class );
+        assertThat( data.get( "long_url" ), equalTo( longUrl ) );
+
+        // Assert lookup form long URL
+        given().
+            queryParam( "longUrl", longUrl ).
+            expect().
+            statusCode( 200 ).
+            body( "hash", equalTo( hash ) ).
+            body( "short_url", equalTo( shortUrl ) ).
+            when().
+            get( "/api/lookup" );
+
+        // Assert redirection works
+        expect().
+            statusCode( 200 ).
+            body( containsString( "Copyright &#xA9; 2013 W3C" ) ).
+            when().
+            get( shortUrl );
     }
 }
