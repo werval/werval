@@ -182,7 +182,17 @@ configure( install.repositories.mavenInstaller ) {
                 email = "paul@nosphere.org"
                 timezone = "CET"
                 roles {
-                    role 'Core Team'
+                    role 'Founder'
+                    role 'Developer'
+                }
+            }
+            developer {
+                id = "q"
+                name = "Quentin Gensburger"
+                email = "quentin.gensburger@free.fr"
+                timezone = "CET"
+                roles {
+                    role 'Contributor'
                 }
             }
         }
