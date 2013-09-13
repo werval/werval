@@ -221,6 +221,9 @@ public class HttpOnDiskRequestAggregator
     public void channelInactive( ChannelHandlerContext ctx )
         throws IOException
     {
-        Files.delete( bodyFile );
+        if( bodyFile != null )
+        {
+            Files.delete( bodyFile );
+        }
     }
 }
