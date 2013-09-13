@@ -13,46 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package controllers;
+package urlshortener;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class Shortener
+/**
+ * URL Shortener Service.
+ * <p><code>Singleton</code></p>
+ */
+public final class ShortenerService
 {
 
-    public static final Shortener INSTANCE = new Shortener();
+    public static final ShortenerService INSTANCE = new ShortenerService();
+
+    public static final class Link
+    {
+
+        public String hash;
+        public String long_url;
+
+        public static Link newInstance( String hash, String longUrl )
+        {
+            Link link = new Link();
+            link.hash = hash;
+            link.long_url = longUrl;
+            return link;
+        }
+    }
     private static final int LENGTH = 4;
     private static final char[] CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-    private final Map<String, String> shortened = new HashMap<>();
+    private final Map<String, Link> shortened = new HashMap<>();
     private final Random rng = new Random();
 
-    public Map<String, String> list()
+    public Collection<Link> list()
     {
-        return Collections.unmodifiableMap( shortened );
+        return Collections.unmodifiableCollection( shortened.values() );
     }
 
     public String shorten( String longUrl )
     {
         String hash = generateNewHash();
-        shortened.put( hash, longUrl );
+        shortened.put( hash, Link.newInstance( hash, longUrl ) );
         return hash;
     }
 
     public String expand( String hash )
     {
-        return shortened.get( hash );
+        Link link = shortened.get( hash );
+        return link == null ? null : link.long_url;
     }
 
     public String lookup( String longUrl )
     {
-        for( Map.Entry<String, String> entry : shortened.entrySet() )
+        for( Map.Entry<String, Link> entry : shortened.entrySet() )
         {
-            if( entry.getValue().equals( longUrl ) )
+            Link link = entry.getValue();
+            if( link.long_url.equals( longUrl ) )
             {
-                return entry.getKey();
+                return link.hash;
             }
         }
         return null;
@@ -66,7 +88,6 @@ public class Shortener
             for( int idx = 0; idx < LENGTH; idx++ )
             {
                 sb.append( CHARS[rng.nextInt( CHARS.length )] );
-
             }
             String hash = sb.toString();
             if( !shortened.containsKey( hash ) )
@@ -76,7 +97,7 @@ public class Shortener
         }
     }
 
-    private Shortener()
+    private ShortenerService()
     {
     }
 }

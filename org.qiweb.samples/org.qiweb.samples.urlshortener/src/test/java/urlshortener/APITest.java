@@ -28,6 +28,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Assert API behaviour.
+ */
 public class APITest
     extends AbstractQiWebTest
 {
@@ -39,7 +42,7 @@ public class APITest
         // Assert list is empty
         expect().
             statusCode( 200 ).
-            body( equalTo( "{}" ) ).
+            body( equalTo( "[]" ) ).
             when().
             get( "/api/list" );
 
@@ -62,7 +65,8 @@ public class APITest
         // Assert presence in list
         expect().
             statusCode( 200 ).
-            body( hash, equalTo( longUrl ) ).
+            body( containsString( hash ) ).
+            body( containsString( longUrl ) ).
             when().
             get( "/api/list" );
 
@@ -71,6 +75,7 @@ public class APITest
             queryParam( "hash", hash ).
             expect().
             statusCode( 200 ).
+            body( "hash", equalTo( hash ) ).
             body( "long_url", startsWith( "http://" ) ).
             when().
             get( "/api/expand" );
