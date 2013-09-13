@@ -84,7 +84,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Port.
-     * <p>Computed from the request URI and standard defaults 80/443.</p>
+     * <p>Computed from the request URI or HTTP Host header and standard defaults 80/443.</p>
      * @return The HTTP Port
      */
     int port();

@@ -151,17 +151,29 @@ public class RequestHeaderInstance
             @Override
             public Integer get()
             {
-                String parse = uri.substring( "https://".length() + 1 );
-                int slashIdx = parse.indexOf( '/' );
-                if( slashIdx < 0 )
+                if( uri.startsWith( "http" ) )
                 {
-                    return uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
+                    String parse = uri.substring( "https://".length() + 1 );
+                    int slashIdx = parse.indexOf( '/' );
+                    if( slashIdx < 0 )
+                    {
+                        return uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
+                    }
+                    parse = parse.substring( 0, slashIdx );
+                    int colIdx = parse.indexOf( ':' );
+                    return colIdx < 0
+                           ? uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT
+                           : Integer.valueOf( parse.substring( colIdx + 1, parse.length() ) );
                 }
-                parse = parse.substring( 0, slashIdx );
-                int colIdx = parse.indexOf( ':' );
-                return colIdx < 0
-                       ? uri.startsWith( "https" ) ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT
-                       : Integer.valueOf( parse.substring( colIdx + 1, parse.length() ) );
+                else
+                {
+                    String host = headers.singleValue( HOST );
+                    if( host.contains( ":" ) )
+                    {
+                        return Integer.valueOf( host.split( ":" )[1] );
+                    }
+                    return DEFAULT_HTTP_PORT;
+                }
             }
         } );
     }
@@ -174,7 +186,12 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                return headers.singleValue( HOST ).split( ":" )[0];
+                String host = headers.singleValue( HOST );
+                if( host.contains( ":" ) )
+                {
+                    return host.split( ":" )[0];
+                }
+                return host;
             }
         } );
     }
@@ -213,7 +230,7 @@ public class RequestHeaderInstance
                         return option.split( "=" )[1];
                     }
                 }
-                return headers.singleValue( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
+                return Strings.EMPTY;
             }
         } );
     }
