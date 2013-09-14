@@ -292,7 +292,7 @@ public final class DamnSmallDevShell
         List<URL> classpathList = new ArrayList<>();
         // First, current classpath
         classpathList.addAll( ClassLoaders.urlsOf( DamnSmallDevShell.class.getClassLoader() ) );
-        // Then either command line provided or defaults
+        // Then add command line provided
         if( cmd.hasOption( 'c' ) )
         {
             for( String url : cmd.getOptionValues( 'c' ) )
