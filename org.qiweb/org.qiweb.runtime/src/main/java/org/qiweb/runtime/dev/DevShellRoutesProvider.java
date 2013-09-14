@@ -60,7 +60,7 @@ public class DevShellRoutesProvider
         try( InputStream input = routesUrl.openStream() )
         {
             String routes = Strings.toString( new InputStreamReader( input, UTF_8 ) );
-            return RouteBuilder.parseRoutes( application, routes + DEVSHELL_ROUTES );
+            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES + routes );
         }
         catch( IOException ex )
         {
