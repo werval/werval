@@ -50,7 +50,7 @@ public class APITest
 
         // Assert can shorten URL
         Response response = given().
-            queryParam( "longUrl", longUrl ).
+            queryParam( "long_url", longUrl ).
             expect().
             statusCode( 200 ).
             body( "hash", notNullValue() ).
@@ -84,7 +84,7 @@ public class APITest
 
         // Assert lookup form long URL
         given().
-            queryParam( "longUrl", longUrl ).
+            queryParam( "long_url", longUrl ).
             expect().
             statusCode( 200 ).
             body( containsString( hash ) ).
