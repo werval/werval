@@ -208,7 +208,7 @@ public class ReverseRoutesInstance
             {
                 absoluteUrl.append( "s" );
             }
-            absoluteUrl.append( "://" ).append( request().host() );
+            absoluteUrl.append( "://" ).append( request().domain() );
             if( ( !secure && request().port() != DEFAULT_HTTP_PORT )
                 || ( secure && request().port() != DEFAULT_HTTPS_PORT ) )
             {
