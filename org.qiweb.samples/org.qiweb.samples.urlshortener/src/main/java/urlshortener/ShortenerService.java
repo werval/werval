@@ -15,9 +15,11 @@
  */
 package urlshortener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -29,21 +31,6 @@ public final class ShortenerService
 {
 
     public static final ShortenerService INSTANCE = new ShortenerService();
-
-    public static final class Link
-    {
-
-        public String hash;
-        public String long_url;
-
-        public static Link newInstance( String hash, String longUrl )
-        {
-            Link link = new Link();
-            link.hash = hash;
-            link.long_url = longUrl;
-            return link;
-        }
-    }
     private static final int LENGTH = 4;
     private static final char[] CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
     private final Map<String, Link> shortened = new HashMap<>();
@@ -54,30 +41,30 @@ public final class ShortenerService
         return Collections.unmodifiableCollection( shortened.values() );
     }
 
-    public String shorten( String longUrl )
+    public Link link( String hash )
     {
-        String hash = generateNewHash();
-        shortened.put( hash, Link.newInstance( hash, longUrl ) );
-        return hash;
+        return shortened.get( hash );
     }
 
-    public String expand( String hash )
+    public Link shorten( String longUrl )
     {
-        Link link = shortened.get( hash );
-        return link == null ? null : link.long_url;
+        Link link = Link.newInstance( generateNewHash(), longUrl );
+        shortened.put( link.hash, link );
+        return link;
     }
 
-    public String lookup( String longUrl )
+    public Collection<Link> lookup( String longUrl )
     {
+        List<Link> list = new ArrayList<>();
         for( Map.Entry<String, Link> entry : shortened.entrySet() )
         {
             Link link = entry.getValue();
-            if( link.long_url.equals( longUrl ) )
+            if( link.longUrl.equals( longUrl ) )
             {
-                return link.hash;
+                list.add( link );
             }
         }
-        return null;
+        return list;
     }
 
     private String generateNewHash()

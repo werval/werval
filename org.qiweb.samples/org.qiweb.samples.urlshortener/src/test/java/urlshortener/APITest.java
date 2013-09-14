@@ -87,8 +87,8 @@ public class APITest
             queryParam( "longUrl", longUrl ).
             expect().
             statusCode( 200 ).
-            body( "hash", equalTo( hash ) ).
-            body( "short_url", equalTo( shortUrl ) ).
+            body( containsString( hash ) ).
+            body( containsString( shortUrl ) ).
             when().
             get( "/api/lookup" );
 

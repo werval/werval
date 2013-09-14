@@ -5,123 +5,121 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link href="/client/lib/webjars/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <link href="/client/lib/webjars/bootstrap/3.0.0/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+        <style>
+            #api-output p,
+            #api-output pre {
+                font-size: 0.8em;
+            }
+        </style>
     </head>
     <body>
-        <div class="container">
-            <h1>URL Shortener</h1>
-            <p class="lead">URL Shortener is a sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a></p>
-            <div class="row">
-                <div class="col-md-3">
-                    <form class="form-inline" id="form-shorten">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="url" class="form-control input-sm" id="input-shorten" placeholder="Long URL" required/>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default btn-sm" id="btn-shorten">
-                                        <span class="glyphicon glyphicon-resize-small"></span>
-                                        Shorten
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-3">
-                    <form class="form-inline" id="form-expand">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control input-sm" id="input-expand" placeholder="Hash" required/>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default btn-sm" id="btn-expand">
-                                        <span class="glyphicon glyphicon-resize-full"></span>
-                                        Expand
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-3">
-                    <form class="form-inline">
-                        <div class="form-group" id="form-lookup">
-                            <div class="input-group">
-                                <input type="url" class="form-control input-sm" id="input-lookup" placeholder="Long URL" required/>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default btn-sm" id="btn-lookup">
-                                        <span class="glyphicon glyphicon-search"></span>
-                                        Lookup
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-3">
-                    <form class="form-inline" id="form-redirect">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control input-sm" id="input-redirect" placeholder="Hash" required/>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default btn-sm" id="btn-redirect">
-                                        <span class="glyphicon glyphicon-new-window"></span>
-                                        Redirect
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <span class="navbar-brand">URL Shortener</span>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <h2>List of shortened URLs</h2>
-                    <div id="list_output"></div>
+            <p class="navbar-text pull-right">Sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a></p>
+        </nav>
+        <div class="container">
+            <form class="form-inline" id="form-shorten">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="url" class="form-control input-sm" id="input-shorten" placeholder="Long URL" required/>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default btn-sm" id="btn-shorten">
+                                <span class="glyphicon glyphicon-resize-small"></span>
+                                Shorten
+                            </button>
+                        </span>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h2>API Output</h2>
-                    <div id="api_output"></div>
+            </form>
+            <hr/>
+            <div class="row">
+                <div class="col-md-8">
+                    <div id="list-output"></div>
+                </div>
+                <div class="col-md-4">
+                    <div id="api-output"></div>
                 </div>
             </div>
         </div>
         <script src="/client/lib/webjars/jquery/2.0.3/jquery.min.js"></script>
         <script src="/client/lib/webjars/bootstrap/3.0.0/js/bootstrap.js"></script>
         <script type="text/javascript">
+            function data_to_pre_json(title, data)
+            {
+                return "<p><strong>" + title + "</strong></p><pre>" + JSON.stringify(data) + "</pre>";
+            }
+            var shorten, expand, lookup, redirect;
             $(document).ready(function() {
-                var $list_out = $("#list_output");
-                var $api_out = $("#api_output");
-                function data_to_pre_json(data)
-                {
-                    return "<p><strong>" + new Date() + "</strong></p><pre>" + JSON.stringify(data) + "</pre>";
-                }
+                var $list_out = $("#list-output");
+                var $api_out = $("#api-output");
+                var $input_shorten = $("#input-shorten");
                 function refresh_list()
                 {
-                    $.getJSON("/api/list", function(data) {
-                        $list_out.prepend(data_to_pre_json(data));
+                    var url = "/api/list"
+                    $.getJSON(url, function(data) {
+                        $api_out.prepend(data_to_pre_json("GET " + url, data));
+                        var list = "";
+                        if (data.length > 0) {
+                            for (var idx = 0; idx < data.length; idx++) {
+                                var link = data[idx];
+                                list += " <div class='panel panel-default'>\
+                                            <div class='panel-heading'>\
+                                                <span class='glyphicon glyphicon-new-window'></span> \
+                                                <a href=\"javascript:redirect('" + link.hash + "');\">" + window.location + link.hash + "</a>\
+                                                <div class='pull-right'><a href=\"javascript:expand('" + link.hash + "');\" class='btn btn-xs btn-default'><span class='glyphicon glyphicon-resize-full'></span> Expand</a></div>\
+                                            </div>\
+                                            <div class='panel-body'>\
+                                              " + link.clicks + " click" + (link.clicks > 1 ? "s" : "") + "\
+                                              <span class='glyphicon glyphicon-arrow-right'></span> " + link.long_url + "\
+                                              <div class='pull-right'><a href=\"javascript:lookup('" + link.long_url + "');\" class='btn btn-xs btn-default'><span class='glyphicon glyphicon-search'></span> Lookup</a></div>\
+                                            </div>\
+                                          </div>";
+                            }
+                        } else {
+                            list += "<p>No shortened URL.</p>";
+                        }
+                        $list_out.html(list);
                     });
                 }
-                $("#form-shorten").submit(function(e) {
-                    e.preventDefault();
-                    $.getJSON("/api/shorten?longUrl=" + $("#input-shorten").val(), function(data) {
-                        $api_out.prepend(data_to_pre_json(data));
+                shorten = function(longUrl) {
+                    var url = "/api/shorten?long_url=" + encodeURIComponent(longUrl);
+                    $.getJSON(url, function(data) {
+                        $api_out.prepend(data_to_pre_json("GET " + url, data));
                         refresh_list();
                     });
-                });
-                $("#form-expand").submit(function(e) {
-                    e.preventDefault();
-                    $.getJSON("/api/expand?hash=" + $("#input-expand").val(), function(data) {
-                        $api_out.prepend(data_to_pre_json(data));
+                    $input_shorten.focus();
+                };
+                expand = function(hash) {
+                    var url = "/api/expand?hash=" + hash;
+                    $.getJSON(url, function(data) {
+                        $api_out.prepend(data_to_pre_json("GET " + url, data));
                     });
-                });
-                $("#form-lookup").submit(function(e) {
-                    e.preventDefault();
-                    $.getJSON("/api/lookup?longUrl=" + $("#input-lookup").val(), function(data) {
-                        $api_out.prepend(data_to_pre_json(data));
+                    $input_shorten.focus();
+                };
+                lookup = function(longUrl)
+                {
+                    var url = "/api/lookup?long_url=" + encodeURIComponent(longUrl);
+                    $.getJSON(url, function(data) {
+                        $api_out.prepend(data_to_pre_json("GET " + url, data));
                     });
-                });
-                $("#form-redirect").submit(function(e) {
+                    $input_shorten.focus();
+                };
+                redirect = function(hash) {
+                    var url = "/" + hash;
+                    window.open(url);
+                    setTimeout(function() {
+                        $api_out.prepend(data_to_pre_json("GET " + url, "303 See Other"));
+                        refresh_list();
+                    }, "500");
+                    $input_shorten.focus();
+                };
+                $("#form-shorten").submit(function(e) {
                     e.preventDefault();
-                    window.open("/" + $("#input-redirect").val());
+                    shorten($input_shorten.val());
                 });
+                $input_shorten.focus();
                 refresh_list();
             });
         </script>
