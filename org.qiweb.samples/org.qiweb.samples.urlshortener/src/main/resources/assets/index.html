@@ -118,6 +118,7 @@
                 $("#form-shorten").submit(function(e) {
                     e.preventDefault();
                     shorten($input_shorten.val());
+                    $input_shorten.val("");
                 });
                 $input_shorten.focus();
                 refresh_list();
