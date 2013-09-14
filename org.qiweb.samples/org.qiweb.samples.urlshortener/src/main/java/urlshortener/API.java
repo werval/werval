@@ -57,9 +57,9 @@ public class API
     public Outcome shorten( String longUrl )
         throws JsonProcessingException
     {
-        Link link = ShortenerService.INSTANCE.shorten( longUrl );
+        Link link = ShortenerService.INSTANCE.shorten( longUrl.trim() );
         String json = JSON_MAPPER.writeValueAsString( link );
-        LOG.info( "Shorten {} to {} and 200 {}", longUrl, link.shortUrl(), json );
+        LOG.info( "Shorten {} to {} and 200 {}", link.longUrl, link.shortUrl(), json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
     }
 
@@ -72,14 +72,14 @@ public class API
     public Outcome expand( String hash )
         throws JsonProcessingException
     {
-        Link link = ShortenerService.INSTANCE.link( hash );
+        Link link = ShortenerService.INSTANCE.link( hash.trim() );
         if( link == null )
         {
-            LOG.info( "Expand fail with 404 for {}", hash );
+            LOG.info( "Expand fail with 404 for {}", hash.trim() );
             return outcomes().notFound().as( APPLICATION_JSON ).build();
         }
         String json = JSON_MAPPER.writeValueAsString( link );
-        LOG.info( "Expand {} to {} and 200 {}", hash, link.longUrl, json );
+        LOG.info( "Expand {} to {} and 200 {}", link.hash, link.longUrl, json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
     }
 
@@ -92,14 +92,14 @@ public class API
     public Outcome lookup( String longUrl )
         throws JsonProcessingException
     {
-        Collection<Link> list = ShortenerService.INSTANCE.lookup( longUrl );
+        Collection<Link> list = ShortenerService.INSTANCE.lookup( longUrl.trim() );
         if( list.isEmpty() )
         {
-            LOG.info( "Lookup fail with 404 for {}", longUrl );
+            LOG.info( "Lookup fail with 404 for {}", longUrl.trim() );
             return outcomes().notFound().as( APPLICATION_JSON ).build();
         }
         String json = JSON_MAPPER.writeValueAsString( list );
-        LOG.info( "Lookup {} found {} link(s) and 200 {}", longUrl, list.size(), json );
+        LOG.info( "Lookup {} found {} link(s) and 200 {}", longUrl.trim(), list.size(), json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
     }
 
@@ -111,13 +111,13 @@ public class API
      */
     public Outcome redirect( String hash )
     {
-        Link link = ShortenerService.INSTANCE.link( hash );
+        Link link = ShortenerService.INSTANCE.link( hash.trim() );
         if( link == null )
         {
-            LOG.info( "Redirect fail with 404 for {}", hash );
+            LOG.info( "Redirect fail with 404 for {}", hash.trim() );
             return outcomes().notFound().as( APPLICATION_JSON ).build();
         }
-        LOG.info( "Redirect {} to 303 {}", hash, link.longUrl );
+        LOG.info( "Redirect {} to 303 {}", link.hash, link.longUrl );
         link.clicks += 1;
         return outcomes().seeOther( link.longUrl ).build();
     }
