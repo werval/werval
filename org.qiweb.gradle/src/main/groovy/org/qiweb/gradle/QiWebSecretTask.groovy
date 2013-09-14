@@ -13,37 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.qiweb.gradle
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
+import org.gradle.api.tasks.*
+import org.qiweb.runtime.CryptoInstance;
 
 /**
- * QiWeb Gradle Plugin.
+ * Output a newly generated Application secret.
  */
-class QiWebPlugin implements Plugin<Project>
+class QiWebSecretTask extends DefaultTask
 {
 
-    void apply( Project project )
+    @TaskAction
+    void generateNewSecret()
     {
-        project.extensions.create(
-            "qiweb",
-            QiWebPluginExtension
-        )
-        
-        project.task( 
-            "devshell",
-            type: QiWebDevShellTask,
-            group: "QiWeb",
-            description: "Start the QiWeb DevShell."
-        )
-
-        project.task( 
-            "secret",
-            type: QiWebSecretTask,
-            group:"QiWeb",
-            description: 'Generate a new Application Secret.'
-        )
+        project.logger.lifecycle ">> Generate new QiWeb Application Secret"
+        System.out.println CryptoInstance.genRandom256bitsHexSecret()
     }
 
 }
