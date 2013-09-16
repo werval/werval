@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.Set;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
+import org.qiweb.devshell.QiWebDevShellException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
@@ -39,6 +40,10 @@ public class GradleDevShellSPI
      * Name of the Gradle task to run to rebuild the sources.
      */
     private final String rebuildTask;
+    /**
+     * Current connection.
+     */
+    private ProjectConnection connection;
 
     public GradleDevShellSPI( URL[] applicationClassPath, URL[] runtimeClassPath,
                               Set<File> sources, SourceWatcher watcher,
@@ -52,16 +57,26 @@ public class GradleDevShellSPI
     @Override
     protected void doRebuild()
     {
-        ProjectConnection connection = connector.connect();
+        if( connection == null )
+        {
+            connection = connector.connect();
+        }
         try
         {
             connection.newBuild().
                 forTasks( rebuildTask ).
                 run();
         }
-        finally
+        catch( IllegalStateException disconnected )
+        {
+            connection = connector.connect();
+            doRebuild();
+        }
+        catch( Exception ex )
         {
             connection.close();
+            connection = null;
+            throw new QiWebDevShellException( "Unable to rebuild application sources", ex );
         }
     }
 }
