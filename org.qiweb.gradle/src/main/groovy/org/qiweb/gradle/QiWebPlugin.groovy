@@ -26,11 +26,21 @@ class QiWebPlugin implements Plugin<Project>
 
     void apply( Project project )
     {
+        project.configurations.create( "qiweb" )
+        project.configurations.qiweb {
+            description = "QiWeb Runtime Configuration"
+            visible = false
+            extendsFrom project.configurations.runtime
+        }
+        project.dependencies {
+            qiweb "org.qiweb:org.qiweb.doc:" + BuildVersion.VERSION
+        }
+
         project.extensions.create(
             "qiweb",
             QiWebPluginExtension
         )
-        
+
         project.task( 
             "devshell",
             type: QiWebDevShellTask,

@@ -5,11 +5,10 @@ apply plugin: 'sonar-runner'
 
 dependencies {
 
-    compile gradleApi()
-    groovy localGroovy()
-
     compile "org.qiweb:org.qiweb.devshell:$version"
     compile libs.gradle_tooling
+    compile localGroovy()
+    compile gradleApi()
     
 }
 

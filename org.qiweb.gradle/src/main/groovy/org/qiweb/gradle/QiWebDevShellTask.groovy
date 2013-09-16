@@ -37,8 +37,7 @@ class QiWebDevShellTask extends DefaultTask
             project.sourceSets.main.output.classesDir.toURI().toURL(),
             project.sourceSets.main.output.resourcesDir.toURI().toURL()
         ]
-        // TODO Add org.qiweb.doc to runtimeClasspath ???
-        def runtimeClasspath = project.sourceSets.main.runtimeClasspath.files.collect { f ->
+        def runtimeClasspath = project.configurations.qiweb.files.collect { f ->
             f.toURI().toURL()
         }
         sources.each { f -> runtimeClasspath << f.toURI().toURL() }
