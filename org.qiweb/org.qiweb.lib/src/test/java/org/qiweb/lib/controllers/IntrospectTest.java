@@ -36,7 +36,6 @@ public class IntrospectTest
         return new RoutesParserProvider(
             "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
             + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
-            + "GET /@classpath org.qiweb.lib.controllers.Introspect.classpath\n"
             + "GET /@logs org.qiweb.lib.controllers.Introspect.logs\n" );
     }
 

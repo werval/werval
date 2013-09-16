@@ -46,7 +46,6 @@ public class DevShellRoutesProvider
                                 + "GET /@doc/*path org.qiweb.lib.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n"
                                 + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
                                 + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
-                                + "GET /@classpath org.qiweb.lib.controllers.Introspect.classpath\n"
                                 + "GET /@logs org.qiweb.lib.controllers.Introspect.logs\n";
 
     @Override

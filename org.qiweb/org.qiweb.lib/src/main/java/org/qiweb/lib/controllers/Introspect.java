@@ -19,6 +19,7 @@ import org.qiweb.api.controllers.Outcome;
 
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 
 /**
  * Controller with methods to introspect QiWeb Runtime.
@@ -33,7 +34,7 @@ public class Introspect
      */
     public Outcome config()
     {
-        return outcomes().ok( application().config().toString() ).as( "application/json" ).build();
+        return outcomes().ok( application().config().toString() ).as( APPLICATION_JSON ).build();
     }
 
     /**
@@ -56,15 +57,7 @@ public class Introspect
                               + "  \"dirty\": " + String.valueOf( org.qiweb.api.BuildVersion.DIRTY ) + ",\n"
                               + "  \"date\": \"" + org.qiweb.api.BuildVersion.DATE + "\"\n"
                               + "}\n" ).
-            as( "application/json" ).build();
-    }
-
-    /**
-     * NOT IMPLEMENTED YET.
-     */
-    public Outcome classpath()
-    {
-        return outcomes().notImplemented().build();
+            as( APPLICATION_JSON ).build();
     }
 
     /**
