@@ -24,7 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.qiweb.devshell.DevShell;
-import org.qiweb.devshell.JNotifyWatcher;
+import org.qiweb.devshell.JavaWatcher;
 
 /**
  * @goal devshell
@@ -70,16 +70,13 @@ public class DevShellMojo
                 sources.add( new File( sourceRoot ) );
             }
 
-            // Deploy JNotify            
-            JNotifyWatcher.deployNativeLibraries( new File( rootDir, "target" ) );
-
             // Run DevShell
             URL[] applicationClasspath = new URL[]
             {
                 new File( rootDir, "target/classes" ).toURI().toURL()
             };
             final DevShell devShell = new DevShell( new MavenDevShellSPI( applicationClasspath, runtimeClassPath,
-                                                                          sources, new JNotifyWatcher(),
+                                                                          sources, new JavaWatcher(),
                                                                           rootDir, rebuildPhase ) );
 
             Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()

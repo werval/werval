@@ -48,7 +48,7 @@ import org.apache.commons.io.FileUtils;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.util.Strings;
 import org.qiweb.devshell.DevShell;
-import org.qiweb.devshell.JNotifyWatcher;
+import org.qiweb.devshell.JavaWatcher;
 import org.qiweb.devshell.QiWebDevShellException;
 import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.util.ClassLoaders;
@@ -350,9 +350,8 @@ public final class DamnSmallDevShell
 
         System.out.println( "Loading..." );
 
-        // Deploy JNotify
-        JNotifyWatcher.deployNativeLibraries( tmpDir );
-        SourceWatcher watcher = new JNotifyWatcher();
+        // Watch Sources
+        SourceWatcher watcher = new JavaWatcher();
 
         // First build
         rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );

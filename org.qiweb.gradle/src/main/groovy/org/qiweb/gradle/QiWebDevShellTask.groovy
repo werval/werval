@@ -19,7 +19,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.*
 
-import org.qiweb.devshell.JNotifyWatcher
+import org.qiweb.devshell.JavaWatcher
 import org.qiweb.devshell.DevShell
 
 class QiWebDevShellTask extends DefaultTask
@@ -42,17 +42,13 @@ class QiWebDevShellTask extends DefaultTask
         }
         sources.each { f -> runtimeClasspath << f.toURI().toURL() }
 
-        // == Deploy JNotify Native Librairies
-
-        JNotifyWatcher.deployNativeLibraries( project.getBuildDir() )
-
         // == Start the DevShell
 
         def devShellSPI = new GradleDevShellSPI(
             applicationClasspath as URL[],
             runtimeClasspath as URL[],
             sources,
-            new JNotifyWatcher(),
+            new JavaWatcher(),
             project.getProjectDir(),
             project.qiweb.rebuildTask
         )
