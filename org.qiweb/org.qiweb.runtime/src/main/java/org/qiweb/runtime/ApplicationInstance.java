@@ -34,6 +34,7 @@ import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
+import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
@@ -77,6 +78,11 @@ public final class ApplicationInstance
     public ApplicationInstance( RoutesProvider routesProvider )
     {
         this( Mode.TEST, routesProvider );
+    }
+
+    public ApplicationInstance( Mode mode )
+    {
+        this( mode, new RoutesConfProvider() );
     }
 
     public ApplicationInstance( Mode mode, RoutesProvider routesProvider )

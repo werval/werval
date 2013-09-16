@@ -16,8 +16,6 @@
 package org.qiweb.runtime;
 
 import org.qiweb.api.Application.Mode;
-import org.qiweb.runtime.routes.RoutesConfProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.server.HttpServer;
 import org.qiweb.runtime.server.HttpServerInstance;
 
@@ -32,8 +30,7 @@ public final class Main
         System.out.println( "QiWeb!" );
         try
         {
-            RoutesProvider routesProvider = new RoutesConfProvider();
-            ApplicationInstance application = new ApplicationInstance( Mode.PROD, routesProvider );
+            ApplicationInstance application = new ApplicationInstance( Mode.PROD );
             HttpServer server = new HttpServerInstance( "qiweb-http-server", application );
             server.registerPassivationShutdownHook();
             server.activate();
