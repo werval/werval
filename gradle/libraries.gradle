@@ -26,7 +26,6 @@ rootProject.ext {
         javassist:          "org.javassist:javassist:$v_javassist",
         logback:            "ch.qos.logback:logback-classic:$v_logback",
         netty_codec_http:   "io.netty:netty-codec-http:$v_netty",
-        netty_example:      "io.netty:netty-example:$v_netty",
         slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
         threeten_backport:  "org.threeten:threetenbp:$v_threeten_backport",
         typesafe_config:    "com.typesafe:config:$v_typesafe_config",
