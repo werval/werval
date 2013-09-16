@@ -25,10 +25,6 @@
     
     <repositories>
         <repository>
-            <id>qi4j</id>
-            <url>https://repository-qi4j.forge.cloudbees.com/release/</url>
-        </repository>
-        <repository>
             <id>typesafe</id>
             <url>http://repo.typesafe.com/typesafe/releases</url>
         </repository>

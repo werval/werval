@@ -28,11 +28,11 @@ import org.qiweb.api.util.URLs;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.qi4j.functional.Iterables.count;
-import static org.qi4j.functional.Iterables.first;
-import static org.qi4j.functional.Iterables.skip;
 import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.routes.RouteBuilder.route;
+import static org.qiweb.runtime.util.Iterables.count;
+import static org.qiweb.runtime.util.Iterables.first;
+import static org.qiweb.runtime.util.Iterables.skip;
 
 /**
  * Assert that Routes and Route types behave correctly and that RouteBuilder is able to parse all routes definitions.

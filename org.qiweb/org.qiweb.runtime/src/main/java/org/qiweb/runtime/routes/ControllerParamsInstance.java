@@ -19,10 +19,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.qi4j.functional.Function;
-
-import static org.qi4j.functional.Iterables.map;
-import static org.qi4j.functional.Iterables.toList;
 
 /**
  * Route Controller Params instance.
@@ -65,14 +61,14 @@ public class ControllerParamsInstance
     @Override
     public Class<?>[] types()
     {
-        return toList( map( new Function<ControllerParam, Class<?>>()
+        Class<?>[] types = new Class<?>[ params.size() ];
+        int idx = 0;
+        for( ControllerParam param : params.values() )
         {
-            @Override
-            public Class<?> map( ControllerParam param )
-            {
-                return param.type();
-            }
-        }, params.values() ) ).toArray( new Class<?>[ params.size() ] );
+            types[idx] = param.type();
+            idx++;
+        }
+        return types;
     }
 
     public Map<String, ControllerParam> asMap()

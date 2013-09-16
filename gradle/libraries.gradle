@@ -14,7 +14,6 @@ def v_jnotify = '0.94'
 def v_junit = '4.11'
 def v_logback = '1.0.13'
 def v_netty = '4.0.9.Final'
-def v_qi4j = '2.0'
 def v_rest_assured = '1.8.1'
 def v_selenium = '2.35.0'
 def v_slf4j = '1.7.5'
@@ -29,7 +28,6 @@ rootProject.ext {
         logback:            "ch.qos.logback:logback-classic:$v_logback",
         netty_codec_http:   "io.netty:netty-codec-http:$v_netty",
         netty_example:      "io.netty:netty-example:$v_netty",
-        qi4j_functional:    "org.qi4j.core:org.qi4j.core.functional:$v_qi4j",
         slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
         threeten_backport:  "org.threeten:threetenbp:$v_threeten_backport",
         typesafe_config:    "com.typesafe:config:$v_typesafe_config",
@@ -58,10 +56,6 @@ rootProject.ext {
                             "junit:junit:$v_junit",
                             "org.hamcrest:hamcrest-all:$v_hamcrest"
         ],
-        qi4j_api:           "org.qi4j.core:org.qi4j.core.api:$v_qi4j",
-        qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
-        qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
-        qi4j_test:          "org.qi4j.core:org.qi4j.core.testsupport:$v_qi4j",
         rest_assured:[
                             "com.jayway.restassured:rest-assured:$v_rest_assured",
                             "commons-logging:commons-logging:1.1.3"

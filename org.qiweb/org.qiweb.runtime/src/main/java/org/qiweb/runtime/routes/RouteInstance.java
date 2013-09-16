@@ -16,6 +16,7 @@
 package org.qiweb.runtime.routes;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,26 +27,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.qi4j.functional.Function;
-import org.qi4j.functional.Iterables;
-import org.qi4j.functional.Specification;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
-import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 
-import static org.qi4j.functional.Iterables.addAll;
-import static org.qi4j.functional.Iterables.filter;
-import static org.qi4j.functional.Iterables.iterable;
-import static org.qi4j.functional.Iterables.map;
-import static org.qi4j.functional.Iterables.matchesAny;
-import static org.qi4j.functional.Iterables.toList;
-import static org.qi4j.functional.Specifications.in;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.runtime.util.Iterables.addAll;
+import static org.qiweb.runtime.util.Iterables.toList;
 
 /**
  * Instance of a Route.
@@ -92,21 +85,14 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
         }
 
         Iterable<String> controllerParamsNames = controllerParams.names();
-        List<String> pathParamsNames = toList( map( new Function<String, String>()
+        List<String> pathParamsNames = new ArrayList<>();
+        for( String pathSegment : path.substring( 1 ).split( "/" ) )
         {
-            @Override
-            public String map( String from )
+            if( pathSegment.startsWith( ":" ) || pathSegment.startsWith( "*" ) )
             {
-                return from.substring( 1 );
+                pathParamsNames.add( pathSegment.substring( 1 ) );
             }
-        }, filter( new Specification<String>()
-        {
-            @Override
-            public boolean satisfiedBy( String pathSegment )
-            {
-                return pathSegment.startsWith( ":" ) || pathSegment.startsWith( "*" );
-            }
-        }, iterable( path.substring( 1 ).split( "/" ) ) ) ) );
+        }
 
         // Disallow multiple occurences of a single parameter name in the path
         for( String paramName : pathParamsNames )
@@ -125,7 +111,16 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
         addAll( allParamsNames, pathParamsNames );
         for( String paramName : allParamsNames )
         {
-            if( !matchesAny( in( paramName ), controllerParamsNames ) )
+            boolean found = false;
+            for( String controllerParamName : controllerParamsNames )
+            {
+                if( paramName.equals( controllerParamName ) )
+                {
+                    found = true;
+                    continue;
+                }
+            }
+            if( !found )
             {
                 throw new IllegalRouteException( toString(),
                                                  "Parameter '" + paramName + "' is present in path but not bound." );
@@ -283,7 +278,7 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
     @SuppressWarnings( "unchecked" )
     public String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters )
     {
-        List<String> paramsToUnbind = Iterables.toList( controllerParams.names() );
+        List<String> paramsToUnbind = toList( controllerParams.names() );
         StringBuilder unboundPath = new StringBuilder( "/" );
 
         // Unbinding path
