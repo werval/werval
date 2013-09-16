@@ -1,9 +1,7 @@
 package com.acme.app;
 
-import org.qi4j.api.mixin.Mixins;
 import org.qiweb.api.controllers.Outcome;
 
-@Mixins( FakeControllerInstance.class )
 public interface FakeController
 {
 
