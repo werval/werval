@@ -4,7 +4,6 @@ dependencies {
     compile project( ':org.qiweb.api' )
     compile libs.slf4j
     compile libs.jtoolbox
-    compile libs.netty_codec_http // TODO Remove Me!
     
     testCompile project( ':org.qiweb.test' )
     testCompile libs.rest_assured

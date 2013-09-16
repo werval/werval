@@ -29,18 +29,18 @@ import org.qiweb.api.util.Dates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CACHE_CONTROL;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.ETAG;
-import static io.netty.handler.codec.http.HttpHeaders.Names.IF_MODIFIED_SINCE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.IF_NONE_MATCH;
-import static io.netty.handler.codec.http.HttpHeaders.Names.LAST_MODIFIED;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.response;
+import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.http.Headers.Names.ETAG;
+import static org.qiweb.api.http.Headers.Names.IF_MODIFIED_SINCE;
+import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
+import static org.qiweb.api.http.Headers.Names.LAST_MODIFIED;
 import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
