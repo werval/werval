@@ -23,13 +23,6 @@
         </license>
     </licenses>
     
-    <repositories>
-        <repository>
-            <id>typesafe</id>
-            <url>http://repo.typesafe.com/typesafe/releases</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         
         <dependency>

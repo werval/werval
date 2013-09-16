@@ -20,9 +20,6 @@ repositories {
     maven {
         url "http://repo.gradle.org/gradle/libs-releases-local/"
     }
-    maven {
-        url "http://repo.typesafe.com/typesafe/releases"
-    }
 }
 
 dependencies {

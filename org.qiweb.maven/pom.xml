@@ -26,10 +26,6 @@
     
     <repositories>
         <repository>
-            <id>typesafe</id>
-            <url>http://repo.typesafe.com/typesafe/releases</url>
-        </repository>
-        <repository>
             <id>mojo-executor-repository</id>
             <url>http://twdata-m2-repository.googlecode.com/svn/</url>
         </repository>
