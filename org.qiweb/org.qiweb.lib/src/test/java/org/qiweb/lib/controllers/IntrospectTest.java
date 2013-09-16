@@ -22,9 +22,16 @@ import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.AbstractQiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.either;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.qiweb.api.BuildVersion.COMMIT;
+import static org.qiweb.api.BuildVersion.DATE;
+import static org.qiweb.api.BuildVersion.DETAILED_VERSION;
+import static org.qiweb.api.BuildVersion.DIRTY;
+import static org.qiweb.api.BuildVersion.VERSION;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
 
 public class IntrospectTest
     extends AbstractQiWebTest
@@ -35,18 +42,17 @@ public class IntrospectTest
     {
         return new RoutesParserProvider(
             "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-            + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
-            + "GET /@logs org.qiweb.lib.controllers.Introspect.logs\n" );
+            + "GET /@version org.qiweb.lib.controllers.Introspect.version\n" );
     }
 
     @Test
     public void testJSONConfig()
     {
         given().
-            header( "Accept", "application/json" ).
+            header( "Accept", APPLICATION_JSON ).
             expect().
             statusCode( 200 ).
-            contentType( "application/json" ).
+            contentType( APPLICATION_JSON ).
             body( "app.secret", notNullValue() ).
             when().
             get( "/@config" );
@@ -56,14 +62,15 @@ public class IntrospectTest
     public void testJSONVersion()
     {
         given().
-            header( "Accept", "application/json" ).
+            header( "Accept", APPLICATION_JSON ).
             expect().
             statusCode( 200 ).
-            contentType( "application/json" ).
-            body( "version", notNullValue() ).
-            body( "commit", notNullValue() ).
-            body( "dirty", either( is( false ) ).or( is( true ) ) ).
-            body( "date", notNullValue() ).
+            contentType( APPLICATION_JSON ).
+            body( "version", equalTo( VERSION ) ).
+            body( "commit", equalTo( COMMIT ) ).
+            body( "dirty", is( DIRTY ) ).
+            body( "date", equalTo( DATE ) ).
+            body( "detail", equalTo( DETAILED_VERSION ) ).
             when().
             get( "/@version" );
     }
@@ -73,10 +80,10 @@ public class IntrospectTest
     public void testHTMLVersion()
     {
         given().
-            header( "Accept", "text/html" ).
+            header( "Accept", TEXT_HTML ).
             expect().
             statusCode( 200 ).
-            contentType( "text/html" ).
+            contentType( TEXT_HTML ).
             when().
             get( "/@version" );
     }

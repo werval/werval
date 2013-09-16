@@ -17,6 +17,11 @@ package org.qiweb.lib.controllers;
 
 import org.qiweb.api.controllers.Outcome;
 
+import static org.qiweb.api.BuildVersion.COMMIT;
+import static org.qiweb.api.BuildVersion.DATE;
+import static org.qiweb.api.BuildVersion.DETAILED_VERSION;
+import static org.qiweb.api.BuildVersion.DIRTY;
+import static org.qiweb.api.BuildVersion.VERSION;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
@@ -51,20 +56,14 @@ public class Introspect
      */
     public Outcome version()
     {
-        return outcomes().ok( "{\n"
-                              + "  \"version\": \"" + org.qiweb.api.BuildVersion.VERSION + "\",\n"
-                              + "  \"commit\": \"" + org.qiweb.api.BuildVersion.COMMIT + "\",\n"
-                              + "  \"dirty\": " + String.valueOf( org.qiweb.api.BuildVersion.DIRTY ) + ",\n"
-                              + "  \"date\": \"" + org.qiweb.api.BuildVersion.DATE + "\"\n"
-                              + "}\n" ).
+        return outcomes().ok(
+            "{\n"
+            + "  \"version\": \"" + VERSION + "\",\n"
+            + "  \"commit\": \"" + COMMIT + "\",\n"
+            + "  \"dirty\": " + String.valueOf( DIRTY ) + ",\n"
+            + "  \"date\": \"" + DATE + "\",\n"
+            + "  \"detail\": \"" + DETAILED_VERSION + "\"\n"
+            + "}\n" ).
             as( APPLICATION_JSON ).build();
-    }
-
-    /**
-     * NOT IMPLEMENTED YET.
-     */
-    public Outcome logs()
-    {
-        return outcomes().notImplemented().build();
     }
 }
