@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.Error;
 import org.qiweb.api.controllers.Context;
@@ -171,8 +170,7 @@ public final class HttpRequestRouterHandler
     {
         // Generate a unique identifier per request
         requestIdentity = generateNewRequestIdentity();
-        LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity,
-                   Strings.indentTwoSpaces( nettyRequest.toString(), 2 ) );
+        LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
 
         // Return 503 to request incoming while shutting down
         if( nettyContext.executor().isShuttingDown() )

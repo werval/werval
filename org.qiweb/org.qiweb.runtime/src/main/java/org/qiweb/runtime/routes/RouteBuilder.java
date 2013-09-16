@@ -29,14 +29,14 @@ import java.util.Scanner;
 import java.util.Set;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import org.codeartisans.java.toolbox.ObjectHolder;
-import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.util.Strings;
+import org.qiweb.runtime.util.Holder;
 import org.qiweb.runtime.routes.ControllerParamsInstance.ControllerParamInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -434,7 +434,7 @@ public final class RouteBuilder
     @SuppressWarnings( "unchecked" )
     public <T> RouteBuilder to( final Class<T> controllerType, MethodRecorder<T> methodRecorder )
     {
-        final ObjectHolder<String> methodNameHolder = new ObjectHolder<>();
+        final Holder<String> methodNameHolder = new Holder<>();
         T controllerProxy;
         if( controllerType.isInterface() )
         {
@@ -449,7 +449,7 @@ public final class RouteBuilder
                 @Override
                 public Object invoke( Object proxy, Method method, Object[] args )
                 {
-                    methodNameHolder.setHolded( method.getName() );
+                    methodNameHolder.set( method.getName() );
                     return null;
                 }
             } );
@@ -466,7 +466,7 @@ public final class RouteBuilder
                     @Override
                     public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
                     {
-                        methodNameHolder.setHolded( controllerMethod.getName() );
+                        methodNameHolder.set( controllerMethod.getName() );
                         return null;
                     }
                 } );
@@ -480,7 +480,7 @@ public final class RouteBuilder
         methodRecorder.call( controllerProxy );
 
         this.controllerType = controllerType;
-        this.controllerMethodName = methodNameHolder.getHolded();
+        this.controllerMethodName = methodNameHolder.get();
         this.controllerParams = new ControllerParamsInstance( methodRecorder.controllerParams() );
 
         return this;

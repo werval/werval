@@ -23,11 +23,11 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.http.FormAttributes;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.RequestBody;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.FileByteBuff;
 
 import static org.qiweb.api.util.Charsets.UTF_8;

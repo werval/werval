@@ -44,8 +44,9 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.codeartisans.java.toolbox.Strings;
+import org.apache.commons.io.FileUtils;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.util.Strings;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JNotifyWatcher;
 import org.qiweb.devshell.QiWebDevShellException;
@@ -60,6 +61,7 @@ import static org.qiweb.api.util.Charsets.UTF_8;
  * Damn Small QiWeb DevShell.
  */
 // TODO QUID Use embedded ant tasks under the hood to ensure cross-platform compatibility.
+// This would help removing dependencies to apache-commons, or not ...
 public final class DamnSmallDevShell
 {
 
@@ -112,7 +114,14 @@ public final class DamnSmallDevShell
         public void run()
         {
             devShell.stop();
-            org.codeartisans.java.toolbox.io.Files.deleteSilently( tmpDir );
+            try
+            {
+                FileUtils.deleteDirectory( tmpDir );
+            }
+            catch( IOException ex )
+            {
+                ex.printStackTrace( System.err );
+            }
         }
     }
     // figlet -f rectangles  "QiWeb DevShell"
@@ -255,10 +264,17 @@ public final class DamnSmallDevShell
 
     private static void cleanCommand( boolean debug, File tmpDir )
     {
-        // Clean
-        org.codeartisans.java.toolbox.io.Files.deleteSilently( tmpDir );
-        // Inform user
-        System.out.println( "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted." );
+        try
+        {
+            // Clean
+            FileUtils.deleteDirectory( tmpDir );
+            // Inform user
+            System.out.println( "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted." );
+        }
+        catch( IOException ex )
+        {
+            ex.printStackTrace( System.err );
+        }
     }
 
     private static void runCommand( boolean debug, File tmpDir, CommandLine cmd )

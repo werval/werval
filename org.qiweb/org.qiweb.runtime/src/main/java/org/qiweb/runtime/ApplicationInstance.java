@@ -37,7 +37,7 @@ import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 
-import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_MIMETYPES;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;

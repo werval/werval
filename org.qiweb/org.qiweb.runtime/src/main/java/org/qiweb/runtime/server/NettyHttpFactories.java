@@ -34,8 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.codeartisans.java.toolbox.Strings;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
@@ -46,6 +44,7 @@ import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
@@ -61,6 +60,8 @@ import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
 import static org.qiweb.api.util.Charsets.UTF_8;
@@ -103,8 +104,8 @@ import static org.qiweb.api.util.Charsets.UTF_8;
                                           boolean allowMultiValuedQueryStringParameters,
                                           boolean allowMultiValuedHeaders )
     {
-        NullArgumentException.ensureNotEmpty( "Request Identity", identity );
-        NullArgumentException.ensureNotNull( "Netty HttpRequest", request );
+        ensureNotEmpty( "Request Identity", identity );
+        ensureNotNull( "Netty HttpRequest", request );
 
         // Method
         String method = request.getMethod().name();

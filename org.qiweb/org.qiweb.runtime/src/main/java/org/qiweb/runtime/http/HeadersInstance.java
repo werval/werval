@@ -22,12 +22,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import org.codeartisans.java.toolbox.Strings;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
+
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 /**
  * Instance of HTTP Headers.
@@ -66,7 +67,7 @@ public final class HeadersInstance
     @Override
     public boolean has( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         return headers.containsKey( name );
     }
 
@@ -79,7 +80,7 @@ public final class HeadersInstance
     @Override
     public String singleValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -95,7 +96,7 @@ public final class HeadersInstance
     @Override
     public String firstValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -106,7 +107,7 @@ public final class HeadersInstance
     @Override
     public String lastValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -118,7 +119,7 @@ public final class HeadersInstance
     @Override
     public List<String> values( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
             return Collections.emptyList();
@@ -168,7 +169,7 @@ public final class HeadersInstance
     @Override
     public MutableHeaders without( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         headers.remove( name );
         return this;
     }
@@ -176,7 +177,7 @@ public final class HeadersInstance
     @Override
     public MutableHeaders with( String name, String value )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         if( headers.get( name ) == null )
         {
             headers.put( name, new ArrayList<String>() );
@@ -192,7 +193,7 @@ public final class HeadersInstance
     @Override
     public MutableHeaders withSingle( String name, String value )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         if( headers.get( name ) == null )
         {
             headers.put( name, new ArrayList<String>() );
@@ -208,7 +209,7 @@ public final class HeadersInstance
     @Override
     public MutableHeaders withAll( String name, String... values )
     {
-        NullArgumentException.ensureNotEmpty( "Header Name", name );
+        ensureNotEmpty( "Header Name", name );
         for( String value : values )
         {
             with( name, value );

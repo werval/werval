@@ -20,7 +20,7 @@ import java.io.StringWriter;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.codeartisans.java.toolbox.Strings;
+import org.qiweb.api.util.Strings;
 
 /**
  * Stacktraces utilities.

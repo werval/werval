@@ -28,12 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.util.Charsets.UTF_8;
 
 public class FormUploadsInstance
@@ -70,7 +70,7 @@ public class FormUploadsInstance
     @Override
     public boolean has( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Upload Name", name );
+        ensureNotEmpty( "Form Upload Name", name );
         return uploads.containsKey( name );
     }
 
@@ -83,7 +83,7 @@ public class FormUploadsInstance
     @Override
     public Upload singleValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Upload Name", name );
+        ensureNotEmpty( "Form Upload Name", name );
         if( !uploads.containsKey( name ) )
         {
             throw new IllegalArgumentException( "No Form Upload named '" + name + "'" );
@@ -99,7 +99,7 @@ public class FormUploadsInstance
     @Override
     public Upload firstValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Upload Name", name );
+        ensureNotEmpty( "Form Upload Name", name );
         if( !uploads.containsKey( name ) )
         {
             throw new IllegalArgumentException( "No Form Upload named '" + name + "'" );
@@ -110,7 +110,7 @@ public class FormUploadsInstance
     @Override
     public Upload lastValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Upload Name", name );
+        ensureNotEmpty( "Form Upload Name", name );
         if( !uploads.containsKey( name ) )
         {
             throw new IllegalArgumentException( "No Form Upload named '" + name + "'" );
@@ -122,7 +122,7 @@ public class FormUploadsInstance
     @Override
     public List<Upload> values( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Upload Name", name );
+        ensureNotEmpty( "Form Upload Name", name );
         if( !uploads.containsKey( name ) )
         {
             return Collections.emptyList();

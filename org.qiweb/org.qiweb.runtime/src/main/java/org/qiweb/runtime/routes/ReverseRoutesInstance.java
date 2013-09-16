@@ -22,17 +22,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.codeartisans.java.toolbox.Strings;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.Application;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
 
 import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
@@ -51,7 +52,7 @@ public class ReverseRoutesInstance
     @Override
     public ReverseRoute of( Outcome outcome )
     {
-        NullArgumentException.ensureNotNull( "Controller call for Reverse Routing", outcome );
+        ensureNotNull( "Controller call for Reverse Routing", outcome );
         if( !( outcome instanceof ReverseOutcome ) )
         {
             throw new IllegalArgumentException( "Bad API usage! Given Outcome is not an instance of ReverseOutcome." );
@@ -132,8 +133,8 @@ public class ReverseRoutesInstance
         @Override
         public ReverseRoute appendQueryString( String key, String value )
         {
-            NullArgumentException.ensureNotEmpty( "key", key );
-            NullArgumentException.ensureNotNull( "value", value );
+            ensureNotEmpty( "key", key );
+            ensureNotNull( "value", value );
             if( !appendedQueryString.containsKey( key ) )
             {
                 appendedQueryString.put( key, new ArrayList<String>() );
@@ -145,12 +146,12 @@ public class ReverseRoutesInstance
         @Override
         public ReverseRoute appendQueryString( Map<String, ?> parameters )
         {
-            NullArgumentException.ensureNotNull( "parameters", parameters );
+            ensureNotNull( "parameters", parameters );
             for( Map.Entry<String, ?> entry : parameters.entrySet() )
             {
                 String key = entry.getKey();
-                NullArgumentException.ensureNotEmpty( "parameter key", key );
-                NullArgumentException.ensureNotNull( "parameter value for '" + key + "'", entry.getValue() );
+                ensureNotEmpty( "parameter key", key );
+                ensureNotNull( "parameter value for '" + key + "'", entry.getValue() );
                 if( !appendedQueryString.containsKey( key ) )
                 {
                     appendedQueryString.put( key, new ArrayList<String>() );

@@ -20,10 +20,10 @@ import org.qiweb.api.controllers.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 /**
  * Classpath Resources Controller.

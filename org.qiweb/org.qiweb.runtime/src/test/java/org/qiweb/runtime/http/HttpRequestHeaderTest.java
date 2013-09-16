@@ -1,10 +1,10 @@
 package org.qiweb.runtime.http;
 
-import org.codeartisans.java.toolbox.Strings;
 import org.junit.Test;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.util.Strings;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

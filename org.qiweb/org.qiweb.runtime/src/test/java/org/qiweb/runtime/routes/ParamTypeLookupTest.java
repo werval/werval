@@ -1,7 +1,6 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.CustomParam;
-import org.codeartisans.java.toolbox.Collections;
 import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
@@ -21,7 +20,7 @@ public class ParamTypeLookupTest
     {
         Application app = new ApplicationInstance( new RoutesParserProvider(
             "GET /:custom com.acme.app.FakeController.customParam( com.acme.app.CustomParam custom )" ) );
-        Route route = Collections.firstElementOrNull( app.routes() );
+        Route route = app.routes().iterator().next();
         System.out.println( route );
         assertThat( ( (RouteInstance) route ).controllerParams().get( "custom" ).type().getName(), equalTo( CustomParam.class.getName() ) );
     }
@@ -31,7 +30,7 @@ public class ParamTypeLookupTest
     {
         Application app = new ApplicationInstance( new RoutesParserProvider(
             "GET /:custom com.acme.app.FakeController.customParam( CustomParam custom )" ) );
-        Route route = Collections.firstElementOrNull( app.routes() );
+        Route route = app.routes().iterator().next();
         System.out.println( route );
         assertThat( ( (RouteInstance) route ).controllerParams().get( "custom" ).type().getName(), equalTo( CustomParam.class.getName() ) );
     }

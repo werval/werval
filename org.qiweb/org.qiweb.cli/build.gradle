@@ -3,6 +3,7 @@ dependencies {
     compile project( ':org.qiweb.devshell' )
     compile libs.cli
     compile libs.exec
+    compile libs.io
 }
 
 apply plugin: 'application'

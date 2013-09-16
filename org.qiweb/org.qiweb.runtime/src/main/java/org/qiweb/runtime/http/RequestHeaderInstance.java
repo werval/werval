@@ -18,11 +18,11 @@ package org.qiweb.runtime.http;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
+import org.qiweb.api.util.Strings;
 
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.HOST;

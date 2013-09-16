@@ -23,7 +23,8 @@ import java.util.Properties;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
-import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.*;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 
 /**
  * Application MimeType instance.

@@ -37,8 +37,6 @@ import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 
-import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.codeartisans.java.toolbox.exceptions.NullArgumentException.ensureNotNull;
 import static org.qi4j.functional.Iterables.addAll;
 import static org.qi4j.functional.Iterables.filter;
 import static org.qi4j.functional.Iterables.iterable;
@@ -46,10 +44,13 @@ import static org.qi4j.functional.Iterables.map;
 import static org.qi4j.functional.Iterables.matchesAny;
 import static org.qi4j.functional.Iterables.toList;
 import static org.qi4j.functional.Specifications.in;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 
 /**
  * Instance of a Route.
  */
+// TODO Support quoted parameter forced values in routes.conf
 /* package */ final class RouteInstance
     implements Route
 {
@@ -237,6 +238,7 @@ import static org.qi4j.functional.Specifications.in;
     }
 
     @Override
+    // TODO Fix multiple query string parameter values handling
     public Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path, QueryString queryString )
     {
         Matcher matcher = pathRegex.matcher( path );
@@ -320,6 +322,7 @@ import static org.qi4j.functional.Specifications.in;
         }
 
         // Unbinding query string
+        // WARN Only controller parameters are unbound, not all given parameters
         if( !paramsToUnbind.isEmpty() )
         {
             unboundPath.append( "?" );

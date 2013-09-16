@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.codeartisans.java.toolbox.Strings;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.FormAttributes;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
+
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 public class FormAttributesInstance
     implements FormAttributes
@@ -61,7 +62,7 @@ public class FormAttributesInstance
     @Override
     public boolean has( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Attribute Name", name );
+        ensureNotEmpty( "Form Attribute Name", name );
         return attributes.containsKey( name );
     }
 
@@ -74,7 +75,7 @@ public class FormAttributesInstance
     @Override
     public String singleValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Attribute Name", name );
+        ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -90,7 +91,7 @@ public class FormAttributesInstance
     @Override
     public String firstValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Attribute Name", name );
+        ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -101,7 +102,7 @@ public class FormAttributesInstance
     @Override
     public String lastValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Attribute Name", name );
+        ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -113,7 +114,7 @@ public class FormAttributesInstance
     @Override
     public List<String> values( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Form Attribute Name", name );
+        ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
             return Collections.emptyList();

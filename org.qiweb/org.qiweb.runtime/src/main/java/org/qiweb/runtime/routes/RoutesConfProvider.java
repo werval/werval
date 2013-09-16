@@ -17,11 +17,11 @@ package org.qiweb.runtime.routes;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import org.codeartisans.java.toolbox.Strings;
+import java.util.Scanner;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
@@ -43,7 +43,8 @@ public class RoutesConfProvider
         }
         try( InputStream input = routesUrl.openStream() )
         {
-            String routes = Strings.toString( new InputStreamReader( input, UTF_8 ) );
+            Scanner scanner = new Scanner( input, UTF_8.name() ).useDelimiter( "\\A" );
+            String routes = scanner.hasNext() ? scanner.next() : "";
             return RouteBuilder.parseRoutes( application, routes );
         }
         catch( IOException ex )

@@ -22,11 +22,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import org.codeartisans.java.toolbox.Strings;
-import org.codeartisans.java.toolbox.exceptions.NullArgumentException;
 import org.qiweb.api.http.QueryString;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
+
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 public class QueryStringInstance
     implements QueryString
@@ -78,7 +79,7 @@ public class QueryStringInstance
     @Override
     public boolean has( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        ensureNotEmpty( "Query String Parameter Name", name );
         return parameters.containsKey( name );
     }
 
@@ -91,7 +92,7 @@ public class QueryStringInstance
     @Override
     public String singleValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -107,7 +108,7 @@ public class QueryStringInstance
     @Override
     public String firstValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -118,7 +119,7 @@ public class QueryStringInstance
     @Override
     public String lastValue( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Strings.EMPTY;
@@ -130,7 +131,7 @@ public class QueryStringInstance
     @Override
     public List<String> values( String name )
     {
-        NullArgumentException.ensureNotEmpty( "Query String Parameter Name", name );
+        ensureNotEmpty( "Query String Parameter Name", name );
         if( !parameters.containsKey( name ) )
         {
             return Collections.emptyList();

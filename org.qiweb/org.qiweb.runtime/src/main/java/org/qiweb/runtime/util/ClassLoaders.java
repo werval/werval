@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.codeartisans.java.toolbox.Strings;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.util.Strings;
 
 public final class ClassLoaders
 {

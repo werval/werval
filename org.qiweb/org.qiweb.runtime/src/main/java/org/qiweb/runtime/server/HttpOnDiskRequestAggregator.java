@@ -33,9 +33,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
-import org.codeartisans.java.toolbox.io.Files;
 import org.qiweb.api.Application;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.util.FileByteBuff;
@@ -223,7 +223,7 @@ public class HttpOnDiskRequestAggregator
     {
         if( bodyFile != null )
         {
-            Files.delete( bodyFile );
+            Files.deleteIfExists( bodyFile.toPath() );
         }
     }
 }
