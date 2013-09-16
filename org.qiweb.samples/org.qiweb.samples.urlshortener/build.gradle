@@ -29,6 +29,7 @@ dependencies {
     compile libs.jackson_core
 
     runtime "org.qiweb:org.qiweb.runtime:$version"
+    runtime libs.logback
     runtime webjars.bootstrap
     runtime webjars.jquery
 

@@ -12,8 +12,10 @@ targetCompatibility = '1.7'
 
 // Adding dependencies here will add the dependencies to each subproject.
 dependencies {
-    runtime libs.logback
+
     testCompile libs.junit
+    testRuntime libs.logback
+
 }
 
 // Create basic folder structure

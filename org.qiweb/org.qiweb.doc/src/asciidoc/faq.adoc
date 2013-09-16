@@ -74,3 +74,19 @@ Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issu
 Yes.
 The Apache License is very business-friendly.
 Please observe the obligations on your part, especially regarding notices, trademarks and patent licensing terms.
+
+
+=== What to do when I can see no logs and get a weird message from SLF4J?
+
+QiWeb use the http://www.slf4j.org[SLF4J] API (Simple Logging Facade for Java) but you have to choose what SLF4J
+implementation to use.
+We strongly recommend http://logback.qos.ch/[Logback].
+
+If you don't have any SLF4J implementation in your application classpath, you'll get the following warning:
+
+    SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+    SLF4J: Defaulting to no-operation (NOP) logger implementation
+    SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+From there you simply add Logback (or any SLF4J implementation) to your dependencies and configure it the way you want.
+And voila!
