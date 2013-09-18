@@ -18,11 +18,13 @@ package org.qiweb.runtime.mime;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
+import static java.util.Locale.US;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 
@@ -33,10 +35,14 @@ public class MimeTypesInstance
     implements MimeTypes
 {
 
+    private final Charset defaultCharset;
     private final Properties extToType = new Properties();
+    private final Map<String, Charset> textuals;
 
-    public MimeTypesInstance()
+    public MimeTypesInstance( Charset defaultCharset,
+                              Map<String, Charset> textuals )
     {
+        this.defaultCharset = defaultCharset;
         try( InputStream input = getClass().getResourceAsStream( "mime-types-extensions.properties" ) )
         {
             extToType.load( input );
@@ -45,12 +51,15 @@ public class MimeTypesInstance
         {
             throw new QiWebRuntimeException( "Unable to load internal mime types database: " + ex.getMessage(), ex );
         }
+        this.textuals = textuals;
     }
 
-    public MimeTypesInstance( Map<String, String> applicationMimeTypes )
+    public MimeTypesInstance( Charset defaultCharset,
+                              Map<String, String> supplementaryMimetypes,
+                              Map<String, Charset> textuals )
     {
-        this();
-        this.extToType.putAll( applicationMimeTypes );
+        this( defaultCharset, textuals );
+        this.extToType.putAll( supplementaryMimetypes );
     }
 
     @Override
@@ -61,10 +70,34 @@ public class MimeTypesInstance
     }
 
     @Override
+    public String ofFileWithCharset( File file )
+    {
+        return withCharsetIfTextual( ofFile( file ) );
+    }
+
+    @Override
+    public String ofFileWithCharset( File file, Charset charset )
+    {
+        return withCharset( ofFile( file ), charset );
+    }
+
+    @Override
     public String ofPath( String path )
     {
         ensureNotEmpty( "Path", path );
         return ofFile( new File( path ) );
+    }
+
+    @Override
+    public String ofPathWithCharset( String path )
+    {
+        return withCharsetIfTextual( ofPath( path ) );
+    }
+
+    @Override
+    public String ofPathWithCharset( String path, Charset charset )
+    {
+        return withCharset( ofPath( path ), charset );
     }
 
     @Override
@@ -80,6 +113,18 @@ public class MimeTypesInstance
     }
 
     @Override
+    public String ofFilenameWithCharset( String filename )
+    {
+        return withCharsetIfTextual( ofFilename( filename ) );
+    }
+
+    @Override
+    public String ofFilenameWithCharset( String filename, Charset charset )
+    {
+        return withCharset( ofFilename( filename ), charset );
+    }
+
+    @Override
     public String ofExtension( String extension )
     {
         ensureNotEmpty( "Extension", extension );
@@ -88,13 +133,59 @@ public class MimeTypesInstance
     }
 
     @Override
+    public String ofExtensionWithCharset( String extension )
+    {
+        return withCharsetIfTextual( ofExtension( extension ) );
+    }
+
+    @Override
+    public String ofExtensionWithCharset( String extension, Charset charset )
+    {
+        return withCharset( ofExtension( extension ), charset );
+    }
+
+    @Override
     public boolean isTextual( String mimetype )
     {
         ensureNotEmpty( "MimeType", mimetype );
-        if( mimetype.startsWith( "text/" ) || mimetype.startsWith( APPLICATION_JSON ) )
+        if( mimetype.startsWith( "text/" ) )
         {
             return true;
         }
+        for( Map.Entry<String, Charset> textual : textuals.entrySet() )
+        {
+            if( mimetype.startsWith( textual.getKey() ) )
+            {
+                return true;
+            }
+        }
         return false;
+    }
+
+    @Override
+    public Charset encodingOfTextual( String mimetype )
+    {
+        if( !isTextual( mimetype ) )
+        {
+            throw new IllegalArgumentException( mimetype + " is not textual" );
+        }
+        Charset charset = textuals.get( mimetype );
+        return charset == null ? defaultCharset : charset;
+    }
+
+    @Override
+    public String withCharset( String mimetype, Charset charset )
+    {
+        String charsetString = charset.name().toLowerCase( US );
+        return mimetype + "; charset=" + charsetString;
+    }
+
+    private String withCharsetIfTextual( String mimetype )
+    {
+        if( isTextual( mimetype ) )
+        {
+            return withCharset( mimetype, encodingOfTextual( mimetype ) );
+        }
+        return mimetype;
     }
 }

@@ -26,7 +26,6 @@ public interface ConfigKeys
     //
     String APP_ERRORS_RECORD_MAX = "app.errors.record.max";
     String APP_GLOBAL = "app.global";
-    String APP_MIMETYPES = "app.mimetypes";
     String APP_SECRET = "app.secret";
     String APP_SESSION_COOKIE_NAME = "app.session.cookie.name";
     String APP_SESSION_COOKIE_DOMAIN = "app.session.cookie.domain";
@@ -39,6 +38,8 @@ public interface ConfigKeys
     //
     String QIWEB_CHARACTER_ENCODING = "qiweb.character-encoding";
     String QIWEB_FS_TEMP = "qiweb.fs.temp";
+    String QIWEB_MIMETYPES_SUPPLEMENTARY = "qiweb.mimetypes.supplementary";
+    String QIWEB_MIMETYPES_TEXTUAL = "qiweb.mimetypes.textual";
     String QIWEB_SHUTDOWN_QUIETPERIOD = "qiweb.shutdown.quiet-period";
     String QIWEB_SHUTDOWN_TIMEOUT = "qiweb.shutdown.timeout";
     String QIWEB_SHUTDOWN_RETRYAFTER = "qiweb.shutdown.retry-after";

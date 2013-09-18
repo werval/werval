@@ -18,7 +18,9 @@ package org.qiweb.runtime;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
@@ -40,10 +42,11 @@ import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
-import static org.qiweb.runtime.ConfigKeys.APP_MIMETYPES;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_FS_TEMP;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
 
 /**
@@ -270,13 +273,24 @@ public final class ApplicationInstance
 
     private void configureMimeTypes()
     {
-        if( config.has( APP_MIMETYPES ) )
+        Map<String, Charset> textuals = new LinkedHashMap<>();
+        for( Map.Entry<String, String> textConfig : config.stringMap( QIWEB_MIMETYPES_TEXTUAL ).entrySet() )
         {
-            mimeTypes = new MimeTypesInstance( config.stringMap( APP_MIMETYPES ) );
+            String mimetype = textConfig.getKey();
+            String charsetString = textConfig.getValue().trim();
+            Charset charset = "default".equals( charsetString )
+                              ? defaultCharset
+                              : Charset.forName( charsetString );
+            textuals.put( mimetype, charset );
+        }
+        if( config.has( QIWEB_MIMETYPES_SUPPLEMENTARY ) )
+        {
+            Map<String, String> supplementaryMimetypes = config.stringMap( QIWEB_MIMETYPES_SUPPLEMENTARY );
+            mimeTypes = new MimeTypesInstance( defaultCharset, supplementaryMimetypes, textuals );
         }
         else
         {
-            mimeTypes = new MimeTypesInstance();
+            mimeTypes = new MimeTypesInstance( defaultCharset, textuals );
         }
     }
 

@@ -16,6 +16,7 @@
 package org.qiweb.api.mime;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 /**
  * MimeTypes registry.
@@ -25,22 +26,40 @@ import java.io.File;
  * <p>The known Mime Types are extracted from Apache HTTP Server source code by the QiWeb Build System.</p>
  * <p><img src="doc-files/apache-httpd.jpg"/></p>
  * <p>
- *     You can add Mime Type definitions in <code>application.conf</code> at the <code>app.mimetypes</code> config
- *     property.
+ *     You can add Mime Type definitions in <code>application.conf</code> at the
+ *     <code>qiweb.mimetypes.supplementary</code> config property.
  * </p>
  * <p>Here is an example defining two more Mime Types:</p>
  * <pre>
- * app: {
- *     mimetypes = {
- *         foo: "application/vnd.acme.foo",
- *         bar: "application/vnd.acme.bar"
- *     }
+ * qiweb.mimetypes.supplementary: {
+ *     foo: "application/vnd.acme.foo",
+ *     bar: "application/vnd.acme.bar"
  * }
  * </pre>
  * <p>
  *     Files with a <code>foo</code> or <code>bar</code> extension will then be respectively served with a
  *     <code>application/vnd.acme.foo</code> or <code>application/vnd.acme.bar</code> Mime Type.
  * </p>
+ * <p><strong>Textual mimetypes and character encoding</strong></p>
+ * <p>
+ *     Adding character encoding extensions to a mime type is a frequent task.
+ *     The MimeTypes API provide helpers for this matter.
+ *     You can ask if a given mime type is textual.
+ *     You can ask the default charset to use for a given textual mimetype.
+ * </p>
+ * <p>
+ *     As a shortcut, methods named <code>of*WithCharset</code> add a charset if the mimetype is textual using the default QiWeb character encoding or an override from the textuals mimetypes definition in configuration.
+ * </p>
+ * <p>
+ *     Here is an example registering the two mimetypes used above as textual while defining their default character encoding:
+ * </p>
+ * <pre>
+ * qiweb.character-encoding: utf-8
+ * qiweb.mimetypes.textuals: {
+ *      "application/vnd.acme.foo": default,
+ *      "application/vnd.acme.bar": koi8-ru
+ * }
+ * </pre>
  */
 public interface MimeTypes
     extends MimeTypesNames
@@ -52,9 +71,29 @@ public interface MimeTypes
     String ofFile( File file );
 
     /**
+     * @return MimeType of a File with optional character encoding if textual
+     */
+    String ofFileWithCharset( File file );
+
+    /**
+     * @return MimeType of a File with character encoding, textual or not
+     */
+    String ofFileWithCharset( File file, Charset charset );
+
+    /**
      * @return MimeType of a path
      */
     String ofPath( String path );
+
+    /**
+     * @return MimeType of a Path with optional character encoding if textual
+     */
+    String ofPathWithCharset( String path );
+
+    /**
+     * @return MimeType of a Path with character encoding, textual or not
+     */
+    String ofPathWithCharset( String path, Charset charset );
 
     /**
      * @return MimeType of a filename
@@ -62,12 +101,44 @@ public interface MimeTypes
     String ofFilename( String filename );
 
     /**
+     * @return MimeType of a filename with optional character encoding if textual
+     */
+    String ofFilenameWithCharset( String filename );
+
+    /**
+     * @return MimeType of a filename with character encoding, textual or not
+     */
+    String ofFilenameWithCharset( String filename, Charset charset );
+
+    /**
      * @return MimeType of a file extension
      */
     String ofExtension( String extension );
 
     /**
+     * @return MimeType of a Extension with optional character encoding if textual
+     */
+    String ofExtensionWithCharset( String extension );
+
+    /**
+     * @return MimeType of a Extension with character encoding, textual or not
+     */
+    String ofExtensionWithCharset( String extension, Charset charset );
+
+    /**
      * @return TRUE is mimetype is textual, otherwise return FALSE
      */
     boolean isTextual( String mimetype );
+
+    /**
+     * @return Character encoding to use for the given MimeType
+     * @throws IllegalArgumentException when mimetype is not textual
+     */
+    Charset encodingOfTextual( String mimetype );
+
+    /**
+     * @param charset Character encoding
+     * @return MimeType with character encoding information set
+     */
+    String withCharset( String mimetype, Charset charset );
 }

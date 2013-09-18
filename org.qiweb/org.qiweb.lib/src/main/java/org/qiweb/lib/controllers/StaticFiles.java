@@ -29,6 +29,7 @@ import org.qiweb.api.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Locale.US;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
@@ -41,6 +42,7 @@ import static org.qiweb.api.http.Headers.Names.ETAG;
 import static org.qiweb.api.http.Headers.Names.IF_MODIFIED_SINCE;
 import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
 import static org.qiweb.api.http.Headers.Names.LAST_MODIFIED;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_OCTET_STREAM;
 import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
@@ -233,17 +235,14 @@ public class StaticFiles
         response().headers().with( LAST_MODIFIED, Dates.HTTP.format( new Date( lastModified ) ) );
 
         // MimeType
-        String mimetype = application().mimeTypes().ofFile( file );
-        mimetype = application().mimeTypes().isTextual( mimetype )
-                   ? mimetype + "; charset=utf-8"
-                   : mimetype;
+        String mimetype = application().mimeTypes().ofFileWithCharset( file );
         response().headers().with( CONTENT_TYPE, mimetype );
 
         // Disposition and filename
         String filename = US_ASCII.newEncoder().canEncode( file.getName() )
                           ? "; filename=\"" + file.getName() + "\""
-                          : "; filename*=utf-8; filename=\"" + file.getName() + "\"";
-        if( "application/octet-stream".equals( mimetype ) )
+                          : "; filename*=" + application().defaultCharset().name().toLowerCase( US ) + "; filename=\"" + file.getName() + "\"";
+        if( APPLICATION_OCTET_STREAM.equals( mimetype ) )
         {
             // Browser will prompt the user, we should provide a filename
             response().headers().with( "Content-Disposition", "attachment" + filename );
