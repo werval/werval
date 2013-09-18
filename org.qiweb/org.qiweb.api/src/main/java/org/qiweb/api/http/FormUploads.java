@@ -120,12 +120,12 @@ public interface FormUploads
     {
 
         /**
-         * @return Upload's content-type
+         * @return Upload's content-type or null if not defined
          */
         String contentType();
 
         /**
-         * @return Upload's charset
+         * @return Upload's charset or null if not defined
          */
         Charset charset();
 
@@ -150,7 +150,8 @@ public interface FormUploads
         byte[] asBytes();
 
         /**
-         * @return Upload data as a String
+         * @return  Upload data as a String using the upload character encoding if defined, the QiWeb default character
+         *          encoding otherwise.
          */
         String asString();
 

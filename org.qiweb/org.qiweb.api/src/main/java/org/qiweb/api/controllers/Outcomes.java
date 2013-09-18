@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.controllers;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -38,10 +39,16 @@ public interface Outcomes
     OutcomeBuilder ok();
 
     /**
-     * @param body Response body as String
+     * @param body Response body as String using the default character encoding
      * @return Builder for a 200 OK Outcome
      */
     OutcomeBuilder ok( String body );
+
+    /**
+     * @param body Response body as String
+     * @return Builder for a 200 OK Outcome
+     */
+    OutcomeBuilder ok( String body, Charset charset );
 
     /**
      * @return Builder for a 201 CREATED Outcome

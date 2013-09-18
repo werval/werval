@@ -47,11 +47,11 @@ import static io.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static io.netty.handler.codec.http.HttpHeaders.removeTransferEncodingChunked;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static java.util.Locale.US;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.
@@ -74,7 +74,6 @@ public class HttpOnDiskRequestAggregator
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpOnDiskRequestAggregator.class );
-    private static final ByteBuf CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", UTF_8 );
     private final Application app;
     private final int maxContentLength;
     private HttpRequest aggregatedRequestHeader;
@@ -129,7 +128,7 @@ public class HttpOnDiskRequestAggregator
 
         if( is100ContinueExpected( newRequestHeader ) )
         {
-            context.write( CONTINUE.duplicate() );
+            context.write( copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", app.defaultCharset() ) );
         }
 
         if( !newRequestHeader.getDecoderResult().isSuccess() )
@@ -162,9 +161,9 @@ public class HttpOnDiskRequestAggregator
         if( maxContentLength != -1 && bodyFile.length() > maxContentLength - chunk.content().readableBytes() )
         {
             LOG.warn( "Request Entity is too large, content length exceeded {} bytes.", maxContentLength );
-            ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", UTF_8 );
+            ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", app.defaultCharset() );
             FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, REQUEST_ENTITY_TOO_LARGE, body );
-            response.headers().set( CONTENT_TYPE, "text/plain; charset=utf-8" );
+            response.headers().set( CONTENT_TYPE, "text/plain; charset=" + app.defaultCharset().name().toLowerCase( US ) );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
             context.write( response ).addListener( ChannelFutureListener.CLOSE );

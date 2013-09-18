@@ -17,6 +17,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +81,12 @@ public interface Config
      * @return Config entry value as UTF-8 bytes
      */
     byte[] utf8Bytes( String key );
+
+    /**
+     * @param key Config entry key
+     * @return Config entry value as Charset
+     */
+    Charset charset( String key );
 
     /**
      * @param key Config entry key

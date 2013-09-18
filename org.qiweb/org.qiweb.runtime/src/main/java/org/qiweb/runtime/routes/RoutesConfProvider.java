@@ -24,8 +24,6 @@ import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
-import static org.qiweb.api.util.Charsets.UTF_8;
-
 /**
  * Routes Provider using 'routes.conf' from the Application classpath root.
  */
@@ -43,7 +41,7 @@ public class RoutesConfProvider
         }
         try( InputStream input = routesUrl.openStream() )
         {
-            Scanner scanner = new Scanner( input, UTF_8.name() ).useDelimiter( "\\A" );
+            Scanner scanner = new Scanner( input, application.defaultCharset().name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
             return RouteBuilder.parseRoutes( application, routes );
         }

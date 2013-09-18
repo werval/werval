@@ -16,6 +16,7 @@
 package org.qiweb.runtime.routes;
 
 import io.netty.handler.codec.http.QueryStringEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -34,7 +35,6 @@ import org.qiweb.runtime.util.Comparators;
 import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
-import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 
@@ -80,7 +80,8 @@ public class ReverseRoutesInstance
                     idx++;
                 }
                 String unboundPath = route.unbindParameters( application.parameterBinders(), parameters );
-                return new ReverseRouteInstance( reverseOutcome.httpMethod(), unboundPath );
+                return new ReverseRouteInstance( reverseOutcome.httpMethod(), unboundPath,
+                                                 application.defaultCharset() );
             }
         }
         throw new RouteNotFoundException( reverseOutcome.httpMethod(),
@@ -95,13 +96,15 @@ public class ReverseRoutesInstance
 
         private final String method;
         private final String uri;
+        private final Charset charset;
         private final Map<String, List<String>> appendedQueryString = new TreeMap<>( Comparators.LOWER_CASE );
         private String fragmentIdentifier;
 
-        public ReverseRouteInstance( String method, String uri )
+        public ReverseRouteInstance( String method, String uri, Charset charset )
         {
             this.method = method;
             this.uri = uri;
+            this.charset = charset;
         }
 
         @Override
@@ -113,7 +116,7 @@ public class ReverseRoutesInstance
         @Override
         public String uri()
         {
-            QueryStringEncoder encoder = new QueryStringEncoder( uri, UTF_8 );
+            QueryStringEncoder encoder = new QueryStringEncoder( uri, charset );
             for( Map.Entry<String, List<String>> entry : appendedQueryString.entrySet() )
             {
                 String key = entry.getKey();

@@ -79,6 +79,9 @@ public class HttpRequestHeaderTest
             withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).charset(),
             equalTo( Strings.EMPTY ) );
         assertThat(
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=us-ascii" ) ).charset(),
+            equalTo( "us-ascii" ) );
+        assertThat(
             withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8" ) ).charset(),
             equalTo( "utf-8" ) );
         assertThat(

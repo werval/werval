@@ -16,6 +16,7 @@
 package org.qiweb.runtime;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import org.qiweb.api.Application;
@@ -41,6 +42,7 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_MIMETYPES;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_FS_TEMP;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
 
@@ -61,6 +63,7 @@ public final class ApplicationInstance
     private Config config;
     private Global global;
     private Crypto crypto;
+    private Charset defaultCharset;
     private File tmpdir;
     private ClassLoader classLoader;
     private final RoutesProvider routesProvider;
@@ -132,6 +135,12 @@ public final class ApplicationInstance
     }
 
     @Override
+    public Charset defaultCharset()
+    {
+        return defaultCharset;
+    }
+
+    @Override
     public File tmpdir()
     {
         return tmpdir;
@@ -195,6 +204,7 @@ public final class ApplicationInstance
             started = false;
         }
         configureGlobal();
+        configureDefaultCharset();
         configureCrypto();
         configureTmpdir();
         configureParameterBinders();
@@ -217,9 +227,14 @@ public final class ApplicationInstance
         }
     }
 
+    private void configureDefaultCharset()
+    {
+        this.defaultCharset = config.charset( QIWEB_CHARACTER_ENCODING );
+    }
+
     private void configureCrypto()
     {
-        this.crypto = new CryptoInstance( config.string( APP_SECRET ) );
+        this.crypto = new CryptoInstance( config.string( APP_SECRET ), defaultCharset );
     }
 
     private void configureTmpdir()

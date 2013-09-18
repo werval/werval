@@ -37,6 +37,7 @@ import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_DOMAIN;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_HTTPONLY;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_PATH;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_SECURE;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 
 public class SessionInstance
     implements Session
@@ -82,7 +83,7 @@ public class SessionInstance
             LOG.warn( "Invalid Session Cookie Signature: '{}'. Will use an empty Session.", cookie.value() );
             return;
         }
-        String decoded = URLs.decode( payload );
+        String decoded = URLs.decode( payload, config.charset( QIWEB_CHARACTER_ENCODING ) );
         Matcher matcher = COOKIE_VALUE_PATTERN.matcher( decoded );
         while( matcher.find() )
         {
@@ -155,7 +156,7 @@ public class SessionInstance
         {
             sb.append( "\u0000" ).append( entry.getKey() ).append( ":" ).append( entry.getValue() ).append( "\u0000" );
         }
-        String sessionData = URLs.encode( sb.toString() );
+        String sessionData = URLs.encode( sb.toString(), config.charset( QIWEB_CHARACTER_ENCODING ) );
         String signedCookieValue = crypto.hexHmacSha256( sessionData ) + "-" + sessionData;
         return new CookieInstance(
             config.string( APP_SESSION_COOKIE_NAME ),

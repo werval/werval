@@ -16,6 +16,7 @@
 package org.qiweb.api;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -97,8 +98,13 @@ public interface Application
     Crypto crypto();
 
     /**
+     * Application default {@link Charset}.
+     * @return Application default {@link Charset}
+     */
+    Charset defaultCharset();
+
+    /**
      * Application temporary directory {@link File}.
-     * <p>Don't hold references to the File instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application temporary directory {@link File}
      */
     File tmpdir();

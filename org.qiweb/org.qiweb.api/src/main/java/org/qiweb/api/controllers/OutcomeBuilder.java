@@ -16,6 +16,7 @@
 package org.qiweb.api.controllers;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * Builder for Outcomes.
@@ -46,6 +47,15 @@ public interface OutcomeBuilder
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( String body );
+
+    /**
+     * Use a String body.
+     * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
+     * @param body Body as String
+     * @param charset Character encoding to use
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder withBody( String body, Charset charset );
 
     /**
      * Use an InputStream body if undetermined length.

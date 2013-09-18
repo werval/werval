@@ -77,6 +77,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static java.util.Locale.US;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
@@ -89,7 +90,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
-import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
@@ -177,9 +177,9 @@ public final class HttpRequestRouterHandler
         {
             FullHttpResponse response = new DefaultFullHttpResponse(
                 HTTP_1_1, SERVICE_UNAVAILABLE,
-                copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", UTF_8 ) );
+                copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", app.defaultCharset() ) );
             response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
-            response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
+            response.headers().set( CONTENT_TYPE, "text/html; charset=" + app.defaultCharset().name().toLowerCase( US ) );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
             // By default, no Retry-After, only if defined in configuration
@@ -195,7 +195,7 @@ public final class HttpRequestRouterHandler
         rebuildIfNeeded();
 
         // Parse RequestHeader
-        RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest,
+        RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest, app.defaultCharset(),
                                                        app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
                                                        app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
 
@@ -222,7 +222,7 @@ public final class HttpRequestRouterHandler
                 requestHeader.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) ) );
 
             // Parse Request
-            Request request = requestOf( requestHeader, parameters, nettyRequest,
+            Request request = requestOf( requestHeader, parameters, nettyRequest, app.defaultCharset(),
                                          app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
                                          app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
                                          app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED ) );
@@ -472,9 +472,9 @@ public final class HttpRequestRouterHandler
 
     private void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
     {
-        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, UTF_8 ) );
+        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, app.defaultCharset() ) );
         response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
-        response.headers().set( CONTENT_TYPE, "text/html; charset=utf-8" );
+        response.headers().set( CONTENT_TYPE, "text/html; charset=" + app.defaultCharset().name().toLowerCase( US ) );
         response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
         response.headers().set( CONNECTION, CLOSE );
         context.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );

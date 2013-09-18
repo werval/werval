@@ -34,7 +34,6 @@ import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.util.Comparators;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.qiweb.api.util.Charsets.UTF_8;
 
 public class FormUploadsInstance
     implements FormUploads
@@ -177,13 +176,17 @@ public class FormUploadsInstance
         private final Charset charset;
         private final String filename;
         private final File temporaryFile;
+        private final Charset defaultCharset;
 
-        public UploadInstance( String contentType, Charset charset, String filename, File temporaryFile )
+        public UploadInstance( String contentType, Charset charset,
+                               String filename, File temporaryFile,
+                               Charset defaultCharset )
         {
             this.contentType = contentType;
             this.charset = charset;
             this.filename = filename;
             this.temporaryFile = temporaryFile;
+            this.defaultCharset = defaultCharset;
         }
 
         @Override
@@ -239,7 +242,7 @@ public class FormUploadsInstance
         @Override
         public String asString()
         {
-            return new String( asBytes(), UTF_8 );
+            return new String( asBytes(), charset == null ? defaultCharset : charset );
         }
 
         @Override

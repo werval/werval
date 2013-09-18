@@ -30,8 +30,6 @@ import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.FileByteBuff;
 
-import static org.qiweb.api.util.Charsets.UTF_8;
-
 /**
  * A RequestBody Instance.
  */
@@ -39,6 +37,7 @@ public final class RequestBodyInstance
     implements RequestBody
 {
 
+    private final Charset charset;
     private final ByteBuf byteBuf;
     private final FormAttributes attributes;
     private final FormUploads uploads;
@@ -46,8 +45,10 @@ public final class RequestBodyInstance
     /**
      * Create a new EMPTY RequestBody.
      */
-    public RequestBodyInstance( boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads )
+    public RequestBodyInstance( Charset charset,
+                                boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads )
     {
+        this.charset = charset;
         this.byteBuf = null;
         this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
         this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
@@ -58,8 +59,11 @@ public final class RequestBodyInstance
      * 
      * @param byteBuf Body data
      */
-    public RequestBodyInstance( boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads, ByteBuf byteBuf )
+    public RequestBodyInstance( Charset charset,
+                                boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads,
+                                ByteBuf byteBuf )
     {
+        this.charset = charset;
         this.byteBuf = byteBuf;
         this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
         this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
@@ -71,8 +75,11 @@ public final class RequestBodyInstance
      * @param attributes Form attributes
      * @param uploads Upload data
      */
-    public RequestBodyInstance( boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads, Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
+    public RequestBodyInstance( Charset charset,
+                                boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads,
+                                Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
     {
+        this.charset = charset;
         this.byteBuf = null;
         this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, attributes );
         this.uploads = new FormUploadsInstance( allowMultiValuedUploads, uploads );
@@ -127,7 +134,7 @@ public final class RequestBodyInstance
         {
             return Strings.EMPTY;
         }
-        return byteBuf.toString( UTF_8 );
+        return byteBuf.toString( charset );
     }
 
     @Override

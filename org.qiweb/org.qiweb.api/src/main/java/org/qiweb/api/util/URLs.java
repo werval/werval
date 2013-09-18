@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.qiweb.api.exceptions.QiWebException;
 
-import static org.qiweb.api.util.Charsets.UTF_8;
-
 /**
  * URL related utility methods.
  */
@@ -34,25 +32,41 @@ public final class URLs
 {
 
     /**
-     * Translates a string into application/x-www-form-urlencoded format.
-     * 
+     * Translates a string into application/x-www-form-urlencoded format using UTF-8 character encoding.
+     *
      * @param string String to be translated
+     * @param charset Character encoding
      * @return the translated String
      */
-    public static String encode( String string )
+    public static String encode( String string, Charset charset )
     {
-        return encode( string, UTF_8 );
+        try
+        {
+            return URLEncoder.encode( string, charset.name() );
+        }
+        catch( UnsupportedEncodingException ex )
+        {
+            throw new QiWebException( "Unable to URL encode " + string, ex );
+        }
     }
 
     /**
      * Decodes a application/x-www-form-urlencoded string.
-     * 
+     *
      * @param string the String to decode
+     * @param charset Character encoding
      * @return the newly decoded String
      */
-    public static String decode( String string )
+    public static String decode( String string, Charset charset )
     {
-        return decode( string, UTF_8 );
+        try
+        {
+            return URLDecoder.decode( string, charset.name() );
+        }
+        catch( UnsupportedEncodingException ex )
+        {
+            throw new QiWebException( "Unable to URL decode " + string, ex );
+        }
     }
 
     /**
@@ -62,7 +76,7 @@ public final class URLs
      * @param queryString The query string data
      * @return The URL with query string data appended
      */
-    public static String appendQueryString( final String url, Map<String, List<String>> queryString )
+    public static String appendQueryString( final String url, Map<String, List<String>> queryString, Charset charset )
     {
         int hashIdx = url.indexOf( '#' );
         StringBuilder builder = new StringBuilder( hashIdx > 0 ? url.substring( 0, hashIdx ) : url );
@@ -80,9 +94,9 @@ public final class URLs
                     {
                         String paramValue = itVal.next();
                         builder.
-                            append( URLs.encode( paramName ) ).
+                            append( encode( paramName, charset ) ).
                             append( "=" ).
-                            append( URLs.encode( paramValue ) ).
+                            append( encode( paramValue, charset ) ).
                             append( itVal.hasNext() ? "&" : "" );
                     }
                     builder.append( itKey.hasNext() ? "&" : "" );
@@ -94,30 +108,6 @@ public final class URLs
             builder.append( url.substring( hashIdx ) );
         }
         return builder.toString();
-    }
-
-    private static String encode( String string, Charset charset )
-    {
-        try
-        {
-            return URLEncoder.encode( string, charset.name() );
-        }
-        catch( UnsupportedEncodingException ex )
-        {
-            throw new QiWebException( "Unable to URL encode " + string, ex );
-        }
-    }
-
-    private static String decode( String string, Charset charset )
-    {
-        try
-        {
-            return URLDecoder.decode( string, charset.name() );
-        }
-        catch( UnsupportedEncodingException ex )
-        {
-            throw new QiWebException( "Unable to URL decode " + string, ex );
-        }
     }
 
     private URLs()

@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.controllers;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.qiweb.api.util.URLs;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 
 /**
  * Outcomes instance.
@@ -62,6 +64,12 @@ public class OutcomesInstance
     public OutcomeBuilder ok( String body )
     {
         return new OutcomeBuilderInstance( OK.code(), config, headers, cookies ).withBody( body );
+    }
+
+    @Override
+    public OutcomeBuilder ok( String body, Charset charset )
+    {
+        return new OutcomeBuilderInstance( OK.code(), config, headers, cookies ).withBody( body, charset );
     }
 
     @Override
@@ -301,6 +309,7 @@ public class OutcomesInstance
     private OutcomeBuilder redirect( String url, Map<String, List<String>> queryString, int status )
     {
         return new OutcomeBuilderInstance( status, config, headers, cookies ).
-            withHeader( LOCATION, URLs.appendQueryString( url, queryString ) );
+            withHeader( LOCATION, URLs.appendQueryString( url, queryString,
+                                                          config.charset( QIWEB_CHARACTER_ENCODING ) ) );
     }
 }

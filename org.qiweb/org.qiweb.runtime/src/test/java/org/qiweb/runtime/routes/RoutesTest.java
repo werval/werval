@@ -305,7 +305,7 @@ public class RoutesTest
     private RequestHeader reqHeadForGet( String requestUri )
     {
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( requestUri, UTF_8 );
-        String requestPath = URLs.decode( queryStringDecoder.path() );
+        String requestPath = URLs.decode( queryStringDecoder.path(), UTF_8 );
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
         return new RequestHeaderInstance( "identity", "HTTP/1.1",
                                           "GET", requestUri, requestPath,

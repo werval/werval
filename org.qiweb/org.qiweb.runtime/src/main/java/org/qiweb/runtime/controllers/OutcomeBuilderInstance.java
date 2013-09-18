@@ -20,6 +20,7 @@ import io.netty.handler.stream.ChunkedInput;
 import io.netty.handler.stream.ChunkedStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import org.qiweb.api.Config;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.controllers.OutcomeBuilder;
@@ -27,10 +28,11 @@ import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
 
-import static io.netty.buffer.Unpooled.*;
+import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
+import static io.netty.buffer.Unpooled.copiedBuffer;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 
 /**
@@ -131,7 +133,7 @@ public class OutcomeBuilderInstance
         extends AbstractOutcome<ChunkedOutcome>
     {
 
-        private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( "".getBytes( UTF_8 ) ) );
+        private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( new byte[ 0 ] ) );
 
         /* package */ ChunkedOutcome( int status, MutableHeaders headers, InputStream input, int chunkSize )
         {
@@ -150,6 +152,7 @@ public class OutcomeBuilderInstance
     private Object body = EMPTY_BUFFER;
     private long length = 0;
     private int chunkSize;
+    private final Charset defaultCharset;
 
 
     /* package */ OutcomeBuilderInstance( int status, Config config, MutableHeaders headers, MutableCookies cookies )
@@ -158,6 +161,7 @@ public class OutcomeBuilderInstance
         this.headers = headers;
         this.cookies = cookies;
         this.chunkSize = config.intNumber( QIWEB_HTTP_CHUNKSIZE );
+        this.defaultCharset = config.charset( QIWEB_CHARACTER_ENCODING );
     }
 
     @Override
@@ -177,7 +181,13 @@ public class OutcomeBuilderInstance
     @Override
     public OutcomeBuilder withBody( String bodyString )
     {
-        ByteBuf buffer = copiedBuffer( bodyString, UTF_8 );
+        return withBody( bodyString, defaultCharset );
+    }
+
+    @Override
+    public OutcomeBuilder withBody( String bodyString, Charset charset )
+    {
+        ByteBuf buffer = copiedBuffer( bodyString, charset );
         body = buffer;
         length = buffer.readableBytes();
         return this;

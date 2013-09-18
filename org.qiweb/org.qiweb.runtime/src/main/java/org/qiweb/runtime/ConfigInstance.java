@@ -18,6 +18,7 @@ package org.qiweb.runtime;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +100,12 @@ public class ConfigInstance
     public byte[] utf8Bytes( String key )
     {
         return config.getString( key ).getBytes( UTF_8 );
+    }
+
+    @Override
+    public Charset charset( String key )
+    {
+        return Charset.forName( config.getString( key ) );
     }
 
     @Override

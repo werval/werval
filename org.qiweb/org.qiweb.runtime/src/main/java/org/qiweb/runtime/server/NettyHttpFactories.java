@@ -28,6 +28,7 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.Incompatible
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDataDecoderException;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,9 +63,9 @@ import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
-import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Factory methods used by the server.
@@ -100,9 +101,10 @@ import static org.qiweb.api.util.Charsets.UTF_8;
         return new CookiesInstance( cookies );
     }
 
-    /* package */ static RequestHeader requestHeaderOf( String identity, HttpRequest request,
-                                          boolean allowMultiValuedQueryStringParameters,
-                                          boolean allowMultiValuedHeaders )
+    /* package */ static RequestHeader requestHeaderOf(
+        String identity, HttpRequest request,
+        Charset defaultCharset,
+        boolean allowMultiValuedQueryStringParameters, boolean allowMultiValuedHeaders )
     {
         ensureNotEmpty( "Request Identity", identity );
         ensureNotNull( "Netty HttpRequest", request );
@@ -115,8 +117,10 @@ import static org.qiweb.api.util.Charsets.UTF_8;
         }
 
         // Path and QueryString
-        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), UTF_8 );
-        String requestPath = URLs.decode( queryStringDecoder.path() );
+        String requestCharset = RequestHeaderInstance.extractCharset( request.headers().get( CONTENT_TYPE ) );
+        Charset charset = Strings.isEmpty( requestCharset ) ? defaultCharset : Charset.forName( requestCharset );
+        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), charset );
+        String requestPath = URLs.decode( queryStringDecoder.path(), charset );
         QueryString queryString = new QueryStringInstance( allowMultiValuedQueryStringParameters, queryStringDecoder.parameters() );
 
         // Headers
@@ -137,9 +141,13 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 
     /* package */ static RequestBody bodyOf(
         RequestHeader requestHeader, FullHttpRequest request,
+        Charset defaultCharset,
         boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
     {
         RequestBody body;
+        Charset requestCharset = Strings.isEmpty( requestHeader.charset() )
+                                 ? defaultCharset
+                                 : Charset.forName( requestHeader.charset() );
         if( request.content().readableBytes() > 0
             && ( POST.equals( request.getMethod() )
                  || PUT.equals( request.getMethod() )
@@ -175,14 +183,15 @@ import static org.qiweb.api.util.Charsets.UTF_8;
                                     Upload upload = new UploadInstance( fileUpload.getContentType(),
                                                                         fileUpload.getCharset(),
                                                                         fileUpload.getFilename(),
-                                                                        fileUpload.getFile() );
+                                                                        fileUpload.getFile(),
+                                                                        defaultCharset );
                                     uploads.get( fileUpload.getName() ).add( upload );
                                     break;
                                 default:
                                     break;
                             }
                         }
-                        body = new RequestBodyInstance( allowMultiValuedFormAttributes, allowMultiValuedUploads, attributes, uploads );
+                        body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, allowMultiValuedUploads, attributes, uploads );
                         break;
                     }
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
@@ -191,24 +200,25 @@ import static org.qiweb.api.util.Charsets.UTF_8;
                         throw new QiWebException( ex.getMessage(), ex );
                     }
                 default:
-                    body = new RequestBodyInstance( allowMultiValuedFormAttributes, allowMultiValuedUploads, request.content() );
+                    body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, allowMultiValuedUploads, request.content() );
                     break;
             }
         }
         else
         {
-            body = new RequestBodyInstance( allowMultiValuedFormAttributes, allowMultiValuedUploads );
+            body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, allowMultiValuedUploads );
         }
         return body;
     }
 
     /* package */ static Request requestOf(
         RequestHeader header, Map<String, Object> parameters, FullHttpRequest nettyRequest,
+        Charset defaultCharset,
         boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
     {
         return new RequestInstance( header,
                                     parameters,
-                                    bodyOf( header, nettyRequest,
+                                    bodyOf( header, nettyRequest, defaultCharset,
                                             allowMultiValuedHeaders, allowMultiValuedFormAttributes, allowMultiValuedUploads ) );
     }
 

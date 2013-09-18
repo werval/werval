@@ -20,13 +20,14 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.util.Strings;
+
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 public final class ClassLoaders
 {
@@ -44,8 +45,7 @@ public final class ClassLoaders
 
     public static void printURLs( ClassLoader classLoader )
     {
-        printURLs( classLoader, new PrintWriter( new OutputStreamWriter( System.out,
-                                                                         Charset.forName( "UTF-8" ) ) ) );
+        printURLs( classLoader, new PrintWriter( new OutputStreamWriter( System.out, UTF_8 ) ) );
     }
 
     public static void printURLs( ClassLoader classLoader, PrintWriter output )
@@ -94,8 +94,7 @@ public final class ClassLoaders
 
     public static void printLoadedClasses( ClassLoader classLoader )
     {
-        printLoadedClasses( classLoader, new PrintWriter( new OutputStreamWriter( System.out,
-                                                                                  Charset.forName( "UTF-8" ) ) ) );
+        printLoadedClasses( classLoader, new PrintWriter( new OutputStreamWriter( System.out, UTF_8 ) ) );
     }
 
     @SuppressWarnings(

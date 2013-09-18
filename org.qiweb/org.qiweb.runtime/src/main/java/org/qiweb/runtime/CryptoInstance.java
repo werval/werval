@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime;
 
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -22,8 +23,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.QiWebException;
-
-import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Cryptography service instance.
@@ -33,14 +32,16 @@ public class CryptoInstance
 {
 
     private final byte[] secretBytes;
+    private final Charset charset;
 
-    public CryptoInstance( String secret )
+    public CryptoInstance( String secret, Charset charset )
     {
         this.secretBytes = decodeHex( secret.toCharArray() );
         if( this.secretBytes.length < 32 )
         {
             throw new QiWebException( "Wrong Application Secret: must be at least 256bits long" );
         }
+        this.charset = charset;
     }
 
     @Override
@@ -51,11 +52,10 @@ public class CryptoInstance
 
     public static String genRandom256bitsHexSecret()
     {
-        byte[] seed = new byte[ 32 ]; // 256bits
-        new SecureRandom().nextBytes( seed );
-        SecureRandom random = new SecureRandom( seed );
-        random.nextBytes( seed );
-        return new String( encodeHex( seed ) );
+        byte[] bytes = new byte[ 32 ];
+        new SecureRandom().nextBytes( bytes );
+        new SecureRandom( bytes ).nextBytes( bytes );
+        return new String( encodeHex( bytes ) );
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CryptoInstance
             SecretKeySpec signingKey = new SecretKeySpec( secret, "HmacSHA256" );
             Mac mac = Mac.getInstance( "HmacSHA256" );
             mac.init( signingKey );
-            byte[] rawHmac = mac.doFinal( message.getBytes( UTF_8 ) );
+            byte[] rawHmac = mac.doFinal( message.getBytes( charset ) );
             return new String( encodeHex( rawHmac ) );
         }
         catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e )
@@ -95,7 +95,7 @@ public class CryptoInstance
         int len = data.length;
         if( ( len & 0x01 ) != 0 )
         {
-            throw new QiWebException( "Wrong Secret: Odd number of characters in hex encoded." );
+            throw new QiWebException( "Wrong Secret: Odd number of characters in hexadecimal encoded." );
         }
         byte[] out = new byte[ len >> 1 ];
         // two characters form the hex value.

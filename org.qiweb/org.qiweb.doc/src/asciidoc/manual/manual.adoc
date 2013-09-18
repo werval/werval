@@ -34,6 +34,23 @@ Here are the most useful:
 - etc...
 
 
+=== Character encoding
+
+By default all character encoding is done in UTF-8.
+Character encoding can be changed by setting the `qiweb.character-encoding` configuration property.
+
+QiWeb ignore the runtime platform default encoding and complies to its configuration only.
+This is the only way to get a consistent behaviour accross different environments and prevent
+https://en.wikipedia.org/wiki/Mojibake[mojibakes].
+
+CAUTION: Even tough QiWeb does its best to ensure uniform character encoding for your application, you may use libraries
+that don't.
+In such a case you should http://stackoverflow.com/questions/361975/setting-the-default-java-character-encoding[set the
+default Java character encoding] using the `file.encoding` system property.
+
+All QiWeb APIs allows you to override character encoding when relevant.
+
+
 === Configuration
 
 INFO: QiWeb configuration use the https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON format] ("Human

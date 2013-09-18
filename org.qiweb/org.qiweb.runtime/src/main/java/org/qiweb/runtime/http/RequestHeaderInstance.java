@@ -16,16 +16,17 @@
 package org.qiweb.runtime.http;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
-import org.qiweb.api.util.Strings;
 
+import static java.util.Locale.US;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.HOST;
+import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.api.util.Strings.isEmpty;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 
@@ -204,7 +205,12 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                return headers.singleValue( CONTENT_TYPE ).split( ";" )[0].toLowerCase( Locale.US );
+                String contentType = headers.singleValue( CONTENT_TYPE );
+                if( isEmpty( contentType ) )
+                {
+                    return EMPTY;
+                }
+                return contentType.split( ";" )[0].toLowerCase( US );
             }
         } );
     }
@@ -217,21 +223,30 @@ public class RequestHeaderInstance
             @Override
             public String get()
             {
-                String[] split = headers.singleValue( CONTENT_TYPE ).split( ";" );
-                if( split.length <= 1 )
-                {
-                    return Strings.EMPTY;
-                }
-                for( int idx = 1; idx < split.length; idx++ )
-                {
-                    String option = split[idx].trim().toLowerCase( Locale.US );
-                    if( option.startsWith( "charset" ) )
-                    {
-                        return option.split( "=" )[1];
-                    }
-                }
-                return Strings.EMPTY;
+                return extractCharset( headers.singleValue( CONTENT_TYPE ) );
             }
         } );
+    }
+
+    public static String extractCharset( String contentType )
+    {
+        if( isEmpty( contentType ) )
+        {
+            return EMPTY;
+        }
+        String[] split = contentType.split( ";" );
+        if( split.length <= 1 )
+        {
+            return EMPTY;
+        }
+        for( int idx = 1; idx < split.length; idx++ )
+        {
+            String option = split[idx].trim().toLowerCase( US );
+            if( option.startsWith( "charset" ) )
+            {
+                return option.split( "=" )[1];
+            }
+        }
+        return EMPTY;
     }
 }

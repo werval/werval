@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 public class URLsTest
 {
@@ -33,27 +34,27 @@ public class URLsTest
     {
         String url = "http://acme.com/foo";
 
-        assertThat( URLs.appendQueryString( url, null ),
+        assertThat( URLs.appendQueryString( url, null, UTF_8 ),
                     equalTo( "http://acme.com/foo" ) );
-        assertThat( URLs.appendQueryString( url, Collections.<String, List<String>>emptyMap() ),
+        assertThat( URLs.appendQueryString( url, Collections.<String, List<String>>emptyMap(), UTF_8 ),
                     equalTo( "http://acme.com/foo" ) );
 
         Map<String, List<String>> data = new LinkedHashMap<>();
         data.put( "foo", new ArrayList<String>() );
         data.get( "foo" ).add( "bar" );
-        assertThat( URLs.appendQueryString( url, data ),
+        assertThat( URLs.appendQueryString( url, data, UTF_8 ),
                     equalTo( "http://acme.com/foo?foo=bar" ) );
 
         data.get( "foo" ).add( "bazar zogzog" );
-        assertThat( URLs.appendQueryString( url, data ),
+        assertThat( URLs.appendQueryString( url, data, UTF_8 ),
                     equalTo( "http://acme.com/foo?foo=bar&foo=bazar+zogzog" ) );
 
         url = "http://acme.com/foo?foo=bar";
-        assertThat( URLs.appendQueryString( url, data ),
+        assertThat( URLs.appendQueryString( url, data, UTF_8 ),
                     equalTo( "http://acme.com/foo?foo=bar&foo=bar&foo=bazar+zogzog" ) );
 
         url = "http://acme.com/foo?foo=bar#cathedral";
-        assertThat( URLs.appendQueryString( url, data ),
+        assertThat( URLs.appendQueryString( url, data, UTF_8 ),
                     equalTo( "http://acme.com/foo?foo=bar&foo=bar&foo=bazar+zogzog#cathedral" ) );
 
     }
