@@ -16,14 +16,21 @@
 package org.qiweb.lib.controllers;
 
 import java.io.InputStream;
+import org.qiweb.api.Application;
 import org.qiweb.api.controllers.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Locale.US;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.controllers.Controller.response;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_OCTET_STREAM;
+import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
  * Classpath Resources Controller.
@@ -81,10 +88,6 @@ public class ClasspathResources
                 withBody( "Did you just attempted a directory traversal attack? Keep out." ).
                 build();
         }
-        String mimetype = application().mimeTypes().ofPath( path );
-        mimetype = application().mimeTypes().isTextual( mimetype )
-                   ? mimetype + "; charset=utf-8"
-                   : mimetype;
         InputStream input = application().classLoader().getResourceAsStream( path );
         if( input == null )
         {
@@ -95,7 +98,48 @@ public class ClasspathResources
                 withBody( request().path() + " not found" ).
                 build();
         }
+
+        // Cache-Control
+        if( application().mode() == Application.Mode.DEV )
+        {
+            response().headers().with( CACHE_CONTROL, "no-cache" );
+        }
+        else
+        {
+            Long maxAge = application().config().seconds( "qiweb.lib.classpath.cache.maxage" );
+            if( maxAge.equals( 0L ) )
+            {
+                response().headers().with( CACHE_CONTROL, "no-cache" );
+            }
+            else
+            {
+                response().headers().with( CACHE_CONTROL, "max-age=" + maxAge );
+            }
+        }
+
+        // Mime Type
+        String mimetype = application().mimeTypes().ofPathWithCharset( path );
+        response().headers().with( CONTENT_TYPE, mimetype );
+
+        // Disposition and filename
+        String resourceName = path.substring( path.lastIndexOf( '/' ) + 1 );
+        String filename = US_ASCII.newEncoder().canEncode( resourceName )
+                          ? "; filename=\"" + resourceName + "\""
+                          : "; filename*=" + application().defaultCharset().name().toLowerCase( US ) + "; filename=\"" + resourceName + "\"";
+        if( APPLICATION_OCTET_STREAM.equals( mimetype ) )
+        {
+            // Browser will prompt the user, we should provide a filename
+            response().headers().with( "Content-Disposition", "attachment" + filename );
+        }
+        else
+        {
+            // Tell the browser to attempt to display the file and provide a filename in case it cannot
+            response().headers().with( "Content-Disposition", "inline" + filename );
+        }
+
+
+
         LOG.trace( "Will serve '{}' with mimetype '{}'", path, mimetype );
-        return outcomes().ok().as( mimetype ).withBody( input ).build();
+        return outcomes().ok().withBody( input ).build();
     }
 }
