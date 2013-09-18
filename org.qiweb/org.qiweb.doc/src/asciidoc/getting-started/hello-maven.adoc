@@ -110,8 +110,9 @@ Create a `pom.xml` file at the application root with the following content:
 And that's it!
 You can now use Maven to compile, develop, test, assemble and run your application.
 
-TIP: If you did'nt use `qiweb-cli` to generate an application skeleton you miss an application secret.
+CAUTION: If you did'nt use `qiweb-cli` to generate an application skeleton you miss an application secret.
 You can generate a new one by typing `mvn qiweb:secret` on the command line.
+Don't forget to add it to your `application.conf` file with the `app.secret` key.
 
 .Run in development mode
 [source]

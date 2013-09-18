@@ -19,10 +19,10 @@ The minimal requirement is a configuration file named `application.conf` contain
 
 === Logging
 
-The QiWeb Runtime use http://slf4j.org/[SLF4J] and http://logback.qos.ch/[Logback] logging and do not do anything
-special regarding its configuration.
-This means that you have full control of Logback configuration.
-Therefore you are encouraged to read the official http://logback.qos.ch/documentation.html[Logback documentation].
+QiWeb use the http://www.slf4j.org[SLF4J] API (Simple Logging Facade for Java) but you have to choose what SLF4J
+implementation to use.
+We strongly recommend http://logback.qos.ch/[Logback].
+You have full control on logging configuration.
 
 All QiWeb loggers are present in the `org.qiweb` namespace according to code packages.
 Here are the most useful:
@@ -65,7 +65,7 @@ public MyController {
 All configuration properties can be overriden by defining System Properties.
 This means that you can easily provide all configuration on the command line.
 
-TIP: Every system property is also present in the configuration.
+IMPORTANT: Every system property is also present in the configuration.
 For example, the `java.home` System Property is automatically present in the configuration at the `java.home` key.
 In other words, and if you need it, keep in mind that you can use configuration properties from the command line without
 defining a default value in any configuration file.
@@ -137,8 +137,8 @@ You can also express routes definitions in code using the Routes API.
 Request URI Path and QueryString are the source of Controller Parameters.
 
 
-
-TIP: URI Fragment identifier is considered as useful only on the client side and hence is not taken into account when routing.
+NOTE: URI Fragment identifier is considered as useful only on the client side and hence is not taken into account when
+routing.
 However, the reverse routing API allow you to append a fragment identifier to generated URIs.
 
 
