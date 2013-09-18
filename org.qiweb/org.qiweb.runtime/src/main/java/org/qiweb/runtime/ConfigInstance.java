@@ -85,7 +85,7 @@ public class ConfigInstance
         Map<String, String> entries = new HashMap<>();
         for( Entry<String, com.typesafe.config.ConfigValue> entry : config.getObject( key ).entrySet() )
         {
-            entries.put( entry.getKey(), entry.getValue().render() );
+            entries.put( entry.getKey(), entry.getValue().unwrapped().toString() );
         }
         return entries;
     }
