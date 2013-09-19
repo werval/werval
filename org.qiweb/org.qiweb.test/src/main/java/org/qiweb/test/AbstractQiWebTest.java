@@ -20,7 +20,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Application;
 import org.qiweb.api.Application.Mode;
+import org.qiweb.api.Config;
 import org.qiweb.runtime.ApplicationInstance;
+import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.server.HttpServerInstance;
@@ -32,7 +34,10 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
  * Base QiWeb Test.
  * 
  * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
- * <p>Configuration is loaded from classpath, like in development or production mode.</p>
+ * <p>
+ *     By default, configuration is loaded from the <code>application.conf</conf> file.
+ *     Override the {@link #configurationResourceName()} method to provide your own test configuration.
+ * </p>
  * <p>
  *     By default, routes are loaded from the <code>routes.conf</code> file.
  *     Override the {@link #routesProvider()} method to provide your own test routes.
@@ -50,8 +55,10 @@ public abstract class AbstractQiWebTest
     @Before
     public final void beforeEachTest()
     {
+        ClassLoader classLoader = getClass().getClassLoader();
+        Config config = new ConfigInstance( classLoader, configurationResourceName() );
         RoutesProvider routesProvider = routesProvider();
-        app = new ApplicationInstance( Mode.TEST, routesProvider );
+        app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
         httpServer = new HttpServerInstance( "qiweb-test", app );
         httpServer.activate();
 
@@ -95,6 +102,14 @@ public abstract class AbstractQiWebTest
     protected final String baseHttpUrl()
     {
         return "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) + ":" + app.config().string( QIWEB_HTTP_PORT );
+    }
+
+    /**
+     * Override to provide your own configuration.
+     */
+    protected String configurationResourceName()
+    {
+        return "application.conf";
     }
 
     /**

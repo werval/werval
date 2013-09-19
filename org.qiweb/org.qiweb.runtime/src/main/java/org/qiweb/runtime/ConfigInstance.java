@@ -43,6 +43,11 @@ public class ConfigInstance
         config = com.typesafe.config.ConfigFactory.load( loader );
     }
 
+    public ConfigInstance( ClassLoader loader, String configurationResourceName )
+    {
+        config = com.typesafe.config.ConfigFactory.load( loader, configurationResourceName );
+    }
+
     @Override
     public boolean has( String key )
     {
