@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.routes;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.qiweb.api.exceptions.ParameterBinderException;
@@ -208,6 +209,30 @@ public final class ParameterBindersInstance
 
         @Override
         public java.lang.String unbind( java.lang.String name, java.util.UUID value )
+        {
+            return value.toString();
+        }
+    }
+
+    public static final class URL
+        extends StrictTypingParameterBinder<java.net.URL>
+    {
+
+        @Override
+        public java.net.URL bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return new java.net.URL( value );
+            }
+            catch( MalformedURLException ex )
+            {
+                throw new ParameterBinderException( "Malformed URL for parameter '" + name + "': " + value, ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.net.URL value )
         {
             return value.toString();
         }

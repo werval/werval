@@ -3,6 +3,8 @@ package org.qiweb.runtime.routes;
 import com.acme.app.CustomParam;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +32,7 @@ public class PathBindersTest
 
     @Test
     public void testPathBinders()
+        throws MalformedURLException
     {
         List<ParameterBinder<?>> list = new ArrayList<>();
 
@@ -43,6 +46,7 @@ public class PathBindersTest
         list.add( new ParameterBindersInstance.BigInteger() );
         list.add( new ParameterBindersInstance.BigDecimal() );
         list.add( new ParameterBindersInstance.UUID() );
+        list.add( new ParameterBindersInstance.URL() );
 
         ParameterBinders binders = new ParameterBindersInstance( list );
 
@@ -78,6 +82,11 @@ public class PathBindersTest
                     equalTo( UUID.fromString( "E461082E-B97B-4478-BFB5-DA6C79AFD3F8" ) ) );
         assertThat( binders.unbind( UUID.class, "name", UUID.fromString( "E461082E-B97B-4478-BFB5-DA6C79AFD3F8" ) ),
                     equalTo( "E461082E-B97B-4478-BFB5-DA6C79AFD3F8".toLowerCase( Locale.US ) ) );
+        // URL
+        assertThat( binders.bind( URL.class, "name", "http://qiweb.org" ),
+                    equalTo( new URL( "http://qiweb.org" ) ) );
+        assertThat( binders.unbind( URL.class, "name", new URL( "http://qiweb.org" ) ),
+                    equalTo( "http://qiweb.org" ) );
     }
 
     @Test
