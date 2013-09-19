@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.routes.ParameterBinders;
@@ -265,7 +266,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
                 }
                 if( unboundValue == null )
                 {
-                    throw new IllegalArgumentException( "Parameter named '" + param.name()
+                    throw new ParameterBinderException( "Parameter named '" + param.name()
                                                         + "' not found in path nor in query string." );
                 }
                 boundParams.put( param.name(), parameterBinders.bind( param.type(), param.name(), unboundValue ) );
