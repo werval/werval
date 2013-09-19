@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        mavenLocal();
+        mavenCentral();
+        maven {
+            url "http://repo.gradle.org/gradle/libs-releases-local/"
+        }
+    }
+    dependencies {
+        classpath "org.qiweb:org.qiweb.gradle:0"
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'qiweb'
+
+mainClassName = "org.qiweb.runtime.Main"
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:$version"
+    compile "org.qiweb:org.qiweb.lib:$version"
+    compile libs.jackson_core
+
+    runtime "org.qiweb:org.qiweb.runtime:$version"
+    runtime libs.logback
+    runtime webjars.bootstrap
+    runtime webjars.jquery
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
+
+}
+
