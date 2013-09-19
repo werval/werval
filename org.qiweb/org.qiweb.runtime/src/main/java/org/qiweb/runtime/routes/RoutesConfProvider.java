@@ -31,10 +31,22 @@ public class RoutesConfProvider
     implements RoutesProvider
 {
 
+    private final String routesResourceName;
+
+    public RoutesConfProvider()
+    {
+        this( "routes.conf" );
+    }
+
+    public RoutesConfProvider( String routesResourceName )
+    {
+        this.routesResourceName = routesResourceName;
+    }
+
     @Override
     public Routes routes( Application application )
     {
-        URL routesUrl = application.classLoader().getResource( "routes.conf" );
+        URL routesUrl = application.classLoader().getResource( routesResourceName );
         if( routesUrl == null )
         {
             return RouteBuilder.parseRoutes( application, Strings.EMPTY );

@@ -82,14 +82,6 @@ public abstract class AbstractQiWebTest
     }
 
     /**
-     * Override to provide your own routes.
-     */
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesConfProvider();
-    }
-
-    /**
      * @return Application
      */
     protected final Application application()
@@ -103,5 +95,13 @@ public abstract class AbstractQiWebTest
     protected final String baseHttpUrl()
     {
         return "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) + ":" + app.config().string( QIWEB_HTTP_PORT );
+    }
+
+    /**
+     * Override to provide your own routes.
+     */
+    protected RoutesProvider routesProvider()
+    {
+        return new RoutesConfProvider();
     }
 }
