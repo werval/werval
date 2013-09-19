@@ -35,7 +35,7 @@ import static org.qiweb.runtime.ConfigKeys.APP_ERRORS_RECORD_MAX;
  * Application Errors Instance.
  */
 // TODO Document configuration of ErrorsInstance
-public class ErrorsInstance
+public final class ErrorsInstance
     implements Errors
 {
 

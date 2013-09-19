@@ -31,11 +31,13 @@ import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.runtime.server.HttpOnDiskRequestAggregator;
+import org.qiweb.runtime.server.HttpRequestRouterHandler;
 
 /**
  * Read-only ByteBuff wrapping a File.
  * <p>Used by {@link HttpOnDiskRequestAggregator} to aggregate requests bodies.</p>
- * <p>Used by {@link HttpRouterHandler} to parse requests bodies.</p>
+ * <p>Used by {@link HttpRequestRouterHandler} to parse requests bodies.</p>
  */
 // CHECKSTYLE:OFF
 public final class FileByteBuff

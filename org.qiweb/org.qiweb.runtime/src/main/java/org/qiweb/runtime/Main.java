@@ -18,6 +18,8 @@ package org.qiweb.runtime;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.runtime.server.HttpServer;
 import org.qiweb.runtime.server.HttpServerInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * QiWeb HTTP Development Kit default main class.
@@ -25,9 +27,11 @@ import org.qiweb.runtime.server.HttpServerInstance;
 public final class Main
 {
 
+    private static final Logger LOG = LoggerFactory.getLogger( Main.class );
+
     public static void main( String[] args )
     {
-        System.out.println( "QiWeb!" );
+        LOG.info( "Starting QiWeb!" );
         try
         {
             ApplicationInstance application = new ApplicationInstance( Mode.PROD );
@@ -37,8 +41,7 @@ public final class Main
         }
         catch( Exception ex )
         {
-            System.err.println( "Unable to start application." );
-            ex.printStackTrace( System.err );
+            LOG.error( "Unable to start application.", ex );
             System.exit( 2 );
         }
     }

@@ -422,12 +422,12 @@ public final class HttpRequestRouterHandler
         else if( cause instanceof ParameterBinderException )
         {
             LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, cause );
-            sendError( nettyContext, BAD_REQUEST, cause.getMessage() );
+            sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
         }
         else if( cause instanceof BadRequestException )
         {
             LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, cause );
-            sendError( nettyContext, BAD_REQUEST, cause.getMessage() );
+            sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
         }
         else
         {
