@@ -321,7 +321,7 @@ public final class HttpRequestRouterHandler
                                          Session session, Response response, Outcome outcome,
                                          HttpResponse nettyResponse )
     {
-        applyHttpHeaders( response.headers(), nettyResponse );
+        // Response and Outcome share the same Headers instance, that's why we apply only one
         applyHttpHeaders( outcome.headers(), nettyResponse );
         boolean forceClose = applyKeepAliveHttpHeaders( nettyContext, nettyRequest, outcome, nettyResponse );
         applySession( session, nettyResponse );
