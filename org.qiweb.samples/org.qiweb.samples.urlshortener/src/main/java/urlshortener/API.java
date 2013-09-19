@@ -17,6 +17,7 @@ package urlshortener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URL;
 import java.util.Collection;
 import org.qiweb.api.controllers.Outcome;
 import org.slf4j.Logger;
@@ -51,13 +52,13 @@ public class API
     /**
      * Shorten a URL.
      *
-     * @param longUrl Long URL
+     * @param url Long URL
      * @return application/json Link object.
      */
-    public Outcome shorten( String longUrl )
+    public Outcome shorten( URL url )
         throws JsonProcessingException
     {
-        Link link = ShortenerService.INSTANCE.shorten( longUrl.trim() );
+        Link link = ShortenerService.INSTANCE.shorten( url.toString().trim() );
         String json = JSON_MAPPER.writeValueAsString( link );
         LOG.info( "Shorten {} to {} and 200 {}", link.longUrl, link.shortUrl(), json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
@@ -86,20 +87,21 @@ public class API
     /**
      * Lookup existing shortened URLs from long URL.
      *
-     * @param longUrl Long URL
+     * @param url Long URL
      * @return application/json array filled with Link object.
      */
-    public Outcome lookup( String longUrl )
+    public Outcome lookup( URL url )
         throws JsonProcessingException
     {
-        Collection<Link> list = ShortenerService.INSTANCE.lookup( longUrl.trim() );
+        String urlString = url.toString().trim();
+        Collection<Link> list = ShortenerService.INSTANCE.lookup( urlString );
         if( list.isEmpty() )
         {
-            LOG.info( "Lookup fail with 404 for {}", longUrl.trim() );
+            LOG.info( "Lookup fail with 404 for {}", urlString );
             return outcomes().notFound().as( APPLICATION_JSON ).build();
         }
         String json = JSON_MAPPER.writeValueAsString( list );
-        LOG.info( "Lookup {} found {} link(s) and 200 {}", longUrl.trim(), list.size(), json );
+        LOG.info( "Lookup {} found {} link(s) and 200 {}", urlString, list.size(), json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
     }
 

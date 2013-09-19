@@ -84,7 +84,7 @@
                     });
                 }
                 shorten = function(longUrl) {
-                    var url = "/api/shorten?long_url=" + encodeURIComponent(longUrl);
+                    var url = "/api/shorten?url=" + encodeURIComponent(longUrl);
                     $.getJSON(url, function(data) {
                         $api_out.prepend(data_to_pre_json("GET " + url, data));
                         refresh_list();
@@ -100,7 +100,7 @@
                 };
                 lookup = function(longUrl)
                 {
-                    var url = "/api/lookup?long_url=" + encodeURIComponent(longUrl);
+                    var url = "/api/lookup?url=" + encodeURIComponent(longUrl);
                     $.getJSON(url, function(data) {
                         $api_out.prepend(data_to_pre_json("GET " + url, data));
                     });
