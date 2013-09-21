@@ -29,4 +29,10 @@ public class Global
     {
         application.metaData().put( "shortener", new ShortenerService() );
     }
+
+    @Override
+    public void onStop( Application application )
+    {
+        application.metaData().remove( "shortener" );
+    }
 }
