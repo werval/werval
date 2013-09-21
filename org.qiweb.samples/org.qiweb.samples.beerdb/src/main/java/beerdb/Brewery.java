@@ -25,19 +25,42 @@ import javax.persistence.Id;
 public class Brewery
 {
 
+    public static Brewery newBrewery( String name, String url )
+    {
+        Brewery brewery = new Brewery();
+        brewery.name = name;
+        brewery.url = url;
+        return brewery;
+    }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
     private String name;
+    @Column( length = 1024, nullable = true )
+    private String url;
 
+    /**
+     * @return The ID of the brewery.
+     */
     public Long getId()
     {
         return id;
     }
 
+    /**
+     * @return The name of the brewery.
+     */
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * @return The URL of the brewery.
+     */
+    public String getUrl()
+    {
+        return url;
     }
 }

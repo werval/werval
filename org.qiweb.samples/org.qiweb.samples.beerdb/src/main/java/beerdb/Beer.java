@@ -20,24 +20,62 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Beer
 {
 
+    public static Beer newBeer( Brewery brewery, String name, float abv, String description )
+    {
+        Beer beer = new Beer();
+        beer.brewery = brewery;
+        beer.name = name;
+        beer.abv = abv;
+        beer.description = description;
+        return beer;
+    }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
     private String name;
+    @Column( length = 4096, nullable = true )
+    private String description;
+    @Column( nullable = false )
+    private float abv;
+    @ManyToOne( optional = false )
+    private Brewery brewery;
 
+    /**
+     * @return The ID of the beer.
+     */
     public Long getId()
     {
         return id;
     }
 
+    /**
+     * @return The name of the beer.
+     */
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * @return The description of the beer.
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @return The alcohol by volume of the beer.
+     */
+    public float getAbv()
+    {
+        return abv;
     }
 }
