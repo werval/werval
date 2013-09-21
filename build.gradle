@@ -15,7 +15,11 @@ task _clean_org_qiweb( type: GradleBuild, description: 'Clean org.qiweb' ) {
     buildFile = 'org.qiweb/build.gradle'
     tasks = [ 'clean' ]
 }
-task _clean_org_qiweb_gradle( type: GradleBuild, description: 'Clean org.qiweb.gradle' ) {
+task _clean_org_qiweb_gradle_tooling( type: GradleBuild, description: 'Clean org.qiweb.gradle-tooling' ) {
+    buildFile = 'org.qiweb.gradle-tooling/build.gradle'
+    tasks = [ 'clean' ]
+}
+task _clean_org_qiweb_gradle( type: GradleBuild, description: 'Clean org.qiweb.gradle', dependsOn: _clean_org_qiweb_gradle_tooling ) {
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'clean' ]
 }
@@ -42,7 +46,11 @@ task _check_org_qiweb( type: GradleBuild, description: 'Check org.qiweb' ) {
     buildFile = 'org.qiweb/build.gradle'
     tasks = [ 'check' ]
 }
-task _check_org_qiweb_gradle( type: GradleBuild, description: 'Check org.qiweb.gradle' ) {
+task _check_org_qiweb_gradle_tooling( type: GradleBuild, description: 'Check org.qiweb.gradle-tooling' ) {
+    buildFile = 'org.qiweb.gradle-tooling/build.gradle'
+    tasks = [ 'check' ]
+}
+task _check_org_qiweb_gradle( type: GradleBuild, description: 'Check org.qiweb.gradle', dependsOn: _check_org_qiweb_gradle_tooling ) {
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'check' ]
 }
@@ -69,7 +77,11 @@ task _assemble_org_qiweb( type: GradleBuild, description: 'Assemble org.qiweb' )
     buildFile = 'org.qiweb/build.gradle'
     tasks = [ 'assemble' ]
 }
-task _assemble_org_qiweb_gradle( type: GradleBuild, description: 'Assemble org.qiweb.gradle' ) {
+task _assemble_org_qiweb_gradle_tooling( type: GradleBuild, description: 'Assemble org.qiweb.gradle-tooling' ) {
+    buildFile = 'org.qiweb.gradle-tooling/build.gradle'
+    tasks = [ 'assemble' ]
+}
+task _assemble_org_qiweb_gradle( type: GradleBuild, description: 'Assemble org.qiweb.gradle', dependsOn: _assemble_org_qiweb_gradle_tooling ) {
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'assemble' ]
 }
@@ -96,7 +108,11 @@ task _install_org_qiweb( type: GradleBuild, description: 'Install org.qiweb' ) {
     buildFile = 'org.qiweb/build.gradle'
     tasks = [ 'install' ]
 }
-task _install_org_qiweb_gradle( type: GradleBuild, description: 'Install org.qiweb.gradle' ) {
+task _install_org_qiweb_gradle_tooling( type: GradleBuild, description: 'Install org.qiweb.gradle-tooling' ) {
+    buildFile = 'org.qiweb.gradle-tooling/build.gradle'
+    tasks = [ 'install' ]
+}
+task _install_org_qiweb_gradle( type: GradleBuild, description: 'Install org.qiweb.gradle', dependsOn: _install_org_qiweb_gradle_tooling ) {
     buildFile = 'org.qiweb.gradle/build.gradle'
     tasks = [ 'install' ]
 }

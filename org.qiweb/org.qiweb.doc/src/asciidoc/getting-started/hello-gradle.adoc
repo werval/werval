@@ -15,42 +15,41 @@ Create a `build.gradle` file at the application root with the following content:
 apply plugin: 'java' // <1>
 
 repositories {
-    mavenLocal();
-    mavenCentral();
-    maven {
-        url "http://repo.gradle.org/gradle/libs-releases-local/"
-    }
+    // mavenLocal();   // <2>
+    mavenCentral(); // <3>
 }
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:{qiweb-version}" // <2>
-    compile "org.qiweb:org.qiweb.lib:{qiweb-version}" // <3>
+    compile "org.qiweb:org.qiweb.api:{qiweb-version}" // <4>
+    compile "org.qiweb:org.qiweb.lib:{qiweb-version}" // <5>
     // Add application compile dependencies
 
-    runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}" // <4>
+    runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}" // <6>
     // Add application runtime dependencies
 
-    testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <5>
+    testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <7>
     // Add application test dependencies
 
 }
 
 apply plugin: 'qiweb'
 
-apply plugin: 'application' // <6>
+apply plugin: 'application' // <8>
 
-mainClassName = 'org.qiweb.runtime.Main' // <7>
-applicationName = 'hello-qiweb' // <8>
+mainClassName = 'org.qiweb.runtime.Main'    // <9>
+applicationName = 'hello-qiweb'             // <10>
 ----
 <1> Make this project a Java project
-<2> Add compile scope dependency to QiWeb API
-<3> Add compile scope dependency to QiWeb Standard Library
-<4> Add runtime scope dependency to QiWeb Runtime
-<5> Add test scope dependency to QiWeb Test Support
-<6> Apply the Gradle http://gradle.org/docs/current/userguide/application_plugin.html[Application Plugin]
-<7> Set the main class to `org.qiweb.runtime.Main` for production mode
-<8> Name the archive and startup scripts
+<2> Declare Maven local repository (only if you build QiWeb from sources)
+<3> Declare Maven central repository
+<4> Add compile scope dependency to QiWeb API
+<5> Add compile scope dependency to QiWeb Standard Library
+<6> Add runtime scope dependency to QiWeb Runtime
+<7> Add test scope dependency to QiWeb Test Support
+<8> Apply the Gradle http://gradle.org/docs/current/userguide/application_plugin.html[Application Plugin]
+<9> Set the main class to `org.qiweb.runtime.Main` for production mode
+<10> Name the archive and startup scripts
 
 And that's it!
 You can now use Gradle to compile, develop, test, assemble and run your application.

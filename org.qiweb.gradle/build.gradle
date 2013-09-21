@@ -6,7 +6,7 @@ apply plugin: 'sonar-runner'
 dependencies {
 
     compile "org.qiweb:org.qiweb.devshell:$version"
-    compile libs.gradle_tooling
+    compile "org.qiweb:org.qiweb.gradle-tooling:$version"
     compile localGroovy()
     compile gradleApi()
     

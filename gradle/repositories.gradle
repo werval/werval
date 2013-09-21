@@ -2,8 +2,5 @@
 repositories {
     mavenLocal();
     mavenCentral();
-    maven {
-        url "http://repo.gradle.org/gradle/libs-releases-local"
-    }
 }
 

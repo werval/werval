@@ -2,9 +2,6 @@ buildscript {
     repositories {
         mavenLocal();
         mavenCentral();
-        maven {
-            url "http://repo.gradle.org/gradle/libs-releases-local/"
-        }
     }
     dependencies {
         classpath "org.qiweb:org.qiweb.gradle:0"
