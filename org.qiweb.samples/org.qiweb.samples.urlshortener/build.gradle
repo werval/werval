@@ -29,6 +29,7 @@ dependencies {
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.rest_assured
+    testCompile libs.fluentlenium
 
 }
 
