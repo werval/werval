@@ -118,7 +118,12 @@ public class QiWebTest
      */
     protected final String baseHttpUrl()
     {
-        return "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) + ":" + app.config().string( QIWEB_HTTP_PORT );
+        String httpAddress = app.config().string( QIWEB_HTTP_ADDRESS );
+        if( "127.0.0.1".equals( httpAddress ) )
+        {
+            httpAddress = "localhost";
+        }
+        return "http://" + httpAddress + ":" + app.config().string( QIWEB_HTTP_PORT );
     }
 
     /**
