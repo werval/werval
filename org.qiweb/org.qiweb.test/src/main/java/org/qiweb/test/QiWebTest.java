@@ -46,8 +46,21 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 public class QiWebTest
 {
 
+    private final String configurationResourceNameOverride;
+    private final RoutesProvider routesProviderOverride;
     private HttpServerInstance httpServer;
     private ApplicationInstance app;
+
+    public QiWebTest()
+    {
+        this( null, null );
+    }
+
+    /* package */ QiWebTest( String configurationResourceNameOverride, RoutesProvider routesProviderOverride )
+    {
+        this.configurationResourceNameOverride = configurationResourceNameOverride;
+        this.routesProviderOverride = routesProviderOverride;
+    }
 
     /**
      * Activate HttpServer.
@@ -56,8 +69,12 @@ public class QiWebTest
     public final void beforeEachTest()
     {
         ClassLoader classLoader = getClass().getClassLoader();
-        Config config = new ConfigInstance( classLoader, configurationResourceName() );
-        RoutesProvider routesProvider = routesProvider();
+        Config config = new ConfigInstance( classLoader, configurationResourceNameOverride == null
+                                                         ? configurationResourceName()
+                                                         : configurationResourceNameOverride );
+        RoutesProvider routesProvider = routesProviderOverride == null
+                                        ? routesProvider()
+                                        : routesProviderOverride;
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
         httpServer = new HttpServerInstance( "qiweb-test", app );
         httpServer.activate();

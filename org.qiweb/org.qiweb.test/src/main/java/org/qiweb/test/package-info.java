@@ -14,6 +14,23 @@
  * limitations under the License.
  */
 /**
- * QiWeb Test Support.
+ * QiWeb JUnit Support.
+ * 
+ * <p>JUnit support comes in two flavours:</p>
+ * <ul>
+ *     <li>as a JUnit Rule: {@link QiWebRule} ;</li>
+ *     <li>or as a base class for your JUnit tests to extend: {@link QiWebTest}.</li>
+ * </ul>
+ * <p>You can choose to use whichever suits your needs and habits.</p>
+ * <p>
+ *     Using the <code>QiWebRule</code> is the prefered way of writing QiWeb tests as it don't force you to extend from
+ *     any base class.
+ * </p>
+ * <p>
+ *     QiWeb JUnit Support has transparent integration with
+ *     <a href="https://code.google.com/p/rest-assured/" target="_blank">rest-assured</a> if it is detected on the
+ *     tests classpath.
+ *     rest-assured base URL is set accordingly to the QiWeb configuration so can use relative paths when using it.
+ * </p>
  */
 package org.qiweb.test;
