@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.mime.MimeTypes.TEXT_CSS;
 
 /**
  * Assert API behaviour.
@@ -46,7 +47,7 @@ public class APITest
             when().
             get( "/api/list" );
 
-        String longUrl = "http://www.w3.org/";
+        String longUrl = baseHttpUrl() + "/client/lib/webjars/bootstrap/3.0.0/css/bootstrap.min.css";
 
         // Assert can shorten URL
         Response response = given().
@@ -95,7 +96,8 @@ public class APITest
         // Assert redirection works
         expect().
             statusCode( 200 ).
-            body( containsString( "Copyright &#xA9; 2013 W3C" ) ).
+            contentType( TEXT_CSS ).
+            body( containsString( "Bootstrap" ) ).
             when().
             get( shortUrl );
     }
