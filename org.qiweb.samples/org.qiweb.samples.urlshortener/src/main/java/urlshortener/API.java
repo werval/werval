@@ -23,6 +23,7 @@ import org.qiweb.api.controllers.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 
@@ -34,6 +35,12 @@ public class API
 
     private static final Logger LOG = LoggerFactory.getLogger( API.class );
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private final ShortenerService shortener;
+
+    public API()
+    {
+        this.shortener = application().metaData().get( ShortenerService.class, "shortener" );
+    }
 
     /**
      * List shortened urls and their hash.
@@ -43,7 +50,7 @@ public class API
     public Outcome list()
         throws JsonProcessingException
     {
-        Collection<Link> list = ShortenerService.INSTANCE.list();
+        Collection<Link> list = shortener.list();
         String json = JSON_MAPPER.writeValueAsString( list );
         LOG.info( "List is {}", json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
@@ -58,7 +65,7 @@ public class API
     public Outcome shorten( URL url )
         throws JsonProcessingException
     {
-        Link link = ShortenerService.INSTANCE.shorten( url.toString().trim() );
+        Link link = shortener.shorten( url.toString().trim() );
         String json = JSON_MAPPER.writeValueAsString( link );
         LOG.info( "Shorten {} to {} and 200 {}", link.longUrl, link.shortUrl(), json );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
@@ -73,7 +80,7 @@ public class API
     public Outcome expand( String hash )
         throws JsonProcessingException
     {
-        Link link = ShortenerService.INSTANCE.link( hash.trim() );
+        Link link = shortener.link( hash.trim() );
         if( link == null )
         {
             LOG.info( "Expand fail with 404 for {}", hash.trim() );
@@ -94,7 +101,7 @@ public class API
         throws JsonProcessingException
     {
         String urlString = url.toString().trim();
-        Collection<Link> list = ShortenerService.INSTANCE.lookup( urlString );
+        Collection<Link> list = shortener.lookup( urlString );
         if( list.isEmpty() )
         {
             LOG.info( "Lookup fail with 404 for {}", urlString );
@@ -113,7 +120,7 @@ public class API
      */
     public Outcome redirect( String hash )
     {
-        Link link = ShortenerService.INSTANCE.link( hash.trim() );
+        Link link = shortener.link( hash.trim() );
         if( link == null )
         {
             LOG.info( "Redirect fail with 404 for {}", hash.trim() );

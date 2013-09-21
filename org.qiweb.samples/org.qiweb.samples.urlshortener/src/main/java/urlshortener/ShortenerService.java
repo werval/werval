@@ -25,12 +25,10 @@ import java.util.Random;
 
 /**
  * URL Shortener Service.
- * <p><code>Singleton</code></p>
  */
 public final class ShortenerService
 {
 
-    public static final ShortenerService INSTANCE = new ShortenerService();
     private static final int LENGTH = 4;
     private static final char[] CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
     private final Map<String, Link> shortened = new HashMap<>();
@@ -82,9 +80,5 @@ public final class ShortenerService
                 return hash;
             }
         }
-    }
-
-    private ShortenerService()
-    {
     }
 }
