@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.junit.Assert.assertThat;
@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.equalTo;
  * <p>Please note that this test rely on the fact that the current working directory is set to the module base dir.</p>
  */
 public class StaticFilesTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     private static final File ROOT = new File( "src/test/resources" );

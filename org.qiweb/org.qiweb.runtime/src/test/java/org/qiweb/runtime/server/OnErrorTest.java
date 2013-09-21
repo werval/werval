@@ -25,7 +25,7 @@ import org.qiweb.api.controllers.Outcome;
 import org.qiweb.runtime.TestGlobal;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
@@ -38,7 +38,7 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
  * Assert that Application errors triggers the right code paths.
  */
 public class OnErrorTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     public static class Ctrl

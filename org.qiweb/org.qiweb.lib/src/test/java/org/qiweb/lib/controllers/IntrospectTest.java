@@ -19,7 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -34,7 +34,7 @@ import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
 
 public class IntrospectTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     @Override

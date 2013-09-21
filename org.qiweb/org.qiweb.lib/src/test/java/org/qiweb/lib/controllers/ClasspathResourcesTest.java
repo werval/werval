@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.either;
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ClasspathResourcesTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     @Override

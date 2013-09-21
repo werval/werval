@@ -18,12 +18,12 @@ package org.qiweb.lib.controllers;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 
 public class DefaultTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     @Override

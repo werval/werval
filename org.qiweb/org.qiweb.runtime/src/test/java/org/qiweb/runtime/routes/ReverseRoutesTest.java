@@ -18,7 +18,7 @@ package org.qiweb.runtime.routes;
 import org.junit.Test;
 import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -29,7 +29,7 @@ import static org.qiweb.api.controllers.Controller.reverseRoutes;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class ReverseRoutesTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     public static class Controller

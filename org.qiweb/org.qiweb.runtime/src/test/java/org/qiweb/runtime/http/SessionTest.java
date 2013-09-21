@@ -9,7 +9,7 @@ import org.qiweb.api.http.Session;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.expect;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 
 public class SessionTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     public static class Controller

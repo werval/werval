@@ -5,13 +5,13 @@ import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.expect;
 
 public class CookiesTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     public static class Controller

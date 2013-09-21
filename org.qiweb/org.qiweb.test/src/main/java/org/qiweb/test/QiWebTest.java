@@ -31,7 +31,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 /**
- * Base QiWeb Test.
+ * Base QiWeb JUnit Test.
  * 
  * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
  * <p>
@@ -43,7 +43,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
  *     Override the {@link #routesProvider()} method to provide your own test routes.
  * </p>
  */
-public abstract class AbstractQiWebTest
+public class QiWebTest
 {
 
     private HttpServerInstance httpServer;

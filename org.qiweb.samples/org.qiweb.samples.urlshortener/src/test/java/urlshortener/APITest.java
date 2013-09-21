@@ -17,7 +17,7 @@ package urlshortener;
 
 import com.jayway.restassured.response.Response;
 import java.util.Map;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
  * Assert API behaviour.
  */
 public class APITest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     @Test

@@ -7,13 +7,13 @@ import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.AbstractQiWebTest;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
 
 public class FiltersTest
-    extends AbstractQiWebTest
+    extends QiWebTest
 {
 
     public static class Filter
