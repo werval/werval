@@ -17,6 +17,7 @@ package beerdb;
 
 import com.theoryinpractise.halbuilder.api.RepresentationFactory;
 import com.theoryinpractise.halbuilder.standard.StandardRepresentationFactory;
+import java.util.Collections;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.qiweb.api.Application;
@@ -29,8 +30,9 @@ public class Global
     public void onStart( Application application )
     {
         // Persistence
-        String persistenceUnitName = application.config().string( "app.persistence-unit-name" );
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory( persistenceUnitName );
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory(
+            application.config().string( "app.persistence-unit-name" ),
+            Collections.singletonMap( "eclipselink.classloader", this.getClass().getClassLoader() ) );
         application.metaData().put( "emf", emf );
 
         // Hypertext Application Language
