@@ -76,7 +76,8 @@ public class API
         throws JsonProcessingException
     {
         Representation resource = hal.
-            newRepresentation( reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() );
+            newRepresentation( reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
+            withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() );
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -84,10 +85,12 @@ public class API
             resource.withProperty( "count", breweries.size() );
             for( Brewery brewery : breweries )
             {
-                Representation beerResource = hal.
-                    newRepresentation( reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl() );
-                beerResource.withBean( brewery );
-                resource.withRepresentation( "brewery", beerResource );
+                Representation breweryResource = hal.
+                    newRepresentation( reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl() ).
+                    withProperty( "id", brewery.getId() ).
+                    withProperty( "name", brewery.getName() ).
+                    withProperty( "url", brewery.getUrl() );
+                resource.withRepresentation( "brewery", breweryResource );
             }
             String json = resource.toString( HAL_JSON );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
@@ -105,6 +108,7 @@ public class API
     }
 
     public Outcome brewery( Long id )
+        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -115,8 +119,23 @@ public class API
                 return outcomes().notFound().build();
             }
             Representation resource = hal.
-                newRepresentation( reverseRoutes().of( GET( API.class ).beer( id ) ).httpUrl() ).
-                withBean( brewery );
+                newRepresentation( reverseRoutes().of( GET( API.class ).brewery( id ) ).httpUrl() ).
+                withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() ).
+                withLink( "list", reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
+                withProperty( "id", brewery.getId() ).
+                withProperty( "name", brewery.getName() ).
+                withProperty( "url", brewery.getUrl() );
+            List<Beer> beers = em.createQuery( "select b from Beer b where b.brewery=:brewery", Beer.class ).
+                setParameter( "brewery", brewery ).getResultList();
+            resource.withProperty( "beers-count", beers.size() );
+            for( Beer beer : beers )
+            {
+                Representation beerResource = hal.
+                    newRepresentation( reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl() ).
+                    withProperty( "id", beer.getId() ).
+                    withProperty( "name", beer.getName() );
+                resource.withRepresentation( "beer", beerResource );
+            }
             String json = resource.toString( HAL_JSON );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
@@ -162,7 +181,8 @@ public class API
         throws JsonProcessingException
     {
         Representation resource = hal.
-            newRepresentation( reverseRoutes().of( GET( API.class ).beers() ).httpUrl() );
+            newRepresentation( reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
+            withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() );
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -171,8 +191,9 @@ public class API
             for( Beer beer : beers )
             {
                 Representation beerResource = hal.
-                    newRepresentation( reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl() );
-                beerResource.withBean( beer );
+                    newRepresentation( reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl() ).
+                    withProperty( "id", beer.getId() ).
+                    withProperty( "name", beer.getName() );
                 resource.withRepresentation( "beer", beerResource );
             }
             String json = resource.toString( HAL_JSON );
@@ -190,6 +211,7 @@ public class API
     }
 
     public Outcome beer( Long id )
+        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -201,7 +223,17 @@ public class API
             }
             Representation resource = hal.
                 newRepresentation( reverseRoutes().of( GET( API.class ).beer( id ) ).httpUrl() ).
-                withBean( beer );
+                withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() ).
+                withLink( "list", reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
+                withProperty( "id", beer.getId() ).
+                withProperty( "name", beer.getName() ).
+                withProperty( "description", beer.getDescription() ).
+                withProperty( "abv", beer.getAbv() );
+            Representation breweryResource = hal.
+                newRepresentation( reverseRoutes().of( GET( API.class ).brewery( beer.getBrewery().getId() ) ).httpUrl() ).
+                withProperty( "id", beer.getBrewery().getId() ).
+                withProperty( "name", beer.getBrewery().getName() );
+            resource.withRepresentation( "brewery", breweryResource );
             String json = resource.toString( HAL_JSON );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }

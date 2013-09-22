@@ -32,7 +32,7 @@ public class Global
         // Persistence
         EntityManagerFactory emf = Persistence.createEntityManagerFactory(
             application.config().string( "app.persistence-unit-name" ),
-            Collections.singletonMap( "eclipselink.classloader", this.getClass().getClassLoader() ) );
+            Collections.singletonMap( "eclipselink.classloader", application.classLoader() ) );
         application.metaData().put( "emf", emf );
 
         // Hypertext Application Language

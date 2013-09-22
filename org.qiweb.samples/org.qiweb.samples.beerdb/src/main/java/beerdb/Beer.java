@@ -80,4 +80,12 @@ public class Beer
     {
         return abv;
     }
+
+    /**
+     * @return The Brewery of the beer.
+     */
+    public Brewery getBrewery()
+    {
+        return brewery;
+    }
 }
