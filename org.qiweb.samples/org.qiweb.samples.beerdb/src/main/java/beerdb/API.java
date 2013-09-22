@@ -16,16 +16,21 @@
 package beerdb;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.net.HttpHeaders;
+import com.theoryinpractise.halbuilder.api.ReadableRepresentation;
 import com.theoryinpractise.halbuilder.api.Representation;
 import com.theoryinpractise.halbuilder.api.RepresentationFactory;
+import java.io.StringReader;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.util.Strings;
 
 import static com.theoryinpractise.halbuilder.api.RepresentationFactory.HAL_JSON;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.reverseRoutes;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
@@ -102,9 +107,39 @@ public class API
     }
 
     public Outcome createBrewery()
+        throws JsonProcessingException
     {
-
-        return outcomes().notImplemented().build();
+        String body = request().body().asString();
+        ReadableRepresentation inputRepresentation = hal.readRepresentation( new StringReader( body ) );
+        Object name = inputRepresentation.getValue( "name" );
+        Object url = inputRepresentation.getValue( "url" );
+        if( name == null || url == null )
+        {
+            return outcomes().badRequest().build();
+        }
+        String nameString = name.toString();
+        String urlString = url.toString();
+        if( Strings.isEmpty( nameString ) || Strings.isEmpty( urlString ) )
+        {
+            return outcomes().badRequest().build();
+        }
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            Brewery brewery = Brewery.newBrewery( nameString, urlString );
+            em.persist( brewery );
+            em.flush();
+            em.getTransaction().commit();
+            return outcomes().
+                created().
+                withHeader( HttpHeaders.LOCATION, reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl() ).
+                build();
+        }
+        finally
+        {
+            em.close();
+        }
     }
 
     public Outcome brewery( Long id )

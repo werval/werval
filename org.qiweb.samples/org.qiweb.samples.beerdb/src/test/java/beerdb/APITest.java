@@ -15,11 +15,14 @@
  */
 package beerdb;
 
+import com.jayway.restassured.response.Response;
 import org.junit.Test;
 import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.samples.beerdb.BuildVersion.COMMIT;
 import static org.qiweb.samples.beerdb.BuildVersion.DATE;
@@ -74,6 +77,38 @@ public class APITest
             contentType( APPLICATION_JSON ).
             body( "_links.self.href", equalTo( baseHttpUrl() + "/api/breweries" ) ).
             body( "count", equalTo( 0 ) ).
+            when().
+            get( "/api/breweries" );
+    }
+
+    @Test
+    public void testCreateBreweries()
+    {
+        Response response = given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            expect().
+            statusCode( 201 ).
+            when().
+            post( "/api/breweries" );
+
+        String breweryUrl = response.header( LOCATION );
+
+        expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            body( "_links.self.href", equalTo( breweryUrl ) ).
+            body( "name", equalTo( "ZengBrewery" ) ).
+            when().
+            get( breweryUrl );
+
+        expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            body( "_links.self.href", equalTo( baseHttpUrl() + "/api/breweries" ) ).
+            body( "count", equalTo( 1 ) ).
+            body( "_embedded.brewery.name", equalTo( "ZengBrewery" ) ).
+            body( "_embedded.brewery._links.self.href", equalTo( breweryUrl ) ).
             when().
             get( "/api/breweries" );
     }
