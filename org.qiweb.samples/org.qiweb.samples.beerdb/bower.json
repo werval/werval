@@ -1,0 +1,10 @@
+{
+  "name": "org.qiweb.samples.beerdb",
+  "version": "0.0.0",
+  "description": "Beer Database - QiWeb Sample",
+  "license": "Apache-2",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "~3.0.0"
+  }
+}

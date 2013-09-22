@@ -24,8 +24,6 @@ dependencies {
     runtime libs.eclipselink
     runtime libs.h2
     runtime libs.logback
-    runtime webjars.bootstrap
-    runtime webjars.jquery
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.fluentlenium
@@ -33,3 +31,67 @@ dependencies {
 
 }
 
+//  _____             _
+// |  _  |___ ___ ___| |_ ___
+// |     |_ -|_ -| -_|  _|_ -|
+// |__|__|___|___|___|_| |___|
+// ____________________________________________________________________________
+//
+
+task bowerInstall( type: Exec ) {
+    group = "Assets"
+    description = "Installs Bower Dependencies"
+    commandLine = ["bower", "install"]
+    inputs.file "bower.json"
+    outputs.dir "bower_components"
+}
+task gruntInstall( type: Exec ) {
+    group = "Assets"
+    description = "Installs Grunt Dependencies"
+    commandLine = ["npm", "install"]
+    inputs.file "package.json"
+    outputs.dir "node_modules"
+}
+import org.apache.tools.ant.taskdefs.condition.Os
+class GruntTask extends Exec {
+    private String gruntExecutable = Os.isFamily( Os.FAMILY_WINDOWS ) ? "grunt.cmd" : "grunt"
+    def gruntArgs = ""
+    public GruntTask() {
+        super()
+        this.setExecutable( gruntExecutable )
+    }
+    public void setGruntArgs( String gruntArgs ) {
+        this.args = "$gruntArgs".trim().split( " " ) as List
+    }
+}
+task assetsCheck( type: GruntTask, dependsOn: [ gruntInstall, bowerInstall ] ) {
+    group "Assets"
+    description = "Check assets"
+    gruntArgs = "check"
+    inputs.dir "src/main/assets/js"
+    inputs.file file("Gruntfile.js")
+    // outputs.dir "build/grunt/js"
+}
+task assetsJs( type: GruntTask, dependsOn: [ gruntInstall, bowerInstall ] ) {
+    group "Assets"
+    description = "Process JavaScript"
+    gruntArgs = "assets-js"
+    inputs.dir "src/main/assets/js"
+    inputs.file file("Gruntfile.js")
+    outputs.dir "build/grunt/assets/js"
+}
+task assetsCss( type: GruntTask, dependsOn: [ gruntInstall, bowerInstall ] ) {
+    group "Assets"
+    description = "Process Stylesheets"
+    gruntArgs = "assets-css"
+    inputs.dir "src/main/assets/less"
+    inputs.file file("Gruntfile.js")
+    outputs.dir "build/grunt/assets/css"
+}
+task assetsCopy( type: Copy, dependsOn: [ assetsJs, assetsCss ] ) {
+    from file( "build/grunt/assets" )
+    into file( "build/generated-src/grunt/resources/assets")
+}
+processResources.dependsOn assetsCopy
+check.dependsOn assetsCheck
+sourceSets.main.resources.srcDir file( "build/generated-src/grunt/resources" )
