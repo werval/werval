@@ -103,7 +103,7 @@ public interface BuildVersion
     String DATE = \"""" + now + """\";
 
     /** The full details of the version, including the build date. */
-    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " " + COMMIT + " " + DATE;
+    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " " + COMMIT + " " + ( DIRTY ? "(dirty) " : "" ) + DATE;
 }\n
 """ )
         }
