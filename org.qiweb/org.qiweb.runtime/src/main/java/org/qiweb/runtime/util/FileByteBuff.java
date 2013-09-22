@@ -59,6 +59,16 @@ public final class FileByteBuff
         this.length = file.length();
     }
 
+    @Override
+    public int readableBytes()
+    {
+        if( length < Integer.MIN_VALUE || length > Integer.MAX_VALUE )
+        {
+            throw new IllegalArgumentException( length + " cannot be cast to int without changing its value." );
+        }
+        return (int) length;
+    }
+
     public InputStream getInputStream()
     {
         try
@@ -241,7 +251,26 @@ public final class FileByteBuff
     @Override
     public ByteBuf getBytes( int index, ByteBuffer dst )
     {
-        throw new UnsupportedOperationException( NOT_SUPPORTED );
+        checkIndex( index );
+        try
+        {
+            raf.seek( index );
+            byte[] buffer = new byte[ 8 ];
+            while( dst.position() < dst.limit() )
+            {
+                int read = raf.read( buffer );
+                if( read == -1 )
+                {
+                    break;
+                }
+                dst.put( buffer, 0, read );
+            }
+            return this;
+        }
+        catch( IOException ex )
+        {
+            throw new QiWebException( ex.getMessage(), ex );
+        }
     }
 
     @Override
