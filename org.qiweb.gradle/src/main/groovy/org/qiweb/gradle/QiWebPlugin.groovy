@@ -45,7 +45,9 @@ class QiWebPlugin implements Plugin<Project>
             "devshell",
             type: QiWebDevShellTask,
             group: "QiWeb",
-            description: "Start the QiWeb DevShell."
+            description: "Start the QiWeb DevShell.",
+            // FIXME This use the default value as the project value is not set yet !!!! Chicken and egg problem again..
+            dependsOn: project.tasks.getByName( project.qiweb.rebuildTask )
         )
 
         project.task( 
