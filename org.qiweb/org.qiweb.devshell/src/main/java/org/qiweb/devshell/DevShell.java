@@ -110,14 +110,12 @@ public final class DevShell
         try
         {
             System.out.println( cyan( "Isolating worlds..." ) );
-            System.out.println( yellow( "DevShell Class ClassLoader is: " + getClass().getClassLoader() ) );
-            System.out.println( yellow( "Current Thread Context ClassLoader is: " + originalLoader ) );
 
             setupRealms();
-
-            // Enter sandboxed ClassLoader
-
             ClassRealm appRealm = classWorld.getRealm( currentApplicationRealmID() );
+            Thread.currentThread().setContextClassLoader( appRealm );
+
+            System.out.println( cyan( "Starting isolated QiWeb Application..." ) );
 
             // Config
             Class<?> configClass = appRealm.loadClass( "org.qiweb.api.Config" );
@@ -170,6 +168,15 @@ public final class DevShell
 
             // printRealms();
 
+            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    stop();
+                }
+            }, "qiweb-devshell-shutdown" ) );
+
             System.out.println( white( ">> Ready for requests!" ) );
             Thread.sleep( Long.MAX_VALUE );
         }
@@ -184,7 +191,7 @@ public final class DevShell
                 cause = ex.getCause();
             }
             String msg = "Unable to start QiWeb DevShell: " + cause.getClass().getSimpleName() + " " + cause.getMessage();
-            System.out.println( red( msg ) );
+            System.err.println( red( msg ) );
             throw new QiWebDevShellException( msg, cause );
         }
     }
@@ -199,7 +206,7 @@ public final class DevShell
         catch( Exception ex )
         {
             String msg = "Unable to stop QiWeb DevShell: " + ex.getMessage();
-            System.out.println( red( msg ) );
+            System.err.println( red( msg ) );
             throw new QiWebDevShellException( msg, ex );
         }
     }
