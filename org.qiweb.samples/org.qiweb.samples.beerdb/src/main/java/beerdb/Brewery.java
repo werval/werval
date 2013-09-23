@@ -21,6 +21,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table( name = "breweries" )
@@ -38,8 +40,10 @@ public class Brewery
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
+    @NotBlank
     private String name;
     @Column( length = 1024, nullable = true )
+    @URL
     private String url;
 
     /**

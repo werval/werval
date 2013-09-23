@@ -18,6 +18,7 @@ dependencies {
     compile "org.qiweb:org.qiweb.api:$version"
     compile "org.qiweb:org.qiweb.lib:$version"
     compile libs.halbuilder
+    compile libs.hibernate_validator
     compile libs.jpa
 
     runtime "org.qiweb:org.qiweb.runtime:$version"

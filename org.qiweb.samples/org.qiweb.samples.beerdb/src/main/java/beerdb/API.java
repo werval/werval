@@ -15,23 +15,24 @@
  */
 package beerdb;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.net.HttpHeaders;
 import com.theoryinpractise.halbuilder.api.ReadableRepresentation;
 import com.theoryinpractise.halbuilder.api.Representation;
+import com.theoryinpractise.halbuilder.api.RepresentationException;
 import com.theoryinpractise.halbuilder.api.RepresentationFactory;
 import java.io.StringReader;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.validation.ConstraintViolationException;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.util.Strings;
+import org.qiweb.api.routes.ReverseRoute;
 
 import static com.theoryinpractise.halbuilder.api.RepresentationFactory.HAL_JSON;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.reverseRoutes;
+import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 import static org.qiweb.samples.beerdb.BuildVersion.COMMIT;
@@ -54,7 +55,6 @@ public class API
     }
 
     public Outcome index()
-        throws JsonProcessingException
     {
         Representation resource = hal.
             newRepresentation( reverseRoutes().of( GET( API.class ).index() ).httpUrl() ).
@@ -78,7 +78,6 @@ public class API
     // _________________________________________________________________________________________________________________
     //
     public Outcome breweries()
-        throws JsonProcessingException
     {
         Representation resource = hal.
             newRepresentation( reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
@@ -107,34 +106,42 @@ public class API
     }
 
     public Outcome createBrewery()
-        throws JsonProcessingException
     {
-        String body = request().body().asString();
-        ReadableRepresentation inputRepresentation = hal.readRepresentation( new StringReader( body ) );
-        Object name = inputRepresentation.getValue( "name" );
-        Object url = inputRepresentation.getValue( "url" );
-        if( name == null || url == null )
+        if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
-            return outcomes().badRequest().build();
+            return outcomes().badRequest().
+                withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
-        String nameString = name.toString();
-        String urlString = url.toString();
-        if( Strings.isEmpty( nameString ) || Strings.isEmpty( urlString ) )
+        String body = request().body().asString();
+        String name, url;
+        try
         {
-            return outcomes().badRequest().build();
+            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
+            name = input.getValue( "name" ).toString().trim();
+            url = input.getValue( "url" ).toString().trim();
+        }
+        catch( RepresentationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getMessage() ).build();
         }
         EntityManager em = emf.createEntityManager();
         try
         {
             em.getTransaction().begin();
-            Brewery brewery = Brewery.newBrewery( nameString, urlString );
+            Brewery brewery = Brewery.newBrewery( name, url );
             em.persist( brewery );
-            em.flush();
             em.getTransaction().commit();
+            ReverseRoute breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) );
             return outcomes().
                 created().
-                withHeader( HttpHeaders.LOCATION, reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl() ).
+                withHeader( LOCATION, breweryRoute.httpUrl() ).
                 build();
+        }
+        catch( ConstraintViolationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getConstraintViolations().toString() ).build();
         }
         finally
         {
@@ -143,7 +150,6 @@ public class API
     }
 
     public Outcome brewery( Long id )
-        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -190,13 +196,14 @@ public class API
         EntityManager em = emf.createEntityManager();
         try
         {
+            em.getTransaction().begin();
             Brewery brewery = em.find( Brewery.class, id );
             if( brewery == null )
             {
                 return outcomes().notFound().build();
             }
             em.remove( brewery );
-            em.flush();
+            em.getTransaction().commit();
             return outcomes().ok().build();
         }
         finally
@@ -213,7 +220,6 @@ public class API
     // _________________________________________________________________________________________________________________
     //
     public Outcome beers()
-        throws JsonProcessingException
     {
         Representation resource = hal.
             newRepresentation( reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
@@ -246,7 +252,6 @@ public class API
     }
 
     public Outcome beer( Long id )
-        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -288,13 +293,14 @@ public class API
         EntityManager em = emf.createEntityManager();
         try
         {
+            em.getTransaction().begin();
             Beer beer = em.find( Beer.class, id );
             if( beer == null )
             {
                 return outcomes().notFound().build();
             }
             em.remove( beer );
-            em.flush();
+            em.getTransaction().commit();
             return outcomes().ok().build();
         }
         finally
