@@ -85,7 +85,14 @@ public final class ParameterBindersInstance
         @Override
         public java.lang.Short bind( java.lang.String name, java.lang.String value )
         {
-            return java.lang.Short.valueOf( value );
+            try
+            {
+                return java.lang.Short.valueOf( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -102,7 +109,14 @@ public final class ParameterBindersInstance
         @Override
         public java.lang.Integer bind( java.lang.String name, java.lang.String value )
         {
-            return java.lang.Integer.valueOf( value );
+            try
+            {
+                return java.lang.Integer.valueOf( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -119,7 +133,14 @@ public final class ParameterBindersInstance
         @Override
         public java.lang.Long bind( java.lang.String name, java.lang.String value )
         {
-            return java.lang.Long.valueOf( value );
+            try
+            {
+                return java.lang.Long.valueOf( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -136,7 +157,14 @@ public final class ParameterBindersInstance
         @Override
         public java.lang.Double bind( java.lang.String name, java.lang.String value )
         {
-            return java.lang.Double.valueOf( value );
+            try
+            {
+                return java.lang.Double.valueOf( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -153,7 +181,14 @@ public final class ParameterBindersInstance
         @Override
         public java.lang.Float bind( java.lang.String name, java.lang.String value )
         {
-            return java.lang.Float.valueOf( value );
+            try
+            {
+                return java.lang.Float.valueOf( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -170,7 +205,14 @@ public final class ParameterBindersInstance
         @Override
         public java.math.BigInteger bind( java.lang.String name, java.lang.String value )
         {
-            return new java.math.BigInteger( value );
+            try
+            {
+                return new java.math.BigInteger( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -187,7 +229,14 @@ public final class ParameterBindersInstance
         @Override
         public java.math.BigDecimal bind( java.lang.String name, java.lang.String value )
         {
-            return new java.math.BigDecimal( value );
+            try
+            {
+                return new java.math.BigDecimal( value );
+            }
+            catch( NumberFormatException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -204,7 +253,14 @@ public final class ParameterBindersInstance
         @Override
         public java.util.UUID bind( java.lang.String name, java.lang.String value )
         {
-            return java.util.UUID.fromString( value );
+            try
+            {
+                return java.util.UUID.fromString( value );
+            }
+            catch( IllegalArgumentException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
         }
 
         @Override
@@ -227,7 +283,7 @@ public final class ParameterBindersInstance
             }
             catch( MalformedURLException ex )
             {
-                throw new ParameterBinderException( "Malformed URL for parameter '" + name + "': " + value, ex );
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
             }
         }
 
