@@ -152,6 +152,7 @@ public class HttpServerInstance
                 app.global().onStop( app );
             }
         } );
+        shutdownFuture.awaitUninterruptibly();
     }
 
     @Override
