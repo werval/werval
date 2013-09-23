@@ -18,9 +18,13 @@ package beerdb;
 import com.theoryinpractise.halbuilder.api.RepresentationFactory;
 import com.theoryinpractise.halbuilder.standard.StandardRepresentationFactory;
 import java.util.Collections;
+import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.qiweb.api.Application;
+
+import static org.qiweb.api.Application.Mode.DEV;
 
 public class Global
     extends org.qiweb.api.Global
@@ -47,9 +51,37 @@ public class Global
         // Persistence
         EntityManagerFactory emf = application.metaData().get( EntityManagerFactory.class, "emf" );
         application.metaData().remove( "emf" );
+        if( application.mode() == TEST )
+        {
+            dropData( emf );
+        }
         emf.close();
 
         // Hypertext Application Language
         application.metaData().remove( "hal" );
+    }
+
+    private void dropData( EntityManagerFactory emf )
+    {
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            List<Beer> beers = em.createQuery( "select b from Beer b", Beer.class ).getResultList();
+            for( Beer beer : beers )
+            {
+                em.remove( beer );
+            }
+            List<Brewery> breweries = em.createQuery( "select b from Brewery b", Brewery.class ).getResultList();
+            for( Brewery brewery : breweries )
+            {
+                em.remove( brewery );
+            }
+            em.getTransaction().commit();
+        }
+        finally
+        {
+            em.close();
+        }
     }
 }
