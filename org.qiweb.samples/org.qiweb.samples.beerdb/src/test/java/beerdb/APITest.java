@@ -84,11 +84,25 @@ public class APITest
     }
 
     @Test
-    public void testCreateBreweriesBadContentType()
+    public void testNotFound()
+    {
+        expect().
+            statusCode( 404 ).
+            when().
+            get( "/api/breweries/123" );
+
+        expect().
+            statusCode( 404 ).
+            when().
+            get( "/api/beers/123" );
+    }
+
+    @Test
+    public void testCreateBreweriesBadRequest()
     {
         given().
             contentType( TEXT_PLAIN ).
-            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            body( "{ \"name\":\"Wow it's a name\", \"url\":\"http://zeng-beers.com/\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "content-type" ) ).
@@ -161,7 +175,79 @@ public class APITest
     }
 
     @Test
-    public void testCreateBreweries()
+    public void testCreateBeerBadRequest()
+    {
+        Response response = given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            expect().
+            statusCode( 201 ).
+            when().
+            post( "/api/breweries" );
+
+        String breweryUrl = response.header( LOCATION );
+
+        response = expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            when().
+            get( breweryUrl );
+
+        long breweryId = response.body().jsonPath().getLong( "id" );
+
+        // Missing Brewery
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "brewery" ) ).
+            when().
+            post( "/api/beers" );
+
+        // Missing Name
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery-id\": " + breweryId + ",\"abv\": 4.5 }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "name" ) ).
+            when().
+            post( "/api/beers" );
+
+        // Missing ABV
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\" }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "abv" ) ).
+            when().
+            post( "/api/beers" );
+
+        // Invalid ABV
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": -1 }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "abv" ) ).
+            when().
+            post( "/api/beers" );
+
+        // Invalid ABV
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 101 }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "abv" ) ).
+            when().
+            post( "/api/beers" );
+    }
+
+    @Test
+    public void testCreateListDeleteBreweries()
     {
         Response response = given().
             contentType( APPLICATION_JSON ).
@@ -184,11 +270,77 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "_links.self.href", equalTo( baseHttpUrl() + "/api/breweries" ) ).
             body( "count", equalTo( 1 ) ).
             body( "_embedded.brewery.name", equalTo( "ZengBrewery" ) ).
             body( "_embedded.brewery._links.self.href", equalTo( breweryUrl ) ).
             when().
             get( "/api/breweries" );
+
+        expect().
+            statusCode( 200 ).
+            when().
+            delete( breweryUrl );
+
+        expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            body( "count", equalTo( 0 ) ).
+            when().
+            get( "/api/breweries" );
+    }
+
+    @Test
+    public void testCreateBreweryAndBeerThenDeleteThem()
+    {
+        Response response = given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            expect().
+            statusCode( 201 ).
+            when().
+            post( "/api/breweries" );
+
+        String breweryUrl = response.header( LOCATION );
+
+        response = expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            when().
+            get( breweryUrl );
+
+        long breweryId = response.body().jsonPath().getLong( "id" );
+
+        response = given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            expect().
+            statusCode( 201 ).
+            when().
+            post( "/api/beers" );
+
+        String beerUrl = response.header( LOCATION );
+
+        expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            body( "_links.self.href", equalTo( beerUrl ) ).
+            body( "name", equalTo( "ZengBeer" ) ).
+            when().
+            get( beerUrl );
+
+        expect().
+            statusCode( 409 ).
+            when().
+            delete( breweryUrl );
+
+        expect().
+            statusCode( 200 ).
+            when().
+            delete( beerUrl );
+
+        expect().
+            statusCode( 200 ).
+            when().
+            delete( breweryUrl );
     }
 }

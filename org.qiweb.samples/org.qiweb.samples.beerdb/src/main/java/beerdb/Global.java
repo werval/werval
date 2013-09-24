@@ -25,6 +25,7 @@ import javax.persistence.Persistence;
 import org.qiweb.api.Application;
 
 import static org.qiweb.api.Application.Mode.DEV;
+import static org.qiweb.api.Application.Mode.TEST;
 
 public class Global
     extends org.qiweb.api.Global
@@ -43,6 +44,11 @@ public class Global
         RepresentationFactory halFactory = new StandardRepresentationFactory();
         halFactory.withFlag( RepresentationFactory.PRETTY_PRINT );
         application.metaData().put( "hal", halFactory );
+
+        if( application.mode() == DEV )
+        {
+            createFixtures( emf );
+        }
     }
 
     @Override
@@ -59,6 +65,31 @@ public class Global
 
         // Hypertext Application Language
         application.metaData().remove( "hal" );
+    }
+
+    private void createFixtures( EntityManagerFactory emf )
+    {
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            if( em.createQuery( "select b from Brewery b", Brewery.class ).getResultList().isEmpty() )
+            {
+                Brewery kroBrewery = Brewery.newBrewery( "Kronenbourg", "http://kronenbourg1664.com/" );
+                Beer whiteBeer = Beer.newBeer( kroBrewery, "Kro Blanche", 3 );
+                Beer blondBeer = Beer.newBeer( kroBrewery, "Kro Blonde", 3 );
+                Beer brownBeer = Beer.newBeer( kroBrewery, "Kro Brune", 3 );
+                em.persist( kroBrewery );
+                em.persist( whiteBeer );
+                em.persist( blondBeer );
+                em.persist( brownBeer );
+            }
+            em.getTransaction().commit();
+        }
+        finally
+        {
+            em.close();
+        }
     }
 
     private void dropData( EntityManagerFactory emf )

@@ -23,6 +23,7 @@ dependencies {
 
     runtime "org.qiweb:org.qiweb.runtime:$version"
     runtime libs.eclipselink
+    runtime libs.el
     runtime libs.h2
     runtime libs.logback
 

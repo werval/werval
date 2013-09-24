@@ -22,29 +22,30 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Table( name = "beers" )
 public class Beer
 {
 
-    public static Beer newBeer( Brewery brewery, String name, float abv, String description )
+    public static Beer newBeer( Brewery brewery, String name, float abv )
     {
         Beer beer = new Beer();
         beer.brewery = brewery;
         beer.name = name;
         beer.abv = abv;
-        beer.description = description;
         return beer;
     }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
+    @NotBlank
     private String name;
-    @Column( length = 4096, nullable = true )
-    private String description;
     @Column( nullable = false )
+    @Range( min = 0, max = 100 )
     private float abv;
     @ManyToOne( optional = false )
     private Brewery brewery;
@@ -63,14 +64,6 @@ public class Beer
     public String getName()
     {
         return name;
-    }
-
-    /**
-     * @return The description of the beer.
-     */
-    public String getDescription()
-    {
-        return description;
     }
 
     /**

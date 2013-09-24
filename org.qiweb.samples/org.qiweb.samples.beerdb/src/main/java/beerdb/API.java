@@ -202,6 +202,12 @@ public class API
             {
                 return outcomes().notFound().build();
             }
+            List<Beer> beers = em.createQuery( "select b from Beer b where b.brewery=:brewery", Beer.class ).
+                setParameter( "brewery", brewery ).getResultList();
+            if( !beers.isEmpty() )
+            {
+                return outcomes().conflict().withBody( "Does not have zero beers." ).build();
+            }
             em.remove( brewery );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -248,7 +254,54 @@ public class API
 
     public Outcome createBeer()
     {
-        return outcomes().notImplemented().build();
+        if( !APPLICATION_JSON.equals( request().contentType() ) )
+        {
+            return outcomes().badRequest().
+                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+        }
+        String body = request().body().asString();
+        Long breweryId;
+        String name;
+        Float abv;
+        try
+        {
+            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
+            breweryId = Long.valueOf( input.getValue( "brewery-id" ).toString().trim() );
+            name = input.getValue( "name" ).toString().trim();
+            abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
+        }
+        catch( RepresentationException | NumberFormatException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getMessage() ).build();
+        }
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            Brewery brewery = em.find( Brewery.class, breweryId );
+            if( brewery == null )
+            {
+                return outcomes().badRequest().withBody( "No brewery found with id " + breweryId ).build();
+            }
+            Beer beer = Beer.newBeer( brewery, name, abv );
+            em.persist( beer );
+            em.getTransaction().commit();
+            ReverseRoute beerRoute = reverseRoutes().of( GET( API.class ).beer( beer.getId() ) );
+            return outcomes().
+                created().
+                withHeader( LOCATION, beerRoute.httpUrl() ).
+                build();
+        }
+        catch( ConstraintViolationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getConstraintViolations().toString() ).build();
+        }
+        finally
+        {
+            em.close();
+        }
     }
 
     public Outcome beer( Long id )
@@ -267,7 +320,6 @@ public class API
                 withLink( "list", reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
                 withProperty( "id", beer.getId() ).
                 withProperty( "name", beer.getName() ).
-                withProperty( "description", beer.getDescription() ).
                 withProperty( "abv", beer.getAbv() );
             Representation breweryResource = hal.
                 newRepresentation( reverseRoutes().of( GET( API.class ).brewery( beer.getBrewery().getId() ) ).httpUrl() ).
