@@ -63,10 +63,26 @@ public class Brewery
     }
 
     /**
+     * @param name The name of the brewery.
+     */
+    public void setName( String name )
+    {
+        this.name = name;
+    }
+
+    /**
      * @return The URL of the brewery.
      */
     public String getUrl()
     {
         return url;
+    }
+
+    /**
+     * @param url The URL of the brewery.
+     */
+    public void setUrl( String url )
+    {
+        this.url = url;
     }
 }

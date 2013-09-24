@@ -67,11 +67,27 @@ public class Beer
     }
 
     /**
+     * @param name The name of the beer.
+     */
+    public void setName( String name )
+    {
+        this.name = name;
+    }
+
+    /**
      * @return The alcohol by volume of the beer.
      */
     public float getAbv()
     {
         return abv;
+    }
+
+    /**
+     * @param abv The alcohol by volume of the beer.
+     */
+    public void setAbv( float abv )
+    {
+        this.abv = abv;
     }
 
     /**

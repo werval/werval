@@ -188,7 +188,48 @@ public class API
 
     public Outcome updateBrewery( Long id )
     {
-        return outcomes().notImplemented().build();
+        if( !APPLICATION_JSON.equals( request().contentType() ) )
+        {
+            return outcomes().badRequest().
+                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+        }
+        String body = request().body().asString();
+        String name, url;
+        try
+        {
+            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
+            name = input.getValue( "name" ).toString().trim();
+            url = input.getValue( "url" ).toString().trim();
+        }
+        catch( RepresentationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getMessage() ).build();
+        }
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            Brewery brewery = em.find( Brewery.class, id );
+            if( brewery == null )
+            {
+                return outcomes().notFound().build();
+            }
+            brewery.setName( name );
+            brewery.setUrl( url );
+            em.persist( brewery );
+            em.getTransaction().commit();
+            return outcomes().ok().build();
+        }
+        catch( ConstraintViolationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getConstraintViolations().toString() ).build();
+        }
+        finally
+        {
+            em.close();
+        }
     }
 
     public Outcome deleteBrewery( Long id )
@@ -337,7 +378,49 @@ public class API
 
     public Outcome updateBeer( Long id )
     {
-        return outcomes().notImplemented().build();
+        if( !APPLICATION_JSON.equals( request().contentType() ) )
+        {
+            return outcomes().badRequest().
+                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+        }
+        String body = request().body().asString();
+        String name;
+        Float abv;
+        try
+        {
+            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
+            name = input.getValue( "name" ).toString().trim();
+            abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
+        }
+        catch( RepresentationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getMessage() ).build();
+        }
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            Beer beer = em.find( Beer.class, id );
+            if( beer == null )
+            {
+                return outcomes().notFound().build();
+            }
+            beer.setName( name );
+            beer.setAbv( abv );
+            em.persist( beer );
+            em.getTransaction().commit();
+            return outcomes().ok().build();
+        }
+        catch( ConstraintViolationException ex )
+        {
+            return outcomes().badRequest().
+                withBody( ex.getConstraintViolations().toString() ).build();
+        }
+        finally
+        {
+            em.close();
+        }
     }
 
     public Outcome deleteBeer( Long id )

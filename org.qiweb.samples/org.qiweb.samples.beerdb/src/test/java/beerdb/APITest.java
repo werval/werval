@@ -22,6 +22,7 @@ import org.qiweb.test.QiWebTest;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
@@ -342,5 +343,71 @@ public class APITest
             statusCode( 200 ).
             when().
             delete( breweryUrl );
+    }
+
+    @Test
+    public void testCreateUpdateBreweryAndBeer()
+    {
+        Response response = given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            expect().
+            statusCode( 201 ).
+            when().
+            post( "/api/breweries" );
+
+        String breweryUrl = response.header( LOCATION );
+
+        response = expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            when().
+            get( breweryUrl );
+
+        long breweryId = response.body().jsonPath().getLong( "id" );
+
+        response = given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            expect().
+            statusCode( 201 ).
+            when().
+            post( "/api/beers" );
+
+        String beerUrl = response.header( LOCATION );
+
+        // Edit Brewery
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"ZengBrewery EDITED\", \"url\":\"http://zeng-beers.com/EDITED\" }" ).
+            expect().
+            statusCode( 200 ).
+            when().
+            put( breweryUrl );
+
+        expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            body( "name", endsWith( "EDITED" ) ).
+            body( "url", endsWith( "EDITED" ) ).
+            when().
+            get( breweryUrl );
+
+        // Edit Beer
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{  \"name\":\"ZengBeer EDITED\", \"abv\": 45 }" ).
+            expect().
+            statusCode( 200 ).
+            when().
+            put( beerUrl );
+
+        expect().
+            statusCode( 200 ).
+            contentType( APPLICATION_JSON ).
+            body( "name", endsWith( "EDITED" ) ).
+            body( "abv", equalTo( 45F ) ).
+            when().
+            get( beerUrl );
     }
 }
