@@ -21,5 +21,7 @@ package org.qiweb.gradle
 class QiWebPluginExtension {
 
     def String rebuildTask = "classes"
-    
+
+    def Set<String> supplementarySources = new HashSet<>();
+
 }
