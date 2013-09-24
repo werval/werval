@@ -40,6 +40,10 @@ dependencies {
 // ____________________________________________________________________________
 //
 
+qiweb {
+    supplementarySources << "src/main/assets"
+}
+
 task bowerInstall( type: Exec ) {
     group = "Assets"
     description = "Installs Bower Dependencies"
