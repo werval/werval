@@ -36,11 +36,11 @@ public interface DevShellSPI
         /**
          * Watch a set of directories.
          *
-         * @param directories Set of directories to watch
+         * @param filesAndDirectories Set of files and directories to watch
          * @param listener Listener to notify on change
          * @return A handle to unwatch when done
          */
-        SourceWatch watch( Set<File> directories, SourceChangeListener listener );
+        SourceWatch watch( Set<File> filesAndDirectories, SourceChangeListener listener );
     }
 
     /**

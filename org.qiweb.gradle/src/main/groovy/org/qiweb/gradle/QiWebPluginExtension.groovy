@@ -22,6 +22,6 @@ class QiWebPluginExtension {
 
     def String rebuildTask = "classes"
 
-    def Set<String> supplementarySources = new HashSet<>();
+    def Set<String> extraWatch = new HashSet<>();
 
 }

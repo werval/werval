@@ -46,10 +46,10 @@ public class GradleDevShellSPI
     private ProjectConnection connection;
 
     public GradleDevShellSPI( URL[] applicationClassPath, URL[] runtimeClassPath,
-                              Set<File> sources, SourceWatcher watcher,
+                              Set<File> toWatch, SourceWatcher watcher,
                               File rootDir, String rebuildTask )
     {
-        super( applicationClassPath, runtimeClassPath, sources, watcher );
+        super( applicationClassPath, runtimeClassPath, toWatch, watcher );
         this.connector.forProjectDirectory( rootDir );
         this.rebuildTask = rebuildTask;
     }

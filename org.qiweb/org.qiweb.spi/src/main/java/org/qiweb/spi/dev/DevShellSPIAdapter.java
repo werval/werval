@@ -43,12 +43,13 @@ public class DevShellSPIAdapter
     private final URL[] runtimeClassPath;
     private boolean sourceChanged = true;
 
-    public DevShellSPIAdapter( URL[] applicationClassPath, URL[] runtimeClassPath, Set<File> sources, SourceWatcher watcher )
+    public DevShellSPIAdapter( URL[] applicationClassPath, URL[] runtimeClassPath,
+                               Set<File> toWatch, SourceWatcher watcher )
     {
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
         // TODO Unwatch sources on DevShell passivation
-        watcher.watch( sources, new SourceChangeListener()
+        watcher.watch( toWatch, new SourceChangeListener()
         {
             @Override
             public void onChange()

@@ -90,8 +90,8 @@ public class JavaWatcher
                     return;
                 }
 
-                Path dir = keys.get( key );
-                if( dir == null )
+                Path fileOrDir = keys.get( key );
+                if( fileOrDir == null )
                 {
                     System.err.println( "WatchKey not recognized!!" );
                     continue;
@@ -100,42 +100,45 @@ public class JavaWatcher
                 // Notify source change
                 listener.onChange();
 
-                // Process events to maintain watched directories recursively
-                for( WatchEvent<?> event : key.pollEvents() )
+                if( Files.isDirectory( fileOrDir ) )
                 {
-                    WatchEvent.Kind<?> kind = event.kind();
-
-                    // TBD - provide example of how OVERFLOW event is handled
-                    if( kind == OVERFLOW )
+                    // Process events to maintain watched directories recursively
+                    for( WatchEvent<?> event : key.pollEvents() )
                     {
-                        continue;
-                    }
+                        WatchEvent.Kind<?> kind = event.kind();
 
-                    // Context for directory entry event is the file name of entry
-                    WatchEvent<Path> ev = cast( event );
-                    Path name = ev.context();
-                    Path child = dir.resolve( name );
-
-                    // debug
-                    if( DEBUG )
-                    {
-                        System.out.format( "%s: %s\n", event.kind().name(), child );
-                    }
-
-                    // if directory is created, and watching recursively, then
-                    // register it and its sub-directories
-                    if( kind == ENTRY_CREATE )
-                    {
-                        try
+                        // TBD - provide example of how OVERFLOW event is handled
+                        if( kind == OVERFLOW )
                         {
-                            if( Files.isDirectory( child, NOFOLLOW_LINKS ) )
-                            {
-                                registerAll( child, watchService, keys );
-                            }
+                            continue;
                         }
-                        catch( IOException x )
+
+                        // Context for directory entry event is the file name of entry
+                        WatchEvent<Path> ev = cast( event );
+                        Path name = ev.context();
+                        Path child = fileOrDir.resolve( name );
+
+                        // debug
+                        if( DEBUG )
                         {
-                            // ignore to keep sample readbale
+                            System.out.format( "%s: %s\n", event.kind().name(), child );
+                        }
+
+                        // if directory is created, and watching recursively, then
+                        // register it and its sub-directories
+                        if( kind == ENTRY_CREATE )
+                        {
+                            try
+                            {
+                                if( Files.isDirectory( child, NOFOLLOW_LINKS ) )
+                                {
+                                    registerAll( child, watchService, keys );
+                                }
+                            }
+                            catch( IOException x )
+                            {
+                                // ignore to keep sample readbale
+                            }
                         }
                     }
                 }
@@ -170,15 +173,15 @@ public class JavaWatcher
     private static final AtomicInteger THREAD_NUMBER = new AtomicInteger();
 
     @Override
-    public synchronized SourceWatch watch( Set<File> directories, SourceChangeListener listener )
+    public synchronized SourceWatch watch( Set<File> filesAndDirectories, SourceChangeListener listener )
     {
         try
         {
             final WatchService watchService = FileSystems.getDefault().newWatchService();
             final Map<WatchKey, Path> keys = new HashMap<>();
-            for( File dir : directories )
+            for( File fileOrDirectory : filesAndDirectories )
             {
-                registerAll( dir.toPath(), watchService, keys );
+                registerAll( fileOrDirectory.toPath(), watchService, keys );
             }
             String watchThreadName = "qiweb-devshell-watcher-" + THREAD_NUMBER.getAndIncrement();
             final SourceChangeWatcher sourceChangeWatcher = new SourceChangeWatcher( watchService, keys, listener );
@@ -210,20 +213,27 @@ public class JavaWatcher
     private static void registerAll( final Path start, final WatchService watchService, final Map<WatchKey, Path> keys )
         throws IOException
     {
-        // register directory and sub-directories
-        Files.walkFileTree( start, new SimpleFileVisitor<Path>()
+        if( Files.isRegularFile( start ) )
         {
-            @Override
-            public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
-                throws IOException
+            register( start, watchService, keys );
+        }
+        else
+        {
+            // register directory and sub-directories
+            Files.walkFileTree( start, new SimpleFileVisitor<Path>()
             {
-                register( dir, watchService, keys );
-                return FileVisitResult.CONTINUE;
-            }
-        } );
+                @Override
+                public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
+                    throws IOException
+                {
+                    register( dir, watchService, keys );
+                    return FileVisitResult.CONTINUE;
+                }
+            } );
+        }
     }
 
-    private static void register( Path dir, WatchService watchService, Map<WatchKey, Path> keys )
+    private static void register( Path fileOrDir, WatchService watchService, Map<WatchKey, Path> keys )
         throws IOException
     {
         WatchEvent.Kind<?>[] watchedEvents = new WatchEvent.Kind<?>[]
@@ -247,24 +257,24 @@ public class JavaWatcher
             modifiers = new WatchEvent.Modifier[ 0 ];
         }
 
-        WatchKey key = dir.register( watchService, watchedEvents, modifiers );
+        WatchKey key = fileOrDir.register( watchService, watchedEvents, modifiers );
 
         if( DEBUG )
         {
             Path prev = keys.get( key );
             if( prev == null )
             {
-                System.out.format( "register: %s\n", dir );
+                System.out.format( "register: %s\n", fileOrDir );
             }
             else
             {
-                if( !dir.equals( prev ) )
+                if( !fileOrDir.equals( prev ) )
                 {
-                    System.out.format( "update: %s -> %s\n", prev, dir );
+                    System.out.format( "update: %s -> %s\n", prev, fileOrDir );
                 }
             }
         }
 
-        keys.put( key, dir );
+        keys.put( key, fileOrDir );
     }
 }

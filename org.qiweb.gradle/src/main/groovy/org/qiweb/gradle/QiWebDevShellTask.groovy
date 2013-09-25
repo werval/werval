@@ -33,7 +33,6 @@ class QiWebDevShellTask extends DefaultTask
         // == Gather build info
 
         def sources = project.sourceSets*.allSource*.srcDirs[0]
-        sources += project.qiweb.supplementarySources.collect { s -> project.file( s ) }
         def applicationClasspath = [
             project.sourceSets.main.output.classesDir.toURI().toURL(),
             project.sourceSets.main.output.resourcesDir.toURI().toURL()
@@ -42,6 +41,7 @@ class QiWebDevShellTask extends DefaultTask
             f.toURI().toURL()
         }
         sources.each { f -> runtimeClasspath << f.toURI().toURL() }
+        sources += project.qiweb.extraWatch.collect { s -> project.file( s ) }
 
         // == Start the DevShell
 
