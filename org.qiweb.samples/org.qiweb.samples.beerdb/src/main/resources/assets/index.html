@@ -7,10 +7,96 @@
     </head>
     <body>
         <nav class="navbar navbar-default">
-            <div class="navbar-header"><span class="navbar-brand">Beer Database</span></div>
-            <p class="navbar-text pull-right">Sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a></p>
+            <div class="navbar-header">
+                <span class="navbar-brand">Beer Database</span>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Breweries</a></li>
+                    <li><a href="#">Beers</a></li>
+                </ul>
+                <p class="navbar-text pull-right">Sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a></p>
+            </div>
         </nav>
-        <div class="container" id="main"></div>
+        <div class="container" id="breweries">
+            <div class="page-header">
+                <h2>
+                    Breweries
+                    <span class="pull-right">
+                        <button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></button>
+                    </span>
+                </h2>
+            </div>
+            <div class="list-group">
+                <a href="#" class="list-group-item">
+                    <span class="pull-right badge">14 beers</span>
+                    <h4 class="list-group-item-heading">Kronenbourg 1664</h4>
+                    <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> 1664</p>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="pull-right badge">42 beers</span>
+                    <h4 class="list-group-item-heading">Leffe</h4>
+                    <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> 1876</p>
+                </a>
+            </div>
+        </div>
+        <hr/>
+        <div class="container" id="brewery">
+            <div class="page-header">
+                <h2>
+                    Kronenbourg 1664
+                    <span class="pull-right">
+                        <button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></button>
+                        <button class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-danger" disabled="disabled"><i class="glyphicon glyphicon-remove"></i></button>
+                    </span>
+                </h2>
+            </div>
+            <p><a href="http://kronenbourg1664.com" target="_blank"><i class="glyphicon glyphicon-new-window"></i> http://kronenbourg1664.com</a></p>
+            <h3>Beers</h3>
+            <div class="list-group">
+                <a href="#" class="list-group-item">
+                    <span class="pull-right label label-danger">Red</span>
+                    <h4 class="list-group-item-heading">1664 Rousse</h4>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="pull-right label label-warning">Blond</span>
+                    <h4 class="list-group-item-heading">Valstar</h4>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="pull-right label label-warning">Blond</span>
+                    <h4 class="list-group-item-heading">Kronenbourg Blonde</h4>
+                </a>
+            </div>
+        </div>
+        <hr/>
+        <div class="container" id="beers">
+            <div class="page-header">
+                <h2>
+                    Beers
+                    <span class="pull-right">
+                        <button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></button>
+                    </span>
+                </h2>
+            </div>
+            <div class="list-group">
+                <a href="#" class="list-group-item">
+                    <span class="pull-right label label-danger">Red</span>
+                    <h4 class="list-group-item-heading">1664 Rousse</h4>
+                    <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> Kronenbourg</p>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="pull-right label label-danger">Red</span>
+                    <h4 class="list-group-item-heading">Leffe Ruby</h4>
+                    <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> Leffe</p>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span class="pull-right label label-warning">Blond</span>
+                    <h4 class="list-group-item-heading">Valstar</h4>
+                    <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> Kronenbourg</p>
+                </a>
+            </div>
+        </div>
         <script src="/assets/js/main.min.js"></script>
     </body>
 </html>

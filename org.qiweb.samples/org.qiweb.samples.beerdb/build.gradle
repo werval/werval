@@ -41,7 +41,8 @@ dependencies {
 //
 
 qiweb {
-    supplementarySources << "src/main/assets"
+    //extraWatch += [ "src/main/assets", "Gruntfile.js" ]
+    extraWatch += [ "src/main/assets" ]
 }
 
 task bowerInstall( type: Exec ) {
