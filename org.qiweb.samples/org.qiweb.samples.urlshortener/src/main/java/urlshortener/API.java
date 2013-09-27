@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URL;
 import java.util.Collection;
 import org.qiweb.api.controllers.Outcome;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
@@ -33,13 +31,14 @@ import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 public class API
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger( API.class );
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private final ShortenerService shortener;
+    private final String jsonMime;
 
     public API()
     {
         this.shortener = application().metaData().get( ShortenerService.class, "shortener" );
+        this.jsonMime = application().mimeTypes().withCharsetOfTextual( APPLICATION_JSON );
     }
 
     /**
@@ -51,9 +50,8 @@ public class API
         throws JsonProcessingException
     {
         Collection<Link> list = shortener.list();
-        String json = JSON_MAPPER.writeValueAsString( list );
-        LOG.info( "List is {}", json );
-        return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+        byte[] json = MAPPER.writeValueAsBytes( list );
+        return outcomes().ok( json ).as( jsonMime ).build();
     }
 
     /**
@@ -66,9 +64,8 @@ public class API
         throws JsonProcessingException
     {
         Link link = shortener.shorten( url.toString().trim() );
-        String json = JSON_MAPPER.writeValueAsString( link );
-        LOG.info( "Shorten {} to {} and 200 {}", link.longUrl, link.shortUrl(), json );
-        return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+        String json = MAPPER.writeValueAsString( link );
+        return outcomes().ok( json ).as( jsonMime ).build();
     }
 
     /**
@@ -83,12 +80,10 @@ public class API
         Link link = shortener.link( hash.trim() );
         if( link == null )
         {
-            LOG.info( "Expand fail with 404 for {}", hash.trim() );
-            return outcomes().notFound().as( APPLICATION_JSON ).build();
+            return outcomes().notFound().build();
         }
-        String json = JSON_MAPPER.writeValueAsString( link );
-        LOG.info( "Expand {} to {} and 200 {}", link.hash, link.longUrl, json );
-        return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+        byte[] json = MAPPER.writeValueAsBytes( link );
+        return outcomes().ok( json ).as( jsonMime ).build();
     }
 
     /**
@@ -104,12 +99,10 @@ public class API
         Collection<Link> list = shortener.lookup( urlString );
         if( list.isEmpty() )
         {
-            LOG.info( "Lookup fail with 404 for {}", urlString );
-            return outcomes().notFound().as( APPLICATION_JSON ).build();
+            return outcomes().notFound().build();
         }
-        String json = JSON_MAPPER.writeValueAsString( list );
-        LOG.info( "Lookup {} found {} link(s) and 200 {}", urlString, list.size(), json );
-        return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+        byte[] json = MAPPER.writeValueAsBytes( list );
+        return outcomes().ok( json ).as( jsonMime ).build();
     }
 
     /**
@@ -123,10 +116,8 @@ public class API
         Link link = shortener.link( hash.trim() );
         if( link == null )
         {
-            LOG.info( "Redirect fail with 404 for {}", hash.trim() );
-            return outcomes().notFound().as( APPLICATION_JSON ).build();
+            return outcomes().notFound().build();
         }
-        LOG.info( "Redirect {} to 303 {}", link.hash, link.longUrl );
         link.clicks += 1;
         return outcomes().seeOther( link.longUrl ).build();
     }
