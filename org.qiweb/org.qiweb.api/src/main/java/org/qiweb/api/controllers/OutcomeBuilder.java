@@ -41,6 +41,14 @@ public interface OutcomeBuilder
     OutcomeBuilder as( String contentType );
 
     /**
+     * Use a bytes body.
+     * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
+     * @param body Body bytes
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder withBody( byte[] body );
+
+    /**
      * Use a String body.
      * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
      * @param body Body as String

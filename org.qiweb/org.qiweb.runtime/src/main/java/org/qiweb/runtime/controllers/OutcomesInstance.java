@@ -61,6 +61,12 @@ public class OutcomesInstance
     }
 
     @Override
+    public OutcomeBuilder ok( byte[] body )
+    {
+        return new OutcomeBuilderInstance( OK.code(), config, headers, cookies ).withBody( body );
+    }
+
+    @Override
     public OutcomeBuilder ok( String body )
     {
         return new OutcomeBuilderInstance( OK.code(), config, headers, cookies ).withBody( body );

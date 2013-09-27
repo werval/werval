@@ -39,6 +39,12 @@ public interface Outcomes
     OutcomeBuilder ok();
 
     /**
+     * @param body Response body as bytes
+     * @return Builder for a 200 OK Outcome
+     */
+    OutcomeBuilder ok( byte[] bytes );
+
+    /**
      * @param body Response body as String using the default character encoding
      * @return Builder for a 200 OK Outcome
      */

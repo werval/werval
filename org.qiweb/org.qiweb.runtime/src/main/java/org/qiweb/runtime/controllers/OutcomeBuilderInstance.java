@@ -30,6 +30,7 @@ import org.qiweb.api.http.MutableHeaders;
 
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
 import static io.netty.buffer.Unpooled.copiedBuffer;
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
@@ -175,6 +176,15 @@ public class OutcomeBuilderInstance
     public OutcomeBuilder as( String contentType )
     {
         headers.withSingle( CONTENT_TYPE, contentType );
+        return this;
+    }
+
+    @Override
+    public OutcomeBuilder withBody( byte[] bodyBytes )
+    {
+        ByteBuf buffer = wrappedBuffer( bodyBytes );
+        body = buffer;
+        length = buffer.readableBytes();
         return this;
     }
 
