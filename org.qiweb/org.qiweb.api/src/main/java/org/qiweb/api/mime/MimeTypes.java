@@ -134,11 +134,17 @@ public interface MimeTypes
      * @return Character encoding to use for the given MimeType
      * @throws IllegalArgumentException when mimetype is not textual
      */
-    Charset encodingOfTextual( String mimetype );
+    Charset charsetOfTextual( String mimetype );
 
     /**
      * @param charset Character encoding
      * @return MimeType with character encoding information set
      */
     String withCharset( String mimetype, Charset charset );
+
+    /**
+     * @return MimeType with character encoding information set
+     * @throws IllegalArgumentException when mimetype is not textual
+     */
+    String withCharsetOfTextual( String mimetype );
 }

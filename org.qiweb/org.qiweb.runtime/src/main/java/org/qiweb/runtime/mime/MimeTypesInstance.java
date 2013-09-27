@@ -163,7 +163,7 @@ public class MimeTypesInstance
     }
 
     @Override
-    public Charset encodingOfTextual( String mimetype )
+    public Charset charsetOfTextual( String mimetype )
     {
         if( !isTextual( mimetype ) )
         {
@@ -180,11 +180,17 @@ public class MimeTypesInstance
         return mimetype + "; charset=" + charsetString;
     }
 
+    @Override
+    public String withCharsetOfTextual( String mimetype )
+    {
+        return withCharset( mimetype, charsetOfTextual( mimetype ) );
+    }
+
     private String withCharsetIfTextual( String mimetype )
     {
         if( isTextual( mimetype ) )
         {
-            return withCharset( mimetype, encodingOfTextual( mimetype ) );
+            return withCharset( mimetype, charsetOfTextual( mimetype ) );
         }
         return mimetype;
     }
