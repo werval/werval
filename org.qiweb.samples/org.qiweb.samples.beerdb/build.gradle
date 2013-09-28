@@ -4,16 +4,28 @@ buildscript {
         mavenCentral();
     }
     dependencies {
+        classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3'
+        classpath 'com.eriwen:gradle-js-plugin:1.5.1'
         classpath "org.qiweb:org.qiweb.gradle:0"
     }
 }
 
 apply plugin: 'application'
-apply plugin: 'qiweb'
-
 mainClassName = "org.qiweb.runtime.Main"
 
+apply plugin: 'qiweb'
+qiweb {
+    extraWatch += [ "src/main/assets" ]
+}
+
+configurations {
+    assets
+}
+
 dependencies {
+
+    assets webjars.bootstrap
+    assets webjars.jquery
 
     compile "org.qiweb:org.qiweb.api:$version"
     compile "org.qiweb:org.qiweb.lib:$version"
@@ -40,65 +52,55 @@ dependencies {
 // ____________________________________________________________________________
 //
 
-qiweb {
-    //extraWatch += [ "src/main/assets", "Gruntfile.js" ]
-    extraWatch += [ "src/main/assets" ]
+apply plugin: 'lesscss'
+apply plugin: 'js'
+
+task extractWebJars( type: Copy ) {
+    configurations.assets.files.each { 
+        from zipTree( it ).matching {
+            include 'META-INF/resources/webjars/**'
+        }
+    }
+    eachFile {
+        it.path = it.path.replaceAll( 'META-INF/resources/webjars/', '' )
+    }
+    into 'build/webjars'
 }
 
-task bowerInstall( type: Exec ) {
-    group = "Assets"
-    description = "Installs Bower Dependencies"
-    commandLine = ["bower", "install"]
-    inputs.file "bower.json"
-    outputs.dir "bower_components"
+task optimizeJs( type: com.eriwen.gradle.js.tasks.MinifyJsTask, dependsOn: extractWebJars ) {
+    source = [ 'build/webjars/jquery/2.0.3/jquery.js', 'src/main/assets/js/main.js' ]
+    dest = 'build/assets/js/main.js'
+    closure { warningLevel = 'QUIET' }
+    inputs.file 'build/webjars/jquery/2.0.3/jquery.js'
+    inputs.file 'src/main/assets/js/main.js'
+    outputs.file 'build/assets/js/main.js'
 }
-task gruntInstall( type: Exec ) {
-    group = "Assets"
-    description = "Installs Grunt Dependencies"
-    commandLine = ["npm", "install"]
-    inputs.file "package.json"
-    outputs.dir "node_modules"
+
+task prepareLessFiles( type: Copy, dependsOn: extractWebJars ) {
+    from 'build/webjars/bootstrap/3.0.0/less'
+    from 'src/main/assets/less/main.less'
+    into 'build/less'
 }
-import org.apache.tools.ant.taskdefs.condition.Os
-class GruntTask extends Exec {
-    private String gruntExecutable = Os.isFamily( Os.FAMILY_WINDOWS ) ? "grunt.cmd" : "grunt"
-    def gruntArgs = ""
-    public GruntTask() {
-        super()
-        this.setExecutable( gruntExecutable )
+
+lesscss {
+    source = fileTree( 'build/less' ) {
+        include 'main.less'
     }
-    public void setGruntArgs( String gruntArgs ) {
-        this.args = "$gruntArgs".trim().split( " " ) as List
-    }
+    dest = 'build/assets/css'
+    compress = true
 }
-task assetsCheck( type: GruntTask, dependsOn: [ gruntInstall, bowerInstall ] ) {
-    group "Assets"
-    description = "Check assets"
-    gruntArgs = "check"
-    inputs.dir "src/main/assets/js"
-    inputs.file file("Gruntfile.js")
-    // outputs.dir "build/grunt/js"
+task optimizeCss( type: de.obqo.gradle.lesscss.LessTask, dependsOn: prepareLessFiles ) { }
+
+task copyFonts( type: Copy, dependsOn: extractWebJars ) {
+    from 'build/webjars/bootstrap/3.0.0/fonts'
+    into 'build/generated-src/assets/resources/assets/fonts'
 }
-task assetsJs( type: GruntTask, dependsOn: [ gruntInstall, bowerInstall ] ) {
-    group "Assets"
-    description = "Process JavaScript"
-    gruntArgs = "assets-js"
-    inputs.dir "src/main/assets/js"
-    inputs.file file("Gruntfile.js")
-    outputs.dir "build/grunt/assets/js"
+
+task copyAssets( type: Copy, dependsOn: [ optimizeJs, optimizeCss, copyFonts ] ) {
+    from 'build/assets'
+    into 'build/generated-src/assets/resources/assets'
 }
-task assetsCss( type: GruntTask, dependsOn: [ gruntInstall, bowerInstall ] ) {
-    group "Assets"
-    description = "Process Stylesheets"
-    gruntArgs = "assets-css"
-    inputs.dir "src/main/assets/less"
-    inputs.file file("Gruntfile.js")
-    outputs.dir "build/grunt/assets/css"
-}
-task assetsCopy( type: Copy, dependsOn: [ assetsJs, assetsCss ] ) {
-    from file( "build/grunt/assets" )
-    into file( "build/generated-src/grunt/resources/assets")
-}
-processResources.dependsOn assetsCopy
-check.dependsOn assetsCheck
-sourceSets.main.resources.srcDir file( "build/generated-src/grunt/resources" )
+
+processResources.dependsOn copyAssets
+sourceSets.main.resources.srcDir file( "build/generated-src/assets/resources" )
+
