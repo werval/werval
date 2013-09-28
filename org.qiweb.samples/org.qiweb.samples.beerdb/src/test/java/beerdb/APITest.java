@@ -209,7 +209,7 @@ public class APITest
         // Missing Name
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery-id\": " + breweryId + ",\"abv\": 4.5 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ",\"abv\": 4.5 }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
@@ -219,7 +219,7 @@ public class APITest
         // Missing ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\" }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -229,7 +229,7 @@ public class APITest
         // Invalid ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": -1 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": -1 }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -239,7 +239,7 @@ public class APITest
         // Invalid ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 101 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 101 }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -313,7 +313,7 @@ public class APITest
 
         response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -368,7 +368,7 @@ public class APITest
 
         response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery-id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
             expect().
             statusCode( 201 ).
             when().

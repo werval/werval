@@ -5,98 +5,257 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link href="/assets/css/main.css" rel="stylesheet" media="screen">
     </head>
-    <body>
-        <nav class="navbar navbar-default">
+    <body ng-app="BeerDB">
+
+        <nav class="navbar navbar-default" ng-controller="NavBarCtrl">
             <div class="navbar-header">
                 <span class="navbar-brand">Beer Database</span>
             </div>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Breweries</a></li>
-                    <li><a href="#">Beers</a></li>
+                    <li ng-class="{active: breweries}"><a href="#/breweries">Breweries</a></li>
+                    <li ng-class="{active: beers}"><a href="#/beers">Beers</a></li>
                 </ul>
                 <p class="navbar-text pull-right">Sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a></p>
             </div>
         </nav>
-        <div class="container" id="breweries">
-            <div class="page-header">
+
+        <div class="container">
+            <div id="angular-view" ng-view></div>
+
+            <script type="text/ng-template" id="not-found.html">
+                <div id="not-found">
+                <div class="page-header"><h2>Not Found</h2></div>
+                <p><a href="#/">Continue</a></p>
+                </div>
+            </script>
+
+            <script type="text/ng-template" id="breweries.html">
+                <div id="breweries">
+
+                <div class="page-header">
                 <h2>
-                    Breweries
-                    <span class="pull-right">
-                        <button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></button>
-                    </span>
+                <span class="pull-right">
+                <a href="#/breweries/new" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></a>
+                </span>
+                Breweries
+                <small ng-bind-template="{{breweries.length}} and counting"></small>
                 </h2>
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <span class="pull-right badge">14 beers</span>
-                    <h4 class="list-group-item-heading">Kronenbourg 1664</h4>
-                    <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> 1664</p>
+                </div>
+
+                <form class="inline-form">
+                <div class="form-group">
+                <label class="sr-only" for="search">Search</label>
+                <input type="search" class="form-control input-sm" id="search" placeholder="Type to search breweries" ng-model="query">
+                </div>
+                </form>
+
+                <div class="list-group">
+                <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries | filter:query">
+                <span class="pull-right badge">{{brewery.beers_count}} beers</span>
+                <h4 class="list-group-item-heading">{{brewery.name}}</h4>
+                <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
                 </a>
-                <a href="#" class="list-group-item">
-                    <span class="pull-right badge">42 beers</span>
-                    <h4 class="list-group-item-heading">Leffe</h4>
-                    <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> 1876</p>
-                </a>
-            </div>
-        </div>
-        <hr/>
-        <div class="container" id="brewery">
-            <div class="page-header">
+                </div>
+
+                <!--
+                <pre>{{breweries | json}}</pre>
+                -->
+
+                </div>
+            </script>
+
+            <script type="text/ng-template" id="new-brewery.html">
+                <div id="new-brewery">
+
+                <div class="page-header">
+                <h2>New brewery</h2>
+                </div>
+
+                <form ng-submit="submitForm()">
+
+                <div class="form-group">
+                <input type="text" class="form-control" id="brewery-name" placeholder="Brewery name" required ng-model="data.name"/>
+                </div>
+
+                <div class="form-group">
+                <input type="url" class="form-control" id="brewery-url" placeholder="Brewery URL" required ng-model="data.url"/>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+
+                <div class="form-group">
+                <textarea rows="6" class="form-control" id="brewery-description" placeholder="Description (markdown)" ng-model="data.description"></textarea>
+                </div>
+                </div>
+                <div class="col-md-6" ng-bind-html-unsafe="data.description|markdown">
+                </div>
+                </div>
+
+                <div class="form-group">
+                <button type="submit" class="btn btn-success">Add brewery</button>
+                <a href="#/breweries" class="btn btn-default">Cancel</a>
+                </div>
+
+                </form>
+
+                <!--
+                <pre>{{data | json}}</pre>
+                -->
+
+                </div>
+            </script>
+
+
+            <script type="text/ng-template" id="brewery.html">
+                <div id="brewery">
+
+                <div class="page-header">
                 <h2>
-                    Kronenbourg 1664
-                    <span class="pull-right">
-                        <button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></button>
-                        <button class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></button>
-                        <button class="btn btn-danger" disabled="disabled"><i class="glyphicon glyphicon-remove"></i></button>
-                    </span>
+                {{brewery.name}}
+                <span class="pull-right">
+                <button class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></button>
+                <button class="btn btn-danger" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()"><i class="glyphicon glyphicon-remove"></i></button>
+                </span>
                 </h2>
-            </div>
-            <p><a href="http://kronenbourg1664.com" target="_blank"><i class="glyphicon glyphicon-new-window"></i> http://kronenbourg1664.com</a></p>
-            <h3>Beers</h3>
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <span class="pull-right label label-danger">Red</span>
-                    <h4 class="list-group-item-heading">1664 Rousse</h4>
+                </div>
+
+                <p><a href="{{brewery.url}}" target="_blank"><i class="glyphicon glyphicon-new-window"></i> {{brewery.url}}</a></p>
+
+                <h3>
+                Beers
+                <span class="pull-right">
+                <a href="#/beers/new" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-plus"></i></a>
+                </span>
+                </h3>
+
+                <form class="inline-form">
+                <div class="form-group">
+                <label class="sr-only" for="search">Search</label>
+                <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
+                </div>
+                </form>
+
+                <div class="list-group">
+                <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers | filter:query">
+                <span class="pull-right label label-danger">Red</span>
+                <h4 class="list-group-item-heading">{{beer.name}}</h4>
                 </a>
-                <a href="#" class="list-group-item">
-                    <span class="pull-right label label-warning">Blond</span>
-                    <h4 class="list-group-item-heading">Valstar</h4>
-                </a>
-                <a href="#" class="list-group-item">
-                    <span class="pull-right label label-warning">Blond</span>
-                    <h4 class="list-group-item-heading">Kronenbourg Blonde</h4>
-                </a>
-            </div>
-        </div>
-        <hr/>
-        <div class="container" id="beers">
-            <div class="page-header">
+                </div>
+
+                <!--
+                <pre>{{brewery | json}}</pre>
+                -->
+
+                </div>
+            </script>
+
+            <script type="text/ng-template" id="beers.html">
+                <div id="beers">
+
+                <div class="page-header">
                 <h2>
-                    Beers
-                    <span class="pull-right">
-                        <button class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></button>
-                    </span>
+                Beers
+                <span class="pull-right">
+                <a href="#/beers/new" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></a>
+                </span>
                 </h2>
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <span class="pull-right label label-danger">Red</span>
-                    <h4 class="list-group-item-heading">1664 Rousse</h4>
-                    <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> Kronenbourg</p>
+                </div>
+
+                <form class="inline-form">
+                <div class="form-group">
+                <label class="sr-only" for="search">Search</label>
+                <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
+                </div>
+                </form>
+
+                <div class="list-group">
+                <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers | filter:query">
+                <span class="pull-right label label-danger">Red</span>
+                <h4 class="list-group-item-heading">{{beer.name}}</h4>
+                <!-- <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> beer.brewery.name</p> -->
                 </a>
-                <a href="#" class="list-group-item">
-                    <span class="pull-right label label-danger">Red</span>
-                    <h4 class="list-group-item-heading">Leffe Ruby</h4>
-                    <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> Leffe</p>
-                </a>
-                <a href="#" class="list-group-item">
-                    <span class="pull-right label label-warning">Blond</span>
-                    <h4 class="list-group-item-heading">Valstar</h4>
-                    <p class="list-group-item-text"><small style="color: lightgray">Brewed by</small> Kronenbourg</p>
-                </a>
-            </div>
+                </div>
+
+                <!--
+                <pre>{{beers | json}}</pre>
+                -->
+
+                </div>
+            </script>
+
+            <script type="text/ng-template" id="new-beer.html">
+                <div id="new-beer">
+
+                <div class="page-header">
+                <h2>New beer</h2>
+                </div>
+
+                <form ng-submit="submitForm()">
+
+                <div class="form-group">
+                <select class="form-control" id="beer-brewery" ng-model="data.brewery_id" ng-options="b.id as b.name for b in breweries" required>
+                <option value="">-- Choose a brewery --</option>
+                </select>
+                </div>
+
+                <div class="form-group">
+                <input type="text" class="form-control" id="beer-name" placeholder="Beer name" required ng-model="data.name"/>
+                </div>
+
+                <div class="form-group">
+                <input type="number" class="form-control" id="beer-abv" placeholder="Alcohol by volume" required ng-model="data.abv"/>
+                </div>
+
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <textarea rows="6" class="form-control" id="brewery-description" placeholder="Description (markdown)" ng-model="data.description"></textarea>
+                </div>
+                </div>
+                <div class="col-md-6" ng-bind-html-unsafe="data.description|markdown">
+                </div>
+                </div>
+
+                <div class="form-group">
+                <button type="submit" class="btn btn-success">Add beer</button>
+                <a href="#/beers" class="btn btn-default">Cancel</a>
+                </div>
+
+                </form>
+
+                <!--
+                <pre>{{data | json}}</pre>
+                -->
+
+                </div>
+            </script>
+
+            <script type="text/ng-template" id="beer.html">
+                <div id="beer">
+
+                <div class="page-header">
+                <h2>
+                {{beer.name}}
+                <span class="pull-right">
+                <button class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></button>
+                <button class="btn btn-danger" ng-click="deleteBeer()"><i class="glyphicon glyphicon-remove"></i></button>
+                </span>
+                <br/>
+                <small>Brewed by <a href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>
+                </h2>
+                </div>
+
+                <p>Alcohol by volume {{beer.abv}}°</p>
+
+                <!--
+                <pre>{{beer | json}}</pre>
+                -->
+
+                </div>
+            </script>
         </div>
+
         <script src="/assets/js/main.js"></script>
     </body>
 </html>

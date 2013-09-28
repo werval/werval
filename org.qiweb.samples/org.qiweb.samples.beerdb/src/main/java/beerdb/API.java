@@ -34,6 +34,7 @@ import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 import static org.qiweb.samples.beerdb.BuildVersion.COMMIT;
 import static org.qiweb.samples.beerdb.BuildVersion.DATE;
@@ -89,10 +90,11 @@ public class API
             resource.withProperty( "count", breweries.size() );
             for( Brewery brewery : breweries )
             {
-                Representation breweryResource = hal.
-                    newRepresentation( reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl() ).
+                String breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl();
+                Representation breweryResource = hal.newRepresentation( breweryRoute ).
                     withProperty( "id", brewery.getId() ).
                     withProperty( "name", brewery.getName() ).
+                    withProperty( "since", brewery.getSince() ).
                     withProperty( "url", brewery.getUrl() );
                 resource.withRepresentation( "brewery", breweryResource );
             }
@@ -132,10 +134,16 @@ public class API
             Brewery brewery = Brewery.newBrewery( name, url );
             em.persist( brewery );
             em.getTransaction().commit();
-            ReverseRoute breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) );
+            String breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl();
+            String json = hal.newRepresentation().
+                withProperty( "id", brewery.getId() ).
+                withProperty( "url", breweryRoute ).
+                toString( HAL_JSON );
             return outcomes().
                 created().
-                withHeader( LOCATION, breweryRoute.httpUrl() ).
+                withHeader( LOCATION, breweryRoute ).
+                as( APPLICATION_JSON ).
+                withBody( json ).
                 build();
         }
         catch( ConstraintViolationException ex )
@@ -307,7 +315,7 @@ public class API
         try
         {
             ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
-            breweryId = Long.valueOf( input.getValue( "brewery-id" ).toString().trim() );
+            breweryId = Long.valueOf( input.getValue( "brewery_id" ).toString().trim() );
             name = input.getValue( "name" ).toString().trim();
             abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
         }
@@ -328,10 +336,16 @@ public class API
             Beer beer = Beer.newBeer( brewery, name, abv );
             em.persist( beer );
             em.getTransaction().commit();
-            ReverseRoute beerRoute = reverseRoutes().of( GET( API.class ).beer( beer.getId() ) );
+            String beerRoute = reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl();
+            String json = hal.newRepresentation().
+                withProperty( "id", beer.getId() ).
+                withProperty( "url", beerRoute ).
+                toString( HAL_JSON );
             return outcomes().
                 created().
-                withHeader( LOCATION, beerRoute.httpUrl() ).
+                withHeader( LOCATION, beerRoute ).
+                as( APPLICATION_JSON ).
+                withBody( json ).
                 build();
         }
         catch( ConstraintViolationException ex )

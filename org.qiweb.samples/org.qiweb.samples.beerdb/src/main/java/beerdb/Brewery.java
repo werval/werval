@@ -45,6 +45,7 @@ public class Brewery
     @Column( length = 1024, nullable = true )
     @URL
     private String url;
+    private Integer since = 1664;
 
     /**
      * @return The ID of the brewery.
@@ -84,5 +85,10 @@ public class Brewery
     public void setUrl( String url )
     {
         this.url = url;
+    }
+
+    public Integer getSince()
+    {
+        return since;
     }
 }

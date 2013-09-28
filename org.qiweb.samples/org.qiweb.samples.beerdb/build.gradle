@@ -24,8 +24,9 @@ configurations {
 
 dependencies {
 
+    assets webjars.angular
     assets webjars.bootstrap
-    assets webjars.jquery
+    assets webjars.marked
 
     compile "org.qiweb:org.qiweb.api:$version"
     compile "org.qiweb:org.qiweb.lib:$version"
@@ -56,7 +57,7 @@ apply plugin: 'lesscss'
 apply plugin: 'js'
 
 task extractWebJars( type: Copy ) {
-    configurations.assets.files.each { 
+    configurations.assets.files.each {
         from zipTree( it ).matching {
             include 'META-INF/resources/webjars/**'
         }
@@ -67,14 +68,44 @@ task extractWebJars( type: Copy ) {
     into 'build/webjars'
 }
 
-task optimizeJs( type: com.eriwen.gradle.js.tasks.MinifyJsTask, dependsOn: extractWebJars ) {
-    source = [ 'build/webjars/jquery/2.0.3/jquery.js', 'src/main/assets/js/main.js' ]
+task concatJs( type: com.eriwen.gradle.js.tasks.CombineJsTask, dependsOn: extractWebJars ) {
+    source = [
+        'build/webjars/angularjs/1.0.8/angular.js',
+        'build/webjars/marked/0.2.9/marked.js',
+        'src/main/assets/js/main.js'
+    ]
     dest = 'build/assets/js/main.js'
-    closure { warningLevel = 'QUIET' }
-    inputs.file 'build/webjars/jquery/2.0.3/jquery.js'
-    inputs.file 'src/main/assets/js/main.js'
-    outputs.file 'build/assets/js/main.js'
 }
+
+//requirejs {
+//    options = [
+//        //'baseUrl':      'build/assets/js',
+//        'name':             'main',
+//        'paths.main':       'src/main/assets/js/main',
+//        'paths.angular':    'build/webjars/angularjs/1.0.8/angular',
+//    ]
+//}
+//task optimizeJavascript( type: com.eriwen.gradle.js.tasks.RequireJsTask, dependsOn: extractWebJars ) {
+//    source = [
+//        'build/webjars/angularjs/1.0.8/angular.js',
+//        'src/main/assets/js/main.js'
+//    ]
+//    dest = 'build/assets/js/main.js'
+//}
+//
+//task optimizeJs( type: com.eriwen.gradle.js.tasks.MinifyJsTask, dependsOn: extractWebJars ) {
+//    source = [
+//        'build/webjars/angularjs/1.0.8/angular.js',
+//        'src/main/assets/js/main.js'
+//    ]
+//    dest = 'build/assets/js/main.js'
+//    closure {
+//        warningLevel = 'QUIET'
+//        // compilationLevel = 'WHITESPACE_ONLY'
+//    }
+//    inputs.file 'src/main/assets/js/main.js'
+//    outputs.file 'build/assets/js/main.js'
+//}
 
 task prepareLessFiles( type: Copy, dependsOn: extractWebJars ) {
     from 'build/webjars/bootstrap/3.0.0/less'
@@ -96,7 +127,7 @@ task copyFonts( type: Copy, dependsOn: extractWebJars ) {
     into 'build/generated-src/assets/resources/assets/fonts'
 }
 
-task copyAssets( type: Copy, dependsOn: [ optimizeJs, optimizeCss, copyFonts ] ) {
+task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
     from 'build/assets'
     into 'build/generated-src/assets/resources/assets'
 }
