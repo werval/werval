@@ -66,13 +66,17 @@ See the XXX section of the QiWeb manual to get some know-how.
 
 === I found a bug! What to do?
 
-Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issues]
+Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issues].
+Please provide accurate and useful information when doing so.
+
+If you don't know how to property report a bug, read
+http://www.chiark.greenend.org.uk/~sgtatham/bugs.html[How to Report Bugs Effectively] by Simon Tatham first.
 
 
 === Can I use QiWeb in my commercial applications under a closed-source, proprietary license?
 
 Yes.
-The Apache License is very business-friendly.
+The https://www.apache.org/licenses/LICENSE-2.0.html[Apache License] is very business-friendly.
 Please observe the obligations on your part, especially regarding notices, trademarks and patent licensing terms.
 
 
@@ -90,3 +94,15 @@ If you don't have any SLF4J implementation in your application classpath, you'll
 
 From there you simply add Logback (or any SLF4J implementation) to your dependencies and configure it the way you want.
 And voila!
+
+
+=== Can I build QiWeb Application using {put.your.build.system.here}?
+
+Sure, QiWeb is build system agnostic.
+Integration with Gradle and Maven are provided, if you happen to use another build system you'll have to write some
+code but it's definitely possible.
+Have a look at the Gradle and Maven plugins code to get started.
+
+If you get to something reusable, please contribute it.
+We are very interested in such a contribution.
+
