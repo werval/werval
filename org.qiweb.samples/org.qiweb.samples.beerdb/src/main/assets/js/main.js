@@ -41,6 +41,16 @@ beerdb.controller('NavBarCtrl', [
         });
     }
 ]);
+
+beerdb.controller('FooterCtrl', [
+    '$scope', '$http', function($scope, $http) {
+        $http.get('/api').success(function(data) {
+            $scope.version= data.detailed_version;
+        });
+    }
+]);
+
+
 beerdb.controller('BreweriesCtrl', [
     '$scope', '$http', function($scope, $http) {
         $http.get('/api/breweries').success(function(data) {

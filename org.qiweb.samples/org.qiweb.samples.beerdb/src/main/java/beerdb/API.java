@@ -61,7 +61,7 @@ public class API
             withLink( "breweries", reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
             withProperty( "commit", COMMIT ).
             withProperty( "date", DATE ).
-            withProperty( "detailed-version", DETAILED_VERSION ).
+            withProperty( "detailed_version", DETAILED_VERSION ).
             withProperty( "dirty", DIRTY ).
             withProperty( "name", NAME ).
             withProperty( "version", VERSION );

@@ -52,7 +52,7 @@ public class APITest
             body( "_links.breweries.href", equalTo( baseHttpUrl() + "/api/breweries" ) ).
             body( "commit", equalTo( COMMIT ) ).
             body( "date", equalTo( DATE ) ).
-            body( "detailed-version", equalTo( DETAILED_VERSION ) ).
+            body( "detailed_version", equalTo( DETAILED_VERSION ) ).
             body( "dirty", equalTo( DIRTY ) ).
             body( "name", equalTo( NAME ) ).
             body( "version", equalTo( VERSION ) ).
