@@ -26,6 +26,10 @@ Please note that if you want to get UML diagrams generated in Javadocs you'll
 need to have GraphViz (http://www.graphviz.org/) installed. The build will pass
 without though. But with less fun.
 
+Note also that sample applications integration/functional tests use Selenium
+under the hood and hence need Firefox to be installed and a graphical context
+to be available.
+
 To get you started, here are some usefull commands:
 
     ./gradlew clean             # Clean up the whole project tree
@@ -43,7 +47,7 @@ QiWeb do not have much dependencies but the build system and the tests do.
 As a consequence, a vast amount of code is downloaded the first time you
 run a build.
 Theses downloads are cached, at the time of writing running a full build with
-every dependencies in cache take less than a minute.
+every dependencies in cache take less than two minutes.
 
 QiWeb artifacts produced by the build are installed in your local maven
 repository (`~/.m2/repository`).

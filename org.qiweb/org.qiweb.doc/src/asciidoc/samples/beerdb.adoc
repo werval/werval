@@ -1,0 +1,18 @@
+
+=== Beer Database
+
+This second sample application is a bit more complex, yet the code is quite small regarding what is does.
+
+It is a beer database, with breweries and beers.
+The application expose a HTTP API using HAL-JSON to provide HATEOS enabled ReSTful interactions.
+
+Persistence is done using JPA 2 using EclipseLink implementation.
+In DEV and TEST mode, an in-memory H2 database is used.
+In PROD mode, PostgreSQL is the database server.
+HAL JSON representations are built using HALBuilder.
+
+Browser based front-end is built using Twitter Bootstrap and AngularJS.
+
+The Gradle build handle Bootstrap LESS compilation and Javascript optimization.
+Thanks to this, the front-end loads in three requests, the html host page, the CSS bundle and then the Javascript
+bundle.

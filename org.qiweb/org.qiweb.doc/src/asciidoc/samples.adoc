@@ -1,0 +1,7 @@
+== Samples
+
+Samples applications provide actual example code for you to read, run, modify.
+
+include::samples/urlshortener.adoc[]
+include::samples/beerdb.adoc[]
+
