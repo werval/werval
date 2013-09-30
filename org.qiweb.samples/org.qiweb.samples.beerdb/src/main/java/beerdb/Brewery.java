@@ -21,7 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
 @Entity
@@ -29,59 +29,50 @@ import org.hibernate.validator.constraints.URL;
 public class Brewery
 {
 
-    public static Brewery newBrewery( String name, String url )
+    public static Brewery newBrewery( String name, String url, String description )
     {
         Brewery brewery = new Brewery();
         brewery.name = name;
         brewery.url = url;
+        brewery.description = description;
         return brewery;
     }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
-    @NotBlank
+    @Length( min = 3, max = 255 )
     private String name;
     @Column( length = 1024, nullable = true )
     @URL
+    @Length( max = 1024 )
     private String url;
+    @Column
     private Integer since = 1664;
+    @Column( length = 16384, nullable = true )
+    @Length( max = 16384 )
+    private String description;
 
-    /**
-     * @return The ID of the brewery.
-     */
     public Long getId()
     {
         return id;
     }
 
-    /**
-     * @return The name of the brewery.
-     */
     public String getName()
     {
         return name;
     }
 
-    /**
-     * @param name The name of the brewery.
-     */
     public void setName( String name )
     {
         this.name = name;
     }
 
-    /**
-     * @return The URL of the brewery.
-     */
     public String getUrl()
     {
         return url;
     }
 
-    /**
-     * @param url The URL of the brewery.
-     */
     public void setUrl( String url )
     {
         this.url = url;
@@ -90,5 +81,20 @@ public class Brewery
     public Integer getSince()
     {
         return since;
+    }
+
+    public void setSince( Integer since )
+    {
+        this.since = since;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription( String description )
+    {
+        this.description = description;
     }
 }

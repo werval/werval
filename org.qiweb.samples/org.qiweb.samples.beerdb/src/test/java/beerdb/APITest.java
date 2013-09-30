@@ -148,7 +148,7 @@ public class APITest
 
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"\", \"url\":\"http://zeng-beers.com/\" }" ).
+            body( "{ \"name\":\"\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
@@ -157,7 +157,7 @@ public class APITest
 
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"Wow it's a name\", \"url\":\"But this is not an URL\" }" ).
+            body( "{ \"name\":\"Wow it's a name\", \"url\":\"But this is not an URL\", \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "url" ) ).
@@ -166,7 +166,7 @@ public class APITest
 
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"   \", \"url\":\"But this is not an URL\" }" ).
+            body( "{ \"name\":\"   \", \"url\":\"But this is not an URL\", \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
@@ -180,7 +180,7 @@ public class APITest
     {
         Response response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -229,7 +229,7 @@ public class APITest
         // Invalid ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": -1 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": -1, \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -239,7 +239,7 @@ public class APITest
         // Invalid ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 101 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 101, \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -252,7 +252,7 @@ public class APITest
     {
         Response response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -295,7 +295,7 @@ public class APITest
     {
         Response response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -313,7 +313,7 @@ public class APITest
 
         response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5, \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -350,7 +350,7 @@ public class APITest
     {
         Response response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\" }" ).
+            body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -368,7 +368,7 @@ public class APITest
 
         response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5 }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5, \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -379,7 +379,7 @@ public class APITest
         // Edit Brewery
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"ZengBrewery EDITED\", \"url\":\"http://zeng-beers.com/EDITED\" }" ).
+            body( "{ \"name\":\"ZengBrewery EDITED\", \"url\":\"http://zeng-beers.com/EDITED\", \"description\":\"\" }" ).
             expect().
             statusCode( 200 ).
             when().
@@ -396,7 +396,7 @@ public class APITest
         // Edit Beer
         given().
             contentType( APPLICATION_JSON ).
-            body( "{  \"name\":\"ZengBeer EDITED\", \"abv\": 45 }" ).
+            body( "{  \"name\":\"ZengBeer EDITED\", \"abv\": 45, \"description\":\"\" }" ).
             expect().
             statusCode( 200 ).
             when().

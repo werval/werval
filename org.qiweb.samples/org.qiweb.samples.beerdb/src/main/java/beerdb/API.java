@@ -25,7 +25,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.routes.ReverseRoute;
 
 import static com.theoryinpractise.halbuilder.api.RepresentationFactory.HAL_JSON;
 import static org.qiweb.api.controllers.Controller.application;
@@ -34,7 +33,6 @@ import static org.qiweb.api.controllers.Controller.request;
 import static org.qiweb.api.controllers.Controller.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 import static org.qiweb.samples.beerdb.BuildVersion.COMMIT;
 import static org.qiweb.samples.beerdb.BuildVersion.DATE;
@@ -95,7 +93,8 @@ public class API
                     withProperty( "id", brewery.getId() ).
                     withProperty( "name", brewery.getName() ).
                     withProperty( "since", brewery.getSince() ).
-                    withProperty( "url", brewery.getUrl() );
+                    withProperty( "url", brewery.getUrl() ).
+                    withProperty( "description", brewery.getDescription() );
                 resource.withRepresentation( "brewery", breweryResource );
             }
             String json = resource.toString( HAL_JSON );
@@ -115,12 +114,13 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        String name, url;
+        String name, url, description;
         try
         {
             ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
             name = input.getValue( "name" ).toString().trim();
             url = input.getValue( "url" ).toString().trim();
+            description = input.getValue( "description" ).toString().trim();
         }
         catch( RepresentationException ex )
         {
@@ -131,7 +131,7 @@ public class API
         try
         {
             em.getTransaction().begin();
-            Brewery brewery = Brewery.newBrewery( name, url );
+            Brewery brewery = Brewery.newBrewery( name, url, description );
             em.persist( brewery );
             em.getTransaction().commit();
             String breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl();
@@ -173,7 +173,8 @@ public class API
                 withLink( "list", reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
                 withProperty( "id", brewery.getId() ).
                 withProperty( "name", brewery.getName() ).
-                withProperty( "url", brewery.getUrl() );
+                withProperty( "url", brewery.getUrl() ).
+                withProperty( "description", brewery.getDescription() );
             List<Beer> beers = em.createQuery( "select b from Beer b where b.brewery=:brewery", Beer.class ).
                 setParameter( "brewery", brewery ).getResultList();
             resource.withProperty( "beers-count", beers.size() );
@@ -202,12 +203,13 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        String name, url;
+        String name, url, description;
         try
         {
             ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
             name = input.getValue( "name" ).toString().trim();
             url = input.getValue( "url" ).toString().trim();
+            description = input.getValue( "description" ).toString().trim();
         }
         catch( RepresentationException ex )
         {
@@ -225,6 +227,7 @@ public class API
             }
             brewery.setName( name );
             brewery.setUrl( url );
+            brewery.setDescription( description );
             em.persist( brewery );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -289,7 +292,9 @@ public class API
                 Representation beerResource = hal.
                     newRepresentation( reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl() ).
                     withProperty( "id", beer.getId() ).
-                    withProperty( "name", beer.getName() );
+                    withProperty( "name", beer.getName() ).
+                    withProperty( "brewery_id", beer.getBrewery().getId() ).
+                    withProperty( "brewery_name", beer.getBrewery().getName() );
                 resource.withRepresentation( "beer", beerResource );
             }
             String json = resource.toString( HAL_JSON );
@@ -310,7 +315,7 @@ public class API
         }
         String body = request().body().asString();
         Long breweryId;
-        String name;
+        String name, description;
         Float abv;
         try
         {
@@ -318,6 +323,7 @@ public class API
             breweryId = Long.valueOf( input.getValue( "brewery_id" ).toString().trim() );
             name = input.getValue( "name" ).toString().trim();
             abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
+            description = input.getValue( "description" ).toString().trim();
         }
         catch( RepresentationException | NumberFormatException ex )
         {
@@ -333,7 +339,7 @@ public class API
             {
                 return outcomes().badRequest().withBody( "No brewery found with id " + breweryId ).build();
             }
-            Beer beer = Beer.newBeer( brewery, name, abv );
+            Beer beer = Beer.newBeer( brewery, name, abv, description );
             em.persist( beer );
             em.getTransaction().commit();
             String beerRoute = reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl();
@@ -375,7 +381,8 @@ public class API
                 withLink( "list", reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
                 withProperty( "id", beer.getId() ).
                 withProperty( "name", beer.getName() ).
-                withProperty( "abv", beer.getAbv() );
+                withProperty( "abv", beer.getAbv() ).
+                withProperty( "description", beer.getDescription() );
             Representation breweryResource = hal.
                 newRepresentation( reverseRoutes().of( GET( API.class ).brewery( beer.getBrewery().getId() ) ).httpUrl() ).
                 withProperty( "id", beer.getBrewery().getId() ).
@@ -398,13 +405,14 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        String name;
+        String name, description;
         Float abv;
         try
         {
             ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
             name = input.getValue( "name" ).toString().trim();
             abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
+            description = input.getValue( "description" ).toString().trim();
         }
         catch( RepresentationException ex )
         {
@@ -422,6 +430,7 @@ public class API
             }
             beer.setName( name );
             beer.setAbv( abv );
+            beer.setDescription( description );
             em.persist( beer );
             em.getTransaction().commit();
             return outcomes().ok().build();

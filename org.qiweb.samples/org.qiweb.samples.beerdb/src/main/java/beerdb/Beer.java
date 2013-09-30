@@ -22,7 +22,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 @Entity
@@ -30,71 +30,67 @@ import org.hibernate.validator.constraints.Range;
 public class Beer
 {
 
-    public static Beer newBeer( Brewery brewery, String name, float abv )
+    public static Beer newBeer( Brewery brewery, String name, float abv, String description )
     {
         Beer beer = new Beer();
         beer.brewery = brewery;
         beer.name = name;
         beer.abv = abv;
+        beer.description = description;
         return beer;
     }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
-    @NotBlank
+    @Length( min = 3, max = 255 )
     private String name;
     @Column( nullable = false )
     @Range( min = 0, max = 100 )
     private float abv;
+    @Column( length = 16384, nullable = true )
+    @Length( max = 16384 )
+    private String description;
     @ManyToOne( optional = false )
     private Brewery brewery;
 
-    /**
-     * @return The ID of the beer.
-     */
+    public Brewery getBrewery()
+    {
+        return brewery;
+    }
+
     public Long getId()
     {
         return id;
     }
 
-    /**
-     * @return The name of the beer.
-     */
     public String getName()
     {
         return name;
     }
 
-    /**
-     * @param name The name of the beer.
-     */
     public void setName( String name )
     {
         this.name = name;
     }
 
-    /**
-     * @return The alcohol by volume of the beer.
-     */
     public float getAbv()
     {
         return abv;
     }
 
-    /**
-     * @param abv The alcohol by volume of the beer.
-     */
     public void setAbv( float abv )
     {
         this.abv = abv;
     }
 
-    /**
-     * @return The Brewery of the beer.
-     */
-    public Brewery getBrewery()
+    public String getDescription()
     {
-        return brewery;
+        return description;
+    }
+
+    public void setDescription( String description )
+    {
+        this.description = description;
     }
 }
