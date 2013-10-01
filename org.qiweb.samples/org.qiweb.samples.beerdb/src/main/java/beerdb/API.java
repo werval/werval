@@ -15,18 +15,16 @@
  */
 package beerdb;
 
-import com.theoryinpractise.halbuilder.api.ReadableRepresentation;
-import com.theoryinpractise.halbuilder.api.Representation;
-import com.theoryinpractise.halbuilder.api.RepresentationException;
-import com.theoryinpractise.halbuilder.api.RepresentationFactory;
-import java.io.StringReader;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.controllers.Outcome;
 
-import static com.theoryinpractise.halbuilder.api.RepresentationFactory.HAL_JSON;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
 import static org.qiweb.api.controllers.Controller.request;
@@ -45,27 +43,24 @@ public class API
 {
 
     private final EntityManagerFactory emf;
-    private final RepresentationFactory hal;
+    private final ObjectMapper mapper;
 
     public API()
     {
         this.emf = application().metaData().get( EntityManagerFactory.class, "emf" );
-        this.hal = application().metaData().get( RepresentationFactory.class, "hal" );
+        this.mapper = application().metaData().get( ObjectMapper.class, "mapper" );
     }
 
     public Outcome index()
+        throws JsonProcessingException
     {
-        Representation resource = hal.
-            newRepresentation( reverseRoutes().of( GET( API.class ).index() ).httpUrl() ).
-            withLink( "beers", reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
-            withLink( "breweries", reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
-            withProperty( "commit", COMMIT ).
-            withProperty( "date", DATE ).
-            withProperty( "detailed_version", DETAILED_VERSION ).
-            withProperty( "dirty", DIRTY ).
-            withProperty( "name", NAME ).
-            withProperty( "version", VERSION );
-        String json = resource.toString( HAL_JSON );
+        byte[] json = mapper.writeValueAsBytes( mapper.createObjectNode().
+            put( "commit", COMMIT ).
+            put( "date", DATE ).
+            put( "detailed_version", DETAILED_VERSION ).
+            put( "dirty", DIRTY ).
+            put( "name", NAME ).
+            put( "version", VERSION ) );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
     }
 
@@ -77,27 +72,13 @@ public class API
     // _________________________________________________________________________________________________________________
     //
     public Outcome breweries()
+        throws JsonProcessingException
     {
-        Representation resource = hal.
-            newRepresentation( reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
-            withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() );
         EntityManager em = emf.createEntityManager();
         try
         {
             List<Brewery> breweries = em.createQuery( "select b from Brewery b", Brewery.class ).getResultList();
-            resource.withProperty( "count", breweries.size() );
-            for( Brewery brewery : breweries )
-            {
-                String breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl();
-                Representation breweryResource = hal.newRepresentation( breweryRoute ).
-                    withProperty( "id", brewery.getId() ).
-                    withProperty( "name", brewery.getName() ).
-                    withProperty( "since", brewery.getSince() ).
-                    withProperty( "url", brewery.getUrl() ).
-                    withProperty( "description", brewery.getDescription() );
-                resource.withRepresentation( "brewery", breweryResource );
-            }
-            String json = resource.toString( HAL_JSON );
+            byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( breweries );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -107,6 +88,7 @@ public class API
     }
 
     public Outcome createBrewery()
+        throws IOException
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
@@ -114,31 +96,24 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        String name, url, description;
+        Brewery brewery;
         try
         {
-            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
-            name = input.getValue( "name" ).toString().trim();
-            url = input.getValue( "url" ).toString().trim();
-            description = input.getValue( "description" ).toString().trim();
+            brewery = mapper.readValue( body, Brewery.class );
         }
-        catch( RepresentationException ex )
+        catch( JsonProcessingException ex )
         {
-            return outcomes().badRequest().
-                withBody( ex.getMessage() ).build();
+            return outcomes().badRequest().withBody( ex.getMessage() ).build();
         }
         EntityManager em = emf.createEntityManager();
         try
         {
             em.getTransaction().begin();
-            Brewery brewery = Brewery.newBrewery( name, url, description );
             em.persist( brewery );
             em.getTransaction().commit();
+
             String breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl();
-            String json = hal.newRepresentation().
-                withProperty( "id", brewery.getId() ).
-                withProperty( "url", breweryRoute ).
-                toString( HAL_JSON );
+            byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( brewery );
             return outcomes().
                 created().
                 withHeader( LOCATION, breweryRoute ).
@@ -148,8 +123,7 @@ public class API
         }
         catch( ConstraintViolationException ex )
         {
-            return outcomes().badRequest().
-                withBody( ex.getConstraintViolations().toString() ).build();
+            return outcomes().badRequest().withBody( ex.getConstraintViolations().toString() ).build();
         }
         finally
         {
@@ -158,6 +132,7 @@ public class API
     }
 
     public Outcome brewery( Long id )
+        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -167,26 +142,7 @@ public class API
             {
                 return outcomes().notFound().build();
             }
-            Representation resource = hal.
-                newRepresentation( reverseRoutes().of( GET( API.class ).brewery( id ) ).httpUrl() ).
-                withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() ).
-                withLink( "list", reverseRoutes().of( GET( API.class ).breweries() ).httpUrl() ).
-                withProperty( "id", brewery.getId() ).
-                withProperty( "name", brewery.getName() ).
-                withProperty( "url", brewery.getUrl() ).
-                withProperty( "description", brewery.getDescription() );
-            List<Beer> beers = em.createQuery( "select b from Beer b where b.brewery=:brewery", Beer.class ).
-                setParameter( "brewery", brewery ).getResultList();
-            resource.withProperty( "beers-count", beers.size() );
-            for( Beer beer : beers )
-            {
-                Representation beerResource = hal.
-                    newRepresentation( reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl() ).
-                    withProperty( "id", beer.getId() ).
-                    withProperty( "name", beer.getName() );
-                resource.withRepresentation( "beer", beerResource );
-            }
-            String json = resource.toString( HAL_JSON );
+            byte[] json = mapper.writerWithView( Json.BreweryDetailView.class ).writeValueAsBytes( brewery );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -196,6 +152,7 @@ public class API
     }
 
     public Outcome updateBrewery( Long id )
+        throws IOException
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
@@ -203,19 +160,6 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        String name, url, description;
-        try
-        {
-            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
-            name = input.getValue( "name" ).toString().trim();
-            url = input.getValue( "url" ).toString().trim();
-            description = input.getValue( "description" ).toString().trim();
-        }
-        catch( RepresentationException ex )
-        {
-            return outcomes().badRequest().
-                withBody( ex.getMessage() ).build();
-        }
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -225,9 +169,7 @@ public class API
             {
                 return outcomes().notFound().build();
             }
-            brewery.setName( name );
-            brewery.setUrl( url );
-            brewery.setDescription( description );
+            mapper.readerForUpdating( brewery ).readValue( body );
             em.persist( brewery );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -254,9 +196,7 @@ public class API
             {
                 return outcomes().notFound().build();
             }
-            List<Beer> beers = em.createQuery( "select b from Beer b where b.brewery=:brewery", Beer.class ).
-                setParameter( "brewery", brewery ).getResultList();
-            if( !beers.isEmpty() )
+            if( !brewery.getBeers().isEmpty() )
             {
                 return outcomes().conflict().withBody( "Does not have zero beers." ).build();
             }
@@ -278,26 +218,13 @@ public class API
     // _________________________________________________________________________________________________________________
     //
     public Outcome beers()
+        throws JsonProcessingException
     {
-        Representation resource = hal.
-            newRepresentation( reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
-            withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() );
         EntityManager em = emf.createEntityManager();
         try
         {
             List<Beer> beers = em.createQuery( "select b from Beer b", Beer.class ).getResultList();
-            resource.withProperty( "count", beers.size() );
-            for( Beer beer : beers )
-            {
-                Representation beerResource = hal.
-                    newRepresentation( reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl() ).
-                    withProperty( "id", beer.getId() ).
-                    withProperty( "name", beer.getName() ).
-                    withProperty( "brewery_id", beer.getBrewery().getId() ).
-                    withProperty( "brewery_name", beer.getBrewery().getName() );
-                resource.withRepresentation( "beer", beerResource );
-            }
-            String json = resource.toString( HAL_JSON );
+            byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beers );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -307,6 +234,7 @@ public class API
     }
 
     public Outcome createBeer()
+        throws IOException
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
@@ -314,21 +242,20 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        Long breweryId;
-        String name, description;
-        Float abv;
+        JsonNode bodyNode = mapper.readTree( body );
+        if( !bodyNode.hasNonNull( "brewery_id" ) )
+        {
+            return outcomes().badRequest().withBody( "Missing brewery_id" ).build();
+        }
+        Long breweryId = bodyNode.get( "brewery_id" ).longValue();
+        Beer beer;
         try
         {
-            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
-            breweryId = Long.valueOf( input.getValue( "brewery_id" ).toString().trim() );
-            name = input.getValue( "name" ).toString().trim();
-            abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
-            description = input.getValue( "description" ).toString().trim();
+            beer = mapper.treeToValue( bodyNode, Beer.class );
         }
-        catch( RepresentationException | NumberFormatException ex )
+        catch( JsonProcessingException ex )
         {
-            return outcomes().badRequest().
-                withBody( ex.getMessage() ).build();
+            return outcomes().badRequest().withBody( ex.getMessage() ).build();
         }
         EntityManager em = emf.createEntityManager();
         try
@@ -339,14 +266,12 @@ public class API
             {
                 return outcomes().badRequest().withBody( "No brewery found with id " + breweryId ).build();
             }
-            Beer beer = Beer.newBeer( brewery, name, abv, description );
+            beer.setBrewery( brewery );
             em.persist( beer );
+            em.persist( brewery );
             em.getTransaction().commit();
             String beerRoute = reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl();
-            String json = hal.newRepresentation().
-                withProperty( "id", beer.getId() ).
-                withProperty( "url", beerRoute ).
-                toString( HAL_JSON );
+            byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beer );
             return outcomes().
                 created().
                 withHeader( LOCATION, beerRoute ).
@@ -366,6 +291,7 @@ public class API
     }
 
     public Outcome beer( Long id )
+        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -375,20 +301,7 @@ public class API
             {
                 return outcomes().notFound().build();
             }
-            Representation resource = hal.
-                newRepresentation( reverseRoutes().of( GET( API.class ).beer( id ) ).httpUrl() ).
-                withLink( "api", reverseRoutes().of( GET( API.class ).index() ).httpUrl() ).
-                withLink( "list", reverseRoutes().of( GET( API.class ).beers() ).httpUrl() ).
-                withProperty( "id", beer.getId() ).
-                withProperty( "name", beer.getName() ).
-                withProperty( "abv", beer.getAbv() ).
-                withProperty( "description", beer.getDescription() );
-            Representation breweryResource = hal.
-                newRepresentation( reverseRoutes().of( GET( API.class ).brewery( beer.getBrewery().getId() ) ).httpUrl() ).
-                withProperty( "id", beer.getBrewery().getId() ).
-                withProperty( "name", beer.getBrewery().getName() );
-            resource.withRepresentation( "brewery", breweryResource );
-            String json = resource.toString( HAL_JSON );
+            byte[] json = mapper.writerWithView( Json.BeerDetailView.class ).writeValueAsBytes( beer );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -398,6 +311,7 @@ public class API
     }
 
     public Outcome updateBeer( Long id )
+        throws IOException
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
@@ -405,20 +319,6 @@ public class API
                 withBody( "Unacceptable content-type:" + request().contentType() ).build();
         }
         String body = request().body().asString();
-        String name, description;
-        Float abv;
-        try
-        {
-            ReadableRepresentation input = hal.readRepresentation( new StringReader( body ) );
-            name = input.getValue( "name" ).toString().trim();
-            abv = Float.valueOf( input.getValue( "abv" ).toString().trim() );
-            description = input.getValue( "description" ).toString().trim();
-        }
-        catch( RepresentationException ex )
-        {
-            return outcomes().badRequest().
-                withBody( ex.getMessage() ).build();
-        }
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -428,9 +328,7 @@ public class API
             {
                 return outcomes().notFound().build();
             }
-            beer.setName( name );
-            beer.setAbv( abv );
-            beer.setDescription( description );
+            mapper.readerForUpdating( beer ).readValue( body );
             em.persist( beer );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -457,6 +355,9 @@ public class API
             {
                 return outcomes().notFound().build();
             }
+            Brewery brewery = beer.getBrewery();
+            brewery.getBeers().remove( beer );
+            em.persist( brewery );
             em.remove( beer );
             em.getTransaction().commit();
             return outcomes().ok().build();

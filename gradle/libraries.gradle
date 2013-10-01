@@ -29,7 +29,6 @@ def v_rest_assured = '1.8.1'
 // Samples only libraries versions
 def v_eclipselink = '2.5.0'
 def v_el = '3.0.0'
-def v_halbuilder = '3.0.1'
 def v_hibernate_validator = '5.0.1.Final'
 def v_h2 = '1.3.173'
 def v_jpa = '2.1.0'
@@ -81,7 +80,6 @@ rootProject.ext {
         el:                 "org.glassfish:javax.el:$v_el",
         hibernate_validator:"org.hibernate:hibernate-validator:$v_hibernate_validator",
         h2:                 "com.h2database:h2:$v_h2",
-        halbuilder:         "com.theoryinpractise:halbuilder-standard:$v_halbuilder",
         jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
 
     ]

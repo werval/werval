@@ -15,6 +15,9 @@
  */
 package beerdb;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,75 +25,101 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Table( name = "beers" )
+@JsonIgnoreProperties( ignoreUnknown = true )
 public class Beer
 {
 
-    public static Beer newBeer( Brewery brewery, String name, float abv, String description )
-    {
-        Beer beer = new Beer();
-        beer.brewery = brewery;
-        beer.name = name;
-        beer.abv = abv;
-        beer.description = description;
-        return beer;
-    }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
+    @NotBlank
     @Length( min = 3, max = 255 )
     private String name;
     @Column( nullable = false )
+    @NotNull
     @Range( min = 0, max = 100 )
-    private float abv;
+    private Float abv;
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
     private String description;
     @ManyToOne( optional = false )
     private Brewery brewery;
 
-    public Brewery getBrewery()
-    {
-        return brewery;
-    }
-
+    @JsonView(
+        {
+        Json.BeerListView.class, Json.BeerDetailView.class,
+        Json.BreweryDetailView.class
+    } )
     public Long getId()
     {
         return id;
     }
 
+    @JsonView(
+        {
+        Json.BeerListView.class, Json.BeerDetailView.class,
+        Json.BreweryDetailView.class
+    } )
     public String getName()
     {
         return name;
     }
 
-    public void setName( String name )
-    {
-        this.name = name;
-    }
-
-    public float getAbv()
+    @JsonView(
+        {
+        Json.BeerDetailView.class,
+    } )
+    public Float getAbv()
     {
         return abv;
     }
 
-    public void setAbv( float abv )
-    {
-        this.abv = abv;
-    }
-
+    @JsonView(
+        {
+        Json.BeerDetailView.class,
+    } )
     public String getDescription()
     {
         return description;
     }
 
+    @JsonView(
+        {
+        Json.BeerListView.class, Json.BeerDetailView.class
+    } )
+    public Brewery getBrewery()
+    {
+        return brewery;
+    }
+
+    @JsonDeserialize
+    public void setName( String name )
+    {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public void setAbv( Float abv )
+    {
+        this.abv = abv;
+    }
+
+    @JsonDeserialize
     public void setDescription( String description )
     {
-        this.description = description;
+        this.description = description == null ? null : description.trim();
+    }
+
+    public void setBrewery( Brewery brewery )
+    {
+        this.brewery = brewery;
+        this.brewery.getBeers().add( this );
     }
 }

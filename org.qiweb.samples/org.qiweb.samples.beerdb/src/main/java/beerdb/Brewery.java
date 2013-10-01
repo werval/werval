@@ -15,72 +15,109 @@
  */
 package beerdb;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table( name = "breweries" )
+@JsonIgnoreProperties( ignoreUnknown = true )
 public class Brewery
 {
 
-    public static Brewery newBrewery( String name, String url, String description )
-    {
-        Brewery brewery = new Brewery();
-        brewery.name = name;
-        brewery.url = url;
-        brewery.description = description;
-        return brewery;
-    }
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
     @Column( length = 255, unique = true, nullable = false )
+    @NotBlank
     @Length( min = 3, max = 255 )
     private String name;
+    @Column
+    @NotNull
+    @Range( min = 0 )
+    private Integer since = 1664;
     @Column( length = 1024, nullable = true )
     @URL
+    @NotBlank
     @Length( max = 1024 )
     private String url;
-    @Column
-    private Integer since = 1664;
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
     private String description;
+    @OneToMany( mappedBy = "brewery" )
+    private List<Beer> beers = new ArrayList<>();
 
+    @JsonView(
+        {
+        Json.BreweryListView.class, Json.BreweryDetailView.class,
+        Json.BeerListView.class, Json.BeerDetailView.class
+    } )
     public Long getId()
     {
         return id;
     }
 
+    @JsonView(
+        {
+        Json.BreweryListView.class, Json.BreweryDetailView.class,
+        Json.BeerListView.class, Json.BeerDetailView.class
+    } )
     public String getName()
     {
         return name;
     }
 
-    public void setName( String name )
-    {
-        this.name = name;
-    }
-
+    @JsonView( Json.BreweryDetailView.class )
     public String getUrl()
     {
         return url;
     }
 
-    public void setUrl( String url )
-    {
-        this.url = url;
-    }
-
+    @JsonView(
+        {
+        Json.BreweryListView.class, Json.BreweryDetailView.class
+    } )
     public Integer getSince()
     {
         return since;
+    }
+
+    @JsonView( Json.BreweryDetailView.class )
+    public String getDescription()
+    {
+        return description;
+    }
+
+    @JsonView( Json.BreweryDetailView.class )
+    public List<Beer> getBeers()
+    {
+        return beers;
+    }
+
+    @JsonView( Json.BreweryListView.class )
+    public Integer getBeersCount()
+    {
+        return beers.size();
+    }
+
+    @JsonDeserialize
+    public void setName( String name )
+    {
+        this.name = name == null ? name : name.trim();
     }
 
     public void setSince( Integer since )
@@ -88,13 +125,15 @@ public class Brewery
         this.since = since;
     }
 
-    public String getDescription()
+    @JsonDeserialize
+    public void setUrl( String url )
     {
-        return description;
+        this.url = url == null ? null : url.trim();
     }
 
+    @JsonDeserialize
     public void setDescription( String description )
     {
-        this.description = description;
+        this.description = description == null ? null : description.trim();
     }
 }

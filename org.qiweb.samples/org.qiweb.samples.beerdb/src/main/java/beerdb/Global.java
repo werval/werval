@@ -15,8 +15,9 @@
  */
 package beerdb;
 
-import com.theoryinpractise.halbuilder.api.RepresentationFactory;
-import com.theoryinpractise.halbuilder.standard.StandardRepresentationFactory;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -40,10 +41,11 @@ public class Global
             Collections.singletonMap( "eclipselink.classloader", application.classLoader() ) );
         application.metaData().put( "emf", emf );
 
-        // Hypertext Application Language
-        RepresentationFactory halFactory = new StandardRepresentationFactory();
-        halFactory.withFlag( RepresentationFactory.PRETTY_PRINT );
-        application.metaData().put( "hal", halFactory );
+        // Jackson JSON
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure( MapperFeature.DEFAULT_VIEW_INCLUSION, false );
+        mapper.setPropertyNamingStrategy( PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES );
+        application.metaData().put( "mapper", mapper );
 
         if( application.mode() == DEV )
         {
@@ -75,32 +77,104 @@ public class Global
             em.getTransaction().begin();
             if( em.createQuery( "select b from Brewery b", Brewery.class ).getResultList().isEmpty() )
             {
-                Brewery kroBrewery = Brewery.newBrewery(
-                    "Kronenbourg 1664",
-                    "http://kronenbourg1664.com/",
-                    "**Kronenbourg Brewery** (Brasseries Kronenbourg) is a brewery founded in 1664 by Geronimus Hatt in "
-                    + "Strasbourg (at the time a Free Imperial City of the Holy Roman Empire; now France) as the Hatt "
-                    + "Brewery. The name comes from the area (Cronenbourg) where the brewery relocated in 1850. The "
-                    + "company is owned by the Carlsberg Group. The main brand is Kronenbourg 1664, a 5.5% abv pale "
-                    + "lager which is the best selling premium lager brand in France." );
-                Beer kro = Beer.newBeer( kroBrewery, "Kronenbourg", 5.5F, "Pale lager first brewed in 1952." );
-                Beer brown1664 = Beer.newBeer( kroBrewery, "Kronenbourg 1664", 5, "" );
-                Beer singleMalt = Beer.newBeer( kroBrewery, "Single Malt ", 6.1F, "French name Malt d'Exception." );
+                Brewery kroBrewery = new Brewery();
+                {
+                    kroBrewery.setName( "Kronenbourg 1664" );
+                    kroBrewery.setUrl( "http://kronenbourg1664.com/" );
+                    kroBrewery.setDescription(
+                        "**Kronenbourg Brewery** (Brasseries Kronenbourg) is a brewery founded in 1664 by Geronimus "
+                        + "Hatt in Strasbourg (at the time a Free Imperial City of the Holy Roman Empire; now France) "
+                        + "as the Hatt Brewery. The name comes from the area (Cronenbourg) where the brewery relocated "
+                        + "in 1850. The company is owned by the Carlsberg Group. The main brand is Kronenbourg 1664, a "
+                        + "5.5% abv pale lager which is the best selling premium lager brand in France." );
+                }
+                Beer kro = new Beer();
+                {
+                    kro.setBrewery( kroBrewery );
+                    kro.setName( "Kronenbourg" );
+                    kro.setAbv( 5.5F );
+                    kro.setDescription( "Pale lager first brewed in 1952." );
+                }
+                Beer brown1664 = new Beer();
+                {
+                    brown1664.setBrewery( kroBrewery );
+                    brown1664.setName( "Kronenbourg 1664" );
+                    brown1664.setAbv( 5F );
+                    brown1664.setDescription( "" );
+                }
+                Beer singleMalt = new Beer();
+                {
+                    singleMalt.setBrewery( kroBrewery );
+                    singleMalt.setName( "Single Malt " );
+                    singleMalt.setAbv( 6.1F );
+                    singleMalt.setDescription( "French name Malt d'Exception." );
+                }
 
-                Brewery duyckBrewery = Brewery.newBrewery(
-                    "Duyck",
-                    "http://www.jenlain.fr/",
-                    "Since 1922, four generations have successively taken over the brewery, over its eventful "
-                    + "history... From Léon to Raymond Duyck, discover the fascinating story of this devoted family!" );
-                Beer jenlainTenebreuse = Beer.newBeer( duyckBrewery, "Jenlain Ténébreuse", 7, "A GENTLE RAY OF LIGHT AMIDST THE GLOOM." );
-                Beer jenlainAmbree = Beer.newBeer( duyckBrewery, "Jenlain Ambrée", 7.5F, "GUARDIAN OF OUR TRADITIONS." );
-                Beer jenlainBlonde = Beer.newBeer( duyckBrewery, "Jenlain Blonde", 7.5F, "THE WORTHY HEIR." );
-                Beer jenlainBlondeAbbaye = Beer.newBeer( duyckBrewery, "Jenlain Blonde d'Abbaye", 6.8F, "TIME FOR SHARING." );
-                Beer jenlainN6 = Beer.newBeer( duyckBrewery, "Jenlain N°6", 6F, "PERFECTLY BALANCED NUMBER." );
-                Beer jenlainOr = Beer.newBeer( duyckBrewery, "Jenlain Or", 8F, "THE BREWERY'S MOST PRECIOUS TREASURE." );
-                Beer jenlainArdente = Beer.newBeer( duyckBrewery, "Jenlain Ardente", 3.1F, "THE FRUITS OF IMAGINATION." );
-                Beer jenlainBlanche = Beer.newBeer( duyckBrewery, "Jenlain Blanche", 4.3F, "INSTANTANEOUS FRESHNESS." );
-
+                Brewery duyckBrewery = new Brewery();
+                {
+                    duyckBrewery.setName( "Duyck" );
+                    duyckBrewery.setUrl( "http://www.jenlain.fr/" );
+                    duyckBrewery.setDescription(
+                        "Since 1922, four generations have successively taken over the brewery, over its eventful "
+                        + "history... From Léon to Raymond Duyck, discover the fascinating story of this devoted "
+                        + "family!" );
+                }
+                Beer jenlainTenebreuse = new Beer();
+                {
+                    jenlainTenebreuse.setBrewery( duyckBrewery );
+                    jenlainTenebreuse.setName( "Jenlain Ténébreuse" );
+                    jenlainTenebreuse.setAbv( 7F );
+                    jenlainTenebreuse.setDescription( "A GENTLE RAY OF LIGHT AMIDST THE GLOOM." );
+                }
+                Beer jenlainAmbree = new Beer();
+                {
+                    jenlainAmbree.setBrewery( duyckBrewery );
+                    jenlainAmbree.setName( "Jenlain Ambrée" );
+                    jenlainAmbree.setAbv( 7.5F );
+                    jenlainAmbree.setDescription( "GUARDIAN OF OUR TRADITIONS." );
+                }
+                Beer jenlainBlonde = new Beer();
+                {
+                    jenlainBlonde.setBrewery( duyckBrewery );
+                    jenlainBlonde.setName( "Jenlain Blonde" );
+                    jenlainBlonde.setAbv( 7.5F );
+                    jenlainBlonde.setDescription( "THE WORTHY HEIR." );
+                }
+                Beer jenlainBlondeAbbaye = new Beer();
+                {
+                    jenlainBlondeAbbaye.setBrewery( duyckBrewery );
+                    jenlainBlondeAbbaye.setName( "Jenlain Blonde d'Abbaye" );
+                    jenlainBlondeAbbaye.setAbv( 6.8F );
+                    jenlainBlondeAbbaye.setDescription( "TIME FOR SHARING." );
+                }
+                Beer jenlainN6 = new Beer();
+                {
+                    jenlainN6.setBrewery( duyckBrewery );
+                    jenlainN6.setName( "Jenlain N°6" );
+                    jenlainN6.setAbv( 6F );
+                    jenlainN6.setDescription( "PERFECTLY BALANCED NUMBER." );
+                }
+                Beer jenlainOr = new Beer();
+                {
+                    jenlainOr.setBrewery( duyckBrewery );
+                    jenlainOr.setName( "Jenlain Or" );
+                    jenlainOr.setAbv( 8F );
+                    jenlainOr.setDescription( "THE BREWERY'S MOST PRECIOUS TREASURE." );
+                }
+                Beer jenlainArdente = new Beer();
+                {
+                    jenlainArdente.setBrewery( duyckBrewery );
+                    jenlainArdente.setName( "Jenlain Ardente" );
+                    jenlainArdente.setAbv( 3.1F );
+                    jenlainArdente.setDescription( "THE FRUITS OF IMAGINATION." );
+                }
+                Beer jenlainBlanche = new Beer();
+                {
+                    jenlainBlanche.setBrewery( duyckBrewery );
+                    jenlainBlanche.setName( "Jenlain Blanche" );
+                    jenlainBlanche.setAbv( 4.3F );
+                    jenlainBlanche.setDescription( "INSTANTANEOUS FRESHNESS." );
+                }
 
                 em.persist( kroBrewery );
                 em.persist( kro );

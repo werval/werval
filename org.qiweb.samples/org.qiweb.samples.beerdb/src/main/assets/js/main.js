@@ -45,7 +45,7 @@ beerdb.controller('NavBarCtrl', [
 beerdb.controller('FooterCtrl', [
     '$scope', '$http', function($scope, $http) {
         $http.get('/api').success(function(data) {
-            $scope.version= data.detailed_version;
+            $scope.version = data.detailed_version;
         });
     }
 ]);
@@ -54,7 +54,8 @@ beerdb.controller('FooterCtrl', [
 beerdb.controller('BreweriesCtrl', [
     '$scope', '$http', function($scope, $http) {
         $http.get('/api/breweries').success(function(data) {
-            $scope.breweries = asArray(data._embedded.brewery);
+            $scope.breweries = data;
+            $scope.loaded = true;
         });
     }
 ]);
@@ -62,11 +63,7 @@ beerdb.controller('BreweriesCtrl', [
 beerdb.controller('NewBreweryCtrl', [
     '$scope', '$http', '$location', function($scope, $http, $location) {
         $scope.form_title = 'New brewery';
-        $scope.data = {
-            name: '',
-            url: '',
-            description: ''
-        };
+        $scope.loaded = true;
         $scope.submitForm = function() {
             $http.post('/api/breweries', $scope.data).success(function(data) {
                 $location.path('/breweries/' + data.id);
@@ -79,7 +76,7 @@ beerdb.controller('BreweryCtrl', [
     '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
         $http.get('/api/breweries/' + $routeParams.id).success(function(data) {
             $scope.brewery = data;
-            $scope.brewery.beers = asArray(data._embedded.beer);
+            $scope.loaded = true;
         });
         $scope.deleteBrewery = function() {
             $http.delete('/api/breweries/' + $routeParams.id).success(function() {
@@ -92,13 +89,9 @@ beerdb.controller('BreweryCtrl', [
 beerdb.controller('EditBreweryCtrl', [
     '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
         $scope.form_title = 'Edit brewery';
-        $scope.data = {
-            name: '',
-            url: '',
-            description: ''
-        };
         $http.get('/api/breweries/' + $routeParams.id).success(function(data) {
-            $scope.data = data;
+            $scope.data = data; // Rename to $scope.brewery
+            $scope.loaded = true;
         });
         $scope.submitForm = function() {
             $http.put('/api/breweries/' + $routeParams.id, $scope.data).success(function(data) {
@@ -112,7 +105,8 @@ beerdb.controller('EditBreweryCtrl', [
 beerdb.controller('BeersCtrl', [
     '$scope', '$http', function($scope, $http) {
         $http.get('/api/beers').success(function(data) {
-            $scope.beers = asArray(data._embedded.beer);
+            $scope.beers = data;
+            $scope.loaded = true;
         });
     }
 ]);
@@ -121,18 +115,21 @@ beerdb.controller('NewBeerCtrl', [
     '$scope', '$http', '$location', function($scope, $http, $location) {
         $scope.form_title = 'New beer';
         $scope.data = {
-            brewery_id: $location.search().brewery_id ? parseInt($location.search().brewery_id) : undefined,
-            name: '',
-            abv: undefined,
-            description: ''
+            brewery_id: $location.search().brewery_id ? parseInt($location.search().brewery_id) : undefined
         };
         $http.get('/api/breweries').success(function(data) {
-            $scope.breweries = asArray(data._embedded.brewery);
+            $scope.breweries = data;
+            $scope.loaded = true;
         });
         $scope.submitForm = function() {
             $http.post('/api/beers', $scope.data).success(function(data) {
                 $location.path('/beers/' + data.id);
             });
+        };
+        $scope.cancelForm = function() {
+            $location.
+                    path($location.search().brewery_id ? '/breweries/' + $location.search().brewery_id : '/beers').
+                    search({});
         };
     }
 ]);
@@ -141,36 +138,38 @@ beerdb.controller('BeerCtrl', [
     '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
         $http.get('/api/beers/' + $routeParams.id).success(function(data) {
             $scope.beer = data;
-            $scope.beer.brewery = data._embedded.brewery;
+            $scope.loaded = true;
         });
         $scope.deleteBeer = function() {
             $http.delete('/api/beers/' + $routeParams.id).success(function() {
-                $location.path('/api/beers');
+                $location.path('/beers');
             });
         };
     }
 ]);
 
 beerdb.controller('EditBeerCtrl', [
-    '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
+    '$scope', '$q', '$http', '$location', '$routeParams', function($scope, $q, $http, $location, $routeParams) {
         $scope.form_title = 'Edit beer';
-        $scope.data = {
-            brewery_id: undefined,
-            name: '',
-            abv: undefined,
-            description: ''
-        };
+        $scope.brewery_disabled = true;
         $http.get('/api/breweries').success(function(data) {
-            $scope.breweries = asArray(data._embedded.brewery);
+            $scope.breweries = data;
+            if ($scope.data)
+                $scope.loaded = true;
         });
         $http.get('/api/beers/' + $routeParams.id).success(function(data) {
             $scope.data = data;
-            $scope.data.brewery_id = data._embedded.brewery.id;
+            $scope.data.brewery_id = data.brewery.id;
+            if ($scope.breweries)
+                $scope.loaded = true;
         });
         $scope.submitForm = function() {
             $http.put('/api/beers/' + $routeParams.id, $scope.data).success(function(data) {
                 $location.path('/beers/' + $routeParams.id);
             });
+        };
+        $scope.cancelForm = function() {
+            $location.path('/beers/' + $routeParams.id);
         };
     }
 ]);

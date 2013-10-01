@@ -24,6 +24,8 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasItems;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
@@ -47,9 +49,6 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "_links.self.href", equalTo( baseHttpUrl() + "/api" ) ).
-            body( "_links.beers.href", equalTo( baseHttpUrl() + "/api/beers" ) ).
-            body( "_links.breweries.href", equalTo( baseHttpUrl() + "/api/breweries" ) ).
             body( "commit", equalTo( COMMIT ) ).
             body( "date", equalTo( DATE ) ).
             body( "detailed_version", equalTo( DETAILED_VERSION ) ).
@@ -58,30 +57,6 @@ public class APITest
             body( "version", equalTo( VERSION ) ).
             when().
             get( "/api" );
-    }
-
-    @Test
-    public void testBeers()
-    {
-        expect().
-            statusCode( 200 ).
-            contentType( APPLICATION_JSON ).
-            body( "_links.self.href", equalTo( baseHttpUrl() + "/api/beers" ) ).
-            body( "count", equalTo( 0 ) ).
-            when().
-            get( "/api/beers" );
-    }
-
-    @Test
-    public void testBreweries()
-    {
-        expect().
-            statusCode( 200 ).
-            contentType( APPLICATION_JSON ).
-            body( "_links.self.href", equalTo( baseHttpUrl() + "/api/breweries" ) ).
-            body( "count", equalTo( 0 ) ).
-            when().
-            get( "/api/breweries" );
     }
 
     @Test
@@ -115,7 +90,7 @@ public class APITest
             body( "BAD PAYLOAD" ).
             expect().
             statusCode( 400 ).
-            body( containsString( "unrecognized" ) ).
+            body( containsString( "Unexpected character" ) ).
             when().
             post( "/api/breweries" );
 
@@ -166,11 +141,11 @@ public class APITest
 
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"   \", \"url\":\"But this is not an URL\", \"description\":\"\" }" ).
+            body( "{ \"name\":\"a  \", \"url\":\"But this is not an URL\", \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
-            body( containsString( "url" ) ).
+            body( containsString( "URL" ) ).
             when().
             post( "/api/breweries" );
     }
@@ -263,7 +238,6 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "_links.self.href", equalTo( breweryUrl ) ).
             body( "name", equalTo( "ZengBrewery" ) ).
             when().
             get( breweryUrl );
@@ -271,9 +245,8 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "count", equalTo( 1 ) ).
-            body( "_embedded.brewery.name", equalTo( "ZengBrewery" ) ).
-            body( "_embedded.brewery._links.self.href", equalTo( breweryUrl ) ).
+            body( "", hasSize( 1 ) ).
+            body( "name", hasItems( "ZengBrewery" ) ).
             when().
             get( "/api/breweries" );
 
@@ -285,7 +258,7 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "count", equalTo( 0 ) ).
+            body( "breweries", hasSize( 0 ) ).
             when().
             get( "/api/breweries" );
     }
@@ -324,7 +297,6 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "_links.self.href", equalTo( beerUrl ) ).
             body( "name", equalTo( "ZengBeer" ) ).
             when().
             get( beerUrl );
