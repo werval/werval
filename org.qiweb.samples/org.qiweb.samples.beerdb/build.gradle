@@ -26,6 +26,7 @@ dependencies {
 
     assets webjars.angular
     assets webjars.bootstrap
+    assets webjars.jquery
     assets webjars.marked
 
     compile "org.qiweb:org.qiweb.api:$version"
@@ -70,8 +71,10 @@ task extractWebJars( type: Copy ) {
 
 task concatJs( type: com.eriwen.gradle.js.tasks.CombineJsTask, dependsOn: extractWebJars ) {
     source = [
-        'build/webjars/angularjs/1.0.8/angular.js',
         'build/webjars/marked/0.2.9/marked.js',
+        'build/webjars/jquery/2.0.3/jquery.js',
+        'build/webjars/bootstrap/3.0.0/js/bootstrap.js',
+        'build/webjars/angularjs/1.0.8/angular.js',
         'src/main/assets/js/main.js'
     ]
     dest = 'build/assets/js/main.js'

@@ -1,4 +1,8 @@
 
+$(function(){
+   $(".collapse").collapse();
+});
+
 function asArray(eventualArray) {
     if (!eventualArray)
         return [];

@@ -7,16 +7,21 @@
     </head>
     <body ng-app="BeerDB">
 
-        <nav class="navbar navbar-default" ng-controller="NavBarCtrl">
+        <nav class="navbar navbar-default" role="navigation" ng-controller="NavBarCtrl">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-beerdb-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <span class="navbar-brand">Beer Database</span>
             </div>
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <div class="collapse navbar-collapse navbar-beerdb-collapse">
                 <ul class="nav navbar-nav">
                     <li ng-class="{active: breweries}"><a href="#/breweries">Breweries</a></li>
                     <li ng-class="{active: beers}"><a href="#/beers">Beers</a></li>
                 </ul>
-                <p class="navbar-text pull-right">Sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a></p>
             </div>
         </nav>
 
@@ -259,8 +264,12 @@
         </div>
 
         <footer>
-            <div class="container" ng-controller="FooterCtrl">
-                <p><strong>Version</strong> {{version}}</p>
+            <div class="container" ng-controller="FooterCtrl" ng-show="version">
+                <p>
+                    <strong>Version</strong> {{version}}
+                    <br/>
+                    Sample application built with <a href="http://qiweb.org/" target="_blank">QiWeb</a>.
+                </p>
             </div>
         </footer>
 
