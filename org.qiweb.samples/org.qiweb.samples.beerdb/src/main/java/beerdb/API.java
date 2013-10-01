@@ -18,12 +18,15 @@ package beerdb;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.controllers.Outcome;
+import org.qiweb.samples.beerdb.BuildVersion;
 
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
@@ -32,12 +35,6 @@ import static org.qiweb.api.controllers.Controller.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
-import static org.qiweb.samples.beerdb.BuildVersion.COMMIT;
-import static org.qiweb.samples.beerdb.BuildVersion.DATE;
-import static org.qiweb.samples.beerdb.BuildVersion.DETAILED_VERSION;
-import static org.qiweb.samples.beerdb.BuildVersion.DIRTY;
-import static org.qiweb.samples.beerdb.BuildVersion.NAME;
-import static org.qiweb.samples.beerdb.BuildVersion.VERSION;
 
 public class API
 {
@@ -55,12 +52,12 @@ public class API
         throws JsonProcessingException
     {
         byte[] json = mapper.writeValueAsBytes( mapper.createObjectNode().
-            put( "commit", COMMIT ).
-            put( "date", DATE ).
-            put( "detailed_version", DETAILED_VERSION ).
-            put( "dirty", DIRTY ).
-            put( "name", NAME ).
-            put( "version", VERSION ) );
+            put( "commit", BuildVersion.COMMIT ).
+            put( "date", BuildVersion.DATE ).
+            put( "detailed_version", BuildVersion.DETAILED_VERSION ).
+            put( "dirty", BuildVersion.DIRTY ).
+            put( "name", BuildVersion.NAME ).
+            put( "version", BuildVersion.VERSION ) );
         return outcomes().ok( json ).as( APPLICATION_JSON ).build();
     }
 
@@ -92,10 +89,9 @@ public class API
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
-            return outcomes().badRequest().
-                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+            return badRequest( "Unacceptable content-type:" + request().contentType() );
         }
-        String body = request().body().asString();
+        byte[] body = request().body().asBytes();
         Brewery brewery;
         try
         {
@@ -103,7 +99,7 @@ public class API
         }
         catch( JsonProcessingException ex )
         {
-            return outcomes().badRequest().withBody( ex.getMessage() ).build();
+            return badRequest( ex.getMessage() );
         }
         EntityManager em = emf.createEntityManager();
         try
@@ -123,7 +119,7 @@ public class API
         }
         catch( ConstraintViolationException ex )
         {
-            return outcomes().badRequest().withBody( ex.getConstraintViolations().toString() ).build();
+            return badRequest( ex.getConstraintViolations().toString() );
         }
         finally
         {
@@ -140,7 +136,7 @@ public class API
             Brewery brewery = em.find( Brewery.class, id );
             if( brewery == null )
             {
-                return outcomes().notFound().build();
+                return notFound( "Brewery" );
             }
             byte[] json = mapper.writerWithView( Json.BreweryDetailView.class ).writeValueAsBytes( brewery );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
@@ -156,10 +152,9 @@ public class API
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
-            return outcomes().badRequest().
-                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+            return badRequest( "Unacceptable content-type:" + request().contentType() );
         }
-        String body = request().body().asString();
+        byte[] body = request().body().asBytes();
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -167,7 +162,7 @@ public class API
             Brewery brewery = em.find( Brewery.class, id );
             if( brewery == null )
             {
-                return outcomes().notFound().build();
+                return notFound( "Brewery" );
             }
             mapper.readerForUpdating( brewery ).readValue( body );
             em.persist( brewery );
@@ -176,8 +171,7 @@ public class API
         }
         catch( ConstraintViolationException ex )
         {
-            return outcomes().badRequest().
-                withBody( ex.getConstraintViolations().toString() ).build();
+            return badRequest( ex.getConstraintViolations().toString() );
         }
         finally
         {
@@ -186,6 +180,7 @@ public class API
     }
 
     public Outcome deleteBrewery( Long id )
+        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -194,11 +189,11 @@ public class API
             Brewery brewery = em.find( Brewery.class, id );
             if( brewery == null )
             {
-                return outcomes().notFound().build();
+                return notFound( "Brewery" );
             }
             if( !brewery.getBeers().isEmpty() )
             {
-                return outcomes().conflict().withBody( "Does not have zero beers." ).build();
+                return outcomes().conflict().withBody( "Does not have zero beers." ).as( APPLICATION_JSON ).build();
             }
             em.remove( brewery );
             em.getTransaction().commit();
@@ -238,14 +233,13 @@ public class API
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
-            return outcomes().badRequest().
-                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+            return badRequest( "Unacceptable content-type:" + request().contentType() );
         }
-        String body = request().body().asString();
+        byte[] body = request().body().asBytes();
         JsonNode bodyNode = mapper.readTree( body );
         if( !bodyNode.hasNonNull( "brewery_id" ) )
         {
-            return outcomes().badRequest().withBody( "Missing brewery_id" ).build();
+            return badRequest( "Missing brewery_id" );
         }
         Long breweryId = bodyNode.get( "brewery_id" ).longValue();
         Beer beer;
@@ -255,7 +249,7 @@ public class API
         }
         catch( JsonProcessingException ex )
         {
-            return outcomes().badRequest().withBody( ex.getMessage() ).build();
+            return badRequest( ex.getMessage() );
         }
         EntityManager em = emf.createEntityManager();
         try
@@ -264,7 +258,7 @@ public class API
             Brewery brewery = em.find( Brewery.class, breweryId );
             if( brewery == null )
             {
-                return outcomes().badRequest().withBody( "No brewery found with id " + breweryId ).build();
+                return badRequest( "No brewery found with id " + breweryId );
             }
             beer.setBrewery( brewery );
             em.persist( beer );
@@ -281,8 +275,7 @@ public class API
         }
         catch( ConstraintViolationException ex )
         {
-            return outcomes().badRequest().
-                withBody( ex.getConstraintViolations().toString() ).build();
+            return badRequest( ex.getConstraintViolations().toString() );
         }
         finally
         {
@@ -299,7 +292,7 @@ public class API
             Beer beer = em.find( Beer.class, id );
             if( beer == null )
             {
-                return outcomes().notFound().build();
+                return notFound( "Beer" );
             }
             byte[] json = mapper.writerWithView( Json.BeerDetailView.class ).writeValueAsBytes( beer );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
@@ -315,10 +308,9 @@ public class API
     {
         if( !APPLICATION_JSON.equals( request().contentType() ) )
         {
-            return outcomes().badRequest().
-                withBody( "Unacceptable content-type:" + request().contentType() ).build();
+            return badRequest( "Unacceptable content-type:" + request().contentType() );
         }
-        String body = request().body().asString();
+        byte[] body = request().body().asBytes();
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -326,7 +318,7 @@ public class API
             Beer beer = em.find( Beer.class, id );
             if( beer == null )
             {
-                return outcomes().notFound().build();
+                return notFound( "Beer" );
             }
             mapper.readerForUpdating( beer ).readValue( body );
             em.persist( beer );
@@ -335,8 +327,7 @@ public class API
         }
         catch( ConstraintViolationException ex )
         {
-            return outcomes().badRequest().
-                withBody( ex.getConstraintViolations().toString() ).build();
+            return badRequest( ex.getConstraintViolations().toString() );
         }
         finally
         {
@@ -345,6 +336,7 @@ public class API
     }
 
     public Outcome deleteBeer( Long id )
+        throws JsonProcessingException
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -353,7 +345,7 @@ public class API
             Beer beer = em.find( Beer.class, id );
             if( beer == null )
             {
-                return outcomes().notFound().build();
+                return notFound( "Beer" );
             }
             Brewery brewery = beer.getBrewery();
             brewery.getBeers().remove( beer );
@@ -366,5 +358,29 @@ public class API
         {
             em.close();
         }
+    }
+
+    private Outcome notFound( String what )
+        throws JsonProcessingException
+    {
+        return outcomes().notFound().withBody( errorBody( what + " not found" ) ).as( APPLICATION_JSON ).build();
+    }
+
+    private Outcome badRequest( String... messages )
+        throws JsonProcessingException
+    {
+        return outcomes().badRequest().withBody( errorBody( messages ) ).as( APPLICATION_JSON ).build();
+    }
+
+    private byte[] errorBody( String... messages )
+        throws JsonProcessingException
+    {
+        ObjectNode root = mapper.createObjectNode();
+        ArrayNode errors = root.putArray( "errors" );
+        for( String message : messages )
+        {
+            errors.add( message );
+        }
+        return mapper.writeValueAsBytes( root );
     }
 }
