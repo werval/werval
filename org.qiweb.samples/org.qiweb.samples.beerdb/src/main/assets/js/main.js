@@ -1,6 +1,6 @@
 
-$(function(){
-   $(".collapse").collapse();
+$(function() {
+    $(".collapse").collapse();
 });
 
 function asArray(eventualArray) {
@@ -83,9 +83,11 @@ beerdb.controller('BreweryCtrl', [
             $scope.loaded = true;
         });
         $scope.deleteBrewery = function() {
-            $http.delete('/api/breweries/' + $routeParams.id).success(function() {
-                $location.path('/api/breweries');
-            });
+            if (confirm("Delete Brewery?")) {
+                $http.delete('/api/breweries/' + $routeParams.id).success(function() {
+                    $location.path('/api/breweries');
+                });
+            }
         };
     }
 ]);
@@ -145,9 +147,11 @@ beerdb.controller('BeerCtrl', [
             $scope.loaded = true;
         });
         $scope.deleteBeer = function() {
-            $http.delete('/api/beers/' + $routeParams.id).success(function() {
-                $location.path('/beers');
-            });
+            if (confirm("Delete Beer?")) {
+                $http.delete('/api/beers/' + $routeParams.id).success(function() {
+                    $location.path('/breweries/' + $scope.beer.brewery.id);
+                });
+            }
         };
     }
 ]);
