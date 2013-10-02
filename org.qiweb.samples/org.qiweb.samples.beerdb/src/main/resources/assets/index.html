@@ -41,7 +41,9 @@
                 <div class="page-header">
                 <h2>
                 <span class="pull-right">
-                <a href="#/breweries/new" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></a>
+                <a href="#/breweries/new" class="btn btn-success" data-toggle="tooltip" title="Add Brewery" data-placement="left">
+                <i class="glyphicon glyphicon-plus"></i>
+                </a>
                 </span>
                 Breweries
                 <small ng-bind-template="{{breweries.length}} and counting"></small>
@@ -119,8 +121,12 @@
                 <h2>
                 {{brewery.name}}
                 <span class="pull-right">
-                <a class="btn btn-primary" href="#/breweries/{{brewery.id}}/edit"><i class="glyphicon glyphicon-pencil"></i></a>
-                <button class="btn btn-danger" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()"><i class="glyphicon glyphicon-remove"></i></button>
+                <a class="btn btn-primary" href="#/breweries/{{brewery.id}}/edit" data-toggle="tooltip" title="Edit Brewery" data-placement="left">
+                <i class="glyphicon glyphicon-pencil"></i>
+                </a>
+                <button class="btn btn-danger" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()" data-toggle="tooltip" title="Delete Brewery" data-placement="left">
+                <i class="glyphicon glyphicon-remove"></i>
+                </button>
                 </span>
                 </h2>
                 </div>
@@ -131,7 +137,9 @@
                 <h3>
                 Beers
                 <span class="pull-right">
-                <a href="#/beers/new?brewery_id={{brewery.id}}" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-plus"></i></a>
+                <a href="#/beers/new?brewery_id={{brewery.id}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add Beer" data-placement="left">
+                <i class="glyphicon glyphicon-plus"></i>
+                </a>
                 </span>
                 </h3>
 
@@ -163,7 +171,9 @@
                 <h2>
                 Beers
                 <span class="pull-right">
-                <a href="#/beers/new" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i></a>
+                <a href="#/beers/new" class="btn btn-success" data-toggle="tooltip" title="Add Beer" data-placement="left">
+                <i class="glyphicon glyphicon-plus"></i>
+                </a>
                 </span>
                 </h2>
                 </div>
@@ -244,8 +254,12 @@
                 <h2>
                 {{beer.name}}
                 <span class="pull-right">
-                <a class="btn btn-primary" href="#/beers/{{beer.id}}/edit"><i class="glyphicon glyphicon-pencil"></i></a>
-                <button class="btn btn-danger" ng-click="deleteBeer()"><i class="glyphicon glyphicon-remove"></i></button>
+                <a class="btn btn-primary" href="#/beers/{{beer.id}}/edit" data-toggle="tooltip" title="Edit Beer" data-placement="left">
+                <i class="glyphicon glyphicon-pencil"></i>
+                </a>
+                <button class="btn btn-danger" ng-click="deleteBeer()" data-toggle="tooltip" title="Delete Beer" data-placement="left">
+                <i class="glyphicon glyphicon-remove"></i>
+                </button>
                 </span>
                 <br/>
                 <small>Brewed by <a href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>

@@ -1,6 +1,9 @@
 
 $(function() {
     $(".collapse").collapse();
+    $("body").tooltip({
+        selector: 'a,button'
+    });
 });
 
 function asArray(eventualArray) {
