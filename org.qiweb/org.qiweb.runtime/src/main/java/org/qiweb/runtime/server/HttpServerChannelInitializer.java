@@ -107,10 +107,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         // GZip decompression support
         pipeline.addLast( "http-decompressor", new HttpContentDecompressor() );
 
-        // Aggregate chunked HttpRequests to disk
-        // TODO Move the aggregator to SubProtocolSwitchHandler or ensure it won't mangle with WebSockets
-        pipeline.addLast( httpExecutors, "http-aggregator", new HttpOnDiskRequestAggregator( app, -1 ) );
-
         // Allow to send chunked data
         pipeline.addLast( "chunked-write-handler", new ChunkedWriteHandler() );
 

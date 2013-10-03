@@ -33,6 +33,8 @@ import java.nio.file.Files;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.runtime.server.HttpOnDiskRequestAggregator;
 import org.qiweb.runtime.server.HttpRequestRouterHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
 
@@ -46,10 +48,12 @@ public final class FileByteBuff
     extends AbstractByteBuf
 {
 
+    private static final Logger LOG = LoggerFactory.getLogger( FileByteBuff.class );
     private static final String NOT_SUPPORTED = "Not supported";
     private static final String READ_ONLY = "Read Only.";
     private final File file;
     private final long length;
+    private int refCnt = 1;
 
     public FileByteBuff( File file )
         throws FileNotFoundException
@@ -385,30 +389,44 @@ public final class FileByteBuff
     @Override
     public ByteBuf retain( int increment )
     {
+        refCnt += increment;
         return this;
     }
 
     @Override
     public ByteBuf retain()
     {
-        return this;
+        return retain( 1 );
     }
 
     @Override
     public int refCnt()
     {
-        return 1;
+        return refCnt;
     }
 
     @Override
     public boolean release()
     {
-        return false;
+        return release( 1 );
     }
 
     @Override
     public boolean release( int decrement )
     {
+        refCnt -= decrement;
+        if( refCnt <= 0 )
+        {
+            try
+            {
+                Files.deleteIfExists( file.toPath() );
+            }
+            catch( IOException ex )
+            {
+                LOG.warn( "Unable to delete File in FileByteBuff on release: {}", ex.getMessage(), ex );
+            }
+            return true;
+        }
         return false;
     }
 

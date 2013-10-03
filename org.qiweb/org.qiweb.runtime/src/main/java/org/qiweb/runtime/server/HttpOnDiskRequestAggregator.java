@@ -67,8 +67,6 @@ import static org.qiweb.api.http.Headers.Values.CLOSE;
  *     to a file thus preventing OOME. The file is deleted when the channel is closed.
  * </p>
  */
-// TODO Add in-memory buffering and overflow to disk according to a threshold
-// TODO Remove temporary files !
 public class HttpOnDiskRequestAggregator
     extends MessageToMessageDecoder<HttpObject>
 {
@@ -78,7 +76,6 @@ public class HttpOnDiskRequestAggregator
     private final int maxContentLength;
     private HttpRequest aggregatedRequestHeader;
     private File bodyFile;
-    private OutputStream bodyOutputStream;
 
     public HttpOnDiskRequestAggregator( Application app, int maxContentLength )
     {
@@ -147,7 +144,6 @@ public class HttpOnDiskRequestAggregator
         aggregatedRequestHeader = currentRequestHeader;
         // TODO Generate request identity sooner so temporary files use the id in their name to ease debugging
         bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
-        bodyOutputStream = new FileOutputStream( bodyFile, true );
 
         LOG.trace( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
     }
@@ -173,7 +169,10 @@ public class HttpOnDiskRequestAggregator
         // Append chunk data to aggregated File
         if( chunk.content().isReadable() )
         {
-            chunk.content().readBytes( bodyOutputStream, chunk.content().readableBytes() );
+            try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile, true ) )
+            {
+                chunk.content().readBytes( bodyOutputStream, chunk.content().readableBytes() );
+            }
         }
 
         // Last Chunk?
@@ -190,9 +189,6 @@ public class HttpOnDiskRequestAggregator
 
         if( last )
         {
-            bodyOutputStream.flush();
-            bodyOutputStream.close();
-
             // Merge trailing headers into the message.
             if( chunk instanceof LastHttpContent )
             {
@@ -210,19 +206,32 @@ public class HttpOnDiskRequestAggregator
 
             // All done
             aggregatedRequestHeader = null;
-            bodyOutputStream = null;
 
             out.add( fullRequest );
         }
     }
 
     @Override
+    public void channelUnregistered( ChannelHandlerContext ctx )
+        throws IOException
+    {
+        cleanBodyFile();
+    }
+
+    @Override
     public void channelInactive( ChannelHandlerContext ctx )
+        throws IOException
+    {
+        cleanBodyFile();
+    }
+
+    private void cleanBodyFile()
         throws IOException
     {
         if( bodyFile != null )
         {
             Files.deleteIfExists( bodyFile.toPath() );
+            bodyFile = null;
         }
     }
 }

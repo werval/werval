@@ -63,6 +63,7 @@ public class SubProtocolSwitchHandler
         {
             HttpRequest request = (HttpRequest) message;
             LOG.trace( "Switching to plain HTTP protocol" );
+            context.pipeline().addLast( "http-aggregator", new HttpOnDiskRequestAggregator( app, -1 ) );
             context.pipeline().addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
             context.pipeline().remove( this );
             context.fireChannelRead( request );
