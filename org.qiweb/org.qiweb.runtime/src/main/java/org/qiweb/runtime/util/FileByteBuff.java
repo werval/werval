@@ -34,6 +34,8 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.runtime.server.HttpOnDiskRequestAggregator;
 import org.qiweb.runtime.server.HttpRequestRouterHandler;
 
+import static io.netty.buffer.Unpooled.wrappedBuffer;
+
 /**
  * Read-only ByteBuff wrapping a File.
  * <p>Used by {@link HttpOnDiskRequestAggregator} to aggregate requests bodies.</p>
@@ -47,7 +49,6 @@ public final class FileByteBuff
     private static final String NOT_SUPPORTED = "Not supported";
     private static final String READ_ONLY = "Read Only.";
     private final File file;
-    private final RandomAccessFile raf;
     private final long length;
 
     public FileByteBuff( File file )
@@ -55,7 +56,6 @@ public final class FileByteBuff
     {
         super( Integer.MAX_VALUE );
         this.file = file;
-        this.raf = new RandomAccessFile( file, "r" );
         this.length = file.length();
     }
 
@@ -96,7 +96,7 @@ public final class FileByteBuff
     @Override
     protected byte _getByte( int index )
     {
-        try
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
         {
             raf.seek( index );
             return raf.readByte();
@@ -110,7 +110,7 @@ public final class FileByteBuff
     @Override
     protected short _getShort( int index )
     {
-        try
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
         {
             raf.seek( index );
             return raf.readShort();
@@ -130,7 +130,7 @@ public final class FileByteBuff
     @Override
     protected int _getInt( int index )
     {
-        try
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
         {
             raf.seek( index );
             return raf.readInt();
@@ -144,7 +144,7 @@ public final class FileByteBuff
     @Override
     protected long _getLong( int index )
     {
-        try
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
         {
             raf.seek( index );
             return raf.readLong();
@@ -236,7 +236,7 @@ public final class FileByteBuff
     {
         checkIndex( index, length );
         checkDstIndex( index, length, dstIndex, dst.length );
-        try
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
         {
             raf.seek( index );
             raf.read( dst, dstIndex, length );
@@ -252,7 +252,7 @@ public final class FileByteBuff
     public ByteBuf getBytes( int index, ByteBuffer dst )
     {
         checkIndex( index );
-        try
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
         {
             raf.seek( index );
             byte[] buffer = new byte[ 8 ];
@@ -322,7 +322,16 @@ public final class FileByteBuff
     @Override
     public ByteBuf copy( int index, int length )
     {
-        throw new UnsupportedOperationException( NOT_SUPPORTED );
+        byte[] buf = new byte[ length ];
+        try( RandomAccessFile raf = new RandomAccessFile( file, "r" ) )
+        {
+            raf.read( buf, index, length );
+            return wrappedBuffer( buf );
+        }
+        catch( IOException ex )
+        {
+            throw new QiWebException( ex.getMessage(), ex );
+        }
     }
 
     @Override
