@@ -15,6 +15,8 @@
  */
 package beerdb;
 
+import beerdb.entities.Beer;
+import beerdb.entities.Brewery;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -90,24 +92,24 @@ public class Global
                 }
                 Beer kro = new Beer();
                 {
-                    kro.setBrewery( kroBrewery );
                     kro.setName( "Kronenbourg" );
                     kro.setAbv( 5.5F );
                     kro.setDescription( "Pale lager first brewed in 1952." );
+                    kroBrewery.addBeer( kro );
                 }
                 Beer brown1664 = new Beer();
                 {
-                    brown1664.setBrewery( kroBrewery );
                     brown1664.setName( "Kronenbourg 1664" );
                     brown1664.setAbv( 5F );
                     brown1664.setDescription( "" );
+                    kroBrewery.addBeer( brown1664 );
                 }
                 Beer singleMalt = new Beer();
                 {
-                    singleMalt.setBrewery( kroBrewery );
                     singleMalt.setName( "Single Malt " );
                     singleMalt.setAbv( 6.1F );
                     singleMalt.setDescription( "French name Malt d'Exception." );
+                    kroBrewery.addBeer( singleMalt );
                 }
 
                 Brewery duyckBrewery = new Brewery();
@@ -121,59 +123,59 @@ public class Global
                 }
                 Beer jenlainTenebreuse = new Beer();
                 {
-                    jenlainTenebreuse.setBrewery( duyckBrewery );
                     jenlainTenebreuse.setName( "Jenlain Ténébreuse" );
                     jenlainTenebreuse.setAbv( 7F );
                     jenlainTenebreuse.setDescription( "A GENTLE RAY OF LIGHT AMIDST THE GLOOM." );
+                    duyckBrewery.addBeer( jenlainTenebreuse );
                 }
                 Beer jenlainAmbree = new Beer();
                 {
-                    jenlainAmbree.setBrewery( duyckBrewery );
                     jenlainAmbree.setName( "Jenlain Ambrée" );
                     jenlainAmbree.setAbv( 7.5F );
                     jenlainAmbree.setDescription( "GUARDIAN OF OUR TRADITIONS." );
+                    duyckBrewery.addBeer( jenlainAmbree );
                 }
                 Beer jenlainBlonde = new Beer();
                 {
-                    jenlainBlonde.setBrewery( duyckBrewery );
                     jenlainBlonde.setName( "Jenlain Blonde" );
                     jenlainBlonde.setAbv( 7.5F );
                     jenlainBlonde.setDescription( "THE WORTHY HEIR." );
+                    duyckBrewery.addBeer( jenlainBlonde );
                 }
                 Beer jenlainBlondeAbbaye = new Beer();
                 {
-                    jenlainBlondeAbbaye.setBrewery( duyckBrewery );
                     jenlainBlondeAbbaye.setName( "Jenlain Blonde d'Abbaye" );
                     jenlainBlondeAbbaye.setAbv( 6.8F );
                     jenlainBlondeAbbaye.setDescription( "TIME FOR SHARING." );
+                    duyckBrewery.addBeer( jenlainBlondeAbbaye );
                 }
                 Beer jenlainN6 = new Beer();
                 {
-                    jenlainN6.setBrewery( duyckBrewery );
                     jenlainN6.setName( "Jenlain N°6" );
                     jenlainN6.setAbv( 6F );
                     jenlainN6.setDescription( "PERFECTLY BALANCED NUMBER." );
+                    duyckBrewery.addBeer( jenlainN6 );
                 }
                 Beer jenlainOr = new Beer();
                 {
-                    jenlainOr.setBrewery( duyckBrewery );
                     jenlainOr.setName( "Jenlain Or" );
                     jenlainOr.setAbv( 8F );
                     jenlainOr.setDescription( "THE BREWERY'S MOST PRECIOUS TREASURE." );
+                    duyckBrewery.addBeer( jenlainOr );
                 }
                 Beer jenlainArdente = new Beer();
                 {
-                    jenlainArdente.setBrewery( duyckBrewery );
                     jenlainArdente.setName( "Jenlain Ardente" );
                     jenlainArdente.setAbv( 3.1F );
                     jenlainArdente.setDescription( "THE FRUITS OF IMAGINATION." );
+                    duyckBrewery.addBeer( jenlainArdente );
                 }
                 Beer jenlainBlanche = new Beer();
                 {
-                    jenlainBlanche.setBrewery( duyckBrewery );
                     jenlainBlanche.setName( "Jenlain Blanche" );
                     jenlainBlanche.setAbv( 4.3F );
                     jenlainBlanche.setDescription( "INSTANTANEOUS FRESHNESS." );
+                    duyckBrewery.addBeer( jenlainBlanche );
                 }
 
                 em.persist( kroBrewery );

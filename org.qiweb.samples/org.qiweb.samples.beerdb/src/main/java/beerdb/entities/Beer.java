@@ -13,58 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package beerdb;
+package beerdb.entities;
 
+import beerdb.Json;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
-import org.hibernate.validator.constraints.URL;
 
 @Entity
-@Table( name = "breweries" )
+@Table( name = "beers" )
 @JsonIgnoreProperties( ignoreUnknown = true )
-public class Brewery
+public class Beer
 {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
-    @Column( length = 255, unique = true, nullable = false )
+    @Column( length = 255, nullable = false )
     @NotBlank
     @Length( min = 3, max = 255 )
     private String name;
-    @Column
+    @Column( nullable = false )
     @NotNull
-    @Range( min = 0 )
-    private Integer since = 1664;
-    @Column( length = 1024, nullable = true )
-    @URL
-    @NotBlank
-    @Length( max = 1024 )
-    private String url;
+    @Range( min = 0, max = 100 )
+    private Float abv;
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
     private String description;
-    @OneToMany( mappedBy = "brewery" )
-    private List<Beer> beers = new ArrayList<>();
+    @ManyToOne( optional = false )
+    /* package */ Brewery brewery;
 
     @JsonView(
         {
-        Json.BreweryListView.class, Json.BreweryDetailView.class,
-        Json.BeerListView.class, Json.BeerDetailView.class
+        Json.BeerListView.class, Json.BeerDetailView.class,
+        Json.BreweryDetailView.class
     } )
     public Long getId()
     {
@@ -73,62 +66,50 @@ public class Brewery
 
     @JsonView(
         {
-        Json.BreweryListView.class, Json.BreweryDetailView.class,
-        Json.BeerListView.class, Json.BeerDetailView.class
+        Json.BeerListView.class, Json.BeerDetailView.class,
+        Json.BreweryDetailView.class
     } )
     public String getName()
     {
         return name;
     }
 
-    @JsonView( Json.BreweryDetailView.class )
-    public String getUrl()
+    @JsonView(
+        {
+        Json.BeerDetailView.class,
+    } )
+    public Float getAbv()
     {
-        return url;
+        return abv;
     }
 
     @JsonView(
         {
-        Json.BreweryListView.class, Json.BreweryDetailView.class
+        Json.BeerDetailView.class,
     } )
-    public Integer getSince()
-    {
-        return since;
-    }
-
-    @JsonView( Json.BreweryDetailView.class )
     public String getDescription()
     {
         return description;
     }
 
-    @JsonView( Json.BreweryDetailView.class )
-    public List<Beer> getBeers()
+    @JsonView(
+        {
+        Json.BeerListView.class, Json.BeerDetailView.class
+    } )
+    public Brewery getBrewery()
     {
-        return beers;
-    }
-
-    @JsonView( Json.BreweryListView.class )
-    public Integer getBeersCount()
-    {
-        return beers.size();
+        return brewery;
     }
 
     @JsonDeserialize
     public void setName( String name )
     {
-        this.name = name == null ? name : name.trim();
+        this.name = name == null ? null : name.trim();
     }
 
-    public void setSince( Integer since )
+    public void setAbv( Float abv )
     {
-        this.since = since;
-    }
-
-    @JsonDeserialize
-    public void setUrl( String url )
-    {
-        this.url = url == null ? null : url.trim();
+        this.abv = abv;
     }
 
     @JsonDeserialize

@@ -15,6 +15,8 @@
  */
 package beerdb;
 
+import beerdb.entities.Beer;
+import beerdb.entities.Brewery;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -191,7 +193,7 @@ public class API
             {
                 return notFound( "Brewery" );
             }
-            if( !brewery.getBeers().isEmpty() )
+            if( brewery.getBeersCount() > 0 )
             {
                 return outcomes().conflict().withBody( "Does not have zero beers." ).as( APPLICATION_JSON ).build();
             }
@@ -260,7 +262,7 @@ public class API
             {
                 return badRequest( "No brewery found with id " + breweryId );
             }
-            beer.setBrewery( brewery );
+            brewery.addBeer( beer );
             em.persist( beer );
             em.persist( brewery );
             em.getTransaction().commit();
@@ -348,7 +350,7 @@ public class API
                 return notFound( "Beer" );
             }
             Brewery brewery = beer.getBrewery();
-            brewery.getBeers().remove( beer );
+            brewery.removeBeer( beer );
             em.persist( brewery );
             em.remove( beer );
             em.getTransaction().commit();

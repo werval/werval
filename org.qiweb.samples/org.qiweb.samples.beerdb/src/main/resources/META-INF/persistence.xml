@@ -6,12 +6,15 @@
     <!-- EclipseLink and H2 Database Persistence Unit -->
     <persistence-unit name="beerdb-eclipselink-h2" transaction-type="RESOURCE_LOCAL">
 
-        <class>beerdb.Beer</class>
-        <class>beerdb.Brewery</class>
+        <class>beerdb.entities.Beer</class>
+        <class>beerdb.entities.Brewery</class>
 
         <properties>
+
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:beerdb;DB_CLOSE_DELAY=-1" />
+
+            <!-- See http://h2database.com/html/advanced.html#mvcc -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:beerdb;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
             <property name="javax.persistence.jdbc.user" value="sa" />
             <property name="javax.persistence.jdbc.password" value="sa" />
 
@@ -19,8 +22,12 @@
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
             <property name="eclipselink.ddl-generation.output-mode" value="database" />
             <property name="eclipselink.logging.level" value="WARNING"/>
+
+            <!-- LOG SQL
             <property name="eclipselink.logging.level.sql" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
+            -->
+
         </properties>
 
     </persistence-unit>

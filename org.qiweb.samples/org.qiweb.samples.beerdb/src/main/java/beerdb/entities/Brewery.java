@@ -13,50 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package beerdb;
+package beerdb.entities;
 
+import beerdb.Json;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
-@Table( name = "beers" )
+@Table( name = "breweries" )
 @JsonIgnoreProperties( ignoreUnknown = true )
-public class Beer
+public class Brewery
 {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
-    @Column( length = 255, unique = true, nullable = false )
+    @Column( length = 255, nullable = false )
     @NotBlank
     @Length( min = 3, max = 255 )
     private String name;
-    @Column( nullable = false )
+    @Column
     @NotNull
-    @Range( min = 0, max = 100 )
-    private Float abv;
+    @Range( min = 0 )
+    private Integer since = 1664;
+    @Column( length = 1024, nullable = true )
+    @URL
+    @NotBlank
+    @Length( max = 1024 )
+    private String url;
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
     private String description;
-    @ManyToOne( optional = false )
-    private Brewery brewery;
+    @Column( nullable = false )
+    /* package */ Integer beersCount = 0;
+    @OneToMany( mappedBy = "brewery" )
+    private List<Beer> beers = new ArrayList<>();
 
     @JsonView(
         {
-        Json.BeerListView.class, Json.BeerDetailView.class,
-        Json.BreweryDetailView.class
+        Json.BreweryListView.class, Json.BreweryDetailView.class,
+        Json.BeerListView.class, Json.BeerDetailView.class
     } )
     public Long getId()
     {
@@ -65,50 +76,62 @@ public class Beer
 
     @JsonView(
         {
-        Json.BeerListView.class, Json.BeerDetailView.class,
-        Json.BreweryDetailView.class
+        Json.BreweryListView.class, Json.BreweryDetailView.class,
+        Json.BeerListView.class, Json.BeerDetailView.class
     } )
     public String getName()
     {
         return name;
     }
 
-    @JsonView(
-        {
-        Json.BeerDetailView.class,
-    } )
-    public Float getAbv()
+    @JsonView( Json.BreweryDetailView.class )
+    public String getUrl()
     {
-        return abv;
+        return url;
     }
 
     @JsonView(
         {
-        Json.BeerDetailView.class,
+        Json.BreweryListView.class, Json.BreweryDetailView.class
     } )
+    public Integer getSince()
+    {
+        return since;
+    }
+
+    @JsonView( Json.BreweryDetailView.class )
     public String getDescription()
     {
         return description;
     }
 
-    @JsonView(
-        {
-        Json.BeerListView.class, Json.BeerDetailView.class
-    } )
-    public Brewery getBrewery()
+    @JsonView( Json.BreweryDetailView.class )
+    public List<Beer> getBeers()
     {
-        return brewery;
+        return beers;
+    }
+
+    @JsonView( Json.BreweryListView.class )
+    public Integer getBeersCount()
+    {
+        return beersCount;
     }
 
     @JsonDeserialize
     public void setName( String name )
     {
-        this.name = name == null ? null : name.trim();
+        this.name = name == null ? name : name.trim();
     }
 
-    public void setAbv( Float abv )
+    public void setSince( Integer since )
     {
-        this.abv = abv;
+        this.since = since;
+    }
+
+    @JsonDeserialize
+    public void setUrl( String url )
+    {
+        this.url = url == null ? null : url.trim();
     }
 
     @JsonDeserialize
@@ -117,9 +140,17 @@ public class Beer
         this.description = description == null ? null : description.trim();
     }
 
-    public void setBrewery( Brewery brewery )
+    public void addBeer( Beer beer )
     {
-        this.brewery = brewery;
-        this.brewery.getBeers().add( this );
+        beers.add( beer );
+        beer.brewery = this;
+        beersCount += 1;
+    }
+
+    public void removeBeer( Beer beer )
+    {
+        beers.remove( beer );
+        beer.brewery = null;
+        beersCount -= 1;
     }
 }
