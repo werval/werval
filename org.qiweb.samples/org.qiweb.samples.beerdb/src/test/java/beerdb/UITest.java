@@ -16,6 +16,7 @@
 package beerdb;
 
 import org.fluentlenium.adapter.FluentTest;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
@@ -24,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 public class UITest
     extends FluentTest
 {
