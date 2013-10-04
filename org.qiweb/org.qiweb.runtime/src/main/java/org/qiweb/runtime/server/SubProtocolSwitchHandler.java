@@ -16,6 +16,7 @@
 package org.qiweb.runtime.server;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
@@ -26,8 +27,11 @@ import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD;
+
 /**
- * Distinguish HttpRequests and WebSocketFrames.
+ * Distinguish HttpRequests and WebSocketFrames and setup the pipeline accordingly.
  */
 public class SubProtocolSwitchHandler
     extends SimpleChannelInboundHandler<Object>
@@ -63,18 +67,28 @@ public class SubProtocolSwitchHandler
         {
             HttpRequest request = (HttpRequest) message;
             LOG.trace( "Switching to plain HTTP protocol" );
-            context.pipeline().addLast( "http-aggregator", new HttpOnDiskRequestAggregator( app, -1 ) );
-            context.pipeline().addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
-            context.pipeline().remove( this );
+            ChannelPipeline pipeline = context.pipeline();
+
+            int maxBodySize = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE );
+            int diskThreshold = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
+            pipeline.addLast( "http-aggregator", new HttpOnDiskRequestAggregator( app, maxBodySize, diskThreshold ) );
+            pipeline.addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
+
+            pipeline.remove( this );
+
             context.fireChannelRead( request );
         }
         else if( message instanceof WebSocketFrame )
         {
             WebSocketFrame frame = (WebSocketFrame) message;
             LOG.trace( "Switching to WebSocket protocol" );
-            context.pipeline().addLast( "router", new WebSocketRouterHandler( app, devSpi ) );
-            context.pipeline().remove( this );
-            frame.retain();
+            ChannelPipeline pipeline = context.pipeline();
+
+            pipeline.addLast( "router", new WebSocketRouterHandler( app, devSpi ) );
+
+            pipeline.remove( this );
+
+            frame.retain(); // FIXME Check this
             context.fireChannelRead( frame );
         }
         else

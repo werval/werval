@@ -53,6 +53,8 @@ public interface ConfigKeys
     String QIWEB_HTTP_CHUNKSIZE = "qiweb.http.chunksize";
     String QIWEB_HTTP_LOG_LOWLEVEL_ENABLED = "qiweb.http.log.low-level.enabled";
     String QIWEB_HTTP_LOG_LOWLEVEL_LEVEL = "qiweb.http.log.low-level.level";
+    String QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE = "qiweb.http.requests.body.max_size";
+    String QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD = "qiweb.http.requests.body.disk_threshold";
     String QIWEB_HTTP_FORMS_MULTIVALUED = "qiweb.http.forms.multi-valued";
     String QIWEB_HTTP_HEADERS_MULTIVALUED = "qiweb.http.headers.multi-valued";
     String QIWEB_HTTP_QUERYSTRING_MULTIVALUED = "qiweb.http.query-string.multi-valued";

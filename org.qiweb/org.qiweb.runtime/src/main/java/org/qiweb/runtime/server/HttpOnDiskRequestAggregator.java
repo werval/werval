@@ -63,8 +63,9 @@ import static org.qiweb.api.http.Headers.Values.CLOSE;
  *  1       * LastHttpContent
  * </pre>
  * <p>
- *     This handler aggregate all messages pertaining to a request as a FullHttpRequest. The body chunks are written
- *     to a file thus preventing OOME. The file is deleted when the channel is closed.
+ *     This handler aggregate all messages pertaining to a request as a FullHttpRequest. The body chunks, if any, are
+ *     written to a file thus preventing OOMEs.
+ *     The file is deleted when the channel is closed.
  * </p>
  */
 public class HttpOnDiskRequestAggregator
@@ -74,13 +75,17 @@ public class HttpOnDiskRequestAggregator
     private static final Logger LOG = LoggerFactory.getLogger( HttpOnDiskRequestAggregator.class );
     private final Application app;
     private final int maxContentLength;
+    private final int contentLengthDiskThreshold;
     private HttpRequest aggregatedRequestHeader;
+    private int consumedContentlength = 0;
+    private ByteBuf bodyBuf;
     private File bodyFile;
 
-    public HttpOnDiskRequestAggregator( Application app, int maxContentLength )
+    public HttpOnDiskRequestAggregator( Application app, int maxContentLength, int contentLengthDiskThreshold )
     {
         this.app = app;
         this.maxContentLength = maxContentLength;
+        this.contentLengthDiskThreshold = contentLengthDiskThreshold;
     }
 
     @Override
@@ -122,6 +127,9 @@ public class HttpOnDiskRequestAggregator
     {
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
         assert currentRequestHeader == null;
+        assert consumedContentlength == 0;
+        assert bodyFile == null;
+        assert bodyBuf == null;
 
         if( is100ContinueExpected( newRequestHeader ) )
         {
@@ -135,17 +143,15 @@ public class HttpOnDiskRequestAggregator
             out.add( newRequestHeader );
             return;
         }
+
         currentRequestHeader = new DefaultHttpRequest( newRequestHeader.getProtocolVersion(),
                                                        newRequestHeader.getMethod(),
                                                        newRequestHeader.getUri() );
         currentRequestHeader.headers().set( newRequestHeader.headers() );
+
         removeTransferEncodingChunked( currentRequestHeader );
 
         aggregatedRequestHeader = currentRequestHeader;
-        // TODO Generate request identity sooner so temporary files use the id in their name to ease debugging
-        bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
-
-        LOG.trace( "Aggregating request ({} {}) to {}", aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
     }
 
     private void handleHttpContent( ChannelHandlerContext context, HttpContent chunk, List<Object> out )
@@ -154,7 +160,8 @@ public class HttpOnDiskRequestAggregator
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
         assert currentRequestHeader != null;
 
-        if( maxContentLength != -1 && bodyFile.length() > maxContentLength - chunk.content().readableBytes() )
+        int readableBytes = chunk.content().readableBytes();
+        if( maxContentLength != -1 && consumedContentlength + readableBytes > maxContentLength )
         {
             LOG.warn( "Request Entity is too large, content length exceeded {} bytes.", maxContentLength );
             ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", app.defaultCharset() );
@@ -169,10 +176,17 @@ public class HttpOnDiskRequestAggregator
         // Append chunk data to aggregated File
         if( chunk.content().isReadable() )
         {
+            if( bodyFile == null )
+            {
+                bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
+                LOG.trace( "Aggregating request ({} {}) to {}",
+                           aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
+            }
             try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile, true ) )
             {
-                chunk.content().readBytes( bodyOutputStream, chunk.content().readableBytes() );
+                chunk.content().readBytes( bodyOutputStream, readableBytes );
             }
+            consumedContentlength += readableBytes;
         }
 
         // Last Chunk?
@@ -189,24 +203,37 @@ public class HttpOnDiskRequestAggregator
 
         if( last )
         {
-            // Merge trailing headers into the message.
+            // Merge trailing headers
             if( chunk instanceof LastHttpContent )
             {
                 currentRequestHeader.headers().add( ( (LastHttpContent) chunk ).trailingHeaders() );
             }
 
-            // Set the 'Content-Length' header.
-            currentRequestHeader.headers().set( CONTENT_LENGTH, String.valueOf( bodyFile.length() ) );
+            // Set the 'Content-Length' header
+            currentRequestHeader.headers().set( CONTENT_LENGTH, String.valueOf( consumedContentlength ) );
 
-            FullHttpRequest fullRequest = new DefaultFullHttpRequest( currentRequestHeader.getProtocolVersion(),
-                                                                      currentRequestHeader.getMethod(),
-                                                                      currentRequestHeader.getUri(),
-                                                                      new FileByteBuff( bodyFile ) );
+            // Create aggregated request
+            FullHttpRequest fullRequest;
+            if( bodyFile != null )
+            {
+                fullRequest = new DefaultFullHttpRequest( currentRequestHeader.getProtocolVersion(),
+                                                          currentRequestHeader.getMethod(),
+                                                          currentRequestHeader.getUri(),
+                                                          new FileByteBuff( bodyFile ) );
+            }
+            else
+            {
+                fullRequest = new DefaultFullHttpRequest( currentRequestHeader.getProtocolVersion(),
+                                                          currentRequestHeader.getMethod(),
+                                                          currentRequestHeader.getUri() );
+            }
             fullRequest.headers().set( currentRequestHeader.headers() );
 
             // All done
             aggregatedRequestHeader = null;
+            consumedContentlength = 0;
 
+            // Fire aggregated request
             out.add( fullRequest );
         }
     }
