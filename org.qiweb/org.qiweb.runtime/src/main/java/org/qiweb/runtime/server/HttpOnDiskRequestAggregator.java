@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static io.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static io.netty.handler.codec.http.HttpHeaders.removeTransferEncodingChunked;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE;
@@ -52,6 +53,7 @@ import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
+import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.
@@ -73,19 +75,20 @@ public class HttpOnDiskRequestAggregator
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpOnDiskRequestAggregator.class );
+    private static final ByteBuf HTTP_100_CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", US_ASCII );
     private final Application app;
     private final int maxContentLength;
-    private final int contentLengthDiskThreshold;
+    private final int diskThreshold;
     private HttpRequest aggregatedRequestHeader;
     private int consumedContentlength = 0;
     private ByteBuf bodyBuf;
     private File bodyFile;
 
-    public HttpOnDiskRequestAggregator( Application app, int maxContentLength, int contentLengthDiskThreshold )
+    public HttpOnDiskRequestAggregator( Application app, int maxContentLength, int diskThreshold )
     {
         this.app = app;
         this.maxContentLength = maxContentLength;
-        this.contentLengthDiskThreshold = contentLengthDiskThreshold;
+        this.diskThreshold = diskThreshold;
     }
 
     @Override
@@ -133,7 +136,7 @@ public class HttpOnDiskRequestAggregator
 
         if( is100ContinueExpected( newRequestHeader ) )
         {
-            context.write( copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", app.defaultCharset() ) );
+            context.write( HTTP_100_CONTINUE );
         }
 
         if( !newRequestHeader.getDecoderResult().isSuccess() )
@@ -164,7 +167,7 @@ public class HttpOnDiskRequestAggregator
         if( maxContentLength != -1 && consumedContentlength + readableBytes > maxContentLength )
         {
             LOG.warn( "Request Entity is too large, content length exceeded {} bytes.", maxContentLength );
-            ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", app.defaultCharset() );
+            ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", US_ASCII );
             FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, REQUEST_ENTITY_TOO_LARGE, body );
             response.headers().set( CONTENT_TYPE, "text/plain; charset=" + app.defaultCharset().name().toLowerCase( US ) );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
@@ -176,15 +179,47 @@ public class HttpOnDiskRequestAggregator
         // Append chunk data to aggregated File
         if( chunk.content().isReadable() )
         {
-            if( bodyFile == null )
+            // Test disk threshold
+            if( consumedContentlength + readableBytes > diskThreshold )
             {
-                bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
-                LOG.trace( "Aggregating request ({} {}) to {}",
-                           aggregatedRequestHeader.getMethod(), aggregatedRequestHeader.getUri(), bodyFile );
+                // Overflow to disk
+                if( bodyFile == null )
+                {
+                    // Start
+                    bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
+                    try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile ) )
+                    {
+                        if( bodyBuf != null )
+                        {
+                            bodyBuf.readBytes( bodyOutputStream, bodyBuf.readableBytes() );
+                            bodyBuf.release();
+                            bodyBuf = null;
+                        }
+                        chunk.content().readBytes( bodyOutputStream, readableBytes );
+                    }
+                }
+                else
+                {
+                    // Continue
+                    try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile, true ) )
+                    {
+                        chunk.content().readBytes( bodyOutputStream, readableBytes );
+                    }
+                }
             }
-            try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile, true ) )
+            else
             {
-                chunk.content().readBytes( bodyOutputStream, readableBytes );
+                // In-memory
+                if( bodyBuf == null )
+                {
+                    // Start
+                    bodyBuf = chunk.content().retain();
+                }
+                else
+                {
+                    // Continue
+                    bodyBuf = wrappedBuffer( bodyBuf, chunk.content().retain() );
+                }
             }
             consumedContentlength += readableBytes;
         }
@@ -214,12 +249,21 @@ public class HttpOnDiskRequestAggregator
 
             // Create aggregated request
             FullHttpRequest fullRequest;
+            ByteBuf content = null;
             if( bodyFile != null )
+            {
+                content = new FileByteBuff( bodyFile );
+            }
+            else if( bodyBuf != null )
+            {
+                content = bodyBuf.retain();
+            }
+            if( content != null )
             {
                 fullRequest = new DefaultFullHttpRequest( currentRequestHeader.getProtocolVersion(),
                                                           currentRequestHeader.getMethod(),
                                                           currentRequestHeader.getUri(),
-                                                          new FileByteBuff( bodyFile ) );
+                                                          content );
             }
             else
             {
@@ -242,19 +286,24 @@ public class HttpOnDiskRequestAggregator
     public void channelUnregistered( ChannelHandlerContext ctx )
         throws IOException
     {
-        cleanBodyFile();
+        cleanup();
     }
 
     @Override
     public void channelInactive( ChannelHandlerContext ctx )
         throws IOException
     {
-        cleanBodyFile();
+        cleanup();
     }
 
-    private void cleanBodyFile()
+    private void cleanup()
         throws IOException
     {
+        if( bodyBuf != null )
+        {
+            bodyBuf.release();
+            bodyBuf = null;
+        }
         if( bodyFile != null )
         {
             Files.deleteIfExists( bodyFile.toPath() );
