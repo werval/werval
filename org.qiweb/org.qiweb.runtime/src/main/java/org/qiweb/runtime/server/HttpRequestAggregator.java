@@ -70,11 +70,11 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
  *     The file is deleted when the channel is closed.
  * </p>
  */
-public class HttpOnDiskRequestAggregator
+public class HttpRequestAggregator
     extends MessageToMessageDecoder<HttpObject>
 {
 
-    private static final Logger LOG = LoggerFactory.getLogger( HttpOnDiskRequestAggregator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HttpRequestAggregator.class );
     private static final ByteBuf HTTP_100_CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", US_ASCII );
     private final Application app;
     private final int maxContentLength;
@@ -84,7 +84,7 @@ public class HttpOnDiskRequestAggregator
     private ByteBuf bodyBuf;
     private File bodyFile;
 
-    public HttpOnDiskRequestAggregator( Application app, int maxContentLength, int diskThreshold )
+    public HttpRequestAggregator( Application app, int maxContentLength, int diskThreshold )
     {
         this.app = app;
         this.maxContentLength = maxContentLength;
