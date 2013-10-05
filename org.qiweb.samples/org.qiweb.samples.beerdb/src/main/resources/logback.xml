@@ -11,6 +11,7 @@
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="org.qiweb"  level="info"/>
+    <logger name="org.qiweb" level="info"/>
+    <logger name="beerdb" level="trace"/>
 
 </configuration>

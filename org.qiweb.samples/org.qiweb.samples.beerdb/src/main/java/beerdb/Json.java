@@ -18,25 +18,25 @@ package beerdb;
 /**
  * Jackson JSON Related utilities.
  * <ul>
- *     <li>Class IDs for Jackson JSON Views, see http://wiki.fasterxml.com/JacksonJsonViews</li>
+ *     <li><a href="http://wiki.fasterxml.com/JacksonJsonViews" target="_blank">Jackson JSON Views</a> class IDs</li>
  * </ul>
  */
-public final class Json
+public interface Json
 {
 
-    public static class BeerListView
+    public interface BeerListView
     {
     }
 
-    public static class BeerDetailView
+    public interface BeerDetailView
     {
     }
 
-    public static class BreweryListView
+    public interface BreweryListView
     {
     }
 
-    public static class BreweryDetailView
+    public interface BreweryDetailView
     {
     }
 }

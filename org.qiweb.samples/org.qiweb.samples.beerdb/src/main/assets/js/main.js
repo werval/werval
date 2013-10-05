@@ -88,7 +88,7 @@ beerdb.controller('BreweryCtrl', [
         $scope.deleteBrewery = function() {
             if (confirm("Delete Brewery?")) {
                 $http.delete('/api/breweries/' + $routeParams.id).success(function() {
-                    $location.path('/api/breweries');
+                    $location.path('/breweries');
                 });
             }
         };

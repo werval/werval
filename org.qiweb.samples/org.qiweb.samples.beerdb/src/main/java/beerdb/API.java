@@ -17,6 +17,7 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -351,8 +352,8 @@ public class API
             }
             Brewery brewery = beer.getBrewery();
             brewery.removeBeer( beer );
-            em.persist( brewery );
             em.remove( beer );
+            em.persist( brewery );
             em.getTransaction().commit();
             return outcomes().ok().build();
         }

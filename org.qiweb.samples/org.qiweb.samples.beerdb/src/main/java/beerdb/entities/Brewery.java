@@ -59,7 +59,7 @@ public class Brewery
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
     private String description;
-    @Column( nullable = false )
+    @Column( name = "beers_count", nullable = false )
     /* package */ Integer beersCount = 0;
     @OneToMany( mappedBy = "brewery" )
     private List<Beer> beers = new ArrayList<>();

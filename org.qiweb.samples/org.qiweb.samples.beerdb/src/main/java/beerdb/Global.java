@@ -17,6 +17,7 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
+
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -26,13 +27,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.qiweb.api.Application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.Application.Mode.DEV;
 import static org.qiweb.api.Application.Mode.TEST;
 
 public class Global
     extends org.qiweb.api.Global
 {
+
+    private static final Logger LOG = LoggerFactory.getLogger( Global.class );
 
     @Override
     public void onStart( Application application )
@@ -42,6 +46,11 @@ public class Global
             application.config().string( "app.persistence-unit-name" ),
             Collections.singletonMap( "eclipselink.classloader", application.classLoader() ) );
         application.metaData().put( "emf", emf );
+        if( application.mode() != TEST )
+        {
+            // Insert initial data on PROD and DEV modes
+            insertInitialData( emf );
+        }
 
         // Jackson JSON
         ObjectMapper mapper = new ObjectMapper();
@@ -49,10 +58,7 @@ public class Global
         mapper.setPropertyNamingStrategy( PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES );
         application.metaData().put( "mapper", mapper );
 
-        if( application.mode() == DEV )
-        {
-            createFixtures( emf );
-        }
+        LOG.info( "Beer Database Started" );
     }
 
     @Override
@@ -63,15 +69,18 @@ public class Global
         application.metaData().remove( "emf" );
         if( application.mode() == TEST )
         {
+            // Drop data on TEST mode
             dropData( emf );
         }
         emf.close();
 
         // Hypertext Application Language
         application.metaData().remove( "hal" );
+
+        LOG.info( "Beer Database Stopped" );
     }
 
-    private void createFixtures( EntityManagerFactory emf )
+    private void insertInitialData( EntityManagerFactory emf )
     {
         EntityManager em = emf.createEntityManager();
         try
@@ -194,6 +203,7 @@ public class Global
                 em.persist( jenlainBlanche );
             }
             em.getTransaction().commit();
+            LOG.info( "Initial Data Inserted" );
         }
         finally
         {
@@ -218,6 +228,7 @@ public class Global
                 em.remove( brewery );
             }
             em.getTransaction().commit();
+            LOG.info( "All data dropped" );
         }
         finally
         {
