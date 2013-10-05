@@ -21,6 +21,9 @@ import org.qiweb.runtime.server.HttpServerInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+
 /**
  * QiWeb HTTP Development Kit default main class.
  */
@@ -31,13 +34,21 @@ public final class Main
 
     public static void main( String[] args )
     {
-        LOG.info( "Starting QiWeb!" );
+        long start = System.currentTimeMillis();
+        LOG.debug( "Starting QiWeb!" );
         try
         {
-            ApplicationInstance application = new ApplicationInstance( Mode.PROD );
-            HttpServer server = new HttpServerInstance( "qiweb-http-server", application );
+            ApplicationInstance app = new ApplicationInstance( Mode.PROD );
+            HttpServer server = new HttpServerInstance( "qiweb-http-server", app );
             server.registerPassivationShutdownHook();
             server.activate();
+            if( LOG.isInfoEnabled() )
+            {
+                String address = app.config().string( QIWEB_HTTP_ADDRESS );
+                int port = app.config().intNumber( QIWEB_HTTP_PORT );
+                LOG.info( "Ready for requests on http(s)://{}:{} - Took {}ms",
+                          address, port, System.currentTimeMillis() - start );
+            }
         }
         catch( Exception ex )
         {
