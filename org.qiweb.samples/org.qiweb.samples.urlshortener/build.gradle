@@ -39,9 +39,9 @@ tasks.startScripts {
         def scriptShellFile = file "${outputDir}/${applicationName}"
         def scriptBatchFile = file "${outputDir}/${applicationName}.bat"
         scriptShellFile.text = scriptShellFile.text.replace( 'CLASSPATH=$APP_HOME/lib',
-                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib' )
+                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib')
         scriptBatchFile.text = scriptBatchFile.text.replace( 'CLASSPATH=%APP_HOME%\\lib',
-                                                             'CLASSPATH=%APP_HOME%\\config\\;%APP_HOME%\\lib' )
+                                                             'CLASSPATH=%APP_HOME%\\etc\\;%APP_HOME%\\lib' )
     }
 }
 artifacts {

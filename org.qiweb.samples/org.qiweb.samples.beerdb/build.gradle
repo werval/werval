@@ -9,14 +9,6 @@ buildscript {
     }
 }
 
-apply plugin: 'application'
-mainClassName = "org.qiweb.runtime.Main"
-
-apply plugin: 'qiweb'
-qiweb {
-    extraWatch += [ "src/main/assets" ]
-}
-
 configurations {
     assets
 }
@@ -46,6 +38,35 @@ dependencies {
     testCompile libs.rest_assured
 
 }
+
+apply plugin: 'qiweb'
+qiweb {
+    extraWatch += [ "src/main/assets" ]
+}
+
+apply plugin: 'application'
+applicationName = "beer-database"
+mainClassName = "org.qiweb.runtime.Main"
+applicationDistribution.from( "src/main/resources" ) {
+    include "*.conf"
+    into "etc"
+}
+tasks.startScripts {
+    doLast {
+        def scriptShellFile = file "${outputDir}/${applicationName}"
+        def scriptBatchFile = file "${outputDir}/${applicationName}.bat"
+        scriptShellFile.text = scriptShellFile.text.replace( 'CLASSPATH=$APP_HOME/lib',
+                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib')
+        scriptBatchFile.text = scriptBatchFile.text.replace( 'CLASSPATH=%APP_HOME%\\lib',
+                                                             'CLASSPATH=%APP_HOME%\\etc\\;%APP_HOME%\\lib' )
+    }
+}
+artifacts {
+    archives distZip
+}
+
+
+
 
 //  _____             _
 // |  _  |___ ___ ___| |_ ___
@@ -108,4 +129,3 @@ task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
 
 processResources.dependsOn copyAssets
 sourceSets.main.resources.srcDir file( "build/generated-src/assets/resources" )
-
