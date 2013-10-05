@@ -33,6 +33,7 @@ dependencies {
     compile libs.hibernate_validator
     compile libs.jackson_core
     compile libs.jpa
+    compile libs.liquibase
 
     runtime "org.qiweb:org.qiweb.runtime:$version"
     runtime libs.eclipselink

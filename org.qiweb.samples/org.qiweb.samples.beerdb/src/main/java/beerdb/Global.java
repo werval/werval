@@ -21,17 +21,41 @@ import beerdb.entities.Brewery;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import java.util.Collections;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.ResourceAccessor;
 import org.qiweb.api.Application;
+import org.qiweb.api.exceptions.QiWebException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.Application.Mode.TEST;
+import static org.qiweb.api.util.Strings.EMPTY;
 
+/**
+ * Beer Database Global Object.
+ * <p>Apply database changelog.</p>
+ * <p>Setup JPA and Jackson.</p>
+ * <p>Behaviour depends on Application Mode:</p>
+ * <ul>
+ *     <li>PROD: Insert initial data on start.</li>
+ *     <li>DEV: Insert initial data on start.</li>
+ *     <li>TEST: No initial data inserted. All data dropped on stop.</li>
+ * </ul>
+ */
 public class Global
     extends org.qiweb.api.Global
 {
@@ -41,22 +65,18 @@ public class Global
     @Override
     public void onStart( Application application )
     {
+        // Database schema migration
+        liquibaseUpdate( application );
+
         // Persistence
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-            application.config().string( "app.persistence-unit-name" ),
-            Collections.singletonMap( "eclipselink.classloader", application.classLoader() ) );
-        application.metaData().put( "emf", emf );
+        application.metaData().put( "emf", createEntityManagerFactory( application ) );
         if( application.mode() != TEST )
         {
-            // Insert initial data on PROD and DEV modes
-            insertInitialData( emf );
+            insertInitialData( application );
         }
 
         // Jackson JSON
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure( MapperFeature.DEFAULT_VIEW_INCLUSION, false );
-        mapper.setPropertyNamingStrategy( PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES );
-        application.metaData().put( "mapper", mapper );
+        application.metaData().put( "mapper", createObjectMapper() );
 
         LOG.info( "Beer Database Started" );
     }
@@ -70,18 +90,103 @@ public class Global
         if( application.mode() == TEST )
         {
             // Drop data on TEST mode
-            dropData( emf );
+            liquibaseDropAll( application );
         }
         emf.close();
 
-        // Hypertext Application Language
-        application.metaData().remove( "hal" );
+        // Jackson JSON
+        application.metaData().remove( "mapper" );
 
         LOG.info( "Beer Database Stopped" );
     }
 
-    private void insertInitialData( EntityManagerFactory emf )
+    private void liquibaseUpdate( Application application )
     {
+        Liquibase liquibase = null;
+        try
+        {
+            liquibase = newLiquibase( application );
+            liquibase.update( EMPTY );
+        }
+        catch( ClassNotFoundException | LiquibaseException | SQLException ex )
+        {
+            throw new QiWebException( "Unable to apply database changelog: " + ex.getMessage(), ex );
+        }
+        finally
+        {
+            closeLiquibaseSilently( liquibase );
+        }
+    }
+
+    private void liquibaseDropAll( Application application )
+    {
+        Liquibase liquibase = null;
+        try
+        {
+            liquibase = newLiquibase( application );
+            liquibase.dropAll();
+        }
+        catch( ClassNotFoundException | LiquibaseException | SQLException ex )
+        {
+            throw new QiWebException( "Unable to drop database data: " + ex.getMessage(), ex );
+        }
+        finally
+        {
+            closeLiquibaseSilently( liquibase );
+        }
+    }
+
+    private Liquibase newLiquibase( Application application )
+        throws ClassNotFoundException, SQLException, LiquibaseException
+    {
+        Class.forName( application.config().string( "jdbc.driver" ) );
+        Connection connection = DriverManager.getConnection(
+            application.config().string( "jdbc.url" ),
+            application.config().string( "jdbc.user" ),
+            application.config().string( "jdbc.password" ) );
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation( new JdbcConnection( connection ) );
+        String changelog = "beerdb/changelog/db.changelog-master.xml";
+        ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor( application.classLoader() );
+        Liquibase liquibase = new Liquibase( changelog, resourceAccessor, database );
+        return liquibase;
+    }
+
+    private void closeLiquibaseSilently( Liquibase liquibase )
+    {
+        if( liquibase != null )
+        {
+            try
+            {
+                liquibase.getDatabase().getConnection().close();
+            }
+            catch( DatabaseException ignored )
+            {
+            }
+        }
+    }
+
+    private EntityManagerFactory createEntityManagerFactory( Application application )
+    {
+        Map<String, Object> jpaProps = new HashMap<>();
+        jpaProps.put( "javax.persistence.jdbc.driver", application.config().string( "jdbc.driver" ) );
+        jpaProps.put( "javax.persistence.jdbc.url", application.config().string( "jdbc.url" ) );
+        jpaProps.put( "javax.persistence.jdbc.user", application.config().string( "jdbc.user" ) );
+        jpaProps.put( "javax.persistence.jdbc.password", application.config().string( "jdbc.password" ) );
+        jpaProps.put( "eclipselink.classloader", application.classLoader() );
+        return Persistence.createEntityManagerFactory( application.config().string( "jpa.pu-name" ), jpaProps );
+    }
+
+    private ObjectMapper createObjectMapper()
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure( MapperFeature.DEFAULT_VIEW_INCLUSION, false );
+        mapper.setPropertyNamingStrategy( PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES );
+        return mapper;
+    }
+
+    private void insertInitialData( Application application )
+    {
+        EntityManagerFactory emf = application.metaData().get( EntityManagerFactory.class, "emf" );
         EntityManager em = emf.createEntityManager();
         try
         {
@@ -201,34 +306,10 @@ public class Global
                 em.persist( jenlainOr );
                 em.persist( jenlainArdente );
                 em.persist( jenlainBlanche );
-            }
-            em.getTransaction().commit();
-            LOG.info( "Initial Data Inserted" );
-        }
-        finally
-        {
-            em.close();
-        }
-    }
 
-    private void dropData( EntityManagerFactory emf )
-    {
-        EntityManager em = emf.createEntityManager();
-        try
-        {
-            em.getTransaction().begin();
-            List<Beer> beers = em.createQuery( "select b from Beer b", Beer.class ).getResultList();
-            for( Beer beer : beers )
-            {
-                em.remove( beer );
+                em.getTransaction().commit();
+                LOG.info( "Initial Data Inserted" );
             }
-            List<Brewery> breweries = em.createQuery( "select b from Brewery b", Brewery.class ).getResultList();
-            for( Brewery brewery : breweries )
-            {
-                em.remove( brewery );
-            }
-            em.getTransaction().commit();
-            LOG.info( "All data dropped" );
         }
         finally
         {

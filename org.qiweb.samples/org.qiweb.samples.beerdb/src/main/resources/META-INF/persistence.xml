@@ -4,25 +4,14 @@
              version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <!-- EclipseLink and H2 Database Persistence Unit -->
-    <persistence-unit name="beerdb-eclipselink-h2" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="beerdb-eclipselink" transaction-type="RESOURCE_LOCAL">
 
         <class>beerdb.entities.Beer</class>
         <class>beerdb.entities.Brewery</class>
 
         <properties>
 
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-
-            <!-- See http://h2database.com/html/advanced.html#mvcc -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:beerdb;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
-            <property name="javax.persistence.jdbc.user" value="sa" />
-            <property name="javax.persistence.jdbc.password" value="sa" />
-
-            <!-- EclipseLink should create the database schema automatically -->
-            <property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
-            <property name="eclipselink.ddl-generation.output-mode" value="database" />
-
-            <!-- Logging -->
+            <!-- EclipseLink Logging -->
             <property name="eclipselink.logging.level" value="WARNING"/>
             <!--
             <property name="eclipselink.logging.level.sql" value="FINE"/>
