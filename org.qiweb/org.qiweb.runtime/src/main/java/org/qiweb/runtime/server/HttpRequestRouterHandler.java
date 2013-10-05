@@ -126,7 +126,8 @@ public final class HttpRequestRouterHandler
 
     private static String generateNewRequestIdentity()
     {
-        return REQUEST_IDENTITY_PREFIX + REQUEST_IDENTITY_COUNT.getAndIncrement();
+        return new StringBuilder( REQUEST_IDENTITY_PREFIX ).
+            append( REQUEST_IDENTITY_COUNT.getAndIncrement() ).toString();
     }
 
     private final class HttpRequestCompleteChannelFutureListener

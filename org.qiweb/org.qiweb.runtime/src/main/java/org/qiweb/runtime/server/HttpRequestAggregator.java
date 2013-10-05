@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.util.FileByteBuff;
@@ -76,6 +77,14 @@ public class HttpRequestAggregator
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpRequestAggregator.class );
     private static final ByteBuf HTTP_100_CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", US_ASCII );
+    private static final String TEMP_FILE_IDENTITY_PREFIX = "body_" + UUID.randomUUID().toString() + "-";
+    private static final AtomicLong TEMP_FILE_IDENTITY_COUNT = new AtomicLong();
+
+    private static String generateNewTempFileIdentity()
+    {
+        return new StringBuilder( TEMP_FILE_IDENTITY_PREFIX ).
+            append( TEMP_FILE_IDENTITY_COUNT.getAndIncrement() ).toString();
+    }
     private final Application app;
     private final int maxContentLength;
     private final int diskThreshold;
@@ -186,7 +195,7 @@ public class HttpRequestAggregator
                 if( bodyFile == null )
                 {
                     // Start
-                    bodyFile = new File( app.tmpdir(), "body_" + UUID.randomUUID().toString() );
+                    bodyFile = new File( app.tmpdir(), generateNewTempFileIdentity() );
                     try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile ) )
                     {
                         if( bodyBuf != null )
@@ -284,19 +293,6 @@ public class HttpRequestAggregator
 
     @Override
     public void channelUnregistered( ChannelHandlerContext ctx )
-        throws IOException
-    {
-        cleanup();
-    }
-
-    @Override
-    public void channelInactive( ChannelHandlerContext ctx )
-        throws IOException
-    {
-        cleanup();
-    }
-
-    private void cleanup()
         throws IOException
     {
         if( bodyBuf != null )
