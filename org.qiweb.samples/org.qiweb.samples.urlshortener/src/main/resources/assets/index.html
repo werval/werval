@@ -57,7 +57,7 @@
                 var $input_shorten = $("#input-shorten");
                 function refresh_list()
                 {
-                    var url = "/api/list"
+                    var url = "/api/list";
                     $.getJSON(url, function(data) {
                         $api_out.prepend(data_to_pre_json("GET " + url, data));
                         var list = "";
