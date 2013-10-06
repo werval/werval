@@ -5,7 +5,8 @@ The URL Shortener sample implement an extremely simple HTTP API using GET method
 The shortened URLs are stored in-memory, not persisted.
 They do not survive an application restart.
 
-A proof of concept client UI implemented with Twitter Bootstrap and JQuery allow to play with the API.
+A proof of concept client UI implemented with http://getbootstrap.com/[Twitter Bootstrap] and http://jquery.com/[JQuery]
+allow to play with the API.
 It shows the list of shortened URLs and dump all JSON returned by the HTTP API.
 
 This is the simplest sample and it is intended to be so.
@@ -17,11 +18,35 @@ It demonstrate the following:
 - basics of Global object usage.
 
 Even if this sample is damn simple, it has unit tests covering the whole HTTP API.
-They are implemented using rest-assured from Jayway making them short and expressive.
+They are implemented using https://code.google.com/p/rest-assured/[rest-assured] from http://www.jayway.com/[Jayway]
+making them short and expressive.
 
 There is even tests for the UI, launching a browser, clicking on things and asserting that the UI behave well.
-Thoses tests are implemented using FluentLenium from XXXXXXX that provide a nice DSL on top of Selenium/WebDriver.
+Thoses tests are implemented using http://fluentlenium.org/[FluentLenium] from
+https://github.com/MathildeLemee[Mathilde Lemée] that provide a nice DSL on top of Selenium/WebDriver.
 
 Whatever would be your QiWeb usage, you are encouraged to read this sample code.
 
+To stage the application run:
+
+[source,shell]
+----
+gradle installApp
+----
+
+To run from the staged application run:
+
+[source,shell]
+----
+./build/install/url-shortener/bin/url-shortener
+----
+
+To build a standalone distribution of the application run:
+
+[source,shell]
+----
+gradle distZip
+----
+
+The distribution can be located at `build/distributions/url-shortener-0.zip`.
 
