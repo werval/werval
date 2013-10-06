@@ -32,6 +32,7 @@ dependencies {
     runtime libs.el
     runtime libs.h2
     runtime libs.logback
+    runtime libs.postgres
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.fluentlenium

@@ -25,6 +25,7 @@ def v_jackson = '2.2.3'
 def v_junit = '4.11'
 def v_liquibase = '3.0.5'
 def v_logback = '1.0.13'
+def v_postgres = '9.2-1003-jdbc4'
 def v_rest_assured = '1.8.1'
 
 // Samples only libraries versions
@@ -83,6 +84,7 @@ rootProject.ext {
         h2:                 "com.h2database:h2:$v_h2",
         jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
         liquibase:          "org.liquibase:liquibase-core:$v_liquibase",
+        postgres:           "org.postgresql:postgresql:$v_postgres",
 
     ]
 }
