@@ -20,13 +20,11 @@ include::getting-started/using-devshell.adoc[]
 
 === Next steps
 
-// TODO Write short Next Steps after Getting Started
-// Links to
+Now that you have a minimal skeleton, the obvious next step is to write your application.
 
-// - Tutorial
-// - Manual
-// - API Docs
-// - Guides
+You can use the following resources to learn what you need:
 
-
-
+- link:samples.html[Sample applications], ready to run, with documentation and tests
+- link:manual.html[Manual]
+- link:api/index.html[API Docs]
+- link:guides.html[Guides]

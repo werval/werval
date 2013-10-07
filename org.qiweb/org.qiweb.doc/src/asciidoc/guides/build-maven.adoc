@@ -1,8 +1,0 @@
-=== Build Applications with Maven
-
-NOTE: TODO Write Maven build documentation
-
-==== Generate executable distribution
-
-==== Use QiWeb Development Shell
-
