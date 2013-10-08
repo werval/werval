@@ -172,7 +172,7 @@ public class Global
         jpaProps.put( "javax.persistence.jdbc.url", application.config().string( "jdbc.url" ) );
         jpaProps.put( "javax.persistence.jdbc.user", application.config().string( "jdbc.user" ) );
         jpaProps.put( "javax.persistence.jdbc.password", application.config().string( "jdbc.password" ) );
-        jpaProps.put( "eclipselink.connection-pool.default.max", application.config().intNumber( "jpa.pool.max" ) );
+        jpaProps.put( "eclipselink.connection-pool.default.max", application.config().string( "jpa.pool.max" ) );
         jpaProps.put( "eclipselink.classloader", application.classLoader() );
         return Persistence.createEntityManagerFactory( application.config().string( "jpa.pu_name" ), jpaProps );
     }
