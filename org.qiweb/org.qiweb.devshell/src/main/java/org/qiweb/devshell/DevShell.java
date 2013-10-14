@@ -65,14 +65,17 @@ public final class DevShell
                 try
                 {
                     super.rebuild();
-                    reSetupApplicationRealm();
-                    httpAppInstance.getClass().getMethod( "reload", new Class<?>[]
+                    reSetupApplicationRealms();
+                    ClassLoader appLoader = classWorld.getRealm( currentApplicationRealmID() );
+                    Class<?>[] paramTypes = new Class<?>[]
                     {
                         ClassLoader.class
-                    } ).
-                        invoke( httpAppInstance, classWorld.getRealm( currentApplicationRealmID() ) );
+                    };
+                    httpAppInstance.getClass().getMethod( "reload", paramTypes ).invoke( httpAppInstance, appLoader );
                 }
-                catch( Exception ex )
+                catch( DuplicateRealmException | NoSuchRealmException |
+                       NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                       InvocationTargetException ex )
                 {
                     throw new QiWebDevShellException( "Unable to reload Application: " + ex.getMessage(), ex );
                 }
@@ -220,7 +223,7 @@ public final class DevShell
         ClassRealm devRealm = classWorld.newRealm( DEVSHELL_REALM_ID, originalLoader );
 
         // Dependencies Realm contains all Application dependencies JARs
-        // and import QiWeb DevShell and Dev SPI packages from current ClassLoader (Either the CLI or the Build Plugin One)
+        // and import QiWeb DevShell and Dev SPI packages from DevShell Realm
         ClassRealm depRealm = classWorld.newRealm( DEPENDENCIES_REALM_ID, null );
         for( URL runtimeClasspathElement : spi.runtimeClassPath() )
         {
@@ -229,6 +232,19 @@ public final class DevShell
         depRealm.importFrom( devRealm, "org.qiweb.devshell.*" );
         depRealm.importFrom( devRealm, "org.qiweb.spi.dev.*" );
 
+        setupApplicationRealm( depRealm );
+    }
+
+    private void reSetupApplicationRealms()
+        throws DuplicateRealmException, NoSuchRealmException
+    {
+        classWorld.disposeRealm( currentApplicationRealmID() );
+        setupApplicationRealm( classWorld.getRealm( DEPENDENCIES_REALM_ID ) );
+    }
+
+    private void setupApplicationRealm( ClassRealm depRealm )
+        throws DuplicateRealmException
+    {
         // Application Realm contains all Application compiler output directories
         // and it check itself first and then check Dependencies Realm
         ClassRealm appRealm = classWorld.newRealm( nextApplicationRealmID(), null );
@@ -237,18 +253,6 @@ public final class DevShell
             appRealm.addURL( applicationClasspathElement );
         }
         appRealm.setParentRealm( depRealm );
-    }
-
-    private void reSetupApplicationRealm()
-        throws DuplicateRealmException, NoSuchRealmException
-    {
-        classWorld.disposeRealm( currentApplicationRealmID() );
-        ClassRealm appRealm = classWorld.newRealm( nextApplicationRealmID(), null );
-        for( URL applicationClasspathElement : spi.applicationClassPath() )
-        {
-            appRealm.addURL( applicationClasspathElement );
-        }
-        appRealm.setParentRealm( classWorld.getRealm( DEPENDENCIES_REALM_ID ) );
     }
 
     private void disposeRealms()
