@@ -29,20 +29,20 @@ public interface ConfigKeys
     String APP_SECRET = "app.secret";
     String APP_SESSION_COOKIE_NAME = "app.session.cookie.name";
     String APP_SESSION_COOKIE_DOMAIN = "app.session.cookie.domain";
-    String APP_SESSION_COOKIE_HTTPONLY = "app.session.cookie.httpOnly";
-    String APP_SESSION_COOKIE_ONLYIFCHANGED = "app.session.cookie.onlyIfChanged";
+    String APP_SESSION_COOKIE_HTTPONLY = "app.session.cookie.http_only";
+    String APP_SESSION_COOKIE_ONLYIFCHANGED = "app.session.cookie.only_if_changed";
     String APP_SESSION_COOKIE_PATH = "app.session.cookie.path";
     String APP_SESSION_COOKIE_SECURE = "app.session.cookie.secure";
     //
     // Framework configuration keys
     //
-    String QIWEB_CHARACTER_ENCODING = "qiweb.character-encoding";
-    String QIWEB_FS_TEMP = "qiweb.fs.temp";
+    String QIWEB_CHARACTER_ENCODING = "qiweb.character_encoding";
+    String QIWEB_TMPDIR = "qiweb.tmpdir";
     String QIWEB_MIMETYPES_SUPPLEMENTARY = "qiweb.mimetypes.supplementary";
     String QIWEB_MIMETYPES_TEXTUAL = "qiweb.mimetypes.textual";
-    String QIWEB_SHUTDOWN_QUIETPERIOD = "qiweb.shutdown.quiet-period";
+    String QIWEB_SHUTDOWN_QUIETPERIOD = "qiweb.shutdown.quiet_period";
     String QIWEB_SHUTDOWN_TIMEOUT = "qiweb.shutdown.timeout";
-    String QIWEB_SHUTDOWN_RETRYAFTER = "qiweb.shutdown.retry-after";
+    String QIWEB_SHUTDOWN_RETRYAFTER = "qiweb.shutdown.retry_after";
     String QIWEB_HTTP_ADDRESS = "qiweb.http.address";
     String QIWEB_HTTP_PORT = "qiweb.http.port";
     String QIWEB_HTTP_ACCEPTORS = "qiweb.http.acceptors";
@@ -51,14 +51,14 @@ public interface ConfigKeys
     String QIWEB_HTTP_TIMEOUT_READ = "qiweb.http.timeout.read";
     String QIWEB_HTTP_TIMEOUT_WRITE = "qiweb.http.timeout.write";
     String QIWEB_HTTP_CHUNKSIZE = "qiweb.http.chunksize";
-    String QIWEB_HTTP_LOG_LOWLEVEL_ENABLED = "qiweb.http.log.low-level.enabled";
-    String QIWEB_HTTP_LOG_LOWLEVEL_LEVEL = "qiweb.http.log.low-level.level";
+    String QIWEB_HTTP_LOG_LOWLEVEL_ENABLED = "qiweb.http.log.low_level.enabled";
+    String QIWEB_HTTP_LOG_LOWLEVEL_LEVEL = "qiweb.http.log.low_level.level";
     String QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE = "qiweb.http.requests.body.max_size";
     String QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD = "qiweb.http.requests.body.disk_threshold";
-    String QIWEB_HTTP_FORMS_MULTIVALUED = "qiweb.http.forms.multi-valued";
-    String QIWEB_HTTP_HEADERS_MULTIVALUED = "qiweb.http.headers.multi-valued";
-    String QIWEB_HTTP_QUERYSTRING_MULTIVALUED = "qiweb.http.query-string.multi-valued";
-    String QIWEB_HTTP_UPLOADS_MULTIVALUED = "qiweb.http.uploads.multi-valued";
-    String QIWEB_ROUTES_IMPORTEDPACKAGES = "qiweb.routes.imported-packages";
-    String QIWEB_ROUTES_PARAMETERBINDERS = "qiweb.routes.parameter-binders";
+    String QIWEB_HTTP_FORMS_MULTIVALUED = "qiweb.http.forms.multi_valued";
+    String QIWEB_HTTP_HEADERS_MULTIVALUED = "qiweb.http.headers.multi_valued";
+    String QIWEB_HTTP_QUERYSTRING_MULTIVALUED = "qiweb.http.query_string.multi_valued";
+    String QIWEB_HTTP_UPLOADS_MULTIVALUED = "qiweb.http.uploads.multi_valued";
+    String QIWEB_ROUTES_IMPORTEDPACKAGES = "qiweb.routes.imported_packages";
+    String QIWEB_ROUTES_PARAMETERBINDERS = "qiweb.routes.parameter_binders";
 }

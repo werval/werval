@@ -44,7 +44,7 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_FS_TEMP;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
@@ -242,7 +242,7 @@ public final class ApplicationInstance
 
     private void configureTmpdir()
     {
-        File tmpdirFile = config.file( QIWEB_FS_TEMP );
+        File tmpdirFile = config.file( QIWEB_TMPDIR );
         if( tmpdirFile.isFile() )
         {
             throw new QiWebException( "tmpdir already exist but is a file: " + tmpdirFile );
