@@ -38,7 +38,7 @@ public final class ParameterBindersInstance
         }
 
         @Override
-        public final boolean accept( Class<?> type )
+        public final boolean accept( java.lang.Class<?> type )
         {
             return type.equals( TypeResolver.resolveArgument( getClass(), ParameterBinder.class ) );
         }
@@ -293,6 +293,30 @@ public final class ParameterBindersInstance
             return value.toString();
         }
     }
+
+    public static final class Class
+        extends StrictTypingParameterBinder<java.lang.Class>
+    {
+
+        @Override
+        public java.lang.Class bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return java.lang.Class.forName( value );
+            }
+            catch( ClassNotFoundException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.lang.Class value )
+        {
+            return value.getCanonicalName();
+        }
+    }
     private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
 
     public ParameterBindersInstance()
@@ -306,7 +330,7 @@ public final class ParameterBindersInstance
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public <T> T bind( Class<T> type, java.lang.String paramName, java.lang.String paramValue )
+    public <T> T bind( java.lang.Class<T> type, java.lang.String paramName, java.lang.String paramValue )
     {
         for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
@@ -320,7 +344,7 @@ public final class ParameterBindersInstance
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public <T> java.lang.String unbind( Class<T> type, java.lang.String paramName, T paramValue )
+    public <T> java.lang.String unbind( java.lang.Class<T> type, java.lang.String paramName, T paramValue )
     {
         for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
