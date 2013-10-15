@@ -34,7 +34,7 @@ public interface RequestHeader
     String identity();
 
     /**
-     * @return The HTTP Request Protocol Version
+     * @return The HTTP Request Protocol Version such as "HTTP/1.0" or "HTTP/1.1".
      */
     String version();
 

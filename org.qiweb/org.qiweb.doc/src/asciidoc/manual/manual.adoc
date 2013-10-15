@@ -16,6 +16,8 @@ A QiWeb Application is nothing but a plain old Java program.
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
 The minimal requirement is a configuration file named `application.conf` containing a `app.secret` entry.
 
+==== Threading Model
+
 
 === Logging
 
@@ -53,7 +55,7 @@ All QiWeb APIs allows you to override character encoding when relevant.
 
 === Configuration
 
-INFO: QiWeb configuration use the https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON format] ("Human
+NOTE: QiWeb configuration use the https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON format] ("Human
 Optimized Config Object Notation"). It is parsed using https://github.com/typesafehub/config[Typesafe Config].
 
 The `application.conf` file must be present at the root of your classpath and must at least contain one single entry:
@@ -255,5 +257,9 @@ The `QueryString` API leave you in control regarding which value you want to use
 
 NOTE: Enabling `qiweb.http.query-string.multi-valued` do not enable any *syntax*. A request with multiple `foo[]`
 values will pass but the values will be in the `"foo[]"` parameter, not `"foo"`. Be careful, there's no magic.
+Speaking of which, something along the line of Ruby on Rails
+http://guides.rubyonrails.org/action_controller_overview.html#hash-and-array-parameters[Hash and Array Parameters]
+could be implemented as a library, pull-requests are welcome!
+
 
 
