@@ -114,13 +114,10 @@ public final class ErrorsInstance
                 return false;
             }
             final ErrorInstance other = (ErrorInstance) obj;
-            if( !Objects.equals( this.errorId, other.errorId ) )
-            {
-                return false;
-            }
-            return true;
+            return Objects.equals( this.errorId, other.errorId );
         }
     }
+
     private final Config config;
     private final Map<String, Error> errors;
     private String errorIdentityPrefix;

@@ -87,6 +87,7 @@ public final class ContextInstance
     }
 
     @Override
+    @SuppressWarnings( "ReturnOfCollectionOrArrayField" )
     public MetaData metaData()
     {
         return metaData;

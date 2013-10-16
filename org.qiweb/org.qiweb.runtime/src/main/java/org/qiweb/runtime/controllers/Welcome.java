@@ -20,6 +20,7 @@ import org.qiweb.api.controllers.Outcome;
 import static org.qiweb.api.Application.Mode.DEV;
 import static org.qiweb.api.controllers.Controller.application;
 import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
 
 /**
  * Welcome Controller.
@@ -44,7 +45,7 @@ public class Welcome
                       : "org/qiweb/runtime/controllers/welcome.html";
         return outcomes().
             ok().
-            as( "text/html; charset=utf-8" ).
+            as( application().mimeTypes().withCharsetOfTextual( TEXT_HTML ) ).
             withBody( application().classLoader().getResourceAsStream( path ) ).
             build();
     }

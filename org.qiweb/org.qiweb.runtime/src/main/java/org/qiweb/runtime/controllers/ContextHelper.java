@@ -26,22 +26,6 @@ import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 public final class ContextHelper
 {
 
-    private ClassLoader previousLoader = null;
-
-    public void setOnCurrentThread( ClassLoader loader, Context context )
-    {
-        previousLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( loader );
-        getControllerContextThreadLocal().set( context );
-    }
-
-    public void clearCurrentThread()
-    {
-        Thread.currentThread().setContextClassLoader( previousLoader );
-        previousLoader = null;
-        getControllerContextThreadLocal().remove();
-    }
-
     @SuppressWarnings( "unchecked" )
     private static ThreadLocal<Context> getControllerContextThreadLocal()
     {
@@ -59,5 +43,21 @@ public final class ContextHelper
             throw new QiWebRuntimeException( "QiWeb API mismatch, unable to get Controller Context Thread Local, "
                                              + "something is broken! " + ex.getMessage(), ex );
         }
+    }
+
+    private ClassLoader previousLoader = null;
+
+    public void setOnCurrentThread( ClassLoader loader, Context context )
+    {
+        previousLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( loader );
+        getControllerContextThreadLocal().set( context );
+    }
+
+    public void clearCurrentThread()
+    {
+        Thread.currentThread().setContextClassLoader( previousLoader );
+        previousLoader = null;
+        getControllerContextThreadLocal().remove();
     }
 }

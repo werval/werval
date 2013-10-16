@@ -147,6 +147,7 @@ public class OutcomeBuilderInstance
             return input;
         }
     }
+
     private final int status;
     private final MutableHeaders headers;
     private final MutableCookies cookies;

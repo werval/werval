@@ -78,20 +78,39 @@ public final class ApplicationInstance
     private final Errors errors;
 
     /**
-     * Create a new Application instance in {@link Mode#test}.
+     * Create a new Application instance in {@link Mode#TEST}.
+     *
      * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
+     *
+     * @param routesProvider Routes provider
      */
     public ApplicationInstance( RoutesProvider routesProvider )
     {
         this( Mode.TEST, routesProvider );
     }
 
+    /**
+     * Create a new Application instance in given {@link Mode}.
+     *
+     * <p>Routes are loaded from the {@literal routes.conf} file.</p>
+     * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
+     *
+     * @param mode Application Mode
+     */
     public ApplicationInstance( Mode mode )
     {
         this( mode, new RoutesConfProvider() );
     }
 
-    public ApplicationInstance( Mode mode, RoutesProvider routesProvider )
+    /**
+     * Create a new Application instance in given {@link Mode}.
+     *
+     * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
+     *
+     * @param mode Application Mode
+     * @param routesProvider Routes provider
+     */
+    private ApplicationInstance( Mode mode, RoutesProvider routesProvider )
     {
         this( mode,
               new ConfigInstance( ApplicationInstance.class.getClassLoader() ),
@@ -99,6 +118,14 @@ public final class ApplicationInstance
               routesProvider );
     }
 
+    /**
+     * Create a new Application instance in given {@link Mode}.
+     *
+     * @param mode Application Mode
+     * @param config Application config
+     * @param classLoader Application ClassLoader
+     * @param routesProvider Routes provider
+     */
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
     {
         ensureNotNull( "Application Mode", mode );
@@ -124,11 +151,6 @@ public final class ApplicationInstance
     public Config config()
     {
         return config;
-    }
-
-    public Global global()
-    {
-        return global;
     }
 
     @Override
@@ -191,7 +213,21 @@ public final class ApplicationInstance
         return errors;
     }
 
-    // Called reflectively by org.qiweb.devshell.DevShell
+    /**
+     * @return Application Global object
+     */
+    public Global global()
+    {
+        return global;
+    }
+
+    /**
+     * Reload Application with a new ClassLoader.
+     *
+     * <p>Called reflectively by {@literal org.qiweb.devshell.DevShell}</p>
+     *
+     * @param newClassLoader New Application ClassLoader
+     */
     public void reload( ClassLoader newClassLoader )
     {
         this.classLoader = newClassLoader;
@@ -265,7 +301,8 @@ public final class ApplicationInstance
             }
             catch( ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex )
             {
-                throw new ParameterBinderException( "Unable to instanciate ParameterBinders: " + parameterBinderClassName, ex );
+                throw new ParameterBinderException( "Unable to instanciate ParameterBinders, failed at: "
+                                                    + parameterBinderClassName, ex );
             }
         }
         parameterBinders = new ParameterBindersInstance( list );
@@ -273,6 +310,7 @@ public final class ApplicationInstance
 
     private void configureMimeTypes()
     {
+        // Load textuals mime-types
         Map<String, Charset> textuals = new LinkedHashMap<>();
         for( Map.Entry<String, String> textConfig : config.stringMap( QIWEB_MIMETYPES_TEXTUAL ).entrySet() )
         {
@@ -283,6 +321,7 @@ public final class ApplicationInstance
                               : Charset.forName( charsetString );
             textuals.put( mimetype, charset );
         }
+        // Load supplementary mime-types
         if( config.has( QIWEB_MIMETYPES_SUPPLEMENTARY ) )
         {
             Map<String, String> supplementaryMimetypes = config.stringMap( QIWEB_MIMETYPES_SUPPLEMENTARY );

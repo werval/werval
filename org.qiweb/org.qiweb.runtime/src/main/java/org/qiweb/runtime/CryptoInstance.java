@@ -31,6 +31,11 @@ public class CryptoInstance
     implements Crypto
 {
 
+    private static final char[] HEX_DIGITS =
+    {
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+
     private final byte[] secretBytes;
     private final Charset charset;
 
@@ -85,10 +90,6 @@ public class CryptoInstance
             throw new QiWebException( "Unable to HMAC message", e );
         }
     }
-    private static final char[] HEX_DIGITS =
-    {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-    };
 
     private static byte[] decodeHex( char[] data )
     {
