@@ -74,6 +74,7 @@ public final class URLs
      * 
      * @param url The URL
      * @param queryString The query string data
+     * @param charset Character encoding
      * @return The URL with query string data appended
      */
     public static String appendQueryString( final String url, Map<String, List<String>> queryString, Charset charset )

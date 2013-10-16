@@ -66,83 +66,103 @@ public interface MimeTypes
 {
 
     /**
+     * @param file File
      * @return MimeType of a File
      */
     String ofFile( File file );
 
     /**
+     * @param file File
      * @return MimeType of a File with optional character encoding if textual
      */
     String ofFileWithCharset( File file );
 
     /**
+     * @param file File
+     * @param charset Character encoding
      * @return MimeType of a File with character encoding, textual or not
      */
     String ofFileWithCharset( File file, Charset charset );
 
     /**
+     * @param path Path
      * @return MimeType of a path
      */
     String ofPath( String path );
 
     /**
+     * @param path Path
      * @return MimeType of a Path with optional character encoding if textual
      */
     String ofPathWithCharset( String path );
 
     /**
+     * @param path Path
+     * @param charset Character encoding
      * @return MimeType of a Path with character encoding, textual or not
      */
     String ofPathWithCharset( String path, Charset charset );
 
     /**
+     * @param filename File name
      * @return MimeType of a filename
      */
     String ofFilename( String filename );
 
     /**
+     * @param filename File name
      * @return MimeType of a filename with optional character encoding if textual
      */
     String ofFilenameWithCharset( String filename );
 
     /**
+     * @param filename File name
+     * @param charset Character encoding
      * @return MimeType of a filename with character encoding, textual or not
      */
     String ofFilenameWithCharset( String filename, Charset charset );
 
     /**
+     * @param extension File extension
      * @return MimeType of a file extension
      */
     String ofExtension( String extension );
 
     /**
+     * @param extension File extension
      * @return MimeType of a Extension with optional character encoding if textual
      */
     String ofExtensionWithCharset( String extension );
 
     /**
+     * @param extension File extension
+     * @param charset Character encoding
      * @return MimeType of a Extension with character encoding, textual or not
      */
     String ofExtensionWithCharset( String extension, Charset charset );
 
     /**
+     * @param mimetype Mimetype
      * @return TRUE is mimetype is textual, otherwise return FALSE
      */
     boolean isTextual( String mimetype );
 
     /**
+     * @param mimetype Mimetype
      * @return Character encoding to use for the given MimeType
      * @throws IllegalArgumentException when mimetype is not textual
      */
     Charset charsetOfTextual( String mimetype );
 
     /**
+     * @param mimetype Mimetype
      * @param charset Character encoding
      * @return MimeType with character encoding information set
      */
     String withCharset( String mimetype, Charset charset );
 
     /**
+     * @param mimetype Mimetype
      * @return MimeType with character encoding information set
      * @throws IllegalArgumentException when mimetype is not textual
      */

@@ -28,6 +28,9 @@ public interface FilterChain
 
     /**
      * Pass the Context to the next Filter in the chain.
+     *
+     * @param context Request Context
+     * @return Next Outcome
      */
     Outcome next( Context context );
 }

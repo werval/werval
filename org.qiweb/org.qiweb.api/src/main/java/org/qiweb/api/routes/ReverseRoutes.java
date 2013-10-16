@@ -36,15 +36,6 @@ import org.qiweb.api.http.Headers;
 public abstract class ReverseRoutes
 {
 
-    /**
-     * Get the ReverseRoute of a Controller call.
-     * 
-     * @param reverseOutcome Reverse Outcome
-     * @return a ReverseRoute
-     * @throws IllegalArgumentException when the given Outcome is not appropriate
-     */
-    public abstract ReverseRoute of( Outcome reverseOutcome );
-
     public static <T> T GET( Class<T> controllerType )
     {
         return HTTP( "GET", controllerType );
@@ -66,15 +57,15 @@ public abstract class ReverseRoutes
                 new Class<?>[]
             {
                 controllerType
-            },
+                },
                 new InvocationHandler()
-            {
-                @Override
-                public Object invoke( Object proxy, Method controllerMethod, Object[] args )
                 {
-                    return new ReverseOutcome( httpMethod, controllerType, controllerMethod, Arrays.asList( args ) );
-                }
-            } );
+                    @Override
+                    public Object invoke( Object proxy, Method controllerMethod, Object[] args )
+                    {
+                        return new ReverseOutcome( httpMethod, controllerType, controllerMethod, Arrays.asList( args ) );
+                    }
+                } );
         }
         else
         {
@@ -99,6 +90,15 @@ public abstract class ReverseRoutes
         }
         return controllerProxy;
     }
+
+    /**
+     * Get the ReverseRoute of a Controller call.
+     *
+     * @param reverseOutcome Reverse Outcome
+     * @return a ReverseRoute
+     * @throws IllegalArgumentException when the given Outcome is not appropriate
+     */
+    public abstract ReverseRoute of( Outcome reverseOutcome );
 
     /**
      * @hidden
@@ -158,4 +158,5 @@ public abstract class ReverseRoutes
             throw new UnsupportedOperationException( "ReverseOutcome has no headers." );
         }
     }
+
 }

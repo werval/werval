@@ -42,7 +42,7 @@ public interface Outcomes
      * @param body Response body as bytes
      * @return Builder for a 200 OK Outcome
      */
-    OutcomeBuilder ok( byte[] bytes );
+    OutcomeBuilder ok( byte[] body );
 
     /**
      * @param body Response body as String using the default character encoding
@@ -52,6 +52,7 @@ public interface Outcomes
 
     /**
      * @param body Response body as String
+     * @param charset Body charset
      * @return Builder for a 200 OK Outcome
      */
     OutcomeBuilder ok( String body, Charset charset );
@@ -92,21 +93,27 @@ public interface Outcomes
     OutcomeBuilder multiStatus();
 
     /**
+     * @param url Redirect target
      * @return Builder for a 302 FOUND Outcome
      */
     OutcomeBuilder found( String url );
 
     /**
+     * @param url Redirect target
+     * @param queryString QueryString values
      * @return Builder for a 302 FOUND Outcome
      */
     OutcomeBuilder found( String url, Map<String, List<String>> queryString );
 
     /**
+     * @param url Redirect target
      * @return Builder for a 303 SEE_OTHER Outcome
      */
     OutcomeBuilder seeOther( String url );
 
     /**
+     * @param url Redirect target
+     * @param queryString QueryString values
      * @return Builder for a 303 SEE_OTHER Outcome
      */
     OutcomeBuilder seeOther( String url, Map<String, List<String>> queryString );
@@ -117,11 +124,14 @@ public interface Outcomes
     OutcomeBuilder notModified();
 
     /**
+     * @param url Redirect target
      * @return Builder for a 307 TEMPORARY_REDIRECT Outcome
      */
     OutcomeBuilder temporaryRedirect( String url );
 
     /**
+     * @param url Redirect target
+     * @param queryString QueryString values
      * @return Builder for a 307 TEMPORARY_REDIRECT Outcome
      */
     OutcomeBuilder temporaryRedirect( String url, Map<String, List<String>> queryString );

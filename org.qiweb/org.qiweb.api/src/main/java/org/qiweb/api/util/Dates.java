@@ -28,6 +28,25 @@ import java.util.TimeZone;
 public final class Dates
 {
 
+    public static Date now()
+    {
+        return new Date();
+    }
+
+    public static Date yesterday()
+    {
+        return new Date( System.currentTimeMillis() - 24 * 60 * 60 );
+    }
+
+    public static Date tomorrow()
+    {
+        return new Date( System.currentTimeMillis() + 24 * 60 * 60 );
+    }
+
+    private Dates()
+    {
+    }
+
     public static final class HTTP
     {
 
@@ -73,22 +92,4 @@ public final class Dates
         }
     }
 
-    public static Date now()
-    {
-        return new Date();
-    }
-
-    public static Date yesterday()
-    {
-        return new Date( System.currentTimeMillis() - 24 * 60 * 60 );
-    }
-
-    public static Date tomorrow()
-    {
-        return new Date( System.currentTimeMillis() + 24 * 60 * 60 );
-    }
-
-    private Dates()
-    {
-    }
 }

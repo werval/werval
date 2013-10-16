@@ -46,7 +46,7 @@ public class Charsets
         @Override
         protected Map<Charset, CharsetEncoder> initialValue()
         {
-            return new IdentityHashMap<>();
+            return new IdentityHashMap<>( 4 );
         }
     };
     private static final ThreadLocal<Map<Charset, CharsetDecoder>> decoders = new ThreadLocal<Map<Charset, CharsetDecoder>>()
@@ -54,12 +54,14 @@ public class Charsets
         @Override
         protected Map<Charset, CharsetDecoder> initialValue()
         {
-            return new IdentityHashMap<>();
+            return new IdentityHashMap<>( 4 );
         }
     };
 
     /**
      * Returns a cached thread-local {@link CharsetEncoder} for the specified <tt>charset</tt>.
+     * @param charset Character encoding
+     * @return  Character encoder
      */
     public static CharsetEncoder getEncoder( Charset charset )
     {
@@ -87,6 +89,8 @@ public class Charsets
 
     /**
      * Returns a cached thread-local {@link CharsetDecoder} for the specified <tt>charset</tt>.
+     * @param charset Character encoding
+     * @return  Character decoder
      */
     public static CharsetDecoder getDecoder( Charset charset )
     {

@@ -38,6 +38,8 @@ public interface ReverseRoute
     /**
      * Append a parameter to this ReverseRoute Query String.
      * 
+     * @param key QueryString key
+     * @param value QueryString value
      * @return This very ReverseRoute as fluent API
      * @throws IllegalArgumentException when key is null or empty, or when value is null
      */

@@ -31,11 +31,6 @@ public final class NullArgumentException
     private static final String WAS_EMPTY = " was empty.";
     private static final String WAS_ZERO = " was zero.";
 
-    private NullArgumentException( String message )
-    {
-        super( message );
-    }
-
     public static void ensureNotNull( String name, Object value )
     {
         if( value != null )
@@ -142,5 +137,10 @@ public final class NullArgumentException
         {
             throw new NullArgumentException( name + WAS_ZERO );
         }
+    }
+
+    private NullArgumentException( String message )
+    {
+        super( message );
     }
 }
