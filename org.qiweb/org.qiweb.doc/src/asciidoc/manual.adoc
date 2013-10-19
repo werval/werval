@@ -2,4 +2,4 @@
 
 The QiWeb Manual is intended to be a comprehensive guide to the development kit.
 
-include::manual/manual.adoc[]
+include::src/asciidoc/manual/manual.adoc[]

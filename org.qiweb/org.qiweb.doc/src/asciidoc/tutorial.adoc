@@ -2,5 +2,5 @@
 
 The QiWeb Tutorial will guide you through making a full blown bookmarking application, "à là" delic.io.us.
 
-include::tutorial/tutorial.adoc[]
+include::src/asciidoc/tutorial/tutorial.adoc[]
 
