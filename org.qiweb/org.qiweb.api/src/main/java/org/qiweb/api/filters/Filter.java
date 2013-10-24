@@ -15,8 +15,8 @@
  */
 package org.qiweb.api.filters;
 
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.context.Context;
+import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Controller invocation Filter.
@@ -32,4 +32,5 @@ public interface Filter
      * @return Filtered Outcome
      */
     Outcome filter( FilterChain chain, Context context );
+
 }

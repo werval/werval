@@ -15,12 +15,12 @@
  */
 package org.qiweb.runtime.controllers;
 
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 
 import static org.qiweb.api.Application.Mode.DEV;
-import static org.qiweb.api.controllers.Controller.application;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
+import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 /**
  * Welcome Controller.
@@ -49,4 +49,5 @@ public class Welcome
             withBody( application().classLoader().getResourceAsStream( path ) ).
             build();
     }
+
 }

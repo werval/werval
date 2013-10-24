@@ -17,8 +17,8 @@ package urlshortener;
 
 import com.jayway.restassured.response.Response;
 import java.util.Map;
-import org.qiweb.test.QiWebTest;
 import org.junit.Test;
+import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.mime.MimeTypes.TEXT_CSS;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_CSS;
 
 /**
  * Assert API behaviour.
@@ -101,4 +101,5 @@ public class APITest
             when().
             get( shortUrl );
     }
+
 }

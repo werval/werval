@@ -71,7 +71,7 @@ All configuration properties are available to your controllers and filters via t
 
 [source,java]
 ----
-import static org.qiweb.api.controllers.Controller.*;
+import static org.qiweb.api.context.CurrentContext.*;
 public MyController {
   public Outcome aControllerMethod() {
     String configValue = application().config().getString("your.custom.config.key");
@@ -195,7 +195,7 @@ Signature use the HmacSHA1 algorithm.
 
 [source,java]
 ----
-import static org.qiweb.api.controllers.Controller.*;
+import static org.qiweb.api.context.CurrentContext.*;
 public MyController {
   public Outcome aControllerMethod() {
     String singleFoo = request().queryString().singleValueOf("foo");
@@ -236,7 +236,7 @@ When enabled, `foo=bar&foo=baz` is accepted and your application code can access
 
 [source,java]
 ----
-import static org.qiweb.api.controllers.Controller.*;
+import static org.qiweb.api.context.CurrentContext.*;
 public MyController {
   public Outcome aControllerMethod() {
     String singleFoo        = request().queryString().singleValueOf("foo"); <1>

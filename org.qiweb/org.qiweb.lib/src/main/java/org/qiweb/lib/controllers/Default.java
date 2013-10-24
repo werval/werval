@@ -17,9 +17,9 @@ package org.qiweb.lib.controllers;
 
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.controllers.Controller.outcomes;
+import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Controller providing default outcomes.
@@ -83,4 +83,5 @@ public class Default
     {
         return outcomes().notImplemented().withBody( "501 Not Implemented" ).build();
     }
+
 }

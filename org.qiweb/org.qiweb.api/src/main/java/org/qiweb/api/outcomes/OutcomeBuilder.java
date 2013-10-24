@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.api.outcomes;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -97,4 +97,5 @@ public interface OutcomeBuilder
      * @return A new Outcome instance
      */
     Outcome build();
+
 }

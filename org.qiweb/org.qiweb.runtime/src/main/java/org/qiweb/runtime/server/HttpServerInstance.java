@@ -29,10 +29,10 @@ import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
@@ -58,7 +58,9 @@ public class HttpServerInstance
         {
             server.passivate();
         }
+
     }
+
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
     private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;
     private final String identity;
@@ -120,7 +122,7 @@ public class HttpServerInstance
         }
         catch( InterruptedException ex )
         {
-            throw new QiWebRuntimeException( "Unable to bind to http://" + address + ":" + port + "/ "
+            throw new QiWebRuntimeException( "Unable to bind to http(s)://" + address + ":" + port + "/ "
                                              + "Port already in use?", ex );
         }
 
@@ -167,4 +169,5 @@ public class HttpServerInstance
             throw new IllegalStateException( "HttpServer passivation hook previously registered", ex );
         }
     }
+
 }

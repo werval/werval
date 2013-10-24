@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.server;
 
+import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,32 +40,31 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application.Mode;
 import org.qiweb.api.Error;
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.controllers.Outcome.StatusClass;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Request;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.outcomes.Outcome.StatusClass;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
-import org.qiweb.runtime.ErrorsInstance;
-import org.qiweb.runtime.controllers.ContextInstance;
-import org.qiweb.runtime.controllers.ContextHelper;
-import org.qiweb.runtime.controllers.OutcomeBuilderInstance.ChunkedOutcome;
-import org.qiweb.runtime.controllers.OutcomeBuilderInstance.SimpleOutcome;
-import org.qiweb.runtime.controllers.OutcomeBuilderInstance.StreamOutcome;
+import org.qiweb.runtime.context.ContextInstance;
+import org.qiweb.runtime.context.ThreadContextHelper;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.http.SessionInstance;
+import org.qiweb.runtime.outcomes.OutcomeBuilderInstance.ChunkedOutcome;
+import org.qiweb.runtime.outcomes.OutcomeBuilderInstance.SimpleOutcome;
+import org.qiweb.runtime.outcomes.OutcomeBuilderInstance.StreamOutcome;
 import org.qiweb.runtime.util.Stacktraces;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -72,9 +72,9 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static java.util.Locale.US;
@@ -151,7 +151,9 @@ public final class HttpRequestRouterHandler
                 app.global().onHttpRequestComplete( app, requestHeader );
             }
         }
+
     }
+
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;
     private String requestIdentity;
@@ -204,7 +206,7 @@ public final class HttpRequestRouterHandler
         Routes routes = app.routes();
 
         // Prepare Controller Context
-        ContextHelper contextHelper = new ContextHelper();
+        ThreadContextHelper contextHelper = new ThreadContextHelper();
         try
         {
             final Route route = routes.route( requestHeader );
@@ -216,7 +218,6 @@ public final class HttpRequestRouterHandler
                                                                    requestHeader.queryString() );
 
             // TODO Eventually UPGRADE to WebSocket
-
             // Parse Session Cookie
             Session session = new SessionInstance(
                 app.config(), app.crypto(),
@@ -240,7 +241,6 @@ public final class HttpRequestRouterHandler
             Outcome outcome = new FilterChainFactory().buildFilterChain( app, app.global(), context ).next( context );
 
             // == Build the response
-
             // Status
             HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( outcome.status() );
 
@@ -268,7 +268,7 @@ public final class HttpRequestRouterHandler
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
-                ( (FullHttpResponse) nettyResponse ).content().
+                ( (ByteBufHolder) nettyResponse ).content().
                     writeBytes( streamOutcome.bodyInputStream(),
                                 new BigDecimal( streamOutcome.contentLength() ).intValueExact() );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
@@ -281,7 +281,7 @@ public final class HttpRequestRouterHandler
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
                 // Body
-                ( (FullHttpResponse) nettyResponse ).content().writeBytes( simpleOutcome.body() );
+                ( (ByteBufHolder) nettyResponse ).content().writeBytes( simpleOutcome.body() );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
             else
@@ -461,7 +461,7 @@ public final class HttpRequestRouterHandler
             String bodyString = body.toString();
 
             // Record Error
-            Error error = ( (ErrorsInstance) app.errors() ).record( requestIdentity, bodyString, cause );
+            Error error = app.errors().record( requestIdentity, bodyString, cause );
 
             // Notifies Application's Global
             app.global().onHttpRequestError( app, error );
@@ -480,4 +480,5 @@ public final class HttpRequestRouterHandler
         response.headers().set( CONNECTION, CLOSE );
         context.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
     }
+
 }

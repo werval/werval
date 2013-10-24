@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.controllers;
+package org.qiweb.runtime.outcomes;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.stream.ChunkedInput;
@@ -22,11 +22,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.qiweb.api.Config;
-import org.qiweb.api.controllers.Outcome;
-import org.qiweb.api.controllers.OutcomeBuilder;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.outcomes.OutcomeBuilder;
 
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
 import static io.netty.buffer.Unpooled.copiedBuffer;
@@ -79,6 +79,7 @@ public class OutcomeBuilderInstance
         {
             return status + ", " + headers;
         }
+
     }
 
     public static class SimpleOutcome
@@ -102,6 +103,7 @@ public class OutcomeBuilderInstance
             this.body = body;
             return this;
         }
+
     }
 
     public static class StreamOutcome
@@ -128,6 +130,7 @@ public class OutcomeBuilderInstance
         {
             return contentLength;
         }
+
     }
 
     public static class ChunkedOutcome
@@ -146,6 +149,7 @@ public class OutcomeBuilderInstance
         {
             return input;
         }
+
     }
 
     private final int status;
@@ -252,4 +256,5 @@ public class OutcomeBuilderInstance
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }
+
 }

@@ -1,9 +1,11 @@
 package com.acme.app;
 
-import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Cookies;
+import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.controllers.Controller.*;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.request;
+import static org.qiweb.api.context.CurrentContext.response;
 
 public class FakeControllerInstance
     implements FakeController
@@ -83,4 +85,5 @@ public class FakeControllerInstance
         Cookies responseCookies = response().cookies();
         return outcomes().ok().withBody( param.computedValue() ).build();
     }
+
 }

@@ -16,16 +16,16 @@
 package org.qiweb.runtime.routes;
 
 import org.junit.Test;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.controllers.Controller.request;
-import static org.qiweb.api.controllers.Controller.reverseRoutes;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.request;
+import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class ReverseRoutesTest
@@ -70,6 +70,7 @@ public class ReverseRoutesTest
             ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).fragmentIdentifier() ).withFragmentIdentifier( "bazar" );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
+
     }
 
     @Override
@@ -194,4 +195,5 @@ public class ReverseRoutesTest
             when().
             get( url );
     }
+
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.api.outcomes;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -260,4 +260,5 @@ public interface Outcomes
      * @return Builder for a 507 INSUFFICIENT_STORAGE Outcome
      */
     OutcomeBuilder insufficientStorage();
+
 }

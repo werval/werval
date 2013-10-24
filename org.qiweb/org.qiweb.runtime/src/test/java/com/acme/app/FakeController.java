@@ -1,6 +1,6 @@
 package com.acme.app;
 
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 
 public interface FakeController
 {
@@ -20,4 +20,5 @@ public interface FakeController
     String noOutcome();
 
     Outcome customParam( CustomParam param );
+
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.api.outcomes;
 
 import org.qiweb.api.http.Headers;
 
@@ -92,6 +92,7 @@ public interface Outcome
             // >= 6xx
             return UNKNOWN;
         }
+
         // CHECKSTYLE:ON
     }
 
@@ -100,4 +101,5 @@ public interface Outcome
     StatusClass statusClass();
 
     Headers headers();
+
 }

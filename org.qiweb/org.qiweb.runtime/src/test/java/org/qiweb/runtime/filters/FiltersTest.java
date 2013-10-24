@@ -1,10 +1,10 @@
 package org.qiweb.runtime.filters;
 
 import org.junit.Test;
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
@@ -26,17 +26,18 @@ public class FiltersTest
             context.response().headers().with( "X-QiWeb-Filtered", "true" );
             return chain.next( context );
         }
+
     }
 
     public static class Controller
-        extends org.qiweb.api.controllers.Controller
     {
 
         @FilterWith( Filter.class )
         public Outcome filtered()
         {
-            return outcomes().ok().build();
+            return org.qiweb.api.context.CurrentContext.outcomes().ok().build();
         }
+
     }
 
     @Override
@@ -55,4 +56,5 @@ public class FiltersTest
             when().
             get( "/" );
     }
+
 }

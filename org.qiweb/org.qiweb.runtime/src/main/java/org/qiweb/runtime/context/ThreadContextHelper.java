@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.controllers;
+package org.qiweb.runtime.context;
 
 import java.lang.reflect.Field;
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Controller;
+import org.qiweb.api.context.Context;
+import org.qiweb.api.context.CurrentContext;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
 /**
- * Controller Thread Context Helper.
+ * Current Thread Context Helper.
  */
-public final class ContextHelper
+public final class ThreadContextHelper
 {
 
     @SuppressWarnings( "unchecked" )
-    private static ThreadLocal<Context> getControllerContextThreadLocal()
+    private static ThreadLocal<Context> getCurrentContextThreadLocal()
     {
         try
         {
-            Field field = Controller.class.getDeclaredField( "CONTEXT_THREAD_LOCAL" );
+            Field field = CurrentContext.class.getDeclaredField( "CONTEXT_THREAD_LOCAL" );
             if( !field.isAccessible() )
             {
                 field.setAccessible( true );
@@ -40,7 +40,7 @@ public final class ContextHelper
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new QiWebRuntimeException( "QiWeb API mismatch, unable to get Controller Context Thread Local, "
+            throw new QiWebRuntimeException( "QiWeb API mismatch, unable to get Current Context Thread Local, "
                                              + "something is broken! " + ex.getMessage(), ex );
         }
     }
@@ -51,13 +51,14 @@ public final class ContextHelper
     {
         previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( loader );
-        getControllerContextThreadLocal().set( context );
+        getCurrentContextThreadLocal().set( context );
     }
 
     public void clearCurrentThread()
     {
         Thread.currentThread().setContextClassLoader( previousLoader );
         previousLoader = null;
-        getControllerContextThreadLocal().remove();
+        getCurrentContextThreadLocal().remove();
     }
+
 }

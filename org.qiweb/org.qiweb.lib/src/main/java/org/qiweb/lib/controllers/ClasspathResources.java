@@ -17,19 +17,19 @@ package org.qiweb.lib.controllers;
 
 import java.io.InputStream;
 import org.qiweb.api.Application;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Locale.US;
-import static org.qiweb.api.controllers.Controller.application;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.controllers.Controller.request;
-import static org.qiweb.api.controllers.Controller.response;
+import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.request;
+import static org.qiweb.api.context.CurrentContext.response;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_OCTET_STREAM;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
 import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
@@ -137,9 +137,8 @@ public class ClasspathResources
             response().headers().with( "Content-Disposition", "inline" + filename );
         }
 
-
-
         LOG.trace( "Will serve '{}' with mimetype '{}'", path, mimetype );
         return outcomes().ok().withBody( input ).build();
     }
+
 }

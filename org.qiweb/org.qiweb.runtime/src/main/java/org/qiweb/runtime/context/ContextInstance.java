@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.controllers;
+package org.qiweb.runtime.context;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.MetaData;
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Outcomes;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.outcomes.OutcomesInstance;
 
 /**
  * A HTTP Interaction Context instance.
@@ -92,4 +93,5 @@ public final class ContextInstance
     {
         return metaData;
     }
+
 }

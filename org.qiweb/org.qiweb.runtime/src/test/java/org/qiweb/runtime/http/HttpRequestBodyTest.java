@@ -16,16 +16,16 @@
 package org.qiweb.runtime.http;
 
 import org.junit.Test;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.controllers.Controller.request;
-import static org.qiweb.api.mime.MimeTypes.TEXT_PLAIN;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.request;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 
 public class HttpRequestBodyTest
     extends QiWebTest
@@ -41,6 +41,7 @@ public class HttpRequestBodyTest
                 as( TEXT_PLAIN ).
                 build();
         }
+
     }
 
     @Override
@@ -61,4 +62,5 @@ public class HttpRequestBodyTest
             when().
             post( "/echo" );
     }
+
 }

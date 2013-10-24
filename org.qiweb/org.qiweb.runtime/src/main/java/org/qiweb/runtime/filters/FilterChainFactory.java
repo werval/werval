@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.Stack;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
-import org.qiweb.api.controllers.Context;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
@@ -78,4 +78,5 @@ public class FilterChainFactory
         }
         return filters;
     }
+
 }

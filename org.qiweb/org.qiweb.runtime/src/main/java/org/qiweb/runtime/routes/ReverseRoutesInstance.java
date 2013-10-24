@@ -24,19 +24,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.qiweb.api.Application;
-import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
 
-import static org.qiweb.api.controllers.Controller.request;
+import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
-import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
+import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 
 public class ReverseRoutesInstance
     extends ReverseRoutes
@@ -228,5 +228,7 @@ public class ReverseRoutesInstance
         {
             return uri();
         }
+
     }
+
 }

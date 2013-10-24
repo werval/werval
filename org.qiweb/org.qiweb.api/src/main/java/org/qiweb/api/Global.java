@@ -17,10 +17,10 @@ package org.qiweb.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Application Global Object.
@@ -174,10 +174,11 @@ public class Global
      * Invoked when an exception pops out of the Application.
      * <p>Default to NOOP.</p>
      *
-     * @param requestHeader Request Header
+     * @param application Application
      * @param error Error
      */
     public void onHttpRequestError( Application application, Error error )
     {
     }
+
 }

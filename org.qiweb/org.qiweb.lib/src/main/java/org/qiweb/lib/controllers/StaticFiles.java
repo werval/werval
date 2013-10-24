@@ -23,17 +23,17 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import org.qiweb.api.Application.Mode;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Dates;
 import org.qiweb.api.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Locale.US;
-import static org.qiweb.api.controllers.Controller.application;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.controllers.Controller.request;
-import static org.qiweb.api.controllers.Controller.response;
+import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.request;
+import static org.qiweb.api.context.CurrentContext.response;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
@@ -42,7 +42,7 @@ import static org.qiweb.api.http.Headers.Names.ETAG;
 import static org.qiweb.api.http.Headers.Names.IF_MODIFIED_SINCE;
 import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
 import static org.qiweb.api.http.Headers.Names.LAST_MODIFIED;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_OCTET_STREAM;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
 import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
@@ -269,4 +269,5 @@ public class StaticFiles
             return outcomes().notFound().build();
         }
     }
+
 }

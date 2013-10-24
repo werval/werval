@@ -16,7 +16,8 @@
 package urlshortener;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.qiweb.api.controllers.Controller;
+import org.qiweb.api.context.CurrentContext;
+
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 /**
@@ -42,6 +43,7 @@ public final class Link
     @JsonProperty( "short_url" )
     public String shortUrl()
     {
-        return Controller.reverseRoutes().of( GET( API.class ).redirect( hash ) ).httpUrl();
+        return CurrentContext.reverseRoutes().of( GET( API.class ).redirect( hash ) ).httpUrl();
     }
+
 }

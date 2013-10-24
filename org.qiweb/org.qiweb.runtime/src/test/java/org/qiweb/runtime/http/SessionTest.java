@@ -1,20 +1,37 @@
+/**
+ * Copyright (c) 2013 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.qiweb.runtime.http;
 
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
-import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
 
-import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.session;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 
 public class SessionTest
@@ -22,7 +39,6 @@ public class SessionTest
 {
 
     public static class Controller
-        extends org.qiweb.api.controllers.Controller
     {
 
         public Outcome show()
@@ -41,7 +57,9 @@ public class SessionTest
             session().clear();
             return show();
         }
+
     }
+
     private String sessionCookieName;
 
     @Override
@@ -102,4 +120,5 @@ public class SessionTest
             expect().body( equalTo( "{}" ) ).
             when().get( "/clear" );
     }
+
 }

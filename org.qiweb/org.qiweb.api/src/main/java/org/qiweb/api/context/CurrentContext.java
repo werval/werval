@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.api.context;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ReverseRoutes;
 
 /**
- * Controller.
- * <p>
- *     This class only provide static helpers backed by a ThreadLocal&lt;Context&gt; so you can extend it
- *     <strong>or not</strong>, as you like.
- * </p>
+ * Current Context.
  *
  * @navassoc - - - Context
  */
-public class Controller
+public class CurrentContext
 {
 
     private static final ThreadLocal<Context> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
@@ -40,7 +37,7 @@ public class Controller
      * @return Current Request Context
      * @throws QiWebException if no Context in current Thread
      */
-    public static Context context()
+    public static Context get()
     {
         Context context = CONTEXT_THREAD_LOCAL.get();
         if( context == null )
@@ -56,7 +53,7 @@ public class Controller
      */
     public static Application application()
     {
-        return context().application();
+        return get().application();
     }
 
     /**
@@ -65,7 +62,7 @@ public class Controller
      */
     public static ReverseRoutes reverseRoutes()
     {
-        return context().application().reverseRoutes();
+        return get().application().reverseRoutes();
     }
 
     /**
@@ -74,7 +71,7 @@ public class Controller
      */
     public static Session session()
     {
-        return context().session();
+        return get().session();
     }
 
     /**
@@ -83,7 +80,7 @@ public class Controller
      */
     public static Request request()
     {
-        return context().request();
+        return get().request();
     }
 
     /**
@@ -92,7 +89,7 @@ public class Controller
      */
     public static Response response()
     {
-        return context().response();
+        return get().response();
     }
 
     /**
@@ -101,11 +98,12 @@ public class Controller
      */
     public static Outcomes outcomes()
     {
-        return context().outcomes();
+        return get().outcomes();
     }
 
-    public Controller()
+    public CurrentContext()
     {
         // NOOP
     }
+
 }

@@ -19,11 +19,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URL;
 import java.util.Collection;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.controllers.Controller.application;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 
 /**
  * URL Shortener HTTP API.
@@ -45,6 +45,7 @@ public class API
      * List shortened urls and their hash.
      *
      * @return  application/json array filled with Link objects.
+     * @throws JsonProcessingException
      */
     public Outcome list()
         throws JsonProcessingException
@@ -59,6 +60,7 @@ public class API
      *
      * @param url Long URL
      * @return application/json Link object.
+     * @throws JsonProcessingException
      */
     public Outcome shorten( URL url )
         throws JsonProcessingException
@@ -73,6 +75,7 @@ public class API
      *
      * @param hash Hash
      * @return application/json Link object.
+     * @throws JsonProcessingException
      */
     public Outcome expand( String hash )
         throws JsonProcessingException
@@ -91,6 +94,7 @@ public class API
      *
      * @param url Long URL
      * @return application/json array filled with Link object.
+     * @throws JsonProcessingException
      */
     public Outcome lookup( URL url )
         throws JsonProcessingException
@@ -121,4 +125,5 @@ public class API
         link.clicks += 1;
         return outcomes().seeOther( link.longUrl ).build();
     }
+
 }

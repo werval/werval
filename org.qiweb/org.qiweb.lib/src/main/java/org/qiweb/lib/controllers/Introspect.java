@@ -15,16 +15,16 @@
  */
 package org.qiweb.lib.controllers;
 
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 
 import static org.qiweb.api.BuildVersion.COMMIT;
 import static org.qiweb.api.BuildVersion.DATE;
 import static org.qiweb.api.BuildVersion.DETAILED_VERSION;
 import static org.qiweb.api.BuildVersion.DIRTY;
 import static org.qiweb.api.BuildVersion.VERSION;
-import static org.qiweb.api.controllers.Controller.application;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 
 /**
  * Controller with methods to introspect QiWeb Runtime.
@@ -66,4 +66,5 @@ public class Introspect
             + "}\n" ).
             as( APPLICATION_JSON ).build();
     }
+
 }

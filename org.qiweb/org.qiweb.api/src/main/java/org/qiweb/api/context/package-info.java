@@ -13,25 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.filters;
-
-import org.qiweb.api.context.Context;
-import org.qiweb.api.outcomes.Outcome;
 
 /**
- * Chain of Filters.
- *
- * @composed 1 <chain> * Filter
+ * Context API.
  */
-public interface FilterChain
-{
-
-    /**
-     * Pass the Context to the next Filter in the chain.
-     *
-     * @param context Request Context
-     * @return Next Outcome
-     */
-    Outcome next( Context context );
-
-}
+package org.qiweb.api.context;

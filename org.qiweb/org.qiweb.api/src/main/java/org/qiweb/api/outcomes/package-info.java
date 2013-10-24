@@ -15,6 +15,6 @@
  */
 
 /**
- * Controllers & Context API.
+ * Outcomes API.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.api.outcomes;

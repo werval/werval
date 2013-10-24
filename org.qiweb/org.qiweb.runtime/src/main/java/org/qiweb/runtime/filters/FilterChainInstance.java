@@ -17,10 +17,10 @@ package org.qiweb.runtime.filters;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
-import org.qiweb.api.controllers.Context;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
+import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Instance of FilterChain.
@@ -51,7 +51,9 @@ import org.qiweb.api.filters.FilterChain;
             Object controller = global.getControllerInstance( app, context.route().controllerType() );
             return global.invokeControllerMethod( context, controller );
         }
+
     }
+
     private final Application app;
     private final Global global;
     private final Class<? extends Filter> filterType;
@@ -71,4 +73,5 @@ import org.qiweb.api.filters.FilterChain;
         Filter filter = global.getFilterInstance( app, filterType );
         return filter.filter( next, context );
     }
+
 }

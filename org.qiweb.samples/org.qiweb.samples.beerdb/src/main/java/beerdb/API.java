@@ -17,7 +17,6 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,15 +27,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.samples.beerdb.BuildVersion;
 
-import static org.qiweb.api.controllers.Controller.application;
-import static org.qiweb.api.controllers.Controller.outcomes;
-import static org.qiweb.api.controllers.Controller.request;
-import static org.qiweb.api.controllers.Controller.reverseRoutes;
+import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.request;
+import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class API
@@ -386,4 +385,5 @@ public class API
         }
         return mapper.writeValueAsBytes( root );
     }
+
 }

@@ -23,9 +23,9 @@ import java.util.List;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
-import org.qiweb.api.controllers.Outcome;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Reverse Routes.
@@ -157,6 +157,7 @@ public abstract class ReverseRoutes
         {
             throw new UnsupportedOperationException( "ReverseOutcome has no headers." );
         }
+
     }
 
 }

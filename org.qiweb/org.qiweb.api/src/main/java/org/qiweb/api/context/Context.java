@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.api.context;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.Route;
 
 /**
  * HTTP Interaction Context.
- * <p>Accessible using {@link Controller#context()} and other helpers in {@link Controller}.</p>
+ * <p>Accessible using {@link CurrentContext#get()} and other helpers in {@link CurrentContext}.</p>
  *
  * @navassoc - - - org.qiweb.api.Application
  * @navassoc - - - org.qiweb.api.http.Session
@@ -79,4 +80,5 @@ public interface Context
     // How to share a ThreadLocal to the new thread?
     // All context objects should then be made thread safe!
     // Could be someting like: ThreadFactory threadFactory()
+
 }

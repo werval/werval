@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.Test;
 import org.qiweb.api.Error;
-import org.qiweb.api.controllers.Controller;
-import org.qiweb.api.controllers.Outcome;
+import org.qiweb.api.context.CurrentContext;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.TestGlobal;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
@@ -46,12 +46,12 @@ public class OnErrorTest
 
         public Outcome success()
         {
-            return Controller.outcomes().ok().build();
+            return CurrentContext.outcomes().ok().build();
         }
 
         public Outcome internalServerError()
         {
-            return Controller.outcomes().internalServerError().build();
+            return CurrentContext.outcomes().internalServerError().build();
         }
 
         public Outcome exception()
@@ -59,6 +59,7 @@ public class OnErrorTest
         {
             throw new IOException( "Wow an exception!", new RuntimeException( "This is a crash" ) );
         }
+
     }
 
     @Override
@@ -136,4 +137,5 @@ public class OnErrorTest
         assertThat( testGlobal.lastError.cause().getCause().getClass().getName(), equalTo( RuntimeException.class.getName() ) );
         assertThat( testGlobal.lastError.cause().getCause().getMessage(), equalTo( "This is a crash" ) );
     }
+
 }

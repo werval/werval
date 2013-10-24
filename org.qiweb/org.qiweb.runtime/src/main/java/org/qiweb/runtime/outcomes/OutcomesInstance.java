@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.controllers;
+package org.qiweb.runtime.outcomes;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.Config;
-import org.qiweb.api.controllers.OutcomeBuilder;
-import org.qiweb.api.controllers.Outcomes;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.outcomes.OutcomeBuilder;
+import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.util.URLs;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
@@ -318,4 +318,5 @@ public class OutcomesInstance
             withHeader( LOCATION, URLs.appendQueryString( url, queryString,
                                                           config.charset( QIWEB_CHARACTER_ENCODING ) ) );
     }
+
 }
