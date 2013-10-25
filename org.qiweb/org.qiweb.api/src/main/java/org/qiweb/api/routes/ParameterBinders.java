@@ -23,7 +23,24 @@ package org.qiweb.api.routes;
 public interface ParameterBinders
 {
 
-    <T> T bind( Class<T> type, String paramName, String paramValue );
+    /**
+     * Bind a parameter value.
+     * @param <T> Parameter parameterized type
+     * @param type Parameter type
+     * @param name Parameter name
+     * @param value Parameter value
+     * @return The bound value
+     */
+    <T> T bind( Class<T> type, String name, String value );
 
-    <T> String unbind( Class<T> type, String paramName, T paramValue );
+    /**
+     * Unbind a parameter value.
+     * @param <T> Parameter parameterized type
+     * @param type Parameter type
+     * @param name Parameter name
+     * @param value Parameter value
+     * @return The unbound raw value
+     */
+    <T> String unbind( Class<T> type, String name, T value );
+
 }

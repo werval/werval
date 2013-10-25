@@ -25,7 +25,14 @@ package org.qiweb.api.http;
 public interface Response
 {
 
+    /**
+     * @return Response mutable headers
+     */
     MutableHeaders headers();
 
+    /**
+     * @return Response mutable cookies
+     */
     MutableCookies cookies();
+
 }

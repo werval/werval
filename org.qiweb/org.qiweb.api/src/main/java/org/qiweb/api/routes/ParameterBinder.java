@@ -24,12 +24,26 @@ public interface ParameterBinder<T>
 {
 
     /**
+     * Check if this ParameterBinder accept the given type.
      * @param type Parameter type
      * @return TRUE if this ParameterBinder accept the given type, otherwise return FALSE
      */
     boolean accept( Class<?> type );
 
+    /**
+     * Bind a parameter value.
+     * @param name Parameter name
+     * @param value Parameter raw value
+     * @return The bound value
+     */
     T bind( String name, String value );
 
+    /**
+     * Unbind a parameter value.
+     * @param name Parameter name
+     * @param value Parameter value
+     * @return The unbound raw value
+     */
     String unbind( String name, T value );
+
 }

@@ -38,4 +38,5 @@ public class QiWebException
     {
         super( message, cause );
     }
+
 }

@@ -15,11 +15,26 @@
  */
 package org.qiweb.api.http;
 
+/**
+ * Mutable Cookies.
+ */
 public interface MutableCookies
     extends Cookies
 {
 
+    /**
+     * Set a cookie value.
+     * @param name Cookie name
+     * @param value Cookie value
+     * @return This very MutableCookies instance
+     */
     MutableCookies set( String name, String value );
 
+    /**
+     * Invalidate a cookie.
+     * @param name Cookie name
+     * @return This very MutableCookies instance
+     */
     MutableCookies invalidate( String name );
+
 }

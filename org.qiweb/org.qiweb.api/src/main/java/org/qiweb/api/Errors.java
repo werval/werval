@@ -86,4 +86,5 @@ public interface Errors
      * @return Last recorded Error pertaining to the given request
      */
     Error lastOfRequest( String requestIdentity );
+
 }

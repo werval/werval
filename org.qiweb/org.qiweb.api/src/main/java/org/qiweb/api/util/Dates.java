@@ -28,16 +28,25 @@ import java.util.TimeZone;
 public final class Dates
 {
 
+    /**
+     * @return Now
+     */
     public static Date now()
     {
         return new Date();
     }
 
+    /**
+     * @return Yesterday
+     */
     public static Date yesterday()
     {
         return new Date( System.currentTimeMillis() - 24 * 60 * 60 );
     }
 
+    /**
+     * @return Tomorrow
+     */
     public static Date tomorrow()
     {
         return new Date( System.currentTimeMillis() + 24 * 60 * 60 );
@@ -47,6 +56,9 @@ public final class Dates
     {
     }
 
+    /**
+     * Utilities to work with HTTP dates.
+     */
     public static final class HTTP
     {
 
@@ -61,27 +73,47 @@ public final class Dates
             }
         };
 
+        /**
+         * Format HTTP dates.
+         * @param date Date
+         * @return HTTP formatted date
+         */
         public static String format( Date date )
         {
             return HTTP_DATE_FORMAT.get().format( date );
         }
 
+        /**
+         * Parse HTTP dates.
+         * @param httpFormatDateString HTTP format date String
+         * @return Date
+         * @throws ParseException when the given string is not in HTTP date format
+         */
         public static Date parse( String httpFormatDateString )
             throws ParseException
         {
             return HTTP_DATE_FORMAT.get().parse( httpFormatDateString );
         }
 
+        /**
+         * @return Now HTTP formatted
+         */
         public static String now()
         {
             return format( new Date() );
         }
 
+        /**
+         * @return Yesterday HTTP formatted
+         */
         public static String yesterday()
         {
             return format( Dates.yesterday() );
         }
 
+        /**
+         * @return Tomorrow HTTP formatted
+         */
         public static String tomorrow()
         {
             return format( Dates.tomorrow() );
@@ -90,6 +122,7 @@ public final class Dates
         private HTTP()
         {
         }
+
     }
 
 }

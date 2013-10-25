@@ -24,28 +24,58 @@ import java.util.Iterator;
 public final class Strings
 {
 
+    /**
+     * Empty string.
+     */
     public static final String EMPTY = "";
 
+    /**
+     * Check if a String is null or empty.
+     * @param value String
+     * @return TRUE if the String is null or empty, otherwise return FALSE
+     */
     public static boolean isEmpty( String value )
     {
         return value == null || value.length() == 0;
     }
 
+    /**
+     * Join strings.
+     * @param strings Strings to join
+     * @return Joined String
+     */
     public static String join( String[] strings )
     {
         return join( Arrays.asList( strings ) );
     }
 
+    /**
+     * Join strings with a given delimiter.
+     * @param strings Strings to join
+     * @param delimiter Delimiter
+     * @return Joined String
+     */
     public static String join( String[] strings, String delimiter )
     {
         return join( Arrays.asList( strings ), delimiter );
     }
 
+    /**
+     * Join strings.
+     * @param strings Strings to join
+     * @return Joined String
+     */
     public static String join( Iterable<? extends CharSequence> strings )
     {
         return join( strings, "" );
     }
 
+    /**
+     * Join strings with a given delimiter.
+     * @param strings Strings to join
+     * @param delimiter Delimiter
+     * @return Joined String
+     */
     public static String join( Iterable<? extends CharSequence> strings, String delimiter )
     {
         int capacity = 0;
@@ -72,4 +102,5 @@ public final class Strings
     private Strings()
     {
     }
+
 }

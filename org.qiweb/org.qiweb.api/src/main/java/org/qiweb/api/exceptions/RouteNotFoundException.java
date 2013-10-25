@@ -35,13 +35,20 @@ public class RouteNotFoundException
         this.uri = uri;
     }
 
+    /**
+     * @return HTTP method
+     */
     public String method()
     {
         return method;
     }
 
+    /**
+     * @return HTTP URI
+     */
     public String uri()
     {
         return uri;
     }
+
 }

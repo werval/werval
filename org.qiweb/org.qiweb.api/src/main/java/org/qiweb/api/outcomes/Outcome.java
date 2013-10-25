@@ -96,10 +96,19 @@ public interface Outcome
         // CHECKSTYLE:ON
     }
 
+    /**
+     * @return Outcome HTTP status
+     */
     int status();
 
+    /**
+     * @return Outcome HTTP status class
+     */
     StatusClass statusClass();
 
+    /**
+     @return Outcome HTTP headers
+     */
     Headers headers();
 
 }

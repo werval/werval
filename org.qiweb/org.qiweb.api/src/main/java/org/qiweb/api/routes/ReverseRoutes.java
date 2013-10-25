@@ -36,16 +36,90 @@ import org.qiweb.api.outcomes.Outcome;
 public abstract class ReverseRoutes
 {
 
+    /**
+     * Generate controller dynamic proxy that record method calls for a OPTIONS method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
+    public static <T> T OPTIONS( Class<T> controllerType )
+    {
+        return HTTP( "OPTIONS", controllerType );
+    }
+
+    /**
+     * Generate controller dynamic proxy that record method calls for a GET method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
     public static <T> T GET( Class<T> controllerType )
     {
         return HTTP( "GET", controllerType );
     }
 
-    public static <T> T POST( Class<T> controllerType )
+    /**
+     * Generate controller dynamic proxy that record method calls for a HEAD method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
+    public static <T> T HEAD( Class<T> controllerType )
     {
-        return HTTP( "GET", controllerType );
+        return HTTP( "HEAD", controllerType );
     }
 
+    /**
+     * Generate controller dynamic proxy that record method calls for a POST method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
+    public static <T> T POST( Class<T> controllerType )
+    {
+        return HTTP( "POST", controllerType );
+    }
+
+    /**
+     * Generate controller dynamic proxy that record method calls for a PUT method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
+    public static <T> T PUT( Class<T> controllerType )
+    {
+        return HTTP( "PUT", controllerType );
+    }
+
+    /**
+     * Generate controller dynamic proxy that record method calls for a DELETE method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
+    public static <T> T DELETE( Class<T> controllerType )
+    {
+        return HTTP( "DELETE", controllerType );
+    }
+
+    /**
+     * Generate controller dynamic proxy that record method calls for a TRACE method.
+     * @param <T> Parameterized controller type
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
+    public static <T> T TRACE( Class<T> controllerType )
+    {
+        return HTTP( "TRACE", controllerType );
+    }
+
+    /**
+     * Generate controller dynamic proxy that record method calls.
+     * @param <T> Parameterized controller type
+     * @param httpMethod HTTP Method
+     * @param controllerType controller type
+     * @return Dynamic proxy of the controller type that record method calls
+     */
     @SuppressWarnings( "unchecked" )
     public static <T> T HTTP( final String httpMethod, final Class<T> controllerType )
     {
@@ -101,6 +175,7 @@ public abstract class ReverseRoutes
     public abstract ReverseRoute of( Outcome reverseOutcome );
 
     /**
+     * Reverse Outcome.
      * @hidden
      */
     public static final class ReverseOutcome
@@ -120,21 +195,33 @@ public abstract class ReverseRoutes
             this.parameters = parameters;
         }
 
+        /**
+         * @return HTTP Method
+         */
         public String httpMethod()
         {
             return httpMethod;
         }
 
+        /**
+         * @return Controller type
+         */
         public Class<?> controllerType()
         {
             return controllerType;
         }
 
+        /**
+         * @return Controller method
+         */
         public Method controllerMethod()
         {
             return controllerMethod;
         }
 
+        /**
+         * @return Controller parameters
+         */
         public List<Object> parameters()
         {
             return Collections.unmodifiableList( parameters );

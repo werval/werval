@@ -38,8 +38,12 @@ public class IllegalRouteException
         super( routeString + "\n" + message, cause );
     }
 
+    /**
+     * @return Route string
+     */
     public String routeString()
     {
         return routeString;
     }
+
 }

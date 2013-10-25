@@ -143,4 +143,5 @@ public final class NullArgumentException
     {
         super( message );
     }
+
 }

@@ -15,16 +15,35 @@
  */
 package org.qiweb.api;
 
+/**
+ * Application error.
+ */
 public interface Error
 {
 
+    /**
+     * @return Error's timestamp
+     */
     long timestamp();
 
+    /**
+     * @return Error's ID
+     */
     String errorId();
 
+    /**
+     * @return Request ID that seen the Error occur or null if the error did not happen during a request
+     */
     String requestId();
 
+    /**
+     * @return Error's message
+     */
     String message();
 
+    /**
+     * @return Error's cause
+     */
     Throwable cause();
+
 }

@@ -26,15 +26,15 @@ import org.qiweb.api.Crypto;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.util.Strings;
+import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.util.Comparators;
-import org.qiweb.api.util.URLs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_DOMAIN;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_HTTPONLY;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_PATH;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_SECURE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
@@ -166,4 +166,5 @@ public class SessionInstance
             signedCookieValue,
             config.bool( APP_SESSION_COOKIE_HTTPONLY ) );
     }
+
 }

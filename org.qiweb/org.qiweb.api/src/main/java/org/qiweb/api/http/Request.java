@@ -26,7 +26,14 @@ public interface Request
     extends RequestHeader
 {
 
+    /**
+     * @return Request path and query-string parameters
+     */
     Map<String, Object> parameters();
 
+    /**
+     * @return Request body
+     */
     RequestBody body();
+
 }

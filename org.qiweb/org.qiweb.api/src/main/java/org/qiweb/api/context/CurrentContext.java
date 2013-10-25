@@ -101,9 +101,8 @@ public class CurrentContext
         return get().outcomes();
     }
 
-    public CurrentContext()
+    private CurrentContext()
     {
-        // NOOP
     }
 
 }

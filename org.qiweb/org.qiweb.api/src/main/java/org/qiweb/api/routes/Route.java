@@ -30,18 +30,40 @@ import org.qiweb.api.http.RequestHeader;
 public interface Route
 {
 
+    /**
+     * @return HTTP Method
+     */
     String httpMethod();
 
+    /**
+     * @return Path
+     */
     String path();
 
+    /**
+     * @return Controller type
+     */
     Class<?> controllerType();
 
+    /**
+     * @return Controller method
+     */
     Method controllerMethod();
 
+    /**
+     * @return Controller method name
+     */
     String controllerMethodName();
 
+    /**
+     * @param requestHeader Request header
+     * @return TRUE if the Route is satisfied by the given request header, otherwise return FALSE
+     */
     boolean satisfiedBy( RequestHeader requestHeader );
 
+    /**
+     * @return Set of modifiers
+     */
     Set<String> modifiers();
 
     /**
@@ -62,4 +84,5 @@ public interface Route
      * @return String representation to a URI of this route with the given parameters values
      */
     String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters );
+
 }
