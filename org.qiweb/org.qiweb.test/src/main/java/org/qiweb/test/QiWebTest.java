@@ -35,7 +35,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
  * 
  * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
  * <p>
- *     By default, configuration is loaded from the <code>application.conf</conf> file.
+ *     By default, configuration is loaded from the <code>application.conf</code> file.
  *     Override the {@link #configurationResourceName()} method to provide your own test configuration.
  * </p>
  * <p>
@@ -128,6 +128,7 @@ public class QiWebTest
 
     /**
      * Override to provide your own configuration.
+     * @return Configuration resource name
      */
     protected String configurationResourceName()
     {
@@ -136,9 +137,11 @@ public class QiWebTest
 
     /**
      * Override to provide your own routes.
+     * @return Routes provider
      */
     protected RoutesProvider routesProvider()
     {
         return new RoutesConfProvider();
     }
+
 }

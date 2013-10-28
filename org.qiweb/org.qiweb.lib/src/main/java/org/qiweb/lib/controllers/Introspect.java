@@ -36,6 +36,7 @@ public class Introspect
 
     /**
      * Render QiWeb Config as JSON.
+     * @return QiWeb Config as JSON
      */
     public Outcome config()
     {
@@ -53,6 +54,7 @@ public class Introspect
      *   "date": "Tue, 03 Sep 2013 16:01:24 GMT",
      * }
      * </pre>
+     * @return QiWeb Version information as JSON
      */
     public Outcome version()
     {

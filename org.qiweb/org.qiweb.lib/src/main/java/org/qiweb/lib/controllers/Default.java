@@ -37,6 +37,7 @@ public class Default
     }
 
     /**
+     * @param url Target URL
      * @return a 302 FOUND Outcome
      */
     public Outcome found( String url )
@@ -45,6 +46,8 @@ public class Default
     }
 
     /**
+     * @param url Target URL
+     * @param queryString Query String elements
      * @return a 302 FOUND Outcome
      */
     public Outcome found( String url, Map<String, List<String>> queryString )
@@ -53,6 +56,7 @@ public class Default
     }
 
     /**
+     * @param url Target URL
      * @return a 303 SEE_OTHER Outcome
      */
     public Outcome seeOther( String url )
@@ -61,6 +65,8 @@ public class Default
     }
 
     /**
+     * @param url Target URL
+     * @param queryString Query String elements
      * @return a 303 SEE_OTHER Outcome
      */
     public Outcome seeOther( String url, Map<String, List<String>> queryString )

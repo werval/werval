@@ -108,6 +108,8 @@ public final class NullArgumentException
     /**
      * Ensures that the string array instance is not null and that it has entries that are not null or empty
      * either without trimming the string.
+     * @param name Name
+     * @param value Value
      */
     public static void ensureNotEmptyContent( String name, String[] value )
     {
@@ -116,6 +118,9 @@ public final class NullArgumentException
 
     /**
      * Ensures that the string array instance is not null and that it has entries that are not null or empty.
+     * @param name Name
+     * @param trim Trim flag
+     * @param value Value
      */
     public static void ensureNotEmptyContent( String name, boolean trim, String[] value )
     {

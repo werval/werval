@@ -41,6 +41,7 @@ public interface DevShellSPI
          * @return A handle to unwatch when done
          */
         SourceWatch watch( Set<File> filesAndDirectories, SourceChangeListener listener );
+
     }
 
     /**
@@ -50,6 +51,7 @@ public interface DevShellSPI
     {
 
         void onChange();
+
     }
 
     /**
@@ -59,6 +61,7 @@ public interface DevShellSPI
     {
 
         void unwatch();
+
     }
 
     /**
@@ -77,6 +80,8 @@ public interface DevShellSPI
 
     /**
      * Build Application source file URL if it exists.
+     * @param fileName File name
+     * @param lineNumber Line number
      * @return URL to the Application source file or null if not present.
      */
     String sourceURL( String fileName, int lineNumber );
@@ -90,4 +95,5 @@ public interface DevShellSPI
      * Rebuild the Application sources.
      */
     void rebuild();
+
 }

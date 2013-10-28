@@ -44,6 +44,9 @@ public final class RequestBodyInstance
 
     /**
      * Create a new EMPTY RequestBody.
+     * @param charset Body charset
+     * @param allowMultiValuedAttributes Allow multi-valued attributes
+     * @param allowMultiValuedUploads Allow multi-valued uploads
      */
     public RequestBodyInstance( Charset charset,
                                 boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads )
@@ -57,6 +60,9 @@ public final class RequestBodyInstance
     /**
      * Create a new RequestBody backed by a ByteBuf.
      * 
+     * @param charset Body charset
+     * @param allowMultiValuedAttributes Allow multi-valued attributes
+     * @param allowMultiValuedUploads Allow multi-valued uploads
      * @param byteBuf Body data
      */
     public RequestBodyInstance( Charset charset,
@@ -72,6 +78,9 @@ public final class RequestBodyInstance
     /**
      * Create a new RequestBody backed by form and upload data.
      * 
+     * @param charset Body charset
+     * @param allowMultiValuedAttributes Allow multi-valued attributes
+     * @param allowMultiValuedUploads Allow multi-valued uploads
      * @param attributes Form attributes
      * @param uploads Upload data
      */

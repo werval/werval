@@ -26,7 +26,7 @@ import org.qiweb.runtime.routes.RoutesProvider;
  *
  * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
  * <p>
- *     By default, configuration is loaded from the <code>application.conf</conf> file.
+ *     By default, configuration is loaded from the <code>application.conf</code> file.
  *     Use {@link #QiWebRule(java.lang.String)} or
  *     {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider)} constructor to to provide your own
  *     test configuration.
@@ -102,4 +102,5 @@ public class QiWebRule
             }
         };
     }
+
 }

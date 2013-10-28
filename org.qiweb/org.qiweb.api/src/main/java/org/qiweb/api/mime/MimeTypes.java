@@ -24,7 +24,7 @@ import java.nio.charset.Charset;
  * <p>Mime Type lookups always succeed and thus never return null.</p>
  * <p>If unable to detect, {@link #APPLICATION_OCTET_STREAM} is returned.</p>
  * <p>The known Mime Types are extracted from Apache HTTP Server source code by the QiWeb Build System.</p>
- * <p><img src="doc-files/apache-httpd.jpg"/></p>
+ * <p><img src="doc-files/apache-httpd.jpg" alt="Apache HTTP Server"></p>
  * <p>
  *     You can add Mime Type definitions in <code>application.conf</code> at the
  *     <code>qiweb.mimetypes.supplementary</code> config property.
@@ -167,4 +167,5 @@ public interface MimeTypes
      * @throws IllegalArgumentException when mimetype is not textual
      */
     String withCharsetOfTextual( String mimetype );
+
 }
