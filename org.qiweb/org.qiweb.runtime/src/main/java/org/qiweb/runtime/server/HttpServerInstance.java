@@ -62,7 +62,7 @@ public class HttpServerInstance
     }
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
-    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
     private final String identity;
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;

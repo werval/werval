@@ -72,7 +72,15 @@ public class SubProtocolSwitchHandler
             int maxBodySize = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE );
             int diskThreshold = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
             pipeline.addLast( "http-aggregator", new HttpRequestAggregator( app, maxBodySize, diskThreshold ) );
-            pipeline.addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
+
+            if( httpExecutors != null )
+            {
+                pipeline.addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
+            }
+            else
+            {
+                pipeline.addLast( "router", new HttpRequestRouterHandler( app, devSpi ) );
+            }
 
             pipeline.remove( this );
 

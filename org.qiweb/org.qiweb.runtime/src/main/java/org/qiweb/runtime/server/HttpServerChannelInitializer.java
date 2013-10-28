@@ -45,8 +45,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
     extends ChannelInitializer<Channel>
 {
 
-    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 4;
-
     private static class ExecutorsThreadFactory
         implements ThreadFactory
     {
@@ -58,7 +56,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         {
             return new Thread( runnable, "http-executor-" + count.getAndIncrement() );
         }
+
     }
+
     private final ChannelGroup allChannels;
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;
@@ -69,11 +69,30 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         this.allChannels = allChannels;
         this.app = httpApp;
         this.devSpi = devSpi;
-        int executors = app.config().has( QIWEB_HTTP_EXECUTORS )
-                        ? app.config().intNumber( QIWEB_HTTP_EXECUTORS )
-                        : DEFAULT_POOL_SIZE;
-        this.httpExecutors = new DefaultEventExecutorGroup( devSpi == null ? executors : 1,
-                                                            new ExecutorsThreadFactory() );
+        if( devSpi != null )
+        {
+            // Development mode, single controller executor thread
+            this.httpExecutors = new DefaultEventExecutorGroup( 1, new ExecutorsThreadFactory() );
+        }
+        else if( app.config().has( QIWEB_HTTP_EXECUTORS ) )
+        {
+            int executors = app.config().intNumber( QIWEB_HTTP_EXECUTORS );
+            if( executors <= 0 )
+            {
+                // Config set to 0, no controller executors
+                this.httpExecutors = null;
+            }
+            else
+            {
+                // Configured controller executors count
+                this.httpExecutors = new DefaultEventExecutorGroup( executors, new ExecutorsThreadFactory() );
+            }
+        }
+        else
+        {
+            // No configuration, no controller executors
+            this.httpExecutors = null;
+        }
     }
 
     @Override
@@ -113,4 +132,5 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         // Protocol Switching Handler
         pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, httpExecutors, app, devSpi ) );
     }
+
 }
