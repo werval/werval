@@ -234,7 +234,7 @@ public final class HttpRequestRouterHandler
 
             // Set Controller Context
             Context context = new ContextInstance( app, session, route, request, response );
-            contextHelper.setOnCurrentThread( app.classLoader(), context );
+            contextHelper.setOnCurrentThread( context );
 
             // Invoke Controller FilterChain, ended by Controller Method Invokation
             LOG.trace( "{} Invoking controller method: {}", requestIdentity, route.controllerMethod() );

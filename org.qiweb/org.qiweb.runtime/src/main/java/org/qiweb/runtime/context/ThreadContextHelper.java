@@ -41,19 +41,59 @@ public final class ThreadContextHelper
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
             throw new QiWebRuntimeException( "QiWeb API mismatch, unable to get Current Context Thread Local, "
-                                             + "something is broken! " + ex.getMessage(), ex );
+                                             + "something is broken! Please report. " + ex.getMessage(), ex );
         }
     }
 
+    /**
+     * Run a {@literal Runnable} with a Context.
+     * <p>Use a {@link ThreadContextHelper} instance, see its methods documentation.</p>
+     * @param context Context
+     * @param runnable Runnable
+     */
+    public static void withContext( Context context, Runnable runnable )
+    {
+        ThreadContextHelper helper = new ThreadContextHelper();
+        try
+        {
+            helper.setOnCurrentThread( context );
+            runnable.run();
+        }
+        finally
+        {
+            helper.clearCurrentThread();
+        }
+    }
     private ClassLoader previousLoader = null;
 
-    public void setOnCurrentThread( ClassLoader loader, Context context )
+    /**
+     * Set {@literal Context} on current {@literal Thread}.
+     *
+     * <p>In order:</p>
+     * <ul>
+     *     <li>Keep previous thread context {@link ClassLoader}.</li>
+     *     <li>Set thread {@link ClassLoader}.</li>
+     *     <li>Set thread Context {@literal ThreadLocal}.</li>
+     * </ul>
+     *
+     * @param context Context
+     */
+    public void setOnCurrentThread( Context context )
     {
         previousLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( loader );
+        Thread.currentThread().setContextClassLoader( context.application().classLoader() );
         getCurrentContextThreadLocal().set( context );
     }
 
+    /**
+     * Remove {@literal Context} from current {@literal Thread}.
+     *
+     * <p>In order:</p>
+     * <ul>
+     *     <li>Set thread {@link ClassLoader} to previous one.</li>
+     *     <li>Remove thread Context {@literal ThreadLocal}.</li>
+     * </ul>
+     */
     public void clearCurrentThread()
     {
         Thread.currentThread().setContextClassLoader( previousLoader );
