@@ -25,13 +25,14 @@ import org.qiweb.api.routes.ReverseRoutes;
 
 /**
  * Current Context.
+ * <p>Static utility methods to get a hand on the thread local Context.</p>
  *
  * @navassoc - - - Context
  */
 public class CurrentContext
 {
 
-    private static final ThreadLocal<Context> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
+    /* package */ static final ThreadLocal<Context> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * @return Current Request Context

@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.context;
+package org.qiweb.api.context;
 
-import java.lang.reflect.Field;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.context.CurrentContext;
-import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.slf4j.MDC;
 
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
@@ -28,25 +24,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
  */
 public final class ThreadContextHelper
 {
-
-    @SuppressWarnings( "unchecked" )
-    private static ThreadLocal<Context> getCurrentContextThreadLocal()
-    {
-        try
-        {
-            Field field = CurrentContext.class.getDeclaredField( "CONTEXT_THREAD_LOCAL" );
-            if( !field.isAccessible() )
-            {
-                field.setAccessible( true );
-            }
-            return (ThreadLocal<Context>) field.get( null );
-        }
-        catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
-        {
-            throw new QiWebRuntimeException( "QiWeb API mismatch, unable to get Current Context Thread Local, "
-                                             + "something is broken! Please report. " + ex.getMessage(), ex );
-        }
-    }
 
     /**
      * Run a {@literal Runnable} with a Context.
@@ -67,6 +44,10 @@ public final class ThreadContextHelper
             helper.clearCurrentThread();
         }
     }
+
+    /**
+     * Previous ClassLoader.
+     */
     private ClassLoader previousLoader = null;
 
     /**
@@ -86,7 +67,7 @@ public final class ThreadContextHelper
     {
         previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( context.application().classLoader() );
-        getCurrentContextThreadLocal().set( context );
+        CurrentContext.CONTEXT_THREAD_LOCAL.set( context );
         MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
     }
 
@@ -105,7 +86,7 @@ public final class ThreadContextHelper
         MDC.remove( X_QIWEB_REQUEST_ID );
         Thread.currentThread().setContextClassLoader( previousLoader );
         previousLoader = null;
-        getCurrentContextThreadLocal().remove();
+        CurrentContext.CONTEXT_THREAD_LOCAL.remove();
     }
 
 }
