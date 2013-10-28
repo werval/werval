@@ -151,7 +151,7 @@ Routes are defined by:
 - optionaly a method parameters definition ;
 - and finaly optional modifiers.
 
-Teh default QiWeb router allows for textual representation of routes definition.
+The default QiWeb router allows for textual representation of routes definition.
 
     http-method path-expression controller-fqcn.method-name[(parameters)] [modifiers]
 
@@ -159,9 +159,9 @@ You can also express routes definitions in code using the Routes API.
 
 Request URI Path and QueryString are the source of Controller Parameters.
 
+You can also handle all the routing in your Global object.
 
-NOTE: URI Fragment identifier is considered as useful only on the client side and hence is not taken into account when
-routing.
+NOTE: URI Fragment identifier is considered useful on the client side only, hence not taken into account when routing.
 However, the reverse routing API allow you to append a fragment identifier to generated URIs.
 
 
@@ -178,6 +178,8 @@ However, the reverse routing API allow you to append a fragment identifier to ge
 
 As QiWeb is stateless oriented, it provides no way to keep session state server side.
 Instead a simple session Cookie is used to keep state accross user requests.
+
+TIP: If you need to keep server side state think about your database or cache system of choice.
 
 The Session Cookie contains a `Map<String,String>` and is signed using the mandatory Application Secret.
 Signature use the HmacSHA1 algorithm.
