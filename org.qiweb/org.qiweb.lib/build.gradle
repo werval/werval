@@ -2,7 +2,6 @@
 dependencies {
 
     compile project( ':org.qiweb.api' )
-    compile libs.slf4j
     
     testCompile project( ':org.qiweb.test' )
     testCompile libs.rest_assured

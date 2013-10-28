@@ -3,7 +3,6 @@ dependencies {
 
     compile project( ":org.qiweb.api" )
     compile project( ":org.qiweb.spi" )
-    compile libs.slf4j
     compile libs.typesafe_config
     compile libs.netty_codec_http
     
