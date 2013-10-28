@@ -19,6 +19,9 @@ import java.lang.reflect.Field;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.context.CurrentContext;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.slf4j.MDC;
+
+import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 
 /**
  * Current Thread Context Helper.
@@ -74,6 +77,7 @@ public final class ThreadContextHelper
      *     <li>Keep previous thread context {@link ClassLoader}.</li>
      *     <li>Set thread {@link ClassLoader}.</li>
      *     <li>Set thread Context {@literal ThreadLocal}.</li>
+     *     <li>Put current Request ID in SLF4J MDC at the {@link #X_QIWEB_REQUEST_ID} key.</li>
      * </ul>
      *
      * @param context Context
@@ -83,6 +87,7 @@ public final class ThreadContextHelper
         previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( context.application().classLoader() );
         getCurrentContextThreadLocal().set( context );
+        MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
     }
 
     /**
@@ -90,12 +95,14 @@ public final class ThreadContextHelper
      *
      * <p>In order:</p>
      * <ul>
+     *     <li>Remove current Request ID from SLF4J MDC.</li>
      *     <li>Set thread {@link ClassLoader} to previous one.</li>
      *     <li>Remove thread Context {@literal ThreadLocal}.</li>
      * </ul>
      */
     public void clearCurrentThread()
     {
+        MDC.remove( X_QIWEB_REQUEST_ID );
         Thread.currentThread().setContextClassLoader( previousLoader );
         previousLoader = null;
         getCurrentContextThreadLocal().remove();

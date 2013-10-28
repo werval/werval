@@ -35,6 +35,10 @@ Here are the most useful:
 - `org.qiweb.runtime.filters` QiWeb Controller Filters
 - etc...
 
+TIP: QiWeb Runtime leverage SLF4J X-QiWeb-Request-ID[Mapped Diagnosic Context], aka. MDC, by putting the current request
+ID at the `X-QiWeb-Request-ID` key.
+You can use this key in your loggers output patterns to write the request ID.
+
 
 === Character encoding
 
