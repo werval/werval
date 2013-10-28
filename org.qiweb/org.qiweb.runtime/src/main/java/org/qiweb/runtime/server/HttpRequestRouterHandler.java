@@ -52,7 +52,7 @@ import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.outcomes.Outcome.StatusClass;
+import org.qiweb.api.http.StatusClass;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
@@ -62,9 +62,9 @@ import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.http.SessionInstance;
-import org.qiweb.runtime.outcomes.OutcomeBuilderInstance.ChunkedOutcome;
-import org.qiweb.runtime.outcomes.OutcomeBuilderInstance.SimpleOutcome;
-import org.qiweb.runtime.outcomes.OutcomeBuilderInstance.StreamOutcome;
+import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
+import org.qiweb.runtime.outcomes.SimpleOutcome;
+import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.util.Stacktraces;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -248,9 +248,9 @@ public final class HttpRequestRouterHandler
             final HttpResponse nettyResponse;
             final ChannelFuture writeFuture;
             final boolean forceClose;
-            if( outcome instanceof ChunkedOutcome )
+            if( outcome instanceof ChunkedInputOutcome )
             {
-                ChunkedOutcome chunkedOutcome = (ChunkedOutcome) outcome;
+                ChunkedInputOutcome chunkedOutcome = (ChunkedInputOutcome) outcome;
                 nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
@@ -260,9 +260,9 @@ public final class HttpRequestRouterHandler
                 nettyContext.write( nettyResponse );
                 writeFuture = nettyContext.writeAndFlush( new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput() ) );
             }
-            else if( outcome instanceof StreamOutcome )
+            else if( outcome instanceof InputStreamOutcome )
             {
-                StreamOutcome streamOutcome = (StreamOutcome) outcome;
+                InputStreamOutcome streamOutcome = (InputStreamOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );

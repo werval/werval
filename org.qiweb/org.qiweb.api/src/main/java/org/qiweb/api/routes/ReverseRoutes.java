@@ -18,13 +18,10 @@ package org.qiweb.api.routes;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.http.Headers;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
@@ -173,78 +170,5 @@ public abstract class ReverseRoutes
      * @throws IllegalArgumentException when the given Outcome is not appropriate
      */
     public abstract ReverseRoute of( Outcome reverseOutcome );
-
-    /**
-     * Reverse Outcome.
-     * @hidden
-     */
-    public static final class ReverseOutcome
-        implements Outcome
-    {
-
-        private final String httpMethod;
-        private final Class<?> controllerType;
-        private final Method controllerMethod;
-        private final List<Object> parameters;
-
-        private ReverseOutcome( String method, Class<?> controllerType, Method controllerMethod, List<Object> parameters )
-        {
-            this.httpMethod = method;
-            this.controllerType = controllerType;
-            this.controllerMethod = controllerMethod;
-            this.parameters = parameters;
-        }
-
-        /**
-         * @return HTTP Method
-         */
-        public String httpMethod()
-        {
-            return httpMethod;
-        }
-
-        /**
-         * @return Controller type
-         */
-        public Class<?> controllerType()
-        {
-            return controllerType;
-        }
-
-        /**
-         * @return Controller method
-         */
-        public Method controllerMethod()
-        {
-            return controllerMethod;
-        }
-
-        /**
-         * @return Controller parameters
-         */
-        public List<Object> parameters()
-        {
-            return Collections.unmodifiableList( parameters );
-        }
-
-        @Override
-        public int status()
-        {
-            throw new UnsupportedOperationException( "ReverseOutcome has no status." );
-        }
-
-        @Override
-        public StatusClass statusClass()
-        {
-            throw new UnsupportedOperationException( "ReverseOutcome has no status." );
-        }
-
-        @Override
-        public Headers headers()
-        {
-            throw new UnsupportedOperationException( "ReverseOutcome has no headers." );
-        }
-
-    }
 
 }

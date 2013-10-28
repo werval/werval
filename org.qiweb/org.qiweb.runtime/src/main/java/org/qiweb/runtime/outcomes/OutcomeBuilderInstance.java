@@ -16,13 +16,9 @@
 package org.qiweb.runtime.outcomes;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.stream.ChunkedInput;
-import io.netty.handler.stream.ChunkedStream;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.qiweb.api.Config;
-import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.outcomes.Outcome;
@@ -31,7 +27,6 @@ import org.qiweb.api.outcomes.OutcomeBuilder;
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
@@ -42,115 +37,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 public class OutcomeBuilderInstance
     implements OutcomeBuilder
 {
-
-    private abstract static class AbstractOutcome<T extends AbstractOutcome<?>>
-        implements Outcome
-    {
-
-        protected final MutableHeaders headers;
-        private final int status;
-
-        private AbstractOutcome( int status, MutableHeaders headers )
-        {
-            this.headers = headers;
-            this.status = status;
-        }
-
-        @Override
-        public final int status()
-        {
-            return status;
-        }
-
-        @Override
-        public StatusClass statusClass()
-        {
-            return StatusClass.valueOf( status );
-        }
-
-        @Override
-        public final Headers headers()
-        {
-            return headers;
-        }
-
-        @Override
-        public String toString()
-        {
-            return status + ", " + headers;
-        }
-
-    }
-
-    public static class SimpleOutcome
-        extends AbstractOutcome<SimpleOutcome>
-    {
-
-        private ByteBuf body = EMPTY_BUFFER;
-
-        /* package */ SimpleOutcome( int status, MutableHeaders headers )
-        {
-            super( status, headers );
-        }
-
-        public ByteBuf body()
-        {
-            return body;
-        }
-
-        /* package */ final SimpleOutcome withEntity( ByteBuf body )
-        {
-            this.body = body;
-            return this;
-        }
-
-    }
-
-    public static class StreamOutcome
-        extends AbstractOutcome<StreamOutcome>
-    {
-
-        private final InputStream bodyInputStream;
-        private final long contentLength;
-
-        /* package */ StreamOutcome( int status, MutableHeaders headers, InputStream bodyInputStream, long contentLength )
-        {
-            super( status, headers );
-            this.bodyInputStream = bodyInputStream;
-            this.contentLength = contentLength;
-            this.headers.with( CONTENT_LENGTH, String.valueOf( contentLength ) );
-        }
-
-        public final InputStream bodyInputStream()
-        {
-            return bodyInputStream;
-        }
-
-        public final long contentLength()
-        {
-            return contentLength;
-        }
-
-    }
-
-    public static class ChunkedOutcome
-        extends AbstractOutcome<ChunkedOutcome>
-    {
-
-        private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( new byte[ 0 ] ) );
-
-        /* package */ ChunkedOutcome( int status, MutableHeaders headers, InputStream input, int chunkSize )
-        {
-            super( status, headers );
-            this.input = new ChunkedStream( input, chunkSize );
-        }
-
-        public ChunkedInput<ByteBuf> chunkedInput()
-        {
-            return input;
-        }
-
-    }
 
     private final int status;
     private final MutableHeaders headers;
@@ -250,9 +136,9 @@ public class OutcomeBuilderInstance
             InputStream bodyInputStream = (InputStream) body;
             if( length != -1 )
             {
-                return new StreamOutcome( status, headers, bodyInputStream, length );
+                return new InputStreamOutcome( status, headers, bodyInputStream, length );
             }
-            return new ChunkedOutcome( status, headers, bodyInputStream, chunkSize );
+            return new ChunkedInputOutcome( status, headers, bodyInputStream, chunkSize );
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }

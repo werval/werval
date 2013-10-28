@@ -13,30 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.outcomes;
+package org.qiweb.runtime.outcomes;
 
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.StatusClass;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import org.qiweb.api.http.MutableHeaders;
 
 /**
- * Outcome of a HTTP Request processing.
+ * Simple {@link ByteBuf} based Outcome.
  */
-public interface Outcome
+public class SimpleOutcome
+    extends AbstractOutcome<SimpleOutcome>
 {
 
-    /**
-     * @return Outcome HTTP status
-     */
-    int status();
+    private ByteBuf body = Unpooled.EMPTY_BUFFER;
 
-    /**
-     * @return Outcome HTTP status class
-     */
-    StatusClass statusClass();
+    /* package */ SimpleOutcome( int status, MutableHeaders headers )
+    {
+        super( status, headers );
+    }
 
-    /**
-     @return Outcome HTTP headers
-     */
-    Headers headers();
+    /* package */ final SimpleOutcome withEntity( ByteBuf body )
+    {
+        this.body = body;
+        return this;
+    }
+
+    public ByteBuf body()
+    {
+        return body;
+    }
 
 }
