@@ -44,14 +44,14 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
 
 /**
  * An Application Instance.
- * <p>Application Mode defaults to {@link Mode#test}.</p>
+ * <p>Application Mode defaults to {@link Mode#TEST}.</p>
  * <p>Application Config behaviour is the very same whatever the Mode is.</p>
  * <p>Application ClassLoader defaults to the ClassLoader that defined the ApplicationInstance class.</p>
  * <p>Application Routes are fetched from a given RoutesProvider.</p>
@@ -338,4 +338,5 @@ public final class ApplicationInstance
         routes = routesProvider.routes( this );
         reverseRoutes = new ReverseRoutesInstance( this );
     }
+
 }

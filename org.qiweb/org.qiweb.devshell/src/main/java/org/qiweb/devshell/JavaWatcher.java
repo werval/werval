@@ -45,7 +45,7 @@ import static org.qiweb.runtime.util.Iterables.first;
  * Java WatchService based SourceWatcher.
  * <p>
  *     Based on the <a href="http://docs.oracle.com/javase/tutorial/essential/io/notification.html">Watching a Directory
- *     for Changes</p> Java Tutorial.
+ *     for Changes</a> Java Tutorial.
  * </p>
  */
 public class JavaWatcher
@@ -162,6 +162,7 @@ public class JavaWatcher
         {
             run = false;
         }
+
     }
 
     @SuppressWarnings( "unchecked" )
@@ -277,4 +278,5 @@ public class JavaWatcher
 
         keys.put( key, fileOrDir );
     }
+
 }

@@ -36,10 +36,6 @@ import java.util.WeakHashMap;
 public final class TypeResolver
 {
 
-    private TypeResolver()
-    {
-    }
-
     /** An unknown type. */
     public static final class Unknown
     {
@@ -47,7 +43,9 @@ public final class TypeResolver
         private Unknown()
         {
         }
+
     }
+
     /** Cache of type variable/argument pairs */
     private static final Map<Class<?>, Reference<Map<TypeVariable<?>, Type>>> typeVariableCache = Collections.synchronizedMap( new WeakHashMap<Class<?>, Reference<Map<TypeVariable<?>, Type>>>() );
     private static boolean cacheEnabled = true;
@@ -74,6 +72,8 @@ public final class TypeResolver
      * upwards from the {@code initialType}. If no arguments can be resolved then
      * {@code Unknown.class} is returned.
      * 
+     * @param <T> Parameterized target type
+     * @param <I> Parameterized initial type
      * @param initialType to resolve upwards from
      * @param targetType to resolve arguments for
      * @return type argument for {@code initialType} else {@code null} if no type arguments are
@@ -121,6 +121,8 @@ public final class TypeResolver
      * to a Class are returned as {@code Unknown.class}. If no arguments can be resolved then
      * {@code null} is returned.
      * 
+     * @param <T> Parameterized target type
+     * @param <I> Parameterized initial type
      * @param initialType to resolve upwards from
      * @param targetType to resolve arguments for
      * @return array of raw classes representing type arguments for {@code initialType} else
@@ -136,6 +138,10 @@ public final class TypeResolver
      * Resolves the arguments for the {@code genericType} using the type variable information for the
      * {@code targetType}. Returns {@code null} if {@code genericType} is not parameterized or if
      * arguments cannot be resolved.
+     *
+     * @param genericType Generic type
+     * @param targetType Target type
+     * @return {@code null} if {@code genericType} is not parameterized or if arguments cannot be resolved
      */
     public static Class<?>[] resolveArguments( Type genericType, Class<?> targetType )
     {
@@ -163,6 +169,10 @@ public final class TypeResolver
     /**
      * Resolves the generic Type for the {@code targetType} by walking the type hierarchy upwards from
      * the {@code initialType}.
+     *
+     * @param initialType Initial type
+     * @param targetType Target type
+     * @return Generic type
      */
     public static Type resolveGenericType( Type initialType, Class<?> targetType )
     {
@@ -211,6 +221,10 @@ public final class TypeResolver
     /**
      * Resolves the raw class for the given {@code genericType}, using the type variable information
      * from the {@code targetType}.
+     *
+     * @param genericType Generic type
+     * @param targetType Target type
+     * @return Raw class
      */
     public static Class<?> resolveClass( Type genericType, Class<?> targetType )
     {
@@ -375,5 +389,10 @@ public final class TypeResolver
 
         return bound == Object.class ? Unknown.class : bound;
     }
+
+    private TypeResolver()
+    {
+    }
+
 }
 // CHECKSTYLE:ON

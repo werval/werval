@@ -42,6 +42,7 @@ public final class HeadersInstance
 
     /**
      * Create new empty Headers instance.
+     * @param allowMultiValuedHeaders Allow multi-valued headers
      */
     public HeadersInstance( boolean allowMultiValuedHeaders )
     {
@@ -51,6 +52,8 @@ public final class HeadersInstance
 
     /**
      * Deep-copy constructor.
+     * @param allowMultiValuedHeaders Allow multi-valued headers
+     * @param headers Headers to copy
      */
     public HeadersInstance( boolean allowMultiValuedHeaders, Headers headers )
     {
@@ -232,4 +235,5 @@ public final class HeadersInstance
     {
         return headers.toString();
     }
+
 }

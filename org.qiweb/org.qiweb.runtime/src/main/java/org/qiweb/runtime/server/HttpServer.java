@@ -24,14 +24,14 @@ public interface HttpServer
     /**
      * Activate the QiWeb Http Server.
      * 
-     * @throws QiWebException if unable to activate HttpServer
+     * @throws org.qiweb.api.exceptions.QiWebException if unable to activate HttpServer
      */
     void activate();
 
     /**
      * Passivate the QiWeb Http Server.
      *
-     * @throws QiWebException if unable to passivate HttpServer
+     * @throws org.qiweb.api.exceptions.QiWebException if unable to passivate HttpServer
      */
     void passivate();
 
@@ -41,4 +41,5 @@ public interface HttpServer
      * @throws IllegalStateException when the passivation shutdown hook has already been registered
      */
     void registerPassivationShutdownHook();
+
 }

@@ -32,12 +32,12 @@ import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Strings;
-import org.qiweb.runtime.util.Holder;
+import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.runtime.routes.ControllerParamsInstance.ControllerParamInstance;
+import org.qiweb.runtime.util.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
  * <p>If you happen to use Java 8 you'll be able to shorten the code a bit:</p>
  * <pre>
  * Route route = route( GET ).on( "/foo/:slug/bar/:id" ).
- *     to( MyController.class, ctrl -> ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) ) ).
+ *     to( MyController.class, ctrl -&gt; ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) ) ).
  *     newInstance();
  * </pre>
  * <p>
@@ -83,8 +83,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
  */
 public final class RouteBuilder
 {
-
-    private static final Logger LOG = LoggerFactory.getLogger( RouteBuilder.class );
 
     /**
      * @param <T> the controller type
@@ -138,11 +136,17 @@ public final class RouteBuilder
          * @param controller a dynamic proxy that will record a method call
          */
         protected abstract void call( T controller );
+
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger( RouteBuilder.class );
 
     /**
      * Parse a textual definition of multiple routes, one per line.
      * <p>Ignore lines that begins with a # or are empty.</p>
+     * @param application Application
+     * @param routesString Routes as String
+     * @return Parsed Routes
      */
     public static Routes parseRoutes( Application application, String routesString )
     {
@@ -173,7 +177,7 @@ public final class RouteBuilder
 
     /**
      * Parse a textual route definition to a Route instance.
-     * @param loader The ClassLoader to use to find Controller classes
+     * @param application Application
      * @param routeString a textual route definition
      * @return a new Route instance
      * @throws IllegalRouteException when the textual route definition is invalid
@@ -231,7 +235,7 @@ public final class RouteBuilder
                            new Object[]
                 {
                     cleanRouteString, methodEnd, pathEnd, controllerTypeEnd, controllerMethodEnd, controllerParamsEnd
-                } );
+                           } );
             }
 
             String httpMethod = cleanRouteString.substring( 0, methodEnd );
@@ -259,7 +263,7 @@ public final class RouteBuilder
                            new Object[]
                 {
                     cleanRouteString, httpMethod, path, controllerTypeName, controllerMethodName, controllerMethodParams
-                } );
+                           } );
             }
 
             // Parse controller type
@@ -397,6 +401,8 @@ public final class RouteBuilder
 
     /**
      * Create a new RouteBuilder for a Http Method.
+     * @param method HTTP Method
+     * @return new RouteBuilder
      */
     public static RouteBuilder route( String method )
     {
@@ -427,6 +433,7 @@ public final class RouteBuilder
 
     /**
      * Set Route controller type, method and parameters.
+     * @param <T> Parameterized controller type
      * @param controllerType the controller type
      * @param methodRecorder a {@link MethodRecorder}
      * @return this RouteBuilder
@@ -443,16 +450,16 @@ public final class RouteBuilder
                 new Class<?>[]
             {
                 controllerType
-            },
+                },
                 new InvocationHandler()
-            {
-                @Override
-                public Object invoke( Object proxy, Method method, Object[] args )
                 {
-                    methodNameHolder.set( method.getName() );
-                    return null;
-                }
-            } );
+                    @Override
+                    public Object invoke( Object proxy, Method method, Object[] args )
+                    {
+                        methodNameHolder.set( method.getName() );
+                        return null;
+                    }
+                } );
         }
         else
         {
@@ -500,4 +507,5 @@ public final class RouteBuilder
     {
         return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams, modifiers );
     }
+
 }

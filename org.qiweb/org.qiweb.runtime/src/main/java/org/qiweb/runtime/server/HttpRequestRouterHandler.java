@@ -51,8 +51,8 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Response;
 import org.qiweb.api.http.Session;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.http.StatusClass;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
@@ -63,8 +63,8 @@ import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
-import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
+import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.runtime.util.Stacktraces;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -104,7 +104,7 @@ import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
  * 
- * <h4>HTTP Requests</h4>
+ * <p><strong>HTTP Requests</strong></p>
  * <p>
  *     Any HTTP request message is allowed to contain a message body, and thus must be parsed with that in mind.
  *     This implementation consume the request body for any requests methods but it is only parsed for POST, PUT
@@ -112,7 +112,7 @@ import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
  *     types, it's the application responsibility to do the parsing.
  * </p>
  * 
- * <h4>WebSocket UPGRADE Requests</h4>
+ * <p><strong>WebSocket UPGRADE Requests</strong></p>
  * 
  * <p>TODO WebSocket UPGRADE</p>
  */
