@@ -34,24 +34,24 @@ public class Global
 {
 
     /**
-     * Invoked on Application start.
+     * Invoked on Application activation.
      * @param application Application
      */
-    public void onStart( Application application )
+    public void onActivate( Application application )
     {
     }
 
     /**
-     * Invoked on Application stop.
+     * Invoked on Application passivation.
      * @param application Application
      */
-    public void onStop( Application application )
+    public void onPassivate( Application application )
     {
     }
 
     /**
      * Invoked before binding Http Server.
-     * <p>Invoked after {@link #onStart(org.qiweb.api.Application)}.</p>
+     * <p>Invoked after {@link #onActivate(org.qiweb.api.Application)}.</p>
      * <p>Default to NOOP.</p>
      * <p>Reloads occuring in development mode do not trigger this call.</p>
      *
@@ -85,7 +85,7 @@ public class Global
 
     /**
      * Invoked after unbinding Http Server.
-     * <p>Invoked before {@link #onStop(org.qiweb.api.Application)}.</p>
+     * <p>Invoked before {@link #onPassivate(org.qiweb.api.Application)}.</p>
      * <p>Default to NOOP.</p>
      * <p>Reloads occuring in development mode do not trigger this call.</p>
      *

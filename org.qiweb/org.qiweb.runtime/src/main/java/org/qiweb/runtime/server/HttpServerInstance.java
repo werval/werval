@@ -87,6 +87,8 @@ public class HttpServerInstance
     @Override
     public void activate()
     {
+        // Activate Application
+        app.activate();
         app.global().beforeHttpBind( app );
 
         // Netty Bootstrap
@@ -150,8 +152,9 @@ public class HttpServerInstance
 
                 LOG.debug( "[{}] Http Service Passivated", identity );
 
+                // Passivate Application
                 app.global().afterHttpUnbind( app );
-                app.global().onStop( app );
+                app.passivate();
             }
         } );
         shutdownFuture.awaitUninterruptibly();

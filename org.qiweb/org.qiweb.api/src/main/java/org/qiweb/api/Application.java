@@ -81,7 +81,25 @@ public interface Application
     }
 
     /**
-     * @return Application {@link Mode}, defaults to {@link Mode#TEST}.
+     * Activate the Application.
+     * @throws IllegalStateException if the {@literal Application} is already active.
+     */
+    void activate();
+
+    /**
+     * Passivate the Application.
+     * @throws IllegalStateException if the {@literal Application} was not active.
+     */
+    void passivate();
+
+    /**
+     * Application activation state.
+     * @return {@literal TRUE} if the {@literal Application} is active, otherwise return {@literal FALSE}
+     */
+    boolean isActive();
+
+    /**
+     * @return {@literal Application} {@link Mode}, defaults to {@link Mode#TEST}.
      */
     Mode mode();
 

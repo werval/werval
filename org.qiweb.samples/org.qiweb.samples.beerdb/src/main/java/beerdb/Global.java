@@ -63,7 +63,7 @@ public class Global
     private static final Logger LOG = LoggerFactory.getLogger( Global.class );
 
     @Override
-    public void onStart( Application application )
+    public void onActivate( Application application )
     {
         // Database schema migration
         liquibaseUpdate( application );
@@ -78,11 +78,11 @@ public class Global
         // Jackson JSON
         application.metaData().put( "mapper", createObjectMapper() );
 
-        LOG.info( "Beer Database Started" );
+        LOG.info( "Beer Database Activated" );
     }
 
     @Override
-    public void onStop( Application application )
+    public void onPassivate( Application application )
     {
         // Persistence
         EntityManagerFactory emf = application.metaData().get( EntityManagerFactory.class, "emf" );
@@ -97,7 +97,7 @@ public class Global
         // Jackson JSON
         application.metaData().remove( "mapper" );
 
-        LOG.info( "Beer Database Stopped" );
+        LOG.info( "Beer Database Passivated" );
     }
 
     private void liquibaseUpdate( Application application )

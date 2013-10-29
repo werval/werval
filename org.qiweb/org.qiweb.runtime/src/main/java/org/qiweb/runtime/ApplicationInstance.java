@@ -61,8 +61,8 @@ public final class ApplicationInstance
     implements Application
 {
 
+    private volatile boolean activated;
     private final Mode mode;
-    private boolean started;
     private Config config;
     private Global global;
     private Crypto crypto;
@@ -138,7 +138,35 @@ public final class ApplicationInstance
         this.classLoader = classLoader;
         this.metaData = new MetaData();
         this.errors = new ErrorsInstance( config );
-        configurationChanged();
+        configure();
+    }
+
+    @Override
+    public synchronized void activate()
+    {
+        if( activated )
+        {
+            throw new IllegalStateException( "Application already activated." );
+        }
+        global.onActivate( this );
+        activated = true;
+    }
+
+    @Override
+    public synchronized void passivate()
+    {
+        if( !activated )
+        {
+            throw new IllegalStateException( "Application already passivated." );
+        }
+        global.onPassivate( this );
+        activated = false;
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return activated;
     }
 
     @Override
@@ -230,27 +258,22 @@ public final class ApplicationInstance
      */
     public void reload( ClassLoader newClassLoader )
     {
+        passivate();
         this.classLoader = newClassLoader;
         this.config = new ConfigInstance( newClassLoader );
-        configurationChanged();
+        configure();
+        activate();
     }
 
-    private void configurationChanged()
+    private void configure()
     {
-        if( started )
-        {
-            global.onStop( this );
-            started = false;
-        }
         configureGlobal();
         configureDefaultCharset();
         configureCrypto();
         configureTmpdir();
         configureParameterBinders();
         configureMimeTypes();
-        loadRoutes();
-        global.onStart( this );
-        started = true;
+        configureRoutes();
     }
 
     private void configureGlobal()
@@ -333,7 +356,7 @@ public final class ApplicationInstance
         }
     }
 
-    private void loadRoutes()
+    private void configureRoutes()
     {
         routes = routesProvider.routes( this );
         reverseRoutes = new ReverseRoutesInstance( this );

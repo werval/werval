@@ -25,13 +25,13 @@ public class Global
 {
 
     @Override
-    public void onStart( Application application )
+    public void onActivate( Application application )
     {
         application.metaData().put( "shortener", new ShortenerService() );
     }
 
     @Override
-    public void onStop( Application application )
+    public void onPassivate( Application application )
     {
         application.metaData().remove( "shortener" );
     }
