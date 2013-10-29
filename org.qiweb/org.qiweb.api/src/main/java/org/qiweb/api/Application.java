@@ -43,12 +43,13 @@ public interface Application
      * {@link Application} Mode.
      * <p>Default is {@link #TEST} Mode.</p>
      */
+    @SuppressWarnings( "PublicInnerClass" )
     enum Mode
     {
 
         /**
          * Development Mode.
-         * <p>Source is watched, Application is reloaded on-demand, stacktraces are disclosed in responses.</p>
+         * <p>Source is watched, Application is restarted on-demand, stacktraces are disclosed in responses.</p>
          */
         DEV( "Development" ),
         /**
@@ -76,6 +77,7 @@ public interface Application
         {
             return displayName;
         }
+
     }
 
     /**
@@ -157,4 +159,5 @@ public interface Application
      * @return Application {@link Errors}
      */
     Errors errors();
+
 }

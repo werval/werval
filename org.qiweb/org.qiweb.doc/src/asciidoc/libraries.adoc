@@ -1,5 +1,10 @@
 == Librairies
 
+Libraries contains non-core functionnality.
+
+NOTE: Libraries presented here are maintained by the QiWeb team, documented, tested and evolve along the core SDK.
+At the end of this document, you'll find external libraries maintained by the community.
+
 === Standard Library
 ==== Default Controller
 ==== META-INF Resources & WebJars
@@ -56,4 +61,17 @@
 
 === Password Hashing
 
+=== Authentication System
+
 === Serious i18n
+
+=== Community Libaries
+
+NOTE: Community Libraries are maintained by the community.
+It's the community responsibility to keep them documented, tested and up to date.
+The QiWeb Team makes no guarantee regarding their shape.
+Check their activity and codebase before using in production.
+
+==== DevMode Ant Tasks
+
+Proof of concept, we don't use it, need a maintainer

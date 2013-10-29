@@ -16,7 +16,19 @@ A QiWeb Application is nothing but a plain old Java program.
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
 The minimal requirement is a configuration file named `application.conf` containing a `app.secret` entry.
 
+==== Typical files
+
 ==== Threading Model
+
+QiWeb has a quite simple threading model based on the Netty one.
+
+- Netty
+    - Netty Selector Threads, default to Runtime.availableProcessors() * 2
+     -Netty IO Threads, default to Runtime.availableProcessors() * 2
+- Controllers
+    - Optional Controller Execution Thread Pool
+    - It means that by default, your controller code is executed on the IO Threads and that any controller doing
+      blocking operations will slow your application down.
 
 
 === Logging
@@ -268,4 +280,63 @@ http://guides.rubyonrails.org/action_controller_overview.html#hash-and-array-par
 could be implemented as a library, pull-requests are welcome!
 
 
+=== Testing
 
+The `org.qiweb.test` module provide http://junit.org[JUnit] based construct to ease tests implementation.
+
+First construct is `QiWebTest` that should be subclassed by your test classes.
+Second one is `QiWebRule`, a JUnit Rule to be declared in your test classes.
+Both have the same extension points, choose the one that fits your need.
+
+==== QiWebTest usage
+
+[source,java]
+----
+import org.junit.Test;
+import org.qiweb.test.QiWebTest;
+
+public class MyTest extends QiWebTest {
+  @Test
+  public void myTest() {
+    // Assert what you have to here
+  }
+}
+----
+
+
+==== QiWebRule usage
+
+[source,java]
+----
+import org.junit.Rule;
+import org.junit.Test;
+import org.qiweb.test.QiWebTest;
+
+public class MyTest {
+  @Rule QiWebRule qiweb = new QiWebRule();
+  @Test
+  public void myTest() {
+    // Assert what you have to here
+  }
+}
+----
+
+
+==== Best practices
+
+- Logging
+- Configuration
+- Routes
+
+
+==== Testing HTTP
+
+The QiWeb Team recommand https://code.google.com/p/rest-assured/[rest-assured].
+All HTTP assertions in the SDK are done using `rest-assured`, see the tests source code for numerous examples.
+
+
+==== Testing browser based UIs
+
+The QiWeb Team recommand http://fluentlenium.org/[FluentLenium].
+All browser based UI assertions in the samples are done using `FluentLenium`, see the tests source code for numerous
+examples.
