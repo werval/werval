@@ -17,6 +17,7 @@ package org.qiweb.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
@@ -32,6 +33,17 @@ import org.qiweb.api.outcomes.Outcome;
  */
 public class Global
 {
+
+    /**
+     * Chance to provide extra Plugins instances programmatically.
+     * <p>Invoked before Application activation.</p>
+     * <p>Default to no extra Plugins.</p>
+     * @return Extra Plugin instances
+     */
+    public Iterable<Plugin<?>> extraPlugins()
+    {
+        return Collections.emptySet();
+    }
 
     /**
      * Invoked on Application activation.
@@ -96,6 +108,27 @@ public class Global
     }
 
     /**
+     * Get Plugin instance.
+     * <p>Default to {@link Class#newInstance()} instanciation without any cache.</p>
+     *
+     * @param <T> Plugin Parameterized Type
+     * @param application Application
+     * @param pluginType Plugin Type
+     * @return Plugin Instance
+     */
+    public <T> T getPluginInstance( Application application, Class<T> pluginType )
+    {
+        try
+        {
+            return pluginType.newInstance();
+        }
+        catch( InstantiationException | IllegalAccessException ex )
+        {
+            throw new QiWebException( "Unable to create a Plugin.instance: " + ex.getMessage(), ex );
+        }
+    }
+
+    /**
      * Get Filter instance.
      * <p>Default to {@link Class#newInstance()} instanciation without any cache.</p>
      * 
@@ -112,7 +145,7 @@ public class Global
         }
         catch( InstantiationException | IllegalAccessException ex )
         {
-            throw new QiWebException( "Unable to instanciate Filter Type.", ex );
+            throw new QiWebException( "Unable to create a Filter.instance: " + ex.getMessage(), ex );
         }
     }
 
@@ -133,7 +166,7 @@ public class Global
         }
         catch( InstantiationException | IllegalAccessException ex )
         {
-            throw new QiWebException( "Unable to instanciate Controller Type.", ex );
+            throw new QiWebException( "Unable to create a Controller.instance: " + ex.getMessage(), ex );
         }
     }
 

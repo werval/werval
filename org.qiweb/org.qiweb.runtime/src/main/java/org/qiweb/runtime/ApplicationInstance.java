@@ -64,6 +64,7 @@ public final class ApplicationInstance
     private volatile boolean activated;
     private final Mode mode;
     private Config config;
+    private PluginsInstance plugins;
     private Global global;
     private Crypto crypto;
     private Charset defaultCharset;
@@ -148,6 +149,7 @@ public final class ApplicationInstance
         {
             throw new IllegalStateException( "Application already activated." );
         }
+        plugins.onActivate( this );
         global.onActivate( this );
         activated = true;
     }
@@ -160,6 +162,7 @@ public final class ApplicationInstance
             throw new IllegalStateException( "Application already passivated." );
         }
         global.onPassivate( this );
+        plugins.onPassivate( this );
         activated = false;
     }
 
@@ -179,6 +182,18 @@ public final class ApplicationInstance
     public Config config()
     {
         return config;
+    }
+
+    @Override
+    public <T> T plugin( Class<T> pluginApiType )
+    {
+        return plugins.plugin( pluginApiType );
+    }
+
+    @Override
+    public <T> Iterable<T> plugins( Class<T> pluginApiType )
+    {
+        return plugins.plugins( pluginApiType );
     }
 
     @Override
@@ -274,6 +289,7 @@ public final class ApplicationInstance
         configureParameterBinders();
         configureMimeTypes();
         configureRoutes();
+        configurePlugins();
     }
 
     private void configureGlobal()
@@ -360,6 +376,11 @@ public final class ApplicationInstance
     {
         routes = routesProvider.routes( this );
         reverseRoutes = new ReverseRoutesInstance( this );
+    }
+
+    private void configurePlugins()
+    {
+        plugins = new PluginsInstance( config, global.extraPlugins() );
     }
 
 }

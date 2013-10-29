@@ -111,6 +111,26 @@ public interface Application
     Config config();
 
     /**
+     * Lookup a Plugin's API.
+     * <p>Don't hold references to the Plugins API instances in order to make your code {@link Mode#DEV} friendly.</p>
+     * @param <T> Parameterized Plugin API type
+     * @param pluginApiType Plugin type
+     * @return The first Plugin API found that match given type (Type equals first, then assignable).
+     * @throws IllegalArgumentException if no Plugin is found for the given API type
+     */
+    <T> T plugin( Class<T> pluginApiType );
+
+    /**
+     * Lookup possibly several Plugin's API.
+     * <p>Don't hold references to the Plugins API instances in order to make your code {@link Mode#DEV} friendly.</p>
+     * @param <T> Parameterized Plugin API type
+     * @param pluginApiType Plugin type
+     * @return All Plugin APIs found that match the he given type (Type equals first, then assignables), or none if no
+     *         Plugin is found for the given API type.
+     */
+    <T> Iterable<T> plugins( Class<T> pluginApiType );
+
+    /**
      * Application {@link Crypto}.
      * <p>Don't hold references to the Crypto instance in order to make your code {@link Mode#DEV} friendly.</p>
      * @return Application {@link Crypto}
