@@ -303,6 +303,8 @@ public class MyTest extends QiWebTest {
 }
 ----
 
+Your Application will be activated/passivated around each test method.
+
 
 ==== QiWebRule usage
 
@@ -321,9 +323,31 @@ public class MyTest {
 }
 ----
 
+As expected, this will activate/passivate your Application around each test method.
+If you prefer to have your Application activated/passivated around each test class, use the JUnit `@ClassRule`
+annotation.
 
-==== Best practices
+[source,java]
+----
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.qiweb.test.QiWebTest;
 
+public class MyTest {
+  @ClassRule static QiWebRule qiweb = new QiWebRule();
+  @Test
+  public void myTest() {
+    // Assert what you have to here
+  }
+}
+----
+
+
+==== In practice
+
+- HTTP or not HTTP
+- Automatic free port usage, allowing tests to be run in parallel
+- Per Method / Per Class
 - Logging
 - Configuration
 - Routes
@@ -340,3 +364,5 @@ All HTTP assertions in the SDK are done using `rest-assured`, see the tests sour
 The QiWeb Team recommand http://fluentlenium.org/[FluentLenium].
 All browser based UI assertions in the samples are done using `FluentLenium`, see the tests source code for numerous
 examples.
+
+

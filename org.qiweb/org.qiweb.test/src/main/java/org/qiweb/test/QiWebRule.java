@@ -15,6 +15,8 @@
  */
 package org.qiweb.test;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -24,7 +26,11 @@ import org.qiweb.runtime.routes.RoutesProvider;
 /**
  * QiWeb JUnit Rule.
  *
- * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
+ * <p>Activate/Passivate QiWeb Application in test mode around JUnit tests.</p>
+ * <p>
+ *     Can be used to activate/passivate around each method test as a @{@link Rule} or around each test class as a
+ *     @{@link ClassRule}.
+ * </p>
  * <p>
  *     By default, configuration is loaded from the <code>application.conf</code> file.
  *     Use {@link #QiWebRule(java.lang.String)} or
@@ -74,6 +80,22 @@ public class QiWebRule
     }
 
     /**
+     * @return QiWeb Application HTTP host
+     */
+    public final String httpHost()
+    {
+        return qiweb.httpHost();
+    }
+
+    /**
+     * @return QiWeb Application HTTP port
+     */
+    public final int httpPort()
+    {
+        return qiweb.httpPort();
+    }
+
+    /**
      * @return QiWeb Application base HTTP URL.
      */
     public final String baseHttpUrl()
@@ -90,14 +112,14 @@ public class QiWebRule
             public void evaluate()
                 throws Throwable
             {
-                qiweb.beforeEachTest();
+                qiweb.beforeEachQiWebTestMethod();
                 try
                 {
                     statement.evaluate();
                 }
                 finally
                 {
-                    qiweb.afterEachTest();
+                    qiweb.afterEachQiWebTestMethod();
                 }
             }
         };

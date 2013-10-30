@@ -33,7 +33,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 /**
  * Base QiWeb JUnit Test.
  * 
- * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test.</p>
+ * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test method.</p>
  * <p>
  *     By default, configuration is loaded from the <code>application.conf</code> file.
  *     Override the {@link #configurationResourceName()} method to provide your own test configuration.
@@ -66,7 +66,7 @@ public class QiWebTest
      * Activate HttpServer.
      */
     @Before
-    public final void beforeEachTest()
+    public final void beforeEachQiWebTestMethod()
     {
         ClassLoader classLoader = getClass().getClassLoader();
         Config config = new ConfigInstance( classLoader, configurationResourceNameOverride == null
@@ -98,7 +98,7 @@ public class QiWebTest
      * Passivate HttpServer.
      */
     @After
-    public final void afterEachTest()
+    public final void afterEachQiWebTestMethod()
     {
         httpServer.passivate();
         httpServer = null;
@@ -114,16 +114,32 @@ public class QiWebTest
     }
 
     /**
+     * @return HTTP host based on QiWeb listening address Configuration.
+     */
+    protected final String httpHost()
+    {
+        String httpHost = app.config().string( QIWEB_HTTP_ADDRESS );
+        if( "127.0.0.1".equals( httpHost ) )
+        {
+            httpHost = "localhost";
+        }
+        return httpHost;
+    }
+
+    /**
+     * @return HTTP port based on QiWeb listening port Configuration.
+     */
+    protected final int httpPort()
+    {
+        return app.config().intNumber( QIWEB_HTTP_PORT );
+    }
+
+    /**
      * @return Base HTTP URL based on QiWeb listening address and port Configuration.
      */
     protected final String baseHttpUrl()
     {
-        String httpAddress = app.config().string( QIWEB_HTTP_ADDRESS );
-        if( "127.0.0.1".equals( httpAddress ) )
-        {
-            httpAddress = "localhost";
-        }
-        return "http://" + httpAddress + ":" + app.config().string( QIWEB_HTTP_PORT );
+        return "http://" + httpHost() + ":" + httpPort();
     }
 
     /**
