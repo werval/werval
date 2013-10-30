@@ -36,7 +36,10 @@ import java.util.WeakHashMap;
 public final class TypeResolver
 {
 
-    /** An unknown type. */
+    /** 
+     * An unknown type.
+     */
+    @SuppressWarnings( "PublicInnerClass" )
     public static final class Unknown
     {
 
@@ -46,8 +49,14 @@ public final class TypeResolver
 
     }
 
-    /** Cache of type variable/argument pairs */
+    /** 
+     * Cache of type variable/argument pairs.
+     */
     private static final Map<Class<?>, Reference<Map<TypeVariable<?>, Type>>> typeVariableCache = Collections.synchronizedMap( new WeakHashMap<Class<?>, Reference<Map<TypeVariable<?>, Type>>>() );
+
+    /**
+     * Enable/disable cache.
+     */
     private static boolean cacheEnabled = true;
 
     /**
@@ -246,8 +255,7 @@ public final class TypeResolver
         {
             TypeVariable<?> variable = (TypeVariable<?>) genericType;
             genericType = getTypeVariableMap( targetType ).get( variable );
-            genericType = genericType == null ? resolveBound( variable ) : resolveClass( genericType,
-                                                                                         targetType );
+            genericType = genericType == null ? resolveBound( variable ) : resolveClass( genericType, targetType );
         }
 
         return genericType instanceof Class ? (Class<?>) genericType : Unknown.class;
@@ -330,8 +338,7 @@ public final class TypeResolver
      * Populates the {@code typeVariableMap} with type arguments and parameters for the given
      * {@code type}.
      */
-    private static void buildTypeVariableMap( ParameterizedType type,
-                                              Map<TypeVariable<?>, Type> typeVariableMap )
+    private static void buildTypeVariableMap( ParameterizedType type, Map<TypeVariable<?>, Type> typeVariableMap )
     {
         if( type.getRawType() instanceof Class )
         {
