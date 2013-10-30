@@ -15,10 +15,11 @@
  */
 package org.qiweb.runtime.routes;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -29,7 +30,6 @@ import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class ReverseRoutesTest
-    extends QiWebTest
 {
 
     public static class Controller
@@ -73,23 +73,20 @@ public class ReverseRoutesTest
 
     }
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET /simpleMethod org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
-            + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
-            + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"
-            + "GET /query/:path/string org.qiweb.runtime.routes.ReverseRoutesTest$Controller.qstring( String path, String qsOne, String qsTwo )\n"
-            + "GET /appended/qs org.qiweb.runtime.routes.ReverseRoutesTest$Controller.appendedQueryString\n"
-            + "GET /fragment/identifier org.qiweb.runtime.routes.ReverseRoutesTest$Controller.fragmentIdentifier" );
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "GET /simpleMethod org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
+        + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
+        + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"
+        + "GET /query/:path/string org.qiweb.runtime.routes.ReverseRoutesTest$Controller.qstring( String path, String qsOne, String qsTwo )\n"
+        + "GET /appended/qs org.qiweb.runtime.routes.ReverseRoutesTest$Controller.appendedQueryString\n"
+        + "GET /fragment/identifier org.qiweb.runtime.routes.ReverseRoutesTest$Controller.fragmentIdentifier" ) );
 
     @Test
     public void testSimpleMethod()
         throws Exception
     {
-        String url = baseHttpUrl() + "/simpleMethod";
+        String url = QIWEB.baseHttpUrl() + "/simpleMethod";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -101,7 +98,7 @@ public class ReverseRoutesTest
     public void testSimpleMethodWithParam()
         throws Exception
     {
-        String url = baseHttpUrl() + "/simpleMethod/test/foo";
+        String url = QIWEB.baseHttpUrl() + "/simpleMethod/test/foo";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -113,7 +110,7 @@ public class ReverseRoutesTest
     public void testWildcard()
         throws Exception
     {
-        String url = baseHttpUrl() + "/wild/wild/wild/card";
+        String url = QIWEB.baseHttpUrl() + "/wild/wild/wild/card";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -125,7 +122,7 @@ public class ReverseRoutesTest
     public void testQueryString()
         throws Exception
     {
-        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bazar";
+        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bazar";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -137,7 +134,7 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParam()
         throws Exception
     {
-        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=";
+        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=";
         expect().
             statusCode( 200 ).
             body( equalTo( url ) ).
@@ -149,11 +146,11 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParamSeveralTimes()
         throws Exception
     {
-        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
+        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
         expect().
             statusCode( 200 ).
             when().
-            body( equalTo( baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=" ) ).
+            body( equalTo( QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=" ) ).
             get( url );
     }
 
@@ -161,10 +158,10 @@ public class ReverseRoutesTest
     public void testQueryStringWithSameValueParamSeveralTimes()
         throws Exception
     {
-        String url = baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
+        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
         expect().
             statusCode( 200 ).
-            body( equalTo( baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar" ) ).
+            body( equalTo( QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar" ) ).
             when().
             get( url );
     }
@@ -173,7 +170,7 @@ public class ReverseRoutesTest
     public void testAppendedQueryString()
         throws Exception
     {
-        String url = baseHttpUrl() + "/appended/qs";
+        String url = QIWEB.baseHttpUrl() + "/appended/qs";
         given().
             queryParam( "bar", "bazar" ).
             queryParam( "foo", "bar" ).
@@ -188,7 +185,7 @@ public class ReverseRoutesTest
     public void testFragmentIdentifier()
         throws Exception
     {
-        String url = baseHttpUrl() + "/fragment/identifier";
+        String url = QIWEB.baseHttpUrl() + "/fragment/identifier";
         expect().
             statusCode( 200 ).
             body( equalTo( url + "#bazar" ) ).

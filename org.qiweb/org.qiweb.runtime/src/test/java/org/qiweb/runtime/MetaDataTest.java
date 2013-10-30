@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.qiweb.api.MetaData;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 public class MetaDataTest
 {
@@ -27,4 +27,5 @@ public class MetaDataTest
         assertNull( meta.get( "bazar" ) );
         assertNull( meta.get( ArrayList.class, "bazar" ) );
     }
+
 }

@@ -1,19 +1,18 @@
 package org.qiweb.runtime.filters;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
 
 public class FiltersTest
-    extends QiWebTest
 {
 
     public static class Filter
@@ -40,11 +39,9 @@ public class FiltersTest
 
     }
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider( "GET / org.qiweb.runtime.filters.FiltersTest$Controller.filtered" );
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule(
+        new RoutesParserProvider( "GET / org.qiweb.runtime.filters.FiltersTest$Controller.filtered" ) );
 
     @Test
     public void testFilters()

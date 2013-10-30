@@ -18,32 +18,28 @@ package org.qiweb.lib.controllers;
 import com.jayway.restassured.response.Response;
 import java.io.File;
 import java.math.BigDecimal;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Assert that the StaticFiles controller behave correctly.
  * <p>Please note that this test rely on the fact that the current working directory is set to the module base dir.</p>
  */
 public class StaticFilesTest
-    extends QiWebTest
 {
 
-    private static final File ROOT = new File( "src/test/resources" );
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
+        + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )" ) );
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
-            + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )" );
-    }
+    private static final File ROOT = new File( "src/test/resources" );
 
     @Test
     public void givenSingleStaticFileRouteWhenRequestingExpectCorrectResult()
@@ -96,4 +92,5 @@ public class StaticFilesTest
     {
         return new BigDecimal( new File( ROOT, relativePath ).length() ).intValueExact();
     }
+
 }

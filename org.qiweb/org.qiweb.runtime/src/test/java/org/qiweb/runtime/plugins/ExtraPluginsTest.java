@@ -15,8 +15,9 @@
  */
 package org.qiweb.runtime.plugins;
 
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,19 +26,15 @@ import static org.junit.Assert.assertThat;
  * Assert Extra-Plugins defined in a Global Object are properly used.
  */
 public class ExtraPluginsTest
-    extends QiWebTest
 {
 
-    @Override
-    protected String configurationResourceName()
-    {
-        return "extra-plugin-test.conf";
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( "extra-plugin-test.conf" );
 
     @Test
     public void givenRegisteredPluginWhenUsePluginExpectCorrectResult()
     {
-        String hello = application().plugin( HelloWorld.class ).sayHello( "John" );
+        String hello = QIWEB.application().plugin( HelloWorld.class ).sayHello( "John" );
         assertThat( hello, equalTo( "Hello John!" ) );
     }
 

@@ -315,7 +315,7 @@ import org.junit.Test;
 import org.qiweb.test.QiWebTest;
 
 public class MyTest {
-  @Rule QiWebRule qiweb = new QiWebRule();
+  @Rule public QiWebRule qiweb = new QiWebRule();
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -324,6 +324,7 @@ public class MyTest {
 ----
 
 As expected, this will activate/passivate your Application around each test method.
+
 If you prefer to have your Application activated/passivated around each test class, use the JUnit `@ClassRule`
 annotation.
 
@@ -334,7 +335,7 @@ import org.junit.Test;
 import org.qiweb.test.QiWebTest;
 
 public class MyTest {
-  @ClassRule static QiWebRule qiweb = new QiWebRule();
+  @ClassRule public static final QiWebRule QIWEB = new QiWebRule();
   @Test
   public void myTest() {
     // Assert what you have to here

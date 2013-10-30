@@ -1,25 +1,21 @@
 package org.qiweb.runtime.server;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 
 public class RouterTest
-    extends QiWebTest
 {
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET / com.acme.app.FakeControllerInstance.index()\n"
-            + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
-            + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
-            + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" );
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "GET / com.acme.app.FakeControllerInstance.index()\n"
+        + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
+        + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"
+        + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )" ) );
 
     @Test
     public void testRoutes()
@@ -50,4 +46,5 @@ public class RouterTest
             when().
             get( "/azertyuiop/1234" );
     }
+
 }

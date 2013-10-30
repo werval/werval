@@ -31,15 +31,16 @@ public class UITest
 {
 
     @Rule
-    public QiWebRule qiwebRule = new QiWebRule();
+    public QiWebRule qiweb = new QiWebRule();
 
     @Test
     public void testUI()
     {
         // First load to breweries
-        goTo( qiwebRule.baseHttpUrl() + "/" );
+        goTo( qiweb.baseHttpUrl() + "/" );
         assertThat( title(), equalTo( "Beer Database - QiWeb Sample App" ) );
         assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ), equalTo( "active" ) );
         assertThat( findFirst( "#breweries" ), notNullValue() );
     }
+
 }

@@ -20,8 +20,10 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Error;
 import org.qiweb.api.Errors;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * Assert that the Errors API implementation in Runtime behave correctly.
@@ -70,4 +72,5 @@ public class ErrorsTest
         assertThat( errors.count(), is( 10 ) );
         assertThat( errors.last().message(), equalTo( "error-message-20" ) );
     }
+
 }

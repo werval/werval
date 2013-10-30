@@ -15,11 +15,11 @@
  */
 package org.qiweb.lib.controllers;
 
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,20 +30,16 @@ import static org.qiweb.api.BuildVersion.DATE;
 import static org.qiweb.api.BuildVersion.DETAILED_VERSION;
 import static org.qiweb.api.BuildVersion.DIRTY;
 import static org.qiweb.api.BuildVersion.VERSION;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 public class IntrospectTest
-    extends QiWebTest
 {
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-            + "GET /@version org.qiweb.lib.controllers.Introspect.version\n" );
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
+        + "GET /@version org.qiweb.lib.controllers.Introspect.version\n" ) );
 
     @Test
     public void testJSONConfig()
@@ -87,4 +83,5 @@ public class IntrospectTest
             when().
             get( "/@version" );
     }
+
 }

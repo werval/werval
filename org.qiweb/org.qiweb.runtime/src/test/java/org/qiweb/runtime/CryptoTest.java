@@ -15,28 +15,32 @@
  */
 package org.qiweb.runtime;
 
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class CryptoTest
-    extends QiWebTest
 {
+
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule();
 
     @Test
     public void testGenerateNewSecret()
     {
-        String secret = application().crypto().genNew256bitsHexSecret();
+        String secret = QIWEB.application().crypto().genNew256bitsHexSecret();
         assertThat( secret.length(), equalTo( 64 ) );
     }
 
     @Test
     public void testSignature()
     {
-        String left = application().crypto().hexHmacSha256( "Text to be signed." );
-        String right = application().crypto().hexHmacSha256( "Text to be signed." );
+        String left = QIWEB.application().crypto().hexHmacSha256( "Text to be signed." );
+        String right = QIWEB.application().crypto().hexHmacSha256( "Text to be signed." );
         assertThat( left, equalTo( right ) );
     }
+
 }

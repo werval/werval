@@ -15,8 +15,9 @@
  */
 package org.qiweb.runtime.plugins;
 
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -28,46 +29,42 @@ import static org.qiweb.runtime.util.Iterables.count;
  * Assert Plugin system overall behaviour.
  */
 public class PluginsTest
-    extends QiWebTest
 {
 
-    @Override
-    protected String configurationResourceName()
-    {
-        return "plugin-test.conf";
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( "plugin-test.conf" );
 
     @Test( expected = IllegalArgumentException.class )
     public void givenWrongPluginAPIWhenGetPluginExpectIAE()
     {
-        application().plugin( HelloWorldPlugin.class );
+        QIWEB.application().plugin( HelloWorldPlugin.class );
     }
 
     @Test
     public void givenRegisteredPluginWhenGetPluginExpectPresent()
     {
-        HelloWorld plugin = application().plugin( HelloWorld.class );
+        HelloWorld plugin = QIWEB.application().plugin( HelloWorld.class );
         assertThat( plugin, notNullValue() );
     }
 
     @Test
     public void givenRegisteredPluginWhenUsePluginExpectCorrectResult()
     {
-        String hello = application().plugin( HelloWorld.class ).sayHello( "John" );
+        String hello = QIWEB.application().plugin( HelloWorld.class ).sayHello( "John" );
         assertThat( hello, equalTo( "Hello John!" ) );
     }
 
     @Test
     public void givenRegisteredPluginWhenGetPluginsExpectSingle()
     {
-        Iterable<HelloWorld> plugins = application().plugins( HelloWorld.class );
+        Iterable<HelloWorld> plugins = QIWEB.application().plugins( HelloWorld.class );
         assertThat( count( plugins ), is( 1L ) );
     }
 
     @Test
     public void testActivations()
     {
-        HelloWorld plugin = application().plugin( HelloWorld.class );
+        HelloWorld plugin = QIWEB.application().plugin( HelloWorld.class );
         assertThat( plugin.activations(), is( 1 ) );
         assertThat( plugin.passivations(), is( 0 ) );
     }

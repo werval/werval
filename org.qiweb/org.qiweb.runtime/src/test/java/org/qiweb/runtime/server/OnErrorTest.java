@@ -18,14 +18,14 @@ package org.qiweb.runtime.server;
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
 import java.util.List;
+import org.junit.Rule;
 import org.junit.Test;
 import org.qiweb.api.Error;
 import org.qiweb.api.context.CurrentContext;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.TestGlobal;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
@@ -38,7 +38,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
  * Assert that Application errors triggers the right code paths.
  */
 public class OnErrorTest
-    extends QiWebTest
 {
 
     public static class Ctrl
@@ -62,14 +61,11 @@ public class OnErrorTest
 
     }
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET /success org.qiweb.runtime.server.OnErrorTest$Ctrl.success\n"
-            + "GET /internalServerError org.qiweb.runtime.server.OnErrorTest$Ctrl.internalServerError\n"
-            + "GET /exception org.qiweb.runtime.server.OnErrorTest$Ctrl.exception" );
-    }
+    @Rule
+    public final QiWebRule qiweb = new QiWebRule( new RoutesParserProvider(
+        "GET /success org.qiweb.runtime.server.OnErrorTest$Ctrl.success\n"
+        + "GET /internalServerError org.qiweb.runtime.server.OnErrorTest$Ctrl.internalServerError\n"
+        + "GET /exception org.qiweb.runtime.server.OnErrorTest$Ctrl.exception" ) );
 
     @Test
     public void testSuccess()
@@ -79,7 +75,7 @@ public class OnErrorTest
             statusCode( 200 ).
             when().
             get( "/success" );
-        assertThat( application().errors().count(), is( 0 ) );
+        assertThat( qiweb.application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -90,7 +86,7 @@ public class OnErrorTest
             statusCode( 500 ).
             when().
             get( "/internalServerError" );
-        assertThat( application().errors().count(), is( 0 ) );
+        assertThat( qiweb.application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -106,9 +102,9 @@ public class OnErrorTest
         String requestId = response.header( X_QIWEB_REQUEST_ID );
         assertThat( requestId, notNullValue() );
 
-        assertThat( application().errors().count(), is( 1 ) );
+        assertThat( qiweb.application().errors().count(), is( 1 ) );
 
-        List<Error> requestErrors = application().errors().ofRequest( requestId );
+        List<Error> requestErrors = qiweb.application().errors().ofRequest( requestId );
         assertThat( requestErrors.size(), is( 1 ) );
 
         Error requestError = requestErrors.get( 0 );
@@ -122,7 +118,7 @@ public class OnErrorTest
     public void testGlobalOnHttpRequestError()
         throws IOException
     {
-        TestGlobal testGlobal = TestGlobal.ofApplication( application() );
+        TestGlobal testGlobal = TestGlobal.ofApplication( qiweb.application() );
         assertThat( testGlobal.httpRequestErrorCount, is( 0 ) );
 
         Response response = expect().

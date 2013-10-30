@@ -17,10 +17,10 @@ package org.qiweb.lib.controllers;
 
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.either;
@@ -29,15 +29,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ClasspathResourcesTest
-    extends QiWebTest
 {
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET /*path org.qiweb.lib.controllers.ClasspathResources.metainf( String path )" );
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "GET /*path org.qiweb.lib.controllers.ClasspathResources.metainf( String path )" ) );
 
     @Test
     public void givenNonExistentResourceWhenRequestingExpectNotFound()
@@ -106,7 +102,6 @@ public class ClasspathResourcesTest
         assertDirectoryTraversalAttemptFailed( "/../shadow" );
 
         // URI encoded directory traversal
-
         assertDirectoryTraversalAttemptFailed( "/%2e%2e%2fshadow" );
         assertDirectoryTraversalAttemptFailed( "/%2e%2e%5cshadow" );
         assertDirectoryTraversalAttemptFailed( "/%2e%2e/shadow" );
@@ -116,7 +111,6 @@ public class ClasspathResourcesTest
         assertDirectoryTraversalAttemptFailed( "/..%5cshadow" );
 
         // Unicode / UTF-8 encoded directory traversal
-
         assertDirectoryTraversalAttemptFailed( "/\u002e\u002e\u002fshadow" );
         assertDirectoryTraversalAttemptFailed( "/\u002e.\u002fshadow" );
         assertDirectoryTraversalAttemptFailed( "/.\u002e\u002fshadow" );
@@ -132,4 +126,5 @@ public class ClasspathResourcesTest
             when().
             get( path );
     }
+
 }

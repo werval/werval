@@ -17,14 +17,14 @@ package org.qiweb.runtime.http;
 
 import java.util.Collections;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -35,7 +35,6 @@ import static org.qiweb.api.context.CurrentContext.session;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 
 public class SessionTest
-    extends QiWebTest
 {
 
     public static class Controller
@@ -60,21 +59,18 @@ public class SessionTest
 
     }
 
-    private String sessionCookieName;
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "GET /set/:name/:value org.qiweb.runtime.http.SessionTest$Controller.set( String name, String value )\n"
+        + "GET /clear org.qiweb.runtime.http.SessionTest$Controller.clear\n"
+        + "GET /show org.qiweb.runtime.http.SessionTest$Controller.show" ) );
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider(
-            "GET /set/:name/:value org.qiweb.runtime.http.SessionTest$Controller.set( String name, String value )\n"
-            + "GET /clear org.qiweb.runtime.http.SessionTest$Controller.clear\n"
-            + "GET /show org.qiweb.runtime.http.SessionTest$Controller.show" );
-    }
+    private String sessionCookieName;
 
     @Before
     public void beforeSessionTest()
     {
-        sessionCookieName = application().config().string( APP_SESSION_COOKIE_NAME );
+        sessionCookieName = QIWEB.application().config().string( APP_SESSION_COOKIE_NAME );
     }
 
     @Test
@@ -82,15 +78,15 @@ public class SessionTest
     {
         String cookieValue = expect().when().get( "/set/foo/bar" ).cookie( sessionCookieName );
         Cookie sessionCookie = new CookieInstance( sessionCookieName, "/", null, false, cookieValue, true );
-        Session session = new SessionInstance( application().config(), application().crypto(), sessionCookie );
+        Session session = new SessionInstance( QIWEB.application().config(), QIWEB.application().crypto(), sessionCookie );
         assertThat( session.get( "foo" ), equalTo( "bar" ) );
     }
 
     @Test
     public void testValidSessionAssured()
     {
-        String signedSession = new SessionInstance( application().config(),
-                                                    application().crypto(),
+        String signedSession = new SessionInstance( QIWEB.application().config(),
+                                                    QIWEB.application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
         given().cookie( sessionCookieName, signedSession ).
             expect().body( equalTo( "{foo=bar}" ) ).
@@ -100,8 +96,8 @@ public class SessionTest
     @Test
     public void testInvalidSessionAssured()
     {
-        String signedSession = new SessionInstance( application().config(),
-                                                    application().crypto(),
+        String signedSession = new SessionInstance( QIWEB.application().config(),
+                                                    QIWEB.application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
         // Invalidate Session Data
         signedSession = signedSession.substring( 1 );
@@ -113,8 +109,8 @@ public class SessionTest
     @Test
     public void testClearSessionAssured()
     {
-        String signedSession = new SessionInstance( application().config(),
-                                                    application().crypto(),
+        String signedSession = new SessionInstance( QIWEB.application().config(),
+                                                    QIWEB.application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
         given().cookie( sessionCookieName, signedSession ).
             expect().body( equalTo( "{}" ) ).

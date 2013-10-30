@@ -15,11 +15,11 @@
  */
 package org.qiweb.runtime.http;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebRule;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,7 +28,6 @@ import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 
 public class HttpRequestBodyTest
-    extends QiWebTest
 {
 
     public static class Controller
@@ -44,11 +43,9 @@ public class HttpRequestBodyTest
 
     }
 
-    @Override
-    protected RoutesProvider routesProvider()
-    {
-        return new RoutesParserProvider( "POST /echo org.qiweb.runtime.http.HttpRequestBodyTest$Controller.echo" );
-    }
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+        "POST /echo org.qiweb.runtime.http.HttpRequestBodyTest$Controller.echo" ) );
 
     @Test
     public void testBodyAsString()
