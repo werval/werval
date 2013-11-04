@@ -286,7 +286,14 @@ The `org.qiweb.test` module provide http://junit.org[JUnit] based construct to e
 
 First construct is `QiWebTest` that should be subclassed by your test classes.
 Second one is `QiWebRule`, a JUnit Rule to be declared in your test classes.
-Both have the same extension points, choose the one that fits your need.
+Both have the same extension points, choose the one that suits your needs and habits.
+
+Using the JUnit Rule is the prefered way of writing QiWeb tests as it don't force you to extend from any base class.
+
+TIP: QiWeb JUnit Support has transparent integration with https://code.google.com/p/rest-assured/[rest-assured] if it is
+detected on the tests classpath.
+rest-assured base URL is automatically set accordingly to the QiWeb configuration so can use relative paths when using
+it.
 
 ==== QiWebTest usage
 
