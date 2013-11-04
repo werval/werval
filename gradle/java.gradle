@@ -114,12 +114,21 @@ public interface BuildVersion
 }
 
 
-
-// Enable test output
+// Tests configuration
 test {
     testLogging {
-        showStandardStreams = true
-    }   
+        info {
+            exceptionFormat "full"
+        }
+    }
+    // Do not rely on ASM to scan for test classes
+    // Specify pattern instead
+    // This is mandatory for JDK 8 support until Gradle use ASM 5
+    scanForTestClasses = false
+    include '**/*Test.*'
+    exclude '**/*Test$*.*'
+    exclude '**/*Abstract*.*'
+    exclude '**/*$*Test*.*'
 }
 
 // Create sources JAR
