@@ -22,6 +22,7 @@ import java.util.Set;
 /**
  * HTTP Headers.
  */
+@SuppressWarnings( "PublicInnerClass" )
 public interface Headers
 {
 
@@ -403,6 +404,10 @@ public interface Headers
          */
         String WWW_AUTHENTICATE = "WWW-Authenticate";
         /**
+         * {@code "X-Forwarded-For"}
+         */
+        String X_FORWARDED_FOR = "X-Forwarded-For";
+        /**
          * {@code "X-HTTP-Method-Override"}
          */
         String X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
@@ -414,6 +419,7 @@ public interface Headers
          * {@code "X-QiWeb-Request-ID"}
          */
         String X_QIWEB_REQUEST_ID = "X-QiWeb-Request-ID";
+
     }
 
     /**
@@ -542,6 +548,7 @@ public interface Headers
          * {@code "WebSocket"}
          */
         String WEBSOCKET = "WebSocket";
+
     }
 
 }

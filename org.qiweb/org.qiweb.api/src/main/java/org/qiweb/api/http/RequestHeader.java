@@ -70,8 +70,19 @@ public interface RequestHeader
 
     /**
      * The HTTP Client Address.
-     * <p>Computed from the X-Forwarded-For header value if this header is present and the local address is loopback.</p>
-     * @return The HTTP Client Address or an empty String
+     * <p>Default value is the underlying socket client address.</p>
+     * <p>
+     *     If the {@literal qiweb.http.headers.x_forwarded_for.enabled} configuration property is {@literal yes}, then
+     *     the value is computed from the {@literal X-Forwarded-For} header value. This is the default behaviour.
+     * </p>
+     * <p>
+     *     If the {@literal qiweb.http.headers.x_forwarded_for.check_proxies} configuration property is {@literal yes},
+     *     then {@literal X-Forwarded-For} value is accepted only if all proxies in the chain are present in the
+     *     {@literal qiweb.http.headers.x_forwarded_for.trusted_proxies} configuration list. This is the default
+     *     behaviour trusting only {@literal 127.0.0.1}.
+     * </p>
+     * <p>If the {@literal X-Forwarded-For} cannot be trusted, QiWeb respond with a {@literal 400 Bad Request}.</p>
+     * @return The HTTP Client Address
      */
     String remoteAddress();
 
@@ -109,4 +120,5 @@ public interface RequestHeader
      * @return The HTTP Request Charset or an empty String
      */
     String charset();
+
 }

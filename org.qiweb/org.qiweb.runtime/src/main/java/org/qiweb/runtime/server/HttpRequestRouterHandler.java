@@ -94,10 +94,14 @@ import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
+import static org.qiweb.runtime.server.NettyHttpFactories.remoteAddressOf;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
 import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
 
@@ -198,9 +202,15 @@ public final class HttpRequestRouterHandler
         rebuildIfNeeded();
 
         // Parse RequestHeader
-        RequestHeader requestHeader = requestHeaderOf( requestIdentity, nettyRequest, app.defaultCharset(),
-                                                       app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
-                                                       app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
+        RequestHeader requestHeader = requestHeaderOf(
+            requestIdentity, nettyRequest,
+            remoteAddressOf( nettyContext.channel() ),
+            app.config().bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED ),
+            app.config().bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK ),
+            app.config().stringList( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED ),
+            app.defaultCharset(),
+            app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
+            app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
 
         // Route the request
         Routes routes = app.routes();
@@ -425,49 +435,55 @@ public final class HttpRequestRouterHandler
             LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, cause );
             sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
         }
-        else if( cause instanceof BadRequestException )
-        {
-            LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, cause );
-            sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
-        }
         else
         {
-            LOG.error( "{} Exception caught: {}( {} )",
-                       requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
-                       cause );
-
             // We want nice stack traces
+            // TODO Make stack-trace reduction pluggable
             if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
             {
                 // WARN This depends on and work only with DefaultControllerInvocation!
                 cause = cause.getCause().getCause();
             }
 
-            // Build body
-            StringWriter body = new StringWriter();
-            body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
-            if( app.mode() == Mode.DEV )
+            if( cause instanceof BadRequestException )
             {
-                body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
-                {
-                    @Override
-                    public String urlFor( String filename, int line )
-                    {
-                        return devSpi.sourceURL( filename, line );
-                    }
-                } ) );
+                // Handle HTTP Exceptions
+                LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, cause );
+                sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
             }
-            body.append( "</body></html>\n" );
-            String bodyString = body.toString();
+            else
+            {
+                // Handle Unexpected Exceptions
+                LOG.error( "{} Exception caught: {}( {} )",
+                           requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
+                           cause );
 
-            // Record Error
-            Error error = app.errors().record( requestIdentity, bodyString, cause );
+                // Build body
+                StringWriter body = new StringWriter();
+                body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
+                if( app.mode() == Mode.DEV )
+                {
+                    body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
+                    {
+                        @Override
+                        public String urlFor( String filename, int line )
+                        {
+                            return devSpi.sourceURL( filename, line );
+                        }
+                    } ) );
+                }
+                body.append( "</body></html>\n" );
+                String bodyString = body.toString();
 
-            // Notifies Application's Global
-            app.global().onHttpRequestError( app, error );
+                // Record Error
+                Error error = app.errors().record( requestIdentity, bodyString, cause );
 
-            // Send Error to client
-            sendError( nettyContext, INTERNAL_SERVER_ERROR, bodyString );
+                // Notifies Application's Global
+                app.global().onHttpRequestError( app, error );
+
+                // Send Error to client
+                sendError( nettyContext, INTERNAL_SERVER_ERROR, bodyString );
+            }
         }
     }
 

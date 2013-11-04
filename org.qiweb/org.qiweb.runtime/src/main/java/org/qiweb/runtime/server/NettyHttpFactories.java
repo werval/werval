@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.server;
 
+import io.netty.channel.Channel;
 import io.netty.handler.codec.http.CookieDecoder;
 import io.netty.handler.codec.http.DefaultCookie;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -28,6 +29,9 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.Incompatible
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDataDecoderException;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +50,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.util.Strings;
+import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
@@ -54,7 +59,6 @@ import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestBodyInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.RequestInstance;
-import org.qiweb.api.util.URLs;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
@@ -66,6 +70,7 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
+import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
 
 /**
  * Factory methods used by the server.
@@ -101,8 +106,25 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
         return new CookiesInstance( cookies );
     }
 
+    /* package */ static String remoteAddressOf( Channel channel )
+    {
+        SocketAddress remoteAddress = channel.remoteAddress();
+        if( remoteAddress == null || !( remoteAddress instanceof InetSocketAddress ) )
+        {
+            return null;
+        }
+        InetAddress inetRemoteAddress = ( (InetSocketAddress) remoteAddress ).getAddress();
+        if( inetRemoteAddress == null )
+        {
+            return null;
+        }
+        return inetRemoteAddress.getHostAddress();
+    }
+
     /* package */ static RequestHeader requestHeaderOf(
         String identity, HttpRequest request,
+        String remoteSocketAddress,
+        boolean xffEnabled, boolean xffCheckProxies, List<String> xffTrustedProxies,
         Charset defaultCharset,
         boolean allowMultiValuedQueryStringParameters, boolean allowMultiValuedHeaders )
     {
@@ -117,7 +139,7 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
         }
 
         // Path and QueryString
-        String requestCharset = RequestHeaderInstance.extractCharset( request.headers().get( CONTENT_TYPE ) );
+        String requestCharset = extractCharset( request.headers().get( CONTENT_TYPE ) );
         Charset charset = Strings.isEmpty( requestCharset ) ? defaultCharset : Charset.forName( requestCharset );
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), charset );
         String requestPath = URLs.decode( queryStringDecoder.path(), charset );
@@ -129,7 +151,8 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
         // Cookies
         Cookies cookies = cookiesOf( request );
 
-        return new RequestHeaderInstance( identity,
+        return new RequestHeaderInstance( identity, remoteSocketAddress,
+                                          xffEnabled, xffCheckProxies, xffTrustedProxies,
                                           request.getProtocolVersion().text(),
                                           method,
                                           request.getUri(),
@@ -245,4 +268,5 @@ import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
     private NettyHttpFactories()
     {
     }
+
 }

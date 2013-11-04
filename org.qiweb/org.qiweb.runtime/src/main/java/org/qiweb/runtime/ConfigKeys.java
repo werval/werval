@@ -57,8 +57,12 @@ public interface ConfigKeys
     String QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD = "qiweb.http.requests.body.disk_threshold";
     String QIWEB_HTTP_FORMS_MULTIVALUED = "qiweb.http.forms.multi_valued";
     String QIWEB_HTTP_HEADERS_MULTIVALUED = "qiweb.http.headers.multi_valued";
+    String QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED = "qiweb.http.headers.x_forwarded_for.enabled";
+    String QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK = "qiweb.http.headers.x_forwarded_for.check_proxies";
+    String QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED = "qiweb.http.headers.x_forwarded_for.trusted_proxies";
     String QIWEB_HTTP_QUERYSTRING_MULTIVALUED = "qiweb.http.query_string.multi_valued";
     String QIWEB_HTTP_UPLOADS_MULTIVALUED = "qiweb.http.uploads.multi_valued";
     String QIWEB_ROUTES_IMPORTEDPACKAGES = "qiweb.routes.imported_packages";
     String QIWEB_ROUTES_PARAMETERBINDERS = "qiweb.routes.parameter_binders";
+
 }

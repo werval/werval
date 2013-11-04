@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2013 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
@@ -11,19 +26,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.Application;
-import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.http.QueryString;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
-import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
+import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
-import org.qiweb.api.util.URLs;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -45,19 +60,18 @@ public class RoutesTest
     {
         Route route = route( "GET" ).on( "/foo/:id/bar/:slug" ).
             to( FakeController.class, new MethodRecorder<FakeController>()
-        {
-            @Override
-            protected void call( FakeController controller )
-            {
-                controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
-            }
-        } ).modifiedBy( "service", "foo" ).newInstance();
+                {
+                    @Override
+                    protected void call( FakeController controller )
+                    {
+                        controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
+                    }
+            } ).modifiedBy( "service", "foo" ).newInstance();
 
         // Java 8 - Lambda Expressions
         // Route route = route( GET ).on( "/foo/:id/bar/:slug" ).
         //     to( FakeController.class, { c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) } ).
         //     modifiedBy( "service", "foo" ).newInstance();
-
         assertThat( route.toString(), equalTo( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another( String id, Integer slug ) service foo" ) );
     }
 
@@ -238,7 +252,9 @@ public class RoutesTest
         {
 
             Map<String, Class<?>> params();
+
         }
+
     }
 
     @Test
@@ -307,7 +323,7 @@ public class RoutesTest
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( requestUri, UTF_8 );
         String requestPath = URLs.decode( queryStringDecoder.path(), UTF_8 );
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
-        return new RequestHeaderInstance( "identity", "HTTP/1.1",
+        return new RequestHeaderInstance( "identity", "127.0.0.1", "HTTP/1.1",
                                           "GET", requestUri, requestPath,
                                           queryString, new HeadersInstance( false ), new CookiesInstance() );
     }
@@ -360,4 +376,5 @@ public class RoutesTest
                         equalTo( refRouteModifiers.get( idx ) ) );
         }
     }
+
 }
