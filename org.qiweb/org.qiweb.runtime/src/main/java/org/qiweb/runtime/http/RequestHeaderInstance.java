@@ -19,16 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.QueryString;
+import org.qiweb.api.http.RequestHeader;
 
 import static java.util.Locale.US;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.HOST;
 import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.api.util.Strings.isEmpty;
-import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
+import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 
 public class RequestHeaderInstance
     implements RequestHeader
@@ -39,7 +39,31 @@ public class RequestHeaderInstance
 
         T get()
             throws IllegalStateException;
+
     }
+
+    public static String extractCharset( String contentType )
+    {
+        if( isEmpty( contentType ) )
+        {
+            return EMPTY;
+        }
+        String[] split = contentType.split( ";" );
+        if( split.length <= 1 )
+        {
+            return EMPTY;
+        }
+        for( int idx = 1; idx < split.length; idx++ )
+        {
+            String option = split[idx].trim().toLowerCase( US );
+            if( option.startsWith( "charset" ) )
+            {
+                return option.split( "=" )[1];
+            }
+        }
+        return EMPTY;
+    }
+
     private final String identity;
     private final String version;
     private final String method;
@@ -48,17 +72,7 @@ public class RequestHeaderInstance
     private final QueryString queryString;
     private final Headers headers;
     private final Cookies cookies;
-    private Map<String, Object> lazyValues = new HashMap<>();
-
-    @SuppressWarnings( "unchecked" )
-    private synchronized <T> T lazy( String key, Lazy<T> function )
-    {
-        if( !lazyValues.containsKey( key ) )
-        {
-            lazyValues.put( key, function.get() );
-        }
-        return (T) lazyValues.get( key );
-    }
+    private final Map<String, Object> lazyValues = new HashMap<>( 5 );
 
     public RequestHeaderInstance( String identity,
                                   String version, String method,
@@ -73,6 +87,16 @@ public class RequestHeaderInstance
         this.queryString = queryString;
         this.headers = headers;
         this.cookies = cookies;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private synchronized <T> T lazy( String key, Lazy<T> function )
+    {
+        if( !lazyValues.containsKey( key ) )
+        {
+            lazyValues.put( key, function.get() );
+        }
+        return (T) lazyValues.get( key );
     }
 
     @Override
@@ -228,25 +252,4 @@ public class RequestHeaderInstance
         } );
     }
 
-    public static String extractCharset( String contentType )
-    {
-        if( isEmpty( contentType ) )
-        {
-            return EMPTY;
-        }
-        String[] split = contentType.split( ";" );
-        if( split.length <= 1 )
-        {
-            return EMPTY;
-        }
-        for( int idx = 1; idx < split.length; idx++ )
-        {
-            String option = split[idx].trim().toLowerCase( US );
-            if( option.startsWith( "charset" ) )
-            {
-                return option.split( "=" )[1];
-            }
-        }
-        return EMPTY;
-    }
 }
