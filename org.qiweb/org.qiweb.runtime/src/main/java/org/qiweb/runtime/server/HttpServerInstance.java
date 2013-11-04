@@ -102,8 +102,8 @@ public class HttpServerInstance
         int iothreads = app.config().has( QIWEB_HTTP_IOTHREADS )
                         ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
-        bootstrap.group( new NioEventLoopGroup( devSpi == null ? acceptors : 1 ),
-                         new NioEventLoopGroup( devSpi == null ? iothreads : 1 ) );
+        bootstrap.group( new NioEventLoopGroup( devSpi == null ? acceptors : 1, new ThreadFactories.Acceptors() ),
+                         new NioEventLoopGroup( devSpi == null ? iothreads : 1, new ThreadFactories.IO() ) );
 
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );

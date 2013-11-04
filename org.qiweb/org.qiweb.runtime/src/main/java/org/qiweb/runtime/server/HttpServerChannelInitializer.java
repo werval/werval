@@ -28,8 +28,6 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.spi.dev.DevShellSPI;
 
@@ -45,20 +43,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
     extends ChannelInitializer<Channel>
 {
 
-    private static class ExecutorsThreadFactory
-        implements ThreadFactory
-    {
-
-        private final AtomicLong count = new AtomicLong( 0L );
-
-        @Override
-        public Thread newThread( Runnable runnable )
-        {
-            return new Thread( runnable, "http-executor-" + count.getAndIncrement() );
-        }
-
-    }
-
     private final ChannelGroup allChannels;
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;
@@ -72,7 +56,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         if( devSpi != null )
         {
             // Development mode, single controller executor thread
-            this.httpExecutors = new DefaultEventExecutorGroup( 1, new ExecutorsThreadFactory() );
+            this.httpExecutors = new DefaultEventExecutorGroup( 1, new ThreadFactories.HttpExecutors() );
         }
         else if( app.config().has( QIWEB_HTTP_EXECUTORS ) )
         {
@@ -85,7 +69,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
             else
             {
                 // Configured controller executors count
-                this.httpExecutors = new DefaultEventExecutorGroup( executors, new ExecutorsThreadFactory() );
+                this.httpExecutors = new DefaultEventExecutorGroup( executors, new ThreadFactories.HttpExecutors() );
             }
         }
         else
