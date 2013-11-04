@@ -3,7 +3,7 @@
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[@%-10thread] %-5level %logger{42} - %msg%n</pattern>
+            <pattern>[@%-10thread] %-5level %logger{42} [ID:%X{X-QiWeb-Request-ID}, FROM:%X{X-QiWeb-Client-IP}] - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -11,7 +11,7 @@
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="io.netty"                 level="trace"/>
+    <logger name="io.netty"                 level="warn"/>
 
     <logger name="org.qiweb"                level="trace"/>
     <logger name="org.qiweb.runtime.routes" level="debug"/>

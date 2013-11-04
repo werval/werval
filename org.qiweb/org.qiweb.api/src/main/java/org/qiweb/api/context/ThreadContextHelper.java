@@ -17,6 +17,7 @@ package org.qiweb.api.context;
 
 import org.slf4j.MDC;
 
+import static org.qiweb.api.http.Headers.Names.X_QIWEB_CLIENT_IP;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 
 /**
@@ -45,10 +46,9 @@ public final class ThreadContextHelper
         }
     }
 
-    /**
-     * Previous ClassLoader.
-     */
     private ClassLoader previousLoader = null;
+    private boolean logRequestId = false;
+    private boolean logClientIp = false;
 
     /**
      * Set {@literal Context} on current {@literal Thread}.
@@ -59,6 +59,10 @@ public final class ThreadContextHelper
      *     <li>Set thread {@link ClassLoader}.</li>
      *     <li>Set thread Context {@literal ThreadLocal}.</li>
      *     <li>Put current Request ID in SLF4J MDC at the {@link #X_QIWEB_REQUEST_ID} key.</li>
+     *     <li>
+     *         Put current Request Client IP in SLF4J MDC at the {@link #X_QIWEB_CLIENT_IP} key if enabled in the
+     *         configuration.
+     *     </li>
      * </ul>
      *
      * @param context Context
@@ -67,8 +71,17 @@ public final class ThreadContextHelper
     {
         previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( context.application().classLoader() );
+        logRequestId = context.application().config().bool( "qiweb.http.log.context.request_id" );
+        if( logRequestId )
+        {
+            MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
+        }
+        logClientIp = context.application().config().bool( "qiweb.http.log.context.client_ip" );
+        if( logClientIp )
+        {
+            MDC.put( X_QIWEB_CLIENT_IP, context.request().remoteAddress() );
+        }
         CurrentContext.CONTEXT_THREAD_LOCAL.set( context );
-        MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
     }
 
     /**
@@ -83,7 +96,14 @@ public final class ThreadContextHelper
      */
     public void clearCurrentThread()
     {
-        MDC.remove( X_QIWEB_REQUEST_ID );
+        if( logRequestId )
+        {
+            MDC.remove( X_QIWEB_REQUEST_ID );
+        }
+        if( logClientIp )
+        {
+            MDC.remove( X_QIWEB_CLIENT_IP );
+        }
         Thread.currentThread().setContextClassLoader( previousLoader );
         previousLoader = null;
         CurrentContext.CONTEXT_THREAD_LOCAL.remove();

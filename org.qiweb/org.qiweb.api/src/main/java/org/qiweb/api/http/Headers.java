@@ -416,6 +416,10 @@ public interface Headers
          */
         String X_QIWEB_CONTENT_LENGTH = "X-QiWeb-Content-Length";
         /**
+         * {@code "X-QiWeb-Client-IP"}
+         */
+        String X_QIWEB_CLIENT_IP = "X-QiWeb-Client-IP";
+        /**
          * {@code "X-QiWeb-Request-ID"}
          */
         String X_QIWEB_REQUEST_ID = "X-QiWeb-Request-ID";
