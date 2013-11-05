@@ -31,7 +31,7 @@ With an eventful history, it keeps moving.
 Second, the main Java running platform, a.k.a the JVM, is quite ubiquitous on the x86 architecture, supported on almost
 every operating system and cloud provider.
 It is now open-source and already available to ARM architectures as a
-https://jdk8.java.net/download.html[JDK8 Developer Preview].
+https://jdk8.java.net/download.html[JDK8 Early Access Releases].
 
 Third, Java:
 

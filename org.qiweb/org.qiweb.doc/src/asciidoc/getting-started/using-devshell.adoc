@@ -95,13 +95,13 @@ Change the controller content to:
 ----
 package controllers;
 
-import org.qiweb.api.controllers.*;
+import org.qiweb.api.context.*;
 
 public class Application {
 
     public Outcome index()
     {
-        return Controller.outcomes().ok( "Hello World!" ).build();
+        return CurrentContext.outcomes().ok( "Hello World!" ).build();
     }
 
 }
@@ -111,7 +111,6 @@ Hit your browser refresh button again.
 This time you should see **Hello World!**.
 
 This is how the QiWeb Development Shell gives you instant feedback when coding.
-No more endless packaging and deployment to see your changes.
 
 
 ==== Embedded documentation
