@@ -15,7 +15,6 @@
  */
 package org.qiweb.devshell;
 
-import org.qiweb.spi.dev.DevShellSPI;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -24,6 +23,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
+import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
 import static org.qiweb.runtime.util.AnsiColor.cyan;
@@ -81,7 +81,9 @@ public final class DevShell
                 }
             }
         }
+
     }
+
     private static final String DEVSHELL_REALM_ID = "DevShellRealm";
     private static final String DEPENDENCIES_REALM_ID = "DependenciesRealm";
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
@@ -145,32 +147,30 @@ public final class DevShell
                 routesProviderClass
             } ).
                 newInstance( new Object[]
-            {
-                // Dev Mode
-                modeClass.getEnumConstants()[0],
-                configInstance,
-                appRealm,
-                routesProviderInstance
-            } );
+                    {
+                        // Dev Mode
+                        modeClass.getEnumConstants()[0],
+                        configInstance,
+                        appRealm,
+                        routesProviderInstance
+                } );
 
             // HttpServer
             Object httpServer = appRealm.loadClass( "org.qiweb.runtime.server.HttpServerInstance" ).
                 getConstructor( new Class<?>[]
-            {
-                String.class, appClass, DevShellSPI.class
-            } ).
+                    {
+                        String.class, appClass, DevShellSPI.class
+                } ).
                 newInstance( new Object[]
-            {
-                "devshell-httpserver", appInstance, new DevShellSPIDecorator( spi, appInstance )
-            } );
+                    {
+                        "devshell-httpserver", appInstance, new DevShellSPIDecorator( spi, appInstance )
+                } );
 
             httpServer.getClass().getMethod( "registerPassivationShutdownHook" ).invoke( httpServer );
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
 
             // ---------------------------------------------------------------------------------------------------------
-
             // printRealms();
-
             Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
             {
                 @Override
@@ -284,4 +284,5 @@ public final class DevShell
         printURLs( appRealm );
         printLoadedClasses( appRealm );
     }
+
 }

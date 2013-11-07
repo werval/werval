@@ -4,4 +4,3 @@ dependencies {
     compile project( ":org.qiweb.api" )
 
 }
-
