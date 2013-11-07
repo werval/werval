@@ -3,6 +3,10 @@ apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
 apply plugin: 'groovy'
 apply plugin: 'sonar-runner'
 
+// Gradle Groovy Compiler is not JDK8_ASM5 ready
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.devshell:$version"

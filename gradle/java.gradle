@@ -6,8 +6,10 @@ apply plugin: 'maven'
 apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
 apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
 
-sourceCompatibility = '1.7'
-targetCompatibility = '1.7'
+// Require JDK8 at build time, JRE8 at runtime
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // Adding dependencies here will add the dependencies to each subproject.

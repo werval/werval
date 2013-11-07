@@ -15,7 +15,9 @@ The documentation is not published online yet but is embedded in the QiWeb
 Development Mode at the /@doc path.
 
 QiWeb is built using Gradle (http://www.gradle.org/).
-You don't need to install anything except a JVM (>=7).
+
+You don't need to install anything except a JVM >=8 (http://jdk8.java.net/download.html).
+
 The `gradlew` script that can be found at the projects root will download and
 bootstrap Gradle for you.
 If you are interested in this Gradle feature, check the Gradle Wrapper
