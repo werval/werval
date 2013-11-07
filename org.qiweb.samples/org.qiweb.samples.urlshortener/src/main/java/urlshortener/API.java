@@ -45,7 +45,7 @@ public class API
      * List shortened urls and their hash.
      *
      * @return  application/json array filled with Link objects.
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException when unable to serialize JSON response
      */
     public Outcome list()
         throws JsonProcessingException
@@ -60,7 +60,7 @@ public class API
      *
      * @param url Long URL
      * @return application/json Link object.
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException when unable to serialize JSON response
      */
     public Outcome shorten( URL url )
         throws JsonProcessingException
@@ -75,7 +75,7 @@ public class API
      *
      * @param hash Hash
      * @return application/json Link object.
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException when unable to serialize JSON response
      */
     public Outcome expand( String hash )
         throws JsonProcessingException
@@ -94,7 +94,7 @@ public class API
      *
      * @param url Long URL
      * @return application/json array filled with Link object.
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException when unable to serialize JSON response
      */
     public Outcome lookup( URL url )
         throws JsonProcessingException

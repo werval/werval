@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.context;
 
+import org.qiweb.api.http.Headers.Names;
 import org.slf4j.MDC;
 
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_CLIENT_IP;
@@ -58,9 +59,9 @@ public final class ThreadContextHelper
      *     <li>Keep previous thread context {@link ClassLoader}.</li>
      *     <li>Set thread {@link ClassLoader}.</li>
      *     <li>Set thread Context {@literal ThreadLocal}.</li>
-     *     <li>Put current Request ID in SLF4J MDC at the {@link #X_QIWEB_REQUEST_ID} key.</li>
+     *     <li>Put current Request ID in SLF4J MDC at the {@link Names#X_QIWEB_REQUEST_ID} key.</li>
      *     <li>
-     *         Put current Request Client IP in SLF4J MDC at the {@link #X_QIWEB_CLIENT_IP} key if enabled in the
+     *         Put current Request Client IP in SLF4J MDC at the {@link Names#X_QIWEB_CLIENT_IP} key if enabled in the
      *         configuration.
      *     </li>
      * </ul>

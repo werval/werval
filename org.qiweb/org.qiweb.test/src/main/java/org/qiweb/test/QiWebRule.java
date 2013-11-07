@@ -28,8 +28,8 @@ import org.qiweb.runtime.routes.RoutesProvider;
  *
  * <p>Activate/Passivate QiWeb Application in test mode around JUnit tests.</p>
  * <p>
- *     Can be used to activate/passivate around each method test as a @{@link Rule} or around each test class as a
- *     @{@link ClassRule}.
+ *     Can be used to activate/passivate around each method test as a {@literal @}{@link Rule} or around each test class
+ *     as a {@literal @}{@link ClassRule}.
  * </p>
  * <p>
  *     By default, configuration is loaded from the <code>application.conf</code> file.
