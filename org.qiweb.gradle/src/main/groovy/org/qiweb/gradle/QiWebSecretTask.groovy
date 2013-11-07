@@ -19,7 +19,6 @@ package org.qiweb.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.*
-import org.qiweb.runtime.CryptoInstance;
 
 /**
  * Output a newly generated Application secret.
@@ -31,7 +30,14 @@ class QiWebSecretTask extends DefaultTask
     void generateNewSecret()
     {
         project.logger.lifecycle ">> Generate new QiWeb Application Secret"
-        System.out.println CryptoInstance.genRandom256bitsHexSecret()
+        // Reflective call to prevent JDK8/ASM headache with Gradle Groovy Compiler
+        // Should be rewritten once Gradle use ASM 5
+        // org.qiweb.runtime.CryptoInstance.genRandom256bitsHexSecret()
+        def newSecret = Thread.currentThread().getContextClassLoader().
+            loadClass( "org.qiweb.runtime.CryptoInstance" ).
+            getDeclaredMethod( "genRandom256bitsHexSecret" ).
+            invoke( null )
+        System.out.println( newSecret )
     }
 
 }
