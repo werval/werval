@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.qiweb.api.Config;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
@@ -87,8 +88,9 @@ public class ConfigInstance
     @Override
     public Map<String, String> stringMap( String key )
     {
-        Map<String, String> entries = new HashMap<>();
-        for( Entry<String, com.typesafe.config.ConfigValue> entry : config.getObject( key ).entrySet() )
+        Set<Entry<String, com.typesafe.config.ConfigValue>> entrySet = config.getObject( key ).entrySet();
+        Map<String, String> entries = new HashMap<>( entrySet.size() );
+        for( Entry<String, com.typesafe.config.ConfigValue> entry : entrySet )
         {
             entries.put( entry.getKey(), entry.getValue().unwrapped().toString() );
         }
@@ -156,4 +158,5 @@ public class ConfigInstance
     {
         config = com.typesafe.config.ConfigFactory.load();
     }
+
 }

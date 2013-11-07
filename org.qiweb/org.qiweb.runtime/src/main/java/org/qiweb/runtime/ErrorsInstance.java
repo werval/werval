@@ -116,6 +116,7 @@ public final class ErrorsInstance
             final ErrorInstance other = (ErrorInstance) obj;
             return Objects.equals( this.errorId, other.errorId );
         }
+
     }
 
     private final Config config;
@@ -240,4 +241,5 @@ public final class ErrorsInstance
         }
         return ofRequest.get( 0 );
     }
+
 }

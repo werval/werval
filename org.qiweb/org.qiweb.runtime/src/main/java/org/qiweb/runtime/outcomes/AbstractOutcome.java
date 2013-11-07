@@ -17,8 +17,8 @@ package org.qiweb.runtime.outcomes;
 
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.http.StatusClass;
+import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Base Outcome class.

@@ -23,6 +23,11 @@ import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.runtime.util.TypeResolver;
 
+@SuppressWarnings(
+     {
+        "PublicInnerClass",
+        "PackageVisibleInnerClass"
+    } )
 public final class ParameterBindersInstance
     implements ParameterBinders
 {
@@ -42,6 +47,7 @@ public final class ParameterBindersInstance
         {
             return type.equals( TypeResolver.resolveArgument( getClass(), ParameterBinder.class ) );
         }
+
     }
 
     public static final class String
@@ -59,6 +65,7 @@ public final class ParameterBindersInstance
         {
             return value;
         }
+
     }
 
     public static final class Boolean
@@ -76,6 +83,7 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
+
     }
 
     public static final class Short
@@ -100,6 +108,7 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
+
     }
 
     public static final class Integer
@@ -124,6 +133,7 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
+
     }
 
     public static final class Long
@@ -148,6 +158,7 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
+
     }
 
     public static final class Double
@@ -172,6 +183,7 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
+
     }
 
     public static final class Float
@@ -196,6 +208,7 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
+
     }
 
     public static final class BigInteger
@@ -220,6 +233,7 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
+
     }
 
     public static final class BigDecimal
@@ -244,6 +258,7 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
+
     }
 
     public static final class UUID
@@ -268,6 +283,7 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
+
     }
 
     public static final class URL
@@ -292,14 +308,15 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
+
     }
 
     public static final class Class
-        extends StrictTypingParameterBinder<java.lang.Class>
+        extends StrictTypingParameterBinder<java.lang.Class<?>>
     {
 
         @Override
-        public java.lang.Class bind( java.lang.String name, java.lang.String value )
+        public java.lang.Class<?> bind( java.lang.String name, java.lang.String value )
         {
             try
             {
@@ -312,11 +329,13 @@ public final class ParameterBindersInstance
         }
 
         @Override
-        public java.lang.String unbind( java.lang.String name, java.lang.Class value )
+        public java.lang.String unbind( java.lang.String name, java.lang.Class<?> value )
         {
             return value.getCanonicalName();
         }
+
     }
+
     private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
 
     public ParameterBindersInstance()
@@ -355,4 +374,5 @@ public final class ParameterBindersInstance
         }
         throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
     }
+
 }

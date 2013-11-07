@@ -25,4 +25,5 @@ public interface RoutesProvider
 {
 
     Routes routes( Application application );
+
 }
