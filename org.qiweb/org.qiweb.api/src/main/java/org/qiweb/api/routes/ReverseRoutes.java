@@ -26,8 +26,6 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Reverse Routes.
- *
- * @composed 1 - * ReverseRoute
  */
 // TODO Remove Javassist dependency in API!
 public abstract class ReverseRoutes

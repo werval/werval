@@ -24,7 +24,6 @@ import org.qiweb.api.http.StatusClass;
 
 /**
  * Reverse Outcome.
- * @hidden
  */
 public final class ReverseOutcome
     implements Outcome

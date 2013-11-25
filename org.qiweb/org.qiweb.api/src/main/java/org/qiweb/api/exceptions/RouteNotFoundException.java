@@ -17,8 +17,6 @@ package org.qiweb.api.exceptions;
 
 /**
  * Thrown when no satisfying Route found.
- *
- * @extends QiWebException
  */
 public class RouteNotFoundException
     extends QiWebException

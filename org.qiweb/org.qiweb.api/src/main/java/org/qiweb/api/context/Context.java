@@ -26,14 +26,6 @@ import org.qiweb.api.routes.Route;
 /**
  * HTTP Interaction Context.
  * <p>Accessible using {@link CurrentContext#get()} and other static helpers in {@link CurrentContext}.</p>
- *
- * @navassoc - - - org.qiweb.api.Application
- * @navassoc - - - org.qiweb.api.http.Session
- * @navassoc - - - org.qiweb.api.http.Request
- * @navassoc - - - org.qiweb.api.routes.Route
- * @navassoc - - - org.qiweb.api.MetaData
- * @depend - - - org.qiweb.api.http.Response
- * @depend - - - Outcomes
  */
 public interface Context
 {

@@ -19,8 +19,6 @@ import java.util.Map;
 
 /**
  * Mutable Reverse Route.
- * 
- * @navassoc - - - ParameterBinders
  */
 public interface ReverseRoute
 {
