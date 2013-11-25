@@ -90,7 +90,7 @@ public class APITest
             body( "BAD PAYLOAD" ).
             expect().
             statusCode( 400 ).
-            body( containsString( "Unexpected character" ) ).
+            body( containsString( "Unrecognized token" ) ).
             when().
             post( "/api/breweries" );
 
