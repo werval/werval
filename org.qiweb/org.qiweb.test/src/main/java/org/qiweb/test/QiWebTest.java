@@ -44,6 +44,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
  * </p>
  */
 public class QiWebTest
+    implements QiWebTestSupport
 {
 
     private final String configurationResourceNameOverride;
@@ -105,18 +106,14 @@ public class QiWebTest
         app = null;
     }
 
-    /**
-     * @return Application
-     */
-    protected final Application application()
+    @Override
+    public final Application application()
     {
         return app;
     }
 
-    /**
-     * @return HTTP host based on QiWeb listening address Configuration.
-     */
-    protected final String httpHost()
+    @Override
+    public final String httpHost()
     {
         String httpHost = app.config().string( QIWEB_HTTP_ADDRESS );
         if( "127.0.0.1".equals( httpHost ) )
@@ -126,18 +123,14 @@ public class QiWebTest
         return httpHost;
     }
 
-    /**
-     * @return HTTP port based on QiWeb listening port Configuration.
-     */
-    protected final int httpPort()
+    @Override
+    public final int httpPort()
     {
         return app.config().intNumber( QIWEB_HTTP_PORT );
     }
 
-    /**
-     * @return Base HTTP URL based on QiWeb listening address and port Configuration.
-     */
-    protected final String baseHttpUrl()
+    @Override
+    public final String baseHttpUrl()
     {
         return "http://" + httpHost() + ":" + httpPort();
     }

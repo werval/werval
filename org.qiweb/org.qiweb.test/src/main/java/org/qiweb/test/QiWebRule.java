@@ -45,7 +45,7 @@ import org.qiweb.runtime.routes.RoutesProvider;
  * </p>
  */
 public class QiWebRule
-    implements TestRule
+        implements QiWebTestSupport, TestRule
 {
 
     private final QiWebTest qiweb;
@@ -71,33 +71,25 @@ public class QiWebRule
         qiweb = new QiWebTest( configurationResourceName, routesProvider );
     }
 
-    /**
-     * @return QiWeb Application
-     */
+    @Override
     public final Application application()
     {
         return qiweb.application();
     }
 
-    /**
-     * @return QiWeb Application HTTP host
-     */
+    @Override
     public final String httpHost()
     {
         return qiweb.httpHost();
     }
 
-    /**
-     * @return QiWeb Application HTTP port
-     */
+    @Override
     public final int httpPort()
     {
         return qiweb.httpPort();
     }
 
-    /**
-     * @return QiWeb Application base HTTP URL.
-     */
+    @Override
     public final String baseHttpUrl()
     {
         return qiweb.baseHttpUrl();
@@ -110,7 +102,7 @@ public class QiWebRule
         {
             @Override
             public void evaluate()
-                throws Throwable
+                    throws Throwable
             {
                 qiweb.beforeEachQiWebTestMethod();
                 try
