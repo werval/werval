@@ -16,24 +16,22 @@
 package beerdb.ui;
 
 import org.fluentlenium.core.FluentPage;
-import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.WebDriver;
-import org.qiweb.api.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 /**
- * Beers Page Object.
+ * Beer Page Object.
  */
-public class BeersPage
+public class BeerPage
     extends FluentPage
 {
 
     private final String url;
 
-    public BeersPage( WebDriver driver, String url )
+    public BeerPage( WebDriver driver, String url )
     {
         super( driver );
         ensureNotEmpty( "url", url );
@@ -50,35 +48,7 @@ public class BeersPage
     public void isAt()
     {
         assertThat( find( "ul.navbar-nav li" ).get( 1 ).getAttribute( "class" ) ).isEqualTo( "active" );
-        assertThat( findFirst( "#beers" ) ).isNotNull();
-    }
-
-    public int totalCount()
-    {
-        return find( ".list-group a" ).size();
-    }
-
-    public long visibleCount()
-    {
-        return find( ".list-group a" ).stream().filter( each -> each.isDisplayed() ).count();
-    }
-
-    public void fillFilterForm( String filter )
-    {
-        fill( "#search" ).with( filter );
-    }
-
-    public void clearFilterForm()
-    {
-        fill( "#search" ).with( Strings.EMPTY );
-    }
-
-    public BeerPage clickBeer( int index )
-    {
-        FluentWebElement link = find( ".list-group a" ).get( index );
-        String href = link.getAttribute( "href" );
-        link.click();
-        return new BeerPage( getDriver(), href );
+        assertThat( findFirst( "#beer" ) ).isNotNull();
     }
 
 }

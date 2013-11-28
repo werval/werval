@@ -18,22 +18,21 @@ package beerdb.ui;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.WebDriver;
-import org.qiweb.api.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 /**
- * Breweries Page Object.
+ * Brewery Page Object.
  */
-public class BreweriesPage
+public class BreweryPage
     extends FluentPage
 {
 
     private final String url;
 
-    public BreweriesPage( WebDriver driver, String url )
+    public BreweryPage( WebDriver driver, String url )
     {
         super( driver );
         ensureNotEmpty( "url", url );
@@ -50,41 +49,15 @@ public class BreweriesPage
     public void isAt()
     {
         assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ) ).isEqualTo( "active" );
-        assertThat( findFirst( "#breweries" ) ).isNotNull();
+        assertThat( findFirst( "#brewery" ) ).isNotNull();
     }
 
-    public long displayCount()
-    {
-        String displayCountText = findFirst( ".page-header h2 small" ).getText().trim();
-        return Integer.valueOf( displayCountText.substring( 0, displayCountText.indexOf( ' ' ) ) );
-    }
-
-    public long totalCount()
-    {
-        return find( ".list-group a" ).size();
-    }
-
-    public long visibleCount()
-    {
-        return find( ".list-group a" ).stream().filter( each -> each.isDisplayed() ).count();
-    }
-
-    public void fillFilterForm( String filter )
-    {
-        fill( "#search" ).with( filter );
-    }
-
-    public void clearFilterForm()
-    {
-        fill( "#search" ).with( Strings.EMPTY );
-    }
-
-    public BreweryPage clickBrewery( int index )
+    public BeerPage clickBeer( int index )
     {
         FluentWebElement link = find( ".list-group a" ).get( index );
         String href = link.getAttribute( "href" );
         link.click();
-        return new BreweryPage( getDriver(), href );
+        return new BeerPage( getDriver(), href );
     }
 
 }

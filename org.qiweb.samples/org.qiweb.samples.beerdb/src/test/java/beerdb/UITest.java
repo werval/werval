@@ -15,8 +15,10 @@
  */
 package beerdb;
 
+import beerdb.ui.BeerPage;
 import beerdb.ui.BeersPage;
 import beerdb.ui.BreweriesPage;
+import beerdb.ui.BreweryPage;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -36,10 +38,10 @@ public class UITest
     private BeersPage beersPage;
 
     @Before
-    public void setupPages()
+    public void createPages()
     {
-        breweriesPage = new BreweriesPage( getDriver(), QIWEB );
-        beersPage = new BeersPage( getDriver(), QIWEB );
+        breweriesPage = new BreweriesPage( getDriver(), QIWEB.baseHttpUrl() + "/#/breweries" );
+        beersPage = new BeersPage( getDriver(), QIWEB.baseHttpUrl() + "/#/beers" );
     }
 
     @Override
@@ -57,24 +59,35 @@ public class UITest
             assertThat( breweriesPage.displayCount() ).isEqualTo( 2 );
             assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
             assertThat( breweriesPage.visibleCount() ).isEqualTo( 2 );
-
-            breweriesPage.fillFilterForm( "valstar" );
-            assertThat( breweriesPage.visibleCount() ).isEqualTo( 0 );
-
+            //breweriesPage.fillFilterForm( "valstar" );
+            //assertThat( breweriesPage.visibleCount() ).isEqualTo( 0 );
             //breweriesPage.clearFilterForm();
             //assertThat( breweriesPage.visibleCount() ).isEqualTo( 2 );
+        }
+
+        BreweryPage breweryPage = breweriesPage.clickBrewery( 0 );
+        {
+            assertThat( breweryPage ).isAt();
+        }
+
+        BeerPage beerPage = breweryPage.clickBeer( 0 );
+        {
+            assertThat( beerPage ).isAt();
         }
 
         goTo( beersPage );
         {
             assertThat( beersPage ).isAt();
             assertThat( beersPage.totalCount() ).isEqualTo( 11 );
-
-            beersPage.fillFilterForm( "blonde" );
-            assertThat( beersPage.visibleCount() ).isEqualTo( 2 );
-
+            //beersPage.fillFilterForm( "blonde" );
+            //assertThat( beersPage.visibleCount() ).isEqualTo( 2 );
             //beersPage.clearFilterForm();
             //assertThat( beersPage.listCount() ).isEqualTo( 11 );
+        }
+
+        beerPage = beersPage.clickBeer( 0 );
+        {
+            assertThat( beerPage ).isAt();
         }
     }
 
