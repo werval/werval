@@ -92,10 +92,10 @@
                 <div class="col-md-6">
 
                 <div class="form-group">
-                <textarea rows="6" class="form-control" id="brewery-description" placeholder="Description (markdown)" ng-model="data.description"></textarea>
+                <textarea rows="6" class="form-control" id="brewery-description" placeholder="Optional description (markdown)" ng-model="data.description"></textarea>
                 </div>
                 </div>
-                <div class="col-md-6" ng-bind-html-unsafe="data.description|markdown">
+                <div class="col-md-6" ng-bind-html="data.description|markdown">
                 </div>
                 </div>
 
@@ -131,7 +131,7 @@
                 </h2>
                 </div>
 
-                <p ng-bind-html-unsafe="brewery.description|markdown"></p>
+                <p ng-bind-html="brewery.description|markdown"></p>
                 <p><a href="{{brewery.url}}" target="_blank"><i class="glyphicon glyphicon-new-window"></i> {{brewery.url}}</a></p>
 
                 <h3>
@@ -229,7 +229,7 @@
                 <textarea rows="6" class="form-control" id="brewery-description" placeholder="Description (markdown)" ng-model="data.description"></textarea>
                 </div>
                 </div>
-                <div class="col-md-6" ng-bind-html-unsafe="data.description|markdown">
+                <div class="col-md-6" ng-bind-html="data.description|markdown">
                 </div>
                 </div>
 
@@ -266,7 +266,7 @@
                 </h2>
                 </div>
 
-                <p ng-bind-html-unsafe="beer.description|markdown"></p>
+                <p ng-bind-html="beer.description|markdown"></p>
                 <p>Alcohol by volume {{beer.abv}}°</p>
 
                 <!--

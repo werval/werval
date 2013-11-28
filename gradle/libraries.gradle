@@ -91,8 +91,8 @@ rootProject.ext {
 
 
 // Tests and Samples WebJARs versions
-def v_angular = '1.0.8'
-def v_bootstrap = '3.0.0'
+def v_angular = '1.2.2'
+def v_bootstrap = '3.0.2'
 def v_jquery = '2.0.3-1'
 def v_marked = '0.2.9'
 

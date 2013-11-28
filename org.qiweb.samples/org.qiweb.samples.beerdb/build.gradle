@@ -77,6 +77,7 @@ artifacts {
 //
 
 task extractWebJars( type: Copy ) {
+    inputs.file 'build.gradle'
     configurations.assets.files.each {
         from zipTree( it ).matching {
             include 'META-INF/resources/webjars/**'
@@ -95,15 +96,17 @@ task concatJs( dependsOn: extractWebJars ) {
         ant.concat( destfile: 'build/assets/js/main.js' ) {
             fileset( file: 'build/webjars/marked/0.2.9/marked.js' )
             fileset( file: 'build/webjars/jquery/2.0.3/jquery.js' )
-            fileset( file: 'build/webjars/bootstrap/3.0.0/js/bootstrap.js' )
-            fileset( file: 'build/webjars/angularjs/1.0.8/angular.js' )
+            fileset( file: 'build/webjars/bootstrap/3.0.2/js/bootstrap.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.2/angular.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.2/angular-route.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.2/angular-sanitize.js' )
             fileset( file: 'src/main/assets/js/main.js' )
         }
     }
 }
 
 task prepareLessFiles( type: Copy, dependsOn: extractWebJars ) {
-    from 'build/webjars/bootstrap/3.0.0/less'
+    from 'build/webjars/bootstrap/3.0.2/less'
     from 'src/main/assets/less/main.less'
     into 'build/less'
 }
@@ -119,7 +122,7 @@ lesscss {
 task optimizeCss( type: de.obqo.gradle.lesscss.LessTask, dependsOn: prepareLessFiles ) { }
 
 task copyFonts( type: Copy, dependsOn: extractWebJars ) {
-    from 'build/webjars/bootstrap/3.0.0/fonts'
+    from 'build/webjars/bootstrap/3.0.2/fonts'
     into 'build/generated-src/assets/resources/assets/fonts'
 }
 
