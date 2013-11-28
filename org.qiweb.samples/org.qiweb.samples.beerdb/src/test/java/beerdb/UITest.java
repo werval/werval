@@ -15,32 +15,67 @@
  */
 package beerdb;
 
+import beerdb.ui.BeersPage;
+import beerdb.ui.BreweriesPage;
 import org.fluentlenium.adapter.FluentTest;
-import org.junit.Ignore;
-import org.junit.Rule;
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 
-@Ignore
 public class UITest
     extends FluentTest
 {
 
-    @Rule
-    public QiWebRule qiweb = new QiWebRule();
+    @ClassRule
+    public static final QiWebRule QIWEB = new QiWebRule();
+    private BreweriesPage breweriesPage;
+    private BeersPage beersPage;
+
+    @Before
+    public void setupPages()
+    {
+        breweriesPage = new BreweriesPage( getDriver(), QIWEB );
+        beersPage = new BeersPage( getDriver(), QIWEB );
+    }
+
+    @Override
+    public String getDefaultBaseUrl()
+    {
+        return QIWEB.baseHttpUrl();
+    }
 
     @Test
-    public void testUI()
+    public void test()
     {
-        // First load to breweries
-        goTo( qiweb.baseHttpUrl() + "/" );
-        assertThat( title(), equalTo( "Beer Database - QiWeb Sample App" ) );
-        assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ), equalTo( "active" ) );
-        assertThat( findFirst( "#breweries" ), notNullValue() );
+        goTo( "/" );
+        {
+            assertThat( breweriesPage ).isAt();
+            assertThat( breweriesPage.displayCount() ).isEqualTo( 2 );
+            assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
+            assertThat( breweriesPage.visibleCount() ).isEqualTo( 2 );
+
+            breweriesPage.fillFilterForm( "valstar" );
+            assertThat( breweriesPage.visibleCount() ).isEqualTo( 0 );
+
+            //breweriesPage.clearFilterForm();
+            //assertThat( breweriesPage.visibleCount() ).isEqualTo( 2 );
+        }
+
+        goTo( beersPage );
+        {
+            assertThat( beersPage ).isAt();
+            assertThat( beersPage.totalCount() ).isEqualTo( 11 );
+
+            beersPage.fillFilterForm( "blonde" );
+            assertThat( beersPage.visibleCount() ).isEqualTo( 2 );
+
+            //beersPage.clearFilterForm();
+            //assertThat( beersPage.listCount() ).isEqualTo( 11 );
+        }
     }
 
 }

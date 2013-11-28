@@ -70,10 +70,7 @@ public class Global
 
         // Persistence
         application.metaData().put( "emf", createEntityManagerFactory( application ) );
-        if( application.mode() != TEST )
-        {
-            insertInitialData( application );
-        }
+        insertInitialData( application );
 
         // Jackson JSON
         application.metaData().put( "mapper", createObjectMapper() );

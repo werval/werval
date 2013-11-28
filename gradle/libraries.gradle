@@ -75,7 +75,7 @@ rootProject.ext {
                             "com.jayway.restassured:rest-assured:$v_rest_assured",
                             "commons-logging:commons-logging:1.1.3"
         ],
-        fluentlenium:       "org.fluentlenium:fluentlenium-core:$v_fluentlenium",
+        fluentlenium:       "org.fluentlenium:fluentlenium-festassert:$v_fluentlenium",
 
         // Samples only libraries
         eclipselink:        "org.eclipse.persistence:eclipselink:$v_eclipselink",
