@@ -15,12 +15,16 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <span class="navbar-brand">Beer Database</span>
+                <span class="navbar-brand">Beer DB</span>
             </div>
             <div class="collapse navbar-collapse navbar-beerdb-collapse">
                 <ul class="nav navbar-nav">
-                    <li ng-class="{active: breweries}"><a href="#/breweries">Breweries</a></li>
-                    <li ng-class="{active: beers}"><a href="#/beers">Beers</a></li>
+                    <li ng-class="{active: breweries}">
+                        <a href="#/breweries"><img class="brewery-icon" src="/assets/images/barrels.png"/> Breweries</a>
+                    </li>
+                    <li ng-class="{active: beers}">
+                        <a href="#/beers"><img class="beer-icon" src="/assets/images/beer.png"/> Beers</a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -60,6 +64,7 @@
                 <div class="list-group">
                 <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries | filter:query">
                 <span class="pull-right badge">{{brewery.beers_count}} beers</span>
+                <img class="brewery-icon" src="/assets/images/barrels.png"/>
                 <h4 class="list-group-item-heading">{{brewery.name}}</h4>
                 <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
                 </a>
@@ -153,6 +158,7 @@
                 <div class="list-group">
                 <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers | filter:query">
                 <span class="pull-right label label-danger">Red</span>
+                <img class="beer-icon" src="/assets/images/beer.png"/>
                 <h4 class="list-group-item-heading">{{beer.name}}</h4>
                 </a>
                 </div>
@@ -188,6 +194,7 @@
                 <div class="list-group">
                 <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers | filter:query">
                 <span class="pull-right label label-danger">Red</span>
+                <img class="beer-icon" src="/assets/images/beer.png"/>
                 <h4 class="list-group-item-heading">{{beer.name}}</h4>
                 <p class="list-group-item-text"> <small style="color: lightgray">Brewed by</small> {{beer.brewery.name}}</p>
                 </a>
