@@ -53,14 +53,9 @@ public class BeersPage
         assertThat( findFirst( "#beers" ) ).isNotNull();
     }
 
-    public int totalCount()
+    public int listCount()
     {
         return find( ".list-group a" ).size();
-    }
-
-    public long visibleCount()
-    {
-        return find( ".list-group a" ).stream().filter( each -> each.isDisplayed() ).count();
     }
 
     public void fillFilterForm( String filter )

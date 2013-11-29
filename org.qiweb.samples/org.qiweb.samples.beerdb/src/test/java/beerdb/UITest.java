@@ -19,6 +19,7 @@ import beerdb.ui.BeerPage;
 import beerdb.ui.BeersPage;
 import beerdb.ui.BreweriesPage;
 import beerdb.ui.BreweryPage;
+import beerdb.ui.CreateBreweryPage;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -34,15 +35,6 @@ public class UITest
 
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule();
-    private BreweriesPage breweriesPage;
-    private BeersPage beersPage;
-
-    @Before
-    public void createPages()
-    {
-        breweriesPage = new BreweriesPage( getDriver(), QIWEB.baseHttpUrl() + "/#/breweries" );
-        beersPage = new BeersPage( getDriver(), QIWEB.baseHttpUrl() + "/#/beers" );
-    }
 
     @Override
     public String getDefaultBaseUrl()
@@ -50,45 +42,95 @@ public class UITest
         return QIWEB.baseHttpUrl();
     }
 
+    private BreweriesPage breweriesPage;
+    private BeersPage beersPage;
+
+    @Before
+    public void createPages()
+    {
+        breweriesPage = new BreweriesPage( getDriver(), getDefaultBaseUrl() + "/#/breweries" );
+        beersPage = new BeersPage( getDriver(), getDefaultBaseUrl() + "/#/beers" );
+    }
+
     @Test
     public void test()
     {
+        BreweryPage breweryPage;
+        CreateBreweryPage createBreweryPage;
+        BeerPage beerPage;
+
+        // Start from Breweries
+        //
         goTo( "/" );
-        {
-            assertThat( breweriesPage ).isAt();
-            assertThat( breweriesPage.displayCount() ).isEqualTo( 2 );
-            assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
-            assertThat( breweriesPage.visibleCount() ).isEqualTo( 2 );
-            //breweriesPage.fillFilterForm( "valstar" );
-            //assertThat( breweriesPage.visibleCount() ).isEqualTo( 0 );
-            //breweriesPage.clearFilterForm();
-            //assertThat( breweriesPage.visibleCount() ).isEqualTo( 2 );
-        }
+        assertThat( breweriesPage ).isAt();
+        assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
+        assertThat( breweriesPage.listCount() ).isEqualTo( 2 );
 
-        BreweryPage breweryPage = breweriesPage.clickBrewery( 0 );
-        {
-            assertThat( breweryPage ).isAt();
-        }
+        // Click on first brewery and take a look at it
+        //
+        goTo( breweriesPage );
+        breweryPage = breweriesPage.clickBrewery( 0 );
+        assertThat( breweryPage ).isAt();
 
-        BeerPage beerPage = breweryPage.clickBeer( 0 );
-        {
-            assertThat( beerPage ).isAt();
-        }
+        // Click on first beer and take a look at it
+        //
+        beerPage = breweryPage.clickBeer( 0 );
+        assertThat( beerPage ).isAt();
 
+        // Navigate to breweries and click create brewery button, then cancel
+        //
+        goTo( breweriesPage );
+        createBreweryPage = breweriesPage.createBrewery();
+        assertThat( createBreweryPage ).isAt();
+        createBreweryPage.cancel();
+        assertThat( breweriesPage ).isAt();
+
+        // Click create brewery button, then click save without filling the form
+        //
+        createBreweryPage = breweriesPage.createBrewery();
+        assertThat( createBreweryPage ).isAt();
+        createBreweryPage.save();
+        assertThat( createBreweryPage ).isAt();
+
+        // Fill create brewery form and click save button
+        //
+        createBreweryPage.fillForm( "Test Brewery", "http://test-brewery.qiweb.org/", "This is Test Brewery" );
+        createBreweryPage.saveAndWaitForRedirect();
+
+        // Take a look at the newly created brewery
+        //
+        breweryPage = new BreweryPage( getDriver(), getDriver().getCurrentUrl() );
+        assertThat( breweryPage ).isAt();
+        assertThat( breweryPage.breweryName() ).isEqualTo( "Test Brewery" );
+
+        // Navigate to breweries to see the newly created brewery in the list
+        //
+        goTo( breweriesPage );
+        assertThat( breweriesPage ).isAt();
+        assertThat( breweriesPage.listCount() ).isEqualTo( 3 );
+
+        // Navigate to the newly created brewery and click delete button
+        //
+        goTo( breweryPage );
+        assertThat( breweryPage ).isAt();
+        breweryPage.delete();
+
+        // Navigate to breweries to see that the newly created brewery was removed from the list
+        //
+        goTo( breweriesPage );
+        assertThat( breweriesPage ).isAt();
+        assertThat( breweriesPage.listCount() ).isEqualTo( 2 );
+
+        // Navigate to beers
+        //
         goTo( beersPage );
-        {
-            assertThat( beersPage ).isAt();
-            assertThat( beersPage.totalCount() ).isEqualTo( 11 );
-            //beersPage.fillFilterForm( "blonde" );
-            //assertThat( beersPage.visibleCount() ).isEqualTo( 2 );
-            //beersPage.clearFilterForm();
-            //assertThat( beersPage.listCount() ).isEqualTo( 11 );
-        }
+        assertThat( beersPage ).isAt();
+        assertThat( beersPage.listCount() ).isEqualTo( 11 );
 
+        // Click on first beer and take a look at it
+        //
         beerPage = beersPage.clickBeer( 0 );
-        {
-            assertThat( beerPage ).isAt();
-        }
+        assertThat( beerPage ).isAt();
     }
 
 }

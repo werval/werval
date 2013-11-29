@@ -45,9 +45,7 @@
                 <div class="page-header">
                 <h2>
                 <span class="pull-right">
-                <a href="#/breweries/new" class="btn btn-success" data-toggle="tooltip" title="Add Brewery" data-placement="left">
-                <i class="glyphicon glyphicon-plus"></i>
-                </a>
+                <a title="Add Brewery" href="#/breweries/new" class="add-button" data-toggle="tooltip" data-placement="left"><i></i></a>
                 </span>
                 Breweries
                 <small ng-bind-template="{{breweries.length}} and counting"></small>
@@ -105,8 +103,8 @@
                 </div>
 
                 <div class="form-group">
-                <button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i> Save Brewery</button>
-                <a href="#/breweries" class="btn btn-default"><i class="glyphicon glyphicon-ban-circle"></i> Cancel</a>
+                <button type="submit" class="save-button"><i></i> Save Brewery</button>
+                <a href="#/breweries" class="cancel-button"><i></i> Cancel</a>
                 </div>
 
                 </form>
@@ -124,14 +122,10 @@
 
                 <div class="page-header">
                 <h2>
-                {{brewery.name}}
+                <span class="brewery-name">{{brewery.name}}</span>
                 <span class="pull-right">
-                <a class="btn btn-primary" href="#/breweries/{{brewery.id}}/edit" data-toggle="tooltip" title="Edit Brewery" data-placement="left">
-                <i class="glyphicon glyphicon-pencil"></i>
-                </a>
-                <button class="btn btn-danger" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()" data-toggle="tooltip" title="Delete Brewery" data-placement="left">
-                <i class="glyphicon glyphicon-remove"></i>
-                </button>
+                <a title="Edit Brewery" class="edit-button" href="#/breweries/{{brewery.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
+                <button title="Delete Brewery" class="delete-button" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()" data-toggle="tooltip" data-placement="left"><i></i></button>
                 </span>
                 </h2>
                 </div>
@@ -142,9 +136,7 @@
                 <h3>
                 Beers
                 <span class="pull-right">
-                <a href="#/beers/new?brewery_id={{brewery.id}}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add Beer" data-placement="left">
-                <i class="glyphicon glyphicon-plus"></i>
-                </a>
+                <a href="#/beers/new?brewery_id={{brewery.id}}" class="add-button btn-sm" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
                 </span>
                 </h3>
 
@@ -177,9 +169,7 @@
                 <h2>
                 Beers
                 <span class="pull-right">
-                <a href="#/beers/new" class="btn btn-success" data-toggle="tooltip" title="Add Beer" data-placement="left">
-                <i class="glyphicon glyphicon-plus"></i>
-                </a>
+                <a href="#/beers/new" class="add-button" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
                 </span>
                 </h2>
                 </div>
@@ -241,8 +231,8 @@
                 </div>
 
                 <div class="form-group">
-                <button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i> Save beer</button>
-                <button class="btn btn-default" ng-click="cancelForm()"><i class="glyphicon glyphicon-ban-circle"></i> Cancel</button>
+                <button type="submit" class="save-button"><i></i> Save beer</button>
+                <button class="cancel-button" ng-click="cancelForm()"><i></i> Cancel</button>
                 </div>
 
                 </form>
@@ -261,12 +251,8 @@
                 <h2>
                 {{beer.name}}
                 <span class="pull-right">
-                <a class="btn btn-primary" href="#/beers/{{beer.id}}/edit" data-toggle="tooltip" title="Edit Beer" data-placement="left">
-                <i class="glyphicon glyphicon-pencil"></i>
-                </a>
-                <button class="btn btn-danger" ng-click="deleteBeer()" data-toggle="tooltip" title="Delete Beer" data-placement="left">
-                <i class="glyphicon glyphicon-remove"></i>
-                </button>
+                <a title="Edit Beer" class="edit-button" href="#/beers/{{beer.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
+                <button title="Delete Beer" class="delete-button" ng-click="deleteBeer()" data-toggle="tooltip" data-placement="left"><i></i></button>
                 </span>
                 <br/>
                 <small>Brewed by <a href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>

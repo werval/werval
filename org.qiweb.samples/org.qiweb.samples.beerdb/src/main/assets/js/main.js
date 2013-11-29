@@ -12,7 +12,7 @@ function asArray(eventualArray) {
     return angular.isArray(eventualArray) ? eventualArray : [eventualArray];
 }
 
-var beerdb = angular.module('BeerDB', ['ngRoute','ngSanitize']);
+var beerdb = angular.module('BeerDB', ['ngRoute', 'ngSanitize']);
 
 beerdb.config([
     '$routeProvider', function($routeProvider) {

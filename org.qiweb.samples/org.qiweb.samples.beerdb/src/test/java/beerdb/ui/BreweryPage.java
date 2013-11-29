@@ -60,4 +60,15 @@ public class BreweryPage
         return new BeerPage( getDriver(), href );
     }
 
+    public String breweryName()
+    {
+        return findFirst( "span.brewery-name" ).getText();
+    }
+
+    public void delete()
+    {
+        findFirst( ".delete-button" ).click();
+        getDriver().switchTo().alert().accept();
+    }
+
 }

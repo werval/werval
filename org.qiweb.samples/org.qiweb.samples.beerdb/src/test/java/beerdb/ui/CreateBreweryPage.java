@@ -15,25 +15,24 @@
  */
 package beerdb.ui;
 
+import com.google.common.base.Predicate;
 import org.fluentlenium.core.FluentPage;
-import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.WebDriver;
-import org.qiweb.api.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 /**
- * Breweries Page Object.
+ * Create Brewery Page Object.
  */
-public class BreweriesPage
+public class CreateBreweryPage
     extends FluentPage
 {
 
     private final String url;
 
-    public BreweriesPage( WebDriver driver, String url )
+    public CreateBreweryPage( WebDriver driver, String url )
     {
         super( driver );
         ensureNotEmpty( "url", url );
@@ -50,44 +49,49 @@ public class BreweriesPage
     public void isAt()
     {
         assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ) ).isEqualTo( "active" );
-        assertThat( findFirst( "#breweries" ) ).isNotNull();
+        assertThat( findFirst( "#new-brewery" ) ).isNotNull();
     }
 
-    public long totalCount()
+    public void cancel()
     {
-        String displayCountText = findFirst( ".page-header h2 small" ).getText().trim();
-        return Integer.valueOf( displayCountText.substring( 0, displayCountText.indexOf( ' ' ) ) );
+        findFirst( ".cancel-button" ).click();
     }
 
-    public long listCount()
+    public void fillForm( String name, String url, String description )
     {
-        return find( ".list-group a" ).size();
+        fill( "#brewery-name" ).with( name );
+        fill( "#brewery-url" ).with( url );
+        fill( "#brewery-description" ).with( description );
+        assertThat( findFirst( "#brewery-name" ).getValue() ).isEqualTo( name );
+        assertThat( findFirst( "#brewery-url" ).getValue() ).isEqualTo( url );
+        assertThat( findFirst( "#brewery-description" ).getValue() ).isEqualTo( description );
     }
 
-    public void fillFilterForm( String filter )
+    public void save()
     {
-        fill( "#search" ).with( filter );
+        save( false );
     }
 
-    public void clearFilterForm()
+    public void saveAndWaitForRedirect()
     {
-        fill( "#search" ).with( Strings.EMPTY );
+        save( true );
     }
 
-    public BreweryPage clickBrewery( int index )
+    @SuppressWarnings( "Convert2Lambda" )
+    private void save( boolean waitForRedirect )
     {
-        FluentWebElement link = find( ".list-group a" ).get( index );
-        String href = link.getAttribute( "href" );
-        link.click();
-        return new BreweryPage( getDriver(), href );
-    }
-
-    public CreateBreweryPage createBrewery()
-    {
-        FluentWebElement link = findFirst( ".add-button" );
-        String href = link.getAttribute( "href" );
-        link.click();
-        return new CreateBreweryPage( getDriver(), href );
+        findFirst( ".save-button" ).click();
+        if( waitForRedirect )
+        {
+            await().until( new Predicate<WebDriver>()
+            {
+                @Override
+                public boolean apply( WebDriver driver )
+                {
+                    return !driver.getCurrentUrl().endsWith( "new" );
+                }
+            } );
+        }
     }
 
 }

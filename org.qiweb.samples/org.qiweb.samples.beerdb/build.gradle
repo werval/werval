@@ -90,6 +90,7 @@ task extractWebJars( type: Copy ) {
 }
 
 task concatJs( dependsOn: extractWebJars ) {
+    inputs.dir 'src/main/assets/js'
     inputs.dir 'build/webjars'
     outputs.file 'build/assets/js/main.js'
     doLast {
