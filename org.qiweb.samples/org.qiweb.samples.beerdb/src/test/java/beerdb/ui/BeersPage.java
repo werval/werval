@@ -76,4 +76,12 @@ public class BeersPage
         return new BeerPage( getDriver(), href );
     }
 
+    public CreateBeerPage createBeer()
+    {
+        FluentWebElement link = findFirst( ".add-button" );
+        String href = link.getAttribute( "href" );
+        link.click();
+        return new CreateBeerPage( getDriver(), href );
+    }
+
 }

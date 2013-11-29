@@ -18,21 +18,22 @@ package beerdb.ui;
 import com.google.common.base.Predicate;
 import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Select;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 
 /**
- * Create Brewery Page Object.
+ * Create Beer Page Object.
  */
-public class CreateBreweryPage
+public class CreateBeerPage
     extends FluentPage
 {
 
     private final String url;
 
-    public CreateBreweryPage( WebDriver driver, String url )
+    public CreateBeerPage( WebDriver driver, String url )
     {
         super( driver );
         ensureNotEmpty( "url", url );
@@ -48,26 +49,37 @@ public class CreateBreweryPage
     @Override
     public void isAt()
     {
-        assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ) ).isEqualTo( "active" );
-        assertThat( findFirst( "#new-brewery" ) ).isNotNull();
+        assertThat( find( "ul.navbar-nav li" ).get( 1 ).getAttribute( "class" ) ).isEqualTo( "active" );
+        assertThat( findFirst( "#new-beer" ) ).isNotNull();
+    }
+
+    public String selectedBreweryName()
+    {
+        return new Select( findFirst( "#beer-brewery" ).getElement() ).getFirstSelectedOption().getText();
+    }
+
+    public void selectBreweryByName( String name )
+    {
+        fillSelect( "#beer-brewery" ).withText( name );
+        assertThat( selectedBreweryName() ).isEqualTo( name );
     }
 
     public void fillName( String name )
     {
-        fill( "#brewery-name" ).with( name );
-        assertThat( findFirst( "#brewery-name" ).getValue() ).isEqualTo( name );
+        fill( "#beer-name" ).with( name );
+        assertThat( findFirst( "#beer-name" ).getValue() ).isEqualTo( name );
     }
 
-    public void fillUrl( String url )
+    public void fillAbv( float abv )
     {
-        fill( "#brewery-url" ).with( url );
-        assertThat( findFirst( "#brewery-url" ).getValue() ).isEqualTo( url );
+        fill( "#beer-abv" ).with( String.valueOf( abv ) );
+        assertThat( findFirst( "#beer-abv" ).getValue() ).isEqualTo( String.valueOf( abv ) );
     }
 
     public void fillDescription( String description )
     {
-        fill( "#brewery-description" ).with( description );
-        assertThat( findFirst( "#brewery-description" ).getValue() ).isEqualTo( description );
+        fill( "#beer-description" ).with( description );
+        assertThat( findFirst( "#beer-description" ).getValue() ).isEqualTo( description );
     }
 
     public void cancel()

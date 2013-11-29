@@ -223,7 +223,7 @@
                 <div class="row">
                 <div class="col-md-6">
                 <div class="form-group">
-                <textarea rows="6" class="form-control" id="brewery-description" placeholder="Description (markdown)" ng-model="data.description"></textarea>
+                <textarea id="beer-description" class="form-control" rows="6" placeholder="Description (markdown)" ng-model="data.description"></textarea>
                 </div>
                 </div>
                 <div class="col-md-6" ng-bind-html="data.description|markdown">
@@ -249,13 +249,13 @@
 
                 <div class="page-header">
                 <h2>
-                {{beer.name}}
+                <span class="beer-name">{{beer.name}}</span>
                 <span class="pull-right">
                 <a title="Edit Beer" class="edit-button" href="#/beers/{{beer.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
                 <button title="Delete Beer" class="delete-button" ng-click="deleteBeer()" data-toggle="tooltip" data-placement="left"><i></i></button>
                 </span>
                 <br/>
-                <small>Brewed by <a href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>
+                <small>Brewed by <a class="brewery-link" href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>
                 </h2>
                 </div>
 

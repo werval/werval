@@ -19,6 +19,7 @@ import beerdb.ui.BeerPage;
 import beerdb.ui.BeersPage;
 import beerdb.ui.BreweriesPage;
 import beerdb.ui.BreweryPage;
+import beerdb.ui.CreateBeerPage;
 import beerdb.ui.CreateBreweryPage;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
@@ -58,6 +59,7 @@ public class UITest
         BreweryPage breweryPage;
         CreateBreweryPage createBreweryPage;
         BeerPage beerPage;
+        CreateBeerPage createBeerPage;
 
         // Start from Breweries
         //
@@ -69,6 +71,7 @@ public class UITest
         // Click on first brewery and take a look at it
         //
         goTo( breweriesPage );
+        assertThat( breweriesPage ).isAt();
         breweryPage = breweriesPage.clickBrewery( 0 );
         assertThat( breweryPage ).isAt();
 
@@ -80,6 +83,7 @@ public class UITest
         // Navigate to breweries and click create brewery button, then cancel
         //
         goTo( breweriesPage );
+        assertThat( breweriesPage ).isAt();
         createBreweryPage = breweriesPage.createBrewery();
         assertThat( createBreweryPage ).isAt();
         createBreweryPage.cancel();
@@ -94,7 +98,9 @@ public class UITest
 
         // Fill create brewery form and click save button
         //
-        createBreweryPage.fillForm( "Test Brewery", "http://test-brewery.qiweb.org/", "This is Test Brewery" );
+        createBreweryPage.fillName( "Test Brewery" );
+        createBreweryPage.fillUrl( "http://test-brewery.qiweb.org/" );
+        createBreweryPage.fillDescription( "This is Test Brewery" );
         createBreweryPage.saveAndWaitForRedirect();
 
         // Take a look at the newly created brewery
@@ -131,6 +137,46 @@ public class UITest
         //
         beerPage = beersPage.clickBeer( 0 );
         assertThat( beerPage ).isAt();
+
+        // Click on the beer's brewery and take a look at it
+        //
+        breweryPage = beerPage.navigateToBrewery();
+        assertThat( breweryPage ).isAt();
+
+        // Navigate to beers and click create beer button, then cancel
+        //
+        goTo( beersPage );
+        assertThat( beersPage ).isAt();
+        createBeerPage = beersPage.createBeer();
+        createBeerPage.cancel();
+        assertThat( beersPage ).isAt();
+
+        // Click create beer button, then click save without filling the form
+        //
+        createBeerPage = beersPage.createBeer();
+        assertThat( createBeerPage ).isAt();
+        createBeerPage.save();
+        assertThat( createBeerPage ).isAt();
+
+        // Fill create beer form and click save button
+        //
+        createBeerPage.selectBreweryByName( "Duyck" );
+        createBeerPage.fillName( "Jeanlain Bière de Bourrin" );
+        createBeerPage.fillAbv( 5.4F );
+        createBeerPage.fillDescription( "Good ol'times" );
+        createBeerPage.saveAndWaitForRedirect();
+
+        // Take a look at the newly created beer
+        //
+        beerPage = new BeerPage( getDriver(), getDriver().getCurrentUrl() );
+        assertThat( beerPage ).isAt();
+        assertThat( beerPage.beerName() ).isEqualTo( "Jeanlain Bière de Bourrin" );
+
+        // Navigate to beers to see the newly created beer in the list
+        //
+        goTo( beersPage );
+        assertThat( beersPage ).isAt();
+        assertThat( beersPage.listCount() ).isEqualTo( 12 );
     }
 
 }

@@ -16,6 +16,7 @@
 package beerdb.ui;
 
 import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.WebDriver;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -49,6 +50,19 @@ public class BeerPage
     {
         assertThat( find( "ul.navbar-nav li" ).get( 1 ).getAttribute( "class" ) ).isEqualTo( "active" );
         assertThat( findFirst( "#beer" ) ).isNotNull();
+    }
+
+    public BreweryPage navigateToBrewery()
+    {
+        FluentWebElement link = findFirst( "a.brewery-link" );
+        String href = link.getAttribute( "href" );
+        link.click();
+        return new BreweryPage( getDriver(), href );
+    }
+
+    public String beerName()
+    {
+        return findFirst( "span.beer-name" ).getText();
     }
 
 }
