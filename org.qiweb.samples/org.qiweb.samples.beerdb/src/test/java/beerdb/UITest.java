@@ -177,6 +177,18 @@ public class UITest
         goTo( beersPage );
         assertThat( beersPage ).isAt();
         assertThat( beersPage.listCount() ).isEqualTo( 12 );
+
+        // Navigate to the newly created beer and click delete button
+        //
+        goTo( beerPage );
+        assertThat( beerPage ).isAt();
+        beerPage.delete();
+
+        // Navigate to beers to see that the newly created beer was removed from the list
+        //
+        goTo( beersPage );
+        assertThat( beersPage ).isAt();
+        assertThat( beersPage.listCount() ).isEqualTo( 11 );
     }
 
 }

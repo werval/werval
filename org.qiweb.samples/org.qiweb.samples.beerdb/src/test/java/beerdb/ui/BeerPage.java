@@ -65,4 +65,10 @@ public class BeerPage
         return findFirst( "span.beer-name" ).getText();
     }
 
+    public void delete()
+    {
+        findFirst( ".delete-button" ).click();
+        getDriver().switchTo().alert().accept();
+    }
+
 }
