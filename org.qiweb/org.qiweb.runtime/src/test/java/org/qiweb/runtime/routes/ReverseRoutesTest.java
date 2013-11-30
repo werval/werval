@@ -143,30 +143,6 @@ public class ReverseRoutesTest
     }
 
     @Test
-    public void testQueryStringWithNoValueParamSeveralTimes()
-        throws Exception
-    {
-        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
-        expect().
-            statusCode( 200 ).
-            when().
-            body( equalTo( QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=" ) ).
-            get( url );
-    }
-
-    @Test
-    public void testQueryStringWithSameValueParamSeveralTimes()
-        throws Exception
-    {
-        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar" ) ).
-            when().
-            get( url );
-    }
-
-    @Test
     public void testAppendedQueryString()
         throws Exception
     {
@@ -189,6 +165,29 @@ public class ReverseRoutesTest
         expect().
             statusCode( 200 ).
             body( equalTo( url + "#bazar" ) ).
+            when().
+            get( url );
+    }
+
+    @Test
+    public void testQueryStringWithNoValueParamSeveralTimes()
+        throws Exception
+    {
+        // FIXME This should be 400 but the Netty HTTP Codec flatten no-value query string parameters
+        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
+        expect().
+            statusCode( 200 ).
+            when().
+            get( url );
+    }
+
+    @Test
+    public void testQueryStringWithSameValueParamSeveralTimes()
+        throws Exception
+    {
+        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
+        expect().
+            statusCode( 400 ).
             when().
             get( url );
     }
