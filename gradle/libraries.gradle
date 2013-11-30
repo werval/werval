@@ -27,7 +27,7 @@ def v_junit = '4.11'
 def v_liquibase = '3.0.7'
 def v_logback = '1.0.13'
 def v_postgres = '9.3-1100-jdbc41'
-def v_rest_assured = '1.8.1'
+def v_rest_assured = '2.0.1'
 
 // Samples only libraries versions
 def v_eclipselink = '2.5.1'
