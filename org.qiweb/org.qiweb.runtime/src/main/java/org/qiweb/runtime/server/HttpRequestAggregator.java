@@ -140,8 +140,8 @@ public class HttpRequestAggregator
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
         assert currentRequestHeader == null;
         assert consumedContentlength == 0;
-        assert bodyFile == null;
-        assert bodyBuf == null;
+        // assert bodyFile == null;
+        // assert bodyBuf == null;
 
         if( is100ContinueExpected( newRequestHeader ) )
         {
@@ -292,7 +292,20 @@ public class HttpRequestAggregator
     }
 
     @Override
-    public void channelUnregistered( ChannelHandlerContext ctx )
+    public void channelActive( ChannelHandlerContext ctx )
+        throws Exception
+    {
+        cleanup();
+    }
+
+    @Override
+    public void channelInactive( ChannelHandlerContext ctx )
+        throws Exception
+    {
+        cleanup();
+    }
+
+    private void cleanup()
         throws IOException
     {
         if( bodyBuf != null )
@@ -306,4 +319,5 @@ public class HttpRequestAggregator
             bodyFile = null;
         }
     }
+
 }
