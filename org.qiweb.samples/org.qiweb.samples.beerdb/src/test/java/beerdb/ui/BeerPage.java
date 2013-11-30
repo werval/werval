@@ -71,4 +71,12 @@ public class BeerPage
         getDriver().switchTo().alert().accept();
     }
 
+    public EditBeerPage edit()
+    {
+        FluentWebElement link = findFirst( ".edit-button" );
+        String href = link.getAttribute( "href" );
+        link.click();
+        return new EditBeerPage( getDriver(), href );
+    }
+
 }

@@ -21,6 +21,8 @@ import beerdb.ui.BreweriesPage;
 import beerdb.ui.BreweryPage;
 import beerdb.ui.CreateBeerPage;
 import beerdb.ui.CreateBreweryPage;
+import beerdb.ui.EditBeerPage;
+import beerdb.ui.EditBreweryPage;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -58,8 +60,10 @@ public class UITest
     {
         BreweryPage breweryPage;
         CreateBreweryPage createBreweryPage;
+        EditBreweryPage editBreweryPage;
         BeerPage beerPage;
         CreateBeerPage createBeerPage;
+        EditBeerPage editBeerPage;
 
         // Start from Breweries
         //
@@ -108,6 +112,33 @@ public class UITest
         breweryPage = new BreweryPage( getDriver(), getDriver().getCurrentUrl() );
         assertThat( breweryPage ).isAt();
         assertThat( breweryPage.breweryName() ).isEqualTo( "Test Brewery" );
+
+        // Click edit brewery button then cancel
+        //
+        editBreweryPage = breweryPage.edit();
+        assertThat( editBreweryPage ).isAt();
+        editBreweryPage.cancel();
+        assertThat( breweryPage ).isAt();
+
+        // Click edit brewery button, clear url, try to save
+        //
+        editBreweryPage = breweryPage.edit();
+        assertThat( editBreweryPage ).isAt();
+        editBreweryPage.clearUrl();
+        editBreweryPage.save();
+        assertThat( editBreweryPage ).isAt();
+
+        // Put url back, change name, then save
+        //
+        editBreweryPage.fillName( "Test EDITED Brewery" );
+        editBreweryPage.fillUrl( "http://test-brewery.qiweb.org/" );
+        editBreweryPage.saveAndWaitForRedirect();
+
+        // Take a look at the edited brewery
+        //
+        goTo( breweryPage );
+        assertThat( breweryPage ).isAt();
+        assertThat( breweryPage.breweryName() ).isEqualTo( "Test EDITED Brewery" );
 
         // Navigate to breweries to see the newly created brewery in the list
         //
@@ -171,6 +202,33 @@ public class UITest
         beerPage = new BeerPage( getDriver(), getDriver().getCurrentUrl() );
         assertThat( beerPage ).isAt();
         assertThat( beerPage.beerName() ).isEqualTo( "Jeanlain Bière de Bourrin" );
+
+        // Click edit beer button then cancel
+        //
+        editBeerPage = beerPage.edit();
+        assertThat( editBeerPage ).isAt();
+        editBeerPage.cancel();
+        assertThat( beerPage ).isAt();
+
+        // Click edit beer button, clear abv, try to save
+        //
+        editBeerPage = beerPage.edit();
+        assertThat( editBeerPage ).isAt();
+        editBeerPage.clearAbv();
+        editBeerPage.save();
+        assertThat( editBeerPage ).isAt();
+
+        // Put abv back, change name, then save
+        //
+        editBeerPage.fillName( "Test EDITED Beer" );
+        editBeerPage.fillAbv( 5.4F );
+        editBeerPage.saveAndWaitForRedirect();
+
+        // Take a look at the edited brewery
+        //
+        goTo( beerPage );
+        assertThat( beerPage ).isAt();
+        assertThat( beerPage.beerName() ).isEqualTo( "Test EDITED Beer" );
 
         // Navigate to beers to see the newly created beer in the list
         //

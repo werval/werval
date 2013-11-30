@@ -76,6 +76,9 @@ beerdb.controller('NewBreweryCtrl', [
                 $location.path('/breweries/' + data.id);
             });
         };
+        $scope.cancelForm = function() {
+            $location.path('/breweries');
+        };
     }
 ]);
 
@@ -106,6 +109,9 @@ beerdb.controller('EditBreweryCtrl', [
             $http.put('/api/breweries/' + $routeParams.id, $scope.data).success(function(data) {
                 $location.path('/breweries/' + $routeParams.id);
             });
+        };
+        $scope.cancelForm = function() {
+            $location.path('/breweries/' + $routeParams.id);
         };
     }
 ]);

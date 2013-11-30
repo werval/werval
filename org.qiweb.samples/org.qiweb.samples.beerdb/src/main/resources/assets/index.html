@@ -20,10 +20,10 @@
             <div class="collapse navbar-collapse navbar-beerdb-collapse">
                 <ul class="nav navbar-nav">
                     <li ng-class="{active: breweries}">
-                        <a href="#/breweries"><img class="brewery-icon" src="/assets/images/barrels.png"/> Breweries</a>
+                        <a href="#/breweries"><img class="brewery-icon" alt="Breweries" src="/assets/images/barrels.png"/> Breweries</a>
                     </li>
                     <li ng-class="{active: beers}">
-                        <a href="#/beers"><img class="beer-icon" src="/assets/images/beer.png"/> Beers</a>
+                        <a href="#/beers"><img class="beer-icon" alt="Beers" src="/assets/images/beer.png"/> Beers</a>
                     </li>
                 </ul>
             </div>
@@ -34,43 +34,43 @@
 
             <script type="text/ng-template" id="not-found.html">
                 <div id="not-found">
-                <div class="page-header"><h2>Not Found</h2></div>
-                <p><a href="#/">Continue</a></p>
+                    <div class="page-header"><h2>Not Found</h2></div>
+                    <p><a href="#/">Continue</a></p>
                 </div>
             </script>
 
             <script type="text/ng-template" id="breweries.html">
                 <div id="breweries" ng-show="loaded">
 
-                <div class="page-header">
-                <h2>
-                <span class="pull-right">
-                <a title="Add Brewery" href="#/breweries/new" class="add-button" data-toggle="tooltip" data-placement="left"><i></i></a>
-                </span>
-                Breweries
-                <small ng-bind-template="{{breweries.length}} and counting"></small>
-                </h2>
-                </div>
+                    <div class="page-header">
+                        <h2>
+                            <span class="pull-right">
+                                <a title="Add Brewery" href="#/breweries/new" class="add-button" data-toggle="tooltip" data-placement="left"><i></i></a>
+                            </span>
+                            Breweries
+                            <small ng-bind-template="{{breweries.length}} and counting"></small>
+                        </h2>
+                    </div>
 
-                <form class="inline-form">
-                <div class="form-group">
-                <label class="sr-only" for="search">Search</label>
-                <input type="search" class="form-control input-sm" id="search" placeholder="Type to search breweries" ng-model="query">
-                </div>
-                </form>
+                    <form class="inline-form">
+                        <div class="form-group">
+                            <label class="sr-only" for="search">Search</label>
+                            <input type="search" class="form-control input-sm" id="search" placeholder="Type to search breweries" ng-model="query">
+                        </div>
+                    </form>
 
-                <div class="list-group">
-                <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries | filter:query">
-                <span class="pull-right badge">{{brewery.beers_count}} beers</span>
-                <img class="brewery-icon" src="/assets/images/barrels.png"/>
-                <h4 class="list-group-item-heading">{{brewery.name}}</h4>
-                <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
-                </a>
-                </div>
+                    <div class="list-group">
+                        <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries | filter:query">
+                            <span class="pull-right badge">{{brewery.beers_count}} beers</span>
+                            <img class="brewery-icon" src="/assets/images/barrels.png"/>
+                            <h4 class="list-group-item-heading">{{brewery.name}}</h4>
+                            <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
+                        </a>
+                    </div>
 
-                <!--
-                <pre>{{breweries | json}}</pre>
-                -->
+                    <!--
+                    <pre>{{breweries | json}}</pre>
+                    -->
 
                 </div>
             </script>
@@ -78,40 +78,35 @@
             <script type="text/ng-template" id="brewery-form.html">
                 <div id="new-brewery" ng-show="loaded">
 
-                <div class="page-header">
-                <h2>{{form_title}}</h2>
-                </div>
+                    <div class="page-header">
+                        <h2>{{form_title}}</h2>
+                    </div>
 
-                <form ng-submit="submitForm()">
+                    <form ng-submit="submitForm()">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="brewery-name" placeholder="Brewery name" required ng-model="data.name"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="url" class="form-control" id="brewery-url" placeholder="Brewery URL" required ng-model="data.url"/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <textarea rows="6" class="form-control" id="brewery-description" placeholder="Optional description (markdown)" ng-model="data.description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6" ng-bind-html="data.description|markdown">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="save-button"><i></i> Save Brewery</button>
+                            <button class="cancel-button" ng-click="cancelForm()" ><i></i> Cancel</a>
+                        </div>
+                    </form>
 
-                <div class="form-group">
-                <input type="text" class="form-control" id="brewery-name" placeholder="Brewery name" required ng-model="data.name"/>
-                </div>
-
-                <div class="form-group">
-                <input type="url" class="form-control" id="brewery-url" placeholder="Brewery URL" required ng-model="data.url"/>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-
-                <div class="form-group">
-                <textarea rows="6" class="form-control" id="brewery-description" placeholder="Optional description (markdown)" ng-model="data.description"></textarea>
-                </div>
-                </div>
-                <div class="col-md-6" ng-bind-html="data.description|markdown">
-                </div>
-                </div>
-
-                <div class="form-group">
-                <button type="submit" class="save-button"><i></i> Save Brewery</button>
-                <a href="#/breweries" class="cancel-button"><i></i> Cancel</a>
-                </div>
-
-                </form>
-
-                <!--
-                <pre>{{data | json}}</pre>
-                -->
+                    <!--
+                    <pre>{{data | json}}</pre>
+                    -->
 
                 </div>
             </script>
@@ -121,38 +116,38 @@
                 <div id="brewery" ng-show="loaded">
 
                 <div class="page-header">
-                <h2>
-                <span class="brewery-name">{{brewery.name}}</span>
-                <span class="pull-right">
-                <a title="Edit Brewery" class="edit-button" href="#/breweries/{{brewery.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
-                <button title="Delete Brewery" class="delete-button" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()" data-toggle="tooltip" data-placement="left"><i></i></button>
-                </span>
-                </h2>
+                    <h2>
+                        <span class="brewery-name">{{brewery.name}}</span>
+                        <span class="pull-right">
+                            <a title="Edit Brewery" class="edit-button" href="#/breweries/{{brewery.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
+                            <button title="Delete Brewery" class="delete-button" ng-disabled="brewery.beers.length > 0" ng-click="deleteBrewery()" data-toggle="tooltip" data-placement="left"><i></i></button>
+                        </span>
+                    </h2>
                 </div>
 
                 <p ng-bind-html="brewery.description|markdown"></p>
                 <p><a href="{{brewery.url}}" target="_blank"><i class="glyphicon glyphicon-new-window"></i> {{brewery.url}}</a></p>
 
                 <h3>
-                Beers
-                <span class="pull-right">
-                <a href="#/beers/new?brewery_id={{brewery.id}}" class="add-button btn-sm" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
-                </span>
+                    Beers
+                    <span class="pull-right">
+                        <a href="#/beers/new?brewery_id={{brewery.id}}" class="add-button btn-sm" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
+                    </span>
                 </h3>
 
                 <form class="inline-form">
-                <div class="form-group">
-                <label class="sr-only" for="search">Search</label>
-                <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
-                </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="search">Search</label>
+                        <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
+                    </div>
                 </form>
 
                 <div class="list-group">
-                <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers | filter:query">
-                <span class="pull-right label label-danger">Red</span>
-                <img class="beer-icon" src="/assets/images/beer.png"/>
-                <h4 class="list-group-item-heading">{{beer.name}}</h4>
-                </a>
+                    <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers | filter:query">
+                        <span class="pull-right label label-danger">Red</span>
+                        <img class="beer-icon" src="/assets/images/beer.png"/>
+                        <h4 class="list-group-item-heading">{{beer.name}}</h4>
+                    </a>
                 </div>
 
                 <!--
@@ -165,34 +160,34 @@
             <script type="text/ng-template" id="beers.html">
                 <div id="beers" ng-show="loaded">
 
-                <div class="page-header">
-                <h2>
-                Beers
-                <span class="pull-right">
-                <a href="#/beers/new" class="add-button" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
-                </span>
-                </h2>
-                </div>
+                    <div class="page-header">
+                        <h2>
+                            Beers
+                            <span class="pull-right">
+                                <a href="#/beers/new" class="add-button" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
+                            </span>
+                        </h2>
+                    </div>
 
-                <form class="inline-form">
-                <div class="form-group">
-                <label class="sr-only" for="search">Search</label>
-                <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
-                </div>
-                </form>
+                    <form class="inline-form">
+                        <div class="form-group">
+                            <label class="sr-only" for="search">Search</label>
+                            <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
+                        </div>
+                    </form>
 
-                <div class="list-group">
-                <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers | filter:query">
-                <span class="pull-right label label-danger">Red</span>
-                <img class="beer-icon" src="/assets/images/beer.png"/>
-                <h4 class="list-group-item-heading">{{beer.name}}</h4>
-                <p class="list-group-item-text"> <small style="color: lightgray">Brewed by</small> {{beer.brewery.name}}</p>
-                </a>
-                </div>
+                    <div class="list-group">
+                        <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers | filter:query">
+                            <span class="pull-right label label-danger">Red</span>
+                            <img class="beer-icon" src="/assets/images/beer.png"/>
+                            <h4 class="list-group-item-heading">{{beer.name}}</h4>
+                            <p class="list-group-item-text"> <small style="color: lightgray">Brewed by</small> {{beer.brewery.name}}</p>
+                        </a>
+                    </div>
 
-                <!--
-                <pre>{{beers | json}}</pre>
-                -->
+                    <!--
+                    <pre>{{beers | json}}</pre>
+                    -->
 
                 </div>
             </script>
@@ -200,46 +195,44 @@
             <script type="text/ng-template" id="beer-form.html">
                 <div id="new-beer" ng-show="loaded">
 
-                <div class="page-header">
-                <h2>{{form_title}}</h2>
-                </div>
+                    <div class="page-header">
+                        <h2>{{form_title}}</h2>
+                    </div>
 
-                <form ng-submit="submitForm()">
+                    <form ng-submit="submitForm()">
+                        <div class="form-group">
+                            <select class="form-control" id="beer-brewery" ng-model="data.brewery_id" ng-options="b.id as b.name for b in breweries" ng-disabled="brewery_disabled" required>
+                                <option value="">-- Choose a brewery --</option>
+                            </select>
+                        </div>
 
-                <div class="form-group">
-                <select class="form-control" id="beer-brewery" ng-model="data.brewery_id" ng-options="b.id as b.name for b in breweries" ng-disabled="brewery_disabled" required>
-                <option value="">-- Choose a brewery --</option>
-                </select>
-                </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="beer-name" placeholder="Beer name" required ng-model="data.name"/>
+                        </div>
 
-                <div class="form-group">
-                <input type="text" class="form-control" id="beer-name" placeholder="Beer name" required ng-model="data.name"/>
-                </div>
+                        <div class="form-group">
+                            <input type="number" step="any" class="form-control" id="beer-abv" placeholder="Alcohol by volume" required ng-model="data.abv"/>
+                        </div>
 
-                <div class="form-group">
-                <input type="number" step="any" class="form-control" id="beer-abv" placeholder="Alcohol by volume" required ng-model="data.abv"/>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <textarea id="beer-description" class="form-control" rows="6" placeholder="Description (markdown)" ng-model="data.description"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6" ng-bind-html="data.description|markdown">
+                            </div>
+                        </div>
 
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <textarea id="beer-description" class="form-control" rows="6" placeholder="Description (markdown)" ng-model="data.description"></textarea>
-                </div>
-                </div>
-                <div class="col-md-6" ng-bind-html="data.description|markdown">
-                </div>
-                </div>
+                        <div class="form-group">
+                            <button type="submit" class="save-button"><i></i> Save beer</button>
+                            <button class="cancel-button" ng-click="cancelForm()"><i></i> Cancel</button>
+                        </div>
+                    </form>
 
-                <div class="form-group">
-                <button type="submit" class="save-button"><i></i> Save beer</button>
-                <button class="cancel-button" ng-click="cancelForm()"><i></i> Cancel</button>
-                </div>
-
-                </form>
-
-                <!--
-                <pre>{{data | json}}</pre>
-                -->
+                    <!--
+                    <pre>{{data | json}}</pre>
+                    -->
 
                 </div>
             </script>
@@ -247,24 +240,24 @@
             <script type="text/ng-template" id="beer.html">
                 <div id="beer" ng-show="loaded">
 
-                <div class="page-header">
-                <h2>
-                <span class="beer-name">{{beer.name}}</span>
-                <span class="pull-right">
-                <a title="Edit Beer" class="edit-button" href="#/beers/{{beer.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
-                <button title="Delete Beer" class="delete-button" ng-click="deleteBeer()" data-toggle="tooltip" data-placement="left"><i></i></button>
-                </span>
-                <br/>
-                <small>Brewed by <a class="brewery-link" href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>
-                </h2>
-                </div>
+                    <div class="page-header">
+                        <h2>
+                            <span class="beer-name">{{beer.name}}</span>
+                            <span class="pull-right">
+                                <a title="Edit Beer" class="edit-button" href="#/beers/{{beer.id}}/edit" data-toggle="tooltip" data-placement="left"><i></i></a>
+                                <button title="Delete Beer" class="delete-button" ng-click="deleteBeer()" data-toggle="tooltip" data-placement="left"><i></i></button>
+                            </span>
+                            <br/>
+                            <small>Brewed by <a class="brewery-link" href="#/breweries/{{beer.brewery.id}}">{{beer.brewery.name}}</a></small>
+                        </h2>
+                    </div>
 
-                <p ng-bind-html="beer.description|markdown"></p>
-                <p>Alcohol by volume {{beer.abv}}°</p>
+                    <p ng-bind-html="beer.description|markdown"></p>
+                    <p>Alcohol by volume {{beer.abv}}°</p>
 
-                <!--
-                <pre>{{beer | json}}</pre>
-                -->
+                    <!--
+                    <pre>{{beer | json}}</pre>
+                    -->
 
                 </div>
             </script>
