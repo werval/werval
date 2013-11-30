@@ -59,7 +59,7 @@ public class QueryStringInstance
             String name = entry.getKey();
             if( !this.parameters.containsKey( name ) )
             {
-                this.parameters.put( name, new ArrayList<String>() );
+                this.parameters.put( name, new ArrayList<>() );
             }
             List<String> values = entry.getValue();
             if( !allowMultiValuedParameters && ( !this.parameters.get( name ).isEmpty() || values.size() > 1 ) )
@@ -177,4 +177,5 @@ public class QueryStringInstance
     {
         return Collections.unmodifiableMap( parameters );
     }
+
 }
