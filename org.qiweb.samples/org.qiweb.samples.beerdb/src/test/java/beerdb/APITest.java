@@ -245,7 +245,7 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "", hasSize( 1 ) ).
+            body( "", hasSize( 3 ) ).
             body( "name", hasItems( "ZengBrewery" ) ).
             when().
             get( "/api/breweries" );
@@ -258,7 +258,7 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "breweries", hasSize( 0 ) ).
+            body( "breweries", hasSize( 2 ) ).
             when().
             get( "/api/breweries" );
     }

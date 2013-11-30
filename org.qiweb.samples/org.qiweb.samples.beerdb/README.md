@@ -1,7 +1,7 @@
 # Beer Database - QiWeb Sample Application
 
 This sample is backed by an [EclipseLink][1] [JPA 2][2] store for breweries
-and beers and expose a [JSON][3] api consumed by an [AngularJS][4] front-end.
+and beers. It expose a [JSON][3] api consumed by an [AngularJS][4] front-end.
 
 In development and test modes, the JPA 2 store is an in-memory [H2][5]
 database. A production configuration that use [PostgreSQL][6] is provided.
