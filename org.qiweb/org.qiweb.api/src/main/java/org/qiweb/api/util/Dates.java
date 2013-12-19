@@ -69,6 +69,7 @@ public final class Dates
             {
                 DateFormat dateFormat = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US );
                 dateFormat.setTimeZone( TimeZone.getTimeZone( "GMT" ) );
+                dateFormat.setLenient( false );
                 return dateFormat;
             }
         };
