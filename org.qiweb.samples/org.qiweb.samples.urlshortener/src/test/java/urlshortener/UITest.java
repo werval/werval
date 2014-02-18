@@ -45,7 +45,7 @@ public class UITest
         await().until( "#api-output pre" ).hasSize( 1 );
         assertThat( findFirst( "#api-output pre" ).getText(), equalTo( "[]" ) );
 
-        String url = qiwebRule.baseHttpUrl() + "/client/lib/webjars/bootstrap/3.0.2/css/bootstrap.min.css";
+        String url = qiwebRule.baseHttpUrl() + "/client/lib/webjars/bootstrap/3.0.3/css/bootstrap.min.css";
 
         // Shorten
         fill( "#input-shorten" ).with( url );

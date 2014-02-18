@@ -47,7 +47,7 @@ public class APITest
             when().
             get( "/api/list" );
 
-        String longUrl = baseHttpUrl() + "/client/lib/webjars/bootstrap/3.0.2/css/bootstrap.min.css";
+        String longUrl = baseHttpUrl() + "/client/lib/webjars/bootstrap/3.0.3/css/bootstrap.min.css";
 
         // Assert can shorten URL
         Response response = given().

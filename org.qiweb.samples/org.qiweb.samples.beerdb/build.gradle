@@ -95,19 +95,19 @@ task concatJs( dependsOn: extractWebJars ) {
     outputs.file 'build/assets/js/main.js'
     doLast {
         ant.concat( destfile: 'build/assets/js/main.js' ) {
-            fileset( file: 'build/webjars/marked/0.2.9/marked.js' )
-            fileset( file: 'build/webjars/jquery/2.0.3/jquery.js' )
-            fileset( file: 'build/webjars/bootstrap/3.0.2/js/bootstrap.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.2/angular.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.2/angular-route.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.2/angular-sanitize.js' )
+            fileset( file: 'build/webjars/marked/0.2.10/marked.js' )
+            fileset( file: 'build/webjars/jquery/2.1.0/jquery.js' )
+            fileset( file: 'build/webjars/bootstrap/3.0.3/js/bootstrap.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.13/angular.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.13/angular-route.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.13/angular-sanitize.js' )
             fileset( file: 'src/main/assets/js/main.js' )
         }
     }
 }
 
 task prepareLessFiles( type: Copy, dependsOn: extractWebJars ) {
-    from 'build/webjars/bootstrap/3.0.2/less'
+    from 'build/webjars/bootstrap/3.0.3/less'
     from 'src/main/assets/less/main.less'
     into 'build/less'
 }
@@ -123,7 +123,7 @@ lesscss {
 task optimizeCss( type: de.obqo.gradle.lesscss.LessTask, dependsOn: prepareLessFiles ) { }
 
 task copyFonts( type: Copy, dependsOn: extractWebJars ) {
-    from 'build/webjars/bootstrap/3.0.2/fonts'
+    from 'build/webjars/bootstrap/3.0.3/fonts'
     into 'build/generated-src/assets/resources/assets/fonts'
 }
 
