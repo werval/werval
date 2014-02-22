@@ -29,7 +29,6 @@ public class HelloWorldPlugin
     private int passivations = 0;
     private final HelloWorld api = new HelloWorld()
     {
-
         @Override
         public int activations()
         {
@@ -47,8 +46,19 @@ public class HelloWorldPlugin
         {
             return "Hello " + name + "!";
         }
-
     };
+
+    @Override
+    public Class<HelloWorld> apiType()
+    {
+        return HelloWorld.class;
+    }
+
+    @Override
+    public HelloWorld api()
+    {
+        return api;
+    }
 
     @Override
     public boolean enabled()
@@ -67,17 +77,4 @@ public class HelloWorldPlugin
     {
         passivations++;
     }
-
-    @Override
-    public Class<HelloWorld> apiType()
-    {
-        return HelloWorld.class;
-    }
-
-    @Override
-    public HelloWorld api()
-    {
-        return api;
-    }
-
 }

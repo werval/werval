@@ -23,11 +23,20 @@ import org.qiweb.api.exceptions.ActivationException;
  */
 public interface Plugin<API>
 {
-
     /**
      * @return TRUE is the Plugin is enabled, otherwise return FALSE
      */
     boolean enabled();
+
+    /**
+     * @return Plugin API type
+     */
+    Class<API> apiType();
+
+    /**
+     * @return Plugin API for the {@link Application} to use
+     */
+    API api();
 
     /**
      * Invoked on Application activation.
@@ -42,15 +51,4 @@ public interface Plugin<API>
      * @param application Application
      */
     void onPassivate( Application application );
-
-    /**
-     * @return Plugin API type
-     */
-    Class<API> apiType();
-
-    /**
-     * @return Plugin API for the {@link Application} to use
-     */
-    API api();
-
 }
