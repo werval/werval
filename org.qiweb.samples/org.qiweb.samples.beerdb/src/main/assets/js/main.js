@@ -84,7 +84,7 @@ beerdb.controller('NewBreweryCtrl', [
 
 beerdb.controller('BreweryCtrl', [
     '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
-        $http.get('/api/breweries/' + $routeParams.id).success(function(data) {
+        $http.get('/api/breweries/' + $routeParams.id).success(function(data) {
             $scope.brewery = data;
             $scope.loaded = true;
         });
@@ -101,7 +101,7 @@ beerdb.controller('BreweryCtrl', [
 beerdb.controller('EditBreweryCtrl', [
     '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
         $scope.form_title = 'Edit brewery';
-        $http.get('/api/breweries/' + $routeParams.id).success(function(data) {
+        $http.get('/api/breweries/' + $routeParams.id).success(function(data) {
             $scope.data = data; // Rename to $scope.brewery
             $scope.loaded = true;
         });
@@ -151,7 +151,7 @@ beerdb.controller('NewBeerCtrl', [
 
 beerdb.controller('BeerCtrl', [
     '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
-        $http.get('/api/beers/' + $routeParams.id).success(function(data) {
+        $http.get('/api/beers/' + $routeParams.id).success(function(data) {
             $scope.beer = data;
             $scope.loaded = true;
         });
@@ -174,7 +174,7 @@ beerdb.controller('EditBeerCtrl', [
             if ($scope.data)
                 $scope.loaded = true;
         });
-        $http.get('/api/beers/' + $routeParams.id).success(function(data) {
+        $http.get('/api/beers/' + $routeParams.id).success(function(data) {
             $scope.data = data;
             $scope.data.brewery_id = data.brewery.id;
             if ($scope.breweries)
