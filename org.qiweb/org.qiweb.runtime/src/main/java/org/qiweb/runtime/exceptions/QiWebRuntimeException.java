@@ -23,7 +23,6 @@ import org.qiweb.api.exceptions.QiWebException;
 public class QiWebRuntimeException
     extends QiWebException
 {
-
     private static final long serialVersionUID = 1L;
 
     public QiWebRuntimeException( String message )

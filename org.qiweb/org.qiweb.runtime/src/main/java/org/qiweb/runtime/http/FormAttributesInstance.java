@@ -31,7 +31,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public class FormAttributesInstance
     implements FormAttributes
 {
-
     private final Map<String, List<String>> attributes;
 
     public FormAttributesInstance( boolean allowMultiValuedAttributes, Map<String, List<String>> attributes )
@@ -42,7 +41,7 @@ public class FormAttributesInstance
             String name = entry.getKey();
             if( !this.attributes.containsKey( name ) )
             {
-                this.attributes.put( name, new ArrayList<String>() );
+                this.attributes.put( name, new ArrayList<>() );
             }
             List<String> values = entry.getValue();
             if( !allowMultiValuedAttributes && ( !this.attributes.get( name ).isEmpty() || values.size() > 1 ) )

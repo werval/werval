@@ -37,7 +37,6 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 public class DevShellRoutesProvider
     implements RoutesProvider
 {
-
     private static final String DEVSHELL_ROUTES =
                                 "\n"
                                 + "GET /@doc org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"

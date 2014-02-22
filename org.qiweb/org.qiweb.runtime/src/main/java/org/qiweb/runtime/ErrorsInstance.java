@@ -37,7 +37,6 @@ import static org.qiweb.runtime.ConfigKeys.APP_ERRORS_RECORD_MAX;
 public final class ErrorsInstance
     implements Errors
 {
-
     private static final class ErrorInstance
         implements Error
     {
@@ -233,5 +232,4 @@ public final class ErrorsInstance
         }
         return ofRequest.get( 0 );
     }
-
 }

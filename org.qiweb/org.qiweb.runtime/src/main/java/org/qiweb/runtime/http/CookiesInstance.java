@@ -29,7 +29,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public class CookiesInstance
     implements MutableCookies
 {
-
     private final Map<String, Cookie> cookies;
 
     public CookiesInstance()

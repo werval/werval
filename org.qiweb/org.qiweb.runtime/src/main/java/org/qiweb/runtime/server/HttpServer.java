@@ -20,7 +20,6 @@ package org.qiweb.runtime.server;
  */
 public interface HttpServer
 {
-
     /**
      * Activate the QiWeb Http Server.
      * 
@@ -41,5 +40,4 @@ public interface HttpServer
      * @throws IllegalStateException when the passivation shutdown hook has already been registered
      */
     void registerPassivationShutdownHook();
-
 }

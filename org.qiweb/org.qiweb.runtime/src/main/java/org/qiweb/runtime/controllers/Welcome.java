@@ -34,7 +34,6 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
  */
 public class Welcome
 {
-
     /**
      * @return The QiWeb Welcome Page according to the Application's {@link Mode}.
      */
@@ -49,5 +48,4 @@ public class Welcome
             withBody( application().classLoader().getResourceAsStream( path ) ).
             build();
     }
-
 }

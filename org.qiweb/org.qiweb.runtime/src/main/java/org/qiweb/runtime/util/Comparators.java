@@ -20,7 +20,6 @@ import java.util.Locale;
 
 public final class Comparators
 {
-
     public static final Comparator<String> LOWER_CASE = new Comparator<String>()
     {
         @Override

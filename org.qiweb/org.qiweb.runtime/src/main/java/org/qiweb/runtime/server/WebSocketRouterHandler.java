@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 public class WebSocketRouterHandler
     extends SimpleChannelInboundHandler<WebSocketFrame>
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketRouterHandler.class );
     private final Application app;
     private final DevShellSPI devSpi;

@@ -42,7 +42,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
 /* package */ class HttpServerChannelInitializer
     extends ChannelInitializer<Channel>
 {
-
     private final ChannelGroup allChannels;
     private final ApplicationInstance app;
     private final DevShellSPI devSpi;
@@ -116,5 +115,4 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         // Protocol Switching Handler
         pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, httpExecutors, app, devSpi ) );
     }
-
 }

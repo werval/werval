@@ -27,7 +27,6 @@ import org.qiweb.api.outcomes.Outcome;
 /* package */ abstract class AbstractOutcome<T extends AbstractOutcome<?>>
     implements Outcome
 {
-
     protected final MutableHeaders headers;
     private final int status;
 
@@ -60,5 +59,4 @@ import org.qiweb.api.outcomes.Outcome;
     {
         return status + ", " + headers;
     }
-
 }

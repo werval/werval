@@ -77,7 +77,6 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
  */
 /* package */ final class NettyHttpFactories
 {
-
     private static MutableHeaders headersOf( HttpRequest request, boolean allowMultiValuedHeaders )
     {
         MutableHeaders headers = new HeadersInstance( allowMultiValuedHeaders );
@@ -91,6 +90,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         return headers;
     }
 
+    // TODO What to do about multiple Cookie headers?
     private static Cookies cookiesOf( HttpRequest nettyRequest )
     {
         Map<String, Cookie> cookies = new HashMap<>();
@@ -193,7 +193,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
                                     Attribute attribute = (Attribute) data;
                                     if( !attributes.containsKey( attribute.getName() ) )
                                     {
-                                        attributes.put( attribute.getName(), new ArrayList<String>() );
+                                        attributes.put( attribute.getName(), new ArrayList<>() );
                                     }
                                     attributes.get( attribute.getName() ).add( attribute.getValue() );
                                     break;
@@ -201,7 +201,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
                                     FileUpload fileUpload = (FileUpload) data;
                                     if( !uploads.containsKey( fileUpload.getName() ) )
                                     {
-                                        uploads.put( fileUpload.getName(), new ArrayList<Upload>() );
+                                        uploads.put( fileUpload.getName(), new ArrayList<>() );
                                     }
                                     Upload upload = new UploadInstance( fileUpload.getContentType(),
                                                                         fileUpload.getCharset(),

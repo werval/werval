@@ -123,7 +123,6 @@ import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
 public final class HttpRequestRouterHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( HttpRequestRouterHandler.class );
     private static final String REQUEST_IDENTITY_PREFIX = UUID.randomUUID().toString() + "-";
     private static final AtomicLong REQUEST_IDENTITY_COUNT = new AtomicLong();
@@ -463,14 +462,7 @@ public final class HttpRequestRouterHandler
                 body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
                 if( app.mode() == Mode.DEV )
                 {
-                    body.append( Stacktraces.toHtml( cause, new Stacktraces.FileURLGenerator()
-                    {
-                        @Override
-                        public String urlFor( String filename, int line )
-                        {
-                            return devSpi.sourceURL( filename, line );
-                        }
-                    } ) );
+                    body.append( Stacktraces.toHtml( cause, devSpi::sourceURL) );
                 }
                 body.append( "</body></html>\n" );
                 String bodyString = body.toString();
@@ -496,5 +488,4 @@ public final class HttpRequestRouterHandler
         response.headers().set( CONNECTION, CLOSE );
         context.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
     }
-
 }

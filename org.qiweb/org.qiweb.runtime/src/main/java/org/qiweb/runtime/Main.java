@@ -29,7 +29,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
  */
 public final class Main
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( Main.class );
 
     public static void main( String[] args )
@@ -60,5 +59,4 @@ public final class Main
     private Main()
     {
     }
-
 }

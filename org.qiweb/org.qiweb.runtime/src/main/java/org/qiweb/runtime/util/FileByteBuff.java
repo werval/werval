@@ -47,7 +47,6 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 public final class FileByteBuff
     extends AbstractByteBuf
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( FileByteBuff.class );
     private static final String NOT_SUPPORTED = "Not supported";
     private static final String READ_ONLY = "Read Only.";

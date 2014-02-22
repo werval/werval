@@ -21,7 +21,6 @@ package org.qiweb.runtime.util;
  */
 public final class Holder<T>
 {
-
     private T holded;
 
     public Holder()

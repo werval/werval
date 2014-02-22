@@ -31,7 +31,6 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 public class ConfigInstance
     implements Config
 {
-
     private com.typesafe.config.Config config;
 
     public ConfigInstance()
@@ -158,5 +157,4 @@ public class ConfigInstance
     {
         config = com.typesafe.config.ConfigFactory.load();
     }
-
 }

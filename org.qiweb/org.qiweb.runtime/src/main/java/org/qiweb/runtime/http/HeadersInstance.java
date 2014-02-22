@@ -36,7 +36,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public final class HeadersInstance
     implements MutableHeaders
 {
-
     private final boolean allowMultiValuedHeaders;
     private final Map<String, List<String>> headers;
 
@@ -183,7 +182,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( headers.get( name ) == null )
         {
-            headers.put( name, new ArrayList<String>() );
+            headers.put( name, new ArrayList<>() );
         }
         else if( !allowMultiValuedHeaders && headers.get( name ).size() > 0 )
         {
@@ -199,7 +198,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( headers.get( name ) == null )
         {
-            headers.put( name, new ArrayList<String>() );
+            headers.put( name, new ArrayList<>() );
         }
         else
         {

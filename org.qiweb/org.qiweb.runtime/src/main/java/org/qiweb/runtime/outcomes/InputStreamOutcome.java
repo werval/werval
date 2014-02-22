@@ -25,7 +25,6 @@ import org.qiweb.api.http.MutableHeaders;
 public class InputStreamOutcome
     extends AbstractOutcome<InputStreamOutcome>
 {
-
     private final InputStream bodyInputStream;
     private final long contentLength;
 
@@ -46,5 +45,4 @@ public class InputStreamOutcome
     {
         return contentLength;
     }
-
 }

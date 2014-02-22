@@ -25,7 +25,6 @@ import org.qiweb.api.http.MutableHeaders;
 public class SimpleOutcome
     extends AbstractOutcome<SimpleOutcome>
 {
-
     private ByteBuf body = Unpooled.EMPTY_BUFFER;
 
     /* package */ SimpleOutcome( int status, MutableHeaders headers )
@@ -43,5 +42,4 @@ public class SimpleOutcome
     {
         return body;
     }
-
 }

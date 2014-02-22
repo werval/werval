@@ -74,7 +74,6 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
 public class HttpRequestAggregator
     extends MessageToMessageDecoder<HttpObject>
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( HttpRequestAggregator.class );
     private static final ByteBuf HTTP_100_CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", US_ASCII );
     private static final String TEMP_FILE_IDENTITY_PREFIX = "body_" + UUID.randomUUID().toString() + "-";
@@ -319,5 +318,4 @@ public class HttpRequestAggregator
             bodyFile = null;
         }
     }
-
 }

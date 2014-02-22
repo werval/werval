@@ -36,7 +36,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 public class OutcomesInstance
     implements Outcomes
 {
-
     private final Config config;
     private final MutableHeaders headers;
     private final MutableCookies cookies;
@@ -318,5 +317,4 @@ public class OutcomesInstance
             withHeader( LOCATION, URLs.appendQueryString( url, queryString,
                                                           config.charset( QIWEB_CHARACTER_ENCODING ) ) );
     }
-
 }

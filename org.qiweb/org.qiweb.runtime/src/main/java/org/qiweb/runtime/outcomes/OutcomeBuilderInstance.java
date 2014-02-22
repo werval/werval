@@ -37,7 +37,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 public class OutcomeBuilderInstance
     implements OutcomeBuilder
 {
-
     private final int status;
     private final MutableHeaders headers;
     private final MutableCookies cookies;
@@ -142,5 +141,4 @@ public class OutcomeBuilderInstance
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }
-
 }

@@ -28,7 +28,6 @@ import org.qiweb.api.http.MutableHeaders;
 public class ChunkedInputOutcome
     extends AbstractOutcome<ChunkedInputOutcome>
 {
-
     private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( new byte[ 0 ] ) );
 
     /* package */ ChunkedInputOutcome( int status, MutableHeaders headers, InputStream input, int chunkSize )
@@ -41,5 +40,4 @@ public class ChunkedInputOutcome
     {
         return input;
     }
-
 }

@@ -34,7 +34,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 public class MimeTypesInstance
     implements MimeTypes
 {
-
     private final Charset defaultCharset;
     private final Properties extToType = new Properties();
     private final Map<String, Charset> textuals;

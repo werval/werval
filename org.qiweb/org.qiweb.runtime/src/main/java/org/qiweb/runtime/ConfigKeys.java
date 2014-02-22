@@ -20,7 +20,6 @@ package org.qiweb.runtime;
  */
 public interface ConfigKeys
 {
-
     //
     // Application configuration keys
     //
@@ -64,5 +63,4 @@ public interface ConfigKeys
     String QIWEB_HTTP_UPLOADS_MULTIVALUED = "qiweb.http.uploads.multi_valued";
     String QIWEB_ROUTES_IMPORTEDPACKAGES = "qiweb.routes.imported_packages";
     String QIWEB_ROUTES_PARAMETERBINDERS = "qiweb.routes.parameter_binders";
-
 }

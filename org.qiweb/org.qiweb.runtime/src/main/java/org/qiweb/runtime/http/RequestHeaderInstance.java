@@ -178,7 +178,6 @@ public class RequestHeaderInstance
     {
         return lazy( "remote-address", new Lazy<String>()
         {
-
             @Override
             public String get()
             {

@@ -24,14 +24,12 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings( "PackageVisibleInnerClass" )
 /* package */ interface ThreadFactories
 {
-
     /**
      * Acceptor Threads Factory.
      */
     /* package */ static class Acceptors
         implements ThreadFactory
     {
-
         private final AtomicLong count = new AtomicLong( 0L );
 
         @Override
@@ -39,7 +37,6 @@ import java.util.concurrent.atomic.AtomicLong;
         {
             return new Thread( runnable, "qiweb-acceptor-" + count.getAndIncrement() );
         }
-
     }
 
     /**
@@ -48,7 +45,6 @@ import java.util.concurrent.atomic.AtomicLong;
     /* package */ static class IO
         implements ThreadFactory
     {
-
         private final AtomicLong count = new AtomicLong( 0L );
 
         @Override
@@ -56,7 +52,6 @@ import java.util.concurrent.atomic.AtomicLong;
         {
             return new Thread( runnable, "qiweb-io-" + count.getAndIncrement() );
         }
-
     }
 
     /**
@@ -65,7 +60,6 @@ import java.util.concurrent.atomic.AtomicLong;
     /* package */ static class HttpExecutors
         implements ThreadFactory
     {
-
         private final AtomicLong count = new AtomicLong( 0L );
 
         @Override
@@ -73,7 +67,6 @@ import java.util.concurrent.atomic.AtomicLong;
         {
             return new Thread( runnable, "http-executor-" + count.getAndIncrement() );
         }
-
     }
 
 }

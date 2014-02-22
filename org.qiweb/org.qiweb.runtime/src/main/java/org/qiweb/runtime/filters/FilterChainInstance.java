@@ -28,7 +28,6 @@ import org.qiweb.api.outcomes.Outcome;
 /* package */ class FilterChainInstance
     implements FilterChain
 {
-
     /**
      * End of the FilterChain, this is the Controller Method Invocation.
      */
@@ -73,5 +72,4 @@ import org.qiweb.api.outcomes.Outcome;
         Filter filter = global.getFilterInstance( app, filterType );
         return filter.filter( next, context );
     }
-
 }

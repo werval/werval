@@ -20,7 +20,6 @@ import org.qiweb.api.exceptions.QiWebException;
 public class BadRequestException
     extends QiWebException
 {
-
     private static final long serialVersionUID = 1L;
 
     public BadRequestException( String message )

@@ -32,7 +32,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 public class HttpChunkedBodyEncoder
     implements ChunkedInput<HttpContent>
 {
-
     private final ChunkedInput<ByteBuf> chunkedBody;
     private boolean isLastChunk = false;
     private boolean isLastChunkRead = false;

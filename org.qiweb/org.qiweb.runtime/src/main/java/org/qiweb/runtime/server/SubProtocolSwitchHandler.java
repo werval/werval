@@ -36,7 +36,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE;
 public class SubProtocolSwitchHandler
     extends SimpleChannelInboundHandler<Object>
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
     private final EventExecutorGroup httpExecutors;
@@ -105,5 +104,4 @@ public class SubProtocolSwitchHandler
             context.channel().close();
         }
     }
-
 }

@@ -31,7 +31,6 @@ import org.qiweb.runtime.outcomes.OutcomesInstance;
 public final class ContextInstance
     implements Context
 {
-
     private final Application application;
     private final Session session;
     private final Route route;
@@ -93,5 +92,4 @@ public final class ContextInstance
     {
         return metaData;
     }
-
 }

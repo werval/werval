@@ -29,7 +29,6 @@ import org.qiweb.runtime.filters.FilterChainInstance.FilterChainControllerTail;
 
 public class FilterChainFactory
 {
-
     public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
         Set<Class<? extends Filter>> uniqueFilters = new LinkedHashSet<>();
@@ -78,5 +77,4 @@ public class FilterChainFactory
         }
         return filters;
     }
-
 }

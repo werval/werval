@@ -21,7 +21,6 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
@@ -41,11 +40,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
 public class HttpServerInstance
     implements HttpServer
 {
-
     private static final class ShutdownHook
         implements Runnable
     {
-
         private final HttpServer server;
 
         private ShutdownHook( HttpServer server )
@@ -58,7 +55,6 @@ public class HttpServerInstance
         {
             server.passivate();
         }
-
     }
 
     private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
@@ -142,20 +138,14 @@ public class HttpServerInstance
             app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD ),
             app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT ),
             TimeUnit.MILLISECONDS );
-        shutdownFuture.addListener( new GenericFutureListener<Future<Object>>()
-        {
-            @Override
-            public void operationComplete( Future<Object> future )
-                throws Exception
-            {
-                allChannels.clear();
-
-                LOG.debug( "[{}] Http Service Passivated", identity );
-
-                // Passivate Application
-                app.global().afterHttpUnbind( app );
-                app.passivate();
-            }
+        shutdownFuture.addListener( future -> {
+            allChannels.clear();
+            
+            LOG.debug( "[{}] Http Service Passivated", identity );
+            
+            // Passivate Application
+            app.global().afterHttpUnbind( app );
+            app.passivate();
         } );
         shutdownFuture.awaitUninterruptibly();
     }
@@ -172,5 +162,4 @@ public class HttpServerInstance
             throw new IllegalStateException( "HttpServer passivation hook previously registered", ex );
         }
     }
-
 }

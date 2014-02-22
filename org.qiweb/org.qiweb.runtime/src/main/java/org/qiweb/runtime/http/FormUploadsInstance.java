@@ -49,7 +49,7 @@ public class FormUploadsInstance
             String name = entry.getKey();
             if( !this.uploads.containsKey( name ) )
             {
-                this.uploads.put( name, new ArrayList<Upload>() );
+                this.uploads.put( name, new ArrayList<>() );
             }
             List<Upload> values = entry.getValue();
             if( !allowMultiValuedUploads && ( !this.uploads.get( name ).isEmpty() || values.size() > 1 ) )

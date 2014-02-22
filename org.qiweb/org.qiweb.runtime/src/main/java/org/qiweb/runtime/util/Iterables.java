@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
  */
 public class Iterables
 {
-
     private static final Iterable EMPTY = new Iterable()
     {
         Iterator iterator = new Iterator()
