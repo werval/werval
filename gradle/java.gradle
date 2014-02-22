@@ -145,9 +145,9 @@ javadoc {
     options.encoding = 'UTF-8'
     options.docFilesSubDirs = true
     options.links(
-        "http://docs.oracle.com/javase/7/docs/api/",
+        "http://download.java.net/jdk8/docs/api/",
         "http://www.slf4j.org/apidocs/",
-        "http://junit.sourceforge.net/javadoc/"
+        "http://junit.org/javadoc/latest/"
     )
     doLast {
         copy {
