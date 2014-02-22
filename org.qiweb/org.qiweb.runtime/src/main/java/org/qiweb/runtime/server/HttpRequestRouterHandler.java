@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,7 +136,6 @@ public final class HttpRequestRouterHandler
     private final class HttpRequestCompleteChannelFutureListener
         implements ChannelFutureListener
     {
-
         private final RequestHeader requestHeader;
 
         private HttpRequestCompleteChannelFutureListener( RequestHeader requestHeader )
@@ -154,7 +153,6 @@ public final class HttpRequestRouterHandler
                 app.global().onHttpRequestComplete( app, requestHeader );
             }
         }
-
     }
 
     private final ApplicationInstance app;
@@ -462,7 +460,7 @@ public final class HttpRequestRouterHandler
                 body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
                 if( app.mode() == Mode.DEV )
                 {
-                    body.append( Stacktraces.toHtml( cause, devSpi::sourceURL) );
+                    body.append( Stacktraces.toHtml( cause, devSpi::sourceURL ) );
                 }
                 body.append( "</body></html>\n" );
                 String bodyString = body.toString();

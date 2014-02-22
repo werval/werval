@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,8 +151,17 @@ public final class ApplicationInstance
         {
             throw new IllegalStateException( "Application already activated." );
         }
-        plugins.onActivate( this );
-        global.onActivate( this );
+        ClassLoader previousLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( classLoader );
+        try
+        {
+            plugins.onActivate( this );
+            global.onActivate( this );
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( previousLoader );
+        }
         activated = true;
     }
 
@@ -163,15 +172,24 @@ public final class ApplicationInstance
         {
             throw new IllegalStateException( "Application already passivated." );
         }
+        ClassLoader previousLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( classLoader );
         try
         {
-            global.onPassivate( this );
+            try
+            {
+                global.onPassivate( this );
+            }
+            catch( Exception ex )
+            {
+                LOG.error( "There were errors during Global passivation", ex );
+            }
+            plugins.onPassivate( this );
         }
-        catch( Exception ex )
+        finally
         {
-            LOG.error( "There were errors during Global passivation", ex );
+            Thread.currentThread().setContextClassLoader( previousLoader );
         }
-        plugins.onPassivate( this );
         activated = false;
     }
 

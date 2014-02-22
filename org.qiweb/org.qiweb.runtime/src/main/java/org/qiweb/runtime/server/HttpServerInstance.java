@@ -140,9 +140,7 @@ public class HttpServerInstance
             TimeUnit.MILLISECONDS );
         shutdownFuture.addListener( future -> {
             allChannels.clear();
-            
             LOG.debug( "[{}] Http Service Passivated", identity );
-            
             // Passivate Application
             app.global().afterHttpUnbind( app );
             app.passivate();
