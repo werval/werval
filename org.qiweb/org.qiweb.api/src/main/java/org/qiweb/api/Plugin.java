@@ -15,6 +15,8 @@
  */
 package org.qiweb.api;
 
+import org.qiweb.api.exceptions.ActivationException;
+
 /**
  * QiWeb Application Plugin.
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
@@ -30,8 +32,10 @@ public interface Plugin<API>
     /**
      * Invoked on Application activation.
      * @param application Application
+     * @throws ActivationException if something goes wrong.
      */
-    void onActivate( Application application );
+    void onActivate( Application application )
+        throws ActivationException;
 
     /**
      * Invoked on Application passivation.

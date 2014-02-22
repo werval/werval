@@ -17,6 +17,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -76,8 +77,10 @@ public interface Application
     /**
      * Activate the Application.
      * @throws IllegalStateException if the {@literal Application} is already active.
+     * @throws ActivationException if something goes wrong.
      */
-    void activate();
+    void activate()
+        throws ActivationException;
 
     /**
      * Passivate the Application.

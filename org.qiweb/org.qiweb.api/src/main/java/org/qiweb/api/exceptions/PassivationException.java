@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,22 @@
  */
 package org.qiweb.api.exceptions;
 
-/**
- * Base exception for all QiWeb errors.
- */
-public class QiWebException
-    extends RuntimeException
+public class PassivationException
+    extends QiWebException
 {
     private static final long serialVersionUID = 1L;
 
-    public QiWebException( String message )
+    public PassivationException( String message )
     {
         super( message );
     }
 
-    public QiWebException( Throwable cause )
+    public PassivationException( Throwable cause )
     {
         super( cause.getMessage(), cause );
     }
 
-    public QiWebException( String message, Throwable cause )
+    public PassivationException( String message, Throwable cause )
     {
         super( message, cause );
     }

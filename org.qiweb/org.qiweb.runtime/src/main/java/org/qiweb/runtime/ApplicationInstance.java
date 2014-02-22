@@ -39,6 +39,8 @@ import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
@@ -60,7 +62,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
 public final class ApplicationInstance
     implements Application
 {
-
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationInstance.class );
     private volatile boolean activated;
     private final Mode mode;
     private Config config;
@@ -161,7 +163,14 @@ public final class ApplicationInstance
         {
             throw new IllegalStateException( "Application already passivated." );
         }
-        global.onPassivate( this );
+        try
+        {
+            global.onPassivate( this );
+        }
+        catch( Exception ex )
+        {
+            LOG.error( "There were errors during Global passivation", ex );
+        }
         plugins.onPassivate( this );
         activated = false;
     }
@@ -382,5 +391,4 @@ public final class ApplicationInstance
     {
         plugins = new PluginsInstance( config, global.extraPlugins() );
     }
-
 }

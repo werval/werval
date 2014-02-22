@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,7 +23,10 @@ import java.util.Set;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.api.exceptions.PassivationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Plugins Instance.
@@ -30,7 +34,7 @@ import org.qiweb.api.exceptions.QiWebException;
  */
 /* package */ class PluginsInstance
 {
-
+    private static final Logger LOG = LoggerFactory.getLogger( PluginsInstance.class );
     private volatile boolean activated = false;
     private final List<String> pluginsFQCNs;
     private final Iterable<Plugin<?>> extraPlugins;
@@ -59,7 +63,7 @@ import org.qiweb.api.exceptions.QiWebException;
             }
             catch( ClassNotFoundException ex )
             {
-                throw new QiWebException( "Unable to activate a plugin: " + ex.getMessage(), ex );
+                throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
             }
         }
         for( Plugin<?> extraPlugin : extraPlugins )
@@ -74,14 +78,32 @@ import org.qiweb.api.exceptions.QiWebException;
         activated = true;
     }
 
+
     /* package */ void onPassivate( Application application )
     {
+        List<Exception> errors = new ArrayList<>();
         for( Plugin<?> activePlugin : activePlugins )
         {
-            activePlugin.onPassivate( application );
+            try
+            {
+                activePlugin.onPassivate( application );
+            }
+            catch( Exception ex )
+            {
+                errors.add( ex );
+            }
         }
         activePlugins = Collections.emptySet();
         activated = false;
+        if( !errors.isEmpty() )
+        {
+            PassivationException ex = new PassivationException( "There were errors during Plugins passivation" );
+            for( Exception err : errors )
+            {
+                ex.addSuppressed( err );
+            }
+            LOG.error( ex.getMessage(), ex );
+        }
     }
 
     /* package */ <T> Iterable<T> plugins( Class<T> pluginApiType )
@@ -135,5 +157,4 @@ import org.qiweb.api.exceptions.QiWebException;
         // No Plugin found
         throw new IllegalArgumentException( "Plugin<" + pluginApiType.getName() + "> not found." );
     }
-
 }
