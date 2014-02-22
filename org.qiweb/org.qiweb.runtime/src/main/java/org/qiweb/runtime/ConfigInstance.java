@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.qiweb.api.Config;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
@@ -138,13 +139,13 @@ public class ConfigInstance
     @Override
     public Long seconds( String key )
     {
-        return milliseconds( key ) / 1000;
+        return config.getDuration( key, TimeUnit.SECONDS );
     }
 
     @Override
     public Long milliseconds( String key )
     {
-        return config.getMilliseconds( key );
+        return config.getDuration( key, TimeUnit.MILLISECONDS );
     }
 
     @Override
