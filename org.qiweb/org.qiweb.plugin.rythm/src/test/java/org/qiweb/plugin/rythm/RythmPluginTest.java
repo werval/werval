@@ -15,7 +15,6 @@
  */
 package org.qiweb.plugin.rythm;
 
-import java.util.Collections;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
@@ -33,7 +32,7 @@ public class RythmPluginTest
     public void testPlugin()
     {
         RythmEngine rythm = QIWEB.application().plugin( RythmEngine.class );
-        String output = rythm.sandbox().render( "hello.html", Collections.singletonMap( "name", "World" ) );
+        String output = rythm.render( "hello.html", "World" );
         System.out.println( output );
         assertThat( output, containsString( "<title>Hello World</title>" ) );
         assertThat( output, containsString( "<h1>Hello World</h1>" ) );
