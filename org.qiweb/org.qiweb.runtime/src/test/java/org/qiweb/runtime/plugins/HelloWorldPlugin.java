@@ -16,15 +16,14 @@
 package org.qiweb.runtime.plugins;
 
 import org.qiweb.api.Application;
-import org.qiweb.api.Plugin;
+import org.qiweb.api.PluginAdapter;
 
 /**
  * Plugin that register {@link HelloWorld} as a Plugin.
  */
 public class HelloWorldPlugin
-    implements Plugin<HelloWorld>
+    extends PluginAdapter<HelloWorld>
 {
-
     private int activations = 0;
     private int passivations = 0;
     private final HelloWorld api = new HelloWorld()
@@ -44,7 +43,7 @@ public class HelloWorldPlugin
         @Override
         public String sayHello( String name )
         {
-            return "Hello " + name + "!";
+            return String.format( "Hello %s!", name );
         }
     };
 
@@ -58,12 +57,6 @@ public class HelloWorldPlugin
     public HelloWorld api()
     {
         return api;
-    }
-
-    @Override
-    public boolean enabled()
-    {
-        return true;
     }
 
     @Override

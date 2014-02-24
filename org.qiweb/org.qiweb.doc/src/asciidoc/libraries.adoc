@@ -1,6 +1,7 @@
 == Librairies
 
 Libraries contains non-core functionnality.
+Libraries are simple JARs and can contain controllers, utility classes and QiWeb Plugins.
 
 NOTE: Libraries presented here are maintained by the QiWeb team, documented, tested and evolve along the core SDK.
 At the end of this document, you'll find external libraries maintained by the community.
@@ -62,6 +63,8 @@ At the end of this document, you'll find external libraries maintained by the co
 === Password Hashing
 
 === Authentication System
+
+=== Rythm Templating
 
 === Serious i18n
 

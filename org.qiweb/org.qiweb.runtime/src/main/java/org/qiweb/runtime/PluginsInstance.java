@@ -78,7 +78,6 @@ import org.slf4j.LoggerFactory;
         activated = true;
     }
 
-
     /* package */ void onPassivate( Application application )
     {
         List<Exception> errors = new ArrayList<>();

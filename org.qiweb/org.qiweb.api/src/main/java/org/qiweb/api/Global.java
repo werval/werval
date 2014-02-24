@@ -33,11 +33,11 @@ import org.qiweb.api.outcomes.Outcome;
  */
 public class Global
 {
-
     /**
      * Chance to provide extra Plugins instances programmatically.
      * <p>Invoked before Application activation.</p>
      * <p>Default to no extra Plugins.</p>
+     *
      * @return Extra Plugin instances
      */
     public Iterable<Plugin<?>> extraPlugins()
@@ -46,7 +46,10 @@ public class Global
     }
 
     /**
-     * Invoked on Application activation.
+     * Application activation.
+     * <p>Invoked after all Plugins activation.</p>
+     * <p>Default to NOOP.</p>
+     *
      * @param application Application
      */
     public void onActivate( Application application )
@@ -54,7 +57,10 @@ public class Global
     }
 
     /**
-     * Invoked on Application passivation.
+     * Application passivation.
+     * <p>Invoked before all Plugins passivation.</p>
+     * <p>Default to NOOP.</p>
+     *
      * @param application Application
      */
     public void onPassivate( Application application )
@@ -213,5 +219,4 @@ public class Global
     public void onHttpRequestError( Application application, Error error )
     {
     }
-
 }
