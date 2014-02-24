@@ -39,7 +39,6 @@ import org.hibernate.validator.constraints.URL;
 @JsonIgnoreProperties( ignoreUnknown = true )
 public class Brewery
 {
-
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
@@ -65,20 +64,20 @@ public class Brewery
     private List<Beer> beers = new ArrayList<>();
 
     @JsonView(
-        {
-        Json.BreweryListView.class, Json.BreweryDetailView.class,
-        Json.BeerListView.class, Json.BeerDetailView.class
-    } )
+         {
+            Json.BreweryListView.class, Json.BreweryDetailView.class,
+            Json.BeerListView.class, Json.BeerDetailView.class
+        } )
     public Long getId()
     {
         return id;
     }
 
     @JsonView(
-        {
-        Json.BreweryListView.class, Json.BreweryDetailView.class,
-        Json.BeerListView.class, Json.BeerDetailView.class
-    } )
+         {
+            Json.BreweryListView.class, Json.BreweryDetailView.class,
+            Json.BeerListView.class, Json.BeerDetailView.class
+        } )
     public String getName()
     {
         return name;
@@ -91,9 +90,9 @@ public class Brewery
     }
 
     @JsonView(
-        {
-        Json.BreweryListView.class, Json.BreweryDetailView.class
-    } )
+         {
+            Json.BreweryListView.class, Json.BreweryDetailView.class
+        } )
     public Integer getSince()
     {
         return since;

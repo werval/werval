@@ -35,7 +35,6 @@ import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat
 public class UITest
     extends FluentTest
 {
-
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule();
 
@@ -248,5 +247,4 @@ public class UITest
         assertThat( beersPage ).isAt();
         assertThat( beersPage.listCount() ).isEqualTo( 11 );
     }
-
 }

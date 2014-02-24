@@ -18,7 +18,6 @@ package beerdb.ui;
 import com.google.common.base.Predicate;
 import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
-
 import org.qiweb.api.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -31,7 +30,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public class EditBreweryPage
     extends FluentPage
 {
-
     private final String url;
 
     public EditBreweryPage( WebDriver driver, String url )
@@ -109,5 +107,4 @@ public class EditBreweryPage
             } );
         }
     }
-
 }

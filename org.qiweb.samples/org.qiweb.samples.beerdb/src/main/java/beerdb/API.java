@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,11 @@ import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.routes.ReverseRoutes.GET;
 
+// TODO SECURITY Filter inputs
+// TODO SECURITY Escape outputs
+// See http://stefanhendriks.wordpress.com/2011/02/16/prevent-cross-site-scripting-when-using-json-objects-using-esapi-and-jackson-framework-1-7-x/
 public class API
 {
-
     private final EntityManagerFactory emf;
     private final ObjectMapper mapper;
 
@@ -385,5 +387,4 @@ public class API
         }
         return mapper.writeValueAsBytes( root );
     }
-
 }

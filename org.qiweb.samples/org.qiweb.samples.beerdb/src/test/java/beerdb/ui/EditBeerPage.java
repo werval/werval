@@ -30,7 +30,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public class EditBeerPage
     extends FluentPage
 {
-
     private final String url;
 
     public EditBeerPage( WebDriver driver, String url )
@@ -108,5 +107,4 @@ public class EditBeerPage
             } );
         }
     }
-
 }

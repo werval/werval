@@ -42,7 +42,6 @@ import static org.qiweb.samples.beerdb.BuildVersion.VERSION;
 public class APITest
     extends QiWebTest
 {
-
     @Test
     public void testIndex()
     {
@@ -382,5 +381,4 @@ public class APITest
             when().
             get( beerUrl );
     }
-
 }

@@ -29,7 +29,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public class BreweryPage
     extends FluentPage
 {
-
     private final String url;
 
     public BreweryPage( WebDriver driver, String url )
@@ -78,5 +77,4 @@ public class BreweryPage
         link.click();
         return new EditBreweryPage( getDriver(), href );
     }
-
 }

@@ -37,7 +37,6 @@ import org.hibernate.validator.constraints.Range;
 @JsonIgnoreProperties( ignoreUnknown = true )
 public class Beer
 {
-
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
@@ -57,47 +56,47 @@ public class Beer
     /* package */ Brewery brewery;
 
     @JsonView(
-        {
-        Json.BeerListView.class, Json.BeerDetailView.class,
-        Json.BreweryDetailView.class
-    } )
+         {
+            Json.BeerListView.class, Json.BeerDetailView.class,
+            Json.BreweryDetailView.class
+        } )
     public Long getId()
     {
         return id;
     }
 
     @JsonView(
-        {
-        Json.BeerListView.class, Json.BeerDetailView.class,
-        Json.BreweryDetailView.class
-    } )
+         {
+            Json.BeerListView.class, Json.BeerDetailView.class,
+            Json.BreweryDetailView.class
+        } )
     public String getName()
     {
         return name;
     }
 
     @JsonView(
-        {
-        Json.BeerDetailView.class,
-    } )
+         {
+            Json.BeerDetailView.class,
+        } )
     public Float getAbv()
     {
         return abv;
     }
 
     @JsonView(
-        {
-        Json.BeerDetailView.class,
-    } )
+         {
+            Json.BeerDetailView.class,
+        } )
     public String getDescription()
     {
         return description;
     }
 
     @JsonView(
-        {
-        Json.BeerListView.class, Json.BeerDetailView.class
-    } )
+         {
+            Json.BeerListView.class, Json.BeerDetailView.class
+        } )
     public Brewery getBrewery()
     {
         return brewery;

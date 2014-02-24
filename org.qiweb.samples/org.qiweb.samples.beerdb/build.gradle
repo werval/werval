@@ -9,6 +9,13 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        // For Fixy
+        url = 'https://raw.github.com/sberan/mvn-repo/master/releases'
+    }
+}
+
 configurations {
     assets
 }
@@ -22,10 +29,12 @@ dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
     compile "org.qiweb:org.qiweb.lib:$version"
+    compile "org.qiweb:org.qiweb.plugin.rythm:$version"
     compile libs.hibernate_validator
     compile libs.jackson_core
     compile libs.jpa
     compile libs.liquibase
+    compile "com.fixy:fixy-jpa:2.1"
 
     runtime "org.qiweb:org.qiweb.runtime:$version"
     runtime libs.eclipselink
