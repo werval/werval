@@ -15,7 +15,6 @@
  */
 package org.qiweb.plugin.rythm;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.Application;
@@ -23,12 +22,10 @@ import org.qiweb.api.Plugin;
 import org.rythmengine.Rythm;
 import org.rythmengine.RythmEngine;
 
-import static org.qiweb.api.Application.Mode.DEV;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_CLASS_LOADER_PARENT_IMPL;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_MODE;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_PLUGIN_VERSION;
 import static org.rythmengine.conf.RythmConfigurationKey.LOG_FACTORY_IMPL;
-import static org.rythmengine.conf.RythmConfigurationKey.HOME_TEMPLATE;
 
 /**
  * Rythm Template Engine Plugin.
@@ -37,8 +34,6 @@ import static org.rythmengine.conf.RythmConfigurationKey.HOME_TEMPLATE;
 public class RythmPlugin
     implements Plugin<RythmEngine>
 {
-    public static final String RYTHM_TEMPLATES_PACKAGE_CONFIG_KEY = "rythm.templates_package";
-    public static final String RYTHM_TEMPLATES_PACKAGE_DEFAULT_VAL = "views";
     private RythmEngine rythm;
 
     @Override
@@ -62,22 +57,30 @@ public class RythmPlugin
     @Override
     public void onActivate( Application application )
     {
-        String templatesPackage = application.config().has( RYTHM_TEMPLATES_PACKAGE_CONFIG_KEY )
-                                  ? application.config().string( RYTHM_TEMPLATES_PACKAGE_CONFIG_KEY )
-                                  : RYTHM_TEMPLATES_PACKAGE_DEFAULT_VAL;
-
         Map<String, Object> conf = new HashMap<>();
-        conf.put( ENGINE_PLUGIN_VERSION.getKey(),
-                  BuildVersion.VERSION );
-        conf.put( ENGINE_MODE.getKey(),
-                  application.mode() == DEV ? Rythm.Mode.dev : Rythm.Mode.prod );
-        conf.put( ENGINE_CLASS_LOADER_PARENT_IMPL.getKey(),
-                  application.classLoader() );
-        conf.put( HOME_TEMPLATE.getKey(),
-                  new File( application.classLoader().getResource( templatesPackage ).getFile() ) );
-        conf.put( LOG_FACTORY_IMPL.getKey(),
-                  new SLF4JLoggerFactory() );
 
+        // Rythm base configuration
+        conf.put(
+            ENGINE_PLUGIN_VERSION.getKey(),
+            BuildVersion.VERSION
+        );
+        conf.put(
+            ENGINE_MODE.getKey(),
+            application.mode() == Application.Mode.DEV ? Rythm.Mode.dev : Rythm.Mode.prod
+        );
+        conf.put(
+            ENGINE_CLASS_LOADER_PARENT_IMPL.getKey(),
+            application.classLoader()
+        );
+        conf.put(
+            LOG_FACTORY_IMPL.getKey(),
+            new SLF4JLoggerFactory()
+        );
+
+        // Load Rythm configuration overriding base configuration
+        conf.putAll( application.config().stringMap( "rythm" ) );
+
+        // Activate Rythm Engine
         rythm = new RythmEngine( conf );
     }
 
