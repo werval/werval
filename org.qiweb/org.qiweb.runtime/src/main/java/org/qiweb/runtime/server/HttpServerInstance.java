@@ -98,8 +98,10 @@ public class HttpServerInstance
         int iothreads = app.config().has( QIWEB_HTTP_IOTHREADS )
                         ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
-        bootstrap.group( new NioEventLoopGroup( devSpi == null ? acceptors : 1, new ThreadFactories.Acceptors() ),
-                         new NioEventLoopGroup( devSpi == null ? iothreads : 1, new ThreadFactories.IO() ) );
+        bootstrap.group(
+            new NioEventLoopGroup( devSpi == null ? acceptors : 1, new ThreadFactories.Acceptors() ),
+            new NioEventLoopGroup( devSpi == null ? iothreads : 1, new ThreadFactories.IO() )
+        );
 
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
@@ -132,17 +134,37 @@ public class HttpServerInstance
     @Override
     public void passivate()
     {
-        app.global().beforeHttpUnbind( app );
+        try
+        {
+            app.global().beforeHttpUnbind( app );
+        }
+        catch( Exception ex )
+        {
+            LOG.error( "Exception on Global.beforeHttpUnbind(): {}", ex.getMessage(), ex );
+        }
+
+        // app.config() can be null if activation failed, allow gracefull shutdown
+        long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
+        long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
 
         Future<?> shutdownFuture = bootstrap.group().shutdownGracefully(
-            app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD ),
-            app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT ),
-            TimeUnit.MILLISECONDS );
-        shutdownFuture.addListener( future -> {
+            shutdownQuietPeriod,
+            shutdownTimeout,
+            TimeUnit.MILLISECONDS
+        );
+        shutdownFuture.addListener( future ->
+        {
             allChannels.clear();
             LOG.debug( "[{}] Http Service Passivated", identity );
             // Passivate Application
-            app.global().afterHttpUnbind( app );
+            try
+            {
+                app.global().afterHttpUnbind( app );
+            }
+            catch( Exception ex )
+            {
+                LOG.error( "Exception on Global.afterHttpUnbind(): {}", ex.getMessage(), ex );
+            }
             app.passivate();
         } );
         shutdownFuture.awaitUninterruptibly();
