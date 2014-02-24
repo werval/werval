@@ -24,7 +24,6 @@ import org.qiweb.api.http.RequestHeader;
 public interface Routes
     extends Iterable<Route>
 {
-
     /**
      * Get a Route satisfiedBy a HttpRequest.
      *
@@ -33,5 +32,4 @@ public interface Routes
      * @throws RouteNotFoundException when no Route is satisfiedBy the HttpRequest
      */
     Route route( RequestHeader requestHeader );
-
 }

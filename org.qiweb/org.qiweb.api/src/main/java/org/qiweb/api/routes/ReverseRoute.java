@@ -22,7 +22,6 @@ import java.util.Map;
  */
 public interface ReverseRoute
 {
-
     /**
      * @return HTTP Method
      */

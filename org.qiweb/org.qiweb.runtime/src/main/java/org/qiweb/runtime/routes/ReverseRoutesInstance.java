@@ -27,13 +27,14 @@ import org.qiweb.api.routes.ReverseOutcome;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.dev.DevShellRoutesProvider;
 
+import static org.qiweb.api.Application.Mode.DEV;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 
 public class ReverseRoutesInstance
     extends ReverseRoutes
 {
-
     private final Application application;
 
     public ReverseRoutesInstance( Application application )
@@ -57,6 +58,11 @@ public class ReverseRoutesInstance
         }
         for( Route route : application.routes() )
         {
+            if( application.mode() == DEV && DevShellRoutesProvider.isDevShell( route ) )
+            {
+                // Skip DevShell Routes
+                continue;
+            }
             if( route.httpMethod().equals( reverseOutcome.httpMethod() )
                 && route.controllerType().getName().equals( reverseOutcome.controllerType().getName() )
                 && route.controllerMethodName().equals( reverseOutcome.controllerMethod().getName() )
@@ -81,5 +87,4 @@ public class ReverseRoutesInstance
                                           + reverseOutcome.controllerMethod()
                                           + "(" + parametersTypes + ")" );
     }
-
 }

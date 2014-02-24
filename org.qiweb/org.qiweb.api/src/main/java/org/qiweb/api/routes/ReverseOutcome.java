@@ -28,7 +28,6 @@ import org.qiweb.api.http.StatusClass;
 public final class ReverseOutcome
     implements Outcome
 {
-
     private final String httpMethod;
     private final Class<?> controllerType;
     private final Method controllerMethod;
@@ -91,5 +90,4 @@ public final class ReverseOutcome
     {
         throw new UnsupportedOperationException( "ReverseOutcome has no headers." );
     }
-
 }

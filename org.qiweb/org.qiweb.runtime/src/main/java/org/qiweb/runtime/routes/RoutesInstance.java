@@ -29,7 +29,6 @@ import org.qiweb.api.routes.Routes;
     extends ArrayList<Route>
     implements Routes
 {
-
     private static final long serialVersionUID = 1L;
 
     @Override

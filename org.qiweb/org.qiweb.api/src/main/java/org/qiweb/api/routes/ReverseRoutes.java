@@ -30,7 +30,6 @@ import org.qiweb.api.outcomes.Outcome;
 // TODO Remove Javassist dependency in API!
 public abstract class ReverseRoutes
 {
-
     /**
      * Generate controller dynamic proxy that record method calls for a OPTIONS method.
      * @param <T> Parameterized controller type
@@ -168,5 +167,4 @@ public abstract class ReverseRoutes
      * @throws IllegalArgumentException when the given Outcome is not appropriate
      */
     public abstract ReverseRoute of( Outcome reverseOutcome );
-
 }

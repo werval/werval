@@ -34,7 +34,6 @@ import org.qiweb.runtime.util.Comparators;
 public class ReverseRouteInstance
     implements ReverseRoute
 {
-
     private final String method;
     private final String uri;
     private final Charset charset;
@@ -81,7 +80,7 @@ public class ReverseRouteInstance
         NullArgumentException.ensureNotNull( "value", value );
         if( !appendedQueryString.containsKey( key ) )
         {
-            appendedQueryString.put( key, new ArrayList<String>() );
+            appendedQueryString.put( key, new ArrayList<>() );
         }
         appendedQueryString.get( key ).add( value );
         return this;
@@ -98,7 +97,7 @@ public class ReverseRouteInstance
             NullArgumentException.ensureNotNull( "parameter value for '" + key + "'", entry.getValue() );
             if( !appendedQueryString.containsKey( key ) )
             {
-                appendedQueryString.put( key, new ArrayList<String>() );
+                appendedQueryString.put( key, new ArrayList<>() );
             }
             if( entry.getValue() instanceof List )
             {
@@ -154,7 +153,8 @@ public class ReverseRouteInstance
             absoluteUrl.append( "s" );
         }
         absoluteUrl.append( "://" ).append( CurrentContext.request().domain() );
-        if( ( !secure && CurrentContext.request().port() != HttpConstants.DEFAULT_HTTP_PORT ) || ( secure && CurrentContext.request().port() != HttpConstants.DEFAULT_HTTPS_PORT ) )
+        if( ( !secure && CurrentContext.request().port() != HttpConstants.DEFAULT_HTTP_PORT )
+            || ( secure && CurrentContext.request().port() != HttpConstants.DEFAULT_HTTPS_PORT ) )
         {
             // With custom port
             absoluteUrl.append( ":" ).append( CurrentContext.request().port() );
@@ -168,5 +168,4 @@ public class ReverseRouteInstance
     {
         return uri();
     }
-
 }

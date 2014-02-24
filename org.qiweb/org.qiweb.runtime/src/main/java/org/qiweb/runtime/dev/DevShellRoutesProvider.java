@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Scanner;
 import org.qiweb.api.Application;
+import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.routes.RouteBuilder;
@@ -37,13 +38,18 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 public class DevShellRoutesProvider
     implements RoutesProvider
 {
-    private static final String DEVSHELL_ROUTES =
-                                "\n"
-                                + "GET /@doc org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
-                                + "GET /@doc/api org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
-                                + "GET /@doc/*path org.qiweb.lib.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n"
-                                + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-                                + "GET /@version org.qiweb.lib.controllers.Introspect.version\n";
+    public static boolean isDevShell( Route route )
+    {
+        return route.path().startsWith( "/@" );
+    }
+
+    private static final String DEVSHELL_ROUTES
+                                = "\n"
+                                  + "GET /@doc org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
+                                  + "GET /@doc/api org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
+                                  + "GET /@doc/*path org.qiweb.lib.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n"
+                                  + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
+                                  + "GET /@version org.qiweb.lib.controllers.Introspect.version\n";
 
     @Override
     public Routes routes( Application application )
