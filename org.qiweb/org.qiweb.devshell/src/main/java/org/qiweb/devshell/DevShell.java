@@ -40,7 +40,6 @@ import static org.qiweb.runtime.util.ClassLoaders.printURLs;
  */
 public final class DevShell
 {
-
     /**
      * Decorate DevShellSPI to reload classes after a rebuild.
      * <p>This is the decorated instance of DevShellSPI that is passed to the HttpServer.</p>
@@ -284,5 +283,4 @@ public final class DevShell
         printURLs( appRealm );
         printLoadedClasses( appRealm );
     }
-
 }

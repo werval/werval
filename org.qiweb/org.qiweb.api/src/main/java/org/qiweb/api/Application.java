@@ -32,12 +32,10 @@ import org.qiweb.api.routes.Routes;
  */
 public interface Application
 {
-
     /**
      * {@link Application} Mode.
      * <p>Default is {@link #TEST} Mode.</p>
      */
-    @SuppressWarnings( "PublicInnerClass" )
     enum Mode
     {
 
@@ -56,6 +54,7 @@ public interface Application
          * <p>Run from binaries only, nothing gets reloaded.</p>
          */
         PROD( "Production" );
+
         private final String displayName;
 
         private Mode( String displayName )
@@ -71,7 +70,6 @@ public interface Application
         {
             return displayName;
         }
-
     }
 
     /**
@@ -193,5 +191,4 @@ public interface Application
      * @return Application {@link Errors}
      */
     Errors errors();
-
 }

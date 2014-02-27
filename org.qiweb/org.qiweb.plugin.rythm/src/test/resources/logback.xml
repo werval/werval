@@ -11,6 +11,6 @@
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="org.qiweb.rythm"          level="trace"/>
+    <logger name="org.qiweb.plugin.rythm"   level="trace"/>
 
 </configuration>

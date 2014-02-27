@@ -133,5 +133,4 @@ public final class SLF4JLoggerFactory
             logger.error( format, args, t );
         }
     }
-
 }

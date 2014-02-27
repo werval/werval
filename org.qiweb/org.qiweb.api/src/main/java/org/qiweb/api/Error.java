@@ -20,7 +20,6 @@ package org.qiweb.api;
  */
 public interface Error
 {
-
     /**
      * @return Error's timestamp
      */
@@ -45,5 +44,4 @@ public interface Error
      * @return Error's cause
      */
     Throwable cause();
-
 }

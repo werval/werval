@@ -33,7 +33,6 @@ import java.util.List;
 public interface Errors
     extends Iterable<org.qiweb.api.Error>
 {
-
     /**
      * Get a list of all Errors.
      * @return Immutable list of all Errors.
@@ -86,5 +85,4 @@ public interface Errors
      * @return Last recorded Error pertaining to the given request
      */
     Error lastOfRequest( String requestIdentity );
-
 }

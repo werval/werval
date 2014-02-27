@@ -29,7 +29,7 @@ import static org.rythmengine.conf.RythmConfigurationKey.LOG_FACTORY_IMPL;
 
 /**
  * Rythm Template Engine Plugin.
- * <p>See the Rythm documentation at <a href="http://rythmengine.org/">http://rythmengine.org/</a>.</p>
+ * <p>See the Rythm documentation at <a href="http://rythmengine.org/">rythmengine.org</a>.</p>
  */
 public class RythmPlugin
     implements Plugin<RythmEngine>
@@ -77,7 +77,7 @@ public class RythmPlugin
             new SLF4JLoggerFactory()
         );
 
-        // Load Rythm configuration overriding base configuration
+        // Load Rythm configuration, possibly overriding base configuration
         conf.putAll( application.config().stringMap( "rythm" ) );
 
         // Activate Rythm Engine

@@ -20,7 +20,6 @@ package org.qiweb.api;
  */
 public interface Crypto
 {
-
     /**
      * Generate a 256 bits long secret encoded in hexadecimal.
      * @return The generated secret encoded in hexadecimal as String
@@ -41,5 +40,4 @@ public interface Crypto
      * @return Message signature
      */
     String hexHmacSha256( String message, String secret );
-
 }

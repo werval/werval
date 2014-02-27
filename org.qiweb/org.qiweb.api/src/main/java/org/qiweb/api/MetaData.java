@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 public final class MetaData
     extends LinkedHashMap<String, Object>
 {
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -58,4 +57,18 @@ public final class MetaData
         return type.cast( value );
     }
 
+    /**
+     * Returns a shallow copy of this <tt>MetaData</tt> instance: the keys and
+     * values themselves are not cloned.
+     *
+     * @return a shallow copy of this MetaData
+     */
+    @Override
+    @SuppressWarnings( "CloneDoesntCallSuperClone" )
+    public Object clone()
+    {
+        MetaData result = new MetaData();
+        result.putAll( this );
+        return result;
+    }
 }

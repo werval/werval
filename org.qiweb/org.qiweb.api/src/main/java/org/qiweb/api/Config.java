@@ -27,7 +27,6 @@ import java.util.Map;
  */
 public interface Config
 {
-
     /**
      * @param key Config entry key
      * @return TRUE if the key is present, otherwise return FALSE
@@ -118,5 +117,4 @@ public interface Config
      */
     @Override
     String toString();
-
 }

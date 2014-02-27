@@ -51,11 +51,9 @@ import static org.qiweb.runtime.util.Iterables.first;
 public class JavaWatcher
     implements SourceWatcher
 {
-
     private static final class SourceChangeWatcher
         implements Runnable
     {
-
         private final WatchService watchService;
         private final Map<WatchKey, Path> keys;
         private final SourceChangeListener listener;
@@ -162,7 +160,6 @@ public class JavaWatcher
         {
             run = false;
         }
-
     }
 
     @SuppressWarnings( "unchecked" )
@@ -222,14 +219,14 @@ public class JavaWatcher
         {
             // register directory and sub-directories
             Files.walkFileTree( start, new SimpleFileVisitor<Path>()
-            {
-                @Override
-                public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
-                    throws IOException
-                {
-                    register( dir, watchService, keys );
-                    return FileVisitResult.CONTINUE;
-                }
+                            {
+                                @Override
+                                public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
+                                    throws IOException
+                                {
+                                    register( dir, watchService, keys );
+                                    return FileVisitResult.CONTINUE;
+                                }
             } );
         }
     }
@@ -278,5 +275,4 @@ public class JavaWatcher
 
         keys.put( key, fileOrDir );
     }
-
 }

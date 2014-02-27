@@ -20,7 +20,6 @@ import org.qiweb.api.exceptions.QiWebException;
 public class QiWebDevShellException
     extends QiWebException
 {
-
     private static final long serialVersionUID = 1L;
 
     public QiWebDevShellException( String message )
