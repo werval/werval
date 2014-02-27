@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.qiweb.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.internal.classloader.ClasspathUtil
 
 /**
  * QiWeb Gradle Plugin.
@@ -38,8 +39,21 @@ class QiWebPlugin implements Plugin<Project>
             visible = false
             extendsFrom project.configurations.runtime
         }
+
         project.dependencies {
-            qiweb "org.qiweb:org.qiweb.doc:" + BuildVersion.VERSION
+            // Get the JAR from this plugin classpath if available, depend on it if not
+            def qiweb_doc = ClasspathUtil.getClasspathForResource(
+                getClass().getClassLoader(),
+                "org/qiweb/doc/html/index.html"
+            )
+            if( qiweb_doc != null )
+            {
+                qiweb project.files( qiweb_doc )
+            }
+            else
+            {
+                qiweb "org.qiweb:org.qiweb.doc:" + BuildVersion.VERSION
+            }
         }
 
         project.extensions.create(

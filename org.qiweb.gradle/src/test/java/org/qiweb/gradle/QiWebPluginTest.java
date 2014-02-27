@@ -24,6 +24,9 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Assert that the plugin register extension and tasks.
+ */
 public class QiWebPluginTest
 {
     private Project project;
