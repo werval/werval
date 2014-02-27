@@ -22,3 +22,37 @@ sonarRunner {
     }
 }
 
+// Gradle Test Kit
+// https://github.com/alkemist/gradle-test-kit
+// Use the fetchGradleTestKit task to update the sourceset
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'org.ajoberstar:gradle-git:0.6.4' }
+}
+sourceSets {
+    gradleTestKit {
+        java        { srcDir 'src/gradle-test-kit/java' }
+        //groovy      { srcDir 'src/gradle-test-kit/groovy' }
+        //resources   { srcDir 'src/gradle-test-kit/resources' }
+    }
+}
+dependencies {
+    gradleTestKitCompile "org.qiweb:org.qiweb.gradle-tooling:$version"
+    gradleTestKitCompile localGroovy()
+    gradleTestKitCompile gradleApi()
+    testCompile sourceSets.gradleTestKit.output
+}
+
+task fetchGradleTestKit( type: org.ajoberstar.gradle.git.tasks.GitClone ) {
+    uri "https://github.com/alkemist/gradle-test-kit.git"
+    destinationPath "build/tmp/gradle-test-kit-repos"
+    cloneAllBranches false
+    branchesToClone "master"
+}
+fetchGradleTestKit.doLast {
+    copy {
+        from "build/tmp/gradle-test-kit-repos/src/main/java"
+        into "src/gradle-test-kit/java"
+    }
+}
+
