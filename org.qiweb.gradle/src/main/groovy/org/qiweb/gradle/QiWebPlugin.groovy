@@ -20,12 +20,18 @@ import org.gradle.api.Project
 
 /**
  * QiWeb Gradle Plugin.
+ * <p>Apply the 'java' plugin on the project if absent.</p>
+ * <p>Define 'qiweb' project extension.</p>
+ * <p>Create {@literal secret} and {@literal devshell} tasks.</p>
  */
 class QiWebPlugin implements Plugin<Project>
 {
-
     void apply( Project project )
     {
+        if( !project.plugins.hasPlugin( 'java' ) ) {
+            project.apply plugin: 'java'
+        }
+        
         project.configurations.create( "qiweb" )
         project.configurations.qiweb {
             description = "QiWeb Runtime Configuration"
@@ -57,5 +63,4 @@ class QiWebPlugin implements Plugin<Project>
             description: 'Generate a new Application Secret.'
         )
     }
-
 }

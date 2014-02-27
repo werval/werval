@@ -28,10 +28,13 @@ import org.qiweb.spi.dev.DevShellSPIAdapter;
  * Gradle DevShellSPI implementation.
  * <p>Use the Gradle Tooling API to rebuild the project.</p>
  */
-public class GradleDevShellSPI
+public final class GradleDevShellSPI
     extends DevShellSPIAdapter
 {
-
+    /**
+     * Number of connection retries to attempt.
+     */
+    private static final int MAX_RETRIES = 3;
     /**
      * Gradle Tooling API Connector.
      */
@@ -57,6 +60,11 @@ public class GradleDevShellSPI
     @Override
     protected void doRebuild()
     {
+        effectivelyRebuild( 0 );
+    }
+
+    private void effectivelyRebuild( int retries )
+    {
         if( connection == null )
         {
             connection = connector.connect();
@@ -69,8 +77,15 @@ public class GradleDevShellSPI
         }
         catch( IllegalStateException disconnected )
         {
-            connection = connector.connect();
-            doRebuild();
+            if( retries < MAX_RETRIES )
+            {
+                connection = null;
+                effectivelyRebuild( retries + 1 );
+            }
+            else
+            {
+                throw disconnected;
+            }
         }
         catch( Exception ex )
         {

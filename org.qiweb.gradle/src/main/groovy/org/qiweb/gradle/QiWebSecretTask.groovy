@@ -18,14 +18,13 @@ package org.qiweb.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskAction
 
 /**
  * Output a newly generated Application secret.
  */
 class QiWebSecretTask extends DefaultTask
 {
-
     @TaskAction
     void generateNewSecret()
     {
@@ -39,5 +38,4 @@ class QiWebSecretTask extends DefaultTask
             invoke( null )
         System.out.println( newSecret )
     }
-
 }
