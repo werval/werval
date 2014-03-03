@@ -24,10 +24,12 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 
+/**
+ * Request Instance.
+ */
 public class RequestInstance
     implements Request
 {
-
     private final RequestHeader header;
     private final Map<String, Object> parameters;
     private final RequestBody body;

@@ -45,7 +45,7 @@ public class ReverseRoutesInstance
     @Override
     public ReverseRoute of( Outcome outcome )
     {
-        ensureNotNull( "Controller call for Reverse Routing", outcome );
+        ensureNotNull( "Controller Outcome for Reverse Routing", outcome );
         if( !( outcome instanceof ReverseOutcome ) )
         {
             throw new IllegalArgumentException( "Bad API usage! Given Outcome is not an instance of ReverseOutcome." );

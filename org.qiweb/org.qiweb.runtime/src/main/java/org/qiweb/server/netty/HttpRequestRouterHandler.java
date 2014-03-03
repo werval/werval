@@ -39,8 +39,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.Mode;
 import org.qiweb.api.Error;
+import org.qiweb.api.Mode;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
@@ -50,6 +50,7 @@ import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.Request;
+import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
@@ -59,6 +60,7 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
+import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
@@ -104,9 +106,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
+import static org.qiweb.server.netty.NettyHttpFactories.bodyOf;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
 import static org.qiweb.server.netty.NettyHttpFactories.requestHeaderOf;
-import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
 
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
@@ -193,7 +195,10 @@ public final class HttpRequestRouterHandler
             // By default, no Retry-After, only if defined in configuration
             if( app.config().has( QIWEB_SHUTDOWN_RETRYAFTER ) )
             {
-                response.headers().set( RETRY_AFTER, String.valueOf( app.config().seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
+                response.headers().set(
+                    RETRY_AFTER,
+                    String.valueOf( app.config().seconds( QIWEB_SHUTDOWN_RETRYAFTER ) )
+                );
             }
             nettyContext.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
             return;
@@ -238,12 +243,15 @@ public final class HttpRequestRouterHandler
             );
 
             // Parse Request
-            Request request = requestOf(
-                requestHeader, parameters, nettyRequest, app.defaultCharset(),
+            RequestBody requestBody = bodyOf(
+                requestHeader,
+                nettyRequest,
+                app.defaultCharset(),
                 app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
                 app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
                 app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED )
             );
+            Request request = new RequestInstance( requestHeader, requestBody );
 
             // Prepare Response Header
             ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
@@ -290,9 +298,10 @@ public final class HttpRequestRouterHandler
                 forceClose = applyResponseHeader( nettyContext, nettyRequest, session, responseHeader, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
-                ( (ByteBufHolder) nettyResponse ).content().
-                    writeBytes( streamOutcome.bodyInputStream(),
-                                new BigDecimal( streamOutcome.contentLength() ).intValueExact() );
+                ( (ByteBufHolder) nettyResponse ).content().writeBytes(
+                    streamOutcome.bodyInputStream(),
+                    new BigDecimal( streamOutcome.contentLength() ).intValueExact()
+                );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
             else if( outcome instanceof SimpleOutcome )
@@ -432,10 +441,8 @@ public final class HttpRequestRouterHandler
             if( app.mode() == Mode.DEV )
             {
                 body.append( "<p>Tried:</p>\n<pre>\n" );
-                Iterator<Route> it = app.routes().iterator();
-                while( it.hasNext() )
+                for( Route route : app.routes() )
                 {
-                    Route route = it.next();
                     if( !route.path().startsWith( "/@" ) )
                     {
                         body.append( route.toString() ).append( "\n" );

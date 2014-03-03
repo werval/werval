@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
+import java.util.Map;
 import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.http.RequestHeader;
@@ -38,77 +39,131 @@ import static org.qiweb.runtime.routes.RouteBuilder.route;
  */
 public class WildcardRoutesTest
 {
-
     @Test
-    public void testAPI()
+    public void wildAPI()
     {
         Application application = new ApplicationInstance( new RoutesProvider()
         {
             @Override
             public Routes routes( Application application )
             {
-                return RouteBuilder.routes( route( "GET" ).on( "/test/*path/as/file" ).
-                    to( FakeController.class, new MethodRecorder<FakeController>()
+                return RouteBuilder.routes(
+                    route( "GET" ).on( "/test/*path/as/file" ).to(
+                        FakeController.class,
+                        new MethodRecorder<FakeController>()
                         {
                             @Override
                             protected void call( FakeController controller )
                             {
                                 controller.wild( p( "path", String.class ) );
                             }
-                    } ).newInstance() );
+                        }
+                    ).newInstance()
+                );
             }
         } );
         Route route = application.routes().iterator().next();
         System.out.println( route );
-        assertWilcardRoute( application, route );
+        assertWild( application, route );
     }
 
     @Test
-    public void testWildcardRoutes()
+    public void wildParsed()
     {
         Application application = new ApplicationInstance( new RoutesParserProvider(
-            "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )" ) );
+            "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )"
+        ) );
         Route route = application.routes().iterator().next();
         System.out.println( route );
-        assertWilcardRoute( application, route );
+        assertWild( application, route );
     }
 
-    private void assertWilcardRoute( Application application, Route route )
+    private void assertWild( Application application, Route route )
     {
         assertThat(
             route.satisfiedBy( reqHeadForGet( "/test/as/file" ) ),
-            is( false ) );
+            is( false )
+        );
 
         assertThat(
             route.satisfiedBy( reqHeadForGet( "/test/foo/as/file" ) ),
-            is( true ) );
+            is( true )
+        );
 
         assertThat(
-            (String) route.bindParameters( application.parameterBinders(), "/test/foo/as/file", QueryStringInstance.EMPTY ).get( "path" ),
-            equalTo( "foo" ) );
+            (String) route.bindParameters(
+                application.parameterBinders(),
+                "/test/foo/as/file",
+                QueryStringInstance.EMPTY
+            ).get( "path" ),
+            equalTo( "foo" )
+        );
 
         assertThat(
             route.satisfiedBy( reqHeadForGet( "/test/foo/bar/as/file" ) ),
-            is( true ) );
+            is( true )
+        );
 
         assertThat(
-            (String) route.bindParameters( application.parameterBinders(), "/test/foo/bar/as/file", QueryStringInstance.EMPTY ).get( "path" ),
-            equalTo( "foo/bar" ) );
+            (String) route.bindParameters(
+                application.parameterBinders(),
+                "/test/foo/bar/as/file",
+                QueryStringInstance.EMPTY
+            ).get( "path" ),
+            equalTo( "foo/bar" )
+        );
 
         assertThat(
             route.satisfiedBy( reqHeadForGet( "/test/as/file/test/bar/as/file" ) ),
-            is( true ) );
+            is( true )
+        );
 
         assertThat(
-            (String) route.bindParameters( application.parameterBinders(), "/test/as/file/test/bar/as/file", QueryStringInstance.EMPTY ).get( "path" ),
-            equalTo( "as/file/test/bar" ) );
+            (String) route.bindParameters(
+                application.parameterBinders(),
+                "/test/as/file/test/bar/as/file",
+                QueryStringInstance.EMPTY
+            ).get( "path" ),
+            equalTo( "as/file/test/bar" )
+        );
     }
 
     private RequestHeader reqHeadForGet( String path )
     {
-        return new RequestHeaderInstance( "abc", "127.0.0.1", "HTTP/1.1", "GET",
-                                          "http://localhost" + path, path,
-                                          QueryStringInstance.EMPTY, new HeadersInstance( false ), new CookiesInstance() );
+        return new RequestHeaderInstance(
+            "abc",
+            "127.0.0.1",
+            "HTTP/1.1",
+            "GET",
+            "http://localhost" + path,
+            path,
+            QueryStringInstance.EMPTY,
+            new HeadersInstance( false ),
+            new CookiesInstance()
+        );
     }
 
+    @Test
+    public void forcedWild()
+    {
+        Application application = new ApplicationInstance( new RoutesParserProvider(
+            "GET /tree/*path com.acme.app.FakeController.forcedWild( String root = 'src/test/resources', String path )"
+        ) );
+        Route route = application.routes().iterator().next();
+        System.out.println( route );
+        Map<String, Object> boundParams = route.bindParameters(
+            application.parameterBinders(),
+            "/tree/staticfiles/",
+            QueryStringInstance.EMPTY
+        );
+        assertThat( (String) boundParams.get( "root" ), equalTo( "src/test/resources" ) );
+        assertThat( (String) boundParams.get( "path" ), equalTo( "staticfiles/" ) );
+        boundParams = route.bindParameters(
+            application.parameterBinders(),
+            "/tree/staticfiles",
+            QueryStringInstance.EMPTY
+        );
+        assertThat( (String) boundParams.get( "root" ), equalTo( "src/test/resources" ) );
+        assertThat( (String) boundParams.get( "path" ), equalTo( "staticfiles" ) );
+    }
 }

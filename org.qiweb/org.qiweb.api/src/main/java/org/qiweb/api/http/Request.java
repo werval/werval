@@ -33,5 +33,4 @@ public interface Request
      * @return Request body
      */
     RequestBody body();
-
 }

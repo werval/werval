@@ -322,8 +322,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
         if( !paramsToUnbind.isEmpty() )
         {
             unboundPath.append( "?" );
-            Iterator<String> qsit = paramsToUnbind.iterator();
-            while( qsit.hasNext() )
+            for( Iterator<String> qsit = paramsToUnbind.iterator(); qsit.hasNext(); )
             {
                 String qsParam = qsit.next();
                 ControllerParam controllerParam = controllerParams.get( qsParam );

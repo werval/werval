@@ -33,7 +33,6 @@ import static org.junit.Assert.assertThat;
  */
 public class StaticFilesTest
 {
-
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
         "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
@@ -92,5 +91,4 @@ public class StaticFilesTest
     {
         return new BigDecimal( new File( ROOT, relativePath ).length() ).intValueExact();
     }
-
 }

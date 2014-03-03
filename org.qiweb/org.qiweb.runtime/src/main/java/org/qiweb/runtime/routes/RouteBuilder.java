@@ -83,7 +83,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
  */
 public final class RouteBuilder
 {
-
     /**
      * @param <T> the controller type
      */
@@ -226,16 +225,19 @@ public final class RouteBuilder
 
             if( LOG.isTraceEnabled() )
             {
-                LOG.trace( "Parsing route string, indices: {}\n"
-                           + "\tMethod end:             {}\n"
-                           + "\tPath end:               {}\n"
-                           + "\tController Type end:    {}\n"
-                           + "\tController Method end:  {}\n"
-                           + "\tController Params end:  {}",
-                           new Object[]
-                {
-                    cleanRouteString, methodEnd, pathEnd, controllerTypeEnd, controllerMethodEnd, controllerParamsEnd
-                           } );
+                LOG.trace(
+                    "Parsing route string, indices: {}\n"
+                    + "\tMethod end:             {}\n"
+                    + "\tPath end:               {}\n"
+                    + "\tController Type end:    {}\n"
+                    + "\tController Method end:  {}\n"
+                    + "\tController Params end:  {}",
+                    new Object[]
+                    {
+                        cleanRouteString, methodEnd, pathEnd,
+                        controllerTypeEnd, controllerMethodEnd, controllerParamsEnd
+                    }
+                );
             }
 
             String httpMethod = cleanRouteString.substring( 0, methodEnd );
@@ -254,16 +256,19 @@ public final class RouteBuilder
 
             if( LOG.isTraceEnabled() )
             {
-                LOG.trace( "Parsing route string, values: {}\n"
-                           + "\tMethod:             {}\n"
-                           + "\tPath:               {}\n"
-                           + "\tController Type:    {}\n"
-                           + "\tController Method:  {}\n"
-                           + "\tController Params:  {}",
-                           new Object[]
-                {
-                    cleanRouteString, httpMethod, path, controllerTypeName, controllerMethodName, controllerMethodParams
-                           } );
+                LOG.trace(
+                    "Parsing route string, values: {}\n"
+                    + "\tMethod:             {}\n"
+                    + "\tPath:               {}\n"
+                    + "\tController Type:    {}\n"
+                    + "\tController Method:  {}\n"
+                    + "\tController Params:  {}",
+                    new Object[]
+                    {
+                        cleanRouteString, httpMethod, path,
+                        controllerTypeName, controllerMethodName, controllerMethodParams
+                    }
+                );
             }
 
             // Parse controller type
@@ -327,12 +332,17 @@ public final class RouteBuilder
                     String[] splitted = controllerMethodParamSegment.split( " " );
                     if( splitted.length != 2 )
                     {
-                        throw new IllegalRouteException( routeString,
-                                                         "Unable to parse parameter: " + controllerMethodParamSegment );
+                        throw new IllegalRouteException(
+                            routeString,
+                            "Unable to parse parameter: " + controllerMethodParamSegment
+                        );
                     }
                     String paramName = splitted[1];
                     String paramTypeName = splitted[0];
-                    controllerParams.put( paramName, new ControllerParamInstance( paramName, lookupParamType( application, paramTypeName ) ) );
+                    controllerParams.put(
+                        paramName,
+                        new ControllerParamInstance( paramName, lookupParamType( application, paramTypeName ) )
+                    );
                 }
             }
         }
@@ -448,8 +458,8 @@ public final class RouteBuilder
             controllerProxy = (T) Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
                 new Class<?>[]
-            {
-                controllerType
+                {
+                    controllerType
                 },
                 new InvocationHandler()
                 {
@@ -459,7 +469,8 @@ public final class RouteBuilder
                         methodNameHolder.set( method.getName() );
                         return null;
                     }
-                } );
+                }
+            );
         }
         else
         {
@@ -468,15 +479,17 @@ public final class RouteBuilder
                 ProxyFactory proxyFactory = new ProxyFactory();
                 proxyFactory.setSuperclass( controllerType );
                 controllerProxy = (T) proxyFactory.createClass().newInstance();
-                ( (javassist.util.proxy.Proxy) controllerProxy ).setHandler( new MethodHandler()
-                {
-                    @Override
-                    public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
+                ( (javassist.util.proxy.Proxy) controllerProxy ).setHandler(
+                    new MethodHandler()
                     {
-                        methodNameHolder.set( controllerMethod.getName() );
-                        return null;
+                        @Override
+                        public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
+                        {
+                            methodNameHolder.set( controllerMethod.getName() );
+                            return null;
+                        }
                     }
-                } );
+                );
             }
             catch( InstantiationException | IllegalAccessException ex )
             {
@@ -507,5 +520,4 @@ public final class RouteBuilder
     {
         return new RouteInstance( httpMethod, path, controllerType, controllerMethodName, controllerParams, modifiers );
     }
-
 }

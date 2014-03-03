@@ -16,13 +16,13 @@
 package org.qiweb.api.http;
 
 /**
- * Method, Path, QueryString, Headers and Cookies.
+ * Request header.
+ * <p>Method, Path, QueryString, Headers and Cookies.</p>
  * <p>No Entity.</p>
  * <p>Helper methods.</p>
  */
 public interface RequestHeader
 {
-
     /**
      * @return The HTTP Request ID created by the framework
      */

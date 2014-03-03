@@ -25,9 +25,9 @@ public interface Routes
     extends Iterable<Route>
 {
     /**
-     * Get a Route satisfiedBy a HttpRequest.
+     * Get a Route satisfiedBy a RequestHeader.
      *
-     * @param requestHeader any HttpRequestHeader
+     * @param requestHeader any RequestHeader
      * @return a Route satisfiedBy the HttpRequest
      * @throws RouteNotFoundException when no Route is satisfiedBy the HttpRequest
      */

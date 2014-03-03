@@ -32,8 +32,9 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 /**
  * Development Mode Routes Provider.
  * <p>
- *     Use 'routes.conf' from the Application classpath root and add Documentation at /@doc plus various introspection
- *     resources.
+ *     Use 'routes.conf' from the Application classpath root and serve HTML documentation and Javadocs at
+ *     {@literal /@doc} and configuration and version information as JSON respectively at {@literal /@config} and
+ *     {@literal /@version}.
  * </p>
  */
 @Reflectively.Loaded( by = "DevShell" )

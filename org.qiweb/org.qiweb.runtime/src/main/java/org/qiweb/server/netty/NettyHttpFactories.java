@@ -46,7 +46,6 @@ import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.http.QueryString;
-import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.util.Strings;
@@ -58,7 +57,6 @@ import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestBodyInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
-import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.util.ByteSource;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
@@ -144,7 +142,10 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         Charset charset = Strings.isEmpty( requestCharset ) ? defaultCharset : Charset.forName( requestCharset );
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), charset );
         String requestPath = URLs.decode( queryStringDecoder.path(), charset );
-        QueryString queryString = new QueryStringInstance( allowMultiValuedQueryStringParameters, queryStringDecoder.parameters() );
+        QueryString queryString = new QueryStringInstance(
+            allowMultiValuedQueryStringParameters,
+            queryStringDecoder.parameters()
+        );
 
         // Headers
         Headers headers = headersOf( request, allowMultiValuedHeaders );
@@ -152,15 +153,17 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         // Cookies
         Cookies cookies = cookiesOf( request );
 
-        return new RequestHeaderInstance( identity, remoteSocketAddress,
-                                          xffEnabled, xffCheckProxies, xffTrustedProxies,
-                                          request.getProtocolVersion().text(),
-                                          method,
-                                          request.getUri(),
-                                          requestPath,
-                                          queryString,
-                                          headers,
-                                          cookies );
+        return new RequestHeaderInstance(
+            identity, remoteSocketAddress,
+            xffEnabled, xffCheckProxies, xffTrustedProxies,
+            request.getProtocolVersion().text(),
+            method,
+            request.getUri(),
+            requestPath,
+            queryString,
+            headers,
+            cookies
+        );
     }
 
     /* package */ static RequestBody bodyOf(
@@ -169,7 +172,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
     {
         RequestBody body;
-        Charset requestCharset = Strings.isEmpty( requestHeader.charset() )
+        Charset requestCharset = requestHeader.charset().isEmpty()
                                  ? defaultCharset
                                  : Charset.forName( requestHeader.charset() );
         if( request.content().readableBytes() > 0
@@ -204,18 +207,24 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
                                     {
                                         uploads.put( fileUpload.getName(), new ArrayList<>() );
                                     }
-                                    Upload upload = new UploadInstance( fileUpload.getContentType(),
-                                                                        fileUpload.getCharset(),
-                                                                        fileUpload.getFilename(),
-                                                                        fileUpload.getFile(),
-                                                                        defaultCharset );
+                                    Upload upload = new UploadInstance(
+                                        fileUpload.getContentType(),
+                                        fileUpload.getCharset(),
+                                        fileUpload.getFilename(),
+                                        fileUpload.getFile(),
+                                        defaultCharset
+                                    );
                                     uploads.get( fileUpload.getName() ).add( upload );
                                     break;
                                 default:
                                     break;
                             }
                         }
-                        body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, allowMultiValuedUploads, attributes, uploads );
+                        body = new RequestBodyInstance(
+                            requestCharset,
+                            allowMultiValuedFormAttributes, allowMultiValuedUploads,
+                            attributes, uploads
+                        );
                         break;
                     }
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
@@ -234,17 +243,6 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
             body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, allowMultiValuedUploads );
         }
         return body;
-    }
-
-    /* package */ static Request requestOf(
-        RequestHeader header, Map<String, Object> parameters, FullHttpRequest nettyRequest,
-        Charset defaultCharset,
-        boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
-    {
-        return new RequestInstance( header,
-                                    parameters,
-                                    bodyOf( header, nettyRequest, defaultCharset,
-                                            allowMultiValuedHeaders, allowMultiValuedFormAttributes, allowMultiValuedUploads ) );
     }
 
     /* package */ static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )
@@ -270,5 +268,4 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
     private NettyHttpFactories()
     {
     }
-
 }

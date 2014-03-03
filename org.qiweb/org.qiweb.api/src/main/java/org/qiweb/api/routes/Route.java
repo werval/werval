@@ -27,7 +27,6 @@ import org.qiweb.api.http.RequestHeader;
  */
 public interface Route
 {
-
     /**
      * @return HTTP Method
      */
@@ -82,5 +81,4 @@ public interface Route
      * @return String representation to a URI of this route with the given parameters values
      */
     String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters );
-
 }

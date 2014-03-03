@@ -48,11 +48,9 @@ import org.qiweb.api.routes.Routes;
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        Iterator<Route> it = iterator();
-        while( it.hasNext() )
+        for( Iterator<Route> it = iterator(); it.hasNext(); )
         {
-            Route route = it.next();
-            sb.append( route.toString() );
+            sb.append( it.next().toString() );
             if( it.hasNext() )
             {
                 sb.append( "\n" );

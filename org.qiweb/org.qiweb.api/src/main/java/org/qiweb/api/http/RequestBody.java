@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
  */
 public interface RequestBody
 {
-
     /**
      * @return Request Form Attributes
      */
