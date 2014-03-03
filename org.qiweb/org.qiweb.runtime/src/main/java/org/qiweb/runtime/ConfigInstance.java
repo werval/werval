@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.api.Config;
+import org.qiweb.api.util.Reflectively;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
 
+@Reflectively.Loaded( by = "DevShell" )
 public class ConfigInstance
     implements Config
 {
@@ -39,6 +41,7 @@ public class ConfigInstance
         this( ConfigInstance.class.getClassLoader() );
     }
 
+    @Reflectively.Invoked( by = "DevShell" )
     public ConfigInstance( ClassLoader loader )
     {
         config = com.typesafe.config.ConfigFactory.load( loader );

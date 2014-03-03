@@ -17,10 +17,12 @@ package org.qiweb.spi;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
+import org.qiweb.api.util.Reflectively;
 
 /**
  * Application SPI.
  */
+@Reflectively.Loaded( by = "DevShell" )
 public interface ApplicationSPI
     extends Application
 {
@@ -36,4 +38,7 @@ public interface ApplicationSPI
      * @param newClassLoader New Application ClassLoader
      */
     void reload( ClassLoader newClassLoader );
+
+    // Move to Application?
+    // CompletableFuture<Outcome> futureOutcomeOf( Request request );
 }

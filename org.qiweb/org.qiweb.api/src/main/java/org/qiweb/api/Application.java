@@ -22,6 +22,7 @@ import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.util.Reflectively;
 
 /**
  * Application.
@@ -30,6 +31,7 @@ import org.qiweb.api.routes.Routes;
  *     be {@link Mode#DEV} friendly, don't hold references to instances returned by an Application instance.
  * </p>
  */
+@Reflectively.Loaded( by = "DevShell" )
 public interface Application
 {
     /**

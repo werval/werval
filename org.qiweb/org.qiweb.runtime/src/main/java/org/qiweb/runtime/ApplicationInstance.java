@@ -35,6 +35,7 @@ import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
@@ -61,6 +62,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
  * <p>Application Routes are fetched from a given RoutesProvider.</p>
  * <p>Others are based on Application Config and created by Application instances.</p>
  */
+@Reflectively.Loaded( by = "DevShell" )
 public final class ApplicationInstance
     implements Application, ApplicationSPI
 {
@@ -131,6 +133,7 @@ public final class ApplicationInstance
      * @param classLoader Application ClassLoader
      * @param routesProvider Routes provider
      */
+    @Reflectively.Invoked( by = "DevShell" )
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
     {
         ensureNotNull( "Application Mode", mode );

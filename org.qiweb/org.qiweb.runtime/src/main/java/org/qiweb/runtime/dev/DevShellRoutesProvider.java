@@ -22,6 +22,7 @@ import java.util.Scanner;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.routes.RouteBuilder;
 import org.qiweb.runtime.routes.RoutesProvider;
@@ -35,6 +36,7 @@ import static org.qiweb.api.util.Charsets.UTF_8;
  *     resources.
  * </p>
  */
+@Reflectively.Loaded( by = "DevShell" )
 public class DevShellRoutesProvider
     implements RoutesProvider
 {
@@ -51,6 +53,7 @@ public class DevShellRoutesProvider
                                   + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
                                   + "GET /@version org.qiweb.lib.controllers.Introspect.version\n";
 
+    @Reflectively.Invoked( by = "DevShell" )
     public DevShellRoutesProvider()
     {
     }

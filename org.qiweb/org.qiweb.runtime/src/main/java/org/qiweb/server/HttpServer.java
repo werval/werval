@@ -15,9 +15,12 @@
  */
 package org.qiweb.server;
 
+import org.qiweb.api.util.Reflectively;
+
 /**
  * QiWeb Http Server.
  */
+@Reflectively.Loaded( by = "DevShell" )
 public interface HttpServer
 {
     /**
@@ -25,6 +28,7 @@ public interface HttpServer
      * 
      * @throws org.qiweb.api.exceptions.QiWebException if unable to activate HttpServer
      */
+    @Reflectively.Invoked( by = "DevShell" )
     void activate();
 
     /**
@@ -32,6 +36,7 @@ public interface HttpServer
      *
      * @throws org.qiweb.api.exceptions.QiWebException if unable to passivate HttpServer
      */
+    @Reflectively.Invoked( by = "DevShell" )
     void passivate();
 
     /**
@@ -39,5 +44,6 @@ public interface HttpServer
      * <p>This method can be called ony once.</p>
      * @throws IllegalStateException when the passivation shutdown hook has already been registered
      */
+    @Reflectively.Invoked( by = "DevShell" )
     void registerPassivationShutdownHook();
 }

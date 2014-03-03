@@ -22,6 +22,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.server.AbstractHttpServer;
 import org.qiweb.server.HttpServer;
@@ -39,6 +40,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
 
+@Reflectively.Loaded( by = "DevShell" )
 public class HttpServerInstance
     extends AbstractHttpServer
 {
@@ -73,6 +75,7 @@ public class HttpServerInstance
         this( identity, app, null );
     }
 
+    @Reflectively.Invoked( by = "DevShell" )
     public HttpServerInstance( String identity, ApplicationSPI app, DevShellSPI devSpi )
     {
         this.identity = identity;
