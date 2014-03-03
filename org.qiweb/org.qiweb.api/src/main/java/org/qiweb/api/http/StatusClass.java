@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,29 +24,34 @@ public enum StatusClass
     /**
      * 1xx Informational.
      */
-    INFORMATIONAL,
+    INFORMATIONAL( "Informational" ),
     /**
      * 2xx Success.
      */
-    SUCCESS,
+    SUCCESS( "Successful" ),
     /**
      * 3xx Redirection.
      */
-    REDIRECTION,
+    REDIRECTION( "Redirection" ),
     /**
      * 4xx Client Error.
      */
-    CLIENT_ERROR,
+    CLIENT_ERROR( "Client Error" ),
     /**
      * 5xx Server Error.
      */
-    SERVER_ERROR,
+    SERVER_ERROR( "Server Error" ),
     /**
      * {@literal 0xx} or {@literal >= 6xx} Unknown
      */
-    UNKNOWN;
+    UNKNOWN( "Unknown Status" );
 
     // CHECKSTYLE:OFF
+    public static StatusClass valueOf( Status status )
+    {
+        return valueOf( status.code() );
+    }
+
     public static StatusClass valueOf( int status )
     {
         if( status < 100 )
@@ -84,4 +89,18 @@ public enum StatusClass
     }
     // CHECKSTYLE:ON
 
+    private final String reasonPhrase;
+
+    private StatusClass( String reasonPhrase )
+    {
+        this.reasonPhrase = reasonPhrase;
+    }
+
+    /**
+     * @return Status class reason phrase
+     */
+    public String reasonPhrase()
+    {
+        return reasonPhrase;
+    }
 }

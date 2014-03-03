@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server;
 
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
@@ -63,9 +63,9 @@ public class OnErrorTest
 
     @Rule
     public final QiWebRule qiweb = new QiWebRule( new RoutesParserProvider(
-        "GET /success org.qiweb.runtime.server.OnErrorTest$Ctrl.success\n"
-        + "GET /internalServerError org.qiweb.runtime.server.OnErrorTest$Ctrl.internalServerError\n"
-        + "GET /exception org.qiweb.runtime.server.OnErrorTest$Ctrl.exception" ) );
+        "GET /success org.qiweb.server.OnErrorTest$Ctrl.success\n"
+        + "GET /internalServerError org.qiweb.server.OnErrorTest$Ctrl.internalServerError\n"
+        + "GET /exception org.qiweb.server.OnErrorTest$Ctrl.exception" ) );
 
     @Test
     public void testSuccess()

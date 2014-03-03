@@ -51,6 +51,10 @@ public class DevShellRoutesProvider
                                   + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
                                   + "GET /@version org.qiweb.lib.controllers.Introspect.version\n";
 
+    public DevShellRoutesProvider()
+    {
+    }
+
     @Override
     public Routes routes( Application application )
     {

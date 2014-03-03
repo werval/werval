@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,18 @@
  */
 package org.qiweb.runtime.outcomes;
 
-import io.netty.buffer.ByteBuf;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.qiweb.api.Config;
-import org.qiweb.api.http.MutableCookies;
-import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
+import org.qiweb.runtime.util.ByteSource;
 
-import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
-import static io.netty.buffer.Unpooled.copiedBuffer;
-import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
+import static org.qiweb.runtime.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Outcome Builder instance.
@@ -37,20 +34,15 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 public class OutcomeBuilderInstance
     implements OutcomeBuilder
 {
-    private final int status;
-    private final MutableHeaders headers;
-    private final MutableCookies cookies;
-    private Object body = EMPTY_BUFFER;
+    private final ResponseHeader response;
+    private Object body = EMPTY_BYTES;
     private long length = 0;
     private int chunkSize;
     private final Charset defaultCharset;
 
-
-    /* package */ OutcomeBuilderInstance( int status, Config config, MutableHeaders headers, MutableCookies cookies )
+    /* package */ OutcomeBuilderInstance( Config config, ResponseHeader response )
     {
-        this.status = status;
-        this.headers = headers;
-        this.cookies = cookies;
+        this.response = response;
         this.chunkSize = config.intNumber( QIWEB_HTTP_CHUNKSIZE );
         this.defaultCharset = config.charset( QIWEB_CHARACTER_ENCODING );
     }
@@ -58,23 +50,22 @@ public class OutcomeBuilderInstance
     @Override
     public OutcomeBuilder withHeader( String name, String value )
     {
-        headers.with( name, value );
+        response.headers().with( name, value );
         return this;
     }
 
     @Override
     public OutcomeBuilder as( String contentType )
     {
-        headers.withSingle( CONTENT_TYPE, contentType );
+        response.headers().withSingle( CONTENT_TYPE, contentType );
         return this;
     }
 
     @Override
     public OutcomeBuilder withBody( byte[] bodyBytes )
     {
-        ByteBuf buffer = wrappedBuffer( bodyBytes );
-        body = buffer;
-        length = buffer.readableBytes();
+        body = ByteSource.wrap( bodyBytes );
+        length = bodyBytes.length;
         return this;
     }
 
@@ -87,9 +78,9 @@ public class OutcomeBuilderInstance
     @Override
     public OutcomeBuilder withBody( String bodyString, Charset charset )
     {
-        ByteBuf buffer = copiedBuffer( bodyString, charset );
-        body = buffer;
-        length = buffer.readableBytes();
+        byte[] bytes = bodyString.getBytes( charset );
+        body = ByteSource.wrap( bytes );
+        length = bytes.length;
         return this;
     }
 
@@ -123,21 +114,21 @@ public class OutcomeBuilderInstance
     {
         if( body == null )
         {
-            return new SimpleOutcome( status, headers );
+            return new SimpleOutcome( response );
         }
-        if( body instanceof ByteBuf )
+        if( body instanceof ByteSource )
         {
-            ByteBuf bodyByteBuf = (ByteBuf) body;
-            return new SimpleOutcome( status, headers ).withEntity( bodyByteBuf );
+            ByteSource bodyByteSource = (ByteSource) body;
+            return new SimpleOutcome( response ).withEntity( bodyByteSource );
         }
         if( body instanceof InputStream )
         {
             InputStream bodyInputStream = (InputStream) body;
             if( length != -1 )
             {
-                return new InputStreamOutcome( status, headers, bodyInputStream, length );
+                return new InputStreamOutcome( response, bodyInputStream, length );
             }
-            return new ChunkedInputOutcome( status, headers, bodyInputStream, chunkSize );
+            return new ChunkedInputOutcome( response, bodyInputStream, chunkSize );
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }

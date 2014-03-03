@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.qiweb.runtime.http;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -28,7 +26,7 @@ import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.util.Strings;
-import org.qiweb.runtime.util.FileByteBuff;
+import org.qiweb.runtime.util.ByteSource;
 
 /**
  * A RequestBody Instance.
@@ -36,9 +34,8 @@ import org.qiweb.runtime.util.FileByteBuff;
 public final class RequestBodyInstance
     implements RequestBody
 {
-
     private final Charset charset;
-    private final ByteBuf byteBuf;
+    private final ByteSource bodyBytes;
     private final FormAttributes attributes;
     private final FormUploads uploads;
 
@@ -52,7 +49,7 @@ public final class RequestBodyInstance
                                 boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads )
     {
         this.charset = charset;
-        this.byteBuf = null;
+        this.bodyBytes = null;
         this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
         this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
     }
@@ -62,17 +59,16 @@ public final class RequestBodyInstance
      * 
      * @param charset Body charset
      * @param allowMultiValuedAttributes Allow multi-valued attributes
-     * @param allowMultiValuedUploads Allow multi-valued uploads
-     * @param byteBuf Body data
+     * @param bodyBytes Body bytes
      */
     public RequestBodyInstance( Charset charset,
-                                boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads,
-                                ByteBuf byteBuf )
+                                boolean allowMultiValuedAttributes,
+                                ByteSource bodyBytes )
     {
         this.charset = charset;
-        this.byteBuf = byteBuf;
+        this.bodyBytes = bodyBytes;
         this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
-        this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
+        this.uploads = new FormUploadsInstance( false, Collections.<String, List<Upload>>emptyMap() );
     }
 
     /**
@@ -89,7 +85,7 @@ public final class RequestBodyInstance
                                 Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
     {
         this.charset = charset;
-        this.byteBuf = null;
+        this.bodyBytes = null;
         this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, attributes );
         this.uploads = new FormUploadsInstance( allowMultiValuedUploads, uploads );
     }
@@ -109,50 +105,36 @@ public final class RequestBodyInstance
     @Override
     public InputStream asStream()
     {
-        if( byteBuf == null )
+        if( bodyBytes == null )
         {
             return new ByteArrayInputStream( new byte[ 0 ] );
         }
-        if( byteBuf instanceof FileByteBuff )
-        {
-            return ( (FileByteBuff) byteBuf ).getInputStream();
-        }
-        return new ByteBufInputStream( byteBuf );
+        return bodyBytes.asStream();
     }
 
     @Override
     public byte[] asBytes()
     {
-        if( byteBuf == null )
+        if( bodyBytes == null )
         {
             return new byte[ 0 ];
         }
-        if( byteBuf instanceof FileByteBuff )
-        {
-            return ( (FileByteBuff) byteBuf ).readAllBytes();
-        }
-        byte[] bytes = new byte[ byteBuf.readableBytes() ];
-        byteBuf.readBytes( bytes, 0, byteBuf.readableBytes() );
-        return bytes;
+        return bodyBytes.asBytes();
     }
 
     @Override
     public String asString()
     {
-        if( byteBuf == null )
-        {
-            return Strings.EMPTY;
-        }
-        return byteBuf.toString( charset );
+        return asString( charset );
     }
 
     @Override
     public String asString( Charset charset )
     {
-        if( byteBuf == null )
+        if( bodyBytes == null )
         {
             return Strings.EMPTY;
         }
-        return byteBuf.toString( charset );
+        return bodyBytes.asString( charset );
     }
 }

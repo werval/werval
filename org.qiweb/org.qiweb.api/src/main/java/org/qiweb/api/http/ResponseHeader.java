@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.test;
+package org.qiweb.api.http;
 
-import org.qiweb.api.Application;
-import org.qiweb.spi.ApplicationSPI;
-
-public interface QiWebTestSupport
+/**
+ * Response Header.
+ */
+public interface ResponseHeader
 {
     /**
-     * @return QiWeb Application
+     * @return Response HTTP status
      */
-    Application application();
+    Status status();
 
     /**
-     * @return QiWeb Application SPI
+     * @return Response mutable headers
      */
-    ApplicationSPI applicationSPI();
+    MutableHeaders headers();
 
     /**
-     * @return QiWeb Application HTTP host
+     * @return Response mutable cookies
      */
-    String httpHost();
-
-    /**
-     * @return QiWeb Application HTTP port
-     */
-    int httpPort();
-
-    /**
-     * @return QiWeb Application base HTTP URL based on listening address and port Configuration
-     */
-    String baseHttpUrl();
+    MutableCookies cookies();
 }

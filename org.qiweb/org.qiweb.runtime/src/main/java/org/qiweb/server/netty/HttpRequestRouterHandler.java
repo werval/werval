@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server.netty;
 
 import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.ChannelFuture;
@@ -27,6 +27,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.ServerCookieEncoder;
+import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
@@ -38,7 +39,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.Application.Mode;
+import org.qiweb.api.Mode;
 import org.qiweb.api.Error;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.context.ThreadContextHelper;
@@ -50,22 +51,21 @@ import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.http.Response;
+import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.http.StatusClass;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.Routes;
-import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
-import org.qiweb.runtime.http.ResponseInstance;
+import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.runtime.util.Stacktraces;
+import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +90,9 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
+import static org.qiweb.api.http.StatusClass.CLIENT_ERROR;
+import static org.qiweb.api.http.StatusClass.SERVER_ERROR;
+import static org.qiweb.api.http.StatusClass.UNKNOWN;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
@@ -100,10 +103,10 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TR
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
-import static org.qiweb.runtime.server.NettyHttpFactories.asNettyCookie;
-import static org.qiweb.runtime.server.NettyHttpFactories.remoteAddressOf;
-import static org.qiweb.runtime.server.NettyHttpFactories.requestHeaderOf;
-import static org.qiweb.runtime.server.NettyHttpFactories.requestOf;
+import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
+import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
+import static org.qiweb.server.netty.NettyHttpFactories.requestHeaderOf;
+import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
 
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
@@ -155,11 +158,11 @@ public final class HttpRequestRouterHandler
         }
     }
 
-    private final ApplicationInstance app;
+    private final ApplicationSPI app;
     private final DevShellSPI devSpi;
     private String requestIdentity;
 
-    public HttpRequestRouterHandler( ApplicationInstance app, DevShellSPI devSpi )
+    public HttpRequestRouterHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.app = app;
@@ -181,7 +184,8 @@ public final class HttpRequestRouterHandler
         {
             FullHttpResponse response = new DefaultFullHttpResponse(
                 HTTP_1_1, SERVICE_UNAVAILABLE,
-                copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", app.defaultCharset() ) );
+                copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", app.defaultCharset() )
+            );
             response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
             response.headers().set( CONTENT_TYPE, "text/html; charset=" + app.defaultCharset().name().toLowerCase( US ) );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
@@ -207,40 +211,47 @@ public final class HttpRequestRouterHandler
             app.config().stringList( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED ),
             app.defaultCharset(),
             app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
-            app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
-
-        // Route the request
-        Routes routes = app.routes();
+            app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
+        );
 
         // Prepare Controller Context
         ThreadContextHelper contextHelper = new ThreadContextHelper();
         try
         {
-            final Route route = routes.route( requestHeader );
+            // Route the request
+            final Route route = app.routes().route( requestHeader );
             LOG.debug( "{} Routing request to: {}", requestIdentity, route );
 
             // Bind parameters
-            Map<String, Object> parameters = route.bindParameters( app.parameterBinders(),
-                                                                   requestHeader.path(),
-                                                                   requestHeader.queryString() );
+            Map<String, Object> parameters = route.bindParameters(
+                app.parameterBinders(),
+                requestHeader.path(),
+                requestHeader.queryString()
+            );
 
             // TODO Eventually UPGRADE to WebSocket
             // Parse Session Cookie
             Session session = new SessionInstance(
-                app.config(), app.crypto(),
-                requestHeader.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) ) );
+                app.config(),
+                app.crypto(),
+                requestHeader.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) )
+            );
 
             // Parse Request
-            Request request = requestOf( requestHeader, parameters, nettyRequest, app.defaultCharset(),
-                                         app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
-                                         app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
-                                         app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED ) );
+            Request request = requestOf(
+                requestHeader, parameters, nettyRequest, app.defaultCharset(),
+                app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
+                app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
+                app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED )
+            );
 
-            // Prepare Response
-            Response response = new ResponseInstance( app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) );
+            // Prepare Response Header
+            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
+                app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
+            );
 
             // Set Controller Context
-            Context context = new ContextInstance( app, session, route, request, response );
+            Context context = new ContextInstance( app, session, route, request, responseHeader );
             contextHelper.setOnCurrentThread( context );
 
             // Invoke Controller FilterChain, ended by Controller Method Invokation
@@ -249,7 +260,7 @@ public final class HttpRequestRouterHandler
 
             // == Build the response
             // Status
-            HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( outcome.status() );
+            HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( outcome.responseHeader().status().code() );
 
             // Headers & Body output
             final HttpResponse nettyResponse;
@@ -260,19 +271,23 @@ public final class HttpRequestRouterHandler
                 ChunkedInputOutcome chunkedOutcome = (ChunkedInputOutcome) outcome;
                 nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, responseHeader, outcome, nettyResponse );
                 nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
                 nettyResponse.headers().set( TRAILER, X_QIWEB_CONTENT_LENGTH );
                 // Body
                 nettyContext.write( nettyResponse );
-                writeFuture = nettyContext.writeAndFlush( new HttpChunkedBodyEncoder( chunkedOutcome.chunkedInput() ) );
+                writeFuture = nettyContext.writeAndFlush(
+                    new HttpChunkedBodyEncoder(
+                        new ChunkedStream( chunkedOutcome.inputStream(), chunkedOutcome.chunkSize() )
+                    )
+                );
             }
             else if( outcome instanceof InputStreamOutcome )
             {
                 InputStreamOutcome streamOutcome = (InputStreamOutcome) outcome;
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, responseHeader, outcome, nettyResponse );
                 nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
                 // Body
                 ( (ByteBufHolder) nettyResponse ).content().
@@ -283,19 +298,20 @@ public final class HttpRequestRouterHandler
             else if( outcome instanceof SimpleOutcome )
             {
                 SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
+                byte[] body = simpleOutcome.body().asBytes();
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
                 // Headers
-                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
-                nettyResponse.headers().set( CONTENT_LENGTH, simpleOutcome.body().readableBytes() );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, responseHeader, outcome, nettyResponse );
+                nettyResponse.headers().set( CONTENT_LENGTH, body.length );
                 // Body
-                ( (ByteBufHolder) nettyResponse ).content().writeBytes( simpleOutcome.body() );
+                ( (ByteBufHolder) nettyResponse ).content().writeBytes( body );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
             else
             {
                 LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
                 nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, response, outcome, nettyResponse );
+                forceClose = applyResponseHeader( nettyContext, nettyRequest, session, responseHeader, outcome, nettyResponse );
                 writeFuture = nettyContext.writeAndFlush( nettyResponse );
             }
 
@@ -326,11 +342,11 @@ public final class HttpRequestRouterHandler
      * @return TRUE if the channel should be closed, otherwise return FALSE
      */
     private boolean applyResponseHeader( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest,
-                                         Session session, Response response, Outcome outcome,
+                                         Session session, ResponseHeader response, Outcome outcome,
                                          HttpResponse nettyResponse )
     {
         // Response and Outcome share the same Headers instance, that's why we apply only one
-        applyHttpHeaders( outcome.headers(), nettyResponse );
+        applyHttpHeaders( outcome.responseHeader().headers(), nettyResponse );
         boolean forceClose = applyKeepAliveHttpHeaders( nettyContext, nettyRequest, outcome, nettyResponse );
         applySession( session, nettyResponse );
         applyCookies( response.cookies(), nettyResponse );
@@ -354,10 +370,9 @@ public final class HttpRequestRouterHandler
                                                Outcome outcome,
                                                HttpResponse nettyResponse )
     {
-        final EnumSet<StatusClass> forceCloseStatuses = EnumSet.of( StatusClass.CLIENT_ERROR,
-                                                                    StatusClass.SERVER_ERROR,
-                                                                    StatusClass.UNKNOWN );
-        if( nettyContext.executor().isShuttingDown() || forceCloseStatuses.contains( outcome.statusClass() ) )
+        final EnumSet<StatusClass> forceCloseStatuses = EnumSet.of( CLIENT_ERROR, SERVER_ERROR, UNKNOWN );
+        if( nettyContext.executor().isShuttingDown()
+            || forceCloseStatuses.contains( outcome.responseHeader().status().statusClass() ) )
         {
             // Apply Keep-Alive response headers if needed
             if( isKeepAlive( nettyRequest ) && nettyRequest.getProtocolVersion() == HTTP_1_1 )
@@ -380,8 +395,10 @@ public final class HttpRequestRouterHandler
     {
         if( !app.config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
         {
-            nettyResponse.headers().add( SET_COOKIE,
-                                         ServerCookieEncoder.encode( asNettyCookie( session.signedCookie() ) ) );
+            nettyResponse.headers().add(
+                SET_COOKIE,
+                ServerCookieEncoder.encode( asNettyCookie( session.signedCookie() ) )
+            );
         }
     }
 
@@ -389,8 +406,10 @@ public final class HttpRequestRouterHandler
     {
         for( Cookie cookie : cookies )
         {
-            nettyResponse.headers().add( SET_COOKIE,
-                                         ServerCookieEncoder.encode( asNettyCookie( cookie ) ) );
+            nettyResponse.headers().add(
+                SET_COOKIE,
+                ServerCookieEncoder.encode( asNettyCookie( cookie ) )
+            );
         }
     }
 
@@ -451,9 +470,11 @@ public final class HttpRequestRouterHandler
             else
             {
                 // Handle Unexpected Exceptions
-                LOG.error( "{} Exception caught: {}( {} )",
-                           requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
-                           cause );
+                LOG.error(
+                    "{} Exception caught: {}( {} )",
+                    requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
+                    cause
+                );
 
                 // Build body
                 StringWriter body = new StringWriter();

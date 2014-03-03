@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.dev.DevShellRoutesProvider;
 
-import static org.qiweb.api.Application.Mode.DEV;
+import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 
 public class ReverseRoutesInstance

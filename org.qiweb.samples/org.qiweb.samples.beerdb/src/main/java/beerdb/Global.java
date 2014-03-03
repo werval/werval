@@ -42,7 +42,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.Application.Mode.TEST;
+import static org.qiweb.api.Mode.TEST;
 import static org.qiweb.api.util.Strings.EMPTY;
 
 /**

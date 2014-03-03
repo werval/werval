@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
@@ -39,7 +39,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Application;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.runtime.util.FileByteBuff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

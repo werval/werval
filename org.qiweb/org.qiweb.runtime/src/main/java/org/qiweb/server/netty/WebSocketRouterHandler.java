@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import org.qiweb.api.Application;
+import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +27,10 @@ public class WebSocketRouterHandler
     extends SimpleChannelInboundHandler<WebSocketFrame>
 {
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketRouterHandler.class );
-    private final Application app;
+    private final ApplicationSPI app;
     private final DevShellSPI devSpi;
 
-    public WebSocketRouterHandler( Application app, DevShellSPI devSpi )
+    public WebSocketRouterHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.app = app;

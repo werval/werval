@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package org.qiweb.runtime.outcomes;
 
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.http.StatusClass;
+import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
@@ -27,36 +25,22 @@ import org.qiweb.api.outcomes.Outcome;
 /* package */ abstract class AbstractOutcome<T extends AbstractOutcome<?>>
     implements Outcome
 {
-    protected final MutableHeaders headers;
-    private final int status;
+    protected final ResponseHeader response;
 
-    /* package */ AbstractOutcome( int status, MutableHeaders headers )
+    /* package */ AbstractOutcome( ResponseHeader response )
     {
-        this.headers = headers;
-        this.status = status;
+        this.response = response;
     }
 
     @Override
-    public final int status()
+    public ResponseHeader responseHeader()
     {
-        return status;
-    }
-
-    @Override
-    public StatusClass statusClass()
-    {
-        return StatusClass.valueOf( status );
-    }
-
-    @Override
-    public final Headers headers()
-    {
-        return headers;
+        return response;
     }
 
     @Override
     public String toString()
     {
-        return status + ", " + headers;
+        return response.toString();
     }
 }

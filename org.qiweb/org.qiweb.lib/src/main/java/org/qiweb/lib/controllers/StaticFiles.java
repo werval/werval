@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import org.qiweb.api.Application.Mode;
+import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Dates;
 import org.qiweb.api.util.Strings;

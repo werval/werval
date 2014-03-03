@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,45 +32,6 @@ import org.qiweb.api.routes.Routes;
  */
 public interface Application
 {
-    /**
-     * {@link Application} Mode.
-     * <p>Default is {@link #TEST} Mode.</p>
-     */
-    enum Mode
-    {
-        /**
-         * Development Mode.
-         * <p>Source is watched, Application is restarted on-demand, stacktraces are disclosed in responses.</p>
-         */
-        DEV( "Development" ),
-        /**
-         * Test Mode.
-         * <p>Intended to be used in unit tests, almost equivalent to {@link #PROD} Mode.</p>
-         */
-        TEST( "Test" ),
-        /**
-         * Production Mode.
-         * <p>Run from binaries only, nothing gets reloaded.</p>
-         */
-        PROD( "Production" );
-
-        private final String displayName;
-
-        private Mode( String displayName )
-        {
-            this.displayName = displayName;
-        }
-
-        /**
-         * @return The display name of this Application Mode
-         */
-        @Override
-        public String toString()
-        {
-            return displayName;
-        }
-    }
-
     /**
      * Activate the Application.
      * @throws IllegalStateException if the {@literal Application} is already active.

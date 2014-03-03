@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -28,7 +28,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.qiweb.runtime.ApplicationInstance;
+import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static java.util.Locale.US;
@@ -43,11 +43,11 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
     extends ChannelInitializer<Channel>
 {
     private final ChannelGroup allChannels;
-    private final ApplicationInstance app;
+    private final ApplicationSPI app;
     private final DevShellSPI devSpi;
     private final EventExecutorGroup httpExecutors;
 
-    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, ApplicationInstance httpApp, DevShellSPI devSpi )
+    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, ApplicationSPI httpApp, DevShellSPI devSpi )
     {
         this.allChannels = allChannels;
         this.app = httpApp;

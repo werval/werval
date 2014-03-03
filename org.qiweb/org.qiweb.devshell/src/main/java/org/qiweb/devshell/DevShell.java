@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ public final class DevShell
 
             // Application
             Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );
-            Class<?> modeClass = appRealm.loadClass( "org.qiweb.api.Application$Mode" );
+            Class<?> modeClass = appRealm.loadClass( "org.qiweb.api.Mode" );
             Object appInstance = appClass.getConstructor(
                 new Class<?>[]
                 {
@@ -162,15 +162,22 @@ public final class DevShell
             );
 
             // HttpServer
-            Object httpServer = appRealm.loadClass( "org.qiweb.runtime.server.HttpServerInstance" ).
-                getConstructor( new Class<?>[]
-                    {
-                        String.class, appClass, DevShellSPI.class
-                } ).
-                newInstance( new Object[]
-                    {
-                        "devshell-httpserver", appInstance, new DevShellSPIDecorator( spi, appInstance )
-                } );
+            Class<?> appSpiClass = appRealm.loadClass( "org.qiweb.spi.ApplicationSPI" );
+            Object httpServer = appRealm.loadClass( "org.qiweb.server.netty.HttpServerInstance" ).getConstructor(
+                new Class<?>[]
+                {
+                    String.class,
+                    appSpiClass,
+                    DevShellSPI.class
+                }
+            ).newInstance(
+                new Object[]
+                {
+                    "devshell-httpserver",
+                    appInstance,
+                    new DevShellSPIDecorator( spi, appInstance )
+                }
+            );
 
             httpServer.getClass().getMethod( "registerPassivationShutdownHook" ).invoke( httpServer );
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );

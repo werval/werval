@@ -15,7 +15,7 @@
  */
 package org.qiweb.runtime.controllers;
 
-import org.qiweb.api.Application.Mode;
+import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 
 import static org.qiweb.api.context.CurrentContext.application;

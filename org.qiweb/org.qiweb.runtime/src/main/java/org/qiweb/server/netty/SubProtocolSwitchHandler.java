@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -22,7 +22,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.concurrent.EventExecutorGroup;
-import org.qiweb.runtime.ApplicationInstance;
+import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +39,11 @@ public class SubProtocolSwitchHandler
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
     private final EventExecutorGroup httpExecutors;
-    private final ApplicationInstance app;
+    private final ApplicationSPI app;
     private final DevShellSPI devSpi;
 
     public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors,
-                                     ApplicationInstance app, DevShellSPI devSpi )
+                                     ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.allChannels = allChannels;

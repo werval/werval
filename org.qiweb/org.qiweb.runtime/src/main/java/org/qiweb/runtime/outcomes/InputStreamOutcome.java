@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package org.qiweb.runtime.outcomes;
 
 import java.io.InputStream;
 import org.qiweb.api.http.Headers.Names;
-import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.ResponseHeader;
 
 /**
- * {@link InputStream} based Outcome.
+ * {@link InputStream} based Outcome for streamed output.
  */
 public class InputStreamOutcome
     extends AbstractOutcome<InputStreamOutcome>
@@ -28,12 +28,12 @@ public class InputStreamOutcome
     private final InputStream bodyInputStream;
     private final long contentLength;
 
-    /* package */ InputStreamOutcome( int status, MutableHeaders headers, InputStream bodyInputStream, long contentLength )
+    /* package */ InputStreamOutcome( ResponseHeader response, InputStream bodyInputStream, long contentLength )
     {
-        super( status, headers );
+        super( response );
         this.bodyInputStream = bodyInputStream;
         this.contentLength = contentLength;
-        this.headers.with( Names.CONTENT_LENGTH, String.valueOf( contentLength ) );
+        this.response.headers().with( Names.CONTENT_LENGTH, String.valueOf( contentLength ) );
     }
 
     public final InputStream bodyInputStream()

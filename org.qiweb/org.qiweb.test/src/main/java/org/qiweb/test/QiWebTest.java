@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,15 @@ import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Application;
-import org.qiweb.api.Application.Mode;
+import org.qiweb.api.Mode;
 import org.qiweb.api.Config;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.runtime.server.HttpServerInstance;
+import org.qiweb.server.HttpServer;
+import org.qiweb.server.netty.HttpServerInstance;
+import org.qiweb.spi.ApplicationSPI;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
@@ -48,8 +50,8 @@ public class QiWebTest
 {
     private final String configurationResourceNameOverride;
     private final RoutesProvider routesProviderOverride;
-    private HttpServerInstance httpServer;
-    private ApplicationInstance app;
+    private HttpServer httpServer;
+    private ApplicationSPI app;
 
     public QiWebTest()
     {
@@ -107,6 +109,12 @@ public class QiWebTest
 
     @Override
     public final Application application()
+    {
+        return app;
+    }
+
+    @Override
+    public ApplicationSPI applicationSPI()
     {
         return app;
     }

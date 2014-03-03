@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,31 @@
  */
 package org.qiweb.runtime.outcomes;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.ResponseHeader;
+import org.qiweb.runtime.util.ByteSource;
+
+import static org.qiweb.runtime.util.ByteSource.EMPTY_BYTES;
 
 /**
- * Simple {@link ByteBuf} based Outcome.
+ * Simple {@link ByteSource} based Outcome.
  */
 public class SimpleOutcome
     extends AbstractOutcome<SimpleOutcome>
 {
-    private ByteBuf body = Unpooled.EMPTY_BUFFER;
+    private ByteSource body = EMPTY_BYTES;
 
-    /* package */ SimpleOutcome( int status, MutableHeaders headers )
+    /* package */ SimpleOutcome( ResponseHeader response )
     {
-        super( status, headers );
+        super( response );
     }
 
-    /* package */ final SimpleOutcome withEntity( ByteBuf body )
+    /* package */ final SimpleOutcome withEntity( ByteSource body )
     {
         this.body = body;
         return this;
     }
 
-    public ByteBuf body()
+    public ByteSource body()
     {
         return body;
     }

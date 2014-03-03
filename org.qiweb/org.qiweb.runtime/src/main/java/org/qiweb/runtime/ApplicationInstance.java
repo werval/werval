@@ -27,6 +27,7 @@ import org.qiweb.api.Crypto;
 import org.qiweb.api.Errors;
 import org.qiweb.api.Global;
 import org.qiweb.api.MetaData;
+import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.mime.MimeTypes;
@@ -39,6 +40,7 @@ import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
+import org.qiweb.spi.ApplicationSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +62,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
  * <p>Others are based on Application Config and created by Application instances.</p>
  */
 public final class ApplicationInstance
-    implements Application
+    implements Application, ApplicationSPI
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationInstance.class );
     private volatile boolean activated;
@@ -283,21 +285,15 @@ public final class ApplicationInstance
         return errors;
     }
 
-    /**
-     * @return Application Global object
-     */
+    // SPI
+    @Override
     public Global global()
     {
         return global;
     }
 
-    /**
-     * Reload Application with a new ClassLoader.
-     *
-     * <p>Called reflectively by {@literal org.qiweb.devshell.DevShell}</p>
-     *
-     * @param newClassLoader New Application ClassLoader
-     */
+    // SPI
+    @Override
     public void reload( ClassLoader newClassLoader )
     {
         passivate();

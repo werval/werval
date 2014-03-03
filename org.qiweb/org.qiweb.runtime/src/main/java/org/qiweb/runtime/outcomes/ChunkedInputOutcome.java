@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,33 @@
  */
 package org.qiweb.runtime.outcomes;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.handler.stream.ChunkedInput;
-import io.netty.handler.stream.ChunkedStream;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.ResponseHeader;
 
 /**
- * {@link ChunkedInput} based Outcome.
+ * {@link InputStream} based Outcome for chunked output.
  */
 public class ChunkedInputOutcome
     extends AbstractOutcome<ChunkedInputOutcome>
 {
-    private ChunkedInput<ByteBuf> input = new ChunkedStream( new ByteArrayInputStream( new byte[ 0 ] ) );
+    private final InputStream input;
+    private final int chunkSize;
 
-    /* package */ ChunkedInputOutcome( int status, MutableHeaders headers, InputStream input, int chunkSize )
+    /* package */
+    ChunkedInputOutcome( ResponseHeader response, InputStream input, int chunkSize )
     {
-        super( status, headers );
-        this.input = new ChunkedStream( input, chunkSize );
+        super( response );
+        this.input = input;
+        this.chunkSize = chunkSize;
     }
 
-    public ChunkedInput<ByteBuf> chunkedInput()
+    public InputStream inputStream()
     {
         return input;
+    }
+
+    public int chunkSize()
+    {
+        return chunkSize;
     }
 }

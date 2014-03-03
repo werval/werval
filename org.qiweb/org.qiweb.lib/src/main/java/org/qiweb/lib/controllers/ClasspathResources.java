@@ -17,6 +17,7 @@ package org.qiweb.lib.controllers;
 
 import java.io.InputStream;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,7 @@ public class ClasspathResources
         }
 
         // Cache-Control
-        if( application().mode() == Application.Mode.DEV )
+        if( application().mode() == Mode.DEV )
         {
             response().headers().with( CACHE_CONTROL, "no-cache" );
         }

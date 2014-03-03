@@ -19,10 +19,11 @@ import org.qiweb.api.Application;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.http.Response;
+import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.outcomes.OutcomesInstance;
 
 /**
@@ -35,18 +36,19 @@ public final class ContextInstance
     private final Session session;
     private final Route route;
     private final Request request;
-    private final Response response;
+    private final ResponseHeader response;
     private final Outcomes outcomes;
     private final MetaData metaData;
 
-    public ContextInstance( Application application, Session session, Route route, Request request, Response response )
+    public ContextInstance( Application application, Session session, Route route, Request request,
+                            ResponseHeaderInstance responseHeader )
     {
         this.application = application;
         this.session = session;
         this.route = route;
         this.request = request;
-        this.response = response;
-        this.outcomes = new OutcomesInstance( application.config(), response.headers(), response.cookies() );
+        this.response = responseHeader;
+        this.outcomes = new OutcomesInstance( application.config(), responseHeader );
         this.metaData = new MetaData();
     }
 
@@ -75,7 +77,7 @@ public final class ContextInstance
     }
 
     @Override
-    public Response response()
+    public ResponseHeader response()
     {
         return response;
     }

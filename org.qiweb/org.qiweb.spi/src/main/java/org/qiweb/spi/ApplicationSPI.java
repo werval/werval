@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.http;
+package org.qiweb.spi;
+
+import org.qiweb.api.Application;
+import org.qiweb.api.Global;
 
 /**
- * Response.
+ * Application SPI.
  */
-public interface Response
+public interface ApplicationSPI
+    extends Application
 {
+    /**
+     * @return Application Global object
+     */
+    Global global();
 
     /**
-     * @return Response mutable headers
+     * Reload Application with a new ClassLoader.
+     * <p>Called reflectively by {@literal org.qiweb.devshell.DevShell}</p>
+     *
+     * @param newClassLoader New Application ClassLoader
      */
-    MutableHeaders headers();
-
-    /**
-     * @return Response mutable cookies
-     */
-    MutableCookies cookies();
-
+    void reload( ClassLoader newClassLoader );
 }

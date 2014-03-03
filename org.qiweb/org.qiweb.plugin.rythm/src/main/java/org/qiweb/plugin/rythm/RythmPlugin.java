@@ -18,6 +18,7 @@ package org.qiweb.plugin.rythm;
 import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.Plugin;
 import org.rythmengine.Rythm;
 import org.rythmengine.RythmEngine;
@@ -66,7 +67,7 @@ public class RythmPlugin
         );
         conf.put(
             ENGINE_MODE.getKey(),
-            application.mode() == Application.Mode.DEV ? Rythm.Mode.dev : Rythm.Mode.prod
+            application.mode() == Mode.DEV ? Rythm.Mode.dev : Rythm.Mode.prod
         );
         conf.put(
             ENGINE_CLASS_LOADER_PARENT_IMPL.getKey(),

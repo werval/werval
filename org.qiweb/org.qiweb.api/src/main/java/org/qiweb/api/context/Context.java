@@ -18,7 +18,7 @@ package org.qiweb.api.context;
 import org.qiweb.api.Application;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.http.Response;
+import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.Route;
@@ -51,9 +51,9 @@ public interface Context
     Request request();
 
     /**
-     * @return Current Response
+     * @return Current Response Header
      */
-    Response response();
+    ResponseHeader response();
 
     /**
      * @return Current Outcome builder

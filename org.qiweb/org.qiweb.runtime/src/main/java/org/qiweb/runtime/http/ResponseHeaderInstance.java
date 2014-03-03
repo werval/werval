@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,47 @@ package org.qiweb.runtime.http;
 
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.http.Response;
+import org.qiweb.api.http.ResponseHeader;
+import org.qiweb.api.http.Status;
 
-public class ResponseInstance
-    implements Response
+/**
+ * Response Header Instance.
+ */
+public class ResponseHeaderInstance
+    implements ResponseHeader
 {
-
     private final MutableHeaders headers;
     private final MutableCookies cookies;
+    private Status status = Status.valueOf( 0 );
 
-    public ResponseInstance( boolean allowMultiValuedHeaders )
+    public ResponseHeaderInstance( boolean allowMultiValuedHeaders )
     {
         this.headers = new HeadersInstance( allowMultiValuedHeaders );
         this.cookies = new CookiesInstance();
+    }
+
+    @Override
+    public Status status()
+    {
+        return status;
+    }
+
+    public ResponseHeader withStatus( Status status )
+    {
+        this.status = status;
+        return this;
+    }
+
+    public ResponseHeader withStatus( int code )
+    {
+        this.status = Status.valueOf( code );
+        return this;
+    }
+
+    public ResponseHeader withStatus( int code, String reasonPhrase )
+    {
+        this.status = new Status( code, reasonPhrase );
+        return this;
     }
 
     @Override

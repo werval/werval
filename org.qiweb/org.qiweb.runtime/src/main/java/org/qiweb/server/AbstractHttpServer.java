@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.outcomes;
+package org.qiweb.server;
 
-import org.qiweb.api.http.ResponseHeader;
-
-/**
- * Outcome of a HTTP Request processing.
- */
-public interface Outcome
+public abstract class AbstractHttpServer
+    implements HttpServer
 {
-    /**
-     * @return Outcome HTTP Response header.
-     */
-    ResponseHeader responseHeader();
-
 }

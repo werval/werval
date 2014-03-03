@@ -18,7 +18,7 @@ package org.qiweb.api.context;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.http.Response;
+import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -86,7 +86,7 @@ public class CurrentContext
      * @return Current Response
      * @throws QiWebException if no Context in current Thread
      */
-    public static Response response()
+    public static ResponseHeader response()
     {
         return get().response();
     }

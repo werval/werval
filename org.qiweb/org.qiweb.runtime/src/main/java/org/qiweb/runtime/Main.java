@@ -15,9 +15,10 @@
  */
 package org.qiweb.runtime;
 
-import org.qiweb.api.Application.Mode;
-import org.qiweb.runtime.server.HttpServer;
-import org.qiweb.runtime.server.HttpServerInstance;
+import org.qiweb.api.Mode;
+import org.qiweb.server.HttpServer;
+import org.qiweb.server.netty.HttpServerInstance;
+import org.qiweb.spi.ApplicationSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public final class Main
         LOG.debug( "Starting QiWeb!" );
         try
         {
-            ApplicationInstance app = new ApplicationInstance( Mode.PROD );
+            ApplicationSPI app = new ApplicationInstance( Mode.PROD );
             HttpServer server = new HttpServerInstance( "qiweb-http-server", app );
             server.registerPassivationShutdownHook();
             server.activate();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.qiweb.runtime.routes;
 
-import io.netty.handler.codec.http.QueryStringEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.qiweb.api.context.CurrentContext;
 import org.qiweb.api.exceptions.NullArgumentException;
+import org.qiweb.api.http.QueryString;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.http.HttpConstants;
@@ -56,7 +56,7 @@ public class ReverseRouteInstance
     @Override
     public String uri()
     {
-        QueryStringEncoder encoder = new QueryStringEncoder( uri, charset );
+        QueryString.Encoder encoder = new QueryString.Encoder( uri, charset );
         for( Map.Entry<String, List<String>> entry : appendedQueryString.entrySet() )
         {
             String key = entry.getKey();

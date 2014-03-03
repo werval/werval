@@ -1,4 +1,4 @@
-package org.qiweb.runtime.server;
+package org.qiweb.server;
 
 import org.junit.ClassRule;
 import org.junit.Test;

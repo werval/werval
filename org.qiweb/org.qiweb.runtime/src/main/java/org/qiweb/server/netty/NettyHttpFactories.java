@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.server;
+package org.qiweb.server.netty;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.CookieDecoder;
@@ -59,6 +59,7 @@ import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestBodyInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.http.RequestInstance;
+import org.qiweb.runtime.util.ByteSource;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
@@ -223,7 +224,8 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
                         throw new QiWebException( ex.getMessage(), ex );
                     }
                 default:
-                    body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, allowMultiValuedUploads, request.content() );
+                    ByteSource bodyBytes = new ByteBufByteSource( request.content() );
+                    body = new RequestBodyInstance( requestCharset, allowMultiValuedFormAttributes, bodyBytes );
                     break;
             }
         }

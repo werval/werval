@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.util;
+package org.qiweb.server.netty;
 
 import io.netty.buffer.AbstractByteBuf;
 import io.netty.buffer.ByteBuf;
@@ -31,8 +31,6 @@ import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.runtime.server.HttpRequestAggregator;
-import org.qiweb.runtime.server.HttpRequestRouterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

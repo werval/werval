@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,19 +53,20 @@ import static org.qiweb.runtime.util.Iterables.skip;
  */
 public class RoutesTest
 {
-
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()
     {
-        Route route = route( "GET" ).on( "/foo/:id/bar/:slug" ).
-            to( FakeController.class, new MethodRecorder<FakeController>()
+        Route route = route( "GET" ).on( "/foo/:id/bar/:slug" ).to(
+            FakeController.class,
+            new MethodRecorder<FakeController>()
+            {
+                @Override
+                protected void call( FakeController controller )
                 {
-                    @Override
-                    protected void call( FakeController controller )
-                    {
-                        controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
-                    }
-            } ).modifiedBy( "service", "foo" ).newInstance();
+                    controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
+                }
+            }
+        ).modifiedBy( "service", "foo" ).newInstance();
 
         // Java 8 - Lambda Expressions
         // Route route = route( GET ).on( "/foo/:id/bar/:slug" ).
@@ -81,7 +81,6 @@ public class RoutesTest
     @SuppressWarnings( "unchecked" )
     public static enum RoutesToTest
     {
-
         // Simple routes
         SIMPLE_1( "GET / com.acme.app.FakeController.test()",
                   "GET", "/", FakeController.class, "test" ),
@@ -94,78 +93,84 @@ public class RoutesTest
                           "GET", "/", FakeController.class, "test", Arrays.asList( "service" ) ),
         // Controller params
         CONTROLLER_PARAMS_1( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another(String    id ,Integer slug   )",
-                             "GET", "/foo/:id/bar/:slug", FakeController.class, "another", new RoutesToTest.Params()
-        {
-            @Override
-            public Map<String, Class<?>> params()
-            {
-                Map<String, Class<?>> params = new LinkedHashMap<>();
-                params.put( "id", String.class );
-                params.put( "slug", Integer.class );
-                return params;
-            }
-        } ),
+                             "GET", "/foo/:id/bar/:slug", FakeController.class, "another",
+                             new RoutesToTest.Params()
+                             {
+                                 @Override
+                                 public Map<String, Class<?>> params()
+                                 {
+                                     Map<String, Class<?>> params = new LinkedHashMap<>();
+                                     params.put( "id", String.class );
+                                     params.put( "slug", Integer.class );
+                                     return params;
+                                 }
+                             } ),
         CONTROLLER_PARAMS_2( "GET /foo/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
-                             "GET", "/foo/bar/:slug/cathedral/:id", FakeController.class, "another", new RoutesToTest.Params()
-        {
-            @Override
-            public Map<String, Class<?>> params()
-            {
-                Map<String, Class<?>> params = new LinkedHashMap<>();
-                params.put( "id", String.class );
-                params.put( "slug", Integer.class );
-                return params;
-            }
-        } ),
+                             "GET", "/foo/bar/:slug/cathedral/:id", FakeController.class, "another",
+                             new RoutesToTest.Params()
+                             {
+                                 @Override
+                                 public Map<String, Class<?>> params()
+                                 {
+                                     Map<String, Class<?>> params = new LinkedHashMap<>();
+                                     params.put( "id", String.class );
+                                     params.put( "slug", Integer.class );
+                                     return params;
+                                 }
+                             } ),
         // Wildcards
         WILDCARDS_1( "GET /static/*path com.acme.app.FakeController.wild( String path )",
-                     "GET", "/static/*path", FakeController.class, "wild", new RoutesToTest.Params()
-        {
-            @Override
-            public Map<String, Class<?>> params()
-            {
-                Map<String, Class<?>> params = new LinkedHashMap<>();
-                params.put( "path", String.class );
-                return params;
-            }
-        } ),
+                     "GET", "/static/*path", FakeController.class, "wild",
+                     new RoutesToTest.Params()
+                     {
+                         @Override
+                         public Map<String, Class<?>> params()
+                         {
+                             Map<String, Class<?>> params = new LinkedHashMap<>();
+                             params.put( "path", String.class );
+                             return params;
+                         }
+                     } ),
         WILDCARDS_2( "GET /d/*path/:slug com.acme.app.FakeController.another( String path, Integer slug )",
-                     "GET", "/d/*path/:slug", FakeController.class, "another", new RoutesToTest.Params()
-        {
-            @Override
-            public Map<String, Class<?>> params()
-            {
-                Map<String, Class<?>> params = new LinkedHashMap<>();
-                params.put( "path", String.class );
-                params.put( "slug", Integer.class );
-                return params;
-            }
-        } ),
+                     "GET", "/d/*path/:slug", FakeController.class, "another",
+                     new RoutesToTest.Params()
+                     {
+                         @Override
+                         public Map<String, Class<?>> params()
+                         {
+                             Map<String, Class<?>> params = new LinkedHashMap<>();
+                             params.put( "path", String.class );
+                             params.put( "slug", Integer.class );
+                             return params;
+                         }
+                     } ),
         // Query string
         QUERY_STRING_1( "GET /nothing/at/all com.acme.app.FakeController.another( String id, Integer slug )",
-                        "GET", "/nothing/at/all", FakeController.class, "another", new RoutesToTest.Params()
-        {
-            @Override
-            public Map<String, Class<?>> params()
-            {
-                Map<String, Class<?>> params = new LinkedHashMap<>();
-                params.put( "id", String.class );
-                params.put( "slug", Integer.class );
-                return params;
-            }
-        } ),
+                        "GET", "/nothing/at/all", FakeController.class, "another",
+                        new RoutesToTest.Params()
+                        {
+                            @Override
+                            public Map<String, Class<?>> params()
+                            {
+                                Map<String, Class<?>> params = new LinkedHashMap<>();
+                                params.put( "id", String.class );
+                                params.put( "slug", Integer.class );
+                                return params;
+                            }
+                        } ),
         QUERY_STRING_2( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )",
-                        "GET", "/foo/:id/bar", FakeController.class, "another", new RoutesToTest.Params()
-        {
-            @Override
-            public Map<String, Class<?>> params()
-            {
-                Map<String, Class<?>> params = new LinkedHashMap<>();
-                params.put( "id", String.class );
-                params.put( "slug", Integer.class );
-                return params;
-            }
-        } ),
+                        "GET", "/foo/:id/bar", FakeController.class, "another",
+                        new RoutesToTest.Params()
+                        {
+                            @Override
+                            public Map<String, Class<?>> params()
+                            {
+                                Map<String, Class<?>> params = new LinkedHashMap<>();
+                                params.put( "id", String.class );
+                                params.put( "slug", Integer.class );
+                                return params;
+                            }
+                        } ),
         // No parenthesis
         NO_PARENTHESIS_1( "  POST    /foo/bar    com.acme.app.FakeController.test",
                           "POST", "/foo/bar", FakeController.class, "test" ),
@@ -250,11 +255,8 @@ public class RoutesTest
 
         public static interface Params
         {
-
             Map<String, Class<?>> params();
-
         }
-
     }
 
     @Test
@@ -284,8 +286,11 @@ public class RoutesTest
     @Test
     public void givenMultipleRoutesStringWhenParsingExpectCorrectRoutes()
     {
-        Application app = new ApplicationInstance( new RoutesParserProvider(
-            "\n" + RoutesToTest.SIMPLE_1.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.SIMPLE_2.routeString + "\n" ) );
+        Application app = new ApplicationInstance(
+            new RoutesParserProvider(
+                "\n" + RoutesToTest.SIMPLE_1.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.SIMPLE_2.routeString + "\n"
+            )
+        );
 
         assertThat( count( app.routes() ), is( 2L ) );
 
@@ -320,12 +325,14 @@ public class RoutesTest
 
     private RequestHeader reqHeadForGet( String requestUri )
     {
-        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( requestUri, UTF_8 );
+        QueryString.Decoder queryStringDecoder = new QueryString.Decoder( requestUri, UTF_8 );
         String requestPath = URLs.decode( queryStringDecoder.path(), UTF_8 );
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
-        return new RequestHeaderInstance( "identity", "127.0.0.1", "HTTP/1.1",
-                                          "GET", requestUri, requestPath,
-                                          queryString, new HeadersInstance( false ), new CookiesInstance() );
+        return new RequestHeaderInstance(
+            "identity", "127.0.0.1", "HTTP/1.1",
+            "GET", requestUri, requestPath,
+            queryString, new HeadersInstance( false ), new CookiesInstance()
+        );
     }
 
     private void assertRoute( Route route, RoutesToTest refRoute )
@@ -376,5 +383,4 @@ public class RoutesTest
                         equalTo( refRouteModifiers.get( idx ) ) );
         }
     }
-
 }
