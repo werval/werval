@@ -46,7 +46,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 public class QiWebTest
     implements QiWebTestSupport
 {
-
     private final String configurationResourceNameOverride;
     private final RoutesProvider routesProviderOverride;
     private HttpServerInstance httpServer;
@@ -80,7 +79,7 @@ public class QiWebTest
         httpServer = new HttpServerInstance( "qiweb-test", app );
         httpServer.activate();
 
-        // Setup RestAssured if present
+        // Setup RestAssured defaults if present
         try
         {
             Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
@@ -152,5 +151,4 @@ public class QiWebTest
     {
         return new RoutesConfProvider();
     }
-
 }

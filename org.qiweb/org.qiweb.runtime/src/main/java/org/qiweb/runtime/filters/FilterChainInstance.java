@@ -34,7 +34,6 @@ import org.qiweb.api.outcomes.Outcome;
     /* package */ static class FilterChainControllerTail
         implements FilterChain
     {
-
         private final Application app;
         private final Global global;
 
@@ -50,7 +49,6 @@ import org.qiweb.api.outcomes.Outcome;
             Object controller = global.getControllerInstance( app, context.route().controllerType() );
             return global.invokeControllerMethod( context, controller );
         }
-
     }
 
     private final Application app;

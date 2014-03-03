@@ -45,7 +45,6 @@ public class FilterChainFactory
 
     private FilterChain buildFilterChain( Application app, Global global, Stack<Class<? extends Filter>> filters, Context context )
     {
-
         if( filters.isEmpty() )
         {
             return new FilterChainControllerTail( app, global );

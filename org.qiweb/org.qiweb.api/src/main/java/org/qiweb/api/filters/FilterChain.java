@@ -23,7 +23,6 @@ import org.qiweb.api.outcomes.Outcome;
  */
 public interface FilterChain
 {
-
     /**
      * Pass the Context to the next Filter in the chain.
      *
@@ -31,5 +30,4 @@ public interface FilterChain
      * @return Next Outcome
      */
     Outcome next( Context context );
-
 }

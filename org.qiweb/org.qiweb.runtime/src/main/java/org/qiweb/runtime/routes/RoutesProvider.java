@@ -23,7 +23,5 @@ import org.qiweb.api.routes.Routes;
  */
 public interface RoutesProvider
 {
-
     Routes routes( Application application );
-
 }

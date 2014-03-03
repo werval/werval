@@ -45,9 +45,8 @@ import org.qiweb.runtime.routes.RoutesProvider;
  * </p>
  */
 public class QiWebRule
-        implements QiWebTestSupport, TestRule
+    implements QiWebTestSupport, TestRule
 {
-
     private final QiWebTest qiweb;
 
     public QiWebRule()
@@ -102,7 +101,7 @@ public class QiWebRule
         {
             @Override
             public void evaluate()
-                    throws Throwable
+                throws Throwable
             {
                 qiweb.beforeEachQiWebTestMethod();
                 try
@@ -116,5 +115,4 @@ public class QiWebRule
             }
         };
     }
-
 }

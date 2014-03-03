@@ -19,7 +19,6 @@ import org.qiweb.api.Application;
 
 public interface QiWebTestSupport
 {
-
     /**
      * @return QiWeb Application
      */
@@ -39,5 +38,4 @@ public interface QiWebTestSupport
      * @return QiWeb Application base HTTP URL based on listening address and port Configuration
      */
     String baseHttpUrl();
-
 }

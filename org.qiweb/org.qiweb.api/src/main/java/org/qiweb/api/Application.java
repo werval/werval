@@ -38,7 +38,6 @@ public interface Application
      */
     enum Mode
     {
-
         /**
          * Development Mode.
          * <p>Source is watched, Application is restarted on-demand, stacktraces are disclosed in responses.</p>

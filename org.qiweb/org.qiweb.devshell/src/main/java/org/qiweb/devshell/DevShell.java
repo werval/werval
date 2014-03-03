@@ -123,13 +123,17 @@ public final class DevShell
 
             // Config
             Class<?> configClass = appRealm.loadClass( "org.qiweb.api.Config" );
-            Object configInstance = appRealm.loadClass( "org.qiweb.runtime.ConfigInstance" ).getConstructor( new Class<?>[]
-            {
-                ClassLoader.class
-            } ).newInstance( new Object[]
-            {
-                appRealm
-            } );
+            Object configInstance = appRealm.loadClass( "org.qiweb.runtime.ConfigInstance" ).getConstructor(
+                new Class<?>[]
+                {
+                    ClassLoader.class
+                }
+            ).newInstance(
+                new Object[]
+                {
+                    appRealm
+                }
+            );
 
             // RoutesProvider
             Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
@@ -138,21 +142,24 @@ public final class DevShell
             // Application
             Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );
             Class<?> modeClass = appRealm.loadClass( "org.qiweb.api.Application$Mode" );
-            Object appInstance = appClass.getConstructor( new Class<?>[]
-            {
-                modeClass,
-                configClass,
-                ClassLoader.class,
-                routesProviderClass
-            } ).
-                newInstance( new Object[]
-                    {
-                        // Dev Mode
-                        modeClass.getEnumConstants()[0],
-                        configInstance,
-                        appRealm,
-                        routesProviderInstance
-                } );
+            Object appInstance = appClass.getConstructor(
+                new Class<?>[]
+                {
+                    modeClass,
+                    configClass,
+                    ClassLoader.class,
+                    routesProviderClass
+                }
+            ).newInstance(
+                new Object[]
+                {
+                    // Dev Mode
+                    modeClass.getEnumConstants()[0],
+                    configInstance,
+                    appRealm,
+                    routesProviderInstance
+                }
+            );
 
             // HttpServer
             Object httpServer = appRealm.loadClass( "org.qiweb.runtime.server.HttpServerInstance" ).
