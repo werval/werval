@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
@@ -48,7 +49,7 @@ public class RequestInstance
     }
 
     @Override
-    public String version()
+    public ProtocolVersion version()
     {
         return header.version();
     }
@@ -111,6 +112,12 @@ public class RequestInstance
     public String charset()
     {
         return header.charset();
+    }
+
+    @Override
+    public boolean isKeepAlive()
+    {
+        return header.isKeepAlive();
     }
 
     @Override

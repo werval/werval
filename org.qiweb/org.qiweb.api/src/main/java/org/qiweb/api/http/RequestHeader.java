@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public interface RequestHeader
     /**
      * @return The HTTP Request Protocol Version such as "HTTP/1.0" or "HTTP/1.1".
      */
-    String version();
+    ProtocolVersion version();
 
     /**
      * @return The HTTP Request Method
@@ -116,4 +116,10 @@ public interface RequestHeader
      */
     String charset();
 
+    /**
+     * Return {@literal true} if and only if the connection can remain open.
+     * <p>Honnor {@link Headers.Names#CONNECTION} header and then protocol version defaults.</p>
+     * @return {@literal true} if the connection should be kept-alive, {@literal false} otherwise
+     */
+    boolean isKeepAlive();
 }

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.util.Strings;
@@ -27,9 +28,12 @@ import org.qiweb.runtime.exceptions.BadRequestException;
 
 import static java.util.Collections.emptyList;
 import static java.util.Locale.US;
+import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.HOST;
 import static org.qiweb.api.http.Headers.Names.X_FORWARDED_FOR;
+import static org.qiweb.api.http.Headers.Values.CLOSE;
+import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.api.util.Strings.isEmpty;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
@@ -65,7 +69,7 @@ public class RequestHeaderInstance
     private final boolean xffEnabled;
     private final boolean xffCheckProxies;
     private final List<String> xffTrustedProxies;
-    private final String version;
+    private final ProtocolVersion version;
     private final String method;
     private final String uri;
     private final String path;
@@ -74,7 +78,7 @@ public class RequestHeaderInstance
     private final Cookies cookies;
 
     public RequestHeaderInstance( String identity, String remoteSocketAddress,
-                                  String version, String method,
+                                  ProtocolVersion version, String method,
                                   String uri, String path, QueryString queryString,
                                   Headers headers, Cookies cookies )
     {
@@ -89,7 +93,7 @@ public class RequestHeaderInstance
 
     public RequestHeaderInstance( String identity, String remoteSocketAddress,
                                   boolean xffEnabled, boolean xffCheckProxies, List<String> xffTrustedProxies,
-                                  String version, String method,
+                                  ProtocolVersion version, String method,
                                   String uri, String path, QueryString queryString,
                                   Headers headers, Cookies cookies )
     {
@@ -114,7 +118,7 @@ public class RequestHeaderInstance
     }
 
     @Override
-    public String version()
+    public ProtocolVersion version()
     {
         return version;
     }
@@ -249,4 +253,18 @@ public class RequestHeaderInstance
         return extractCharset( headers.singleValue( CONTENT_TYPE ) );
     }
 
+    @Override
+    public boolean isKeepAlive()
+    {
+        String connection = headers.singleValue( CONNECTION );
+        if( CLOSE.equalsIgnoreCase( connection ) )
+        {
+            return false;
+        }
+        if( version.isKeepAliveDefault() )
+        {
+            return true;
+        }
+        return KEEP_ALIVE.equalsIgnoreCase( connection );
+    }
 }

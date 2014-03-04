@@ -42,6 +42,7 @@ import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.runtime.routes.RouteBuilder.route;
 import static org.qiweb.runtime.util.Iterables.count;
@@ -329,7 +330,7 @@ public class RoutesTest
         String requestPath = URLs.decode( queryStringDecoder.path(), UTF_8 );
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
         return new RequestHeaderInstance(
-            "identity", "127.0.0.1", "HTTP/1.1",
+            "identity", "127.0.0.1", HTTP_1_1,
             "GET", requestUri, requestPath,
             queryString, new HeadersInstance( false ), new CookiesInstance()
         );

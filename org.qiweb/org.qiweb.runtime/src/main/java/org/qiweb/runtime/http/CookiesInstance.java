@@ -25,6 +25,7 @@ import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 
 public class CookiesInstance
     implements MutableCookies
@@ -85,6 +86,14 @@ public class CookiesInstance
         ensureNotEmpty( "Cookie Name", name );
         // TODO Implement serious Cookie creation
         cookies.put( name, new CookieInstance( name, "", "", false, value == null ? Strings.EMPTY : value, true ) );
+        return this;
+    }
+
+    @Override
+    public MutableCookies set( Cookie cookie )
+    {
+        ensureNotNull( "Cookie", cookie );
+        cookies.put( cookie.name(), cookie );
         return this;
     }
 

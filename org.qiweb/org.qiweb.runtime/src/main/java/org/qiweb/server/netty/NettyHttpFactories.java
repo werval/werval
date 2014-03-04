@@ -45,6 +45,7 @@ import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
@@ -156,7 +157,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         return new RequestHeaderInstance(
             identity, remoteSocketAddress,
             xffEnabled, xffCheckProxies, xffTrustedProxies,
-            request.getProtocolVersion().text(),
+            ProtocolVersion.valueOf( request.getProtocolVersion().text() ),
             method,
             request.getUri(),
             requestPath,

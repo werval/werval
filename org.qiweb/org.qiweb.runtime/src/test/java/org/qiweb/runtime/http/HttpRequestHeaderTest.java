@@ -25,11 +25,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.HOST;
+import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 
 public class HttpRequestHeaderTest
 {
-
     @Test
     public void testPort()
     {
@@ -109,12 +109,11 @@ public class HttpRequestHeaderTest
 
     private RequestHeader withUri( String uri )
     {
-        return new RequestHeaderInstance( null, null, null, null, uri, null, null, null, null );
+        return new RequestHeaderInstance( null, null, HTTP_1_1, null, uri, null, null, null, null );
     }
 
     private RequestHeader withHeaders( Headers headers )
     {
-        return new RequestHeaderInstance( null, null, null, null, null, null, null, headers, null );
+        return new RequestHeaderInstance( null, null, HTTP_1_1, null, null, null, null, headers, null );
     }
-
 }

@@ -36,7 +36,8 @@ public class StaticFilesTest
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
         "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
-        + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )" ) );
+        + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )"
+    ) );
 
     private static final File ROOT = new File( "src/test/resources" );
 

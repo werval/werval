@@ -32,6 +32,7 @@ import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.runtime.routes.RouteBuilder.route;
 
 /**
@@ -133,7 +134,7 @@ public class WildcardRoutesTest
         return new RequestHeaderInstance(
             "abc",
             "127.0.0.1",
-            "HTTP/1.1",
+            HTTP_1_1,
             "GET",
             "http://localhost" + path,
             path,

@@ -15,12 +15,13 @@
  */
 package org.qiweb.api.http;
 
+import java.util.EnumSet;
+
 /**
  * HTTP Status Class.
  */
 public enum StatusClass
 {
-
     /**
      * 1xx Informational.
      */
@@ -88,7 +89,7 @@ public enum StatusClass
         return UNKNOWN;
     }
     // CHECKSTYLE:ON
-
+    private static final EnumSet<StatusClass> FORCE_CLOSE = EnumSet.of( CLIENT_ERROR, SERVER_ERROR, UNKNOWN );
     private final String reasonPhrase;
 
     private StatusClass( String reasonPhrase )
@@ -102,5 +103,10 @@ public enum StatusClass
     public String reasonPhrase()
     {
         return reasonPhrase;
+    }
+
+    public boolean isForceClose()
+    {
+        return FORCE_CLOSE.contains( this );
     }
 }
