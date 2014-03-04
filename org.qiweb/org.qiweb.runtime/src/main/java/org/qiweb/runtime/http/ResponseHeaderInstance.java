@@ -17,8 +17,13 @@ package org.qiweb.runtime.http;
 
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Status;
+
+import static org.qiweb.api.http.Headers.Names.CONNECTION;
+import static org.qiweb.api.http.Headers.Values.CLOSE;
+import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 
 /**
  * Response Header Instance.
@@ -28,12 +33,26 @@ public class ResponseHeaderInstance
 {
     private final MutableHeaders headers;
     private final MutableCookies cookies;
+    private ProtocolVersion version;
     private Status status = Status.valueOf( 0 );
 
-    public ResponseHeaderInstance( boolean allowMultiValuedHeaders )
+    public ResponseHeaderInstance( ProtocolVersion version, boolean allowMultiValuedHeaders )
     {
+        this.version = version;
         this.headers = new HeadersInstance( allowMultiValuedHeaders );
         this.cookies = new CookiesInstance();
+    }
+
+    @Override
+    public ProtocolVersion version()
+    {
+        return version;
+    }
+
+    public ResponseHeader withVersion( ProtocolVersion version )
+    {
+        this.version = version;
+        return this;
     }
 
     @Override
@@ -57,6 +76,38 @@ public class ResponseHeaderInstance
     public ResponseHeader withStatus( int code, String reasonPhrase )
     {
         this.status = new Status( code, reasonPhrase );
+        return this;
+    }
+
+    @Override
+    public boolean isKeepAlive()
+    {
+        return KEEP_ALIVE.equalsIgnoreCase( headers.singleValue( CONNECTION ) );
+    }
+
+    @Override
+    public ResponseHeader withKeepAliveHeaders( boolean keepAliveWanted )
+    {
+        String connection = headers.singleValue( CONNECTION );
+        if( connection.isEmpty() )
+        {
+            if( status.statusClass().isForceClose() )
+            {
+                if( version.isKeepAliveDefault() || keepAliveWanted )
+                {
+                    // Status Force CLOSE
+                    headers.withSingle( CONNECTION, CLOSE );
+                }
+            }
+            else
+            {
+                if( version.isKeepAliveDefault() || keepAliveWanted )
+                {
+                    // Keep-Alive
+                    headers.withSingle( CONNECTION, KEEP_ALIVE );
+                }
+            }
+        }
         return this;
     }
 

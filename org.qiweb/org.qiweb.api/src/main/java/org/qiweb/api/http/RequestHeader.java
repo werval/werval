@@ -15,11 +15,19 @@
  */
 package org.qiweb.api.http;
 
+import java.util.Map;
+import org.qiweb.api.routes.ParameterBinders;
+import org.qiweb.api.routes.Route;
+
 /**
  * Request header.
  * <p>Method, Path, QueryString, Headers and Cookies.</p>
  * <p>No Entity.</p>
  * <p>Helper methods.</p>
+ * <p>
+ *     Parameters are available once bound to a Route, see
+ *     {@link #bind(org.qiweb.api.routes.ParameterBinders, org.qiweb.api.routes.Route)} and {@link #parameters()}.
+ * </p>
  */
 public interface RequestHeader
 {
@@ -122,4 +130,19 @@ public interface RequestHeader
      * @return {@literal true} if the connection should be kept-alive, {@literal false} otherwise
      */
     boolean isKeepAlive();
+
+    /**
+     * Bind Route parameters.
+     * <p>Successive calls to {@link #parameters()} will return bound parameters.</p>
+     * @param parameterBinders Parameter binders
+     * @param route Route
+     * @return This very RequestHeader
+     */
+    RequestHeader bind( ParameterBinders parameterBinders, Route route );
+
+    /**
+     * Bound Route parameters.
+     * @return Request path and query-string bound parameters, or an empty Map if not bound
+     */
+    Map<String, Object> parameters();
 }

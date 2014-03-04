@@ -16,6 +16,7 @@
 package org.qiweb.runtime.http;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
@@ -23,6 +24,8 @@ import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.routes.ParameterBinders;
+import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
 
@@ -76,6 +79,7 @@ public class RequestHeaderInstance
     private final QueryString queryString;
     private final Headers headers;
     private final Cookies cookies;
+    private final Map<String, Object> parameters = new LinkedHashMap<>();
 
     public RequestHeaderInstance( String identity, String remoteSocketAddress,
                                   ProtocolVersion version, String method,
@@ -266,5 +270,19 @@ public class RequestHeaderInstance
             return true;
         }
         return KEEP_ALIVE.equalsIgnoreCase( connection );
+    }
+
+    @Override
+    public RequestHeader bind( ParameterBinders parameterBinders, Route route )
+    {
+        parameters.clear();
+        parameters.putAll( route.bindParameters( parameterBinders, path, queryString ) );
+        return this;
+    }
+
+    @Override
+    public Map<String, Object> parameters()
+    {
+        return Collections.unmodifiableMap( parameters );
     }
 }

@@ -15,7 +15,6 @@
  */
 package org.qiweb.runtime.http;
 
-import java.util.Collections;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
@@ -24,6 +23,8 @@ import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.routes.ParameterBinders;
+import org.qiweb.api.routes.Route;
 
 /**
  * Request Instance.
@@ -32,13 +33,11 @@ public class RequestInstance
     implements Request
 {
     private final RequestHeader header;
-    private final Map<String, Object> parameters;
     private final RequestBody body;
 
-    public RequestInstance( RequestHeader header, Map<String, Object> parameters, RequestBody body )
+    public RequestInstance( RequestHeader header, RequestBody body )
     {
         this.header = header;
-        this.parameters = parameters;
         this.body = body;
     }
 
@@ -133,9 +132,16 @@ public class RequestInstance
     }
 
     @Override
+    public Request bind( ParameterBinders parameterBinders, Route route )
+    {
+        header.bind( parameterBinders, route );
+        return this;
+    }
+
+    @Override
     public Map<String, Object> parameters()
     {
-        return Collections.unmodifiableMap( parameters );
+        return header.parameters();
     }
 
     @Override

@@ -22,10 +22,8 @@ import java.util.Set;
 /**
  * HTTP Headers.
  */
-@SuppressWarnings( "PublicInnerClass" )
 public interface Headers
 {
-
     /**
      * @return TRUE if there's no header, FALSE otherwise
      */
@@ -110,7 +108,6 @@ public interface Headers
      */
     interface Names
     {
-
         /**
          * {@code "Accept"}
          */
@@ -423,7 +420,6 @@ public interface Headers
          * {@code "X-QiWeb-Request-ID"}
          */
         String X_QIWEB_REQUEST_ID = "X-QiWeb-Request-ID";
-
     }
 
     /**
@@ -431,7 +427,6 @@ public interface Headers
      */
     interface Values
     {
-
         /**
          * {@code "base64"}
          */
@@ -552,7 +547,5 @@ public interface Headers
          * {@code "WebSocket"}
          */
         String WEBSOCKET = "WebSocket";
-
     }
-
 }

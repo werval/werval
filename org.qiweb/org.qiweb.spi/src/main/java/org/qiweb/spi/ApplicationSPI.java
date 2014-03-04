@@ -39,6 +39,4 @@ public interface ApplicationSPI
      */
     void reload( ClassLoader newClassLoader );
 
-    // Move to Application?
-    // CompletableFuture<Outcome> futureOutcomeOf( Request request );
 }

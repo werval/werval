@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.ServerCookieEncoder;
 import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
@@ -34,8 +35,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Error;
@@ -45,9 +44,7 @@ import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
-import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
-import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
@@ -88,7 +85,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
@@ -213,131 +209,87 @@ public final class HttpRequestRouterHandler
             app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
         );
 
-        // Prepare Controller Context
-        ThreadContextHelper contextHelper = new ThreadContextHelper();
-        try
+        // Parse Request
+        RequestBody requestBody = bodyOf(
+            requestHeader,
+            nettyRequest,
+            app.defaultCharset(),
+            app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
+            app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
+            app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED )
+        );
+        Request request = new RequestInstance( requestHeader, requestBody );
+
+        // Handle Request
+        Outcome outcome = outcomeOf( request );
+
+        // == Build the Netty Response
+        ResponseHeader responseHeader = outcome.responseHeader();
+
+        // Netty Version & Status
+        HttpVersion responseVersion = HttpVersion.valueOf( responseHeader.version().toString() );
+        HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( responseHeader.status().code() );
+
+        // Netty Headers & Body output
+        final HttpResponse nettyResponse;
+        final ChannelFuture writeFuture;
+        if( outcome instanceof ChunkedInputOutcome )
         {
-            // Route the request
-            final Route route = app.routes().route( requestHeader );
-            LOG.debug( "{} Routing request to: {}", requestIdentity, route );
-
-            // Bind parameters
-            Map<String, Object> parameters = route.bindParameters(
-                app.parameterBinders(),
-                requestHeader.path(),
-                requestHeader.queryString()
+            ChunkedInputOutcome chunkedOutcome = (ChunkedInputOutcome) outcome;
+            nettyResponse = new DefaultHttpResponse( responseVersion, responseStatus );
+            // Headers
+            applyResponseHeader( responseHeader, nettyResponse );
+            nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
+            nettyResponse.headers().set( TRAILER, X_QIWEB_CONTENT_LENGTH );
+            // Body
+            nettyContext.write( nettyResponse );
+            writeFuture = nettyContext.writeAndFlush(
+                new HttpChunkedBodyEncoder(
+                    new ChunkedStream( chunkedOutcome.inputStream(), chunkedOutcome.chunkSize() )
+                )
             );
-
-            // TODO Eventually UPGRADE to WebSocket
-            // Parse Session Cookie
-            Session session = new SessionInstance(
-                app.config(),
-                app.crypto(),
-                requestHeader.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) )
-            );
-
-            // Parse Request
-            RequestBody requestBody = bodyOf(
-                requestHeader,
-                nettyRequest,
-                app.defaultCharset(),
-                app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
-                app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
-                app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED )
-            );
-            Request request = new RequestInstance( requestHeader, requestBody );
-
-            // Prepare Response Header
-            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
-                app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
-            );
-
-            // Set Controller Context
-            Context context = new ContextInstance( app, session, route, request, responseHeader );
-            contextHelper.setOnCurrentThread( context );
-
-            // Invoke Controller FilterChain, ended by Controller Method Invokation
-            LOG.trace( "{} Invoking controller method: {}", requestIdentity, route.controllerMethod() );
-            Outcome outcome = new FilterChainFactory().buildFilterChain( app, app.global(), context ).next( context );
-            // Session
-            if( !app.config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
-            {
-                outcome.responseHeader().cookies().set( session.signedCookie() );
-            }
-
-            // == Build the response
-            ResponseHeader responseHeader = outcome.responseHeader();
-
-            final boolean forceClose = applyKeepAliveHttpHeaders( requestHeader, responseHeader );
-
-            // Status
-            HttpResponseStatus responseStatus = HttpResponseStatus.valueOf( responseHeader.status().code() );
-
-            // Netty Headers & Body output
-            final HttpResponse nettyResponse;
-            final ChannelFuture writeFuture;
-            if( outcome instanceof ChunkedInputOutcome )
-            {
-                ChunkedInputOutcome chunkedOutcome = (ChunkedInputOutcome) outcome;
-                nettyResponse = new DefaultHttpResponse( HTTP_1_1, responseStatus );
-                // Headers
-                applyResponseHeader( responseHeader, nettyResponse );
-                nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
-                nettyResponse.headers().set( TRAILER, X_QIWEB_CONTENT_LENGTH );
-                // Body
-                nettyContext.write( nettyResponse );
-                writeFuture = nettyContext.writeAndFlush(
-                    new HttpChunkedBodyEncoder(
-                        new ChunkedStream( chunkedOutcome.inputStream(), chunkedOutcome.chunkSize() )
-                    )
-                );
-            }
-            else if( outcome instanceof InputStreamOutcome )
-            {
-                InputStreamOutcome streamOutcome = (InputStreamOutcome) outcome;
-                nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                // Headers
-                applyResponseHeader( responseHeader, nettyResponse );
-                nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
-                // Body
-                ( (ByteBufHolder) nettyResponse ).content().writeBytes(
-                    streamOutcome.bodyInputStream(),
-                    new BigDecimal( streamOutcome.contentLength() ).intValueExact()
-                );
-                writeFuture = nettyContext.writeAndFlush( nettyResponse );
-            }
-            else if( outcome instanceof SimpleOutcome )
-            {
-                SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
-                byte[] body = simpleOutcome.body().asBytes();
-                nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                // Headers
-                applyResponseHeader( responseHeader, nettyResponse );
-                nettyResponse.headers().set( CONTENT_LENGTH, body.length );
-                // Body
-                ( (ByteBufHolder) nettyResponse ).content().writeBytes( body );
-                writeFuture = nettyContext.writeAndFlush( nettyResponse );
-            }
-            else
-            {
-                LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
-                nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, responseStatus );
-                applyResponseHeader( responseHeader, nettyResponse );
-                writeFuture = nettyContext.writeAndFlush( nettyResponse );
-            }
-
-            // Listen to request completion
-            writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
-
-            // Close the connection as soon as the response is sent if not keep alive
-            if( forceClose || nettyContext.executor().isShuttingDown() )
-            {
-                writeFuture.addListener( ChannelFutureListener.CLOSE );
-            }
         }
-        finally
+        else if( outcome instanceof InputStreamOutcome )
         {
-            contextHelper.clearCurrentThread();
+            InputStreamOutcome streamOutcome = (InputStreamOutcome) outcome;
+            nettyResponse = new DefaultFullHttpResponse( responseVersion, responseStatus );
+            // Headers
+            applyResponseHeader( responseHeader, nettyResponse );
+            nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
+            // Body
+            ( (ByteBufHolder) nettyResponse ).content().writeBytes(
+                streamOutcome.bodyInputStream(),
+                new BigDecimal( streamOutcome.contentLength() ).intValueExact()
+            );
+            writeFuture = nettyContext.writeAndFlush( nettyResponse );
+        }
+        else if( outcome instanceof SimpleOutcome )
+        {
+            SimpleOutcome simpleOutcome = (SimpleOutcome) outcome;
+            byte[] body = simpleOutcome.body().asBytes();
+            nettyResponse = new DefaultFullHttpResponse( responseVersion, responseStatus );
+            // Headers
+            applyResponseHeader( responseHeader, nettyResponse );
+            nettyResponse.headers().set( CONTENT_LENGTH, body.length );
+            // Body
+            ( (ByteBufHolder) nettyResponse ).content().writeBytes( body );
+            writeFuture = nettyContext.writeAndFlush( nettyResponse );
+        }
+        else
+        {
+            LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
+            nettyResponse = new DefaultFullHttpResponse( responseVersion, responseStatus );
+            applyResponseHeader( responseHeader, nettyResponse );
+            writeFuture = nettyContext.writeAndFlush( nettyResponse );
+        }
+
+        // Listen to request completion
+        writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
+
+        // Close the connection as soon as the response is sent if not keep alive
+        if( !outcome.responseHeader().isKeepAlive() || nettyContext.executor().isShuttingDown() )
+        {
+            writeFuture.addListener( ChannelFutureListener.CLOSE );
         }
     }
 
@@ -349,54 +301,76 @@ public final class HttpRequestRouterHandler
         }
     }
 
-    /**
-     * Apply HTTP 1.1 Keep-Alive headers.
-     * @return TRUE if the connection should be closed, otherwise return FALSE
-     */
-    private boolean applyKeepAliveHttpHeaders( RequestHeader requestHeader, ResponseHeader responseHeader )
+    private Outcome outcomeOf( Request request )
     {
-        boolean keepAlive = requestHeader.isKeepAlive();
-        if( responseHeader.status().statusClass().isForceClose() )
+        // Prepare Controller Context
+        ThreadContextHelper contextHelper = new ThreadContextHelper();
+        try
         {
-            if( keepAlive )
+            // Route the request
+            final Route route = app.routes().route( request );
+            LOG.debug( "{} Routing request to: {}", request.identity(), route );
+
+            // Bind parameters
+            request.bind( app.parameterBinders(), route );
+
+            // Parse Session Cookie
+            Session session = new SessionInstance(
+                app.config(),
+                app.crypto(),
+                request.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) )
+            );
+
+            // Prepare Response Header
+            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
+                request.version(),
+                app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
+            );
+
+            // Set Controller Context
+            Context context = new ContextInstance( app, session, route, request, responseHeader );
+            contextHelper.setOnCurrentThread( context );
+
+            // Invoke Controller FilterChain, ended by Controller Method Invokation
+            LOG.trace( "{Invoking controller method: {}", route.controllerMethod() );
+            Outcome outcome = new FilterChainFactory().buildFilterChain( app, app.global(), context ).next( context );
+
+            // Apply Session to ResponseHeader
+            if( !app.config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
             {
-                // Apply Keep-Alive response headers if needed
-                responseHeader.headers().with( CONNECTION, CLOSE );
+                outcome.responseHeader().cookies().set( session.signedCookie() );
             }
-            // Always close on errors and unknown statuses
-            return true;
+
+            // Apply Keep-Alive to ResponseHeader
+            outcome.responseHeader().withKeepAliveHeaders( request.isKeepAlive() );
+
+            // Add X-QiWeb-Request-ID header to ResponseHeader
+            outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, requestIdentity );
+
+            // Done!
+            return outcome;
         }
-        // Don't close on informational, success or redirection statuses
-        if( keepAlive )
+        finally
         {
-            // Apply Keep-Alive response headers if needed
-            responseHeader.headers().with( CONNECTION, KEEP_ALIVE );
+            contextHelper.clearCurrentThread();
         }
-        // Except if request is not keep-alive
-        return !keepAlive;
     }
 
     /**
-     * @return TRUE if the channel should be closed, otherwise return FALSE
+     * Apply Headers and Cookies into Netty HttpResponse.
+     * @param response QiWeb ResponseHeader
+     * @param nettyResponse Netty HttpResponse
      */
     private void applyResponseHeader( ResponseHeader response, HttpResponse nettyResponse )
     {
-        response.headers().with( X_QIWEB_REQUEST_ID, requestIdentity );
-        applyHttpHeaders( response.headers(), nettyResponse );
-        applyCookies( response.cookies(), nettyResponse );
-    }
-
-    private void applyHttpHeaders( Headers headers, HttpResponse nettyResponse )
-    {
-        for( String name : headers.names() )
+        for( String name : response.headers().names() )
         {
-            nettyResponse.headers().add( name, headers.values( name ) );
+            nettyResponse.headers().add(
+                name,
+                response.headers().values( name )
+            );
         }
-    }
-
-    private void applyCookies( Cookies cookies, HttpResponse nettyResponse )
-    {
-        for( Cookie cookie : cookies )
+        for( Cookie cookie : response.cookies() )
         {
             nettyResponse.headers().add(
                 SET_COOKIE,
