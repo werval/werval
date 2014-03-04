@@ -28,14 +28,24 @@ import org.qiweb.api.Errors;
 import org.qiweb.api.Global;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.Mode;
+import org.qiweb.api.context.Context;
+import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.http.Request;
+import org.qiweb.api.http.Session;
 import org.qiweb.api.mime.MimeTypes;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
+import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
+import org.qiweb.runtime.context.ContextInstance;
+import org.qiweb.runtime.filters.FilterChainFactory;
+import org.qiweb.runtime.http.ResponseHeaderInstance;
+import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
@@ -46,9 +56,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
+import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
@@ -304,6 +318,64 @@ public final class ApplicationInstance
         this.config = new ConfigInstance( newClassLoader );
         configure();
         activate();
+    }
+
+    // SPI
+    @Override
+    public Outcome handleRequest( Request request )
+    {
+        // Prepare Controller Context
+        ThreadContextHelper contextHelper = new ThreadContextHelper();
+        try
+        {
+            // Route the request
+            final Route route = routes().route( request );
+            LOG.debug( "{} Routing request to: {}", request.identity(), route );
+
+            // Bind parameters
+            request.bind( parameterBinders(), route );
+
+            // Parse Session Cookie
+            Session session = new SessionInstance(
+                config(),
+                crypto(),
+                request.cookies().get( config().string( APP_SESSION_COOKIE_NAME ) )
+            );
+
+            // Prepare Response Header
+            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
+                request.version(),
+                config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
+            );
+
+            // Set Controller Context
+            Context context = new ContextInstance( this, session, route, request, responseHeader );
+            contextHelper.setOnCurrentThread( context );
+
+            // Invoke Controller FilterChain, ended by Controller Method Invokation
+            LOG.trace( "{Invoking controller method: {}", route.controllerMethod() );
+            Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context );
+
+            // Apply Session to ResponseHeader
+            if( !config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+            {
+                outcome.responseHeader().cookies().set( session.signedCookie() );
+            }
+
+            // Apply Keep-Alive to ResponseHeader
+            outcome.responseHeader().withKeepAliveHeaders( request.isKeepAlive() );
+
+            // Add X-QiWeb-Request-ID header to ResponseHeader
+            outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
+
+            // Done!
+            return outcome;
+        }
+        finally
+        {
+            // Clean up Controller Context
+            contextHelper.clearCurrentThread();
+        }
     }
 
     private void configure()

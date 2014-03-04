@@ -39,8 +39,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Error;
 import org.qiweb.api.Mode;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
@@ -49,15 +47,10 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
-import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.RequestInstance;
-import org.qiweb.runtime.http.ResponseHeaderInstance;
-import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
@@ -85,8 +78,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
-import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
@@ -171,7 +162,7 @@ public final class HttpRequestRouterHandler
         requestIdentity = generateNewRequestIdentity();
         LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
 
-        // Return 503 to request incoming while shutting down
+        // Return 503 to incoming requests while shutting down
         if( nettyContext.executor().isShuttingDown() )
         {
             FullHttpResponse response = new DefaultFullHttpResponse(
@@ -221,7 +212,7 @@ public final class HttpRequestRouterHandler
         Request request = new RequestInstance( requestHeader, requestBody );
 
         // Handle Request
-        Outcome outcome = outcomeOf( request );
+        Outcome outcome = app.handleRequest( request );
 
         // == Build the Netty Response
         ResponseHeader responseHeader = outcome.responseHeader();
@@ -298,61 +289,6 @@ public final class HttpRequestRouterHandler
         if( devSpi != null && devSpi.isSourceChanged() )
         {
             devSpi.rebuild();
-        }
-    }
-
-    private Outcome outcomeOf( Request request )
-    {
-        // Prepare Controller Context
-        ThreadContextHelper contextHelper = new ThreadContextHelper();
-        try
-        {
-            // Route the request
-            final Route route = app.routes().route( request );
-            LOG.debug( "{} Routing request to: {}", request.identity(), route );
-
-            // Bind parameters
-            request.bind( app.parameterBinders(), route );
-
-            // Parse Session Cookie
-            Session session = new SessionInstance(
-                app.config(),
-                app.crypto(),
-                request.cookies().get( app.config().string( APP_SESSION_COOKIE_NAME ) )
-            );
-
-            // Prepare Response Header
-            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
-                request.version(),
-                app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
-            );
-
-            // Set Controller Context
-            Context context = new ContextInstance( app, session, route, request, responseHeader );
-            contextHelper.setOnCurrentThread( context );
-
-            // Invoke Controller FilterChain, ended by Controller Method Invokation
-            LOG.trace( "{Invoking controller method: {}", route.controllerMethod() );
-            Outcome outcome = new FilterChainFactory().buildFilterChain( app, app.global(), context ).next( context );
-
-            // Apply Session to ResponseHeader
-            if( !app.config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
-            {
-                outcome.responseHeader().cookies().set( session.signedCookie() );
-            }
-
-            // Apply Keep-Alive to ResponseHeader
-            outcome.responseHeader().withKeepAliveHeaders( request.isKeepAlive() );
-
-            // Add X-QiWeb-Request-ID header to ResponseHeader
-            outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, requestIdentity );
-
-            // Done!
-            return outcome;
-        }
-        finally
-        {
-            contextHelper.clearCurrentThread();
         }
     }
 

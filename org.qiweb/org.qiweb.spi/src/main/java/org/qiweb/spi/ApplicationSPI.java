@@ -17,6 +17,8 @@ package org.qiweb.spi;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
+import org.qiweb.api.http.Request;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Reflectively;
 
 /**
@@ -39,4 +41,5 @@ public interface ApplicationSPI
      */
     void reload( ClassLoader newClassLoader );
 
+    Outcome handleRequest( Request request );
 }
