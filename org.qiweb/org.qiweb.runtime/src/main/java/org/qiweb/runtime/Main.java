@@ -17,7 +17,7 @@ package org.qiweb.runtime;
 
 import org.qiweb.api.Mode;
 import org.qiweb.server.HttpServer;
-import org.qiweb.server.netty.HttpServerInstance;
+import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public final class Main
         try
         {
             ApplicationSPI app = new ApplicationInstance( Mode.PROD );
-            HttpServer server = new HttpServerInstance( "qiweb-http-server", app );
+            HttpServer server = new NettyServer( "qiweb-http-server", app );
             server.registerPassivationShutdownHook();
             server.activate();
             if( LOG.isInfoEnabled() )

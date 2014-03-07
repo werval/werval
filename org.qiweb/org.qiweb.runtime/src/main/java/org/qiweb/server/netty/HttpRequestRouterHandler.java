@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Error;
 import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.ParameterBinderException;
@@ -55,6 +53,7 @@ import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.runtime.util.Stacktraces;
+import org.qiweb.server.HttpServerHelper;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -110,14 +109,6 @@ public final class HttpRequestRouterHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
 {
     private static final Logger LOG = LoggerFactory.getLogger( HttpRequestRouterHandler.class );
-    private static final String REQUEST_IDENTITY_PREFIX = UUID.randomUUID().toString() + "-";
-    private static final AtomicLong REQUEST_IDENTITY_COUNT = new AtomicLong();
-
-    private static String generateNewRequestIdentity()
-    {
-        return new StringBuilder( REQUEST_IDENTITY_PREFIX ).
-            append( REQUEST_IDENTITY_COUNT.getAndIncrement() ).toString();
-    }
 
     private final class HttpRequestCompleteChannelFutureListener
         implements ChannelFutureListener
@@ -143,6 +134,7 @@ public final class HttpRequestRouterHandler
 
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
+    private final HttpServerHelper helper = new HttpServerHelper();
     private String requestIdentity;
 
     public HttpRequestRouterHandler( ApplicationSPI app, DevShellSPI devSpi )
@@ -159,7 +151,7 @@ public final class HttpRequestRouterHandler
                IOException
     {
         // Generate a unique identifier per request
-        requestIdentity = generateNewRequestIdentity();
+        requestIdentity = helper.generateNewRequestIdentity();
         LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
 
         // Return 503 to incoming requests while shutting down

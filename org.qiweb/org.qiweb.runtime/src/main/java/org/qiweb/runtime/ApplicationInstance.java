@@ -337,15 +337,15 @@ public final class ApplicationInstance
 
             // Parse Session Cookie
             Session session = new SessionInstance(
-                config(),
+                config,
                 crypto(),
-                request.cookies().get( config().string( APP_SESSION_COOKIE_NAME ) )
+                request.cookies().get( config.string( APP_SESSION_COOKIE_NAME ) )
             );
 
             // Prepare Response Header
             ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
                 request.version(),
-                config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
+                config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
             );
 
             // Set Controller Context
@@ -357,7 +357,7 @@ public final class ApplicationInstance
             Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context );
 
             // Apply Session to ResponseHeader
-            if( !config().bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+            if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
             {
                 outcome.responseHeader().cookies().set( session.signedCookie() );
             }

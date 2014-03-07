@@ -163,7 +163,7 @@ public final class DevShell
 
             // HttpServer
             Class<?> appSpiClass = appRealm.loadClass( "org.qiweb.spi.ApplicationSPI" );
-            Object httpServer = appRealm.loadClass( "org.qiweb.server.netty.HttpServerInstance" ).getConstructor(
+            Object httpServer = appRealm.loadClass( "org.qiweb.server.netty.NettyServer" ).getConstructor(
                 new Class<?>[]
                 {
                     String.class,

@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.server.AbstractHttpServer;
-import org.qiweb.server.HttpServer;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -40,49 +39,28 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
 
+/**
+ * Netty HTTP Server Instance.
+ */
 @Reflectively.Loaded( by = "DevShell" )
-public class HttpServerInstance
+public class NettyServer
     extends AbstractHttpServer
 {
-    private static final class ShutdownHook
-        implements Runnable
-    {
-        private final HttpServer server;
-
-        private ShutdownHook( HttpServer server )
-        {
-            this.server = server;
-        }
-
-        @Override
-        public void run()
-        {
-            server.passivate();
-        }
-    }
-
-    private static final Logger LOG = LoggerFactory.getLogger( HttpServerInstance.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NettyServer.class );
     private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
-    private final String identity;
-    private final ApplicationSPI app;
-    private final DevShellSPI devSpi;
     private final ChannelGroup allChannels;
-    private final Thread shutdownHook;
     private ServerBootstrap bootstrap;
 
-    public HttpServerInstance( String identity, ApplicationSPI app )
+    public NettyServer( String identity, ApplicationSPI app )
     {
         this( identity, app, null );
     }
 
     @Reflectively.Invoked( by = "DevShell" )
-    public HttpServerInstance( String identity, ApplicationSPI app, DevShellSPI devSpi )
+    public NettyServer( String identity, ApplicationSPI app, DevShellSPI devSpi )
     {
-        this.identity = identity;
-        this.app = app;
-        this.devSpi = devSpi;
+        super( identity, app, devSpi );
         this.allChannels = new DefaultChannelGroup( identity, null );
-        this.shutdownHook = new Thread( new ShutdownHook( this ), "qiweb-shutdown" );
     }
 
     @Override
@@ -173,18 +151,5 @@ public class HttpServerInstance
             app.passivate();
         } );
         shutdownFuture.awaitUninterruptibly();
-    }
-
-    @Override
-    public void registerPassivationShutdownHook()
-    {
-        try
-        {
-            Runtime.getRuntime().addShutdownHook( shutdownHook );
-        }
-        catch( IllegalArgumentException ex )
-        {
-            throw new IllegalStateException( "HttpServer passivation hook previously registered", ex );
-        }
     }
 }

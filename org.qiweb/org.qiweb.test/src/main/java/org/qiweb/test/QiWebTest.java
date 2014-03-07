@@ -26,7 +26,7 @@ import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.server.HttpServer;
-import org.qiweb.server.netty.HttpServerInstance;
+import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
@@ -78,7 +78,7 @@ public class QiWebTest
                                         ? routesProvider()
                                         : routesProviderOverride;
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
-        httpServer = new HttpServerInstance( "qiweb-test", app );
+        httpServer = new NettyServer( "qiweb-test", app );
         httpServer.activate();
 
         // Setup RestAssured defaults if present
