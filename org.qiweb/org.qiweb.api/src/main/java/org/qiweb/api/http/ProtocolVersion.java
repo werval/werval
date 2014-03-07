@@ -25,7 +25,7 @@ public class ProtocolVersion
     /**
      * HTTP/1.0
      */
-    public static final ProtocolVersion HTTP_1_0 = new ProtocolVersion( HTTP_1_0_STRING, true );
+    public static final ProtocolVersion HTTP_1_0 = new ProtocolVersion( HTTP_1_0_STRING, false );
 
     /**
      * HTTP/1.1
@@ -45,6 +45,7 @@ public class ProtocolVersion
         }
         return new ProtocolVersion( text, true );
     }
+
     private final String text;
     private final boolean keepAliveDefault;
 

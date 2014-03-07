@@ -268,11 +268,13 @@ public final class HttpRequestRouterHandler
         }
         else
         {
-            LOG.warn( "Unhandled Outcome type '{}', no response body.", outcome.getClass() );
+            LOG.warn( "{} Unhandled Outcome type '{}', no response body.", request.identity(), outcome.getClass() );
             nettyResponse = new DefaultFullHttpResponse( responseVersion, responseStatus );
             applyResponseHeader( responseHeader, nettyResponse );
             writeFuture = nettyContext.writeAndFlush( nettyResponse );
         }
+
+        LOG.trace( "{} Sent a HttpResponse:\n{}", request.identity(), nettyResponse.toString() );
 
         // Listen to request completion
         writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );

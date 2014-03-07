@@ -91,21 +91,13 @@ public class ResponseHeaderInstance
         String connection = headers.singleValue( CONNECTION );
         if( connection.isEmpty() )
         {
-            if( status.statusClass().isForceClose() )
+            if( status.statusClass().isForceClose() || !keepAliveWanted )
             {
-                if( version.isKeepAliveDefault() || keepAliveWanted )
-                {
-                    // Status Force CLOSE
-                    headers.withSingle( CONNECTION, CLOSE );
-                }
+                headers.withSingle( CONNECTION, CLOSE );
             }
             else
             {
-                if( version.isKeepAliveDefault() || keepAliveWanted )
-                {
-                    // Keep-Alive
-                    headers.withSingle( CONNECTION, KEEP_ALIVE );
-                }
+                headers.withSingle( CONNECTION, KEEP_ALIVE );
             }
         }
         return this;
