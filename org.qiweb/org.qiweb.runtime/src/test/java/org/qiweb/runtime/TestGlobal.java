@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,9 @@
  */
 package org.qiweb.runtime;
 
-import org.qiweb.api.Application;
-import org.qiweb.api.Error;
 import org.qiweb.api.Global;
 
 public class TestGlobal
     extends Global
 {
-
-    public static TestGlobal ofApplication( Application application )
-    {
-        return (TestGlobal) ( (ApplicationInstance) application ).global();
-    }
-    public int httpRequestErrorCount = 0;
-    public Error lastError = null;
-
-    @Override
-    public synchronized void onHttpRequestError( Application application, Error error )
-    {
-        httpRequestErrorCount++;
-        lastError = error;
-    }
 }

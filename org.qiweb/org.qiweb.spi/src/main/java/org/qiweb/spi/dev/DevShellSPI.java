@@ -25,14 +25,12 @@ import java.util.Set;
  */
 public interface DevShellSPI
 {
-
     /**
      * File watching abstraction.
      * <p>Allow DevShell implementations to choose their file watching implementation.</p>
      */
     public interface SourceWatcher
     {
-
         /**
          * Watch a set of directories.
          *
@@ -41,7 +39,6 @@ public interface DevShellSPI
          * @return A handle to unwatch when done
          */
         SourceWatch watch( Set<File> filesAndDirectories, SourceChangeListener listener );
-
     }
 
     /**
@@ -49,9 +46,7 @@ public interface DevShellSPI
      */
     interface SourceChangeListener
     {
-
         void onChange();
-
     }
 
     /**
@@ -59,9 +54,7 @@ public interface DevShellSPI
      */
     interface SourceWatch
     {
-
         void unwatch();
-
     }
 
     /**
@@ -95,5 +88,4 @@ public interface DevShellSPI
      * Rebuild the Application sources.
      */
     void rebuild();
-
 }

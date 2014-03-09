@@ -126,30 +126,50 @@ public class NettyServer
             LOG.error( "Exception on Global.beforeHttpUnbind(): {}", ex.getMessage(), ex );
         }
 
-        // app.config() can be null if activation failed, allow gracefull shutdown
-        long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
-        long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
-
-        Future<?> shutdownFuture = bootstrap.group().shutdownGracefully(
-            shutdownQuietPeriod,
-            shutdownTimeout,
-            TimeUnit.MILLISECONDS
-        );
-        shutdownFuture.addListener( future ->
+        if( bootstrap == null )
         {
-            allChannels.clear();
-            LOG.debug( "[{}] Http Service Passivated", identity );
-            // Passivate Application
-            try
+            finalizePassivation();
+        }
+        else
+        {
+            // app.config() can be null if activation failed, allow gracefull shutdown
+            long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
+            long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
+
+            Future<?> shutdownFuture = bootstrap.group().shutdownGracefully(
+                shutdownQuietPeriod,
+                shutdownTimeout,
+                TimeUnit.MILLISECONDS
+            );
+            shutdownFuture.addListener( future ->
             {
-                app.global().afterHttpUnbind( app );
-            }
-            catch( Exception ex )
-            {
-                LOG.error( "Exception on Global.afterHttpUnbind(): {}", ex.getMessage(), ex );
-            }
+                allChannels.clear();
+                LOG.debug( "[{}] Http Service Passivated", identity );
+                finalizePassivation();
+            } );
+            shutdownFuture.awaitUninterruptibly();
+        }
+    }
+
+    private void finalizePassivation()
+    {
+        // Notify Global object that the HttpServer stopped listening to network connections
+        try
+        {
+            app.global().afterHttpUnbind( app );
+        }
+        catch( Exception ex )
+        {
+            LOG.error( "Exception on Global.afterHttpUnbind(): {}", ex.getMessage(), ex );
+        }
+        // Passivate Application
+        try
+        {
             app.passivate();
-        } );
-        shutdownFuture.awaitUninterruptibly();
+        }
+        catch( Exception ex )
+        {
+            LOG.error( "Exception on Application.passivate(): {}", ex.getMessage(), ex );
+        }
     }
 }

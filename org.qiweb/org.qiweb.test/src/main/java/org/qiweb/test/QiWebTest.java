@@ -19,8 +19,8 @@ import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Application;
-import org.qiweb.api.Mode;
 import org.qiweb.api.Config;
+import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
@@ -58,7 +58,17 @@ public class QiWebTest
         this( null, null );
     }
 
-    /* package */ QiWebTest( String configurationResourceNameOverride, RoutesProvider routesProviderOverride )
+    public QiWebTest( String configurationResourceNameOverride )
+    {
+        this( configurationResourceNameOverride, null );
+    }
+
+    public QiWebTest( RoutesProvider routesProviderOverride )
+    {
+        this( null, routesProviderOverride );
+    }
+
+    public QiWebTest( String configurationResourceNameOverride, RoutesProvider routesProviderOverride )
     {
         this.configurationResourceNameOverride = configurationResourceNameOverride;
         this.routesProviderOverride = routesProviderOverride;
@@ -71,9 +81,10 @@ public class QiWebTest
     public final void beforeEachQiWebTestMethod()
     {
         ClassLoader classLoader = getClass().getClassLoader();
-        Config config = new ConfigInstance( classLoader, configurationResourceNameOverride == null
-                                                         ? configurationResourceName()
-                                                         : configurationResourceNameOverride );
+        String conf = configurationResourceNameOverride == null
+                      ? configurationResourceName()
+                      : configurationResourceNameOverride;
+        Config config = new ConfigInstance( classLoader, conf );
         RoutesProvider routesProvider = routesProviderOverride == null
                                         ? routesProvider()
                                         : routesProviderOverride;

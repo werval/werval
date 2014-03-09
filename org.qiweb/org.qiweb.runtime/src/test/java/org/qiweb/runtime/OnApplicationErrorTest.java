@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server;
+package org.qiweb.runtime;
 
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.qiweb.api.Error;
 import org.qiweb.api.context.CurrentContext;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.runtime.TestGlobal;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebRule;
 
@@ -32,17 +31,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static org.qiweb.api.http.Headers.Values.CLOSE;
 
 /**
  * Assert that Application errors triggers the right code paths.
  */
-public class OnErrorTest
+public class OnApplicationErrorTest
 {
-
     public static class Ctrl
     {
-
         public Outcome success()
         {
             return CurrentContext.outcomes().ok().build();
@@ -58,51 +57,54 @@ public class OnErrorTest
         {
             throw new IOException( "Wow an exception!", new RuntimeException( "This is a crash" ) );
         }
-
     }
 
     @Rule
     public final QiWebRule qiweb = new QiWebRule( new RoutesParserProvider(
-        "GET /success org.qiweb.server.OnErrorTest$Ctrl.success\n"
-        + "GET /internalServerError org.qiweb.server.OnErrorTest$Ctrl.internalServerError\n"
-        + "GET /exception org.qiweb.server.OnErrorTest$Ctrl.exception" ) );
+        "GET /success org.qiweb.runtime.OnApplicationErrorTest$Ctrl.success\n"
+        + "GET /internalServerError org.qiweb.runtime.OnApplicationErrorTest$Ctrl.internalServerError\n"
+        + "GET /exception org.qiweb.runtime.OnApplicationErrorTest$Ctrl.exception" )
+    );
 
     @Test
-    public void testSuccess()
+    public void given_200_then_no_error()
         throws IOException
     {
         expect().
             statusCode( 200 ).
+            header( X_QIWEB_REQUEST_ID, notNullValue() ).
             when().
             get( "/success" );
         assertThat( qiweb.application().errors().count(), is( 0 ) );
     }
 
     @Test
-    public void testInternalServerError()
+    public void given_500_from_controller_then_no_error()
         throws IOException
     {
         expect().
             statusCode( 500 ).
+            header( X_QIWEB_REQUEST_ID, notNullValue() ).
+            header( CONNECTION, CLOSE ).
             when().
             get( "/internalServerError" );
         assertThat( qiweb.application().errors().count(), is( 0 ) );
     }
 
     @Test
-    public void testException()
+    public void given_exception_in_controller_then_500_and_error_recorded()
         throws IOException
     {
         Response response = expect().
             statusCode( 500 ).
+            header( CONNECTION, CLOSE ).
             when().
             get( "/exception" );
-        assertThat( response.statusCode(), is( 500 ) );
+
+        assertThat( qiweb.application().errors().count(), is( 1 ) );
 
         String requestId = response.header( X_QIWEB_REQUEST_ID );
         assertThat( requestId, notNullValue() );
-
-        assertThat( qiweb.application().errors().count(), is( 1 ) );
 
         List<Error> requestErrors = qiweb.application().errors().ofRequest( requestId );
         assertThat( requestErrors.size(), is( 1 ) );
@@ -113,25 +115,4 @@ public class OnErrorTest
         assertThat( requestError.cause().getCause().getClass().getName(), equalTo( RuntimeException.class.getName() ) );
         assertThat( requestError.cause().getCause().getMessage(), equalTo( "This is a crash" ) );
     }
-
-    @Test
-    public void testGlobalOnHttpRequestError()
-        throws IOException
-    {
-        TestGlobal testGlobal = TestGlobal.ofApplication( qiweb.application() );
-        assertThat( testGlobal.httpRequestErrorCount, is( 0 ) );
-
-        Response response = expect().
-            statusCode( 500 ).
-            when().
-            get( "/exception" );
-        assertThat( response.statusCode(), is( 500 ) );
-
-        assertThat( testGlobal.httpRequestErrorCount, is( 1 ) );
-        assertThat( testGlobal.lastError.cause().getClass().getName(), equalTo( IOException.class.getName() ) );
-        assertThat( testGlobal.lastError.cause().getMessage(), equalTo( "Wow an exception!" ) );
-        assertThat( testGlobal.lastError.cause().getCause().getClass().getName(), equalTo( RuntimeException.class.getName() ) );
-        assertThat( testGlobal.lastError.cause().getCause().getMessage(), equalTo( "This is a crash" ) );
-    }
-
 }

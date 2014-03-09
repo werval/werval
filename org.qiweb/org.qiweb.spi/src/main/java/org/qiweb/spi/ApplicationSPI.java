@@ -18,11 +18,13 @@ package org.qiweb.spi;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.http.Request;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Reflectively;
 
 /**
  * Application SPI.
+ * <p>Intended for use by HttpServer implementations and unit tests.</p>
  */
 @Reflectively.Loaded( by = "DevShell" )
 public interface ApplicationSPI
@@ -39,7 +41,10 @@ public interface ApplicationSPI
      *
      * @param newClassLoader New Application ClassLoader
      */
+    @Reflectively.Invoked( by = "DevShell" )
     void reload( ClassLoader newClassLoader );
 
     Outcome handleRequest( Request request );
+
+    void onHttpRequestComplete( RequestHeader requestHeader );
 }

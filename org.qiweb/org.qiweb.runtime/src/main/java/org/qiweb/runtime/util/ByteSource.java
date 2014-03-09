@@ -31,6 +31,11 @@ public abstract class ByteSource
 
     public abstract String asString( Charset charset );
 
+    public static ByteSource wrap( CharSequence chars, Charset charset )
+    {
+        return new ByteArrayByteSource( chars.toString().getBytes( charset ) );
+    }
+
     public static ByteSource wrap( byte[] bytes )
     {
         return new ByteArrayByteSource( bytes );

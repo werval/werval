@@ -38,7 +38,6 @@ import java.math.BigDecimal;
 import org.qiweb.api.Error;
 import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.ParameterBinderException;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Request;
@@ -47,12 +46,12 @@ import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
-import org.qiweb.runtime.util.Stacktraces;
 import org.qiweb.server.HttpServerHelper;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
@@ -127,7 +126,7 @@ public final class HttpRequestRouterHandler
             if( future.isSuccess() )
             {
                 LOG.debug( "{} Request completed successfully", requestIdentity );
-                app.global().onHttpRequestComplete( app, requestHeader );
+                app.onHttpRequestComplete( requestHeader );
             }
         }
     }
@@ -152,7 +151,10 @@ public final class HttpRequestRouterHandler
     {
         // Generate a unique identifier per request
         requestIdentity = helper.generateNewRequestIdentity();
-        LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
+        }
 
         // Return 503 to incoming requests while shutting down
         if( nettyContext.executor().isShuttingDown() )
@@ -260,13 +262,19 @@ public final class HttpRequestRouterHandler
         }
         else
         {
-            LOG.warn( "{} Unhandled Outcome type '{}', no response body.", request.identity(), outcome.getClass() );
+            LOG.warn(
+                "{} Unhandled Outcome type '{}', no response body.",
+                requestHeader.identity(), outcome.getClass()
+            );
             nettyResponse = new DefaultFullHttpResponse( responseVersion, responseStatus );
             applyResponseHeader( responseHeader, nettyResponse );
             writeFuture = nettyContext.writeAndFlush( nettyResponse );
         }
 
-        LOG.trace( "{} Sent a HttpResponse:\n{}", request.identity(), nettyResponse.toString() );
+        if( LOG.isTraceEnabled() )
+        {
+            LOG.trace( "{} Sent a HttpResponse:\n{}", requestHeader.identity(), nettyResponse.toString() );
+        }
 
         // Listen to request completion
         writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
@@ -320,54 +328,48 @@ public final class HttpRequestRouterHandler
         {
             LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
         }
-        else if( cause instanceof RouteNotFoundException )
-        {
-            LOG.trace( "{} " + cause.getMessage() + " will return 404.", requestIdentity );
-            StringWriter body = new StringWriter();
-            body.append( "<html>\n<head><title>404 Route Not Found</title></head>\n<body>\n<h1>404 Route Not Found</h1>\n" );
-            if( app.mode() == Mode.DEV )
-            {
-                body.append( "<p>Tried:</p>\n<pre>\n" );
-                for( Route route : app.routes() )
-                {
-                    if( !route.path().startsWith( "/@" ) )
-                    {
-                        body.append( route.toString() ).append( "\n" );
-                    }
-                }
-                body.append( "</pre>\n" );
-            }
-            body.append( "</body>\n</html>\n" );
-            sendError( nettyContext, NOT_FOUND, body.toString() );
-        }
-        else if( cause instanceof ParameterBinderException )
-        {
-            LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, cause );
-            sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
-        }
         else
         {
-            // We want nice stack traces
-            // TODO Make stack-trace reduction pluggable
-            if( cause instanceof QiWebException && cause.getCause() instanceof InvocationTargetException )
+            // TODO Remove this code as this is now handled in Application
+            // TODO Make Application provide a Fault Barrier to the HttpServer for such cases
+            Throwable rootCause = app.global().getRootCause( cause );
+            if( rootCause instanceof RouteNotFoundException )
             {
-                // WARN This depends on and work only with DefaultControllerInvocation!
-                cause = cause.getCause().getCause();
+                LOG.trace( "{} " + rootCause.getMessage() + " will return 404.", requestIdentity );
+                StringWriter body = new StringWriter();
+                body.append( "<html>\n<head><title>404 Route Not Found</title></head>\n<body>\n<h1>404 Route Not Found</h1>\n" );
+                if( app.mode() == Mode.DEV )
+                {
+                    body.append( "<p>Tried:</p>\n<pre>\n" );
+                    for( Route route : app.routes() )
+                    {
+                        if( !route.path().startsWith( "/@" ) )
+                        {
+                            body.append( route.toString() ).append( "\n" );
+                        }
+                    }
+                    body.append( "</pre>\n" );
+                }
+                body.append( "</body>\n</html>\n" );
+                sendError( nettyContext, NOT_FOUND, body.toString() );
             }
-
-            if( cause instanceof BadRequestException )
+            else if( rootCause instanceof ParameterBinderException )
             {
-                // Handle HTTP Exceptions
-                LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, cause );
-                sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + cause.getMessage() );
+                LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, rootCause );
+                sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + rootCause.getMessage() );
+            }
+            else if( rootCause instanceof BadRequestException )
+            {
+                LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, rootCause );
+                sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST\n" + rootCause.getMessage() );
             }
             else
             {
                 // Handle Unexpected Exceptions
                 LOG.error(
                     "{} Exception caught: {}( {} )",
-                    requestIdentity, cause.getClass().getSimpleName(), cause.getMessage(),
-                    cause
+                    requestIdentity, rootCause.getClass().getSimpleName(), rootCause.getMessage(),
+                    rootCause
                 );
 
                 // Build body
@@ -375,16 +377,13 @@ public final class HttpRequestRouterHandler
                 body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
                 if( app.mode() == Mode.DEV )
                 {
-                    body.append( Stacktraces.toHtml( cause, devSpi::sourceURL ) );
+                    body.append( Stacktraces.toHtml( rootCause, devSpi::sourceURL ) );
                 }
                 body.append( "</body></html>\n" );
                 String bodyString = body.toString();
 
                 // Record Error
-                Error error = app.errors().record( requestIdentity, bodyString, cause );
-
-                // Notifies Application's Global
-                app.global().onHttpRequestError( app, error );
+                Error error = app.errors().record( requestIdentity, bodyString, rootCause );
 
                 // Send Error to client
                 sendError( nettyContext, INTERNAL_SERVER_ERROR, bodyString );

@@ -47,21 +47,21 @@ public interface OutcomeBuilder
     OutcomeBuilder withBody( byte[] body );
 
     /**
-     * Use a String body.
+     * Use a characters body.
      * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
-     * @param body Body as String
+     * @param body Body as CharSequence
      * @return This very OutcomeBuilder instance
      */
-    OutcomeBuilder withBody( String body );
+    OutcomeBuilder withBody( CharSequence body );
 
     /**
-     * Use a String body.
+     * Use a characters body.
      * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
-     * @param body Body as String
+     * @param body Body as CharSequence
      * @param charset Character encoding to use
      * @return This very OutcomeBuilder instance
      */
-    OutcomeBuilder withBody( String body, Charset charset );
+    OutcomeBuilder withBody( CharSequence body, Charset charset );
 
     /**
      * Use an InputStream body if undetermined length.

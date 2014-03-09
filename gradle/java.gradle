@@ -16,7 +16,7 @@ targetCompatibility = '1.8'
 dependencies {
 
     testCompile libs.junit
-    testRuntime libs.logback
+    testCompile libs.logback
 
 }
 

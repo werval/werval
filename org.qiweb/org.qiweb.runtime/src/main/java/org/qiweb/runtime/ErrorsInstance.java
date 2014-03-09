@@ -40,7 +40,6 @@ public final class ErrorsInstance
     private static final class ErrorInstance
         implements Error
     {
-
         final Long timestamp;
         final String errorId;
         final String requestId;
@@ -114,7 +113,6 @@ public final class ErrorsInstance
             final ErrorInstance other = (ErrorInstance) obj;
             return Objects.equals( this.errorId, other.errorId );
         }
-
     }
 
     private final Config config;

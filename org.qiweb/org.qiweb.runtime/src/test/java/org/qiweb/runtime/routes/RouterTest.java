@@ -1,4 +1,4 @@
-package org.qiweb.server;
+package org.qiweb.runtime.routes;
 
 import org.junit.ClassRule;
 import org.junit.Test;

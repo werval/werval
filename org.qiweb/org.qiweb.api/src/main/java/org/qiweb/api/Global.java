@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,18 @@ import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.outcomes.Outcomes;
+
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 /**
  * Application Global Object.
- * <p>Provide lifecycle, instanciation and invocation hooks.</p>
+ * <p>Provide lifecycle, instanciation, invocation and error handling hooks.</p>
  * <p>
  *     You are encouraged to subclass it in your Application code by setting the <code>app.global</code> configuration
  *     property to the FQCN of your Global implementation.
  * </p>
+ * <p>Remeber to call the {@literal super} methods to leverage default behaviour.</p>
  */
 public class Global
 {
@@ -199,9 +203,13 @@ public class Global
     }
 
     /**
-     * Invoked when a request completed successfully.
+     * Invoked when a request completed successfully and all bytes are sent to the client.
      * <p>Default to NOOP.</p>
-     * 
+     * <p>
+     *     If this method throws an exception, it will be logged it but it won't be rethrown
+     *     since the request has already completed.
+     * </p>
+     *
      * @param application Application
      * @param requestHeader Request Header
      */
@@ -210,13 +218,60 @@ public class Global
     }
 
     /**
+     * Give a chance to clean-up stacktraces of Throwables poping out of the Application.
+     * <p>
+     *     Default to {@link QiWebException}{@literal >}{@link InvocationTargetException} cleanup in development mode.
+     * </p>
+     * <p>Do nothing in test and production modes.</p>
+     * <p>
+     *     Default behaviour is to clean-up the stacktrace by removing stack elements introduced by the reflective
+     *     calls done in
+     *     {@link #invokeControllerMethod(org.qiweb.api.context.Context, java.lang.Object)} implementation.
+     * </p>
+     * <p>
+     *     If this method throws an exception, it will be added as suppressed to the original cause.
+     * </p>
+     * 
+     * @param throwable A Throwable
+     * @return A Throwable
+     */
+    public Throwable getRootCause( Throwable throwable )
+    {
+        if( throwable instanceof QiWebException && throwable.getCause() instanceof InvocationTargetException )
+        {
+            return throwable.getCause().getCause();
+        }
+        return throwable;
+    }
+
+    /**
      * Invoked when an exception pops out of the Application.
-     * <p>Default to NOOP.</p>
+     * <p>Happens right before {@link Error} recording.</p>
+     * <p>Default to a minimal HTML page advertising a 500 status code and the corresponding reason phrase</p>
+     * <p>Stacktrace is disclosed in development mode only, with links to project sources when available.</p>
+     * <p>
+     *     If this method throws an exception, it is added as suppressed to the original cause
+     *     and default behaviour is replayed. This serve as a fault barrier.
+     * </p>
      *
      * @param application Application
-     * @param error Error
+     * @param outcomes Outcomes utilities
+     * @param cause Cause
+     * @return Outcome to send back to the client
      */
-    public void onHttpRequestError( Application application, Error error )
+    public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
     {
+        StringBuilder html = new StringBuilder();
+        html.append( "<html>\n<head><title>500 Internal Server Error</title></head>\n" );
+        html.append( "<body>\n<h1>500 Internal Server Error</h1>\n" );
+        if( application.mode() == Mode.DEV )
+        {
+            // html.append( Stacktraces.toHtml( cause, devSpi::sourceURL ) );
+        }
+        html.append( "</body>\n</html>\n" );
+        return outcomes.internalServerError().
+            withBody( html.toString() ).
+            as( TEXT_HTML ).
+            build();
     }
 }

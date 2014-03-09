@@ -32,10 +32,13 @@ import org.qiweb.api.context.Context;
 import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Request;
+import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -43,10 +46,12 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.context.ContextInstance;
+import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.mime.MimeTypesInstance;
+import org.qiweb.runtime.outcomes.OutcomesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
@@ -57,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
@@ -311,6 +317,7 @@ public final class ApplicationInstance
 
     // SPI
     @Override
+    @Reflectively.Invoked( by = "DevShell" )
     public void reload( ClassLoader newClassLoader )
     {
         passivate();
@@ -353,7 +360,7 @@ public final class ApplicationInstance
             contextHelper.setOnCurrentThread( context );
 
             // Invoke Controller FilterChain, ended by Controller Method Invokation
-            LOG.trace( "{Invoking controller method: {}", route.controllerMethod() );
+            LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
             Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context );
 
             // Apply Session to ResponseHeader
@@ -362,19 +369,138 @@ public final class ApplicationInstance
                 outcome.responseHeader().cookies().set( session.signedCookie() );
             }
 
-            // Apply Keep-Alive to ResponseHeader
-            outcome.responseHeader().withKeepAliveHeaders( request.isKeepAlive() );
-
-            // Add X-QiWeb-Request-ID header to ResponseHeader
-            outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
-
-            // Done!
-            return outcome;
+            // Finalize!
+            return finalizeOutcome( request, outcome );
+        }
+        catch( Throwable cause )
+        {
+            // Handle error
+            Outcome errorOutcome = handleError( request, cause );
+            // Finalize!
+            return finalizeOutcome( request, errorOutcome );
         }
         finally
         {
             // Clean up Controller Context
             contextHelper.clearCurrentThread();
+        }
+    }
+
+    private Outcome handleError( RequestHeader request, Throwable cause )
+    {
+        // Clean-up stacktrace
+        Throwable rootCause;
+        try
+        {
+            rootCause = global.getRootCause( cause );
+        }
+        catch( Exception ex )
+        {
+            LOG.warn(
+                "An error occured in Global::getRootCause() method "
+                + "and has been added as suppressed exception to the original error stacktrace. Message: {}",
+                ex.getMessage(), ex
+            );
+            cause.addSuppressed( ex );
+            rootCause = cause;
+        }
+
+        // Outcomes
+        Outcomes outcomes = new OutcomesInstance(
+            config,
+            new ResponseHeaderInstance( request.version(), config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) )
+        );
+
+        // Handle contingencies
+        if( rootCause instanceof RouteNotFoundException )
+        {
+            LOG.trace( rootCause.getMessage() + " will return 404." );
+            StringBuilder details = new StringBuilder();
+            if( mode == Mode.DEV )
+            {
+                details.append( "<p>Tried:</p>\n<pre>\n" );
+                for( Route route : routes )
+                {
+                    if( !route.path().startsWith( "/@" ) )
+                    {
+                        details.append( route.toString() ).append( "\n" );
+                    }
+                }
+                details.append( "</pre>\n" );
+            }
+            return outcomes.notFound().
+                withBody( errorHtml( "404 Route Not Found", details ) ).
+                as( TEXT_HTML ).
+                build();
+        }
+        else if( rootCause instanceof ParameterBinderException )
+        {
+            LOG.warn( "ParameterBinderException, will return 400.", rootCause );
+            return outcomes.badRequest().
+                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
+                as( TEXT_HTML ).
+                build();
+        }
+        else if( rootCause instanceof BadRequestException )
+        {
+            LOG.warn( "BadRequestException, will return 400.", rootCause );
+            return outcomes.badRequest().
+                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
+                as( TEXT_HTML ).
+                build();
+        }
+
+        // Handle faults
+        Outcome outcome;
+        try
+        {
+            // Delegates Outcome generation to Global object
+            outcome = global.onApplicationError( this, outcomes, rootCause );
+        }
+        catch( Exception ex )
+        {
+            // Add as suppressed and replay Global default behaviour. This serve as a fault barrier
+            rootCause.addSuppressed( ex );
+            outcome = new Global().onApplicationError( this, outcomes, rootCause );
+        }
+
+        // Record error
+        errors.record( request.identity(), rootCause.getMessage(), rootCause );
+
+        // Done!
+        return outcome;
+    }
+
+    private CharSequence errorHtml( CharSequence title, CharSequence content )
+    {
+        return new StringBuilder().
+            append( "<html>\n<head><title>" ).append( title ).append( "</title></head>\n" ).
+            append( "<body>\n" ).
+            append( "<h1>" ).append( title ).append( "</h1>\n" ).
+            append( content ).append( "\n" ).
+            append( "</body>\n</html>\n" );
+    }
+
+    private Outcome finalizeOutcome( RequestHeader request, Outcome outcome )
+    {
+        // Apply Keep-Alive
+        outcome.responseHeader().withKeepAliveHeaders( request.isKeepAlive() );
+        // Add X-QiWeb-Request-ID
+        outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
+        return outcome;
+    }
+
+    // SPI
+    @Override
+    public void onHttpRequestComplete( RequestHeader requestHeader )
+    {
+        try
+        {
+            global.onHttpRequestComplete( this, requestHeader );
+        }
+        catch( Exception ex )
+        {
+            LOG.error( "An error occured in Global::onHttpRequestComplete(): {}", ex.getMessage(), ex );
         }
     }
 

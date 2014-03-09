@@ -70,15 +70,15 @@ public class OutcomeBuilderInstance
     }
 
     @Override
-    public OutcomeBuilder withBody( String bodyString )
+    public OutcomeBuilder withBody( CharSequence bodyChars )
     {
-        return withBody( bodyString, defaultCharset );
+        return withBody( bodyChars, defaultCharset );
     }
 
     @Override
-    public OutcomeBuilder withBody( String bodyString, Charset charset )
+    public OutcomeBuilder withBody( CharSequence bodyChars, Charset charset )
     {
-        byte[] bytes = bodyString.getBytes( charset );
+        byte[] bytes = bodyChars.toString().getBytes( charset );
         body = ByteSource.wrap( bytes );
         length = bytes.length;
         return this;

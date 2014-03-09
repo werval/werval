@@ -38,7 +38,6 @@ import org.qiweb.api.exceptions.QiWebException;
 public class DevShellSPIAdapter
     implements DevShellSPI
 {
-
     private final URL[] applicationClassPath;
     private final URL[] runtimeClassPath;
     private boolean sourceChanged = true;
@@ -49,15 +48,18 @@ public class DevShellSPIAdapter
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
         // TODO Unwatch sources on DevShell passivation
-        watcher.watch( toWatch, new SourceChangeListener()
-        {
-            @Override
-            public void onChange()
+        watcher.watch(
+            toWatch,
+            new SourceChangeListener()
             {
-                System.out.println( "Source changed!" );
-                sourceChanged = true;
+                @Override
+                public void onChange()
+                {
+                    System.out.println( "Source changed!" );
+                    sourceChanged = true;
+                }
             }
-        } );
+        );
     }
 
     @Override
@@ -85,21 +87,24 @@ public class DevShellSPIAdapter
                 if( root.isDirectory() )
                 {
                     final List<File> found = new ArrayList<>( 1 );
-                    Files.walkFileTree( root.toPath(), new SimpleFileVisitor<Path>()
-                    {
-                        @Override
-                        public FileVisitResult visitFile( Path path, BasicFileAttributes attrs )
-                            throws IOException
+                    Files.walkFileTree(
+                        root.toPath(),
+                        new SimpleFileVisitor<Path>()
                         {
-                            File file = path.toFile();
-                            if( fileName.equals( file.getName() ) )
+                            @Override
+                            public FileVisitResult visitFile( Path path, BasicFileAttributes attrs )
+                            throws IOException
                             {
-                                found.add( file );
-                                return FileVisitResult.TERMINATE;
+                                File file = path.toFile();
+                                if( fileName.equals( file.getName() ) )
+                                {
+                                    found.add( file );
+                                    return FileVisitResult.TERMINATE;
+                                }
+                                return FileVisitResult.CONTINUE;
                             }
-                            return FileVisitResult.CONTINUE;
                         }
-                    } );
+                    );
                     if( !found.isEmpty() )
                     {
                         return "file://" + found.get( 0 ).getAbsolutePath() + "#L" + lineNumber;
