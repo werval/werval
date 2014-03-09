@@ -17,6 +17,7 @@ package org.qiweb.spi;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
@@ -36,18 +37,18 @@ public interface ApplicationSPI
      */
     Global global();
 
-    /**
-     * Reload Application with a new ClassLoader.
-     * <p>Called reflectively by {@literal org.qiweb.devshell.DevShell}</p>
-     *
-     * @param newClassLoader New Application ClassLoader
-     */
-    @Reflectively.Invoked( by = "DevShell" )
-    void reload( ClassLoader newClassLoader );
-
     HttpBuilders httpBuilders();
 
     Outcome handleRequest( Request request );
 
     void onHttpRequestComplete( RequestHeader requestHeader );
+
+    Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity );
+    /**
+     * Reload Application with a new ClassLoader.
+     *
+     * @param newClassLoader New Application ClassLoader
+     */
+    @Reflectively.Invoked( by = "DevShell" )
+    void reload( ClassLoader newClassLoader );
 }

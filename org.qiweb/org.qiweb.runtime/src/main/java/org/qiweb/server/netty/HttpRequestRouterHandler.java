@@ -40,6 +40,7 @@ import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Cookies.Cookie;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
@@ -62,13 +63,11 @@ import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static java.util.Locale.US;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
 import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.TRAILER;
 import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
@@ -76,7 +75,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.server.netty.NettyHttpFactories.bodyOf;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
@@ -152,23 +150,13 @@ public final class HttpRequestRouterHandler
         // Return 503 to incoming requests while shutting down
         if( nettyContext.executor().isShuttingDown() )
         {
-            FullHttpResponse response = new DefaultFullHttpResponse(
-                HTTP_1_1, SERVICE_UNAVAILABLE,
-                copiedBuffer( "<html><body><h1>Service is shutting down</h1></body></html>", app.defaultCharset() )
+            writeOutcome(
+                nettyContext,
+                app.shuttingDownOutcome(
+                    ProtocolVersion.valueOf( nettyRequest.getProtocolVersion().text() ),
+                    requestIdentity
+                )
             );
-            response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
-            response.headers().set( CONTENT_TYPE, "text/html; charset=" + app.defaultCharset().name().toLowerCase( US ) );
-            response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
-            response.headers().set( CONNECTION, CLOSE );
-            // By default, no Retry-After, only if defined in configuration
-            if( app.config().has( QIWEB_SHUTDOWN_RETRYAFTER ) )
-            {
-                response.headers().set(
-                    RETRY_AFTER,
-                    String.valueOf( app.config().seconds( QIWEB_SHUTDOWN_RETRYAFTER ) )
-                );
-            }
-            nettyContext.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
             return;
         }
 
@@ -184,18 +172,30 @@ public final class HttpRequestRouterHandler
             app.defaultCharset()
         );
 
-        // Parse Request
+        // Parse RequestBody
         RequestBody requestBody = bodyOf(
             app.httpBuilders(),
             requestHeader,
             nettyRequest,
             app.defaultCharset()
         );
+
+        // Create Request Instance
         Request request = new RequestInstance( requestHeader, requestBody );
 
         // Handle Request
         Outcome outcome = app.handleRequest( request );
 
+        // Write Outcome
+        ChannelFuture writeFuture = writeOutcome( nettyContext, outcome );
+
+        // Listen to request completion
+        writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
+    }
+
+    private ChannelFuture writeOutcome( ChannelHandlerContext nettyContext, Outcome outcome )
+        throws IOException
+    {
         // == Build the Netty Response
         ResponseHeader responseHeader = outcome.responseHeader();
 
@@ -250,10 +250,7 @@ public final class HttpRequestRouterHandler
         }
         else
         {
-            LOG.warn(
-                "{} Unhandled Outcome type '{}', no response body.",
-                requestHeader.identity(), outcome.getClass()
-            );
+            LOG.warn( "{} Unhandled Outcome type '{}', no response body.", requestIdentity, outcome.getClass() );
             nettyResponse = new DefaultFullHttpResponse( responseVersion, responseStatus );
             applyResponseHeader( responseHeader, nettyResponse );
             writeFuture = nettyContext.writeAndFlush( nettyResponse );
@@ -261,17 +258,17 @@ public final class HttpRequestRouterHandler
 
         if( LOG.isTraceEnabled() )
         {
-            LOG.trace( "{} Sent a HttpResponse:\n{}", requestHeader.identity(), nettyResponse.toString() );
+            LOG.trace( "{} Sent a HttpResponse:\n{}", requestIdentity, nettyResponse.toString() );
         }
-
-        // Listen to request completion
-        writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
 
         // Close the connection as soon as the response is sent if not keep alive
         if( !outcome.responseHeader().isKeepAlive() || nettyContext.executor().isShuttingDown() )
         {
             writeFuture.addListener( ChannelFutureListener.CLOSE );
         }
+
+        // Done!
+        return writeFuture;
     }
 
     private void rebuildIfNeeded()

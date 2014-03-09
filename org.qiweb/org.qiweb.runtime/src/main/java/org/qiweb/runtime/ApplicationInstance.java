@@ -33,11 +33,13 @@ import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Session;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.outcomes.OutcomeBuilder;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
@@ -65,7 +67,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.http.Headers.Names.CONNECTION;
+import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
@@ -76,6 +81,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
 
 /**
@@ -532,6 +538,33 @@ public final class ApplicationInstance
         {
             LOG.error( "An error occured in Global::onHttpRequestComplete(): {}", ex.getMessage(), ex );
         }
+    }
+
+    // SPI
+    @Override
+    public Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
+    {
+        // Outcomes
+        Outcomes outcomes = new OutcomesInstance(
+            config,
+            new ResponseHeaderInstance( version, config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) )
+        );
+
+        // Return 503 to incoming requests while shutting down
+        OutcomeBuilder builder = outcomes.serviceUnavailable().
+            withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
+            as( TEXT_HTML ).
+            withHeader( CONNECTION, CLOSE ).
+            withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
+
+        // By default, no Retry-After, only if defined in configuration
+        if( config.has( QIWEB_SHUTDOWN_RETRYAFTER ) )
+        {
+            builder.withHeader( RETRY_AFTER, String.valueOf( config.seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
+        }
+
+        // Build!
+        return builder.build();
     }
 
     private void configure()

@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
  */
 public interface OutcomeBuilder
 {
-
     /**
      * Use a HTTP header value.
      * @param name The header name
@@ -95,5 +94,4 @@ public interface OutcomeBuilder
      * @return A new Outcome instance
      */
     Outcome build();
-
 }

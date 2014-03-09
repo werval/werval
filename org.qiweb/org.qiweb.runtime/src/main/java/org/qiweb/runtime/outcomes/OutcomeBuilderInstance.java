@@ -25,9 +25,9 @@ import org.qiweb.api.util.ByteArrayByteSource;
 import org.qiweb.api.util.ByteSource;
 
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
-import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Outcome Builder instance.
