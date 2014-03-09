@@ -49,6 +49,7 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.util.ByteSource;
 import org.qiweb.api.util.Strings;
 import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.http.CookiesInstance;
@@ -58,7 +59,6 @@ import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestBodyInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
-import org.qiweb.runtime.util.ByteSource;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;

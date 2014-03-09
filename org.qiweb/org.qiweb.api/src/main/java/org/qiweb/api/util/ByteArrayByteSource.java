@@ -13,43 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.util;
+package org.qiweb.api.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.qiweb.api.exceptions.NullArgumentException;
 
 /**
- * ByteSource backed by an InputStream.
+ * ByteSource backed by a byte[].
  */
-public class InputStreamByteSource
-    extends ByteSource
+public class ByteArrayByteSource
+    implements ByteSource
 {
-    private final InputStream input;
-    private final int bufsize;
+    private final byte[] bytes;
 
-    public InputStreamByteSource( InputStream input, int bufsize )
+    public ByteArrayByteSource( byte[] bytes )
     {
-        NullArgumentException.ensureNotNull( "InputStream", input );
-        this.input = input;
-        this.bufsize = bufsize;
+        NullArgumentException.ensureNotNull( "Array of bytes", bytes );
+        this.bytes = bytes;
     }
 
     @Override
     public byte[] asBytes()
     {
-        return InputStreams.readAllBytes( input, bufsize );
+        return bytes;
     }
 
     @Override
     public InputStream asStream()
     {
-        return input;
+        return new ByteArrayInputStream( bytes );
     }
 
     @Override
     public String asString( Charset charset )
     {
-        return new String( asBytes(), charset );
+        return new String( bytes, charset );
     }
 }

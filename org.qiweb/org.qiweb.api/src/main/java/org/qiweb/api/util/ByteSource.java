@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.util;
+package org.qiweb.api.util;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -21,28 +21,13 @@ import java.nio.charset.Charset;
 /**
  * Source of bytes.
  */
-public abstract class ByteSource
+public interface ByteSource
 {
-    public static final ByteSource EMPTY_BYTES = new ByteArrayByteSource( new byte[ 0 ] );
+    ByteSource EMPTY_BYTES = new ByteArrayByteSource( new byte[ 0 ] );
 
-    public abstract byte[] asBytes();
+    byte[] asBytes();
 
-    public abstract InputStream asStream();
+    InputStream asStream();
 
-    public abstract String asString( Charset charset );
-
-    public static ByteSource wrap( CharSequence chars, Charset charset )
-    {
-        return new ByteArrayByteSource( chars.toString().getBytes( charset ) );
-    }
-
-    public static ByteSource wrap( byte[] bytes )
-    {
-        return new ByteArrayByteSource( bytes );
-    }
-
-    public static ByteSource wrap( InputStream input, int bufsize )
-    {
-        return new InputStreamByteSource( input, bufsize );
-    }
+    String asString( Charset charset );
 }

@@ -19,14 +19,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.qiweb.runtime.util.ByteSource;
-import org.qiweb.runtime.util.InputStreams;
+import org.qiweb.api.util.ByteSource;
+import org.qiweb.api.util.InputStreams;
 
 /**
  * ByteSource backed by a Netty ByteBuf.
  */
 public class ByteBufByteSource
-    extends ByteSource
+    implements ByteSource
 {
     private final ByteBuf bytebuf;
 
@@ -38,7 +38,7 @@ public class ByteBufByteSource
     @Override
     public byte[] asBytes()
     {
-        return InputStreams.readAllBytes( asStream(), 16_384 );
+        return InputStreams.readAllBytes( asStream(), bytebuf.capacity() );
     }
 
     @Override

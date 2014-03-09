@@ -21,12 +21,13 @@ import org.qiweb.api.Config;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
-import org.qiweb.runtime.util.ByteSource;
+import org.qiweb.api.util.ByteArrayByteSource;
+import org.qiweb.api.util.ByteSource;
 
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
-import static org.qiweb.runtime.util.ByteSource.EMPTY_BYTES;
+import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Outcome Builder instance.
@@ -64,7 +65,7 @@ public class OutcomeBuilderInstance
     @Override
     public OutcomeBuilder withBody( byte[] bodyBytes )
     {
-        body = ByteSource.wrap( bodyBytes );
+        body = new ByteArrayByteSource( bodyBytes );
         length = bodyBytes.length;
         return this;
     }
@@ -78,9 +79,9 @@ public class OutcomeBuilderInstance
     @Override
     public OutcomeBuilder withBody( CharSequence bodyChars, Charset charset )
     {
-        byte[] bytes = bodyChars.toString().getBytes( charset );
-        body = ByteSource.wrap( bytes );
-        length = bytes.length;
+        byte[] bodyBytes = bodyChars.toString().getBytes( charset );
+        body = new ByteArrayByteSource( bodyBytes );
+        length = bodyBytes.length;
         return this;
     }
 

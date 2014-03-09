@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.util;
+package org.qiweb.api.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Utilities to work with InputStreams.
+ * InputStream utilities.
  */
 public final class InputStreams
 {
-
     public static byte[] readAllBytes( InputStream input, int bufsize )
     {
         try
