@@ -106,10 +106,9 @@ public final class ApplicationInstance
 
     /**
      * Create a new Application instance in {@link Mode#TEST}.
-     *
      * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
      *
-     * @param routesProvider Routes provider
+     * @param routesProvider Routes provider, must be not null
      */
     public ApplicationInstance( RoutesProvider routesProvider )
     {
@@ -118,11 +117,10 @@ public final class ApplicationInstance
 
     /**
      * Create a new Application instance in given {@link Mode}.
-     *
      * <p>Routes are loaded from the {@literal routes.conf} file.</p>
      * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
      *
-     * @param mode Application Mode
+     * @param mode Application Mode, must be not null
      */
     public ApplicationInstance( Mode mode )
     {
@@ -148,10 +146,10 @@ public final class ApplicationInstance
     /**
      * Create a new Application instance in given {@link Mode}.
      *
-     * @param mode Application Mode
-     * @param config Application config
-     * @param classLoader Application ClassLoader
-     * @param routesProvider Routes provider
+     * @param mode Application Mode, must be not null
+     * @param config Application config, must be not null
+     * @param classLoader Application ClassLoader, must be not null
+     * @param routesProvider Routes provider, must be not null
      */
     @Reflectively.Invoked( by = "DevShell" )
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )

@@ -47,7 +47,6 @@ public final class DevShell
     private final class DevShellSPIDecorator
         extends DevShellSPIWrapper
     {
-
         private final Object httpAppInstance;
 
         private DevShellSPIDecorator( DevShellSPI wrapped, Object httpAppInstance )
@@ -80,7 +79,6 @@ public final class DevShell
                 }
             }
         }
-
     }
 
     private static final String DEVSHELL_REALM_ID = "DevShellRealm";
@@ -184,14 +182,17 @@ public final class DevShell
 
             // ---------------------------------------------------------------------------------------------------------
             // printRealms();
-            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
-            {
-                @Override
-                public void run()
+            Runtime.getRuntime().addShutdownHook( new Thread(
+                new Runnable()
                 {
-                    stop();
-                }
-            }, "qiweb-devshell-shutdown" ) );
+                    @Override
+                    public void run()
+                    {
+                        stop();
+                    }
+                },
+                "qiweb-devshell-shutdown"
+            ) );
 
             System.out.println( white( ">> Ready for requests!" ) );
             Thread.sleep( Long.MAX_VALUE );
@@ -212,6 +213,9 @@ public final class DevShell
         }
     }
 
+    /**
+     * Stop DevShell.
+     */
     public void stop()
     {
         try

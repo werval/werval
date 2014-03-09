@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * SLF4J JUnit Rule for use with Logback.
  */
+// Inspired by https://gist.github.com/tux2323/1005996
 public class Slf4jRule
     extends TestWatcher
 {

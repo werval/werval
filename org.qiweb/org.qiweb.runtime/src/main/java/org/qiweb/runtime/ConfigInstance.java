@@ -24,12 +24,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.qiweb.api.Config;
 import org.qiweb.api.util.Reflectively;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.qiweb.api.util.Charsets.UTF_8;
 
+/**
+ * Config Instance backed by TypeSafe Config.
+ */
 @Reflectively.Loaded( by = "DevShell" )
 public class ConfigInstance
     implements Config
@@ -129,7 +133,10 @@ public class ConfigInstance
         catch( MalformedURLException ex )
         {
             throw new com.typesafe.config.ConfigException.WrongType(
-                config.origin(), "Malformed URL in config, key: " + key + ", value: " + urlString, ex );
+                config.origin(),
+                "Malformed URL in config, key: " + key + ", value: " + urlString,
+                ex
+            );
         }
     }
 
@@ -142,13 +149,13 @@ public class ConfigInstance
     @Override
     public Long seconds( String key )
     {
-        return config.getDuration( key, TimeUnit.SECONDS );
+        return config.getDuration( key, SECONDS );
     }
 
     @Override
     public Long milliseconds( String key )
     {
-        return config.getDuration( key, TimeUnit.MILLISECONDS );
+        return config.getDuration( key, MILLISECONDS );
     }
 
     @Override

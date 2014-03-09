@@ -87,16 +87,26 @@ public final class Stacktraces
         return new RecursivePredicate( (ex) -> ex.getMessage() == null ? false : ex.getMessage().contains( string ) );
     }
 
+    /**
+     * URL Generator to use with {@link #toHtml(java.lang.Throwable, org.qiweb.api.util.Stacktraces.FileURLGenerator)}.
+     */
     public interface FileURLGenerator
     {
+        /**
+         * Generate URL for the given filename and line number.
+         * 
+         * @param filename File name
+         * @param line Line number
+         * @return URL for the given filename and line number, or null if not found
+         */
         String urlFor( String filename, int line );
     }
 
     public static CharSequence toHtml( Throwable throwable, FileURLGenerator urlGen )
     {
+        // Parameters
         ensureNotNull( "Throwable", throwable );
         ensureNotNull( "FileURLGenerator", urlGen );
-        // Parameters
         String containerClassName = "qiweb-stacktrace";
 
         // Get trace
@@ -133,7 +143,7 @@ public final class Stacktraces
             }
         }
 
-        // HTML container
+        // Put in HTML container
         StringBuilder html = new StringBuilder();
         html.append( "<div class=\"" ).append( containerClassName ).append( "\" style=\"white-space: pre;\">\n" );
         html.append( traceWriter.toString() );
