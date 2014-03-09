@@ -38,7 +38,6 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public class FormUploadsInstance
     implements FormUploads
 {
-
     private final Map<String, List<Upload>> uploads;
 
     public FormUploadsInstance( boolean allowMultiValuedUploads, Map<String, List<Upload>> uploads )
@@ -171,7 +170,6 @@ public class FormUploadsInstance
     public static class UploadInstance
         implements Upload
     {
-
         private final String contentType;
         private final Charset charset;
         private final String filename;

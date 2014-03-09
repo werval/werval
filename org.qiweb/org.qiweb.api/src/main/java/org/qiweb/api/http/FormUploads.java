@@ -27,7 +27,6 @@ import java.util.Set;
  */
 public interface FormUploads
 {
-
     /**
      * @return TRUE if there's no upload, FALSE otherwise
      */
@@ -116,7 +115,6 @@ public interface FormUploads
      */
     interface Upload
     {
-
         /**
          * @return Upload's content-type or null if not defined
          */
@@ -166,5 +164,4 @@ public interface FormUploads
          */
         void moveTo( File destination );
     }
-
 }

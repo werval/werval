@@ -170,7 +170,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
     /* package */ static RequestBody bodyOf(
         RequestHeader requestHeader, FullHttpRequest request,
         Charset defaultCharset,
-        boolean allowMultiValuedHeaders, boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
+        boolean allowMultiValuedFormAttributes, boolean allowMultiValuedUploads )
     {
         RequestBody body;
         Charset requestCharset = requestHeader.charset().isEmpty()

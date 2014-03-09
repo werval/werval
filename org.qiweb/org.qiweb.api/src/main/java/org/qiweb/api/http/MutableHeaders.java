@@ -21,7 +21,6 @@ package org.qiweb.api.http;
 public interface MutableHeaders
     extends Headers
 {
-
     /**
      * Remove all values of a HTTP Header.
      * 

@@ -199,7 +199,6 @@ public final class HttpRequestRouterHandler
             requestHeader,
             nettyRequest,
             app.defaultCharset(),
-            app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
             app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
             app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED )
         );

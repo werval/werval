@@ -45,6 +45,12 @@ import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 public class RequestHeaderInstance
     implements RequestHeader
 {
+    /**
+     * Extract charset information from Content-Type string value.
+     *
+     * @param contentType Content-Type string value
+     * @return Extracted charset
+     */
     public static String extractCharset( String contentType )
     {
         if( isEmpty( contentType ) )
@@ -66,7 +72,6 @@ public class RequestHeaderInstance
         }
         return EMPTY;
     }
-
     private final String identity;
     private final String remoteSocketAddress;
     private final boolean xffEnabled;
