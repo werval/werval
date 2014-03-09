@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,19 +36,22 @@ public class FormAttributesInstance
     public FormAttributesInstance( boolean allowMultiValuedAttributes, Map<String, List<String>> attributes )
     {
         this.attributes = new TreeMap<>( Comparators.LOWER_CASE );
-        for( Map.Entry<String, List<String>> entry : attributes.entrySet() )
+        if( attributes != null )
         {
-            String name = entry.getKey();
-            if( !this.attributes.containsKey( name ) )
+            for( Map.Entry<String, List<String>> entry : attributes.entrySet() )
             {
-                this.attributes.put( name, new ArrayList<>() );
+                String name = entry.getKey();
+                if( !this.attributes.containsKey( name ) )
+                {
+                    this.attributes.put( name, new ArrayList<>() );
+                }
+                List<String> values = entry.getValue();
+                if( !allowMultiValuedAttributes && ( !this.attributes.get( name ).isEmpty() || values.size() > 1 ) )
+                {
+                    throw new BadRequestException( "Multi-valued attributes are not allowed" );
+                }
+                this.attributes.get( name ).addAll( entry.getValue() );
             }
-            List<String> values = entry.getValue();
-            if( !allowMultiValuedAttributes && ( !this.attributes.get( name ).isEmpty() || values.size() > 1 ) )
-            {
-                throw new BadRequestException( "Multi-valued attributes are not allowed" );
-            }
-            this.attributes.get( name ).addAll( entry.getValue() );
         }
     }
 

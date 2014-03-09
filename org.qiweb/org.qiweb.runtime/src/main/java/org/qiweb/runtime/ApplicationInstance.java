@@ -49,6 +49,7 @@ import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
+import org.qiweb.runtime.http.HttpBuildersInstance;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.mime.MimeTypesInstance;
@@ -59,6 +60,7 @@ import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
+import org.qiweb.spi.http.HttpBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +105,7 @@ public final class ApplicationInstance
     private ReverseRoutes reverseRoutes;
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
+    private HttpBuilders httpBuilders;
     private final MetaData metaData;
     private final Errors errors;
     private final DevShellSPI devSpi;
@@ -348,6 +351,12 @@ public final class ApplicationInstance
         activate();
     }
 
+    @Override
+    public HttpBuilders httpBuilders()
+    {
+        return httpBuilders;
+    }
+
     // SPI
     @Override
     public Outcome handleRequest( Request request )
@@ -535,6 +544,7 @@ public final class ApplicationInstance
         configureMimeTypes();
         configureRoutes();
         configurePlugins();
+        configureHttpBuilders();
     }
 
     private void configureGlobal()
@@ -626,5 +636,10 @@ public final class ApplicationInstance
     private void configurePlugins()
     {
         plugins = new PluginsInstance( config, global.extraPlugins() );
+    }
+
+    private void configureHttpBuilders()
+    {
+        httpBuilders = new HttpBuildersInstance( config );
     }
 }

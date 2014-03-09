@@ -21,6 +21,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Reflectively;
+import org.qiweb.spi.http.HttpBuilders;
 
 /**
  * Application SPI.
@@ -43,6 +44,8 @@ public interface ApplicationSPI
      */
     @Reflectively.Invoked( by = "DevShell" )
     void reload( ClassLoader newClassLoader );
+
+    HttpBuilders httpBuilders();
 
     Outcome handleRequest( Request request );
 

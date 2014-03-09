@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,19 +43,22 @@ public class FormUploadsInstance
     public FormUploadsInstance( boolean allowMultiValuedUploads, Map<String, List<Upload>> uploads )
     {
         this.uploads = new TreeMap<>( Comparators.LOWER_CASE );
-        for( Map.Entry<String, List<Upload>> entry : uploads.entrySet() )
+        if( uploads != null )
         {
-            String name = entry.getKey();
-            if( !this.uploads.containsKey( name ) )
+            for( Map.Entry<String, List<Upload>> entry : uploads.entrySet() )
             {
-                this.uploads.put( name, new ArrayList<>() );
+                String name = entry.getKey();
+                if( !this.uploads.containsKey( name ) )
+                {
+                    this.uploads.put( name, new ArrayList<>() );
+                }
+                List<Upload> values = entry.getValue();
+                if( !allowMultiValuedUploads && ( !this.uploads.get( name ).isEmpty() || values.size() > 1 ) )
+                {
+                    throw new BadRequestException( "Multi-valued uploads are not allowed" );
+                }
+                this.uploads.get( name ).addAll( entry.getValue() );
             }
-            List<Upload> values = entry.getValue();
-            if( !allowMultiValuedUploads && ( !this.uploads.get( name ).isEmpty() || values.size() > 1 ) )
-            {
-                throw new BadRequestException( "Multi-valued uploads are not allowed" );
-            }
-            this.uploads.get( name ).addAll( entry.getValue() );
         }
     }
 

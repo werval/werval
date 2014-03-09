@@ -76,13 +76,6 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.server.netty.NettyHttpFactories.bodyOf;
@@ -184,23 +177,19 @@ public final class HttpRequestRouterHandler
 
         // Parse RequestHeader
         RequestHeader requestHeader = requestHeaderOf(
-            requestIdentity, nettyRequest,
+            app.httpBuilders(),
+            requestIdentity,
+            nettyRequest,
             remoteAddressOf( nettyContext.channel() ),
-            app.config().bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED ),
-            app.config().bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK ),
-            app.config().stringList( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED ),
-            app.defaultCharset(),
-            app.config().bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
-            app.config().bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
+            app.defaultCharset()
         );
 
         // Parse Request
         RequestBody requestBody = bodyOf(
+            app.httpBuilders(),
             requestHeader,
             nettyRequest,
-            app.defaultCharset(),
-            app.config().bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
-            app.config().bool( QIWEB_HTTP_UPLOADS_MULTIVALUED )
+            app.defaultCharset()
         );
         Request request = new RequestInstance( requestHeader, requestBody );
 

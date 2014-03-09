@@ -42,32 +42,23 @@ public final class RequestBodyInstance
     /**
      * Create a new EMPTY RequestBody.
      * @param charset Body charset
-     * @param allowMultiValuedAttributes Allow multi-valued attributes
-     * @param allowMultiValuedUploads Allow multi-valued uploads
      */
-    public RequestBodyInstance( Charset charset,
-                                boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads )
+    public RequestBodyInstance( Charset charset )
     {
-        this.charset = charset;
-        this.bodyBytes = null;
-        this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
-        this.uploads = new FormUploadsInstance( allowMultiValuedUploads, Collections.<String, List<Upload>>emptyMap() );
+        this( charset, ByteSource.EMPTY_BYTES );
     }
 
     /**
      * Create a new RequestBody backed by a ByteBuf.
      * 
      * @param charset Body charset
-     * @param allowMultiValuedAttributes Allow multi-valued attributes
      * @param bodyBytes Body bytes
      */
-    public RequestBodyInstance( Charset charset,
-                                boolean allowMultiValuedAttributes,
-                                ByteSource bodyBytes )
+    public RequestBodyInstance( Charset charset, ByteSource bodyBytes )
     {
         this.charset = charset;
         this.bodyBytes = bodyBytes;
-        this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, Collections.<String, List<String>>emptyMap() );
+        this.attributes = new FormAttributesInstance( false, Collections.<String, List<String>>emptyMap() );
         this.uploads = new FormUploadsInstance( false, Collections.<String, List<Upload>>emptyMap() );
     }
 

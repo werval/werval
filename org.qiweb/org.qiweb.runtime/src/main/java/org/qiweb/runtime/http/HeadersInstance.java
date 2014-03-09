@@ -50,6 +50,20 @@ public final class HeadersInstance
     }
 
     /**
+     * Deep-copy Map constructor.
+     * @param allowMultiValuedHeaders Allow multi-valued headers
+     * @param headers Headers to copy
+     */
+    public HeadersInstance( boolean allowMultiValuedHeaders, Map<String, List<String>> headers )
+    {
+        this( allowMultiValuedHeaders );
+        for( Entry<String, List<String>> header : headers.entrySet() )
+        {
+            withAll( header.getKey(), header.getValue().toArray( new String[ header.getValue().size() ] ) );
+        }
+    }
+
+    /**
      * Deep-copy constructor.
      * @param allowMultiValuedHeaders Allow multi-valued headers
      * @param headers Headers to copy

@@ -110,7 +110,7 @@ public class RequestHeaderInstance
         this.remoteSocketAddress = remoteSocketAddress;
         this.xffEnabled = xffEnabled;
         this.xffCheckProxies = xffCheckProxies;
-        this.xffTrustedProxies = xffTrustedProxies;
+        this.xffTrustedProxies = xffTrustedProxies == null ? emptyList() : xffTrustedProxies;
         this.version = version;
         this.method = method;
         this.uri = uri;
