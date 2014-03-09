@@ -23,6 +23,7 @@ import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
+import org.qiweb.api.util.Stacktraces;
 
 /**
  * Application.
@@ -171,4 +172,12 @@ public interface Application
      * @return Application {@link Errors}
      */
     Errors errors();
+
+    /**
+     * FileURLGenerator for Application Sources.
+     * <p>Works only in {@link Mode#DEV} mode.</p>
+     *
+     * @return FileURLGenerator for Application Sources
+     */
+    Stacktraces.FileURLGenerator sourceFileURLGenerator();
 }

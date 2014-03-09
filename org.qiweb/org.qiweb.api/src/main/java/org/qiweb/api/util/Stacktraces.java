@@ -102,6 +102,19 @@ public final class Stacktraces
         String urlFor( String filename, int line );
     }
 
+    /**
+     * Null object that implements {@link FileURLGenerator}.
+     */
+    public static final class NullFileURLGenerator
+        implements FileURLGenerator
+    {
+        @Override
+        public String urlFor( String filename, int line )
+        {
+            return null;
+        }
+    }
+
     public static CharSequence toHtml( Throwable throwable, FileURLGenerator urlGen )
     {
         // Parameters

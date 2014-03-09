@@ -146,7 +146,8 @@ public final class DevShell
                     modeClass,
                     configClass,
                     ClassLoader.class,
-                    routesProviderClass
+                    routesProviderClass,
+                    DevShellSPI.class
                 }
             ).newInstance(
                 new Object[]
@@ -155,7 +156,8 @@ public final class DevShell
                     modeClass.getEnumConstants()[0],
                     configInstance,
                     appRealm,
-                    routesProviderInstance
+                    routesProviderInstance,
+                    spi
                 }
             );
 

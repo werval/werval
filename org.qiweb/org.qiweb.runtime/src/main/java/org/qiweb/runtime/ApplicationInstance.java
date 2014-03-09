@@ -45,6 +45,7 @@ import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
+import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
@@ -57,6 +58,7 @@ import org.qiweb.runtime.routes.ReverseRoutesInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +105,7 @@ public final class ApplicationInstance
     private MimeTypes mimeTypes;
     private final MetaData metaData;
     private final Errors errors;
+    private final DevShellSPI devSpi;
 
     /**
      * Create a new Application instance in {@link Mode#TEST}.
@@ -127,20 +130,15 @@ public final class ApplicationInstance
         this( mode, new RoutesConfProvider() );
     }
 
-    /**
-     * Create a new Application instance in given {@link Mode}.
-     *
-     * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
-     *
-     * @param mode Application Mode
-     * @param routesProvider Routes provider
-     */
     private ApplicationInstance( Mode mode, RoutesProvider routesProvider )
     {
-        this( mode,
-              new ConfigInstance( ApplicationInstance.class.getClassLoader() ),
-              ApplicationInstance.class.getClassLoader(),
-              routesProvider );
+        this(
+            mode,
+            new ConfigInstance( ApplicationInstance.class.getClassLoader() ),
+            ApplicationInstance.class.getClassLoader(),
+            routesProvider,
+            null
+        );
     }
 
     /**
@@ -151,8 +149,22 @@ public final class ApplicationInstance
      * @param classLoader Application ClassLoader, must be not null
      * @param routesProvider Routes provider, must be not null
      */
-    @Reflectively.Invoked( by = "DevShell" )
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
+    {
+        this( mode, config, classLoader, routesProvider, null );
+    }
+
+    /**
+     * Create a new Application instance in given {@link Mode}.
+     *
+     * @param mode Application Mode, must be not null
+     * @param config Application config, must be not null
+     * @param classLoader Application ClassLoader, must be not null
+     * @param routesProvider Routes provider, must be not null
+     * @param devSpi DevShell SPI, can be null
+     */
+    @Reflectively.Invoked( by = "DevShell" )
+    public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider, DevShellSPI devSpi )
     {
         ensureNotNull( "Application Mode", mode );
         ensureNotNull( "Application Config", config );
@@ -164,6 +176,7 @@ public final class ApplicationInstance
         this.classLoader = classLoader;
         this.metaData = new MetaData();
         this.errors = new ErrorsInstance( config );
+        this.devSpi = devSpi;
         configure();
     }
 
@@ -304,6 +317,16 @@ public final class ApplicationInstance
     public Errors errors()
     {
         return errors;
+    }
+
+    @Override
+    public Stacktraces.FileURLGenerator sourceFileURLGenerator()
+    {
+        if( devSpi != null )
+        {
+            return devSpi::sourceURL;
+        }
+        return new Stacktraces.NullFileURLGenerator();
     }
 
     // SPI

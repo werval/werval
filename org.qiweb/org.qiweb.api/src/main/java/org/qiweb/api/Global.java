@@ -23,6 +23,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
+import org.qiweb.api.util.Stacktraces;
 
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
@@ -266,7 +267,7 @@ public class Global
         html.append( "<body>\n<h1>500 Internal Server Error</h1>\n" );
         if( application.mode() == Mode.DEV )
         {
-            // html.append( Stacktraces.toHtml( cause, devSpi::sourceURL ) );
+            html.append( Stacktraces.toHtml( cause, application.sourceFileURLGenerator() ) );
         }
         html.append( "</body>\n</html>\n" );
         return outcomes.internalServerError().
