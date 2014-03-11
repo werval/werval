@@ -44,6 +44,8 @@ public interface HttpBuilders
 
     interface QueryStringBuilder
     {
+        QueryStringBuilder query( String queryString );
+
         QueryStringBuilder parameters( Map<String, List<String>> parameters );
 
         QueryString build();

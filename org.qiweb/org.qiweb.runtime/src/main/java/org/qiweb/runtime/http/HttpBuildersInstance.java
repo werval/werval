@@ -32,6 +32,7 @@ import org.qiweb.spi.http.HttpBuilders;
 import static java.util.Collections.emptyMap;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
@@ -52,30 +53,48 @@ public class HttpBuildersInstance
     @Override
     public QueryStringBuilder newQueryStringBuilder()
     {
-        return new QueryStringBuilderInstance( config, null );
+        return new QueryStringBuilderInstance( config, null, null );
     }
 
     private static class QueryStringBuilderInstance
         implements QueryStringBuilder
     {
         private final Config config;
+        private final String queryString;
         private final Map<String, List<String>> parameters;
 
-        private QueryStringBuilderInstance( Config config, Map<String, List<String>> parameters )
+        private QueryStringBuilderInstance( Config config, String queryString, Map<String, List<String>> parameters )
         {
             this.config = config;
+            this.queryString = queryString == null ? EMPTY : queryString;
             this.parameters = parameters == null ? emptyMap() : parameters;
+        }
+
+        @Override
+        public QueryStringBuilder query( String queryString )
+        {
+            return new QueryStringBuilderInstance( config, queryString, parameters );
         }
 
         @Override
         public QueryStringBuilder parameters( Map<String, List<String>> parameters )
         {
-            return new QueryStringBuilderInstance( config, parameters );
+            return new QueryStringBuilderInstance( config, queryString, parameters );
         }
 
         @Override
         public QueryString build()
         {
+            if( !queryString.isEmpty() && !parameters.isEmpty() )
+            {
+                throw new IllegalStateException(
+                    "Cannot build a QueryString with both 'queryString' and 'parameters' set."
+                );
+            }
+            if( !queryString.isEmpty() )
+            {
+                return new QueryStringInstance( new QueryString.Decoder( queryString ).parameters() );
+            }
             return new QueryStringInstance( parameters );
         }
     }
