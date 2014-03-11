@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,21 @@
 package org.qiweb.runtime.http;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.runtime.util.Comparators;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
 
 /**
  * Instance of HTTP Headers.
@@ -36,41 +38,32 @@ import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 public final class HeadersInstance
     implements MutableHeaders
 {
-    private final boolean allowMultiValuedHeaders;
-    private final Map<String, List<String>> headers;
+    private final Map<String, List<String>> headers = new TreeMap<>( LOWER_CASE );
 
     /**
      * Create new empty Headers instance.
-     * @param allowMultiValuedHeaders Allow multi-valued headers
      */
-    public HeadersInstance( boolean allowMultiValuedHeaders )
+    public HeadersInstance()
     {
-        this.allowMultiValuedHeaders = allowMultiValuedHeaders;
-        this.headers = new TreeMap<>( Comparators.LOWER_CASE );
     }
 
     /**
      * Deep-copy Map constructor.
-     * @param allowMultiValuedHeaders Allow multi-valued headers
      * @param headers Headers to copy
      */
-    public HeadersInstance( boolean allowMultiValuedHeaders, Map<String, List<String>> headers )
+    public HeadersInstance( Map<String, List<String>> headers )
     {
-        this( allowMultiValuedHeaders );
-        for( Entry<String, List<String>> header : headers.entrySet() )
-        {
-            withAll( header.getKey(), header.getValue().toArray( new String[ header.getValue().size() ] ) );
-        }
+        headers.entrySet().stream().forEach(
+            header -> this.headers.put( header.getKey(), new ArrayList<>( header.getValue() ) )
+        );
     }
 
     /**
      * Deep-copy constructor.
-     * @param allowMultiValuedHeaders Allow multi-valued headers
      * @param headers Headers to copy
      */
-    public HeadersInstance( boolean allowMultiValuedHeaders, Headers headers )
+    public HeadersInstance( Headers headers )
     {
-        this( allowMultiValuedHeaders );
         withAll( headers );
     }
 
@@ -90,7 +83,7 @@ public final class HeadersInstance
     @Override
     public Set<String> names()
     {
-        return Collections.unmodifiableSet( headers.keySet() );
+        return unmodifiableSet( headers.keySet() );
     }
 
     @Override
@@ -99,7 +92,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return Strings.EMPTY;
+            return EMPTY;
         }
         List<String> values = headers.get( name );
         if( values.size() != 1 )
@@ -115,7 +108,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return Strings.EMPTY;
+            return EMPTY;
         }
         return headers.get( name ).get( 0 );
     }
@@ -126,7 +119,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return Strings.EMPTY;
+            return EMPTY;
         }
         List<String> values = headers.get( name );
         return values.get( values.size() - 1 );
@@ -138,48 +131,39 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return Collections.emptyList();
+            return emptyList();
         }
-        return Collections.unmodifiableList( headers.get( name ) );
+        return unmodifiableList( headers.get( name ) );
     }
 
     @Override
     public Map<String, String> singleValues()
     {
-        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : headers.keySet() )
-        {
-            map.put( name, singleValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, String> singleValues = new TreeMap<>( LOWER_CASE );
+        headers.keySet().stream().forEach( name -> singleValues.put( name, singleValue( name ) ) );
+        return unmodifiableMap( singleValues );
     }
 
     @Override
     public Map<String, String> firstValues()
     {
-        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : headers.keySet() )
-        {
-            map.put( name, firstValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, String> firstValues = new TreeMap<>( LOWER_CASE );
+        headers.keySet().stream().forEach( name -> firstValues.put( name, firstValue( name ) ) );
+        return unmodifiableMap( firstValues );
     }
 
     @Override
     public Map<String, String> lastValues()
     {
-        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : headers.keySet() )
-        {
-            map.put( name, lastValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, String> lastValues = new TreeMap<>( LOWER_CASE );
+        headers.keySet().stream().forEach( name -> lastValues.put( name, lastValue( name ) ) );
+        return unmodifiableMap( lastValues );
     }
 
     @Override
     public Map<String, List<String>> allValues()
     {
-        return Collections.unmodifiableMap( headers );
+        return unmodifiableMap( headers );
     }
 
     @Override
@@ -198,11 +182,7 @@ public final class HeadersInstance
         {
             headers.put( name, new ArrayList<>() );
         }
-        else if( !allowMultiValuedHeaders && headers.get( name ).size() > 0 )
-        {
-            throw new BadRequestException( "Multi-valued headers are not allowed" );
-        }
-        headers.get( name ).add( value == null ? Strings.EMPTY : value );
+        headers.get( name ).add( value == null ? EMPTY : value );
         return this;
     }
 
@@ -218,7 +198,7 @@ public final class HeadersInstance
         {
             headers.get( name ).clear();
         }
-        headers.get( name ).add( value == null ? Strings.EMPTY : value );
+        headers.get( name ).add( value == null ? EMPTY : value );
         return this;
     }
 
@@ -236,10 +216,15 @@ public final class HeadersInstance
     @Override
     public MutableHeaders withAll( Headers headers )
     {
-        for( Entry<String, List<String>> header : headers.allValues().entrySet() )
-        {
-            withAll( header.getKey(), header.getValue().toArray( new String[ header.getValue().size() ] ) );
-        }
+        headers.allValues().entrySet().stream().forEach(
+            (header) ->
+            {
+                withAll(
+                    header.getKey(),
+                    header.getValue().toArray( new String[ header.getValue().size() ] )
+                );
+            }
+        );
         return this;
     }
 

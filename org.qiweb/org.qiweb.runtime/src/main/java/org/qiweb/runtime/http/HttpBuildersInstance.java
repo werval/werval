@@ -33,11 +33,9 @@ import static java.util.Collections.emptyMap;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 
 /**
@@ -80,10 +78,7 @@ public class HttpBuildersInstance
         @Override
         public QueryString build()
         {
-            return new QueryStringInstance(
-                config.bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ),
-                parameters
-            );
+            return new QueryStringInstance( parameters );
         }
     }
 
@@ -114,10 +109,7 @@ public class HttpBuildersInstance
         @Override
         public Headers build()
         {
-            return new HeadersInstance(
-                config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ),
-                headers
-            );
+            return new HeadersInstance( headers );
         }
     }
 

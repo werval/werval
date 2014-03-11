@@ -78,6 +78,7 @@ import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
@@ -371,6 +372,10 @@ public final class ApplicationInstance
         ThreadContextHelper contextHelper = new ThreadContextHelper();
         try
         {
+            // Validates incoming request
+            validatesRequestHeader( request );
+            validatesRequestBody( request );
+
             // Route the request
             final Route route = routes().route( request );
             LOG.debug( "{} Routing request to: {}", request.identity(), route );
@@ -386,10 +391,7 @@ public final class ApplicationInstance
             );
 
             // Prepare Response Header
-            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance(
-                request.version(),
-                config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED )
-            );
+            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance( request.version() );
 
             // Set Controller Context
             Context context = new ContextInstance( this, session, route, request, responseHeader );
@@ -422,6 +424,39 @@ public final class ApplicationInstance
         }
     }
 
+    private void validatesRequestHeader( RequestHeader requestHeader )
+    {
+        // QueryString
+        if( !config.bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ) )
+        {
+            for( List<String> values : requestHeader.queryString().allValues().values() )
+            {
+                if( values.size() > 1 )
+                {
+                    throw new BadRequestException( "Multi-valued query string parameters are not allowed" );
+                }
+            }
+        }
+        // Headers
+        if( !config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) )
+        {
+            for( List<String> values : requestHeader.headers().allValues().values() )
+            {
+                if( values.size() > 1 )
+                {
+                    throw new BadRequestException( "Multi-valued headers are not allowed" );
+                }
+            }
+        }
+        // Cookies
+    }
+
+    private void validatesRequestBody( Request request )
+    {
+        // Forms
+        // Uploads
+    }
+
     private Outcome handleError( RequestHeader request, Throwable cause )
     {
         // Clean-up stacktrace
@@ -444,7 +479,7 @@ public final class ApplicationInstance
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
             config,
-            new ResponseHeaderInstance( request.version(), config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) )
+            new ResponseHeaderInstance( request.version() )
         );
 
         // Handle contingencies
@@ -547,7 +582,7 @@ public final class ApplicationInstance
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
             config,
-            new ResponseHeaderInstance( version, config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) )
+            new ResponseHeaderInstance( version )
         );
 
         // Return 503 to incoming requests while shutting down

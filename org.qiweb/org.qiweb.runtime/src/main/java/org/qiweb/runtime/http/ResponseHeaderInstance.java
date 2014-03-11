@@ -36,10 +36,10 @@ public class ResponseHeaderInstance
     private ProtocolVersion version;
     private Status status = Status.valueOf( 0 );
 
-    public ResponseHeaderInstance( ProtocolVersion version, boolean allowMultiValuedHeaders )
+    public ResponseHeaderInstance( ProtocolVersion version )
     {
         this.version = version;
-        this.headers = new HeadersInstance( allowMultiValuedHeaders );
+        this.headers = new HeadersInstance();
         this.cookies = new CookiesInstance();
     }
 

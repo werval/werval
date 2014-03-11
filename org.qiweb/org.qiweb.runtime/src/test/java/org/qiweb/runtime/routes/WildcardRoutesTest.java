@@ -139,7 +139,7 @@ public class WildcardRoutesTest
             "http://localhost" + path,
             path,
             QueryStringInstance.EMPTY,
-            new HeadersInstance( false ),
+            new HeadersInstance(),
             new CookiesInstance()
         );
     }

@@ -332,7 +332,7 @@ public class RoutesTest
         return new RequestHeaderInstance(
             "identity", "127.0.0.1", HTTP_1_1,
             "GET", requestUri, requestPath,
-            queryString, new HeadersInstance( false ), new CookiesInstance()
+            queryString, new HeadersInstance(), new CookiesInstance()
         );
     }
 

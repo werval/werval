@@ -65,7 +65,7 @@ public class HttpRequestHeaderTest
     @Test
     public void testDomain()
     {
-        MutableHeaders headers = new HeadersInstance( false );
+        MutableHeaders headers = new HeadersInstance();
         assertThat(
             withHeaders( headers.withSingle( HOST, "qiweb.org" ) ).domain(),
             equalTo( "qiweb.org" ) );
@@ -77,7 +77,7 @@ public class HttpRequestHeaderTest
     @Test
     public void testContentType()
     {
-        MutableHeaders headers = new HeadersInstance( false );
+        MutableHeaders headers = new HeadersInstance();
         assertThat(
             withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).contentType(),
             equalTo( "application/json" ) );
@@ -89,7 +89,7 @@ public class HttpRequestHeaderTest
     @Test
     public void testCharset()
     {
-        MutableHeaders headers = new HeadersInstance( false );
+        MutableHeaders headers = new HeadersInstance();
         assertThat(
             withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).charset(),
             equalTo( Strings.EMPTY ) );
