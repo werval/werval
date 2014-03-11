@@ -41,9 +41,12 @@ public interface ApplicationSPI
 
     Outcome handleRequest( Request request );
 
+    Outcome handleError( RequestHeader requestHeader, Throwable cause );
+
     void onHttpRequestComplete( RequestHeader requestHeader );
 
     Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity );
+
     /**
      * Reload Application with a new ClassLoader.
      *

@@ -23,7 +23,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
@@ -32,13 +31,8 @@ import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import org.qiweb.api.Error;
-import org.qiweb.api.Mode;
-import org.qiweb.api.exceptions.ParameterBinderException;
-import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
@@ -46,9 +40,6 @@ import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.util.Stacktraces;
-import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
@@ -59,22 +50,12 @@ import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.buffer.Unpooled.copiedBuffer;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static java.util.Locale.US;
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.TRAILER;
 import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
-import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.server.netty.NettyHttpFactories.bodyOf;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
@@ -126,6 +107,7 @@ public final class HttpRequestRouterHandler
     private final DevShellSPI devSpi;
     private final HttpServerHelper helper = new HttpServerHelper();
     private String requestIdentity;
+    private RequestHeader requestHeader;
 
     public HttpRequestRouterHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
@@ -161,10 +143,14 @@ public final class HttpRequestRouterHandler
         }
 
         // In development mode, rebuild application source if needed
-        rebuildIfNeeded();
+        if( devSpi != null && devSpi.isSourceChanged() )
+        {
+            devSpi.rebuild();
+        }
 
         // Parse RequestHeader
-        RequestHeader requestHeader = requestHeaderOf(
+        // Can throw exceptions
+        requestHeader = requestHeaderOf(
             app.httpBuilders(),
             requestIdentity,
             nettyRequest,
@@ -173,6 +159,7 @@ public final class HttpRequestRouterHandler
         );
 
         // Parse RequestBody
+        // Can throw exceptions
         RequestBody requestBody = bodyOf(
             app.httpBuilders(),
             requestHeader,
@@ -191,6 +178,33 @@ public final class HttpRequestRouterHandler
 
         // Listen to request completion
         writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
+    }
+
+    @Override
+    public void exceptionCaught( ChannelHandlerContext nettyContext, Throwable cause )
+        throws IOException
+    {
+        if( cause instanceof ReadTimeoutException )
+        {
+            LOG.debug( "{} Read timeout, connection has been closed.", requestIdentity );
+        }
+        else if( cause instanceof WriteTimeoutException )
+        {
+            LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
+        }
+        else if( requestHeader != null )
+        {
+            Outcome errorOutcome = app.handleError( requestHeader, cause );
+            writeOutcome( nettyContext, errorOutcome );
+        }
+        else
+        {
+            LOG.error(
+                "HTTP Server encountered an unexpected error, please raise an issue with the complete stacktrace",
+                cause
+            );
+            nettyContext.close();
+        }
     }
 
     private ChannelFuture writeOutcome( ChannelHandlerContext nettyContext, Outcome outcome )
@@ -271,14 +285,6 @@ public final class HttpRequestRouterHandler
         return writeFuture;
     }
 
-    private void rebuildIfNeeded()
-    {
-        if( devSpi != null && devSpi.isSourceChanged() )
-        {
-            devSpi.rebuild();
-        }
-    }
-
     /**
      * Apply Headers and Cookies into Netty HttpResponse.
      * @param response QiWeb ResponseHeader
@@ -300,89 +306,5 @@ public final class HttpRequestRouterHandler
                 ServerCookieEncoder.encode( asNettyCookie( cookie ) )
             );
         }
-    }
-
-    @Override
-    public void exceptionCaught( ChannelHandlerContext nettyContext, Throwable cause )
-    {
-        if( cause instanceof ReadTimeoutException )
-        {
-            LOG.debug( "{} Read timeout, connection has been closed.", requestIdentity );
-        }
-        else if( cause instanceof WriteTimeoutException )
-        {
-            LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
-        }
-        else
-        {
-            // TODO Remove this code as this is now handled in Application
-            // TODO Make Application provide a Fault Barrier to the HttpServer for such cases
-            Throwable rootCause = app.global().getRootCause( cause );
-            if( rootCause instanceof RouteNotFoundException )
-            {
-                LOG.trace( "{} " + rootCause.getMessage() + " will return 404.", requestIdentity );
-                StringWriter body = new StringWriter();
-                body.append( "<html>\n<head><title>404 Route Not Found</title></head>\n<body>\n<h1>404 Route Not Found</h1>\n" );
-                if( app.mode() == Mode.DEV )
-                {
-                    body.append( "<p>Tried:</p>\n<pre>\n" );
-                    for( Route route : app.routes() )
-                    {
-                        if( !route.path().startsWith( "/@" ) )
-                        {
-                            body.append( route.toString() ).append( "\n" );
-                        }
-                    }
-                    body.append( "</pre>\n" );
-                }
-                body.append( "</body>\n</html>\n" );
-                sendError( nettyContext, NOT_FOUND, body.toString() );
-            }
-            else if( rootCause instanceof ParameterBinderException )
-            {
-                LOG.warn( "{} ParameterBinderException, will return 400.", requestIdentity, rootCause );
-                sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST " + rootCause.getMessage() );
-            }
-            else if( rootCause instanceof BadRequestException )
-            {
-                LOG.warn( "{} BadRequestException, will return 400.", requestIdentity, rootCause );
-                sendError( nettyContext, BAD_REQUEST, "400 BAD REQUEST\n" + rootCause.getMessage() );
-            }
-            else
-            {
-                // Handle Unexpected Exceptions
-                LOG.error(
-                    "{} Exception caught: {}( {} )",
-                    requestIdentity, rootCause.getClass().getSimpleName(), rootCause.getMessage(),
-                    rootCause
-                );
-
-                // Build body
-                StringWriter body = new StringWriter();
-                body.append( "<html><head><title>500 Internal Server Error</title></head><body><h1>500 Internal Server Error</h1>\n" );
-                if( app.mode() == Mode.DEV )
-                {
-                    body.append( Stacktraces.toHtml( rootCause, devSpi::sourceURL ) );
-                }
-                body.append( "</body></html>\n" );
-                String bodyString = body.toString();
-
-                // Record Error
-                Error error = app.errors().record( requestIdentity, bodyString, rootCause );
-
-                // Send Error to client
-                sendError( nettyContext, INTERNAL_SERVER_ERROR, bodyString );
-            }
-        }
-    }
-
-    private void sendError( ChannelHandlerContext context, HttpResponseStatus status, String body )
-    {
-        FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, status, copiedBuffer( body, app.defaultCharset() ) );
-        response.headers().set( X_QIWEB_REQUEST_ID, requestIdentity );
-        response.headers().set( CONTENT_TYPE, "text/html; charset=" + app.defaultCharset().name().toLowerCase( US ) );
-        response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
-        response.headers().set( CONNECTION, CLOSE );
-        context.writeAndFlush( response ).addListener( ChannelFutureListener.CLOSE );
     }
 }

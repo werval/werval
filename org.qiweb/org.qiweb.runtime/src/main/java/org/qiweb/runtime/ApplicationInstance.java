@@ -413,9 +413,7 @@ public final class ApplicationInstance
         catch( Throwable cause )
         {
             // Handle error
-            Outcome errorOutcome = handleError( request, cause );
-            // Finalize!
-            return finalizeOutcome( request, errorOutcome );
+            return handleError( request, cause );
         }
         finally
         {
@@ -457,7 +455,8 @@ public final class ApplicationInstance
         // Uploads
     }
 
-    private Outcome handleError( RequestHeader request, Throwable cause )
+    @Override
+    public Outcome handleError( RequestHeader request, Throwable cause )
     {
         // Clean-up stacktrace
         Throwable rootCause;
@@ -499,26 +498,35 @@ public final class ApplicationInstance
                 }
                 details.append( "</pre>\n" );
             }
-            return outcomes.notFound().
+            return finalizeOutcome(
+                request,
+                outcomes.notFound().
                 withBody( errorHtml( "404 Route Not Found", details ) ).
                 as( TEXT_HTML ).
-                build();
+                build()
+            );
         }
         else if( rootCause instanceof ParameterBinderException )
         {
             LOG.warn( "ParameterBinderException, will return 400.", rootCause );
-            return outcomes.badRequest().
+            return finalizeOutcome(
+                request,
+                outcomes.badRequest().
                 withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
                 as( TEXT_HTML ).
-                build();
+                build()
+            );
         }
         else if( rootCause instanceof BadRequestException )
         {
             LOG.warn( "BadRequestException, will return 400.", rootCause );
-            return outcomes.badRequest().
+            return finalizeOutcome(
+                request,
+                outcomes.badRequest().
                 withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
                 as( TEXT_HTML ).
-                build();
+                build()
+            );
         }
 
         // Handle faults
@@ -539,7 +547,7 @@ public final class ApplicationInstance
         errors.record( request.identity(), rootCause.getMessage(), rootCause );
 
         // Done!
-        return outcome;
+        return finalizeOutcome( request, outcome );
     }
 
     private CharSequence errorHtml( CharSequence title, CharSequence content )
