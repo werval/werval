@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@ package org.qiweb.api.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * InputStream utilities.
@@ -29,19 +30,25 @@ public final class InputStreams
         try
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            int nRead;
-            byte[] data = new byte[ bufsize ];
-            while( ( nRead = input.read( data, 0, data.length ) ) != -1 )
-            {
-                buffer.write( data, 0, nRead );
-            }
-            buffer.flush();
+            transferTo( input, buffer, bufsize );
             return buffer.toByteArray();
         }
         catch( IOException ex )
         {
             throw new RuntimeException( ex.getMessage(), ex );
         }
+    }
+
+    public static void transferTo( InputStream input, OutputStream output, int bufsize )
+        throws IOException
+    {
+        int nRead;
+        byte[] data = new byte[ bufsize ];
+        while( ( nRead = input.read( data, 0, data.length ) ) != -1 )
+        {
+            output.write( data, 0, nRead );
+        }
+        output.flush();
     }
 
     private InputStreams()

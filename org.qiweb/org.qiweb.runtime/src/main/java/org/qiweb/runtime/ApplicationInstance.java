@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,11 +91,16 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
 
 /**
  * An Application Instance.
- * <p>Application Mode defaults to {@link Mode#TEST}.</p>
- * <p>Application Config behaviour is the very same whatever the Mode is.</p>
- * <p>Application ClassLoader defaults to the ClassLoader that defined the ApplicationInstance class.</p>
- * <p>Application Routes are fetched from a given RoutesProvider.</p>
- * <p>Others are based on Application Config and created by Application instances.</p>
+ *
+ * Application Mode defaults to {@link Mode#TEST}.
+ * <p>
+ * Application Config behaviour is the very same whatever the Mode is.
+ * <p>
+ * Application ClassLoader defaults to the ClassLoader that defined the ApplicationInstance class.
+ * <p>
+ * Application Routes are fetched from a given RoutesProvider.
+ * <p>
+ * Others are based on Application Config and created by Application instances.
  */
 @Reflectively.Loaded( by = "DevShell" )
 public final class ApplicationInstance
@@ -123,7 +128,8 @@ public final class ApplicationInstance
 
     /**
      * Create a new Application instance in {@link Mode#TEST}.
-     * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
+     *
+     * Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.
      *
      * @param routesProvider Routes provider, must be not null
      */
@@ -134,8 +140,10 @@ public final class ApplicationInstance
 
     /**
      * Create a new Application instance in given {@link Mode}.
-     * <p>Routes are loaded from the {@literal routes.conf} file.</p>
-     * <p>Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.</p>
+     *
+     * Routes are loaded from the {@literal routes.conf} file.
+     * <p>
+     * Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.
      *
      * @param mode Application Mode, must be not null
      */

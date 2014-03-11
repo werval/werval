@@ -29,8 +29,10 @@ import org.qiweb.api.util.ByteSource;
 
 /**
  * HTTP API Objects Builders.
- * <p>Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.</p>
- * <p>All builders are immutable and reusable.</p>
+ * <p>
+ * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.</p>
+ * <p>
+ * All builders are immutable and reusable.</p>
  */
 public interface HttpBuilders
 {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,18 +63,17 @@ import static org.qiweb.server.netty.NettyHttpFactories.requestHeaderOf;
 
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
- * 
- * <p><strong>HTTP Requests</strong></p>
+ *
+ * <strong>HTTP Requests</strong>
  * <p>
- *     Any HTTP request message is allowed to contain a message body, and thus must be parsed with that in mind.
- *     This implementation consume the request body for any requests methods but it is only parsed for POST, PUT
- *     and PATCH methods. Parsing is done only for URL-encoded forms and multipart form data. For other request body
- *     types, it's the application responsibility to do the parsing.
- * </p>
- * 
- * <p><strong>WebSocket UPGRADE Requests</strong></p>
- * 
- * <p>TODO WebSocket UPGRADE</p>
+ * Any HTTP request message is allowed to contain a message body, and thus must be parsed with that in mind.
+ * This implementation consume the request body for any requests methods but it is only parsed for POST, PUT
+ * and PATCH methods. Parsing is done only for URL-encoded forms and multipart form data. For other request body
+ * types, it's the application responsibility to do the parsing.
+ * <p>
+ * <strong>WebSocket UPGRADE Requests</strong>
+ * <p>
+ * TODO WebSocket UPGRADE
  */
 public final class HttpRequestRouterHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
@@ -287,6 +286,7 @@ public final class HttpRequestRouterHandler
 
     /**
      * Apply Headers and Cookies into Netty HttpResponse.
+     *
      * @param response QiWeb ResponseHeader
      * @param nettyResponse Netty HttpResponse
      */
