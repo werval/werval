@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
+import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
@@ -448,6 +449,14 @@ public final class ApplicationInstance
                     throw new BadRequestException( "Multi-valued headers are not allowed" );
                 }
             }
+        }
+        // Some are prohibited anyway
+        if( requestHeader.headers().values( COOKIE ).size() > 1 )
+        {
+            throw new BadRequestException(
+                "RFC 6265 - 5.4. The Cookie Header - When the user agent generates an HTTP request, "
+                + "the user agent MUST NOT attach more than one Cookie header field."
+            );
         }
     }
 

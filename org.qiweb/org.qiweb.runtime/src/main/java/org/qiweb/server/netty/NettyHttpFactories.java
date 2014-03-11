@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,39 +75,6 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
  */
 /* package */ final class NettyHttpFactories
 {
-    private static Map<String, List<String>> headersToMap( HttpHeaders nettyHeaders )
-    {
-        Map<String, List<String>> headers = new HashMap<>();
-        for( String name : nettyHeaders.names() )
-        {
-            if( !headers.containsKey( name ) )
-            {
-                headers.put( name, new ArrayList<>() );
-            }
-            for( String value : nettyHeaders.getAll( name ) )
-            {
-                headers.get( name ).add( value );
-            }
-        }
-        return headers;
-    }
-
-    // TODO What to do about multiple Cookie headers?
-    private static Cookies cookiesOf( HttpRequest nettyRequest )
-    {
-        Map<String, Cookie> cookies = new HashMap<>();
-        String cookieHeaderValue = nettyRequest.headers().get( COOKIE );
-        if( !Strings.isEmpty( cookieHeaderValue ) )
-        {
-            Set<io.netty.handler.codec.http.Cookie> nettyCookies = CookieDecoder.decode( cookieHeaderValue );
-            for( io.netty.handler.codec.http.Cookie nettyCookie : nettyCookies )
-            {
-                cookies.put( nettyCookie.getName(), asQiWebCookie( nettyCookie ) );
-            }
-        }
-        return new CookiesInstance( cookies );
-    }
-
     /* package */ static String remoteAddressOf( Channel channel )
     {
         SocketAddress remoteAddress = channel.remoteAddress();
@@ -233,6 +200,39 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
             }
         }
         return bodyBuilder.build();
+    }
+
+    private static Map<String, List<String>> headersToMap( HttpHeaders nettyHeaders )
+    {
+        Map<String, List<String>> headers = new HashMap<>();
+        for( String name : nettyHeaders.names() )
+        {
+            if( !headers.containsKey( name ) )
+            {
+                headers.put( name, new ArrayList<>() );
+            }
+            for( String value : nettyHeaders.getAll( name ) )
+            {
+                headers.get( name ).add( value );
+            }
+        }
+        return headers;
+    }
+
+    private static Cookies cookiesOf( HttpRequest nettyRequest )
+    {
+        Map<String, Cookie> cookies = new HashMap<>();
+        // WARN Cookie parsed here from last Cookie header value but QiWeb Application ensure later that there is only
+        // one Cookie header. Stable but inefficient.
+        String cookieHeaderValue = nettyRequest.headers().get( COOKIE );
+        if( !Strings.isEmpty( cookieHeaderValue ) )
+        {
+            for( io.netty.handler.codec.http.Cookie nettyCookie : CookieDecoder.decode( cookieHeaderValue ) )
+            {
+                cookies.put( nettyCookie.getName(), asQiWebCookie( nettyCookie ) );
+            }
+        }
+        return new CookiesInstance( cookies );
     }
 
     /* package */ static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +20,12 @@ import org.qiweb.api.http.Cookies.Cookie;
 
 /**
  * HTTP Cookies.
+ * Cookies are loaded from the {@literal Cookie} header of a {@link RequestHeader}.
+ * See <a href="http://tools.ietf.org/html/rfc6265">RFC6265 - HTTP State Management Mechanism</a>
  */
 public interface Cookies
     extends Iterable<Cookie>
 {
-
     /**
      * @return TRUE if there's no cookie, FALSE otherwise
      */
@@ -58,7 +59,6 @@ public interface Cookies
      */
     interface Cookie
     {
-
         /**
          * @return Name of the cookie
          */
@@ -89,5 +89,4 @@ public interface Cookies
          */
         boolean httpOnly();
     }
-
 }
