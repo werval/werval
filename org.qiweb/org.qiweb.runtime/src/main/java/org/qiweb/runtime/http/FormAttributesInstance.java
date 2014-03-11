@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,42 +16,33 @@
 package org.qiweb.runtime.http;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.qiweb.api.http.FormAttributes;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.runtime.util.Comparators;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
 
 public class FormAttributesInstance
     implements FormAttributes
 {
-    private final Map<String, List<String>> attributes;
+    private final Map<String, List<String>> attributes = new TreeMap<>( LOWER_CASE );
 
-    public FormAttributesInstance( boolean allowMultiValuedAttributes, Map<String, List<String>> attributes )
+    public FormAttributesInstance( Map<String, List<String>> attributes )
     {
-        this.attributes = new TreeMap<>( Comparators.LOWER_CASE );
         if( attributes != null )
         {
-            for( Map.Entry<String, List<String>> entry : attributes.entrySet() )
-            {
-                String name = entry.getKey();
-                if( !this.attributes.containsKey( name ) )
-                {
-                    this.attributes.put( name, new ArrayList<>() );
-                }
-                List<String> values = entry.getValue();
-                if( !allowMultiValuedAttributes && ( !this.attributes.get( name ).isEmpty() || values.size() > 1 ) )
-                {
-                    throw new BadRequestException( "Multi-valued attributes are not allowed" );
-                }
-                this.attributes.get( name ).addAll( entry.getValue() );
-            }
+            attributes.entrySet().stream().forEach(
+                attribute -> this.attributes.put( attribute.getKey(), new ArrayList<>( attribute.getValue() ) )
+            );
         }
     }
 
@@ -71,7 +62,7 @@ public class FormAttributesInstance
     @Override
     public Set<String> names()
     {
-        return Collections.unmodifiableSet( attributes.keySet() );
+        return unmodifiableSet( attributes.keySet() );
     }
 
     @Override
@@ -80,7 +71,7 @@ public class FormAttributesInstance
         ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
-            return Strings.EMPTY;
+            return EMPTY;
         }
         List<String> values = attributes.get( name );
         if( values.size() != 1 )
@@ -96,7 +87,7 @@ public class FormAttributesInstance
         ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
-            return Strings.EMPTY;
+            return EMPTY;
         }
         return attributes.get( name ).get( 0 );
     }
@@ -107,7 +98,7 @@ public class FormAttributesInstance
         ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
-            return Strings.EMPTY;
+            return EMPTY;
         }
         List<String> values = attributes.get( name );
         return values.get( values.size() - 1 );
@@ -119,47 +110,38 @@ public class FormAttributesInstance
         ensureNotEmpty( "Form Attribute Name", name );
         if( !attributes.containsKey( name ) )
         {
-            return Collections.emptyList();
+            return emptyList();
         }
-        return Collections.unmodifiableList( attributes.get( name ) );
+        return unmodifiableList( attributes.get( name ) );
     }
 
     @Override
     public Map<String, String> singleValues()
     {
-        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : attributes.keySet() )
-        {
-            map.put( name, singleValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, String> singleValues = new TreeMap<>( LOWER_CASE );
+        attributes.keySet().stream().forEach( name -> singleValues.put( name, singleValue( name ) ) );
+        return unmodifiableMap( singleValues );
     }
 
     @Override
     public Map<String, String> firstValues()
     {
-        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : attributes.keySet() )
-        {
-            map.put( name, firstValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, String> firstValues = new TreeMap<>( LOWER_CASE );
+        attributes.keySet().stream().forEach( name -> firstValues.put( name, firstValue( name ) ) );
+        return unmodifiableMap( firstValues );
     }
 
     @Override
     public Map<String, String> lastValues()
     {
-        Map<String, String> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : attributes.keySet() )
-        {
-            map.put( name, lastValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, String> lastValues = new TreeMap<>( LOWER_CASE );
+        attributes.keySet().stream().forEach( name -> lastValues.put( name, lastValue( name ) ) );
+        return unmodifiableMap( lastValues );
     }
 
     @Override
     public Map<String, List<String>> allValues()
     {
-        return Collections.unmodifiableMap( attributes );
+        return unmodifiableMap( attributes );
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@ package org.qiweb.runtime.http;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.FormAttributes;
@@ -27,6 +26,8 @@ import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.util.ByteSource;
 import org.qiweb.api.util.Strings;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * A RequestBody Instance.
@@ -41,6 +42,7 @@ public final class RequestBodyInstance
 
     /**
      * Create a new EMPTY RequestBody.
+     *
      * @param charset Body charset
      */
     public RequestBodyInstance( Charset charset )
@@ -50,7 +52,7 @@ public final class RequestBodyInstance
 
     /**
      * Create a new RequestBody backed by a ByteBuf.
-     * 
+     *
      * @param charset Body charset
      * @param bodyBytes Body bytes
      */
@@ -58,27 +60,24 @@ public final class RequestBodyInstance
     {
         this.charset = charset;
         this.bodyBytes = bodyBytes;
-        this.attributes = new FormAttributesInstance( false, Collections.<String, List<String>>emptyMap() );
-        this.uploads = new FormUploadsInstance( false, Collections.<String, List<Upload>>emptyMap() );
+        this.attributes = new FormAttributesInstance( emptyMap() );
+        this.uploads = new FormUploadsInstance( emptyMap() );
     }
 
     /**
      * Create a new RequestBody backed by form and upload data.
-     * 
+     *
      * @param charset Body charset
-     * @param allowMultiValuedAttributes Allow multi-valued attributes
-     * @param allowMultiValuedUploads Allow multi-valued uploads
      * @param attributes Form attributes
      * @param uploads Upload data
      */
     public RequestBodyInstance( Charset charset,
-                                boolean allowMultiValuedAttributes, boolean allowMultiValuedUploads,
                                 Map<String, List<String>> attributes, Map<String, List<Upload>> uploads )
     {
         this.charset = charset;
         this.bodyBytes = null;
-        this.attributes = new FormAttributesInstance( allowMultiValuedAttributes, attributes );
-        this.uploads = new FormUploadsInstance( allowMultiValuedUploads, uploads );
+        this.attributes = new FormAttributesInstance( attributes );
+        this.uploads = new FormUploadsInstance( uploads );
     }
 
     @Override

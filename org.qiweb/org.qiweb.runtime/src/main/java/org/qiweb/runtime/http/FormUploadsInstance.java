@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,34 +30,26 @@ import java.util.TreeMap;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.runtime.util.Comparators;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
 
 public class FormUploadsInstance
     implements FormUploads
 {
-    private final Map<String, List<Upload>> uploads;
+    private final Map<String, List<Upload>> uploads = new TreeMap<>( LOWER_CASE );
 
-    public FormUploadsInstance( boolean allowMultiValuedUploads, Map<String, List<Upload>> uploads )
+    public FormUploadsInstance( Map<String, List<Upload>> uploads )
     {
-        this.uploads = new TreeMap<>( Comparators.LOWER_CASE );
         if( uploads != null )
         {
-            for( Map.Entry<String, List<Upload>> entry : uploads.entrySet() )
-            {
-                String name = entry.getKey();
-                if( !this.uploads.containsKey( name ) )
-                {
-                    this.uploads.put( name, new ArrayList<>() );
-                }
-                List<Upload> values = entry.getValue();
-                if( !allowMultiValuedUploads && ( !this.uploads.get( name ).isEmpty() || values.size() > 1 ) )
-                {
-                    throw new BadRequestException( "Multi-valued uploads are not allowed" );
-                }
-                this.uploads.get( name ).addAll( entry.getValue() );
-            }
+            uploads.entrySet().stream().forEach(
+                upload -> this.uploads.put( upload.getKey(), new ArrayList<>( upload.getValue() ) )
+            );
         }
     }
 
@@ -78,7 +69,7 @@ public class FormUploadsInstance
     @Override
     public Set<String> names()
     {
-        return Collections.unmodifiableSet( uploads.keySet() );
+        return unmodifiableSet( uploads.keySet() );
     }
 
     @Override
@@ -126,48 +117,39 @@ public class FormUploadsInstance
         ensureNotEmpty( "Form Upload Name", name );
         if( !uploads.containsKey( name ) )
         {
-            return Collections.emptyList();
+            return emptyList();
         }
-        return Collections.unmodifiableList( uploads.get( name ) );
+        return unmodifiableList( uploads.get( name ) );
     }
 
     @Override
     public Map<String, Upload> singleValues()
     {
-        Map<String, Upload> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : uploads.keySet() )
-        {
-            map.put( name, singleValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, Upload> singleValues = new TreeMap<>( LOWER_CASE );
+        uploads.keySet().stream().forEach( name -> singleValues.put( name, singleValue( name ) ) );
+        return unmodifiableMap( singleValues );
     }
 
     @Override
     public Map<String, Upload> firstValues()
     {
-        Map<String, Upload> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : uploads.keySet() )
-        {
-            map.put( name, firstValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, Upload> firstValues = new TreeMap<>( LOWER_CASE );
+        uploads.keySet().stream().forEach( name -> firstValues.put( name, firstValue( name ) ) );
+        return unmodifiableMap( firstValues );
     }
 
     @Override
     public Map<String, Upload> lastValues()
     {
-        Map<String, Upload> map = new TreeMap<>( Comparators.LOWER_CASE );
-        for( String name : uploads.keySet() )
-        {
-            map.put( name, lastValue( name ) );
-        }
-        return Collections.unmodifiableMap( map );
+        Map<String, Upload> lastValues = new TreeMap<>( LOWER_CASE );
+        uploads.keySet().stream().forEach( name -> lastValues.put( name, lastValue( name ) ) );
+        return unmodifiableMap( lastValues );
     }
 
     @Override
     public Map<String, List<Upload>> allValues()
     {
-        return Collections.unmodifiableMap( uploads );
+        return unmodifiableMap( uploads );
     }
 
     public static class UploadInstance

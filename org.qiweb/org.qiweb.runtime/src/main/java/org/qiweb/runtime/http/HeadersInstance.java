@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,17 +49,22 @@ public final class HeadersInstance
 
     /**
      * Deep-copy Map constructor.
+     *
      * @param headers Headers to copy
      */
     public HeadersInstance( Map<String, List<String>> headers )
     {
-        headers.entrySet().stream().forEach(
-            header -> this.headers.put( header.getKey(), new ArrayList<>( header.getValue() ) )
-        );
+        if( headers != null )
+        {
+            headers.entrySet().stream().forEach(
+                header -> this.headers.put( header.getKey(), new ArrayList<>( header.getValue() ) )
+            );
+        }
     }
 
     /**
      * Deep-copy constructor.
+     *
      * @param headers Headers to copy
      */
     public HeadersInstance( Headers headers )
@@ -216,15 +221,18 @@ public final class HeadersInstance
     @Override
     public MutableHeaders withAll( Headers headers )
     {
-        headers.allValues().entrySet().stream().forEach(
-            (header) ->
-            {
-                withAll(
-                    header.getKey(),
-                    header.getValue().toArray( new String[ header.getValue().size() ] )
-                );
-            }
-        );
+        if( headers != null )
+        {
+            headers.allValues().entrySet().stream().forEach(
+                (header) ->
+                {
+                    withAll(
+                        header.getKey(),
+                        header.getValue().toArray( new String[ header.getValue().size() ] )
+                    );
+                }
+            );
+        }
         return this;
     }
 

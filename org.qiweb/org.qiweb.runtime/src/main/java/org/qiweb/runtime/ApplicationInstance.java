@@ -33,6 +33,7 @@ import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
@@ -77,8 +78,10 @@ import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_QUERYSTRING_MULTIVALUED;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_SUPPLEMENTARY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
@@ -424,7 +427,7 @@ public final class ApplicationInstance
 
     private void validatesRequestHeader( RequestHeader requestHeader )
     {
-        // QueryString
+        // Multi-valued QueryString parameters
         if( !config.bool( QIWEB_HTTP_QUERYSTRING_MULTIVALUED ) )
         {
             for( List<String> values : requestHeader.queryString().allValues().values() )
@@ -435,7 +438,7 @@ public final class ApplicationInstance
                 }
             }
         }
-        // Headers
+        // Multi-valued Headers
         if( !config.bool( QIWEB_HTTP_HEADERS_MULTIVALUED ) )
         {
             for( List<String> values : requestHeader.headers().allValues().values() )
@@ -446,13 +449,32 @@ public final class ApplicationInstance
                 }
             }
         }
-        // Cookies
     }
 
     private void validatesRequestBody( Request request )
     {
-        // Forms
-        // Uploads
+        // Multi-valued Form Attributes
+        if( !config.bool( QIWEB_HTTP_FORMS_MULTIVALUED ) )
+        {
+            for( List<String> values : request.body().formAttributes().allValues().values() )
+            {
+                if( values.size() > 1 )
+                {
+                    throw new BadRequestException( "Multi-valued form attributes are not allowed" );
+                }
+            }
+        }
+        // Multi-valued Form Uploads
+        if( !config.bool( QIWEB_HTTP_UPLOADS_MULTIVALUED ) )
+        {
+            for( List<FormUploads.Upload> values : request.body().formUploads().allValues().values() )
+            {
+                if( values.size() > 1 )
+                {
+                    throw new BadRequestException( "Multi-valued form uploads are not allowed" );
+                }
+            }
+        }
     }
 
     @Override

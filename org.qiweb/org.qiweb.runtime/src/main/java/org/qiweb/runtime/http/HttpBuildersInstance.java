@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,11 +32,9 @@ import org.qiweb.spi.http.HttpBuilders;
 import static java.util.Collections.emptyMap;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
 import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_FORMS_MULTIVALUED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_UPLOADS_MULTIVALUED;
 
 /**
  * HTTP API Objects Builders Instance.
@@ -298,19 +296,10 @@ public class HttpBuildersInstance
             if( attributes != null || uploads != null )
             {
                 // Form
-                return new RequestBodyInstance(
-                    charset,
-                    config.bool( QIWEB_HTTP_FORMS_MULTIVALUED ),
-                    config.bool( QIWEB_HTTP_UPLOADS_MULTIVALUED ),
-                    attributes,
-                    uploads
-                );
+                return new RequestBodyInstance( charset, attributes, uploads );
             }
             // Bytes
-            return new RequestBodyInstance(
-                charset,
-                bodyBytes
-            );
+            return new RequestBodyInstance( charset, bodyBytes );
         }
     }
 }
