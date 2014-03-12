@@ -23,29 +23,29 @@ fi
 
 # core
 $FIGLET org.qiweb
-$GRADLE -b org.qiweb/build.gradle install
-echo "Built."
+$GRADLE -b org.qiweb/build.gradle check install
+echo "Checked."
 
 # modules
 $FIGLET org.qiweb.modules
-$GRADLE -b org.qiweb.modules/build.gradle install
-echo "Built."
+$GRADLE -b org.qiweb.modules/build.gradle check install
+echo "Checked."
 
 # gradle plugin
 $FIGLET org.qiweb.gradle
-$GRADLE -b org.qiweb.gradle-tooling/build.gradle install
-$GRADLE -b org.qiweb.gradle/build.gradle install
-echo "Built."
+$GRADLE -b org.qiweb.gradle-tooling/build.gradle check install
+$GRADLE -b org.qiweb.gradle/build.gradle install check
+echo "Checked."
 
 # maven plugin
 $FIGLET org.qiweb.maven
 # $MAVEN -f org.qiweb.maven/pom.xml test
-echo "NOT BUILT - No Java 8 support for Maven plugins yet"
+echo "NOT CHECKED - No Java 8 support for Maven plugins yet"
 
 # samples
 $FIGLET org.qiweb.samples
-$GRADLE -b org.qiweb.samples/build.gradle assemble
-echo "Built."
+$GRADLE -b org.qiweb.samples/build.gradle check
+echo "Checked."
 
 echo
 
