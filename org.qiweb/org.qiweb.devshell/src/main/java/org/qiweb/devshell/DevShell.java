@@ -16,6 +16,7 @@
 package org.qiweb.devshell;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.concurrent.atomic.AtomicLong;
@@ -50,12 +51,21 @@ public final class DevShell
     private final class DevShellSPIDecorator
         extends DevShellSPIWrapper
     {
-        private final Object httpAppInstance;
+        private final Object appInstance;
+        private final Method reloadMethod;
 
-        private DevShellSPIDecorator( DevShellSPI wrapped, Object httpAppInstance )
+        private DevShellSPIDecorator( DevShellSPI wrapped, Object appInstance )
+            throws NoSuchMethodException
         {
             super( wrapped );
-            this.httpAppInstance = httpAppInstance;
+            this.appInstance = appInstance;
+            this.reloadMethod = appInstance.getClass().getMethod(
+                "reload",
+                new Class<?>[]
+                {
+                    ClassLoader.class
+                }
+            );
         }
 
         @Override
@@ -67,15 +77,13 @@ public final class DevShell
                 {
                     super.rebuild();
                     reSetupApplicationRealms();
-                    ClassLoader appLoader = classWorld.getRealm( currentApplicationRealmID() );
-                    Class<?>[] paramTypes = new Class<?>[]
-                    {
-                        ClassLoader.class
-                    };
-                    httpAppInstance.getClass().getMethod( "reload", paramTypes ).invoke( httpAppInstance, appLoader );
+                    reloadMethod.invoke(
+                        appInstance,
+                        classWorld.getRealm( currentApplicationRealmID() )
+                    );
                 }
                 catch( DuplicateRealmException | NoSuchRealmException |
-                       NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException |
+                       SecurityException | IllegalAccessException | IllegalArgumentException |
                        InvocationTargetException ex )
                 {
                     throw new QiWebDevShellException( "Unable to reload Application: " + ex.getMessage(), ex );
