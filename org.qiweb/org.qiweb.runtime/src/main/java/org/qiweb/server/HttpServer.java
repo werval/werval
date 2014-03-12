@@ -16,6 +16,8 @@
 package org.qiweb.server;
 
 import org.qiweb.api.util.Reflectively;
+import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.spi.dev.DevShellSPI;
 
 /**
  * QiWeb Http Server.
@@ -23,6 +25,22 @@ import org.qiweb.api.util.Reflectively;
 @Reflectively.Loaded( by = "DevShell" )
 public interface HttpServer
 {
+    /**
+     * Set the Application SPI.
+     *
+     * @param application ApplicationSPI
+     */
+    @Reflectively.Invoked( by = "DevShell" )
+    void setApplicationSPI( ApplicationSPI application );
+
+    /**
+     * Set the Development Shell SPI.
+     *
+     * @param devSpi DevShell SPI
+     */
+    @Reflectively.Invoked( by = "DevShell" )
+    void setDevShellSPI( DevShellSPI devSpi );
+
     /**
      * Activate the QiWeb Http Server.
      *

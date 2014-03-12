@@ -172,24 +172,34 @@ public final class DevShell
                 }
             );
 
-            // HttpServer
-            Class<?> appSpiClass = appRealm.loadClass( "org.qiweb.spi.ApplicationSPI" );
-            Object httpServer = appRealm.loadClass( "org.qiweb.server.netty.NettyServer" ).getConstructor(
+            // Create HttpServer instance
+            Object httpServer = appRealm.loadClass( "org.qiweb.server.netty.NettyServer" ).newInstance();
+
+            // Set ApplicationSPI on HttpServer
+            httpServer.getClass().getMethod(
+                "setApplicationSPI",
                 new Class<?>[]
                 {
-                    String.class,
-                    appSpiClass,
-                    DevShellSPI.class
+                    appRealm.loadClass( "org.qiweb.spi.ApplicationSPI" )
                 }
-            ).newInstance(
-                new Object[]
-                {
-                    "devshell-httpserver",
-                    appInstance,
-                    new DevShellSPIDecorator( spi, appInstance )
-                }
+            ).invoke(
+                httpServer,
+                appInstance
             );
 
+            // Set DevShellSPI on HttpServer
+            httpServer.getClass().getMethod(
+                "setDevShellSPI",
+                new Class<?>[]
+                {
+                    DevShellSPI.class
+                }
+            ).invoke(
+                httpServer,
+                new DevShellSPIDecorator( spi, appInstance )
+            );
+
+            // Register shutdown hook and activate HttpServer
             httpServer.getClass().getMethod( "registerPassivationShutdownHook" ).invoke( httpServer );
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
 

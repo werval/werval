@@ -24,7 +24,7 @@ import io.netty.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.server.AbstractHttpServer;
+import org.qiweb.server.HttpServerAdapter;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -44,32 +44,35 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
  */
 @Reflectively.Loaded( by = "DevShell" )
 public class NettyServer
-    extends AbstractHttpServer
+    extends HttpServerAdapter
 {
     private static final Logger LOG = LoggerFactory.getLogger( NettyServer.class );
     private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
 
-    public NettyServer( String identity, ApplicationSPI app )
+    @Reflectively.Invoked( by = "DevShell" )
+    public NettyServer()
     {
-        this( identity, app, null );
+        super();
+        this.allChannels = new DefaultChannelGroup( "qiweb-netty-server", null );
     }
 
-    @Reflectively.Invoked( by = "DevShell" )
-    public NettyServer( String identity, ApplicationSPI app, DevShellSPI devSpi )
+    public NettyServer( ApplicationSPI app )
     {
-        super( identity, app, devSpi );
-        this.allChannels = new DefaultChannelGroup( identity, null );
+        this( app, null );
+    }
+
+    public NettyServer( ApplicationSPI app, DevShellSPI devSpi )
+    {
+        this();
+        setApplicationSPI( app );
+        setDevShellSPI( devSpi );
     }
 
     @Override
-    public void activate()
+    protected void activateHttpServer()
     {
-        // Activate Application
-        app.activate();
-        app.global().beforeHttpBind( app );
-
         // Netty Bootstrap
         bootstrap = new ServerBootstrap();
 
@@ -109,28 +112,13 @@ public class NettyServer
                                              + "Port already in use?", ex );
         }
 
-        LOG.debug( "[{}] Http Service Listening on http(s)://{}:{}", identity, address, port );
-
-        app.global().afterHttpBind( app );
+        LOG.debug( "Http Service Listening on http(s)://{}:{}", address, port );
     }
 
     @Override
-    public void passivate()
+    protected void passivateHttpServer()
     {
-        try
-        {
-            app.global().beforeHttpUnbind( app );
-        }
-        catch( Exception ex )
-        {
-            LOG.error( "Exception on Global.beforeHttpUnbind(): {}", ex.getMessage(), ex );
-        }
-
-        if( bootstrap == null )
-        {
-            finalizePassivation();
-        }
-        else
+        if( bootstrap != null )
         {
             // app.config() can be null if activation failed, allow gracefull shutdown
             long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
@@ -141,35 +129,13 @@ public class NettyServer
                 shutdownTimeout,
                 TimeUnit.MILLISECONDS
             );
-            shutdownFuture.addListener( future ->
-            {
-                allChannels.clear();
-                LOG.debug( "[{}] Http Service Passivated", identity );
-                finalizePassivation();
-            } );
+            shutdownFuture.addListener(
+                future ->
+                {
+                    allChannels.clear();
+                }
+            );
             shutdownFuture.awaitUninterruptibly();
-        }
-    }
-
-    private void finalizePassivation()
-    {
-        // Notify Global object that the HttpServer stopped listening to network connections
-        try
-        {
-            app.global().afterHttpUnbind( app );
-        }
-        catch( Exception ex )
-        {
-            LOG.error( "Exception on Global.afterHttpUnbind(): {}", ex.getMessage(), ex );
-        }
-        // Passivate Application
-        try
-        {
-            app.passivate();
-        }
-        catch( Exception ex )
-        {
-            LOG.error( "Exception on Application.passivate(): {}", ex.getMessage(), ex );
         }
     }
 }

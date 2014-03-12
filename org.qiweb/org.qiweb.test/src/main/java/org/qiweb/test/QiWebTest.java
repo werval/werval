@@ -87,7 +87,7 @@ public class QiWebTest
                                         ? routesProvider()
                                         : routesProviderOverride;
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
-        httpServer = new NettyServer( "qiweb-test", app );
+        httpServer = new NettyServer( app );
         httpServer.activate();
 
         // Setup RestAssured defaults if present

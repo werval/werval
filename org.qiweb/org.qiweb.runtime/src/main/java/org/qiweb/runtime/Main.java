@@ -39,7 +39,7 @@ public final class Main
         try
         {
             ApplicationSPI app = new ApplicationInstance( Mode.PROD );
-            HttpServer server = new NettyServer( "qiweb-http-server", app );
+            HttpServer server = new NettyServer( app );
             server.registerPassivationShutdownHook();
             server.activate();
             if( LOG.isInfoEnabled() )
