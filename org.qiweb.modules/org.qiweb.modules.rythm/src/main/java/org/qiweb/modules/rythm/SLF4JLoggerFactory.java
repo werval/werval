@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.plugin.rythm;
+package org.qiweb.modules.rythm;
 
 import org.rythmengine.extension.ILoggerFactory;
 import org.rythmengine.logger.ILogger;
@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Rythm ILoggerFactory to make Rythm use SLF4J.
- * <p>Automatically registered by {@link RythmPlugin}.</p>
+ *
+ * Automatically registered by {@link RythmPlugin}.
  */
 public final class SLF4JLoggerFactory
     implements ILoggerFactory

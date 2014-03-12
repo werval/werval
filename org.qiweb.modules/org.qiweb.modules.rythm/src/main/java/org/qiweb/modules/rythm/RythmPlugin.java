@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.plugin.rythm;
+package org.qiweb.modules.rythm;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,8 @@ import static org.rythmengine.conf.RythmConfigurationKey.LOG_FACTORY_IMPL;
 
 /**
  * Rythm Template Engine Plugin.
- * <p>See the Rythm documentation at <a href="http://rythmengine.org/">rythmengine.org</a>.</p>
+ *
+ * See the Rythm documentation at <a href="http://rythmengine.org/">rythmengine.org</a>.
  */
 public class RythmPlugin
     implements Plugin<RythmEngine>

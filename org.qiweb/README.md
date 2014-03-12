@@ -1,2 +1,2 @@
-# QiWeb Framework Modules
+# QiWeb Core
 
