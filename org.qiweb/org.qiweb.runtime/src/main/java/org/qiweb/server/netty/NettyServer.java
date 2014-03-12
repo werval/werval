@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
 
 /**
- * Netty HTTP Server Instance.
+ * Netty HTTP Server.
  */
 @Reflectively.Loaded( by = "DevShell" )
 public class NettyServer

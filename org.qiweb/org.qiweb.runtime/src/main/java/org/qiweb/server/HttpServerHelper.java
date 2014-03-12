@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,12 @@ public class HttpServerHelper
 
     /**
      * Generates a new request identity.
-     * <p>Request identity has the following form: {@literal UUID-COUNT}.</p>
-     * <p>One instance of {@link HttpServerHelper} holds a final {@link UUID} and {@link AtomicLong} based counter.</p>
-     * <p>Each call to this method concatenates the UUID and the counter, the later is incremented along the way.</p>
+     *
+     * Request identity has the following form: {@literal UUID-COUNT}.
+     * <p>
+     * One instance of {@link HttpServerHelper} holds a final {@link UUID} and an {@link AtomicLong} based counter.
+     * <p>
+     * Each call to this method concatenates the UUID and the counter, the later is incremented along the way.
      * 
      * @return a new request identity.
      */

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,8 @@ public interface HttpServer
 {
     /**
      * Activate the QiWeb Http Server.
-     * 
+     *
+     * @throws IllegalStateException                   if ApplicationSPI is not set
      * @throws org.qiweb.api.exceptions.QiWebException if unable to activate HttpServer
      */
     @Reflectively.Invoked( by = "DevShell" )
@@ -41,7 +42,9 @@ public interface HttpServer
 
     /**
      * Register a JVM shutdown hook to passivate the HttpServer.
-     * <p>This method can be called ony once.</p>
+     *
+     * This method can be called ony once.
+     *
      * @throws IllegalStateException when the passivation shutdown hook has already been registered
      */
     @Reflectively.Invoked( by = "DevShell" )

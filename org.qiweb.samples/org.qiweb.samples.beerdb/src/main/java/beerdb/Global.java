@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,13 +47,16 @@ import static org.qiweb.api.util.Strings.EMPTY;
 
 /**
  * Beer Database Global Object.
- * <p>Apply database changelog.</p>
- * <p>Setup JPA and Jackson.</p>
- * <p>Behaviour depends on Application Mode:</p>
+ *
+ * Apply database changelog.
+ * <p>
+ * Setup JPA and Jackson.
+ * <p>
+ * Behaviour depends on Application Mode:
  * <ul>
- *     <li>PROD: Insert initial data on start.</li>
- *     <li>DEV: Insert initial data on start.</li>
- *     <li>TEST: No initial data inserted. All data dropped on stop.</li>
+ * <li>PROD: Insert initial data on start.</li>
+ * <li>DEV: Insert initial data on start.</li>
+ * <li>TEST: No initial data inserted. All data dropped on stop.</li>
  * </ul>
  */
 public class Global
@@ -69,6 +72,8 @@ public class Global
 
         // Persistence
         application.metaData().put( "emf", createEntityManagerFactory( application ) );
+
+        // Insert initial data
         insertInitialData( application );
 
         // Jackson JSON
@@ -85,7 +90,7 @@ public class Global
         application.metaData().remove( "emf" );
         if( application.mode() == TEST )
         {
-            // Drop data on TEST mode
+            // Drop ALL data on TEST mode
             liquibaseDropAll( application );
         }
         emf.close();

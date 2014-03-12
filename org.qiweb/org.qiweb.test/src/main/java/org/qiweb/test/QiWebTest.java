@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,16 +34,14 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 /**
  * Base QiWeb JUnit Test.
- * 
- * <p>Activate/Passivate QiWeb Application in test mode around each JUnit test method.</p>
+ *
+ * Activate/Passivate QiWeb Application in test mode around each JUnit test method.
  * <p>
- *     By default, configuration is loaded from the <code>application.conf</code> file.
- *     Override the {@link #configurationResourceName()} method to provide your own test configuration.
- * </p>
+ * By default, configuration is loaded from the <code>application.conf</code> file.
+ * Override the {@link #configurationResourceName()} method to provide your own test configuration.
  * <p>
- *     By default, routes are loaded from the <code>routes.conf</code> file.
- *     Override the {@link #routesProvider()} method to provide your own test routes.
- * </p>
+ * By default, routes are loaded from the <code>routes.conf</code> file.
+ * Override the {@link #routesProvider()} method to provide your own test routes.
  */
 public class QiWebTest
     implements QiWebTestSupport
@@ -155,6 +153,7 @@ public class QiWebTest
 
     /**
      * Override to provide your own configuration.
+     *
      * @return Configuration resource name
      */
     protected String configurationResourceName()
@@ -164,6 +163,7 @@ public class QiWebTest
 
     /**
      * Override to provide your own routes.
+     *
      * @return Routes provider
      */
     protected RoutesProvider routesProvider()

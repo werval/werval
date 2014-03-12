@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,14 +35,17 @@ import static org.qiweb.runtime.util.ClassLoaders.printURLs;
 
 /**
  * QiWeb DevShell.
- * <p>Bind a build plugin to a QiWeb runtime using a DevShellSPI.</p>
- * <p>Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.</p>
+ *
+ * Bind a build plugin to a QiWeb runtime using a DevShellSPI.
+ * <p>
+ * Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.
  */
 public final class DevShell
 {
     /**
      * Decorate DevShellSPI to reload classes after a rebuild.
-     * <p>This is the decorated instance of DevShellSPI that is passed to the HttpServer.</p>
+     * <p>
+     * This is the decorated instance of DevShellSPI that is passed to the HttpServer.
      */
     private final class DevShellSPIDecorator
         extends DevShellSPIWrapper
