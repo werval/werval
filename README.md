@@ -24,6 +24,20 @@ If you are interested in this Gradle feature, check the Gradle Wrapper
 (http://www.gradle.org/docs/current/userguide/gradle_wrapper.html)
 documentation.
 
+This repository contains several independent projects.
+
+    org.qiweb               QiWeb Core
+    org.qiweb.modules       Modules
+    org.qiweb.gradle        Gradle Plugin
+    org.qiweb.maven         Maven Plugin
+    org.qiweb.samples       Samples
+
+For convenience, two shell scripts are provided:
+
+    clean.sh                Clean the repository of built artifacts
+    build.sh                Quick build without tests
+    check.sh                Full build with all tests
+
 Please note that if you want to get UML diagrams generated in Javadocs you'll
 need to have GraphViz (http://www.graphviz.org/) installed. The build will pass
 without though. But with less fun.
@@ -32,24 +46,15 @@ Note also that sample applications integration/functional tests use Selenium
 under the hood and hence need Firefox to be installed and a graphical context
 to be available.
 
-To get you started, here are some usefull commands:
-
-    ./gradlew clean             # Clean up the whole project tree
-    ./gradlew install           # Install all qiweb artifacts
-    ./gradlew install check     # Run all tests
-
-It is recommended to run all tests first, giving you confidence that the whole
-thing work on your computer.
-
-To run all tests you must `install` first as build plugins are tested along the
-way and they need to be installed in order to be used by the tests and samples.
-This is why the command to run tests call the `install` and `check` tasks.
+When working on the QiWeb source code, it is recommended to run all tests
+first, giving you confidence that the whole thing work on your computer.
 
 QiWeb do not have much dependencies but the build system and the tests do.
 As a consequence, a vast amount of code is downloaded the first time you
 run a build.
-Theses downloads are cached, at the time of writing running a full build with
-every dependencies in cache take less than two minutes.
+Theses downloads are cached, at the time of writing running a full build
+including integration tests with every dependencies in cache take less than
+two minutes.
 
 QiWeb artifacts produced by the build are installed in your local maven
 repository (`~/.m2/repository`).
