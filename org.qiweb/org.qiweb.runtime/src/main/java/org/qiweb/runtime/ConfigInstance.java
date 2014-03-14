@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,31 @@ public class ConfigInstance
     public ConfigInstance( ClassLoader loader, String configurationResourceName )
     {
         config = com.typesafe.config.ConfigFactory.load( loader, configurationResourceName );
+    }
+
+    private ConfigInstance( com.typesafe.config.Config config )
+    {
+        this.config = config;
+    }
+
+    @Override
+    public Config object( String key )
+    {
+        return new ConfigInstance( config.getConfig( key ) );
+    }
+
+    @Override
+    public List<Config> array( String key )
+    {
+        List<Config> configs = new ArrayList<>();
+        config.getConfigList( key ).forEach( conf -> configs.add( new ConfigInstance( conf ) ) );
+        return configs;
+    }
+
+    @Override
+    public Set<String> subKeys()
+    {
+        return config.root().keySet();
     }
 
     @Override
