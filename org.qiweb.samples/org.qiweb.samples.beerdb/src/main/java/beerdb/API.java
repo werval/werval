@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.modules.jpa.JPA;
 import org.qiweb.samples.beerdb.BuildVersion;
 
 import static org.qiweb.api.context.CurrentContext.application;
@@ -48,7 +49,7 @@ public class API
 
     public API()
     {
-        this.emf = application().metaData().get( EntityManagerFactory.class, "emf" );
+        this.emf = application().plugin( JPA.class ).emf();
         this.mapper = application().metaData().get( ObjectMapper.class, "mapper" );
     }
 

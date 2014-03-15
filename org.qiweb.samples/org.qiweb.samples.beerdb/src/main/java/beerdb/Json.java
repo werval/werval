@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,17 +17,16 @@ package beerdb;
 
 /**
  * Jackson JSON Related utilities.
+ *
  * <ul>
- *     <li><a href="http://wiki.fasterxml.com/JacksonJsonViews" target="_blank">Jackson JSON Views</a> class IDs</li>
+ * <li><a href="http://wiki.fasterxml.com/JacksonJsonViews" target="_blank">Jackson JSON Views</a> class IDs</li>
  * </ul>
  * <p>
- *     Views are declared here, used in Entities through Jackson annotations and used in the HTTP API to produce
- *     resources representations.
- * </p>
+ * Views are declared here, used in Entities through Jackson annotations and used in the HTTP API to produce
+ * resources representations.
  */
 public interface Json
 {
-
     interface BeerListView
     {
     }
@@ -43,5 +42,4 @@ public interface Json
     interface BreweryDetailView
     {
     }
-
 }

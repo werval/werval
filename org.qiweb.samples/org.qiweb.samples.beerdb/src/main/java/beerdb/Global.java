@@ -17,18 +17,13 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
-
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -39,6 +34,8 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.modules.jdbc.JDBC;
+import org.qiweb.modules.jpa.JPA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +47,7 @@ import static org.qiweb.api.util.Strings.EMPTY;
  *
  * Apply database changelog.
  * <p>
- * Setup JPA and Jackson.
+ * Setup Jackson.
  * <p>
  * Behaviour depends on Application Mode:
  * <ul>
@@ -69,9 +66,6 @@ public class Global
     {
         // Database schema migration
         liquibaseUpdate( application );
-
-        // Persistence
-        application.metaData().put( "emf", createEntityManagerFactory( application ) );
 
         // Insert initial data
         insertInitialData( application );
@@ -140,11 +134,7 @@ public class Global
     private Liquibase newLiquibase( Application application )
         throws ClassNotFoundException, SQLException, LiquibaseException
     {
-        Class.forName( application.config().string( "jdbc.driver" ) );
-        Connection connection = DriverManager.getConnection(
-            application.config().string( "jdbc.url" ),
-            application.config().string( "jdbc.user" ),
-            application.config().string( "jdbc.password" ) );
+        Connection connection = application.plugin( JDBC.class ).connection();
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation( new JdbcConnection( connection ) );
         String changelog = "beerdb/changelog/db.changelog-master.xml";
         ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor( application.classLoader() );
@@ -166,18 +156,6 @@ public class Global
         }
     }
 
-    private EntityManagerFactory createEntityManagerFactory( Application application )
-    {
-        Map<String, Object> jpaProps = new HashMap<>();
-        jpaProps.put( "javax.persistence.jdbc.driver", application.config().string( "jdbc.driver" ) );
-        jpaProps.put( "javax.persistence.jdbc.url", application.config().string( "jdbc.url" ) );
-        jpaProps.put( "javax.persistence.jdbc.user", application.config().string( "jdbc.user" ) );
-        jpaProps.put( "javax.persistence.jdbc.password", application.config().string( "jdbc.password" ) );
-        jpaProps.put( "eclipselink.connection-pool.default.max", application.config().string( "jpa.pool.max" ) );
-        jpaProps.put( "eclipselink.classloader", application.classLoader() );
-        return Persistence.createEntityManagerFactory( application.config().string( "jpa.pu_name" ), jpaProps );
-    }
-
     private ObjectMapper createObjectMapper()
     {
         ObjectMapper mapper = new ObjectMapper();
@@ -188,7 +166,7 @@ public class Global
 
     private void insertInitialData( Application application )
     {
-        EntityManagerFactory emf = application.metaData().get( EntityManagerFactory.class, "emf" );
+        EntityManagerFactory emf = application.plugin( JPA.class ).emf();
         EntityManager em = emf.createEntityManager();
         try
         {

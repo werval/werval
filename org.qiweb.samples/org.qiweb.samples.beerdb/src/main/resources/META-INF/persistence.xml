@@ -4,10 +4,12 @@
              version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <!-- EclipseLink and H2 Database Persistence Unit -->
-    <persistence-unit name="beerdb-eclipselink" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="beerdb" transaction-type="RESOURCE_LOCAL">
 
         <class>beerdb.entities.Beer</class>
         <class>beerdb.entities.Brewery</class>
+
+        <non-jta-data-source>BeerDBDataSource</non-jta-data-source>
 
         <properties>
 

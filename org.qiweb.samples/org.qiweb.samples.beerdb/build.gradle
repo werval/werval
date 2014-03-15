@@ -22,14 +22,16 @@ dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
     compile "org.qiweb:org.qiweb.lib:$version"
-    compile "org.qiweb:org.qiweb.plugin.rythm:$version"
+    compile "org.qiweb:org.qiweb.modules.jndi:$version"
+    compile "org.qiweb:org.qiweb.modules.jpa:$version"
+    compile "org.qiweb:org.qiweb.modules.rythm:$version"
     compile libs.hibernate_validator
     compile libs.jackson_core
-    compile libs.jpa
     compile libs.liquibase
+    compile 'com.ninja-squad:DbSetup:1.2.0'
 
     runtime "org.qiweb:org.qiweb.runtime:$version"
-    runtime libs.eclipselink
+    runtime "org.qiweb:org.qiweb.server.netty:$version"
     runtime libs.el
     runtime libs.h2
     runtime libs.logback
