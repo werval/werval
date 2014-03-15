@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,10 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Null or empty argument exception.
+ * Null or empty argument exception utilities.
  */
-public final class NullArgumentException
-    extends IllegalArgumentException
+public final class IllegalArguments
 {
-
-    private static final long serialVersionUID = 1L;
     private static final String WAS_NULL = " was null.";
     private static final String WAS_EMPTY = " was empty.";
     private static final String WAS_ZERO = " was zero.";
@@ -37,7 +34,7 @@ public final class NullArgumentException
         {
             return;
         }
-        throw new NullArgumentException( name + WAS_NULL );
+        throw new IllegalArgumentException( name + WAS_NULL );
     }
 
     public static void ensureNotEmpty( String name, String value )
@@ -45,7 +42,7 @@ public final class NullArgumentException
         ensureNotNull( name, value );
         if( value.length() == 0 )
         {
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
@@ -54,7 +51,7 @@ public final class NullArgumentException
         ensureNotNull( name, value );
         if( value.length() == 0 )
         {
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
@@ -64,7 +61,7 @@ public final class NullArgumentException
         if( value.length() == 0 || ( trim && value.trim().length() == 0 ) )
         {
 
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
@@ -73,7 +70,7 @@ public final class NullArgumentException
         ensureNotNull( name, value );
         if( value.length == 0 )
         {
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
@@ -82,7 +79,7 @@ public final class NullArgumentException
         ensureNotNull( name, value );
         if( value.isEmpty() )
         {
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
@@ -91,24 +88,24 @@ public final class NullArgumentException
         ensureNotNull( name, value );
         if( value.isEmpty() )
         {
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
     public static void ensureNotEmpty( String name, Map<?, ?> value )
-        throws NullArgumentException
     {
         ensureNotNull( name, value );
         if( value.isEmpty() )
         {
-            throw new NullArgumentException( name + WAS_EMPTY );
+            throw new IllegalArgumentException( name + WAS_EMPTY );
         }
     }
 
     /**
      * Ensures that the string array instance is not null and that it has entries that are not null or empty
      * either without trimming the string.
-     * @param name Name
+     *
+     * @param name  Name
      * @param value Value
      */
     public static void ensureNotEmptyContent( String name, String[] value )
@@ -118,8 +115,9 @@ public final class NullArgumentException
 
     /**
      * Ensures that the string array instance is not null and that it has entries that are not null or empty.
-     * @param name Name
-     * @param trim Trim flag
+     *
+     * @param name  Name
+     * @param trim  Trim flag
      * @param value Value
      */
     public static void ensureNotEmptyContent( String name, boolean trim, String[] value )
@@ -140,13 +138,11 @@ public final class NullArgumentException
         ensureNotNull( name, value );
         if( value == 0 )
         {
-            throw new NullArgumentException( name + WAS_ZERO );
+            throw new IllegalArgumentException( name + WAS_ZERO );
         }
     }
 
-    private NullArgumentException( String message )
+    private IllegalArguments()
     {
-        super( message );
     }
-
 }

@@ -30,8 +30,8 @@ import org.qiweb.api.util.ByteSource;
 import org.qiweb.spi.http.HttpBuilders;
 
 import static java.util.Collections.emptyMap;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;

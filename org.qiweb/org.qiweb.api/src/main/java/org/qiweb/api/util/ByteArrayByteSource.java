@@ -18,7 +18,7 @@ package org.qiweb.api.util;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.qiweb.api.exceptions.NullArgumentException;
+import org.qiweb.api.exceptions.IllegalArguments;
 
 /**
  * ByteSource backed by a byte[].
@@ -30,7 +30,7 @@ public class ByteArrayByteSource
 
     public ByteArrayByteSource( byte[] bytes )
     {
-        NullArgumentException.ensureNotNull( "Array of bytes", bytes );
+        IllegalArguments.ensureNotNull( "Array of bytes", bytes );
         this.bytes = bytes;
     }
 

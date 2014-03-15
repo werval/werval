@@ -63,8 +63,8 @@ import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;

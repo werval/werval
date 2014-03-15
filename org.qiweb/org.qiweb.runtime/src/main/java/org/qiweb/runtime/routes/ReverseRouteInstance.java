@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.qiweb.api.context.CurrentContext;
-import org.qiweb.api.exceptions.NullArgumentException;
+import org.qiweb.api.exceptions.IllegalArguments;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.util.Strings;
@@ -76,8 +76,8 @@ public class ReverseRouteInstance
     @Override
     public ReverseRoute appendQueryString( String key, String value )
     {
-        NullArgumentException.ensureNotEmpty( "key", key );
-        NullArgumentException.ensureNotNull( "value", value );
+        IllegalArguments.ensureNotEmpty( "key", key );
+        IllegalArguments.ensureNotNull( "value", value );
         if( !appendedQueryString.containsKey( key ) )
         {
             appendedQueryString.put( key, new ArrayList<>() );
@@ -89,12 +89,12 @@ public class ReverseRouteInstance
     @Override
     public ReverseRoute appendQueryString( Map<String, ?> parameters )
     {
-        NullArgumentException.ensureNotNull( "parameters", parameters );
+        IllegalArguments.ensureNotNull( "parameters", parameters );
         for( Map.Entry<String, ?> entry : parameters.entrySet() )
         {
             String key = entry.getKey();
-            NullArgumentException.ensureNotEmpty( "parameter key", key );
-            NullArgumentException.ensureNotNull( "parameter value for '" + key + "'", entry.getValue() );
+            IllegalArguments.ensureNotEmpty( "parameter key", key );
+            IllegalArguments.ensureNotNull( "parameter value for '" + key + "'", entry.getValue() );
             if( !appendedQueryString.containsKey( key ) )
             {
                 appendedQueryString.put( key, new ArrayList<>() );

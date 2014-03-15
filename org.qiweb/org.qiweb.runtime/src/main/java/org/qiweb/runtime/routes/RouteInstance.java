@@ -36,8 +36,8 @@ import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.runtime.util.Iterables.addAll;
 import static org.qiweb.runtime.util.Iterables.toList;
 

@@ -15,7 +15,7 @@
  */
 package org.qiweb.api.http;
 
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 
 public class ProtocolVersion
 {

@@ -25,8 +25,8 @@ import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
 import static java.util.Locale.US;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 
 /**
  * Application MimeType instance.

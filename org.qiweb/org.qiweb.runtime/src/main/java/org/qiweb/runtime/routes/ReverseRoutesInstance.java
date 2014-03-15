@@ -30,7 +30,7 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.dev.DevShellRoutesProvider;
 
 import static org.qiweb.api.Mode.DEV;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 
 public class ReverseRoutesInstance
     extends ReverseRoutes

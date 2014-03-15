@@ -24,8 +24,8 @@ import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
 
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotNull;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 
 public class CookiesInstance
     implements MutableCookies

@@ -22,7 +22,7 @@ import org.qiweb.api.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
-import static org.qiweb.api.exceptions.NullArgumentException.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 
 /**
  * Beers Page Object.
