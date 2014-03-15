@@ -1,0 +1,11 @@
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:$version"
+    compile 'com.google.inject:guice:4.0-beta'
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
+
+}
+
