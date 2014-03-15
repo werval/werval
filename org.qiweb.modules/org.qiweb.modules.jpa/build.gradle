@@ -1,0 +1,16 @@
+
+dependencies {
+
+    compile project( ":org.qiweb.modules.jdbc" )
+    compile "org.qiweb:org.qiweb.api:$version"
+    compile libs.jpa
+
+    runtime project( ":org.qiweb.modules.jdbc" )
+    runtime libs.eclipselink
+    
+    testCompile "org.qiweb:org.qiweb.test:$version"
+
+    testRuntime project( ":org.qiweb.modules.jndi" )
+    testRuntime libs.h2
+
+}
