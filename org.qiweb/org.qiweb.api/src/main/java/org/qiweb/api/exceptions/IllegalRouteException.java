@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ package org.qiweb.api.exceptions;
 public class IllegalRouteException
     extends QiWebException
 {
-
     private static final long serialVersionUID = 1L;
     private String routeString;
 
@@ -39,9 +38,8 @@ public class IllegalRouteException
     /**
      * @return Route string
      */
-    public String routeString()
+    public final String routeString()
     {
         return routeString;
     }
-
 }

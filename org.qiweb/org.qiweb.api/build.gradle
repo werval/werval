@@ -10,8 +10,8 @@ dependencies {
 task updateMimeTypesNames( description: "Generate MimeTypesNames from output of org.qiweb.runtime:updateMimeTypes task" ) << {
     def outFile = new File( project.projectDir, "src/main/java/org/qiweb/api/mime/MimeTypesNames.java" )
     outFile.getParentFile().mkdirs()
-    outFile.write( """/**
- * Copyright (c) 2013 the original author or authors
+    outFile.write( """/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,7 @@ package org.qiweb.api.mime;
  * Generated interface with all MimeTypes defined by Apache.
  */
 public interface MimeTypesNames
-{
-""")
+{""")
     def props = new Properties()
     new File( "${project.projectDir}/../org.qiweb.runtime/src/main/resources/org/qiweb/runtime/mime/mime-types-extensions.properties" ).withInputStream {
         stream -> props.load( stream )
@@ -43,7 +42,7 @@ public interface MimeTypesNames
         if( !seen.contains( name ) ) {
             outFile << """
     /**
-     * """ + name + """
+     * """ + name + """.
      */
     String """ + name.replaceAll( '-', '_' ).replaceAll( '/', '_' ).replaceAll( "\\.", '_' ).replaceAll( "\\+", '_' ).toUpperCase() + """ = \"""" + name + """\";"""
             seen << name

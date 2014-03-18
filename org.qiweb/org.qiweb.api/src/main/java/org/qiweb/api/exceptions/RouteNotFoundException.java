@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ package org.qiweb.api.exceptions;
 public class RouteNotFoundException
     extends QiWebException
 {
-
     private static final long serialVersionUID = 1L;
     private final String method;
     private final String uri;
@@ -36,7 +35,7 @@ public class RouteNotFoundException
     /**
      * @return HTTP method
      */
-    public String method()
+    public final String method()
     {
         return method;
     }
@@ -44,9 +43,8 @@ public class RouteNotFoundException
     /**
      * @return HTTP URI
      */
-    public String uri()
+    public final String uri()
     {
         return uri;
     }
-
 }

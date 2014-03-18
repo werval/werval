@@ -43,11 +43,10 @@ public enum StatusClass
      */
     SERVER_ERROR( "Server Error" ),
     /**
-     * {@literal 0xx} or {@literal >= 6xx} Unknown
+     * {@literal 0xx} or {@literal >= 6xx} Unknown.
      */
     UNKNOWN( "Unknown Status" );
 
-    // CHECKSTYLE:OFF
     public static StatusClass valueOf( Status status )
     {
         return valueOf( status.code() );
@@ -88,7 +87,6 @@ public enum StatusClass
         // >= 6xx
         return UNKNOWN;
     }
-    // CHECKSTYLE:ON
     private static final EnumSet<StatusClass> FORCE_CLOSE = EnumSet.of( CLIENT_ERROR, SERVER_ERROR, UNKNOWN );
     private final String reasonPhrase;
 

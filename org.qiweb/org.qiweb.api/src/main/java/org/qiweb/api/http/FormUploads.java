@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,12 +34,13 @@ public interface FormUploads
 
     /**
      * @param name Name of the upload
+     *
      * @return TRUE if there's an upload with the given name
      */
     boolean has( String name );
 
     /**
-     * @return  All upload names as immutable Set&lt;String&gt;.
+     * @return All upload names as immutable Set&lt;String&gt;.
      */
     Set<String> names();
 
@@ -47,7 +48,9 @@ public interface FormUploads
      * Get single form upload value, ensuring it has only one value.
      *
      * @param name Name of the form upload
-     * @return  Value for this form upload name or an empty String
+     *
+     * @return Value for this form upload name or an empty String
+     *
      * @throws IllegalStateException if there is multiple values for this form upload
      */
     Upload singleValue( String name );
@@ -56,7 +59,8 @@ public interface FormUploads
      * Get first form upload value.
      *
      * @param name Name of the form upload
-     * @return  First value for this form upload name or an empty String
+     *
+     * @return First value for this form upload name or an empty String
      */
     Upload firstValue( String name );
 
@@ -64,7 +68,8 @@ public interface FormUploads
      * Get last form upload value.
      *
      * @param name Name of the form upload
-     * @return  Last value for this form upload name or an empty String
+     *
+     * @return Last value for this form upload name or an empty String
      */
     Upload lastValue( String name );
 
@@ -72,16 +77,18 @@ public interface FormUploads
      * Get all form upload values.
      *
      * @param name Name of the form upload
-     * @return  All String values of the form for the given name as immutable List&lt;String&gt;,
-     *          or an immutable empty one.
+     *
+     * @return All String values of the form for the given name as immutable List&lt;String&gt;,
+     *         or an immutable empty one.
      */
     List<Upload> values( String name );
 
     /**
      * Get all form uploads single values, ensuring each has only one value.
      *
-     * @return  Every single value of each form upload as immutable Map&lt;String,String&gt;, or an empty
-     *          immutable one.
+     * @return Every single value of each form upload as immutable Map&lt;String,String&gt;, or an empty
+     *         immutable one.
+     *
      * @throws IllegalStateException if there is multiple values for a parameter
      */
     Map<String, Upload> singleValues();
@@ -89,24 +96,24 @@ public interface FormUploads
     /**
      * Get all form uploads first values.
      *
-     * @return  Every first value of each form upload as immutable Map&lt;String,String&gt;, or an empty
-     *          immutable one.
+     * @return Every first value of each form upload as immutable Map&lt;String,String&gt;, or an empty
+     *         immutable one.
      */
     Map<String, Upload> firstValues();
 
     /**
      * Get all form uploads last values.
      *
-     * @return  Every last value of each form upload as immutable Map&lt;String,String&gt;, or an empty
-     *          immutable one.
+     * @return Every last value of each form upload as immutable Map&lt;String,String&gt;, or an empty
+     *         immutable one.
      */
     Map<String, Upload> lastValues();
 
     /**
      * Get all form uploads values.
      *
-     * @return  Every values of each form upload as immutable Map&lt;String,List&lt;String&gt;&gt;,
-     *          or an empty immutable one.
+     * @return Every values of each form upload as immutable Map&lt;String,List&lt;String&gt;&gt;,
+     *         or an empty immutable one.
      */
     Map<String, List<Upload>> allValues();
 
@@ -146,20 +153,21 @@ public interface FormUploads
         byte[] asBytes();
 
         /**
-         * @return  Upload data as a String using the upload character encoding if defined, the QiWeb default character
-         *          encoding otherwise.
+         * @return Upload data as a String using the upload character encoding if defined, the QiWeb default character
+         *         encoding otherwise.
          */
         String asString();
 
         /**
          * @param charset Charset to use
+         *
          * @return Upload data as a String
          */
         String asString( Charset charset );
 
         /**
          * Move upload data to a File.
-         * 
+         *
          * @param destination Destination file
          */
         void moveTo( File destination );

@@ -22,7 +22,7 @@ import org.qiweb.api.exceptions.IllegalArguments;
 /**
  * ByteSource backed by an InputStream.
  */
-public class InputStreamByteSource
+public final class InputStreamByteSource
     implements ByteSource
 {
     private final InputStream input;

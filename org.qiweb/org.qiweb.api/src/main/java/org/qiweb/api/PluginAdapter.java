@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * QiWeb Application Plugin Adapter.
+ *
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
  */
 public abstract class PluginAdapter<API>

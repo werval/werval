@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +25,16 @@ import org.qiweb.api.routes.ReverseRoutes;
 
 /**
  * Current Context.
- * <p>Static utility methods to get a hand on the thread local Context.</p>
+ *
+ * Static utility methods to get a hand on the thread local Context.
  */
-public class CurrentContext
+public final class CurrentContext
 {
-
     /* package */ static final ThreadLocal<Context> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * @return Current Request Context
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static Context get()
@@ -48,6 +49,7 @@ public class CurrentContext
 
     /**
      * @return Current Application
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static Application application()
@@ -57,6 +59,7 @@ public class CurrentContext
 
     /**
      * @return Current ReverseRoutes
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static ReverseRoutes reverseRoutes()
@@ -66,6 +69,7 @@ public class CurrentContext
 
     /**
      * @return Current Request Session
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static Session session()
@@ -75,6 +79,7 @@ public class CurrentContext
 
     /**
      * @return Current Request
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static Request request()
@@ -84,6 +89,7 @@ public class CurrentContext
 
     /**
      * @return Current Response
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static ResponseHeader response()
@@ -93,6 +99,7 @@ public class CurrentContext
 
     /**
      * @return Current Outcome builder
+     *
      * @throws QiWebException if no Context in current Thread
      */
     public static Outcomes outcomes()
@@ -103,5 +110,4 @@ public class CurrentContext
     private CurrentContext()
     {
     }
-
 }

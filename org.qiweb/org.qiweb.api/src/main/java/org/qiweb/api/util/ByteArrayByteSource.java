@@ -23,7 +23,7 @@ import org.qiweb.api.exceptions.IllegalArguments;
 /**
  * ByteSource backed by a byte[].
  */
-public class ByteArrayByteSource
+public final class ByteArrayByteSource
     implements ByteSource
 {
     private final byte[] bytes;

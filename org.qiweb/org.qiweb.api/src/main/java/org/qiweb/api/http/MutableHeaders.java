@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,42 +23,49 @@ public interface MutableHeaders
 {
     /**
      * Remove all values of a HTTP Header.
-     * 
+     *
      * @param name The HTTP Header name
+     *
      * @return This very MutableHeaders
      */
     MutableHeaders without( String name );
 
     /**
      * Add a HTTP Header value.
-     * 
-     * @param name The HTTP Header name
+     *
+     * @param name  The HTTP Header name
      * @param value The HTTP Header value
+     *
      * @return This very MutableHeaders
      */
     MutableHeaders with( String name, String value );
 
     /**
      * Set a HTTP Header single value, removing previous value(s).
-     * 
-     * @param name The HTTP Header name
+     *
+     * @param name  The HTTP Header name
      * @param value The HTTP Header value
+     *
      * @return This very MutableHeaders
      */
     MutableHeaders withSingle( String name, String value );
 
     /**
      * Add all HTTP Headers values.
-     * @param name The HTTP Header name
+     *
+     * @param name   The HTTP Header name
      * @param values The HTTP Header values
-     * @return  This very MutableHeaders
+     *
+     * @return This very MutableHeaders
      */
     MutableHeaders withAll( String name, String... values );
 
     /**
      * Add all HTTP Headers values.
+     *
      * @param headers Headers to add
-     * @return  This very MutableHeaders
+     *
+     * @return This very MutableHeaders
      */
     MutableHeaders withAll( Headers headers );
 }

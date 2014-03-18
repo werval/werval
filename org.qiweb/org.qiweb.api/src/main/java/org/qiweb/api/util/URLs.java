@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,12 +30,12 @@ import org.qiweb.api.exceptions.QiWebException;
  */
 public final class URLs
 {
-
     /**
      * Translates a string into application/x-www-form-urlencoded format using UTF-8 character encoding.
      *
-     * @param string String to be translated
+     * @param string  String to be translated
      * @param charset Character encoding
+     *
      * @return the translated String
      */
     public static String encode( String string, Charset charset )
@@ -53,8 +53,9 @@ public final class URLs
     /**
      * Decodes a application/x-www-form-urlencoded string.
      *
-     * @param string the String to decode
+     * @param string  the String to decode
      * @param charset Character encoding
+     *
      * @return the newly decoded String
      */
     public static String decode( String string, Charset charset )
@@ -71,10 +72,11 @@ public final class URLs
 
     /**
      * Append query string to a URL.
-     * 
-     * @param url The URL
+     *
+     * @param url         The URL
      * @param queryString The query string data
-     * @param charset Character encoding
+     * @param charset     Character encoding
+     *
      * @return The URL with query string data appended
      */
     public static String appendQueryString( final String url, Map<String, List<String>> queryString, Charset charset )
@@ -114,5 +116,4 @@ public final class URLs
     private URLs()
     {
     }
-
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.qiweb.api.routes;
 
-import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.RequestHeader;
 
 /**
@@ -29,7 +28,7 @@ public interface Routes
      *
      * @param requestHeader any RequestHeader
      * @return a Route satisfiedBy the HttpRequest
-     * @throws RouteNotFoundException when no Route is satisfiedBy the HttpRequest
+     * @throws org.qiweb.api.exceptions.RouteNotFoundException when no Route is satisfiedBy the HttpRequest
      */
     Route route( RequestHeader requestHeader );
 }

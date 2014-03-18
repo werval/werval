@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,18 +17,21 @@ package org.qiweb.api.http;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 
-public class ProtocolVersion
+/**
+ * HTTP Protocol Version.
+ */
+public final class ProtocolVersion
 {
     private static final String HTTP_1_0_STRING = "HTTP/1.0";
     private static final String HTTP_1_1_STRING = "HTTP/1.1";
 
     /**
-     * HTTP/1.0
+     * HTTP/1.0.
      */
     public static final ProtocolVersion HTTP_1_0 = new ProtocolVersion( HTTP_1_0_STRING, false );
 
     /**
-     * HTTP/1.1
+     * HTTP/1.1.
      */
     public static final ProtocolVersion HTTP_1_1 = new ProtocolVersion( HTTP_1_1_STRING, true );
 

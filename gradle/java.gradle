@@ -86,26 +86,43 @@ package """ + project.name.replace( '-', '_' ) + """;
  */
 public interface BuildVersion
 {
-    /** The last commit hash from the git history. */
+    /**
+     * The last commit hash from the git history.
+     */
     String COMMIT = \"""" + commit + """\";
 
-    /** True if they were local changes when built. */
+    /**
+     * True if they were local changes when built.
+     */
     boolean DIRTY = """+ dirty + """;
 
-    /** The version of the project from the gradle build. */
+    /**
+     * The version of the project from the gradle build.
+     */
     String VERSION = \"""" + project.version + """\";
 
-    /** The name of the project from the gradle build. */
+    /**
+     * The name of the project from the gradle build.
+     */
     String NAME = \"""" + project.name + """\";
 
-    /** The group of the project from the gradle build. */
+    /**
+     * The group of the project from the gradle build.
+     */
     String GROUP = \"""" + project.group + """\";
 
-    /** The date this file was generated, usually the last date that the project was modified. */
+    /**
+     * The date this file was generated, usually the last date that the project was modified.
+     */
     String DATE = \"""" + now + """\";
 
-    /** The full details of the version, including the build date. */
-    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " " + COMMIT + " " + ( DIRTY ? "(dirty) " : "" ) + DATE;
+    /**
+     * The full details of the version, including the build date.
+     */
+    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " "
+                              + COMMIT + " "
+                              + ( DIRTY ? "(dirty) " : "" ) + " "
+                              + DATE;
 }\n
 """ )
         }

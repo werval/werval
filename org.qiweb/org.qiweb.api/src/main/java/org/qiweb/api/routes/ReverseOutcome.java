@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,12 @@ public final class ReverseOutcome
     private final Method controllerMethod;
     private final List<Object> parameters;
 
-    /* package */ ReverseOutcome( String method, Class<?> controllerType, Method controllerMethod, List<Object> parameters )
+    /* package */ ReverseOutcome(
+        String method,
+        Class<?> controllerType,
+        Method controllerMethod,
+        List<Object> parameters
+    )
     {
         this.httpMethod = method;
         this.controllerType = controllerType;

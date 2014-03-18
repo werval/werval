@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,33 +34,36 @@ public interface ReverseRoute
 
     /**
      * Append a parameter to this ReverseRoute Query String.
-     * 
-     * @param key QueryString key
+     *
+     * @param key   QueryString key
      * @param value QueryString value
+     *
      * @return This very ReverseRoute as fluent API
+     *
      * @throws IllegalArgumentException when key is null or empty, or when value is null
      */
     ReverseRoute appendQueryString( String key, String value );
 
     /**
      * Append a bunch of parameters to this ReverseRoute Query String.
+     *
+     * If the given <code>parameters</code> Map is a Map&lt;String,List&lt;?&gt;&gt; then each value of each list is
+     * appended to the Query String.
      * <p>
-     *     If the given <code>parameters</code> Map is a Map&lt;String,List&lt;?&gt;&gt; then each value of each list is
-     *     appended to the Query String.
-     * </p>
-     * <p>
-     *     This is the result of each value's <code>toString()</code> method that is appended to the Query String.
-     * </p>
+     * This is the result of each value's <code>toString()</code> method that is appended to the Query String.
      *
      * @param parameters Parameters as a Map
+     *
      * @return This very ReverseRoute as fluent API
-     * @throws  IllegalArgumentException when parameters is null, or when one key is null or empty,
-     *          or when one value is null
+     *
+     * @throws IllegalArgumentException when parameters is null, or when one key is null or empty,
+     *                                  or when one value is null
      */
     ReverseRoute appendQueryString( Map<String, ?> parameters );
 
     /**
      * @param fragmentIdentifier Fragment identifier
+     *
      * @return This very ReverseRoute as fluent API
      */
     ReverseRoute withFragmentIdentifier( String fragmentIdentifier );
@@ -72,6 +75,7 @@ public interface ReverseRoute
 
     /**
      * @param secure is the URL secure?
+     *
      * @return Absolute HTTP(s) URL
      */
     String httpUrl( boolean secure );
@@ -83,6 +87,7 @@ public interface ReverseRoute
 
     /**
      * @param secure is the URL secure?
+     *
      * @return Absolute WebSocket(SSL) URL
      */
     String webSocketUrl( boolean secure );

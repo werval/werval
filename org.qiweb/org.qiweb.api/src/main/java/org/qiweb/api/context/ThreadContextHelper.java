@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,6 @@
  */
 package org.qiweb.api.context;
 
-import org.qiweb.api.http.Headers.Names;
 import org.slf4j.MDC;
 
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_CLIENT_IP;
@@ -59,10 +58,13 @@ public final class ThreadContextHelper
      *     <li>Keep previous thread context {@link ClassLoader}.</li>
      *     <li>Set thread {@link ClassLoader}.</li>
      *     <li>Set thread Context {@literal ThreadLocal}.</li>
-     *     <li>Put current Request ID in SLF4J MDC at the {@link Names#X_QIWEB_REQUEST_ID} key.</li>
      *     <li>
-     *         Put current Request Client IP in SLF4J MDC at the {@link Names#X_QIWEB_CLIENT_IP} key if enabled in the
-     *         configuration.
+     *         Put current Request ID in SLF4J MDC at the {@link org.qiweb.api.http.Headers.Names#X_QIWEB_REQUEST_ID}
+     *         key.
+     *     </li>
+     *     <li>
+     *         Put current Request Client IP in SLF4J MDC at the
+     *         {@link org.qiweb.api.http.Headers.Names#X_QIWEB_CLIENT_IP} key if enabled in the configuration.
      *     </li>
      * </ul>
      *

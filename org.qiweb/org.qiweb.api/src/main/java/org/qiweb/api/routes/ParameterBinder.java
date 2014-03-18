@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,33 +17,37 @@ package org.qiweb.api.routes;
 
 /**
  * (De)Serialize parameters.
- * 
+ *
  * @param <T> Parameter type
  */
 public interface ParameterBinder<T>
 {
-
     /**
      * Check if this ParameterBinder accept the given type.
+     *
      * @param type Parameter type
+     *
      * @return TRUE if this ParameterBinder accept the given type, otherwise return FALSE
      */
     boolean accept( Class<?> type );
 
     /**
      * Bind a parameter value.
-     * @param name Parameter name
+     *
+     * @param name  Parameter name
      * @param value Parameter raw value
+     *
      * @return The bound value
      */
     T bind( String name, String value );
 
     /**
      * Unbind a parameter value.
-     * @param name Parameter name
+     *
+     * @param name  Parameter name
      * @param value Parameter value
+     *
      * @return The unbound raw value
      */
     String unbind( String name, T value );
-
 }

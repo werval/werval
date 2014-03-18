@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,6 @@ import org.qiweb.api.util.Charsets;
  */
 public interface QueryString
 {
-
     /**
      * @return TRUE if there's no query string parameter, FALSE otherwise
      */
@@ -42,12 +41,13 @@ public interface QueryString
 
     /**
      * @param name Name of the query string parameter
+     *
      * @return TRUE if there's a query string parameter with the given name
      */
     boolean has( String name );
 
     /**
-     * @return  All query string parameter names as immutable Set&lt;String&gt;.
+     * @return All query string parameter names as immutable Set&lt;String&gt;.
      */
     Set<String> names();
 
@@ -55,7 +55,9 @@ public interface QueryString
      * Get single query parameter value, ensuring it has only one value.
      *
      * @param name Name of the query string parameter
-     * @return  Value for this query string parameter name or an empty String
+     *
+     * @return Value for this query string parameter name or an empty String
+     *
      * @throws IllegalStateException if there is multiple values for this query string parameter
      */
     String singleValue( String name );
@@ -64,7 +66,8 @@ public interface QueryString
      * Get first query string parameter value.
      *
      * @param name Name of the query string parameter
-     * @return  First value for this query string parameter name or an empty String
+     *
+     * @return First value for this query string parameter name or an empty String
      */
     String firstValue( String name );
 
@@ -72,7 +75,8 @@ public interface QueryString
      * Get last query string parameter value.
      *
      * @param name Name of the query string parameter
-     * @return  Last value for this query string parameter name or an empty String
+     *
+     * @return Last value for this query string parameter name or an empty String
      */
     String lastValue( String name );
 
@@ -80,16 +84,18 @@ public interface QueryString
      * Get all query string parameter values.
      *
      * @param name Name of the query string parameter
-     * @return  All String values from the query string for the given name as immutable List&lt;String&gt;,
-     *          or an immutable empty one.
+     *
+     * @return All String values from the query string for the given name as immutable List&lt;String&gt;,
+     *         or an immutable empty one.
      */
     List<String> values( String name );
 
     /**
      * Get all query string parameters single values, ensuring each has only one value.
      *
-     * @return  Every single value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
-     *          immutable one.
+     * @return Every single value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
+     *         immutable one.
+     *
      * @throws IllegalStateException if there is multiple values for a parameter
      */
     Map<String, String> singleValues();
@@ -97,36 +103,37 @@ public interface QueryString
     /**
      * Get all query string parameters first values.
      *
-     * @return  Every first value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
-     *          immutable one.
+     * @return Every first value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
+     *         immutable one.
      */
     Map<String, String> firstValues();
 
     /**
      * Get all query string parameters last values.
      *
-     * @return  Every last value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
-     *          immutable one.
+     * @return Every last value of each query string parameter as immutable Map&lt;String,String&gt;, or an empty
+     *         immutable one.
      */
     Map<String, String> lastValues();
 
     /**
      * Get all query string parameters values.
      *
-     * @return  Every values of each query string parameter as immutable Map&lt;String,List&lt;String&gt;&gt;,
-     *          or an empty immutable one.
+     * @return Every values of each query string parameter as immutable Map&lt;String,List&lt;String&gt;&gt;,
+     *         or an empty immutable one.
      */
     Map<String, List<String>> allValues();
 
     /**
      * Creates an URL-encoded URI from a path string and key-value parameter pairs.
-     * This encoder is for one time use only.  Create a new instance for each URI.
      *
+     * This encoder is for one time use only. Create a new instance for each URI.
      * <pre>
      * QueryStringCodec.Encoder encoder = new QueryStringCodec.Encoder("/hello");
      * encoder.addParam("recipient", "world");
      * assert encoder.toString().equals("/hello?recipient=world");
      * </pre>
+     *
      * @see Decoder
      */
     class Encoder
@@ -136,8 +143,10 @@ public interface QueryString
         private final List<Param> params = new ArrayList<>();
 
         /**
-         * Creates a new encoder that encodes a URI that starts with the specified
-         * path string.  The encoder will encode the URI in UTF-8.
+         * Creates a new encoder that encodes a URI that starts with the specified path string.
+         *
+         * The encoder will encode the URI in UTF-8.
+         *
          * @param uri URI
          */
         public Encoder( String uri )
@@ -146,9 +155,9 @@ public interface QueryString
         }
 
         /**
-         * Creates a new encoder that encodes a URI that starts with the specified
-         * path string in the specified charset.
-         * @param uri URI
+         * Creates a new encoder that encodes a URI that starts with the specified path string in the specified charset.
+         *
+         * @param uri     URI
          * @param charset Charset
          */
         public Encoder( String uri, Charset charset )
@@ -168,7 +177,8 @@ public interface QueryString
 
         /**
          * Adds a parameter with the specified name and value to this encoder.
-         * @param name Name
+         *
+         * @param name  Name
          * @param value Value
          */
         public void addParam( String name, String value )
@@ -188,7 +198,9 @@ public interface QueryString
          * Returns the URL-encoded URI object which was created from the path string
          * specified in the constructor and the parameters added by
          * {@link #addParam(String, String)} getMethod.
+         *
          * @return URI
+         *
          * @throws java.net.URISyntaxException when the URI is invalid
          */
         public URI toUri()
@@ -201,6 +213,7 @@ public interface QueryString
          * Returns the URL-encoded URI which was created from the path string
          * specified in the constructor and the parameters added by
          * {@link #addParam(String, String)} getMethod.
+         *
          * @return URI
          */
         @Override
@@ -243,9 +256,8 @@ public interface QueryString
 
         private static final class Param
         {
-
-            final String name;
-            final String value;
+            private final String name;
+            private final String value;
 
             Param( String name, String value )
             {
@@ -257,7 +269,8 @@ public interface QueryString
 
     /**
      * Splits an HTTP query string into a path string and key-value parameter pairs.
-     * This decoder is for one time use only.  Create a new instance for each URI:
+     *
+     * This decoder is for one time use only. Create a new instance for each URI:
      * <pre>
      * QueryStringCodec.Decoder decoder = new QueryStringCodec.Decoder("/hello?recipient=world&amp;x=1;y=2");
      * assert decoder.getPath().equals("/hello");
@@ -295,8 +308,10 @@ public interface QueryString
         private int nParams;
 
         /**
-         * Creates a new decoder that decodes the specified URI. The decoder will
-         * assume that the query string is encoded in UTF-8.
+         * Creates a new decoder that decodes the specified URI.
+         *
+         * The decoder will assume that the query string is encoded in UTF-8.
+         *
          * @param uri URI
          */
         public Decoder( String uri )
@@ -305,9 +320,9 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI encoded in the
-         * specified charset.
-         * @param uri URI
+         * Creates a new decoder that decodes the specified URI encoded in the specified charset.
+         *
+         * @param uri     URI
          * @param hasPath Has path?
          */
         public Decoder( String uri, boolean hasPath )
@@ -316,9 +331,9 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI encoded in the
-         * specified charset.
-         * @param uri URI
+         * Creates a new decoder that decodes the specified URI encoded in the specified charset.
+         *
+         * @param uri     URI
          * @param charset Charset
          */
         public Decoder( String uri, Charset charset )
@@ -327,9 +342,9 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI encoded in the
-         * specified charset.
-         * @param uri URI
+         * Creates a new decoder that decodes the specified URI encoded in the specified charset.
+         *
+         * @param uri     URI
          * @param charset Charset
          * @param hasPath Has path?
          */
@@ -339,11 +354,11 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI encoded in the
-         * specified charset.
-         * @param uri URI
-         * @param charset Charset
-         * @param hasPath Has path?
+         * Creates a new decoder that decodes the specified URI encoded in the specified charset.
+         *
+         * @param uri       URI
+         * @param charset   Charset
+         * @param hasPath   Has path?
          * @param maxParams Maximum parameters count
          */
         public Decoder( String uri, Charset charset, boolean hasPath, int maxParams )
@@ -369,8 +384,10 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI. The decoder will
-         * assume that the query string is encoded in UTF-8.
+         * Creates a new decoder that decodes the specified URI.
+         *
+         * The decoder will assume that the query string is encoded in UTF-8.
+         *
          * @param uri URI
          */
         public Decoder( URI uri )
@@ -379,9 +396,9 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI encoded in the
-         * specified charset.
-         * @param uri URI
+         * Creates a new decoder that decodes the specified URI encoded in the specified charset.
+         *
+         * @param uri     URI
          * @param charset Charset
          */
         public Decoder( URI uri, Charset charset )
@@ -390,10 +407,10 @@ public interface QueryString
         }
 
         /**
-         * Creates a new decoder that decodes the specified URI encoded in the
-         * specified charset.
-         * @param uri URI
-         * @param charset Charset
+         * Creates a new decoder that decodes the specified URI encoded in the specified charset.
+         *
+         * @param uri       URI
+         * @param charset   Charset
          * @param maxParams Maximum parameters count
          */
         public Decoder( URI uri, Charset charset, int maxParams )
@@ -431,6 +448,7 @@ public interface QueryString
 
         /**
          * Returns the decoded path string of the URI.
+         *
          * @return Path
          */
         public String path()
@@ -439,7 +457,8 @@ public interface QueryString
             {
                 if( !hasPath )
                 {
-                    return path = "";
+                    path = "";
+                    return path;
                 }
 
                 int pathEndPos = uri.indexOf( '?' );
@@ -449,7 +468,8 @@ public interface QueryString
                 }
                 else
                 {
-                    return path = uri.substring( 0, pathEndPos );
+                    path = uri.substring( 0, pathEndPos );
+                    return path;
                 }
             }
             return path;
@@ -457,6 +477,7 @@ public interface QueryString
 
         /**
          * Returns the decoded key-value parameter pairs of the URI.
+         *
          * @return Parameters
          */
         public Map<String, List<String>> parameters()
@@ -486,7 +507,7 @@ public interface QueryString
 
         private void decodeParams( String s )
         {
-            Map<String, List<String>> params = this.params = new LinkedHashMap<>();
+            params = new LinkedHashMap<>();
             nParams = 0;
             String name = null;
             int pos = 0; // Beginning of the unprocessed region
@@ -555,7 +576,7 @@ public interface QueryString
             List<String> values = params.get( name );
             if( values == null )
             {
-                values = new ArrayList<String>( 1 );  // Often there's only 1 value.
+                values = new ArrayList<>( 1 );  // Often there's only 1 value.
                 params.put( name, values );
             }
             values.add( value );
@@ -565,14 +586,17 @@ public interface QueryString
 
         /**
          * Decodes a bit of an URL encoded by a browser.
-         * <p>
+         *
          * This is equivalent to calling {@link #decodeComponent(String, Charset)}
          * with the UTF-8 charset (recommended to comply with RFC 3986, Section 2).
+         *
          * @param s The string to decode (can be empty).
+         *
          * @return The decoded string, or {@code s} if there's nothing to decode.
-         * If the string to decode is {@code null}, returns an empty string.
+         *         If the string to decode is {@code null}, returns an empty string.
+         *
          * @throws IllegalArgumentException if the string contains a malformed
-         * escape sequence.
+         *                                  escape sequence.
          */
         public static String decodeComponent( final String s )
         {
@@ -581,25 +605,28 @@ public interface QueryString
 
         /**
          * Decodes a bit of an URL encoded by a browser.
-         * <p>
+         *
          * The string is expected to be encoded as per RFC 3986, Section 2.
          * This is the encoding used by JavaScript functions {@code encodeURI}
-         * and {@code encodeURIComponent}, but not {@code escape}.  For example
+         * and {@code encodeURIComponent}, but not {@code escape}. For example
          * in this encoding, &eacute; (in Unicode {@code U+00E9} or in UTF-8
          * {@code 0xC3 0xA9}) is encoded as {@code %C3%A9} or {@code %c3%a9}.
          * <p>
          * This is essentially equivalent to calling
-         *   URLDecoder#decode(String, String) URLDecoder.decode(s, charset.name())}
+         * URLDecoder#decode(String, String) URLDecoder.decode(s, charset.name())}
          * except that it's over 2x faster and generates less garbage for the GC.
          * Actually this function doesn't allocate any memory if there's nothing
          * to decode, the argument itself is returned.
-         * @param s The string to decode (can be empty).
+         *
+         * @param s       The string to decode (can be empty).
          * @param charset The charset to use to decode the string (should really
-         * be {@link Charsets#UTF_8}.
+         *                be {@link Charsets#UTF_8}.
+         *
          * @return The decoded string, or {@code s} if there's nothing to decode.
-         * If the string to decode is {@code null}, returns an empty string.
+         *         If the string to decode is {@code null}, returns an empty string.
+         *
          * @throws IllegalArgumentException if the string contains a malformed
-         * escape sequence.
+         *                                  escape sequence.
          */
         @SuppressWarnings( "fallthrough" )
         public static String decodeComponent( final String s,
@@ -637,8 +664,7 @@ public interface QueryString
                     case '%':
                         if( i == size - 1 )
                         {
-                            throw new IllegalArgumentException( "unterminated escape"
-                                                                + " sequence at end of string: " + s );
+                            throw new IllegalArgumentException( "unterminated escape sequence at end of string: " + s );
                         }
                         c = s.charAt( ++i );
                         if( c == '%' )
@@ -648,8 +674,7 @@ public interface QueryString
                         }
                         if( i == size - 1 )
                         {
-                            throw new IllegalArgumentException( "partial escape"
-                                                                + " sequence at end of string: " + s );
+                            throw new IllegalArgumentException( "partial escape sequence at end of string: " + s );
                         }
                         c = decodeHexNibble( c );
                         final char c2 = decodeHexNibble( s.charAt( ++i ) );
@@ -672,10 +697,12 @@ public interface QueryString
 
         /**
          * Helper to decode half of a hexadecimal number from a string.
+         *
          * @param c The ASCII character of the hexadecimal number to decode.
-         * Must be in the range {@code [0-9a-fA-F]}.
+         *          Must be in the range {@code [0-9a-fA-F]}.
+         *
          * @return The hexadecimal value represented in the ASCII character
-         * given, or {@link Character#MAX_VALUE} if the character is invalid.
+         *         given, or {@link Character#MAX_VALUE} if the character is invalid.
          */
         private static char decodeHexNibble( final char c )
         {
@@ -697,5 +724,4 @@ public interface QueryString
             }
         }
     }
-
 }

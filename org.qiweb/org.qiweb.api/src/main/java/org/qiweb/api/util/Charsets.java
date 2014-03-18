@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,43 +25,53 @@ import java.util.Map;
 /**
  * Utilities to work with charsets.
  */
-public class Charsets
+public final class Charsets
 {
-
     /**
-     * 8-bit UTF (UCS Transformation Format)
+     * 8-bit UTF (UCS Transformation Format).
      */
     public static final Charset UTF_8 = Charset.forName( "UTF-8" );
+
     /**
-     * ISO Latin Alphabet No. 1, as known as <tt>ISO-LATIN-1</tt>
+     * ISO Latin Alphabet No 1, as known as <tt>ISO-LATIN-1</tt>.
      */
     public static final Charset ISO_8859_1 = Charset.forName( "ISO-8859-1" );
+
     /**
      * 7-bit ASCII, as known as ISO646-US or the Basic Latin block of the
-     * Unicode character set
+     * Unicode character set.
      */
     public static final Charset US_ASCII = Charset.forName( "US-ASCII" );
-    private static final ThreadLocal<Map<Charset, CharsetEncoder>> encoders = new ThreadLocal<Map<Charset, CharsetEncoder>>()
+
+    private static final ThreadLocal<Map<Charset, CharsetEncoder>> ENCODERS;
+    private static final ThreadLocal<Map<Charset, CharsetDecoder>> DECODERS;
+
+    static
     {
-        @Override
-        protected Map<Charset, CharsetEncoder> initialValue()
+        ENCODERS = new ThreadLocal<Map<Charset, CharsetEncoder>>()
         {
-            return new IdentityHashMap<>( 4 );
-        }
-    };
-    private static final ThreadLocal<Map<Charset, CharsetDecoder>> decoders = new ThreadLocal<Map<Charset, CharsetDecoder>>()
-    {
-        @Override
-        protected Map<Charset, CharsetDecoder> initialValue()
+            @Override
+            protected Map<Charset, CharsetEncoder> initialValue()
+            {
+                return new IdentityHashMap<>( 4 );
+            }
+        };
+        DECODERS = new ThreadLocal<Map<Charset, CharsetDecoder>>()
         {
-            return new IdentityHashMap<>( 4 );
-        }
-    };
+            @Override
+            protected Map<Charset, CharsetDecoder> initialValue()
+            {
+                return new IdentityHashMap<>( 4 );
+            }
+        };
+    }
 
     /**
      * Returns a cached thread-local {@link CharsetEncoder} for the specified <tt>charset</tt>.
+     *
      * @param charset Character encoding
-     * @return  Character encoder
+     *
+     * @return Character encoder
      */
     public static CharsetEncoder getEncoder( Charset charset )
     {
@@ -70,7 +80,7 @@ public class Charsets
             throw new NullPointerException( "charset" );
         }
 
-        Map<Charset, CharsetEncoder> map = encoders.get();
+        Map<Charset, CharsetEncoder> map = ENCODERS.get();
         CharsetEncoder encoder = map.get( charset );
         if( encoder != null )
         {
@@ -89,8 +99,10 @@ public class Charsets
 
     /**
      * Returns a cached thread-local {@link CharsetDecoder} for the specified <tt>charset</tt>.
+     *
      * @param charset Character encoding
-     * @return  Character decoder
+     *
+     * @return Character decoder
      */
     public static CharsetDecoder getDecoder( Charset charset )
     {
@@ -99,7 +111,7 @@ public class Charsets
             throw new NullPointerException( "charset" );
         }
 
-        Map<Charset, CharsetDecoder> map = decoders.get();
+        Map<Charset, CharsetDecoder> map = DECODERS.get();
         CharsetDecoder decoder = map.get( charset );
         if( decoder != null )
         {
@@ -119,5 +131,4 @@ public class Charsets
     private Charsets()
     {
     }
-
 }

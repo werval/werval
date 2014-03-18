@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
 package org.qiweb.api.util;
 
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -27,8 +26,10 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Set of annotations to document reflective usage.
- * <p>Retention is {@link RetentionPolicy#SOURCE} only.</p>
- * <p>Make it easy to look for element use by name when working on the source.</p>
+ *
+ * Retention is {@link java.lang.annotation.RetentionPolicy#SOURCE} only.
+ * <p>
+ * Make it easy to look for element use by name when working on the source.
  */
 public interface Reflectively
 {
@@ -36,11 +37,7 @@ public interface Reflectively
      * This type is loaded reflectively.
      */
     @Retention( SOURCE )
-    @Target(
-         {
-            TYPE
-        }
-    )
+    @Target( TYPE )
     public @interface Loaded
     {
         /**
@@ -53,11 +50,7 @@ public interface Reflectively
      * This constructor or method is invoked reflectively.
      */
     @Retention( SOURCE )
-    @Target(
-         {
-            CONSTRUCTOR, METHOD
-        }
-    )
+    @Target( { CONSTRUCTOR, METHOD } )
     public @interface Invoked
     {
         /**
@@ -70,11 +63,7 @@ public interface Reflectively
      * This field's value is get reflectively.
      */
     @Retention( SOURCE )
-    @Target(
-         {
-            FIELD
-        }
-    )
+    @Target( FIELD )
     public @interface Get
     {
         /**
@@ -87,11 +76,7 @@ public interface Reflectively
      * This field's value is set reflectively.
      */
     @Retention( SOURCE )
-    @Target(
-         {
-            FIELD
-        }
-    )
+    @Target( FIELD )
     public @interface Set
     {
         /**

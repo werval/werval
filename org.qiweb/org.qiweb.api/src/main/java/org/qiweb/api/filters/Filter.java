@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,14 +23,13 @@ import org.qiweb.api.outcomes.Outcome;
  */
 public interface Filter
 {
-
     /**
      * Filter a request.
-     * 
-     * @param chain Filter Chain
+     *
+     * @param chain   Filter Chain
      * @param context Request Context
+     *
      * @return Filtered Outcome
      */
     Outcome filter( FilterChain chain, Context context );
-
 }
