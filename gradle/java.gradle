@@ -123,7 +123,7 @@ public interface BuildVersion
                               + COMMIT + " "
                               + ( DIRTY ? "(dirty) " : "" ) + " "
                               + DATE;
-}\n
+}
 """ )
         }
         genVersionClassTask.outputs.files generatedSrcDir

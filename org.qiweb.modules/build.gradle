@@ -17,7 +17,7 @@ subprojects {
     apply from: rootProject.file( 'common.gradle' )
     apply plugin: 'license'
     license {
-        header new File( "$rootProject.projectDir.absolutePath/../gradle/header.txt" )
+        header new File( "$rootProject.projectDir.absolutePath/../config/license/header.txt" )
         strictCheck true
         mapping {
             conf="DOUBLESLASH_STYLE"
