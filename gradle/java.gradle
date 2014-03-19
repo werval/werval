@@ -239,12 +239,42 @@ artifacts {
     archives javadocJar
 }
 
-// POM Setup
-configure( install.repositories.mavenInstaller ) {
-    pom.groupId = project.group
-    pom.artifactId = project.name
-    pom.version = project.version
-    pom.project {
+// Sign archives
+apply plugin: 'signing'
+signing {
+    required { version != "0" && !version.contains( "SNAPSHOT" ) }
+    sign configurations.archives
+}
+
+// Setup artifact publication
+uploadArchives.doFirst {
+    if( version == "0" )
+    {
+        throw new GradleException( "'version' must be given as a system property to perform a release." )
+    }
+}
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if( !version.contains( "SNAPSHOT" ) ) {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
+            }
+            repository( url: "https://repo.codeartisans.org/content/repositories/trash" ) {
+                authentication( userName: qiwebNexusUsername, password: qiwebNexusPassword)
+            }
+            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/trash" ) {
+                authentication( userName: qiwebNexusUsername, password: qiwebNexusPassword)
+            }
+        }
+    }
+}
+
+// POM Setup for install and deploy
+[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
+    groupId = project.group
+    artifactId = project.name
+    version = project.version
+    project {
         description = project.description
         url = "http://qiweb.org"
         inceptionYear '2013'
@@ -255,9 +285,9 @@ configure( install.repositories.mavenInstaller ) {
             }
         }
         scm {
-            url 'https://github.com/qiweb/qiweb'
-            connection 'scm:git:https://github.com/qiweb/qiweb.git'
-            developerConnection 'scm:git:git@github.com/qiweb/qiweb.git'
+            url 'https://scm.codeartisans.org/paul/qiweb'
+            connection 'scm:git:https://scm.codeartisans.org/paul/qiweb.git'
+            developerConnection 'scm:git:git@scm.codeartisans.org:paul/qiweb.git'
         }
         developers {
             developer {
@@ -282,3 +312,4 @@ configure( install.repositories.mavenInstaller ) {
         }
     }   
 }
+
