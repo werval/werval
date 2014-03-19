@@ -132,6 +132,60 @@ public interface BuildVersion
     }
 }
 
+// Checkstyle setup
+apply plugin: 'checkstyle'
+checkstyle {
+    configFile = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-checks.xml" )
+    configProperties = [
+        suppressionsCommon: "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-suppressions.xml",
+        suppressionsCustom: "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml"
+    ]
+    ignoreFailures = System.getProperty( "ignoreCheckstyle" ) != null
+    showViolations = false
+    sourceSets = [ project.sourceSets.main ]
+    toolVersion = 5.7
+}
+task checkstyleMainHtmlReport {
+    def xsl = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/html-report.xsl" )
+    def reportDir = file( "$project.projectDir.absolutePath/build/reports/checkstyle" )
+    inputs.file xsl
+    inputs.dir reportDir
+    outputs.dir reportDir
+    doLast {
+        reportDir.eachFile {
+            if( it.name.endsWith( ".xml" ) ) {
+                def outfile = file( "$project.projectDir.absolutePath/build/reports/checkstyle/" + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
+                ant.xslt( in: it, style: xsl, out: outfile )
+            }
+        }
+    }
+}
+checkstyleMain.doFirst {
+    def suppressions = new File( "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml" )
+    if( !suppressions.exists() )
+    {
+        suppressions.getParentFile().mkdirs()
+        suppressions.write( """<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<!-- Checkstyle Suppressions                                             -->
+<!-- See http://checkstyle.sourceforge.net/config.html#SuppressionFilter -->
+
+<suppressions>
+
+    <!-- Add your suppression for this project here -->
+
+    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
+    <suppress checks=".*" files=".*"/>
+
+</suppressions>
+""" )
+        logger.quiet "Checkstyle suppressions skeleton created in $suppressions"
+    }
+}
+checkstyleMain.finalizedBy( checkstyleMainHtmlReport )
 
 // Tests configuration
 test {
