@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,39 +47,57 @@ public enum StatusClass
      */
     UNKNOWN( "Unknown Status" );
 
+    private static final EnumSet<StatusClass> FORCE_CLOSE = EnumSet.of( CLIENT_ERROR, SERVER_ERROR, UNKNOWN );
+    private static final int ONE_HUNDRED = 100;
+    private static final int TWO_HUNDRED = 200;
+    private static final int THREE_HUNDRED = 300;
+    private static final int FOUR_HUNDRED = 400;
+    private static final int FIVE_HUNDRED = 500;
+    private static final int SIX_HUNDRED = 600;
+
+    /**
+     * @param status Status
+     *
+     * @return StatusClass for the given Status
+     */
     public static StatusClass valueOf( Status status )
     {
         return valueOf( status.code() );
     }
 
+    /**
+     * @param status Status code
+     *
+     * @return StatusClass for the given status code
+     */
     public static StatusClass valueOf( int status )
     {
-        if( status < 100 )
+        if( status < ONE_HUNDRED )
         {
             // 0xx
             return UNKNOWN;
         }
-        if( status < 200 )
+        if( status < TWO_HUNDRED )
         {
             // 1xx
             return INFORMATIONAL;
         }
-        if( status < 300 )
+        if( status < THREE_HUNDRED )
         {
             // 2xx
             return SUCCESS;
         }
-        if( status < 400 )
+        if( status < FOUR_HUNDRED )
         {
             // 3xx
             return REDIRECTION;
         }
-        if( status < 500 )
+        if( status < FIVE_HUNDRED )
         {
             // 4xx
             return CLIENT_ERROR;
         }
-        if( status < 600 )
+        if( status < SIX_HUNDRED )
         {
             // 5xx
             return SERVER_ERROR;
@@ -87,7 +105,7 @@ public enum StatusClass
         // >= 6xx
         return UNKNOWN;
     }
-    private static final EnumSet<StatusClass> FORCE_CLOSE = EnumSet.of( CLIENT_ERROR, SERVER_ERROR, UNKNOWN );
+
     private final String reasonPhrase;
 
     private StatusClass( String reasonPhrase )
@@ -103,6 +121,10 @@ public enum StatusClass
         return reasonPhrase;
     }
 
+    /**
+     * @return {@literal true} if this StatusClass force the connection close,
+     *         otherwise return {@literal false}
+     */
     public boolean isForceClose()
     {
         return FORCE_CLOSE.contains( this );

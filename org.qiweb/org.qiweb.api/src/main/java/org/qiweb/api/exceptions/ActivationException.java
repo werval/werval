@@ -23,16 +23,34 @@ public class ActivationException
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Create a new ActivationException.
+     *
+     * @param message Message
+     */
     public ActivationException( String message )
     {
         super( message );
     }
 
+    /**
+     * Create a new ActivationException.
+     *
+     * Use the given cause message as own message.
+     *
+     * @param cause Cause
+     */
     public ActivationException( Throwable cause )
     {
         super( cause.getMessage(), cause );
     }
 
+    /**
+     * Create a new ActivationException.
+     *
+     * @param message Message
+     * @param cause   Cause
+     */
     public ActivationException( String message, Throwable cause )
     {
         super( message, cause );

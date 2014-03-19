@@ -23,16 +23,34 @@ public class PassivationException
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Create a new PassivationException.
+     *
+     * @param message Message
+     */
     public PassivationException( String message )
     {
         super( message );
     }
 
+    /**
+     * Create a new PassivationException.
+     *
+     * Use given cause message as own message.
+     *
+     * @param cause Cause
+     */
     public PassivationException( Throwable cause )
     {
         super( cause.getMessage(), cause );
     }
 
+    /**
+     * Create a new PassivationException.
+     *
+     * @param message Message
+     * @param cause   Cause
+     */
     public PassivationException( String message, Throwable cause )
     {
         super( message, cause );

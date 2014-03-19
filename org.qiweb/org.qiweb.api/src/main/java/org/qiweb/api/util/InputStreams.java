@@ -19,36 +19,55 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.qiweb.api.exceptions.RuntimeIOException;
 
 /**
  * InputStream utilities.
  */
 public final class InputStreams
 {
+    /**
+     * Read all InputStream into a byte[].
+     *
+     * @param input   InputStream
+     * @param bufsize Size of the read buffer
+     *
+     * @return All InputStream bytes
+     *
+     * @throws RuntimeIOException if something goes wrong
+     */
     public static byte[] readAllBytes( InputStream input, int bufsize )
+    {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        transferTo( input, buffer, bufsize );
+        return buffer.toByteArray();
+    }
+
+    /**
+     * Transfer an InputStream to an OutputStream.
+     *
+     * @param input   InputStream
+     * @param output  OutputStream
+     * @param bufsize Size of the read buffer
+     *
+     * @throws RuntimeIOException if something goes wrong
+     */
+    public static void transferTo( InputStream input, OutputStream output, int bufsize )
     {
         try
         {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            transferTo( input, buffer, bufsize );
-            return buffer.toByteArray();
+            int nRead;
+            byte[] data = new byte[ bufsize ];
+            while( ( nRead = input.read( data, 0, data.length ) ) != -1 )
+            {
+                output.write( data, 0, nRead );
+            }
+            output.flush();
         }
         catch( IOException ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new RuntimeIOException( ex );
         }
-    }
-
-    public static void transferTo( InputStream input, OutputStream output, int bufsize )
-        throws IOException
-    {
-        int nRead;
-        byte[] data = new byte[ bufsize ];
-        while( ( nRead = input.read( data, 0, data.length ) ) != -1 )
-        {
-            output.write( data, 0, nRead );
-        }
-        output.flush();
     }
 
     private InputStreams()

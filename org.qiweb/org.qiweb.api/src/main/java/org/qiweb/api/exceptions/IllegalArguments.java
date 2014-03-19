@@ -28,6 +28,14 @@ public final class IllegalArguments
     private static final String WAS_EMPTY = " was empty.";
     private static final String WAS_ZERO = " was zero.";
 
+    /**
+     * Ensure not null.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null
+     */
     public static void ensureNotNull( String name, Object value )
     {
         if( value != null )
@@ -37,6 +45,14 @@ public final class IllegalArguments
         throw new IllegalArgumentException( name + WAS_NULL );
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, String value )
     {
         ensureNotNull( name, value );
@@ -46,6 +62,14 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, CharSequence value )
     {
         ensureNotNull( name, value );
@@ -55,6 +79,15 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param trim  Trim value before check if true, don't otherwise
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, boolean trim, String value )
     {
         ensureNotNull( name, value );
@@ -65,6 +98,14 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, Object[] value )
     {
         ensureNotNull( name, value );
@@ -74,6 +115,14 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, Collection<?> value )
     {
         ensureNotNull( name, value );
@@ -83,6 +132,14 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, Properties value )
     {
         ensureNotNull( name, value );
@@ -92,6 +149,14 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
     public static void ensureNotEmpty( String name, Map<?, ?> value )
     {
         ensureNotNull( name, value );
@@ -107,6 +172,8 @@ public final class IllegalArguments
      *
      * @param name  Name
      * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
      */
     public static void ensureNotEmptyContent( String name, String[] value )
     {
@@ -119,6 +186,8 @@ public final class IllegalArguments
      * @param name  Name
      * @param trim  Trim flag
      * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
      */
     public static void ensureNotEmptyContent( String name, boolean trim, String[] value )
     {
@@ -133,6 +202,14 @@ public final class IllegalArguments
         }
     }
 
+    /**
+     * Ensure not zero.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or zero
+     */
     public static void ensureNotZero( String name, Integer value )
     {
         ensureNotNull( name, value );

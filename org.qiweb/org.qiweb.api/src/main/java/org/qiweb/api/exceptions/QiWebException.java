@@ -23,16 +23,34 @@ public class QiWebException
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Create a new QiWebException.
+     *
+     * @param message Message
+     */
     public QiWebException( String message )
     {
         super( message );
     }
 
+    /**
+     * Create a new QiWebException.
+     *
+     * Use given cause message as own message.
+     *
+     * @param cause Cause
+     */
     public QiWebException( Throwable cause )
     {
         super( cause.getMessage(), cause );
     }
 
+    /**
+     * Create a new QiWebException.
+     *
+     * @param message Message
+     * @param cause   Cause
+     */
     public QiWebException( String message, Throwable cause )
     {
         super( message, cause );

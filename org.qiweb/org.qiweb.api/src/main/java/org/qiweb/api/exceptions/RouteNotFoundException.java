@@ -25,6 +25,12 @@ public class RouteNotFoundException
     private final String method;
     private final String uri;
 
+    /**
+     * Create a new RouteNotFoundException.
+     *
+     * @param method HTTP method
+     * @param uri    HTTP URI
+     */
     public RouteNotFoundException( String method, String uri )
     {
         super( "No route for " + method + " " + uri );

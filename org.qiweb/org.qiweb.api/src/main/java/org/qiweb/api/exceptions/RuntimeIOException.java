@@ -13,35 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.util;
+package org.qiweb.api.exceptions;
 
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.io.IOException;
 
 /**
- * Source of bytes.
+ * Runtime IOException.
  */
-public interface ByteSource
+public class RuntimeIOException
+    extends QiWebException
 {
     /**
-     * Empty ByteSource.
-     */
-    ByteSource EMPTY_BYTES = new ByteArrayByteSource( new byte[ 0 ] );
-
-    /**
-     * @return Content as an array of bytes
-     */
-    byte[] asBytes();
-
-    /**
-     * @return An InputStream of the content
-     */
-    InputStream asStream();
-
-    /**
-     * @param charset Charset
+     * Create a new RuntimeIOException.
      *
-     * @return Content as String encoded with the given Charset
+     * @param ioException IOException
      */
-    String asString( Charset charset );
+    public RuntimeIOException( IOException ioException )
+    {
+        super( ioException.getMessage(), ioException );
+    }
 }

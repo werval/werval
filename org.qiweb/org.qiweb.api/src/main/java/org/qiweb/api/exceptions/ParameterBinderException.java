@@ -21,22 +21,38 @@ package org.qiweb.api.exceptions;
 public class ParameterBinderException
     extends QiWebException
 {
-
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Create a new ParameterBinderException.
+     *
+     * @param message Message
+     */
     public ParameterBinderException( String message )
     {
         super( message );
     }
 
+    /**
+     * Create a new ParameterBinderException.
+     *
+     * Use given cause message as own message.
+     *
+     * @param cause Cause
+     */
     public ParameterBinderException( Throwable cause )
     {
         super( cause );
     }
 
+    /**
+     * Create a new ParameterBinderException.
+     *
+     * @param message Message
+     * @param cause   Cause
+     */
     public ParameterBinderException( String message, Throwable cause )
     {
         super( message, cause );
     }
-
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,11 @@ public final class ByteArrayByteSource
 {
     private final byte[] bytes;
 
+    /**
+     * Create a new ByteSource backed by a {@literal byte[]}.
+     *
+     * @param bytes Array of bytes
+     */
     public ByteArrayByteSource( byte[] bytes )
     {
         IllegalArguments.ensureNotNull( "Array of bytes", bytes );

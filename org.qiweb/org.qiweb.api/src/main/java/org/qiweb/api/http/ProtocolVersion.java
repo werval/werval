@@ -35,6 +35,11 @@ public final class ProtocolVersion
      */
     public static final ProtocolVersion HTTP_1_1 = new ProtocolVersion( HTTP_1_1_STRING, true );
 
+    /**
+     * @param text Version text
+     *
+     * @return ProtocolVersion
+     */
     public static ProtocolVersion valueOf( String text )
     {
         ensureNotEmpty( "Version text", text );
@@ -58,6 +63,10 @@ public final class ProtocolVersion
         this.keepAliveDefault = keepAliveDefault;
     }
 
+    /**
+     * @return {@literal true} if Keep-Alive is the default behaviour for this ProtocolVersion,
+     *         otherwise return {@literal false}
+     */
     public boolean isKeepAliveDefault()
     {
         return keepAliveDefault;

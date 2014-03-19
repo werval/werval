@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,12 @@ public final class InputStreamByteSource
     private final InputStream input;
     private final int bufsize;
 
+    /**
+     * Create a new ByteSource backed by a InputStream.
+     *
+     * @param input   InputStream
+     * @param bufsize Size of the buffer used when consuming the InputStream
+     */
     public InputStreamByteSource( InputStream input, int bufsize )
     {
         IllegalArguments.ensureNotNull( "InputStream", input );

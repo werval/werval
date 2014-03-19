@@ -24,12 +24,25 @@ public class IllegalRouteException
     private static final long serialVersionUID = 1L;
     private String routeString;
 
+    /**
+     * Create a new IllegalRouteException.
+     *
+     * @param routeString Route as String
+     * @param message     Message
+     */
     public IllegalRouteException( String routeString, String message )
     {
         super( routeString + "\n" + message );
         this.routeString = routeString;
     }
 
+    /**
+     * Create a new IllegalRouteException.
+     *
+     * @param routeString Route as String
+     * @param message     Message
+     * @param cause       Cause
+     */
     public IllegalRouteException( String routeString, String message, Throwable cause )
     {
         super( routeString + "\n" + message, cause );
