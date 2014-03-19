@@ -44,6 +44,9 @@ public interface HttpBuilders
 
     RequestBodyBuilder newRequestBodyBuilder();
 
+    /**
+     * QueryString Builder.
+     */
     interface QueryStringBuilder
     {
         QueryStringBuilder query( String queryString );
@@ -53,6 +56,9 @@ public interface HttpBuilders
         QueryString build();
     }
 
+    /**
+     * Headers Builder.
+     */
     interface HeadersBuilder
     {
         HeadersBuilder headers( Map<String, List<String>> headers );
@@ -60,6 +66,9 @@ public interface HttpBuilders
         Headers build();
     }
 
+    /**
+     * RequestHeader Builder.
+     */
     interface RequestHeaderBuilder
     {
         RequestHeaderBuilder identifiedBy( String identity );
@@ -83,6 +92,9 @@ public interface HttpBuilders
         RequestHeader build();
     }
 
+    /**
+     * RequestBody Builder.
+     */
     interface RequestBodyBuilder
     {
         RequestBodyBuilder charset( Charset charset );
