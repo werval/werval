@@ -1,10 +1,13 @@
 // QiWeb Documentation
 
-def htmlTarget = 'build/classes/main/org/qiweb/doc/html'
+def asciidocSource = "$project.projectDir.absolutePath/src/asciidoc"
+def assetsSource = "$project.projectDir.absolutePath/src/assets"
+def htmlTarget = "$project.projectDir.absolutePath/build/classes/main/org/qiweb/doc/html"
+
 
 // Static assets
 task copyAssets( type: Copy ) {
-    from 'src/assets'
+    from assetsSource
     into htmlTarget
 }
 
@@ -21,7 +24,7 @@ buildscript {
 }
 apply plugin: 'asciidoctor'
 asciidoctor {
-    sourceDir = file( "src/asciidoc" )
+    sourceDir = file( asciidocSource )
     outputDir = file( htmlTarget )
     backend = 'html5'
     options = [
@@ -29,7 +32,8 @@ asciidoctor {
         attributes: [
             'qiweb-version': version,
             'toc2': '',
-            'stylesheet': 'src/assets/stylesheets/foundation.css',
+            'stylesheet': "$assetsSource/stylesheets/foundation.css",
+            'icons': 'font',
             'docinfo1': '',
         ]
     ]
@@ -44,16 +48,16 @@ configurations { umlgraphDoclet }
 dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p ->
-        p.name == 'org.qiweb.api' || p.name == 'org.qiweb.lib' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test' || p.name.startsWith( 'org.qiweb.plugin' )
+        p.name == 'org.qiweb.api' || p.name == 'org.qiweb.lib' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test'
     }
 }
 task embeddedJavadoc( type: Javadoc ) {
     title = "QiWeb API Reference (${version})"
     source = embeddedJavadocProjects().collect { p -> p.sourceSets.main.allJava }
     classpath = files( embeddedJavadocProjects().collect { p -> p.sourceSets.main.compileClasspath } )
-    destinationDir = file( "${htmlTarget}/api" )
+    destinationDir = file( "$htmlTarget/api" )
     options.encoding = 'UTF-8'
-    options.overview = file( 'src/javadoc/overview.html' )
+    options.overview = file( "$project.projectDir.absolutePath/src/javadoc/overview.html" )
     options.docFilesSubDirs = true
     options.links(
         "http://download.java.net/jdk8/docs/api/",
@@ -61,24 +65,23 @@ task embeddedJavadoc( type: Javadoc ) {
         "http://junit.org/javadoc/latest/"
     )
     options.group( [
-            "QiWeb API":               [ "org.qiweb.api",       "org.qiweb.api.*"   ],
-            "QiWeb Standard Library":  [ "org.qiweb.lib",       "org.qiweb.lib.*"   ],
-            "QiWeb Standard Plugins":  [ "org.qiweb.plugin",    "org.qiweb.plugin.*"   ],
-            "QiWeb Test Support":      [ "org.qiweb.test",      "org.qiweb.test.*"  ],
-            "QiWeb SPI":               [ "org.qiweb.spi",       "org.qiweb.spi.*"   ]
+            "QiWeb API":               [ "org.qiweb.api",       "org.qiweb.api.*"     ],
+            "QiWeb Standard Library":  [ "org.qiweb.lib",       "org.qiweb.lib.*"     ],
+            "QiWeb Test Support":      [ "org.qiweb.test",      "org.qiweb.test.*"    ],
+            "QiWeb SPI":               [ "org.qiweb.spi",       "org.qiweb.spi.*"     ]
         ] )
     options.docletpath = configurations.umlgraphDoclet.files.asType( List )
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
     doLast {
         copy {
-            from 'src/assets/images'
-            into "${htmlTarget}/api/images"
+            from "$assetsSource/images"
+            into "$htmlTarget/api/images"
         }
     }
     doLast {
         copy {
-            from embeddedJavadocProjects().collect { p -> p.file( 'src/main/javadoc' ) }
-            into "${htmlTarget}/api"
+            from embeddedJavadocProjects().collect { p -> p.file( "$project.projectDir.absolutePath/src/main/javadoc" ) }
+            into "$htmlTarget/api"
         }
     }
 }

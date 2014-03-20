@@ -10,7 +10,7 @@ IMPORTANT: You need to install http://gradle.org[Gradle] to be able to complete 
 Create a `build.gradle` file at the application root with the following content:
 
 .`./build.gradle`
-["source","groovy",subs="attributes"]
+["source","groovy",subs="attributes,callouts"]
 ----
 apply plugin: 'java' // <1>
 
