@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * QiWeb Application Plugin.
+ *
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
  */
 public interface Plugin<API>
@@ -40,7 +41,9 @@ public interface Plugin<API>
 
     /**
      * Invoked on Application activation.
+     *
      * @param application Application
+     *
      * @throws ActivationException if something goes wrong.
      */
     void onActivate( Application application )
@@ -48,6 +51,7 @@ public interface Plugin<API>
 
     /**
      * Invoked on Application passivation.
+     *
      * @param application Application
      */
     void onPassivate( Application application );

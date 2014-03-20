@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,6 @@ import static org.qiweb.runtime.util.Iterables.count;
  */
 public class PluginsTest
 {
-
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule( "plugin-test.conf" );
 
@@ -68,5 +67,4 @@ public class PluginsTest
         assertThat( plugin.activations(), is( 1 ) );
         assertThat( plugin.passivations(), is( 0 ) );
     }
-
 }

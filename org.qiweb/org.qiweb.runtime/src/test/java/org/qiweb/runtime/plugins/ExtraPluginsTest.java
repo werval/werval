@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@ import static org.junit.Assert.assertThat;
  */
 public class ExtraPluginsTest
 {
-
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule( "extra-plugin-test.conf" );
 
@@ -37,5 +36,4 @@ public class ExtraPluginsTest
         String hello = QIWEB.application().plugin( HelloWorld.class ).sayHello( "John" );
         assertThat( hello, equalTo( "Hello John!" ) );
     }
-
 }

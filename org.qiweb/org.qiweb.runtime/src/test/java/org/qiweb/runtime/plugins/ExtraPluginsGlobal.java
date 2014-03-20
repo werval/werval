@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,11 +25,9 @@ import org.qiweb.api.Plugin;
 public class ExtraPluginsGlobal
     extends Global
 {
-
     @Override
     public Iterable<Plugin<?>> extraPlugins()
     {
         return Collections.<Plugin<?>>singleton( new HelloWorldPlugin() );
     }
-
 }
