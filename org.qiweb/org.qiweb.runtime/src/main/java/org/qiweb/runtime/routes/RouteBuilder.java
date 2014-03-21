@@ -132,7 +132,7 @@ public final class RouteBuilder
      *
      * @return Parsed Routes
      */
-    public static Iterable<Route> parseRoutes( Application application, String routesString )
+    public static List<Route> parseRoutes( Application application, String routesString )
     {
         List<Route> routes = new ArrayList<>();
         Scanner scanner = new Scanner( routesString );

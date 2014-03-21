@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,11 @@
  */
 package org.qiweb.api;
 
+import java.util.List;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.api.routes.Route;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * QiWeb Application Plugin.
@@ -58,6 +62,34 @@ public interface Plugin<API>
     }
 
     /**
+     * Routes to prepend to the Application routes.
+     *
+     * Defaults to no Route.
+     * <p>
+     * Called by {@literal Application} once activated.
+     *
+     * @return Routes this plugin prepend to the {@literal Application} routes
+     */
+    default List<Route> firstRoutes()
+    {
+        return EMPTY_LIST;
+    }
+
+    /**
+     * Routes to append to the Application routes.
+     *
+     * Defaults to no Route.
+     * <p>
+     * Called by {@literal Application} once activated.
+     *
+     * @return Routes this plugin append to the {@literal Application} routes
+     */
+    default List<Route> lastRoutes()
+    {
+        return EMPTY_LIST;
+    }
+
+    /**
      * Invoked on Application passivation.
      *
      * Defaults to no operation.
@@ -67,5 +99,24 @@ public interface Plugin<API>
     default void onPassivate( Application application )
     {
         // NOOP
+    }
+
+    /**
+     * Void Plugin exposing no type to the Application.
+     */
+    abstract class Void
+        implements Plugin<java.lang.Void>
+    {
+        @Override
+        public final Class<java.lang.Void> apiType()
+        {
+            return java.lang.Void.class;
+        }
+
+        @Override
+        public final java.lang.Void api()
+        {
+            return null;
+        }
     }
 }

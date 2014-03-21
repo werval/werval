@@ -27,6 +27,7 @@ import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -42,7 +43,7 @@ public class WildcardRoutesTest
     @Test
     public void wildAPI()
     {
-        Application application = new ApplicationInstance( app -> RouteBuilder.routes(
+        Application application = new ApplicationInstance( app -> singletonList(
             route( "GET" )
             .on( "/test/*path/as/file" )
             .to( FakeController.class, c -> c.wild( p( "path", String.class ) ) )

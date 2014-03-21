@@ -18,10 +18,10 @@ package org.qiweb.runtime.dev;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.routes.RouteBuilder;
@@ -59,18 +59,18 @@ public class DevShellRoutesProvider
     }
 
     @Override
-    public Routes routes( Application application )
+    public List<Route> routes( Application application )
     {
         URL routesUrl = application.classLoader().getResource( "routes.conf" );
         if( routesUrl == null )
         {
-            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES ) );
+            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             Scanner scanner = new Scanner( input, UTF_8.name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES + routes ) );
+            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES + routes );
         }
         catch( IOException ex )
         {

@@ -139,6 +139,8 @@ public interface Application
      * Application {@link Routes}.
      *
      * Don't hold references to the Routes instance in order to make your code {@link Mode#DEV} friendly.
+     * <p>
+     * The <em>Application Routes</em> include Routes contributed by registered Plugins.
      *
      * @return Application {@link Routes}
      *

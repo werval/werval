@@ -18,9 +18,10 @@ package org.qiweb.runtime.routes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 import org.qiweb.api.Application;
-import org.qiweb.api.routes.Routes;
+import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
@@ -44,18 +45,18 @@ public class RoutesConfProvider
     }
 
     @Override
-    public Routes routes( Application application )
+    public List<Route> routes( Application application )
     {
         URL routesUrl = application.classLoader().getResource( routesResourceName );
         if( routesUrl == null )
         {
-            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, Strings.EMPTY ) );
+            return RouteBuilder.parseRoutes( application, Strings.EMPTY );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             Scanner scanner = new Scanner( input, application.defaultCharset().name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, routes ) );
+            return RouteBuilder.parseRoutes( application, routes );
         }
         catch( IOException ex )
         {

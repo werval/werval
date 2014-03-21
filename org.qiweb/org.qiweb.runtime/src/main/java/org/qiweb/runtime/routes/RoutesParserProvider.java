@@ -15,8 +15,9 @@
  */
 package org.qiweb.runtime.routes;
 
+import java.util.List;
 import org.qiweb.api.Application;
-import org.qiweb.api.routes.Routes;
+import org.qiweb.api.routes.Route;
 
 /**
  * RouteProvider that parse routes from a string.
@@ -40,8 +41,8 @@ public class RoutesParserProvider
     }
 
     @Override
-    public Routes routes( Application application )
+    public List<Route> routes( Application application )
     {
-        return RouteBuilder.routes( RouteBuilder.parseRoutes( application, routesString ) );
+        return RouteBuilder.parseRoutes( application, routesString );
     }
 }

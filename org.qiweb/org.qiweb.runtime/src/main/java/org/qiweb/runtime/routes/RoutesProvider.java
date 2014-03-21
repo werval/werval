@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,9 @@
  */
 package org.qiweb.runtime.routes;
 
+import java.util.List;
 import org.qiweb.api.Application;
-import org.qiweb.api.routes.Routes;
+import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Reflectively;
 
 /**
@@ -25,5 +26,5 @@ import org.qiweb.api.util.Reflectively;
 @Reflectively.Loaded( by = "DevShell" )
 public interface RoutesProvider
 {
-    Routes routes( Application application );
+    List<Route> routes( Application application );
 }

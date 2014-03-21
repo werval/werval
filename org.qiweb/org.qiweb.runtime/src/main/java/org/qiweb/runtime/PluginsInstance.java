@@ -16,7 +16,6 @@
 package org.qiweb.runtime;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +24,7 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
+import org.qiweb.api.routes.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +108,26 @@ import static java.util.Collections.EMPTY_LIST;
         }
     }
 
+    /* package */ List<Route> firstRoutes()
+    {
+        List<Route> firstRoutes = new ArrayList<>();
+        for( Plugin plugin : activePlugins )
+        {
+            firstRoutes.addAll( plugin.firstRoutes() );
+        }
+        return firstRoutes;
+    }
+
+    /* package */ List<Route> lastRoutes()
+    {
+        List<Route> lastRoutes = new ArrayList<>();
+        for( Plugin plugin : activePlugins )
+        {
+            lastRoutes.addAll( plugin.lastRoutes() );
+        }
+        return lastRoutes;
+    }
+
     /* package */ <T> Iterable<T> plugins( Class<T> pluginApiType )
     {
         if( !activated )
@@ -157,6 +177,6 @@ import static java.util.Collections.EMPTY_LIST;
             }
         }
         // No Plugin found
-        throw new IllegalArgumentException( "Plugin<" + pluginApiType.getName() + "> not found." );
+        throw new IllegalArgumentException( "API for Plugin<" + pluginApiType.getName() + "> not found." );
     }
 }

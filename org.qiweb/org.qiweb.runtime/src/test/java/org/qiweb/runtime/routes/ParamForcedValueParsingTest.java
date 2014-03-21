@@ -23,6 +23,7 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.runtime.routes.RouteBuilder.p;
@@ -34,7 +35,7 @@ public class ParamForcedValueParsingTest
     public void givenRouteBuiltFromCodeWithParamForcedValueWhenBindingExpectCorrectParams()
     {
         Application application = new ApplicationInstance( app
-            -> RouteBuilder.routes(
+            -> singletonList(
                 RouteBuilder.route( "GET" )
                 .on( "/foo/:id/bar" )
                 .to( FakeController.class, c -> c.another( p( "id", String.class ), p( "slug", Integer.class, 42 ) ) )

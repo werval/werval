@@ -59,6 +59,7 @@ import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.outcomes.OutcomesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
+import org.qiweb.runtime.routes.RouteBuilder;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
@@ -195,6 +196,7 @@ public final class ApplicationInstance
         this.mode = mode;
         this.config = config;
         this.routesProvider = routesProvider;
+        this.reverseRoutes = new ReverseRoutesInstance( this );
         this.classLoader = classLoader;
         this.metaData = new MetaData();
         this.errors = new ErrorsInstance( config );
@@ -211,16 +213,24 @@ public final class ApplicationInstance
         }
         ClassLoader previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( classLoader );
+        plugins = new PluginsInstance( config, global.extraPlugins() );
+        List<Route> resolvedRoutes = new ArrayList<>();
+        resolvedRoutes.addAll( routesProvider.routes( this ) );
         try
         {
             plugins.onActivate( this );
+            resolvedRoutes.addAll( 0, plugins.firstRoutes() );
+            resolvedRoutes.addAll( plugins.lastRoutes() );
+            routes = RouteBuilder.routes( resolvedRoutes );
+
+            activated = true;
+
             global.onActivate( this );
         }
         finally
         {
             Thread.currentThread().setContextClassLoader( previousLoader );
         }
-        activated = true;
     }
 
     @Override
@@ -669,8 +679,6 @@ public final class ApplicationInstance
         configureTmpdir();
         configureParameterBinders();
         configureMimeTypes();
-        configureRoutes();
-        configurePlugins();
         configureHttpBuilders();
     }
 
@@ -752,17 +760,6 @@ public final class ApplicationInstance
         {
             mimeTypes = new MimeTypesInstance( defaultCharset, textuals );
         }
-    }
-
-    private void configureRoutes()
-    {
-        routes = routesProvider.routes( this );
-        reverseRoutes = new ReverseRoutesInstance( this );
-    }
-
-    private void configurePlugins()
-    {
-        plugins = new PluginsInstance( config, global.extraPlugins() );
     }
 
     private void configureHttpBuilders()
