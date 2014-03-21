@@ -11,3 +11,7 @@ https://cwiki.apache.org/confluence/display/MAVEN/Java+8+Upgrade
 
 Conclusion, no maven plugin for now...
 
+To generate a HelpMojo that builds well, the very same maven-plugin-plugin create invalid javadoc.
+Java 8 enforce strict javadoc.
+See http://jira.codehaus.org/browse/MPLUGIN-244
+
