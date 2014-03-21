@@ -37,7 +37,6 @@ import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
-import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 // TODO SECURITY Filter inputs
 // TODO SECURITY Escape outputs
@@ -113,7 +112,7 @@ public class API
             em.persist( brewery );
             em.getTransaction().commit();
 
-            String breweryRoute = reverseRoutes().of( GET( API.class ).brewery( brewery.getId() ) ).httpUrl();
+            String breweryRoute = reverseRoutes().get( API.class, c -> c.brewery( brewery.getId() ) ).httpUrl();
             byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( brewery );
             return outcomes().
                 created().
@@ -269,7 +268,7 @@ public class API
             em.persist( beer );
             em.persist( brewery );
             em.getTransaction().commit();
-            String beerRoute = reverseRoutes().of( GET( API.class ).beer( beer.getId() ) ).httpUrl();
+            String beerRoute = reverseRoutes().get( API.class, c -> c.beer( beer.getId() ) ).httpUrl();
             byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beer );
             return outcomes().
                 created().

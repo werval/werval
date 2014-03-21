@@ -25,15 +25,14 @@ import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
-import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class UI
 {
     public Outcome app()
     {
         Map<String, Object> params = new HashMap<>();
-        params.put( "css", reverseRoutes().of( GET( ClasspathResources.class ).resource( "assets/", "css/main.css" ) ).httpUrl() );
-        params.put( "js", reverseRoutes().of( GET( ClasspathResources.class ).resource( "assets/", "js/main.js" ) ).httpUrl() );
+        params.put( "css", reverseRoutes().get( ClasspathResources.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() );
+        params.put( "js", reverseRoutes().get( ClasspathResources.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() );
         String body = application().plugin( RythmEngine.class ).render( "index.html", params );
         return outcomes().ok().as( TEXT_HTML ).withBody( body ).build();
     }
