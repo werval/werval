@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +16,13 @@
 package org.qiweb.runtime.routes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.runtime.util.Iterables;
 
 /**
  * Instance of Routes.
@@ -30,6 +32,17 @@ import org.qiweb.api.routes.Routes;
     implements Routes
 {
     private static final long serialVersionUID = 1L;
+
+    public RoutesInstance( Route... routes )
+    {
+        this( Arrays.asList( routes ) );
+    }
+
+    public RoutesInstance( Iterable<Route> routes )
+    {
+        super();
+        Iterables.addAll( this, routes );
+    }
 
     @Override
     public Route route( RequestHeader requestHeader )

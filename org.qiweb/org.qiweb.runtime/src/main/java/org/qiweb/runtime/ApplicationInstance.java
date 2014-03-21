@@ -166,9 +166,9 @@ public final class ApplicationInstance
     /**
      * Create a new Application instance in given {@link Mode}.
      *
-     * @param mode Application Mode, must be not null
-     * @param config Application config, must be not null
-     * @param classLoader Application ClassLoader, must be not null
+     * @param mode           Application Mode, must be not null
+     * @param config         Application config, must be not null
+     * @param classLoader    Application ClassLoader, must be not null
      * @param routesProvider Routes provider, must be not null
      */
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
@@ -179,11 +179,11 @@ public final class ApplicationInstance
     /**
      * Create a new Application instance in given {@link Mode}.
      *
-     * @param mode Application Mode, must be not null
-     * @param config Application config, must be not null
-     * @param classLoader Application ClassLoader, must be not null
+     * @param mode           Application Mode, must be not null
+     * @param config         Application config, must be not null
+     * @param classLoader    Application ClassLoader, must be not null
      * @param routesProvider Routes provider, must be not null
-     * @param devSpi DevShell SPI, can be null
+     * @param devSpi         DevShell SPI, can be null
      */
     @Reflectively.Invoked( by = "DevShell" )
     public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider, DevShellSPI devSpi )
@@ -272,12 +272,14 @@ public final class ApplicationInstance
     @Override
     public <T> T plugin( Class<T> pluginApiType )
     {
+        ensureActive();
         return plugins.plugin( pluginApiType );
     }
 
     @Override
     public <T> Iterable<T> plugins( Class<T> pluginApiType )
     {
+        ensureActive();
         return plugins.plugins( pluginApiType );
     }
 
@@ -308,12 +310,14 @@ public final class ApplicationInstance
     @Override
     public Routes routes()
     {
+        ensureActive();
         return routes;
     }
 
     @Override
     public ReverseRoutes reverseRoutes()
     {
+        ensureActive();
         return reverseRoutes;
     }
 
@@ -647,6 +651,14 @@ public final class ApplicationInstance
 
         // Build!
         return builder.build();
+    }
+
+    private void ensureActive()
+    {
+        if( !activated )
+        {
+            throw new IllegalStateException( "Application is not active." );
+        }
     }
 
     private void configure()

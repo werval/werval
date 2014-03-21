@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.function.Consumer;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.Application;
@@ -45,11 +45,11 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
 
 /**
  * Fluent builder to create new Route and Routes instances.
+ *
+ * Routes can be parsed from a string or created using this very builder. The toString() method of Route instances
+ * created using this builder output a String that is parseable by this builder.
  * <p>
- *     Routes can be parsed from a string or created using this very builder. The toString() method of Route instances
- *     created using this builder output a String that is parseable by this builder.
- * </p>
- * <p>Let's see some routes:</p>
+ * Let's see some routes:
  * <pre>
  * GET / controllers.Acme.index()
  * GET /login controllers.Acme.loginForm()
@@ -57,7 +57,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
  * POST /subscribe controllers.Acme.subscribe()
  * GET /:nickname controllers.Acme.home( String nickname )
  * </pre>
- * <p>Here is a complete example using the API:</p>
+ * Here is a complete example using the API:
  * <pre>
  * Route route = route( GET ).on( "/foo/:slug/bar/:id" ).
  *     to( MyController.class, new MethodRecorder&lt;MyController&gt;() {
@@ -65,91 +65,76 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
  *             ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) );
  *         }
  *     } ).newInstance();
- * 
+ *
  * System.out.println( route.toString() );
  * </pre>
- * <p>The last line would output:</p>
+ * The last line would output:
  * <pre>GET /foo/:slug/bar/:id f.q.n.MyController.another( String id, Integer slug )</pre>
- * <p>If you happen to use Java 8 you'll be able to shorten the code a bit:</p>
+ * If you happen to use Java 8 you'll be able to shorten the code a bit:
  * <pre>
  * Route route = route( GET ).on( "/foo/:slug/bar/:id" ).
  *     to( MyController.class, ctrl -&gt; ctrl.another( p( "id", String.class ), p( "slug", Integer.class ) ) ).
  *     newInstance();
  * </pre>
- * <p>
- *     <strong>Important:</strong> when using the fluent api to declare routes you can only use interfaces to declare
- *     controllers.
- * </p>
+ * <strong>Important:</strong> when using the fluent api to declare routes you can only use interfaces to declare
+ * controllers.
  */
 public final class RouteBuilder
 {
-    /**
-     * @param <T> the controller type
-     */
-    public abstract static class MethodRecorder<T>
+    private static final ThreadLocal<Map<String, ControllerParam>> CTRL_PARAM_RECORD = new ThreadLocal<Map<String, ControllerParam>>()
     {
-
-        private final Map<String, ControllerParam> controllerParams = new LinkedHashMap<>();
-
-        /**
-         * Record a new method parameter.
-         * @param <T> the parametrized parameter type
-         * @param name the parameter name
-         * @param type the parmeter type
-         * @return an ignored default value
-         */
-        protected final <T> T p( String name, Class<T> type )
+        @Override
+        protected Map<String, ControllerParam> initialValue()
         {
-            controllerParams.put( name, new ControllerParamInstance( name, type ) );
-            return null;
+            return new LinkedHashMap<>();
         }
-
-        /**
-         * Record a new method parameter with forced value.
-         * @param <T> the parametrized parameter type
-         * @param name the parameter name
-         * @param type the parmeter type
-         * @param forcedValue the forced value
-         * @return the forced value
-         */
-        protected final <T> T p( String name, Class<T> type, T forcedValue )
-        {
-            controllerParams.put( name, new ControllerParamInstance( name, type, forcedValue ) );
-            return forcedValue;
-        }
-
-        /**
-         * @return Recorded method parameters
-         */
-        public final Map<String, ControllerParam> controllerParams()
-        {
-            return Collections.unmodifiableMap( controllerParams );
-        }
-
-        /**
-         * Method recorder callback.
-         * <p>
-         *  Call the method of your choice on the given controller and use the
-         *  {@link #p(java.lang.String, java.lang.Class)} method to record method parameters.
-         * </p>
-         * @param controller a dynamic proxy that will record a method call
-         */
-        protected abstract void call( T controller );
-
-    }
-
+    };
     private static final Logger LOG = LoggerFactory.getLogger( RouteBuilder.class );
 
     /**
+     * Record a new method parameter.
+     *
+     * @param <T>  the parameterized parameter type
+     * @param name the parameter name
+     * @param type the parmeter type
+     *
+     * @return an ignored default value
+     */
+    public static final <T> T p( String name, Class<T> type )
+    {
+        CTRL_PARAM_RECORD.get().put( name, new ControllerParamInstance( name, type ) );
+        return null;
+    }
+
+    /**
+     * Record a new method parameter with forced value.
+     *
+     * @param <T>         the parameterized parameter type
+     * @param name        the parameter name
+     * @param type        the parmeter type
+     * @param forcedValue the forced value
+     *
+     * @return the forced value
+     */
+    public static final <T> T p( String name, Class<T> type, T forcedValue )
+    {
+        CTRL_PARAM_RECORD.get().put( name, new ControllerParamInstance( name, type, forcedValue ) );
+        return forcedValue;
+    }
+
+    /**
      * Parse a textual definition of multiple routes, one per line.
-     * <p>Ignore lines that begins with a # or are empty.</p>
-     * @param application Application
+     *
+     * Ignore lines that begins with a # or are empty.
+     *
+     * @param application  Application
      * @param routesString Routes as String
+     *
      * @return Parsed Routes
      */
-    public static Routes parseRoutes( Application application, String routesString )
+    public static Iterable<Route> parseRoutes( Application application, String routesString )
     {
-        RoutesInstance routes = new RoutesInstance();
+        List<Route> routes = new ArrayList<>();
         Scanner scanner = new Scanner( routesString );
         while( scanner.hasNextLine() )
         {
@@ -164,21 +149,36 @@ public final class RouteBuilder
 
     /**
      * Create a Routes instances containing, in order, the given Route instances.
+     *
      * @param routes Route instances
+     *
      * @return a new Routes instance
      */
     public static Routes routes( Route... routes )
     {
-        RoutesInstance instance = new RoutesInstance();
-        instance.addAll( Arrays.asList( routes ) );
-        return instance;
+        return new RoutesInstance( routes );
+    }
+
+    /**
+     * Create a Routes instances containing, in order, the given Route instances.
+     *
+     * @param routes Route instances
+     *
+     * @return a new Routes instance
+     */
+    public static Routes routes( Iterable<Route> routes )
+    {
+        return new RoutesInstance( routes );
     }
 
     /**
      * Parse a textual route definition to a Route instance.
+     *
      * @param application Application
      * @param routeString a textual route definition
+     *
      * @return a new Route instance
+     *
      * @throws IllegalRouteException when the textual route definition is invalid
      */
     public static Route parseRoute( Application application, final String routeString )
@@ -411,7 +411,9 @@ public final class RouteBuilder
 
     /**
      * Create a new RouteBuilder for a Http Method.
+     *
      * @param method HTTP Method
+     *
      * @return new RouteBuilder
      */
     public static RouteBuilder route( String method )
@@ -432,7 +434,9 @@ public final class RouteBuilder
 
     /**
      * Set Route path.
+     *
      * @param path Route path
+     *
      * @return this RouteBuilder
      */
     public RouteBuilder on( String path )
@@ -443,13 +447,15 @@ public final class RouteBuilder
 
     /**
      * Set Route controller type, method and parameters.
-     * @param <T> Parameterized controller type
+     *
+     * @param <T>            Parameterized controller type
      * @param controllerType the controller type
-     * @param methodRecorder a {@link MethodRecorder}
+     * @param callRecorder   a Consumer for the controller type to record a method invocation
+     *
      * @return this RouteBuilder
      */
     @SuppressWarnings( "unchecked" )
-    public <T> RouteBuilder to( final Class<T> controllerType, MethodRecorder<T> methodRecorder )
+    public <T> RouteBuilder to( final Class<T> controllerType, Consumer<T> callRecorder )
     {
         final Holder<String> methodNameHolder = new Holder<>();
         T controllerProxy;
@@ -497,13 +503,20 @@ public final class RouteBuilder
             }
         }
 
-        methodRecorder.call( controllerProxy );
+        try
+        {
+            callRecorder.accept( controllerProxy );
 
-        this.controllerType = controllerType;
-        this.controllerMethodName = methodNameHolder.get();
-        this.controllerParams = new ControllerParamsInstance( methodRecorder.controllerParams() );
+            this.controllerType = controllerType;
+            this.controllerMethodName = methodNameHolder.get();
+            this.controllerParams = new ControllerParamsInstance( CTRL_PARAM_RECORD.get() );
 
-        return this;
+            return this;
+        }
+        finally
+        {
+            CTRL_PARAM_RECORD.remove();
+        }
     }
 
     public RouteBuilder modifiedBy( String... modifiers )
@@ -514,6 +527,7 @@ public final class RouteBuilder
 
     /**
      * Create a new Route instance.
+     *
      * @return a new Route instance.
      */
     public Route newInstance()

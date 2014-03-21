@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,18 +21,17 @@ import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
-import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
+import static org.qiweb.runtime.routes.RouteBuilder.p;
 import static org.qiweb.runtime.routes.RouteBuilder.route;
 
 /**
@@ -43,29 +42,23 @@ public class WildcardRoutesTest
     @Test
     public void wildAPI()
     {
-        Application application = new ApplicationInstance( new RoutesProvider()
+        Application application = new ApplicationInstance( app -> RouteBuilder.routes(
+            route( "GET" )
+            .on( "/test/*path/as/file" )
+            .to( FakeController.class, c -> c.wild( p( "path", String.class ) ) )
+            .newInstance()
+        ) );
+        application.activate();
+        try
         {
-            @Override
-            public Routes routes( Application application )
-            {
-                return RouteBuilder.routes(
-                    route( "GET" ).on( "/test/*path/as/file" ).to(
-                        FakeController.class,
-                        new MethodRecorder<FakeController>()
-                        {
-                            @Override
-                            protected void call( FakeController controller )
-                            {
-                                controller.wild( p( "path", String.class ) );
-                            }
-                        }
-                    ).newInstance()
-                );
-            }
-        } );
-        Route route = application.routes().iterator().next();
-        System.out.println( route );
-        assertWild( application, route );
+            Route route = application.routes().iterator().next();
+            System.out.println( route );
+            assertWild( application, route );
+        }
+        finally
+        {
+            application.passivate();
+        }
     }
 
     @Test
@@ -74,9 +67,17 @@ public class WildcardRoutesTest
         Application application = new ApplicationInstance( new RoutesParserProvider(
             "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )"
         ) );
-        Route route = application.routes().iterator().next();
-        System.out.println( route );
-        assertWild( application, route );
+        application.activate();
+        try
+        {
+            Route route = application.routes().iterator().next();
+            System.out.println( route );
+            assertWild( application, route );
+        }
+        finally
+        {
+            application.passivate();
+        }
     }
 
     private void assertWild( Application application, Route route )
@@ -150,21 +151,29 @@ public class WildcardRoutesTest
         Application application = new ApplicationInstance( new RoutesParserProvider(
             "GET /tree/*path com.acme.app.FakeController.forcedWild( String root = 'src/test/resources', String path )"
         ) );
-        Route route = application.routes().iterator().next();
-        System.out.println( route );
-        Map<String, Object> boundParams = route.bindParameters(
-            application.parameterBinders(),
-            "/tree/staticfiles/",
-            QueryStringInstance.EMPTY
-        );
-        assertThat( (String) boundParams.get( "root" ), equalTo( "src/test/resources" ) );
-        assertThat( (String) boundParams.get( "path" ), equalTo( "staticfiles/" ) );
-        boundParams = route.bindParameters(
-            application.parameterBinders(),
-            "/tree/staticfiles",
-            QueryStringInstance.EMPTY
-        );
-        assertThat( (String) boundParams.get( "root" ), equalTo( "src/test/resources" ) );
-        assertThat( (String) boundParams.get( "path" ), equalTo( "staticfiles" ) );
+        application.activate();
+        try
+        {
+            Route route = application.routes().iterator().next();
+            System.out.println( route );
+            Map<String, Object> boundParams = route.bindParameters(
+                application.parameterBinders(),
+                "/tree/staticfiles/",
+                QueryStringInstance.EMPTY
+            );
+            assertThat( (String) boundParams.get( "root" ), equalTo( "src/test/resources" ) );
+            assertThat( (String) boundParams.get( "path" ), equalTo( "staticfiles/" ) );
+            boundParams = route.bindParameters(
+                application.parameterBinders(),
+                "/tree/staticfiles",
+                QueryStringInstance.EMPTY
+            );
+            assertThat( (String) boundParams.get( "root" ), equalTo( "src/test/resources" ) );
+            assertThat( (String) boundParams.get( "path" ), equalTo( "staticfiles" ) );
+        }
+        finally
+        {
+            application.passivate();
+        }
     }
 }

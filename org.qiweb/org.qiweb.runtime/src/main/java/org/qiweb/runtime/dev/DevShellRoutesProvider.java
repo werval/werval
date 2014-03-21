@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,11 +31,10 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Development Mode Routes Provider.
- * <p>
- *     Use 'routes.conf' from the Application classpath root and serve HTML documentation and Javadocs at
- *     {@literal /@doc} and configuration and version information as JSON respectively at {@literal /@config} and
- *     {@literal /@version}.
- * </p>
+ *
+ * Use 'routes.conf' from the Application classpath root and serve HTML documentation and Javadocs at
+ * {@literal /@doc} and configuration and version information as JSON respectively at {@literal /@config} and
+ * {@literal /@version}.
  */
 @Reflectively.Loaded( by = "DevShell" )
 public class DevShellRoutesProvider
@@ -65,13 +64,13 @@ public class DevShellRoutesProvider
         URL routesUrl = application.classLoader().getResource( "routes.conf" );
         if( routesUrl == null )
         {
-            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES );
+            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES ) );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             Scanner scanner = new Scanner( input, UTF_8.name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES + routes );
+            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES + routes ) );
         }
         catch( IOException ex )
         {

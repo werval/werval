@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,13 +49,13 @@ public class RoutesConfProvider
         URL routesUrl = application.classLoader().getResource( routesResourceName );
         if( routesUrl == null )
         {
-            return RouteBuilder.parseRoutes( application, Strings.EMPTY );
+            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, Strings.EMPTY ) );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             Scanner scanner = new Scanner( input, application.defaultCharset().name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return RouteBuilder.parseRoutes( application, routes );
+            return RouteBuilder.routes( RouteBuilder.parseRoutes( application, routes ) );
         }
         catch( IOException ex )
         {

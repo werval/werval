@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,10 +18,12 @@ package org.qiweb.runtime.routes;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Routes;
 
+/**
+ * RouteProvider that parse routes from a string.
+ */
 public class RoutesParserProvider
     implements RoutesProvider
 {
-
     private final String routesString;
 
     /**
@@ -40,6 +42,6 @@ public class RoutesParserProvider
     @Override
     public Routes routes( Application application )
     {
-        return RouteBuilder.parseRoutes( application, routesString );
+        return RouteBuilder.routes( RouteBuilder.parseRoutes( application, routesString ) );
     }
 }

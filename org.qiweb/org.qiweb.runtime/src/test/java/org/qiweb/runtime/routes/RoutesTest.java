@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,13 +37,13 @@ import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
-import org.qiweb.runtime.routes.RouteBuilder.MethodRecorder;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.runtime.routes.RouteBuilder.p;
 import static org.qiweb.runtime.routes.RouteBuilder.route;
 import static org.qiweb.runtime.util.Iterables.count;
 import static org.qiweb.runtime.util.Iterables.first;
@@ -57,23 +57,16 @@ public class RoutesTest
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()
     {
-        Route route = route( "GET" ).on( "/foo/:id/bar/:slug" ).to(
-            FakeController.class,
-            new MethodRecorder<FakeController>()
-            {
-                @Override
-                protected void call( FakeController controller )
-                {
-                    controller.another( p( "id", String.class ), p( "slug", Integer.class ) );
-                }
-            }
-        ).modifiedBy( "service", "foo" ).newInstance();
+        Route route = route( "GET" )
+            .on( "/foo/:id/bar/:slug" )
+            .to( FakeController.class, c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) )
+            .modifiedBy( "service", "foo" )
+            .newInstance();
 
-        // Java 8 - Lambda Expressions
-        // Route route = route( GET ).on( "/foo/:id/bar/:slug" ).
-        //     to( FakeController.class, { c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) } ).
-        //     modifiedBy( "service", "foo" ).newInstance();
-        assertThat( route.toString(), equalTo( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another( String id, Integer slug ) service foo" ) );
+        assertThat(
+            route.toString(),
+            equalTo( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another( String id, Integer slug ) service foo" )
+        );
     }
 
     /**
@@ -292,14 +285,21 @@ public class RoutesTest
                 "\n" + RoutesToTest.SIMPLE_1.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.SIMPLE_2.routeString + "\n"
             )
         );
+        app.activate();
+        try
+        {
+            assertThat( count( app.routes() ), is( 2L ) );
 
-        assertThat( count( app.routes() ), is( 2L ) );
+            Route one = first( app.routes() );
+            Route two = first( skip( 1, app.routes() ) );
 
-        Route one = first( app.routes() );
-        Route two = first( skip( 1, app.routes() ) );
-
-        assertRoute( one, RoutesToTest.SIMPLE_1 );
-        assertRoute( two, RoutesToTest.SIMPLE_2 );
+            assertRoute( one, RoutesToTest.SIMPLE_1 );
+            assertRoute( two, RoutesToTest.SIMPLE_2 );
+        }
+        finally
+        {
+            app.passivate();
+        }
     }
 
     @Test

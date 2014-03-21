@@ -83,7 +83,8 @@ public interface Application
      *
      * @return The first Plugin API found that match given type (Type equals first, then assignable).
      *
-     * @throws IllegalArgumentException if no Plugin is found for the given API type
+     * @throws IllegalArgumentException if no {@literal Plugin} is found for the given API type
+     * @throws IllegalStateException    if the {@literal Application} is not active
      */
     <T> T plugin( Class<T> pluginApiType );
 
@@ -97,6 +98,8 @@ public interface Application
      *
      * @return All Plugin APIs found that match the he given type (Type equals first, then assignables), or none if no
      *         Plugin is found for the given API type.
+     *
+     * @throws IllegalStateException if the {@literal Application} is not active
      */
     <T> Iterable<T> plugins( Class<T> pluginApiType );
 
@@ -138,6 +141,8 @@ public interface Application
      * Don't hold references to the Routes instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link Routes}
+     *
+     * @throws IllegalStateException if the {@literal Application} is not active
      */
     Routes routes();
 
@@ -147,6 +152,8 @@ public interface Application
      * Don't hold references to the ReverseRoutes instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link ReverseRoutes}
+     *
+     * @throws IllegalStateException if the {@literal Application} is not active
      */
     ReverseRoutes reverseRoutes();
 
