@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.routes;
 
+import java.io.IOException;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
@@ -27,50 +28,47 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.routes.ReverseRoutes.GET;
 
 public class ReverseRoutesTest
 {
-
     public static class Controller
     {
-
         public Outcome simpleMethod()
+            throws Exception
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).simpleMethod() );
+            ReverseRoute reverseRoute = reverseRoutes().get( Controller.class, c -> c.simpleMethod() );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome simpleMethod( String param )
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).simpleMethod( param ) );
+            ReverseRoute reverseRoute = reverseRoutes().get( Controller.class, c -> c.simpleMethod( param ) );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome wild( String card )
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).wild( card ) );
+            ReverseRoute reverseRoute = reverseRoutes().get( Controller.class, c -> c.wild( card ) );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome qstring( String path, String qsOne, String qsTwo )
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).qstring( path, qsOne, qsTwo ) );
+            ReverseRoute reverseRoute = reverseRoutes().get( Controller.class, c -> c.qstring( path, qsOne, qsTwo ) );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome appendedQueryString()
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).appendedQueryString() ).appendQueryString( request().queryString().allValues() );
+            ReverseRoute reverseRoute = reverseRoutes().get( Controller.class, c -> c.appendedQueryString() ).appendQueryString( request().queryString().allValues() );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
 
         public Outcome fragmentIdentifier()
         {
-            ReverseRoute reverseRoute = reverseRoutes().of( GET( Controller.class ).fragmentIdentifier() ).withFragmentIdentifier( "bazar" );
+            ReverseRoute reverseRoute = reverseRoutes().get( Controller.class, c -> c.fragmentIdentifier() ).withFragmentIdentifier( "bazar" );
             return outcomes().ok( reverseRoute.httpUrl() ).build();
         }
-
     }
 
     @ClassRule
@@ -87,11 +85,11 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/simpleMethod";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( url ) ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( url ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -99,11 +97,11 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/simpleMethod/test/foo";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( url ) ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( url ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -111,11 +109,11 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/wild/wild/wild/card";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( url ) ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( url ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -123,11 +121,11 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bazar";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( url ) ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( url ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -135,11 +133,11 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( url ) ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( url ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -147,14 +145,14 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/appended/qs";
-        given().
-            queryParam( "bar", "bazar" ).
-            queryParam( "foo", "bar" ).
-            expect().
-            statusCode( 200 ).
-            body( equalTo( url + "?bar=bazar&foo=bar" ) ).
-            when().
-            get( url );
+        given()
+            .queryParam( "bar", "bazar" )
+            .queryParam( "foo", "bar" )
+            .expect()
+            .statusCode( 200 )
+            .body( equalTo( url + "?bar=bazar&foo=bar" ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -162,11 +160,11 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/fragment/identifier";
-        expect().
-            statusCode( 200 ).
-            body( equalTo( url + "#bazar" ) ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( url + "#bazar" ) )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -175,10 +173,10 @@ public class ReverseRoutesTest
     {
         // FIXME This should be 400 but the Netty HTTP Codec flatten no-value query string parameters
         String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
-        expect().
-            statusCode( 200 ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 200 )
+            .when()
+            .get( url );
     }
 
     @Test
@@ -186,10 +184,9 @@ public class ReverseRoutesTest
         throws Exception
     {
         String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
-        expect().
-            statusCode( 400 ).
-            when().
-            get( url );
+        expect()
+            .statusCode( 400 )
+            .when()
+            .get( url );
     }
-
 }

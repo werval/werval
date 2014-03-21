@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.plugins;
 
+import java.io.IOException;
 import java.util.List;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.outcomes.Outcome;
@@ -34,6 +35,7 @@ public class WithRoutesPlugin
     public static class PluginController
     {
         public Outcome prepended( String test )
+            throws IOException
         {
             return outcomes().ok( "prepended " + test ).build();
         }

@@ -16,7 +16,6 @@
 package org.qiweb.api.routes;
 
 import java.util.List;
-import java.util.function.Consumer;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
 
 /**
@@ -70,6 +69,11 @@ public interface RouteBuilder
      */
     RouteDeclaration route( String httpMethod );
 
+    /**
+     * Parse Routes from Strings.
+     *
+     * @return Route Parser
+     */
     RouteParser parse();
 
     /**
@@ -100,11 +104,11 @@ public interface RouteBuilder
          *
          * @param <T>            Parameterized controller type
          * @param controllerType the controller type
-         * @param callRecorder   a Consumer for the controller type to record a method invocation
+         * @param callRecorder   a closure for the controller type to record a method invocation
          *
          * @return a new RouteDeclaration using the given controller method
          */
-        <T> RouteDeclaration to( Class<T> controllerType, Consumer<T> callRecorder );
+        <T> RouteDeclaration to( Class<T> controllerType, ControllerCallRecorder<T> callRecorder );
 
         /**
          * Set Route modifiers.

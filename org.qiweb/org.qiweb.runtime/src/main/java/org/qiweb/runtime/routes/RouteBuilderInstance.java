@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.function.Consumer;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ControllerParams;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
@@ -141,7 +141,7 @@ public class RouteBuilderInstance
         }
 
         @Override
-        public <T> RouteDeclaration to( Class<T> controllerType, Consumer<T> callRecorder )
+        public <T> RouteDeclaration to( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
         {
             final Holder<String> methodNameHolder = new Holder<>();
             T controllerProxy;
@@ -195,7 +195,17 @@ public class RouteBuilderInstance
                 RouteBuilderContext.clear();
 
                 // Record
-                callRecorder.accept( controllerProxy );
+                try
+                {
+                    callRecorder.recordCall( controllerProxy );
+                }
+                catch( Exception ex )
+                {
+                    throw new QiWebException(
+                        "Error while recording Controller call for Route building: " + ex.getMessage(),
+                        ex
+                    );
+                }
 
                 // Done!
                 return new RouteDeclarationInstance(

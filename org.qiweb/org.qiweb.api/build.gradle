@@ -1,8 +1,6 @@
 
 dependencies {
     compile libs.slf4j
-    // TODO Move me to runtime!!!
-    compile libs.javassist
 }
 
 

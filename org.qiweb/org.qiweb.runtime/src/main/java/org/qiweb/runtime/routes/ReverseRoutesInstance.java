@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,25 +15,30 @@
  */
 package org.qiweb.runtime.routes;
 
-import java.util.ArrayList;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.Proxy;
+import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.Application;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.ReverseOutcome;
+import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.dev.DevShellRoutesProvider;
 
 import static org.qiweb.api.Mode.DEV;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 
 public class ReverseRoutesInstance
-    extends ReverseRoutes
+    implements ReverseRoutes
 {
     private final Application application;
 
@@ -43,19 +48,96 @@ public class ReverseRoutesInstance
     }
 
     @Override
-    public ReverseRoute of( Outcome outcome )
+    public <T> ReverseRoute options( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        ensureNotNull( "Controller Outcome for Reverse Routing", outcome );
-        if( !( outcome instanceof ReverseOutcome ) )
+        return of( "OPTIONS", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute get( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( "GET", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute head( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( "HEAD", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute post( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( "POST", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute put( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( "PUT", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute delete( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( "DELETE", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute trace( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( "TRACE", controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute of( String httpMethod, Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        ensureNotEmpty( "HTTP method", httpMethod );
+        ensureNotNull( "Controller Type", controllerType );
+        ensureNotNull( "Call Recorder", callRecorder );
+
+        // Prepare recording proxy
+        T controllerProxy;
+        ControllerCallHandler handler = new ControllerCallHandler();
+        if( controllerType.isInterface() )
         {
-            throw new IllegalArgumentException( "Bad API usage! Given Outcome is not an instance of ReverseOutcome." );
+            Class<?>[] interfaces = new Class<?>[ 1 ];
+            interfaces[0] = controllerType;
+            controllerProxy = (T) java.lang.reflect.Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                interfaces,
+                handler
+            );
         }
-        ReverseOutcome reverseOutcome = (ReverseOutcome) outcome;
-        List<Class<?>> parametersTypes = new ArrayList<>();
-        for( Object param : reverseOutcome.parameters() )
+        else
         {
-            parametersTypes.add( param.getClass() );
+            try
+            {
+                ProxyFactory proxyFactory = new ProxyFactory();
+                proxyFactory.setSuperclass( controllerType );
+                controllerProxy = (T) proxyFactory.createClass().newInstance();
+                ( (Proxy) controllerProxy ).setHandler( handler );
+            }
+            catch( InstantiationException | IllegalAccessException ex )
+            {
+                throw new QiWebException( "Unable to reverse route", ex );
+            }
         }
+
+        // Record Controller Method Call
+        try
+        {
+            callRecorder.recordCall( controllerProxy );
+        }
+        catch( Exception ex )
+        {
+            throw new QiWebException(
+                "Error while recording Controller call for Reverse routing: " + ex.getMessage(),
+                ex
+            );
+        }
+
+        // Find Route
         for( Route route : application.routes() )
         {
             if( application.mode() == DEV && DevShellRoutesProvider.isDevShell( route ) )
@@ -63,10 +145,10 @@ public class ReverseRoutesInstance
                 // Skip DevShell Routes
                 continue;
             }
-            if( route.httpMethod().equals( reverseOutcome.httpMethod() )
-                && route.controllerType().getName().equals( reverseOutcome.controllerType().getName() )
-                && route.controllerMethodName().equals( reverseOutcome.controllerMethod().getName() )
-                && Arrays.equals( route.controllerMethod().getParameterTypes(), parametersTypes.toArray() ) )
+            if( route.httpMethod().equals( httpMethod )
+                && route.controllerType().getName().equals( controllerType.getName() )
+                && route.controllerMethodName().equals( handler.methodName )
+                && Arrays.equals( route.controllerMethod().getParameterTypes(), handler.paramsTypes ) )
             {
                 // Found!
                 RouteInstance instance = (RouteInstance) route;
@@ -74,17 +156,46 @@ public class ReverseRoutesInstance
                 int idx = 0;
                 for( String paramName : instance.controllerParams().names() )
                 {
-                    parameters.put( paramName, reverseOutcome.parameters().get( idx ) );
+                    parameters.put( paramName, handler.paramsValues[idx] );
                     idx++;
                 }
                 String unboundPath = route.unbindParameters( application.parameterBinders(), parameters );
-                return new ReverseRouteInstance( reverseOutcome.httpMethod(), unboundPath,
-                                                 application.defaultCharset() );
+                return new ReverseRouteInstance( httpMethod, unboundPath, application.defaultCharset() );
             }
         }
-        throw new RouteNotFoundException( reverseOutcome.httpMethod(),
-                                          reverseOutcome.controllerType() + "."
-                                          + reverseOutcome.controllerMethod()
-                                          + "(" + parametersTypes + ")" );
+        // No matching Route Found
+        throw new RouteNotFoundException(
+            httpMethod,
+            controllerType + "." + handler.methodName
+            + "(" + Arrays.toString( handler.paramsTypes ) + ")"
+        );
+    }
+
+    private static class ControllerCallHandler
+        implements MethodHandler, InvocationHandler
+    {
+        private String methodName;
+        private Class<?>[] paramsTypes;
+        private Object[] paramsValues;
+
+        @Override
+        public Object invoke( Object proxy, Method controllerMethod, Method proceed, Object[] args )
+            throws Throwable
+        {
+            return invoke( proxy, controllerMethod, args );
+        }
+
+        @Override
+        public Object invoke( Object proxy, Method controllerMethod, Object[] args )
+            throws Throwable
+        {
+            methodName = controllerMethod.getName();
+            paramsTypes = Arrays.stream( args )
+                .map( obj -> obj.getClass() )
+                .collect( Collectors.toList() )
+                .toArray( new Class<?>[ 0 ] );
+            paramsValues = args;
+            return null;
+        }
     }
 }
