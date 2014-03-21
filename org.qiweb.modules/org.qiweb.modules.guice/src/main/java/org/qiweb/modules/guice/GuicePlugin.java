@@ -19,14 +19,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.qiweb.api.Application;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * GuicePlugin.
  */
 public class GuicePlugin
-    extends PluginAdapter<Injector>
+    implements Plugin<Injector>
 {
     private Injector injector;
 

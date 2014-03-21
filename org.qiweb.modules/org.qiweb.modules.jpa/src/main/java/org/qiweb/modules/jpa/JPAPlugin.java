@@ -19,14 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * JPA 2 Plugin.
  */
 public class JPAPlugin
-    extends PluginAdapter<JPA>
+    implements Plugin<JPA>
 {
     private JPA jpa;
 

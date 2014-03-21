@@ -16,13 +16,13 @@
 package org.qiweb.runtime.plugins;
 
 import org.qiweb.api.Application;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 
 /**
  * Plugin that register {@link HelloWorld} as a Plugin.
  */
 public class HelloWorldPlugin
-    extends PluginAdapter<HelloWorld>
+    implements Plugin<HelloWorld>
 {
     private int activations = 0;
     private int passivations = 0;

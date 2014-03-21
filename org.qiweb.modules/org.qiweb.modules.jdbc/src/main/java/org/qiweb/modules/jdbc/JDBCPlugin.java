@@ -28,7 +28,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * JDBC Plugin that manage DataSources using BoneCP pool.
  */
 public class JDBCPlugin
-    extends PluginAdapter<JDBC>
+    implements Plugin<JDBC>
 {
     /* package */ static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
     private static final String DATASOURCES = "jdbc.datasources";

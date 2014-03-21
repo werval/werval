@@ -27,7 +27,10 @@ public interface Plugin<API>
     /**
      * @return TRUE is the Plugin is enabled, otherwise return FALSE
      */
-    boolean enabled();
+    default boolean enabled()
+    {
+        return true;
+    }
 
     /**
      * @return Plugin API type
@@ -42,17 +45,27 @@ public interface Plugin<API>
     /**
      * Invoked on Application activation.
      *
+     * Defaults to no operation.
+     *
      * @param application Application
      *
      * @throws ActivationException if something goes wrong.
      */
-    void onActivate( Application application )
-        throws ActivationException;
+    default void onActivate( Application application )
+        throws ActivationException
+    {
+        // NOOP
+    }
 
     /**
      * Invoked on Application passivation.
      *
+     * Defaults to no operation.
+     *
      * @param application Application
      */
-    void onPassivate( Application application );
+    default void onPassivate( Application application )
+    {
+        // NOOP
+    }
 }

@@ -18,14 +18,14 @@ package org.qiweb.modules.smtp;
 import java.util.Locale;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * SMTP Plugin.
  */
 public class SmtpPlugin
-    extends PluginAdapter<Smtp>
+    implements Plugin<Smtp>
 {
     private Smtp smtp;
 

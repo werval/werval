@@ -15,9 +15,10 @@
  */
 package org.qiweb.runtime.plugins;
 
-import java.util.Collections;
 import org.qiweb.api.Global;
 import org.qiweb.api.Plugin;
+
+import static java.util.Collections.singleton;
 
 /**
  * Global Object for the {@link ExtraPluginsTest}.
@@ -28,6 +29,6 @@ public class ExtraPluginsGlobal
     @Override
     public Iterable<Plugin<?>> extraPlugins()
     {
-        return Collections.<Plugin<?>>singleton( new HelloWorldPlugin() );
+        return singleton( new HelloWorldPlugin() );
     }
 }

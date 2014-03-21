@@ -18,7 +18,7 @@ package org.qiweb.modules.jndi;
 import javax.naming.NamingException;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 
 /**
@@ -34,7 +34,7 @@ import org.qiweb.api.exceptions.ActivationException;
  * the {@literal tyrex} jar out of the classpath.
  */
 public class JNDIPlugin
-    extends PluginAdapter<JNDI>
+    implements Plugin<JNDI>
 {
     private JNDI jndi;
 

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * See the Qi4j documentation at <a href="http://qi4j.org/">qi4j.org</a>.
  */
 public class Qi4jPlugin
-    extends org.qiweb.api.PluginAdapter<org.qi4j.api.structure.Application>
+    implements org.qiweb.api.Plugin<org.qi4j.api.structure.Application>
 {
     private static final Logger LOG = LoggerFactory.getLogger( Qi4jPlugin.class );
     private org.qi4j.api.structure.Application qi4jApplication;

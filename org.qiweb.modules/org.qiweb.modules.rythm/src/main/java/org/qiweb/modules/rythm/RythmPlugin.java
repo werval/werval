@@ -39,12 +39,6 @@ public class RythmPlugin
     private RythmEngine rythm;
 
     @Override
-    public boolean enabled()
-    {
-        return true;
-    }
-
-    @Override
     public Class<RythmEngine> apiType()
     {
         return RythmEngine.class;

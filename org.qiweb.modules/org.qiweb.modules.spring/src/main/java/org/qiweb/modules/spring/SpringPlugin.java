@@ -16,7 +16,7 @@
 package org.qiweb.modules.spring;
 
 import org.qiweb.api.Application;
-import org.qiweb.api.PluginAdapter;
+import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * SpringPlugin.
  */
 public class SpringPlugin
-    extends PluginAdapter<ApplicationContext>
+    implements Plugin<ApplicationContext>
 {
     private ApplicationContext springContext;
 
