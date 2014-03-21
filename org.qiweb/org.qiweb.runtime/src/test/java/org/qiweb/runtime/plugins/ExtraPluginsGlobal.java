@@ -15,10 +15,11 @@
  */
 package org.qiweb.runtime.plugins;
 
+import java.util.List;
 import org.qiweb.api.Global;
 import org.qiweb.api.Plugin;
 
-import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 
 /**
  * Global Object for the {@link ExtraPluginsTest}.
@@ -27,8 +28,8 @@ public class ExtraPluginsGlobal
     extends Global
 {
     @Override
-    public Iterable<Plugin<?>> extraPlugins()
+    public List<Plugin<?>> extraPlugins()
     {
-        return singleton( new HelloWorldPlugin() );
+        return singletonList( new HelloWorldPlugin() );
     }
 }

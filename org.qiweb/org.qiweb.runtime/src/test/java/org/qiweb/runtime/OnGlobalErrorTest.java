@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package org.qiweb.runtime;
 
 import com.jayway.restassured.response.Response;
+import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.Application;
@@ -260,7 +261,7 @@ public class OnGlobalErrorTest
         extends Global
     {
         @Override
-        public Iterable<Plugin<?>> extraPlugins()
+        public List<Plugin<?>> extraPlugins()
         {
             throw new RuntimeException( "extraPlugins" );
         }
@@ -334,12 +335,12 @@ public class OnGlobalErrorTest
         try
         {
             qiweb.beforeEachQiWebTestMethod();
-            Response response = expect().
-                statusCode( 500 ).
-                header( X_QIWEB_REQUEST_ID, notNullValue() ).
-                header( CONNECTION, CLOSE ).
-                when().
-                get( "/" );
+            Response response = expect()
+                .statusCode( 500 )
+                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( CONNECTION, CLOSE )
+                .when()
+                .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
                 qiweb.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
@@ -372,12 +373,12 @@ public class OnGlobalErrorTest
         try
         {
             qiweb.beforeEachQiWebTestMethod();
-            Response response = expect().
-                statusCode( 500 ).
-                header( X_QIWEB_REQUEST_ID, notNullValue() ).
-                header( CONNECTION, CLOSE ).
-                when().
-                get( "/" );
+            Response response = expect()
+                .statusCode( 500 )
+                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( CONNECTION, CLOSE )
+                .when()
+                .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
                 qiweb.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
@@ -420,12 +421,12 @@ public class OnGlobalErrorTest
         try
         {
             qiweb.beforeEachQiWebTestMethod();
-            Response response = expect().
-                statusCode( 500 ).
-                header( X_QIWEB_REQUEST_ID, notNullValue() ).
-                header( CONNECTION, CLOSE ).
-                when().
-                get( "/" );
+            Response response = expect()
+                .statusCode( 500 )
+                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( CONNECTION, CLOSE )
+                .when()
+                .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
                 qiweb.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
@@ -471,12 +472,12 @@ public class OnGlobalErrorTest
         try
         {
             qiweb.beforeEachQiWebTestMethod();
-            expect().
-                statusCode( 200 ).
-                header( X_QIWEB_REQUEST_ID, notNullValue() ).
-                header( CONNECTION, KEEP_ALIVE ).
-                when().
-                get( "/" );
+            expect()
+                .statusCode( 200 )
+                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( CONNECTION, KEEP_ALIVE )
+                .when()
+                .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 0 ) );
             assertThat( SLF4J.contains( "onHttpRequestComplete" ), is( true ) );
         }
@@ -516,12 +517,12 @@ public class OnGlobalErrorTest
         try
         {
             qiweb.beforeEachQiWebTestMethod();
-            Response response = expect().
-                statusCode( 500 ).
-                header( X_QIWEB_REQUEST_ID, notNullValue() ).
-                header( CONNECTION, CLOSE ).
-                when().
-                get( "/" );
+            expect()
+                .statusCode( 500 )
+                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( CONNECTION, CLOSE )
+                .when()
+                .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
                 Stacktraces.containsMessage( "getRootCause" ).test( qiweb.application().errors().last().cause() ),
@@ -554,12 +555,12 @@ public class OnGlobalErrorTest
         try
         {
             qiweb.beforeEachQiWebTestMethod();
-            expect().
-                statusCode( 500 ).
-                header( X_QIWEB_REQUEST_ID, notNullValue() ).
-                header( CONNECTION, CLOSE ).
-                when().
-                get( "/" );
+            expect()
+                .statusCode( 500 )
+                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( CONNECTION, CLOSE )
+                .when()
+                .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
                 Stacktraces.containsMessage( "onApplicationError" ).test( qiweb.application().errors().last().cause() ),

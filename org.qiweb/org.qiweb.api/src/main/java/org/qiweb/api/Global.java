@@ -17,7 +17,7 @@ package org.qiweb.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
+import java.util.List;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
@@ -25,6 +25,7 @@ import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.util.Stacktraces;
 
+import static java.util.Collections.EMPTY_LIST;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 /**
@@ -35,7 +36,7 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
  * You are encouraged to subclass it in your Application code by setting the <code>app.global</code> configuration
  * property to the FQCN of your Global implementation.
  * <p>
- * Remeber to call the {@literal super} methods to leverage default behaviour.
+ * Remeber you can call the {@literal super} methods to leverage the default behaviour.
  */
 public class Global
 {
@@ -48,9 +49,9 @@ public class Global
      *
      * @return Extra Plugin instances
      */
-    public Iterable<Plugin<?>> extraPlugins()
+    public List<Plugin<?>> extraPlugins()
     {
-        return Collections.emptySet();
+        return EMPTY_LIST;
     }
 
     /**
@@ -138,7 +139,7 @@ public class Global
     /**
      * Get Plugin instance.
      *
-     * Default to {@link Class#newInstance()} instanciation without any cache.
+     * Default to {@link Class#newInstance()}.
      *
      * @param <T>         Plugin Parameterized Type
      * @param application Application
@@ -161,7 +162,7 @@ public class Global
     /**
      * Get Filter instance.
      *
-     * Default to {@link Class#newInstance()} instanciation without any cache.
+     * Default to {@link Class#newInstance()}.
      *
      * @param <T>         Filter Parameterized Type
      * @param application Application
@@ -184,7 +185,7 @@ public class Global
     /**
      * Get Controller instance.
      *
-     * Default to {@link Class#newInstance()} instanciation without any cache.
+     * Default to {@link Class#newInstance()}.
      *
      * @param <T>            Controller Parameterized Type
      * @param application    Application
@@ -254,7 +255,7 @@ public class Global
      * calls done in
      * {@link #invokeControllerMethod(org.qiweb.api.context.Context, java.lang.Object)} implementation.
      * <p>
-     * If this method throws an exception, it will be added as suppressed to the original cause.
+     * If this method is overriden and throws an exception, the later will be added as suppressed to the original cause.
      *
      * @param throwable A Throwable
      *
@@ -274,12 +275,13 @@ public class Global
      *
      * Happens right before {@link Error} recording.
      * <p>
-     * Default to a minimal HTML page advertising a 500 status code and the corresponding reason phrase
+     * Default to a minimal HTML page advertising a 500 status code and the corresponding reason phrase.
      * <p>
      * Stacktrace is disclosed in development mode only, with links to project sources when available.
      * <p>
-     * If this method throws an exception, it is added as suppressed to the original cause
-     * and default behaviour is replayed. This serve as a fault barrier.
+     * If this method is overriden and throws an exception, the later is added as suppressed to the original cause
+     * and default behaviour is replayed.
+     * This mecanism is the {@literal Application} fault barrier.
      *
      * @param application Application
      * @param outcomes    Outcomes utilities

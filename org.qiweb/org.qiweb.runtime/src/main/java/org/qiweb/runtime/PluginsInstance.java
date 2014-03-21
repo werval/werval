@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,22 @@ import org.qiweb.api.exceptions.PassivationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.EMPTY_LIST;
+
 /**
  * A Plugins Instance.
- * <p>Manage Plugins lifecycle and provide lookup for {@link ApplicationInstance}.</p>
+ *
+ * Manage Plugins lifecycle and provide lookup for {@link ApplicationInstance}.
  */
 /* package */ class PluginsInstance
 {
     private static final Logger LOG = LoggerFactory.getLogger( PluginsInstance.class );
     private volatile boolean activated = false;
     private final List<String> pluginsFQCNs;
-    private final Iterable<Plugin<?>> extraPlugins;
-    private Set<Plugin<?>> activePlugins = Collections.emptySet();
+    private final List<Plugin<?>> extraPlugins;
+    private List<Plugin<?>> activePlugins = EMPTY_LIST;
 
-    /* package */ PluginsInstance( Config config, Iterable<Plugin<?>> extraPlugins )
+    /* package */ PluginsInstance( Config config, List<Plugin<?>> extraPlugins )
     {
         this.pluginsFQCNs = config.stringList( "app.plugins" );
         this.extraPlugins = extraPlugins;
@@ -48,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
     /* package */ void onActivate( ApplicationInstance application )
     {
-        Set<Plugin<?>> activatedPlugins = new LinkedHashSet<>( pluginsFQCNs.size() );
+        List<Plugin<?>> activatedPlugins = new ArrayList<>( pluginsFQCNs.size() + extraPlugins.size() );
         for( String pluginFQCN : pluginsFQCNs )
         {
             try
@@ -92,7 +95,7 @@ import org.slf4j.LoggerFactory;
                 errors.add( ex );
             }
         }
-        activePlugins = Collections.emptySet();
+        activePlugins = EMPTY_LIST;
         activated = false;
         if( !errors.isEmpty() )
         {
