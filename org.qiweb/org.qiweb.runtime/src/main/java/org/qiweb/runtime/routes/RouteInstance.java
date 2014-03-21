@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
-import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
+import org.qiweb.api.routes.ControllerParams;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
@@ -243,7 +243,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
             throw new IllegalArgumentException( "Unable to bind, Route is not satisfied by path: " + path );
         }
         Map<String, Object> boundParams = new LinkedHashMap<>();
-        for( ControllerParam param : controllerParams )
+        for( ControllerParams.Param param : controllerParams )
         {
             if( param.hasForcedValue() )
             {
@@ -293,7 +293,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
                 {
                     case ":":
                     case "*":
-                        ControllerParam controllerParam = controllerParams.get( pathElement.substring( 1 ) );
+                        ControllerParams.Param controllerParam = controllerParams.get( pathElement.substring( 1 ) );
                         Object value = controllerParam.hasForcedValue()
                                        ? controllerParam.forcedValue()
                                        : parameters.get( controllerParam.name() );
@@ -325,7 +325,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
             for( Iterator<String> qsit = paramsToUnbind.iterator(); qsit.hasNext(); )
             {
                 String qsParam = qsit.next();
-                ControllerParam controllerParam = controllerParams.get( qsParam );
+                ControllerParams.Param controllerParam = controllerParams.get( qsParam );
                 Object value = controllerParam.hasForcedValue()
                                ? controllerParam.forcedValue()
                                : parameters.get( controllerParam.name() );
@@ -354,13 +354,13 @@ import static org.qiweb.runtime.util.Iterables.toList;
         StringBuilder sb = new StringBuilder();
         sb.append( httpMethod ).append( " " ).append( path ).append( " " ).
             append( controllerType.getName() ).append( "." ).append( controllerMethodName ).append( "(" );
-        Iterator<ControllerParam> it = controllerParams.iterator();
+        Iterator<ControllerParams.Param> it = controllerParams.iterator();
         if( it.hasNext() )
         {
             sb.append( " " );
             while( it.hasNext() )
             {
-                ControllerParam param = it.next();
+                ControllerParams.Param param = it.next();
                 sb.append( param.type().getSimpleName() ).append( " " ).append( param.name() );
                 if( param.hasForcedValue() )
                 {

@@ -19,10 +19,11 @@ import java.util.List;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
-import org.qiweb.runtime.routes.RouteBuilder;
+import org.qiweb.api.routes.RouteBuilder;
 
 import static java.util.Collections.singletonList;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.routes.RouteBuilder.p;
 
 /**
  * WithRoutesPlugin.
@@ -32,36 +33,36 @@ public class WithRoutesPlugin
 {
     public static class PluginController
     {
-        public Outcome prepended()
+        public Outcome prepended( String test )
         {
-            return outcomes().ok( "prepended" ).build();
+            return outcomes().ok( "prepended " + test ).build();
         }
 
-        public Outcome appended()
+        public Outcome appended( String test )
         {
-            return outcomes().ok( "appended" ).build();
+            return outcomes().ok( "appended " + test ).build();
         }
     }
 
     @Override
-    public List<Route> firstRoutes()
+    public List<Route> firstRoutes( RouteBuilder routeBuilder )
     {
-        return singletonList( RouteBuilder
+        return singletonList( routeBuilder
             .route( "GET" )
-            .on( "/prepended" )
-            .to( PluginController.class, c -> c.prepended() )
-            .newInstance()
+            .on( "/prepended/:test" )
+            .to( PluginController.class, c -> c.prepended( p( "test", String.class ) ) )
+            .build()
         );
     }
 
     @Override
-    public List<Route> lastRoutes()
+    public List<Route> lastRoutes( RouteBuilder routeBuilder )
     {
-        return singletonList( RouteBuilder
+        return singletonList( routeBuilder
             .route( "GET" )
-            .on( "/appended" )
-            .to( PluginController.class, c -> c.appended() )
-            .newInstance()
+            .on( "/appended/:test" )
+            .to( PluginController.class, c -> c.appended( p( "test", String.class ) ) )
+            .build()
         );
     }
 }

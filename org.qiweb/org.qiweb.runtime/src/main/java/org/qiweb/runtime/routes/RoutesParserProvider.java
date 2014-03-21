@@ -43,6 +43,6 @@ public class RoutesParserProvider
     @Override
     public List<Route> routes( Application application )
     {
-        return RouteBuilder.parseRoutes( application, routesString );
+        return new RouteBuilderInstance( application ).parse().routes( routesString );
     }
 }

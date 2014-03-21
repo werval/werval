@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.routes;
 
+import org.qiweb.api.routes.ControllerParams;
 import com.acme.app.FakeController;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.RouteBuilder;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.ApplicationInstance;
@@ -36,15 +38,13 @@ import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
-import org.qiweb.runtime.routes.ControllerParams.ControllerParam;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
+import static org.qiweb.api.routes.RouteBuilder.p;
 import static org.qiweb.api.util.Charsets.UTF_8;
-import static org.qiweb.runtime.routes.RouteBuilder.p;
-import static org.qiweb.runtime.routes.RouteBuilder.route;
 import static org.qiweb.runtime.util.Iterables.count;
 import static org.qiweb.runtime.util.Iterables.first;
 import static org.qiweb.runtime.util.Iterables.skip;
@@ -57,11 +57,11 @@ public class RoutesTest
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()
     {
-        Route route = route( "GET" )
+        Route route = new RouteBuilderInstance().route( "GET" )
             .on( "/foo/:id/bar/:slug" )
             .to( FakeController.class, c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) )
             .modifiedBy( "service", "foo" )
-            .newInstance();
+            .build();
 
         assertThat(
             route.toString(),
@@ -258,12 +258,13 @@ public class RoutesTest
         throws Exception
     {
         Application app = new ApplicationInstance( new RoutesParserProvider() );
+        RouteBuilder builder = new RouteBuilderInstance( app );
         for( RoutesToTest refRoute : RoutesToTest.values() )
         {
             System.out.println( "Parsing route: " + refRoute.routeString );
             try
             {
-                Route route = RouteBuilder.parseRoute( app, refRoute.routeString );
+                Route route = builder.parse().route( refRoute.routeString );
                 System.out.println( "Parsed  route: " + route );
                 assertRoute( route, refRoute );
             }
@@ -306,13 +307,14 @@ public class RoutesTest
     public void givenRoutesWhenMatchingExpectCorrectRoutes()
     {
         Application app = new ApplicationInstance( new RoutesParserProvider() );
-        Route index = RouteBuilder.parseRoute( app, "GET / " + FakeController.class.getName() + ".index()" );
-        Route foo = RouteBuilder.parseRoute( app, "GET /foo " + FakeController.class.getName() + ".foo()" );
-        Route bar = RouteBuilder.parseRoute( app, "GET /bar " + FakeController.class.getName() + ".bar()" );
-        Route another = RouteBuilder.parseRoute( app, "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
-        Route anotherOne = RouteBuilder.parseRoute( app, "GET /zeng/:id " + FakeController.class.getName() + ".another(String id,Integer slug)" );
+        RouteBuilder builder = new RouteBuilderInstance( app );
+        Route index = builder.parse().route( "GET / " + FakeController.class.getName() + ".index()" );
+        Route foo = builder.parse().route( "GET /foo " + FakeController.class.getName() + ".foo()" );
+        Route bar = builder.parse().route( "GET /bar " + FakeController.class.getName() + ".bar()" );
+        Route another = builder.parse().route( "GET /foo/:id/bar/:slug " + FakeController.class.getName() + ".another(String id,Integer slug)" );
+        Route anotherOne = builder.parse().route( "GET /zeng/:id " + FakeController.class.getName() + ".another(String id,Integer slug)" );
 
-        Routes routes = RouteBuilder.routes( index, foo, bar, another, anotherOne );
+        Routes routes = new RoutesInstance( index, foo, bar, another, anotherOne );
 
         assertThat( routes.route( reqHeadForGet( "/" ) ), equalTo( index ) );
         assertThat( routes.route( reqHeadForGet( "/?a=b" ) ), equalTo( index ) );
@@ -364,9 +366,9 @@ public class RoutesTest
                     count( route.modifiers() ),
                     equalTo( count( refRoute.modifiers ) ) );
 
-        ControllerParamsInstance routeParameters = (ControllerParamsInstance) ( (RouteInstance) route ).controllerParams();
+        ControllerParams routeParameters = ( (RouteInstance) route ).controllerParams();
         Map<String, Class<?>> refRouteParameters = new LinkedHashMap<>( refRoute.parameters );
-        for( Entry<String, ControllerParam> routeEntry : routeParameters.asMap().entrySet() )
+        for( Entry<String, ControllerParams.Param> routeEntry : routeParameters.asMap().entrySet() )
         {
             String routeParamName = routeEntry.getKey();
             assertThat( "Parameter " + routeParamName + messageSuffix,

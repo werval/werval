@@ -26,7 +26,7 @@ import org.qiweb.runtime.http.QueryStringInstance;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.runtime.routes.RouteBuilder.p;
+import static org.qiweb.api.routes.RouteBuilder.p;
 
 // TODO Write tests with weird forced values taking escaping and special chars into account
 public class ParamForcedValueParsingTest
@@ -36,11 +36,12 @@ public class ParamForcedValueParsingTest
     {
         Application application = new ApplicationInstance( app
             -> singletonList(
-                RouteBuilder.route( "GET" )
+                new RouteBuilderInstance( app )
+                .route( "GET" )
                 .on( "/foo/:id/bar" )
                 .to( FakeController.class, c -> c.another( p( "id", String.class ), p( "slug", Integer.class, 42 ) ) )
                 .modifiedBy( "service", "foo" )
-                .newInstance()
+                .build()
             )
         );
         application.activate();

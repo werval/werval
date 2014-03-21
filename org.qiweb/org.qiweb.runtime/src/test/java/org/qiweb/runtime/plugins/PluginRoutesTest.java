@@ -53,9 +53,9 @@ public class PluginRoutesTest
     {
         expect()
             .statusCode( 200 )
-            .body( equalTo( "prepended" ) )
+            .body( equalTo( "prepended foo" ) )
             .when()
-            .get( "/prepended" );
+            .get( "/prepended/foo" );
         expect()
             .statusCode( 200 )
             .body( equalTo( "index" ) )
@@ -63,9 +63,9 @@ public class PluginRoutesTest
             .get( "/" );
         expect()
             .statusCode( 200 )
-            .body( equalTo( "appended" ) )
+            .body( equalTo( "appended bar" ) )
             .when()
-            .get( "/appended" );
+            .get( "/appended/bar" );
     }
 
     @Test

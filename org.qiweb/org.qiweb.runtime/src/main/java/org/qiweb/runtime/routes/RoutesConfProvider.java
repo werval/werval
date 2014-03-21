@@ -31,7 +31,6 @@ import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 public class RoutesConfProvider
     implements RoutesProvider
 {
-
     private final String routesResourceName;
 
     public RoutesConfProvider()
@@ -50,13 +49,13 @@ public class RoutesConfProvider
         URL routesUrl = application.classLoader().getResource( routesResourceName );
         if( routesUrl == null )
         {
-            return RouteBuilder.parseRoutes( application, Strings.EMPTY );
+            return new RouteBuilderInstance( application ).parse().routes( Strings.EMPTY );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             Scanner scanner = new Scanner( input, application.defaultCharset().name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return RouteBuilder.parseRoutes( application, routes );
+            return new RouteBuilderInstance().parse().routes( routes );
         }
         catch( IOException ex )
         {

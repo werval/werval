@@ -32,8 +32,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
-import static org.qiweb.runtime.routes.RouteBuilder.p;
-import static org.qiweb.runtime.routes.RouteBuilder.route;
+import static org.qiweb.api.routes.RouteBuilder.p;
 
 /**
  * Assert wildcard in routes behaviour.
@@ -44,10 +43,11 @@ public class WildcardRoutesTest
     public void wildAPI()
     {
         Application application = new ApplicationInstance( app -> singletonList(
-            route( "GET" )
+            new RouteBuilderInstance( app )
+            .route( "GET" )
             .on( "/test/*path/as/file" )
             .to( FakeController.class, c -> c.wild( p( "path", String.class ) ) )
-            .newInstance()
+            .build()
         ) );
         application.activate();
         try

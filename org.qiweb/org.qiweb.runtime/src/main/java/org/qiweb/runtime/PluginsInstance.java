@@ -25,6 +25,7 @@ import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,22 +109,22 @@ import static java.util.Collections.EMPTY_LIST;
         }
     }
 
-    /* package */ List<Route> firstRoutes()
+    /* package */ List<Route> firstRoutes( RouteBuilder routeBuilder )
     {
         List<Route> firstRoutes = new ArrayList<>();
         for( Plugin plugin : activePlugins )
         {
-            firstRoutes.addAll( plugin.firstRoutes() );
+            firstRoutes.addAll( plugin.firstRoutes( routeBuilder ) );
         }
         return firstRoutes;
     }
 
-    /* package */ List<Route> lastRoutes()
+    /* package */ List<Route> lastRoutes( RouteBuilder routeBuilder )
     {
         List<Route> lastRoutes = new ArrayList<>();
         for( Plugin plugin : activePlugins )
         {
-            lastRoutes.addAll( plugin.lastRoutes() );
+            lastRoutes.addAll( plugin.lastRoutes( routeBuilder ) );
         }
         return lastRoutes;
     }

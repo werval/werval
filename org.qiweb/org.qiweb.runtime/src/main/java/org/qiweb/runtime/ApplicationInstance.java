@@ -46,6 +46,7 @@ import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.RouteBuilder;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.api.util.Stacktraces;
@@ -59,8 +60,9 @@ import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.outcomes.OutcomesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
-import org.qiweb.runtime.routes.RouteBuilder;
+import org.qiweb.runtime.routes.RouteBuilderInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
+import org.qiweb.runtime.routes.RoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
@@ -213,18 +215,24 @@ public final class ApplicationInstance
         }
         ClassLoader previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( classLoader );
-        plugins = new PluginsInstance( config, global.extraPlugins() );
-        List<Route> resolvedRoutes = new ArrayList<>();
-        resolvedRoutes.addAll( routesProvider.routes( this ) );
         try
         {
+            // Application Routes
+            List<Route> resolvedRoutes = new ArrayList<>();
+            resolvedRoutes.addAll( routesProvider.routes( this ) );
+
+            // Activate Plugins
+            plugins = new PluginsInstance( config, global.extraPlugins() );
             plugins.onActivate( this );
-            resolvedRoutes.addAll( 0, plugins.firstRoutes() );
-            resolvedRoutes.addAll( plugins.lastRoutes() );
-            routes = RouteBuilder.routes( resolvedRoutes );
 
+            // Plugin contributed Routes
+            RouteBuilder routeBuilder = new RouteBuilderInstance( this );
+            resolvedRoutes.addAll( 0, plugins.firstRoutes( routeBuilder ) );
+            resolvedRoutes.addAll( plugins.lastRoutes( routeBuilder ) );
+            routes = new RoutesInstance( resolvedRoutes );
+
+            // Activated
             activated = true;
-
             global.onActivate( this );
         }
         finally

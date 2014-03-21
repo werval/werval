@@ -18,11 +18,15 @@ package org.qiweb.api;
 import java.util.List;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.routes.RouteBuilder;
 
 import static java.util.Collections.EMPTY_LIST;
 
 /**
- * QiWeb Application Plugin.
+ * Application Plugin.
+ *
+ * A {@literal Plugin} is activated/passivated alongside the {@literal Application}
+ * and can contribute {@literal Routes} to it.
  *
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
  */
@@ -68,9 +72,11 @@ public interface Plugin<API>
      * <p>
      * Called by {@literal Application} once activated.
      *
+     * @param routeBuilder Builder for Routes
+     *
      * @return Routes this plugin prepend to the {@literal Application} routes
      */
-    default List<Route> firstRoutes()
+    default List<Route> firstRoutes( RouteBuilder routeBuilder )
     {
         return EMPTY_LIST;
     }
@@ -82,9 +88,11 @@ public interface Plugin<API>
      * <p>
      * Called by {@literal Application} once activated.
      *
+     * @param routeBuilder Builder for Routes
+     *
      * @return Routes this plugin append to the {@literal Application} routes
      */
-    default List<Route> lastRoutes()
+    default List<Route> lastRoutes( RouteBuilder routeBuilder )
     {
         return EMPTY_LIST;
     }

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.routes;
+package org.qiweb.api.routes;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,49 +21,57 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Route Controller Params instance.
+ * Route Controller Params.
+ *
+ * Used internally by {@link RouteBuilder}.
  */
-public class ControllerParamsInstance
-    implements ControllerParams
+public final class ControllerParams
+    implements Iterable<ControllerParams.Param>
 {
+    public static final ControllerParams EMPTY = new ControllerParams();
+    private final Map<String, Param> params = new LinkedHashMap<>();
 
-    private final Map<String, ControllerParam> params;
-
-    public ControllerParamsInstance()
+    private ControllerParams()
     {
-        this.params = new LinkedHashMap<>();
     }
 
-    public ControllerParamsInstance( Map<String, ControllerParam> params )
+    public ControllerParams( Map<String, Param> params )
     {
-        this();
         this.params.putAll( params );
     }
 
     @Override
-    public Iterator<ControllerParam> iterator()
+    public Iterator<Param> iterator()
     {
         return params.values().iterator();
     }
 
-    @Override
-    public ControllerParam get( String name )
+    /**
+     * @param name Name of the ControllerParam
+     *
+     * @return The ControllerParam or null if absent
+     */
+    public Param get( String name )
     {
         return params.get( name );
     }
 
-    @Override
+    /**
+     * @return The names of all ControllerParam in method order
+     */
     public Iterable<String> names()
     {
         return params.keySet();
     }
 
-    @Override
+    /**
+     * @return The types of all ControllerParams in method order
+     */
     public Class<?>[] types()
     {
         Class<?>[] types = new Class<?>[ params.size() ];
         int idx = 0;
-        for( ControllerParam param : params.values() )
+        for( Param param : params.values() )
         {
             types[idx] = param.type();
             idx++;
@@ -71,21 +79,22 @@ public class ControllerParamsInstance
         return types;
     }
 
-    public Map<String, ControllerParam> asMap()
+    public Map<String, Param> asMap()
     {
         return Collections.unmodifiableMap( params );
     }
 
-    public static class ControllerParamInstance
-        implements ControllerParam
+    /**
+     * Route Controller Param.
+     */
+    public static final class Param
     {
-
         private final String name;
         private final Class<?> type;
         private final boolean hasForcedValue;
         private final Object forcedValue;
 
-        public ControllerParamInstance( String name, Class<?> type )
+        public Param( String name, Class<?> type )
         {
             this.name = name;
             this.type = type;
@@ -93,7 +102,7 @@ public class ControllerParamsInstance
             this.forcedValue = null;
         }
 
-        public ControllerParamInstance( String name, Class<?> type, Object forcedValue )
+        public Param( String name, Class<?> type, Object forcedValue )
         {
             this.name = name;
             this.type = type;
@@ -101,25 +110,35 @@ public class ControllerParamsInstance
             this.forcedValue = forcedValue;
         }
 
-        @Override
+        /**
+         * @return Name of the Controller Param
+         */
         public String name()
         {
             return name;
         }
 
-        @Override
+        /**
+         * @return Type of the Controller Param
+         */
         public Class<?> type()
         {
             return type;
         }
 
-        @Override
+        /**
+         * @return TRUE if this ControllerParam has a forced value, otherwise return FALSE
+         */
         public boolean hasForcedValue()
         {
             return hasForcedValue;
         }
 
-        @Override
+        /**
+         * @return Forced value of the Controller Param
+         *
+         * @throws IllegalStateException if no forced value
+         */
         public Object forcedValue()
         {
             if( !hasForcedValue )

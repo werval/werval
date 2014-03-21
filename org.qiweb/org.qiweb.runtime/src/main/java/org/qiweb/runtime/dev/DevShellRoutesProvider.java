@@ -24,7 +24,7 @@ import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.runtime.routes.RouteBuilder;
+import org.qiweb.runtime.routes.RouteBuilderInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
@@ -64,13 +64,13 @@ public class DevShellRoutesProvider
         URL routesUrl = application.classLoader().getResource( "routes.conf" );
         if( routesUrl == null )
         {
-            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES );
+            return new RouteBuilderInstance( application ).parse().routes( DEVSHELL_ROUTES );
         }
         try( InputStream input = routesUrl.openStream() )
         {
             Scanner scanner = new Scanner( input, UTF_8.name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return RouteBuilder.parseRoutes( application, DEVSHELL_ROUTES + routes );
+            return new RouteBuilderInstance( application ).parse().routes( DEVSHELL_ROUTES + routes );
         }
         catch( IOException ex )
         {

@@ -27,7 +27,7 @@ import org.qiweb.runtime.util.Iterables;
 /**
  * Instance of Routes.
  */
-/* package */ class RoutesInstance
+public class RoutesInstance
     extends ArrayList<Route>
     implements Routes
 {
