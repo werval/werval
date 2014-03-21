@@ -1,13 +1,8 @@
+
 .gradle
 .gradletasknamecache
 build
 target
 .nb-gradle
 .nb-gradle-properties
-node_modules
-bower_components
-
-# TODO Remove me!
-qiweb-temp
-
 
