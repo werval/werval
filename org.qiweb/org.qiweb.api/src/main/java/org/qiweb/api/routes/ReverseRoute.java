@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,14 +35,14 @@ public interface ReverseRoute
     /**
      * Append a parameter to this ReverseRoute Query String.
      *
-     * @param key   QueryString key
-     * @param value QueryString value
+     * @param key    QueryString key
+     * @param values QueryString values
      *
      * @return This very ReverseRoute as fluent API
      *
      * @throws IllegalArgumentException when key is null or empty, or when value is null
      */
-    ReverseRoute appendQueryString( String key, String value );
+    ReverseRoute appendQueryString( String key, String... values );
 
     /**
      * Append a bunch of parameters to this ReverseRoute Query String.

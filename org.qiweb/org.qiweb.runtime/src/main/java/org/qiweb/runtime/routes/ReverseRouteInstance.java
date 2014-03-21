@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@ package org.qiweb.runtime.routes;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -74,15 +75,15 @@ public class ReverseRouteInstance
     }
 
     @Override
-    public ReverseRoute appendQueryString( String key, String value )
+    public ReverseRoute appendQueryString( String key, String... values )
     {
         IllegalArguments.ensureNotEmpty( "key", key );
-        IllegalArguments.ensureNotNull( "value", value );
+        IllegalArguments.ensureNotEmpty( "values", values );
         if( !appendedQueryString.containsKey( key ) )
         {
             appendedQueryString.put( key, new ArrayList<>() );
         }
-        appendedQueryString.get( key ).add( value );
+        appendedQueryString.get( key ).addAll( Arrays.asList( values ) );
         return this;
     }
 
