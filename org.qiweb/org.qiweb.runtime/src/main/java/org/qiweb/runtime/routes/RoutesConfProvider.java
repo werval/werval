@@ -55,7 +55,7 @@ public class RoutesConfProvider
         {
             Scanner scanner = new Scanner( input, application.defaultCharset().name() ).useDelimiter( "\\A" );
             String routes = scanner.hasNext() ? scanner.next() : "";
-            return new RouteBuilderInstance().parse().routes( routes );
+            return new RouteBuilderInstance( application ).parse().routes( routes );
         }
         catch( IOException ex )
         {

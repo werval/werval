@@ -38,12 +38,12 @@ public final class RouteBuilderContext
         };
     }
 
-    public static final void recordMethodParameter( String name, Class<?> type )
+    public static void recordMethodParameter( String name, Class<?> type )
     {
         CTRL_PARAM_RECORD.get().put( name, new ControllerParams.Param( name, type ) );
     }
 
-    public static final <T> void recordMethodParameter( String name, Class<T> type, T forcedValue )
+    public static <T> void recordMethodParameter( String name, Class<T> type, T forcedValue )
     {
         CTRL_PARAM_RECORD.get().put( name, new ControllerParams.Param( name, type, forcedValue ) );
     }
@@ -56,5 +56,9 @@ public final class RouteBuilderContext
     public static void clear()
     {
         CTRL_PARAM_RECORD.remove();
+    }
+
+    private RouteBuilderContext()
+    {
     }
 }
