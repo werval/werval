@@ -39,7 +39,7 @@
         <!-- Runtime -->
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.runtime</artifactId>
+            <artifactId>org.qiweb.server.bootstrap</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -78,7 +78,7 @@
     </dependencies>
     
     <properties>
-        <mainClassName>org.qiweb.runtime.Main</mainClassName>
+        <mainClassName>org.qiweb.server.bootstrap.Main</mainClassName>
     </properties>
 
     <build>

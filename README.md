@@ -63,7 +63,7 @@ Once installed you can depend on the following artifacts:
 
 - `org.qiweb:org.qiweb.api:0` in your application code
 - `org.qiweb:org.qiweb.lib:0` in your app code, this is the standard library
-- `org.qiweb:org.qiweb.runtime:0` to run or extend `org.qiweb.runtime.Main`
+- `org.qiweb:org.qiweb.server.bootstrap:0` to run or extend `org.qiweb.server.bootstrap.Main`
 - `org.qiweb:org.qiweb.test:0` in your test code to get a test environment
 
 The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `qiweb:devshell` to run the

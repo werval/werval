@@ -7,4 +7,6 @@ dependencies {
 
     compile project( ":org.qiweb.api" )
 
+    testCompile project( ":org.qiweb.test" )
+
 }

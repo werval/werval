@@ -30,8 +30,7 @@ dependencies {
     compile libs.liquibase
     compile 'com.ninja-squad:DbSetup:1.2.0'
 
-    runtime "org.qiweb:org.qiweb.runtime:$version"
-    runtime "org.qiweb:org.qiweb.server.netty:$version"
+    runtime "org.qiweb:org.qiweb.server.bootstrap:$version"
     runtime libs.el
     runtime libs.h2
     runtime libs.logback
@@ -50,7 +49,7 @@ qiweb {
 
 apply plugin: 'application'
 applicationName = "beer-database"
-mainClassName = "org.qiweb.runtime.Main"
+mainClassName = "org.qiweb.server.bootstrap.Main"
 applicationDistribution.from( "src/main/resources" ) {
     include "*.conf"
     into "etc"

@@ -25,7 +25,7 @@ dependencies {
     compile "org.qiweb:org.qiweb.lib:{qiweb-version}" // <5>
     // Add application compile dependencies
 
-    runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}" // <6>
+    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}" // <6>
     // Add application runtime dependencies
 
     testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <7>
@@ -37,7 +37,7 @@ apply plugin: 'qiweb'
 
 apply plugin: 'application' // <8>
 
-mainClassName = 'org.qiweb.runtime.Main'    // <9>
+mainClassName = 'org.qiweb.server.bootstrap.Main'    // <9>
 applicationName = 'hello-qiweb'             // <10>
 ----
 <1> Make this project a Java project
@@ -48,7 +48,7 @@ applicationName = 'hello-qiweb'             // <10>
 <6> Add runtime scope dependency to QiWeb Runtime
 <7> Add test scope dependency to QiWeb Test Support
 <8> Apply the Gradle http://gradle.org/docs/current/userguide/application_plugin.html[Application Plugin]
-<9> Set the main class to `org.qiweb.runtime.Main` for production mode
+<9> Set the main class to `org.qiweb.server.bootstrap.Main` for production mode
 <10> Name the archive and startup scripts
 
 And that's it!

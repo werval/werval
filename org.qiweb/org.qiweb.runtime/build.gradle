@@ -5,7 +5,6 @@ dependencies {
     compile project( ":org.qiweb.spi" )
     compile libs.typesafe_config
     compile libs.javassist
-    compile libs.netty_codec_http
     
     testCompile project( ":org.qiweb.test" )
     testCompile libs.jackson_core

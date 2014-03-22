@@ -24,9 +24,9 @@ import io.netty.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.server.HttpServerAdapter;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
+import org.qiweb.spi.server.HttpServerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

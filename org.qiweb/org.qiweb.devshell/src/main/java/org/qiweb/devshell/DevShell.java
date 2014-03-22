@@ -95,6 +95,14 @@ public final class DevShell
     private static final String DEVSHELL_REALM_ID = "DevShellRealm";
     private static final String DEPENDENCIES_REALM_ID = "DependenciesRealm";
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
+    private static final String CONFIG_API_CLASS = "org.qiweb.api.Config";
+    private static final String CONFIG_RUNTIME_CLASS = "org.qiweb.runtime.ConfigInstance";
+    private static final String ROUTES_PROVIDER_CLASS = "org.qiweb.runtime.routes.RoutesProvider";
+    private static final String DEVSHELL_ROUTES_PROVIDER_CLASS = "org.qiweb.runtime.dev.DevShellRoutesProvider";
+    private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
+    private static final String MODE_API_CLASS = "org.qiweb.api.Mode";
+    private static final String APPLICATION_SPI_CLASS = "org.qiweb.spi.ApplicationSPI";
+
     private static final AtomicLong APPLICATION_REALM_COUNT = new AtomicLong( 0L );
     private final DevShellSPI spi;
     private final URLClassLoader originalLoader;
@@ -131,8 +139,8 @@ public final class DevShell
             System.out.println( cyan( "Starting isolated QiWeb Application..." ) );
 
             // Config
-            Class<?> configClass = appRealm.loadClass( "org.qiweb.api.Config" );
-            Object configInstance = appRealm.loadClass( "org.qiweb.runtime.ConfigInstance" ).getConstructor(
+            Class<?> configClass = appRealm.loadClass( CONFIG_API_CLASS );
+            Object configInstance = appRealm.loadClass( CONFIG_RUNTIME_CLASS ).getConstructor(
                 new Class<?>[]
                 {
                     ClassLoader.class
@@ -145,12 +153,12 @@ public final class DevShell
             );
 
             // RoutesProvider
-            Class<?> routesProviderClass = appRealm.loadClass( "org.qiweb.runtime.routes.RoutesProvider" );
-            Object routesProviderInstance = appRealm.loadClass( "org.qiweb.runtime.dev.DevShellRoutesProvider" ).newInstance();
+            Class<?> routesProviderClass = appRealm.loadClass( ROUTES_PROVIDER_CLASS );
+            Object routesProviderInstance = appRealm.loadClass( DEVSHELL_ROUTES_PROVIDER_CLASS ).newInstance();
 
             // Application
-            Class<?> appClass = appRealm.loadClass( "org.qiweb.runtime.ApplicationInstance" );
-            Class<?> modeClass = appRealm.loadClass( "org.qiweb.api.Mode" );
+            Class<?> appClass = appRealm.loadClass( APPLICATION_RUNTIME_CLASS );
+            Class<?> modeClass = appRealm.loadClass( MODE_API_CLASS );
             Object appInstance = appClass.getConstructor(
                 new Class<?>[]
                 {
@@ -180,7 +188,7 @@ public final class DevShell
                 "setApplicationSPI",
                 new Class<?>[]
                 {
-                    appRealm.loadClass( "org.qiweb.spi.ApplicationSPI" )
+                    appRealm.loadClass( APPLICATION_SPI_CLASS )
                 }
             ).invoke(
                 httpServer,

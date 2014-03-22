@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server;
+package org.qiweb.spi.server;
 
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.spi.ApplicationSPI;
@@ -40,7 +40,17 @@ public abstract class HttpServerAdapter
 
     protected HttpServerAdapter()
     {
-        this.shutdownHook = new Thread( () -> passivate(), "qiweb-server-shutdown" );
+        this.shutdownHook = new Thread(
+            new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    passivate();
+                }
+            },
+            "qiweb-server-shutdown"
+        );
     }
 
     protected HttpServerAdapter( ApplicationSPI app, DevShellSPI devSpi )

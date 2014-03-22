@@ -61,7 +61,7 @@ Create a `pom.xml` file at the application root with the following content:
     </dependencies>
     
     <properties>
-        <mainClassName>org.qiweb.runtime.Main</mainClassName>
+        <mainClassName>org.qiweb.server.bootstrap.Main</mainClassName>
     </properties>
 
     <build>

@@ -14,7 +14,7 @@ dependencies {
     compile "org.qiweb:org.qiweb.lib:$version"
     compile libs.jackson_core
 
-    runtime "org.qiweb:org.qiweb.runtime:$version"
+    runtime "org.qiweb:org.qiweb.server.bootstrap:$version"
     runtime libs.logback
     runtime webjars.bootstrap
     runtime webjars.jquery
@@ -29,7 +29,7 @@ apply plugin: 'qiweb'
 apply plugin: 'application'
 
 applicationName = "url-shortener"
-mainClassName = "org.qiweb.runtime.Main"
+mainClassName = "org.qiweb.server.bootstrap.Main"
 applicationDistribution.from( "src/main/resources" ) {
     include "*.conf"
     into "etc"

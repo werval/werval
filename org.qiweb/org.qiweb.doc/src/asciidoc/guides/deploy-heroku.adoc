@@ -38,7 +38,7 @@ dependencies {
     compile "org.qiweb:org.qiweb.lib:{qiweb-version}"
     // Add application compile dependencies
 
-    runtime "org.qiweb:org.qiweb.runtime:{qiweb-version}"
+    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}"
     // Add application runtime dependencies
 
     test "org.qiweb:org.qiweb.test:{qiweb-version}"
@@ -48,7 +48,7 @@ dependencies {
 
 apply plugin: 'application'
 
-mainClassName = 'org.qiweb.runtime.Main'
+mainClassName = 'org.qiweb.server.bootstrap.Main'
 applicationName = 'app'
 
 task stage( dependsOn: [ 'clean', 'installApp' ] )

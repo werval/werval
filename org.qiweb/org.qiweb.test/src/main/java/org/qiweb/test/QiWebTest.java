@@ -25,7 +25,7 @@ import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.server.HttpServer;
+import org.qiweb.spi.server.HttpServer;
 import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
 

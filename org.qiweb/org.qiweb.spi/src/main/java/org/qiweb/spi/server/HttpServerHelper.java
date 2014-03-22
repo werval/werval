@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server;
+package org.qiweb.spi.server;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
