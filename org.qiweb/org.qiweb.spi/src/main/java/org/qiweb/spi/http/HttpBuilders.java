@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,10 +29,12 @@ import org.qiweb.api.util.ByteSource;
 
 /**
  * HTTP API Objects Builders.
+ *
+ * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
  * <p>
- * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.</p>
+ * Typically used in unit tests running an Application
  * <p>
- * All builders are immutable and reusable.</p>
+ * All builders are immutable and reusable.
  */
 public interface HttpBuilders
 {

@@ -29,7 +29,7 @@ public interface DevShellSPI
      * File watching abstraction.
      * <p>Allow DevShell implementations to choose their file watching implementation.</p>
      */
-    public interface SourceWatcher
+    interface SourceWatcher
     {
         /**
          * Watch a set of directories.

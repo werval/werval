@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
@@ -30,6 +31,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 public class CookiesInstance
     implements MutableCookies
 {
+    public static final Cookies EMPTY = new CookiesInstance();
     private final Map<String, Cookie> cookies;
 
     public CookiesInstance()

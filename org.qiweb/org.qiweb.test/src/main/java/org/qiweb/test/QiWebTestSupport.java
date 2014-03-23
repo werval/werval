@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,11 @@ package org.qiweb.test;
 import org.qiweb.api.Application;
 import org.qiweb.spi.ApplicationSPI;
 
+/**
+ * QiWeb Test Support contract.
+ *
+ * Provide access to the {@link ApplicationSPI} and implements {@link HttpBuilders}.
+ */
 public interface QiWebTestSupport
 {
     /**

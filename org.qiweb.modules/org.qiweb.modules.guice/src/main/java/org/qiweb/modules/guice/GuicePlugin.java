@@ -23,7 +23,9 @@ import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 
 /**
- * GuicePlugin.
+ * Guice Plugin.
+ *
+ * Expose {@link Injector} as API.
  */
 public class GuicePlugin
     implements Plugin<Injector>

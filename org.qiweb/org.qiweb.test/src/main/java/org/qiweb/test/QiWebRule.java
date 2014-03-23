@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,25 +25,22 @@ import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
 
 /**
- * QiWeb JUnit Rule.
+ * QiWeb HTTP JUnit Rule.
  *
- * <p>Activate/Passivate QiWeb Application in test mode around JUnit tests.</p>
+ * Activate/Passivate QiWeb Application and HTTP Server in test mode around JUnit tests.
  * <p>
- *     Can be used to activate/passivate around each method test as a {@literal @}{@link Rule} or around each test class
- *     as a {@literal @}{@link ClassRule}.
- * </p>
+ * Can be used to activate/passivate around each method test as a {@literal @}{@link Rule} or around each test class
+ * as a {@literal @}{@link ClassRule}.
  * <p>
- *     By default, configuration is loaded from the <code>application.conf</code> file.
- *     Use {@link #QiWebRule(java.lang.String)} or
- *     {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider)} constructor to to provide your own
- *     test configuration.
- * </p>
+ * By default, configuration is loaded from the <code>application.conf</code> file.
+ * Use {@link #QiWebRule(java.lang.String)} or
+ * {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider)} constructor to to provide your own
+ * test configuration.
  * <p>
- *     By default, routes are loaded from the <code>routes.conf</code> file.
- *     Use {@link #QiWebRule(org.qiweb.runtime.routes.RoutesProvider)} or
- *     {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider) } constructor to provide your own
- *     test routes.
- * </p>
+ * By default, routes are loaded from the <code>routes.conf</code> file.
+ * Use {@link #QiWebRule(org.qiweb.runtime.routes.RoutesProvider)} or
+ * {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider) } constructor to provide your own
+ * test routes.
  */
 public class QiWebRule
     implements QiWebTestSupport, TestRule

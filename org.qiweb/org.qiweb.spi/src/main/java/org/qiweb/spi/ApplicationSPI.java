@@ -27,7 +27,7 @@ import org.qiweb.spi.http.HttpBuilders;
 /**
  * Application SPI.
  *
- * Intended for use by HttpServer implementations, the DevShell and Applications unit tests.
+ * Intended for use by HttpServer implementations, the DevShell and Application unit tests.
  * <p>
  * Don't use in your Application code.
  */
@@ -37,6 +37,7 @@ public interface ApplicationSPI
 {
     /**
      * Application Global object.
+     *
      * The Application Global object should not be accessed by Application code,
      * that's why this accessor is in ApplicationSPI only.
      *
@@ -46,6 +47,7 @@ public interface ApplicationSPI
 
     /**
      * HTTP API Objects Builders.
+     *
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
      * All builders are immutable and reusable.
      *
@@ -57,22 +59,24 @@ public interface ApplicationSPI
      * Handle a HTTP Request.
      *
      * @param request HTTP Request
+     *
      * @return Outcome
      */
-    // TODO return CompletableFuture<Outcome>
     Outcome handleRequest( Request request );
 
     /**
      * Handle an exception throwed in a HTTP Request context.
      *
      * @param requestHeader HTTP Request Header
-     * @param cause Exception throwed
+     * @param cause         Exception throwed
+     *
      * @return Error Outcome
      */
     Outcome handleError( RequestHeader requestHeader, Throwable cause );
 
     /**
      * Callback for completed HTTP requests.
+     *
      * Called once the whole response has been sent to the client.
      *
      * @param requestHeader Original request header
@@ -81,11 +85,13 @@ public interface ApplicationSPI
 
     /**
      * Build the Outcome of any request happening while shutting down.
+     *
      * This should return a {@literal 503 Service Unavailable} status
      * and a wisely choosen {@literal Retry-After} header.
      *
-     * @param version Protocol version of the HTTP request
+     * @param version         Protocol version of the HTTP request
      * @param requestIdentity Identity of the HTTP request
+     *
      * @return Shutting down Outcome
      */
     Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity );

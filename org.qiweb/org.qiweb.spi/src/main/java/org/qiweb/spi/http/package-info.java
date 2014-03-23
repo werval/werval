@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * QiWeb HTTP SPI.
+ * SPI for HTTP Support.
  */
 package org.qiweb.spi.http;

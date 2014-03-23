@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
 
 import static java.util.Collections.emptyList;
@@ -29,7 +30,6 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
 
 /**
@@ -38,6 +38,7 @@ import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
 public final class HeadersInstance
     implements MutableHeaders
 {
+    public static final Headers EMPTY = new HeadersInstance();
     private final Map<String, List<String>> headers = new TreeMap<>( LOWER_CASE );
 
     /**
@@ -97,7 +98,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return EMPTY;
+            return Strings.EMPTY;
         }
         List<String> values = headers.get( name );
         if( values.size() != 1 )
@@ -113,7 +114,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return EMPTY;
+            return Strings.EMPTY;
         }
         return headers.get( name ).get( 0 );
     }
@@ -124,7 +125,7 @@ public final class HeadersInstance
         ensureNotEmpty( "Header Name", name );
         if( !headers.containsKey( name ) )
         {
-            return EMPTY;
+            return Strings.EMPTY;
         }
         List<String> values = headers.get( name );
         return values.get( values.size() - 1 );
@@ -187,7 +188,7 @@ public final class HeadersInstance
         {
             headers.put( name, new ArrayList<>() );
         }
-        headers.get( name ).add( value == null ? EMPTY : value );
+        headers.get( name ).add( value == null ? Strings.EMPTY : value );
         return this;
     }
 
@@ -203,7 +204,7 @@ public final class HeadersInstance
         {
             headers.get( name ).clear();
         }
-        headers.get( name ).add( value == null ? EMPTY : value );
+        headers.get( name ).add( value == null ? Strings.EMPTY : value );
         return this;
     }
 
