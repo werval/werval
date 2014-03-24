@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,11 +35,11 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 public class IntrospectTest
 {
-
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-        + "GET /@version org.qiweb.lib.controllers.Introspect.version\n" ) );
+        + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
+    ) );
 
     @Test
     public void testJSONConfig()
@@ -83,5 +83,4 @@ public class IntrospectTest
             when().
             get( "/@version" );
     }
-
 }

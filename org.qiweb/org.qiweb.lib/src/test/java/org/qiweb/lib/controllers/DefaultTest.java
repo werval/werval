@@ -18,7 +18,7 @@ package org.qiweb.lib.controllers;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 
@@ -26,7 +26,7 @@ public class DefaultTest
 {
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /notFound org.qiweb.lib.controllers.Default.notFound\n"
         + "GET /internalServerError org.qiweb.lib.controllers.Default.internalServerError\n"
         + "GET /notImplemented org.qiweb.lib.controllers.Default.notImplemented" ) );

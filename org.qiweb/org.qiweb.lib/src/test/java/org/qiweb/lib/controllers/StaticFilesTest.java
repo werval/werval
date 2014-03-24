@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertThat;
 public class StaticFilesTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
         + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )"
     ) );

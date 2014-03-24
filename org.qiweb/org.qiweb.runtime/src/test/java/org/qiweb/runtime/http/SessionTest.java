@@ -24,7 +24,7 @@ import org.qiweb.api.http.Session;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -60,7 +60,7 @@ public class SessionTest
     }
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /set/:name/:value org.qiweb.runtime.http.SessionTest$Controller.set( String name, String value )\n"
         + "GET /clear org.qiweb.runtime.http.SessionTest$Controller.clear\n"
         + "GET /show org.qiweb.runtime.http.SessionTest$Controller.show" ) );

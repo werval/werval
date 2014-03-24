@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 /**
- * QiWeb JUnit Support.
- * 
- * <p>JUnit support comes in two flavours:</p>
+ * JUnit Support.
+ *
+ * <strong>Testing QiWeb Applications</strong>
+ * <p>
+ * QiWeb Applications tests can be built in two ways:
  * <ul>
- *     <li>as a JUnit Rule: {@link QiWebRule} ;</li>
- *     <li>or as a base class for your JUnit tests to extend: {@link QiWebTest}.</li>
+ * <li>without any HTTP server running.</li>
+ * <li>with an HTTP server running,</li>
  * </ul>
- * <p>You can choose to use whichever suits your needs and habits.</p>
+ * The former allow to test the whole stack using an HTTP client in tests.
+ * The later allow to test the Application alone.
  * <p>
- *     Using the <code>QiWebRule</code> is the prefered way of writing QiWeb tests as it don't force you to extend from
- *     any base class.
- * </p>
+ * <strong>JUnit Support</strong>
  * <p>
- *     QiWeb JUnit Support has transparent integration with
- *     <a href="https://code.google.com/p/rest-assured/" target="_blank">rest-assured</a> if it is detected on the
- *     tests classpath.
- *     rest-assured base URL is set accordingly to the QiWeb configuration so can use relative paths when using it.
- * </p>
+ * JUnit support comes in two flavours:
+ * <ul>
+ * <li>as JUnit Rules: {@link QiWebRule} and {@link QiWebHttpRule};</li>
+ * <li>or as base classes for your JUnit tests to extend: {@link QiWebTest} and {@link QiWebHttpTest}.</li>
+ * </ul>
+ * You can choose to use whichever suits your needs and habits.
+ * <p>
+ * Using <code>QiWebRule</code> and <code>QiWebHttpRule</code> is the prefered way of writing QiWeb tests as it
+ * don't force you to extend from any base class.
+ * <p>
+ * QiWeb HTTP JUnit Support has transparent integration with
+ * <a href="https://code.google.com/p/rest-assured/" target="_blank">rest-assured</a> if it is detected on the
+ * tests classpath.
+ * rest-assured base URL is set accordingly to the QiWeb configuration so one can use relative paths when using it.
  */
 package org.qiweb.test;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,31 @@
 package org.qiweb.test;
 
 import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.http.HttpBuilders;
 
 /**
- * QiWeb Test Support contract.
+ * QiWeb HTTP Test Support contract.
  *
- * Provide access to the {@link ApplicationSPI} and {@link HttpBuilders}.
+ * Provide access to the {@link ApplicationSPI} and 
  */
-public interface QiWebTestSupport
-    extends HttpBuilders
+public interface QiWebHttpTestSupport
 {
     /**
      * @return QiWeb Application SPI
      */
     ApplicationSPI application();
+
+    /**
+     * @return QiWeb Application HTTP host
+     */
+    String httpHost();
+
+    /**
+     * @return QiWeb Application HTTP port
+     */
+    int httpPort();
+
+    /**
+     * @return QiWeb Application base HTTP URL based on listening address and port Configuration
+     */
+    String baseHttpUrl();
 }

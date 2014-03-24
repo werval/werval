@@ -24,7 +24,7 @@ import org.qiweb.api.Error;
 import org.qiweb.api.context.CurrentContext;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
@@ -60,7 +60,7 @@ public class OnApplicationErrorTest
     }
 
     @Rule
-    public final QiWebRule qiweb = new QiWebRule( new RoutesParserProvider(
+    public final QiWebHttpRule qiweb = new QiWebHttpRule( new RoutesParserProvider(
         "GET /success org.qiweb.runtime.OnApplicationErrorTest$Ctrl.success\n"
         + "GET /internalServerError org.qiweb.runtime.OnApplicationErrorTest$Ctrl.internalServerError\n"
         + "GET /exception org.qiweb.runtime.OnApplicationErrorTest$Ctrl.exception" )

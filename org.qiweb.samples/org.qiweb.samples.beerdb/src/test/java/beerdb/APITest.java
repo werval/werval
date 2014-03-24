@@ -17,7 +17,7 @@ package beerdb;
 
 import com.jayway.restassured.response.Response;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebHttpTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -40,7 +40,7 @@ import static org.qiweb.samples.beerdb.BuildVersion.VERSION;
  * Assert API Behaviour.
  */
 public class APITest
-    extends QiWebTest
+    extends QiWebHttpTest
 {
     @Test
     public void testIndex()

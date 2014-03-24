@@ -31,7 +31,7 @@ import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebHttpTest;
 import org.qiweb.test.util.Slf4jRule;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -103,7 +103,7 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void onActivate()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_onActivate.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_onActivate.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -127,7 +127,7 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void beforeHttpBind()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_beforeHttpBind.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_beforeHttpBind.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -151,7 +151,7 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void afterHttpBind()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_afterHttpBind.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_afterHttpBind.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -185,7 +185,7 @@ public class OnGlobalErrorTest
     @Test
     public void onPassivate()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_onPassivate.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_onPassivate.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -209,7 +209,7 @@ public class OnGlobalErrorTest
     @Test
     public void beforeHttpUnbind()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_beforeHttpUnbind.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_beforeHttpUnbind.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -233,7 +233,7 @@ public class OnGlobalErrorTest
     @Test
     public void afterHttpUnbind()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_afterHttpUnbind.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_afterHttpUnbind.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -270,7 +270,7 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void extraPlugins()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_extraPlugins.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_extraPlugins.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -294,7 +294,7 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void getPluginInstance()
     {
-        QiWebTest qiweb = new QiWebTest( "global-errors-test_getPluginInstance.conf" );
+        QiWebHttpTest qiweb = new QiWebHttpTest( "global-errors-test_getPluginInstance.conf" );
         try
         {
             qiweb.beforeEachQiWebTestMethod();
@@ -328,7 +328,7 @@ public class OnGlobalErrorTest
     @Test
     public void getFilterInstance()
     {
-        QiWebTest qiweb = new QiWebTest(
+        QiWebHttpTest qiweb = new QiWebHttpTest(
             "global-errors-test_getFilterInstance.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.action" )
         );
@@ -366,7 +366,7 @@ public class OnGlobalErrorTest
     @Test
     public void getControllerInstance()
     {
-        QiWebTest qiweb = new QiWebTest(
+        QiWebHttpTest qiweb = new QiWebHttpTest(
             "global-errors-test_getControllerInstance.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.action" )
         );
@@ -414,7 +414,7 @@ public class OnGlobalErrorTest
     @Test
     public void invokeControllerMethod()
     {
-        QiWebTest qiweb = new QiWebTest(
+        QiWebHttpTest qiweb = new QiWebHttpTest(
             "global-errors-test_invokeControllerMethod.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.action" )
         );
@@ -465,7 +465,7 @@ public class OnGlobalErrorTest
     @Test
     public void onHttpRequestComplete()
     {
-        QiWebTest qiweb = new QiWebTest(
+        QiWebHttpTest qiweb = new QiWebHttpTest(
             "global-errors-test_onHttpRequestComplete.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.action" )
         );
@@ -510,7 +510,7 @@ public class OnGlobalErrorTest
     @Test
     public void getRootCause()
     {
-        QiWebTest qiweb = new QiWebTest(
+        QiWebHttpTest qiweb = new QiWebHttpTest(
             "global-errors-test_getRootCause.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.error" )
         );
@@ -548,7 +548,7 @@ public class OnGlobalErrorTest
     @Test
     public void onApplicationError()
     {
-        QiWebTest qiweb = new QiWebTest(
+        QiWebHttpTest qiweb = new QiWebHttpTest(
             "global-errors-test_onApplicationError.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.error" )
         );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.qiweb.test;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -22,47 +24,71 @@ import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
 
 /**
- * QiWeb JUnit Rule.
+ * QiWeb HTTP JUnit Rule.
  *
- * Activate/Passivate QiWeb Application in test mode around JUnit tests.
+ * Activate/Passivate QiWeb Application and HTTP Server in test mode around JUnit tests.
  * <p>
- * Can be used to activate/passivate around each method test as a {@literal @}{@link org.junit.Rule}
- * or around each test class as a {@literal @}{@link org.junit.ClassRule}.
+ * Can be used to activate/passivate around each method test as a {@literal @}{@link Rule} or around each test class
+ * as a {@literal @}{@link ClassRule}.
  * <p>
  * By default, configuration is loaded from the <code>application.conf</code> file.
- * Use {@link #QiWebRule(java.lang.String)} or
- * {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider)} constructor to to provide your own
+ * Use {@link #QiWebHttpRule(java.lang.String)} or
+ * {@link #QiWebHttpRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider)} constructor to to provide your own
  * test configuration.
  * <p>
  * By default, routes are loaded from the <code>routes.conf</code> file.
- * Use {@link #QiWebRule(org.qiweb.runtime.routes.RoutesProvider)} or
- * {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider) } constructor to provide your own
+ * Use {@link #QiWebHttpRule(org.qiweb.runtime.routes.RoutesProvider)} or
+ * {@link #QiWebHttpRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider) } constructor to provide your own
  * test routes.
  */
-public class QiWebRule
-    implements QiWebTestSupport, TestRule
+public class QiWebHttpRule
+    implements QiWebHttpTestSupport, TestRule
 {
-    private final QiWebTest qiweb;
+    private final QiWebHttpTest qiweb;
 
-    public QiWebRule()
+    public QiWebHttpRule()
     {
         this( null, null );
     }
 
-    public QiWebRule( String configurationResourceName )
+    public QiWebHttpRule( String configurationResourceName )
     {
 
         this( configurationResourceName, null );
     }
 
-    public QiWebRule( RoutesProvider routesProvider )
+    public QiWebHttpRule( RoutesProvider routesProvider )
     {
         this( null, routesProvider );
     }
 
-    public QiWebRule( String configurationResourceName, RoutesProvider routesProvider )
+    public QiWebHttpRule( String configurationResourceName, RoutesProvider routesProvider )
     {
-        qiweb = new QiWebTest( configurationResourceName, routesProvider );
+        qiweb = new QiWebHttpTest( configurationResourceName, routesProvider );
+    }
+
+    @Override
+    public final ApplicationSPI application()
+    {
+        return qiweb.application();
+    }
+
+    @Override
+    public final String httpHost()
+    {
+        return qiweb.httpHost();
+    }
+
+    @Override
+    public final int httpPort()
+    {
+        return qiweb.httpPort();
+    }
+
+    @Override
+    public final String baseHttpUrl()
+    {
+        return qiweb.baseHttpUrl();
     }
 
     @Override
@@ -85,29 +111,5 @@ public class QiWebRule
                 }
             }
         };
-    }
-
-    @Override
-    public final ApplicationSPI application()
-    {
-        return qiweb.application();
-    }
-
-    @Override
-    public RequestHeaderBuilder newRequestHeaderBuilder()
-    {
-        return qiweb.newRequestHeaderBuilder();
-    }
-
-    @Override
-    public RequestBodyBuilder newRequestBodyBuilder()
-    {
-        return qiweb.newRequestBodyBuilder();
-    }
-
-    @Override
-    public RequestBuilder newRequestBuilder()
-    {
-        return qiweb.newRequestBuilder();
     }
 }

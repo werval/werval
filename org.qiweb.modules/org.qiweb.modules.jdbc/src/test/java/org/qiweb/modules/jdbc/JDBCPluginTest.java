@@ -22,7 +22,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -30,12 +30,12 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * JDBCPluginTest.
+ * JDBC Plugin Test.
  */
 public class JDBCPluginTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule();
 
     @Test
     public void dataSourcesSetup()

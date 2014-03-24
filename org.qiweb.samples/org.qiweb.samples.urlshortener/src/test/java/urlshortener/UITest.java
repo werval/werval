@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import com.google.common.base.Predicate;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -32,9 +32,8 @@ import static org.junit.Assert.assertThat;
 public class UITest
     extends FluentTest
 {
-
     @Rule
-    public QiWebRule qiwebRule = new QiWebRule();
+    public QiWebHttpRule qiwebRule = new QiWebHttpRule();
 
     @Test
     public void testUI()
@@ -91,5 +90,4 @@ public class UITest
         await().untilPage();
         assertThat( pageSource(), containsString( "Bootstrap" ) );
     }
-
 }

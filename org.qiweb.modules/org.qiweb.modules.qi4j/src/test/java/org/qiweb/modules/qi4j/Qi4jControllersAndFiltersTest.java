@@ -30,7 +30,7 @@ import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.core.Is.is;
@@ -51,7 +51,7 @@ public class Qi4jControllersAndFiltersTest
      * QiWeb JUnit Class Rule.
      */
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule(
         "qi4j-controllers-and-filters.conf",
         new RoutesParserProvider( "GET / org.qiweb.modules.qi4j.Qi4jControllersAndFiltersTest$TestController.index" )
     );

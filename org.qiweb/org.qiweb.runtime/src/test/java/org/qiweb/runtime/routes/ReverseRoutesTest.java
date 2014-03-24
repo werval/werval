@@ -20,7 +20,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -72,7 +72,7 @@ public class ReverseRoutesTest
     }
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /simpleMethod org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
         + "GET /simpleMethod/:param/foo org.qiweb.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
         + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"

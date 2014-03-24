@@ -21,21 +21,21 @@ import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
- * JNDIPlugin Test.
+ * JNDI Plugin Test.
  *
  * This test assert embedded behaviour only.
  */
 public class JNDIPluginTest
 {
     @Rule
-    public final QiWebRule qiweb = new QiWebRule();
+    public final QiWebHttpRule qiweb = new QiWebHttpRule();
     private static InitialContext ctx;
 
     @Before

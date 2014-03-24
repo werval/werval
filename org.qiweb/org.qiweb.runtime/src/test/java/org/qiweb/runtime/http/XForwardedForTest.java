@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -47,7 +47,7 @@ public class XForwardedForTest
     }
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET / org.qiweb.runtime.http.XForwardedForTest$Controller.remoteAddress" ) );
 
     @Test

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,51 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.http;
+package org.qiweb.test;
 
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebHttpRule;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import static com.jayway.restassured.RestAssured.expect;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.request;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 
-public class HttpRequestBodyTest
+/**
+ * Assert QiWeb HTTP Test behaviour.
+ */
+public class QiWebHttpTestTest
 {
-
     public static class Controller
     {
-
-        public Outcome echo()
+        public Outcome index()
         {
-            return outcomes().
-                ok( request().body().asString() ).
-                as( TEXT_PLAIN ).
-                build();
+            return outcomes().ok( "good" ).build();
         }
-
     }
 
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "POST /echo org.qiweb.runtime.http.HttpRequestBodyTest$Controller.echo" ) );
+        "GET / org.qiweb.test.QiWebHttpTestTest$Controller.index"
+    ) );
 
     @Test
-    public void testBodyAsString()
+    public void qiWebHttpTest()
     {
-        given().
-            contentType( TEXT_PLAIN ).
-            body( "FooBarBazar" ).
-            expect().
-            statusCode( 200 ).
-            body( equalTo( "FooBarBazar" ) ).
-            when().
-            post( "/echo" );
+        expect()
+            .statusCode( 200 )
+            .body( equalTo( "good" ) )
+            .when()
+            .get( "/" );
     }
-
 }

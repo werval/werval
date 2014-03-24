@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ package urlshortener;
 import com.jayway.restassured.response.Response;
 import java.util.Map;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWebHttpTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -33,9 +33,8 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_CSS;
  * Assert API behaviour.
  */
 public class APITest
-    extends QiWebTest
+    extends QiWebHttpTest
 {
-
     @Test
     @SuppressWarnings( "unchecked" )
     public void testUrlShortenerAPI()
@@ -101,5 +100,4 @@ public class APITest
             when().
             get( shortUrl );
     }
-
 }

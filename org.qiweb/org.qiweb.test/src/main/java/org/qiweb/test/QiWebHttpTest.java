@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.qiweb.test;
 
+import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Config;
@@ -23,12 +24,17 @@ import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
+import org.qiweb.spi.server.HttpServer;
+import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
 
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+
 /**
- * Base QiWeb JUnit Test.
+ * Base QiWeb HTTP JUnit Test.
  *
- * Activate/Passivate QiWeb Application in test mode around each JUnit test method.
+ * Activate/Passivate QiWeb Application and HTTP Server in test mode around each JUnit test method.
  * <p>
  * By default, configuration is loaded from the <code>application.conf</code> file.
  * Override the {@link #configurationResourceName()} method to provide your own test configuration.
@@ -36,26 +42,37 @@ import org.qiweb.spi.ApplicationSPI;
  * By default, routes are loaded from the <code>routes.conf</code> file.
  * Override the {@link #routesProvider()} method to provide your own test routes.
  */
-public class QiWebTest
-    implements QiWebTestSupport
+public class QiWebHttpTest
+    implements QiWebHttpTestSupport
 {
     private final String configurationResourceNameOverride;
     private final RoutesProvider routesProviderOverride;
+    private HttpServer httpServer;
     private ApplicationSPI app;
 
-    public QiWebTest()
+    public QiWebHttpTest()
     {
         this( null, null );
     }
 
-    /* package */ QiWebTest( String configurationResourceNameOverride, RoutesProvider routesProviderOverride )
+    public QiWebHttpTest( String configurationResourceNameOverride )
+    {
+        this( configurationResourceNameOverride, null );
+    }
+
+    public QiWebHttpTest( RoutesProvider routesProviderOverride )
+    {
+        this( null, routesProviderOverride );
+    }
+
+    public QiWebHttpTest( String configurationResourceNameOverride, RoutesProvider routesProviderOverride )
     {
         this.configurationResourceNameOverride = configurationResourceNameOverride;
         this.routesProviderOverride = routesProviderOverride;
     }
 
     /**
-     * Activate Application.
+     * Activate HttpServer.
      */
     @Before
     public final void beforeEachQiWebTestMethod()
@@ -69,16 +86,32 @@ public class QiWebTest
                                         ? routesProvider()
                                         : routesProviderOverride;
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
-        app.activate();
+        httpServer = new NettyServer( app );
+        httpServer.activate();
+
+        // Setup RestAssured defaults if present
+        try
+        {
+            Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
+            restAssuredPortField.set( null, app.config().intNumber( QIWEB_HTTP_PORT ) );
+            Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
+            restAssuredBaseURLField.set( null, "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) );
+        }
+        catch( ClassNotFoundException | NoSuchFieldException |
+               IllegalArgumentException | IllegalAccessException noRestAssured )
+        {
+            // RestAssured is not present, we simply don't configure it.
+        }
     }
 
     /**
-     * Passivate Application.
+     * Passivate HttpServer.
      */
     @After
     public final void afterEachQiWebTestMethod()
     {
-        app.passivate();
+        httpServer.passivate();
+        httpServer = null;
         app = null;
     }
 
@@ -89,21 +122,26 @@ public class QiWebTest
     }
 
     @Override
-    public RequestHeaderBuilder newRequestHeaderBuilder()
+    public final String httpHost()
     {
-        return app.httpBuilders().newRequestHeaderBuilder();
+        String httpHost = app.config().string( QIWEB_HTTP_ADDRESS );
+        if( "127.0.0.1".equals( httpHost ) )
+        {
+            httpHost = "localhost";
+        }
+        return httpHost;
     }
 
     @Override
-    public RequestBodyBuilder newRequestBodyBuilder()
+    public final int httpPort()
     {
-        return app.httpBuilders().newRequestBodyBuilder();
+        return app.config().intNumber( QIWEB_HTTP_PORT );
     }
 
     @Override
-    public RequestBuilder newRequestBuilder()
+    public final String baseHttpUrl()
     {
-        return app.httpBuilders().newRequestBuilder();
+        return "http://" + httpHost() + ":" + httpPort();
     }
 
     /**

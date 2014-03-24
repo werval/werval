@@ -3,7 +3,7 @@ package org.qiweb.runtime.routes;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 
@@ -11,7 +11,7 @@ public class RouterTest
 {
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET / com.acme.app.FakeControllerInstance.index()\n"
         + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
         + "GET /bar com.acme.app.FakeControllerInstance.bar()\n"

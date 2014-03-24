@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.either;
@@ -32,7 +32,7 @@ public class ClasspathResourcesTest
 {
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /*path org.qiweb.lib.controllers.ClasspathResources.metainf( String path )" ) );
 
     @Test

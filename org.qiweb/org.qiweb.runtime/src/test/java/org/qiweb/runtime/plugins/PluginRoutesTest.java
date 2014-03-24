@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -35,7 +35,7 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 public class PluginRoutesTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule(
         "plugin-routes-test.conf",
         new RoutesParserProvider( "GET / org.qiweb.runtime.plugins.PluginRoutesTest$ApplicationController.index" )
     );

@@ -27,7 +27,7 @@ import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
@@ -36,7 +36,7 @@ public class UITest
     extends FluentTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule();
 
     @Override
     public String getDefaultBaseUrl()

@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -58,7 +58,7 @@ public class CookiesTest
     }
 
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /set/:name/:value org.qiweb.runtime.http.CookiesTest$Controller.setCookie( String name, String value )\n"
         + "GET /remove/:name org.qiweb.runtime.http.CookiesTest$Controller.removeCookie( String name )\n"
         + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies" ) );
