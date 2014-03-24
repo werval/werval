@@ -138,7 +138,7 @@ import static java.util.Collections.EMPTY_LIST;
         Set<T> result = new LinkedHashSet<>();
         for( Plugin<?> plugin : activePlugins )
         {
-            if( plugin.apiType().equals( pluginApiType ) )
+            if( plugin.apiType().equals( pluginApiType ) && plugin.api() != null )
             {
                 // Type equals
                 result.add( pluginApiType.cast( plugin.api() ) );
@@ -146,7 +146,7 @@ import static java.util.Collections.EMPTY_LIST;
         }
         for( Plugin<?> plugin : activePlugins )
         {
-            if( plugin.apiType().isAssignableFrom( pluginApiType ) )
+            if( plugin.apiType().isAssignableFrom( pluginApiType ) && plugin.api() != null )
             {
                 // Type is assignable
                 result.add( pluginApiType.cast( plugin.api() ) );
@@ -163,7 +163,7 @@ import static java.util.Collections.EMPTY_LIST;
         }
         for( Plugin<?> plugin : activePlugins )
         {
-            if( plugin.apiType().equals( pluginApiType ) )
+            if( plugin.apiType().equals( pluginApiType ) && plugin.api() != null )
             {
                 // Type equals
                 return pluginApiType.cast( plugin.api() );
@@ -171,7 +171,7 @@ import static java.util.Collections.EMPTY_LIST;
         }
         for( Plugin<?> plugin : activePlugins )
         {
-            if( plugin.apiType().isAssignableFrom( pluginApiType ) )
+            if( plugin.apiType().isAssignableFrom( pluginApiType ) && plugin.api() != null )
             {
                 // Type is assignable
                 return pluginApiType.cast( plugin.api() );

@@ -488,6 +488,7 @@ public final class ApplicationInstance
                 + "the user agent MUST NOT attach more than one Cookie header field."
             );
         }
+        // TODO Multi-valued Cookies
     }
 
     private void validatesRequestBody( Request request )
