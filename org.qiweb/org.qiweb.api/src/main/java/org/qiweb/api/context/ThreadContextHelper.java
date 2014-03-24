@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.context;
 
+import java.util.concurrent.Callable;
 import org.slf4j.MDC;
 
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_CLIENT_IP;
@@ -25,11 +26,12 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
  */
 public final class ThreadContextHelper
 {
-
     /**
      * Run a {@literal Runnable} with a Context.
-     * <p>Use a {@link ThreadContextHelper} instance, see its methods documentation.</p>
-     * @param context Context
+     *
+     * Use a {@link ThreadContextHelper} instance, see its methods documentation.
+     *
+     * @param context  Context
      * @param runnable Runnable
      */
     public static void withContext( Context context, Runnable runnable )
@@ -46,6 +48,34 @@ public final class ThreadContextHelper
         }
     }
 
+    /**
+     * Run a {@literal Callable} with a Context.
+     *
+     * Use a {@link ThreadContextHelper} instance, see its methods documentation.
+     *
+     * @param <T>      Parameterized type of the Callable result
+     * @param context  Context
+     * @param callable Callable
+     *
+     * @return Callable result
+     *
+     * @throws java.lang.Exception if the Callable was unable to compute a result
+     */
+    public static <T> T withContext( Context context, Callable<T> callable )
+        throws Exception
+    {
+        ThreadContextHelper helper = new ThreadContextHelper();
+        try
+        {
+            helper.setOnCurrentThread( context );
+            return callable.call();
+        }
+        finally
+        {
+            helper.clearCurrentThread();
+        }
+    }
+
     private ClassLoader previousLoader = null;
     private boolean logRequestId = false;
     private boolean logClientIp = false;
@@ -53,19 +83,18 @@ public final class ThreadContextHelper
     /**
      * Set {@literal Context} on current {@literal Thread}.
      *
-     * <p>In order:</p>
+     * In order:
      * <ul>
-     *     <li>Keep previous thread context {@link ClassLoader}.</li>
-     *     <li>Set thread {@link ClassLoader}.</li>
-     *     <li>Set thread Context {@literal ThreadLocal}.</li>
-     *     <li>
-     *         Put current Request ID in SLF4J MDC at the {@link org.qiweb.api.http.Headers.Names#X_QIWEB_REQUEST_ID}
-     *         key.
-     *     </li>
-     *     <li>
-     *         Put current Request Client IP in SLF4J MDC at the
-     *         {@link org.qiweb.api.http.Headers.Names#X_QIWEB_CLIENT_IP} key if enabled in the configuration.
-     *     </li>
+     * <li>Keep previous thread context {@link ClassLoader}.</li>
+     * <li>Set thread {@link ClassLoader}.</li>
+     * <li>Set thread Context {@literal ThreadLocal}.</li>
+     * <li>
+     * Put current Request ID in SLF4J MDC at the {@link org.qiweb.api.http.Headers.Names#X_QIWEB_REQUEST_ID} key.
+     * </li>
+     * <li>
+     * Put current Request Client IP in SLF4J MDC at the
+     * {@link org.qiweb.api.http.Headers.Names#X_QIWEB_CLIENT_IP} key if enabled in the configuration.
+     * </li>
      * </ul>
      *
      * @param context Context
@@ -90,11 +119,11 @@ public final class ThreadContextHelper
     /**
      * Remove {@literal Context} from current {@literal Thread}.
      *
-     * <p>In order:</p>
+     * In order:
      * <ul>
-     *     <li>Remove current Request ID from SLF4J MDC.</li>
-     *     <li>Set thread {@link ClassLoader} to previous one.</li>
-     *     <li>Remove thread Context {@literal ThreadLocal}.</li>
+     * <li>Remove current Request ID from SLF4J MDC.</li>
+     * <li>Set thread {@link ClassLoader} to previous one.</li>
+     * <li>Remove thread Context {@literal ThreadLocal}.</li>
      * </ul>
      */
     public void clearCurrentThread()
@@ -111,5 +140,4 @@ public final class ThreadContextHelper
         previousLoader = null;
         CurrentContext.CONTEXT_THREAD_LOCAL.remove();
     }
-
 }
