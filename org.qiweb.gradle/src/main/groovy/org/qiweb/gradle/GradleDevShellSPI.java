@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,31 +26,27 @@ import org.qiweb.spi.dev.DevShellSPIAdapter;
 
 /**
  * Gradle DevShellSPI implementation.
- * <p>Use the Gradle Tooling API to rebuild the project.</p>
+ *
+ * Use the Gradle Tooling API to rebuild the project.
  */
 public final class GradleDevShellSPI
     extends DevShellSPIAdapter
 {
     /**
-     * Number of connection retries to attempt.
-     */
-    private static final int MAX_RETRIES = 3;
-    /**
      * Gradle Tooling API Connector.
      */
     private final GradleConnector connector = GradleConnector.newConnector();
+
     /**
      * Name of the Gradle task to run to rebuild the sources.
      */
     private final String rebuildTask;
-    /**
-     * Current connection.
-     */
-    private ProjectConnection connection;
 
-    public GradleDevShellSPI( URL[] applicationClassPath, URL[] runtimeClassPath,
-                              Set<File> toWatch, SourceWatcher watcher,
-                              File rootDir, String rebuildTask )
+    public GradleDevShellSPI(
+        URL[] applicationClassPath, URL[] runtimeClassPath,
+        Set<File> toWatch, SourceWatcher watcher,
+        File rootDir, String rebuildTask
+    )
     {
         super( applicationClassPath, runtimeClassPath, toWatch, watcher );
         this.connector.forProjectDirectory( rootDir );
@@ -60,38 +56,20 @@ public final class GradleDevShellSPI
     @Override
     protected void doRebuild()
     {
-        effectivelyRebuild( 0 );
-    }
-
-    private void effectivelyRebuild( int retries )
-    {
-        if( connection == null )
-        {
-            connection = connector.connect();
-        }
+        ProjectConnection connection = connector.connect();
         try
         {
             connection.newBuild().
                 forTasks( rebuildTask ).
                 run();
         }
-        catch( IllegalStateException disconnected )
-        {
-            if( retries < MAX_RETRIES )
-            {
-                connection = null;
-                effectivelyRebuild( retries + 1 );
-            }
-            else
-            {
-                throw disconnected;
-            }
-        }
         catch( Exception ex )
         {
-            connection.close();
-            connection = null;
             throw new QiWebDevShellException( "Unable to rebuild application sources", ex );
+        }
+        finally
+        {
+            connection.close();
         }
     }
 }
