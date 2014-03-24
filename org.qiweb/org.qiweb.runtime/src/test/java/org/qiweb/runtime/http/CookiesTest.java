@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,10 +30,8 @@ import static org.qiweb.api.context.CurrentContext.response;
 
 public class CookiesTest
 {
-
     public static class Controller
     {
-
         public Outcome setCookie( String name, String value )
         {
             response().cookies().set( name, value );
@@ -61,7 +59,8 @@ public class CookiesTest
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /set/:name/:value org.qiweb.runtime.http.CookiesTest$Controller.setCookie( String name, String value )\n"
         + "GET /remove/:name org.qiweb.runtime.http.CookiesTest$Controller.removeCookie( String name )\n"
-        + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies" ) );
+        + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies"
+    ) );
 
     @Test
     public void testSetCookie()
@@ -84,5 +83,4 @@ public class CookiesTest
             expect().cookie( "bazar", "cathedral" ).
             when().get( "/mirror" );
     }
-
 }

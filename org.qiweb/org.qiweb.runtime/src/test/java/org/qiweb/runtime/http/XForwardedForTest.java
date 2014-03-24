@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,15 +35,12 @@ import static org.qiweb.api.http.Headers.Names.X_FORWARDED_FOR;
 @SuppressWarnings( "PublicInnerClass" )
 public class XForwardedForTest
 {
-
     public static class Controller
     {
-
         public Outcome remoteAddress()
         {
             return outcomes().ok( request().remoteAddress() ).build();
         }
-
     }
 
     @ClassRule
@@ -96,5 +93,4 @@ public class XForwardedForTest
             expect().statusCode( 400 ).
             when().get( "/" );
     }
-
 }

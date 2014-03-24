@@ -17,7 +17,7 @@ package org.qiweb.modules.rythm;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
+import org.qiweb.test.QiWebRule;
 import org.rythmengine.RythmEngine;
 
 import static org.hamcrest.core.StringContains.containsString;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 public class RythmPluginTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule();
+    public static final QiWebRule QIWEB = new QiWebRule();
 
     @Test
     public void testPlugin()

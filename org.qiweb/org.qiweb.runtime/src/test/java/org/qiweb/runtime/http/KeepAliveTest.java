@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,6 +65,7 @@ public class KeepAliveTest
             return outcomes().status( 666 ).build();
         }
     }
+
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "\n"

@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -35,7 +35,7 @@ import static org.junit.Assert.fail;
 public class JNDIPluginTest
 {
     @Rule
-    public final QiWebHttpRule qiweb = new QiWebHttpRule();
+    public final QiWebRule qiweb = new QiWebRule();
     private static InitialContext ctx;
 
     @Before

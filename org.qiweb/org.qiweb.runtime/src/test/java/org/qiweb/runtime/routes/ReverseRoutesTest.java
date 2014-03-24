@@ -15,7 +15,6 @@
  */
 package org.qiweb.runtime.routes;
 
-import java.io.IOException;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
@@ -78,7 +77,8 @@ public class ReverseRoutesTest
         + "GET /wild/*card org.qiweb.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"
         + "GET /query/:path/string org.qiweb.runtime.routes.ReverseRoutesTest$Controller.qstring( String path, String qsOne, String qsTwo )\n"
         + "GET /appended/qs org.qiweb.runtime.routes.ReverseRoutesTest$Controller.appendedQueryString\n"
-        + "GET /fragment/identifier org.qiweb.runtime.routes.ReverseRoutesTest$Controller.fragmentIdentifier" ) );
+        + "GET /fragment/identifier org.qiweb.runtime.routes.ReverseRoutesTest$Controller.fragmentIdentifier"
+    ) );
 
     @Test
     public void testSimpleMethod()

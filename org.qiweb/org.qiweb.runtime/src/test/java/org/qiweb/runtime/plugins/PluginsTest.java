@@ -17,7 +17,7 @@ package org.qiweb.runtime.plugins;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -31,7 +31,7 @@ import static org.qiweb.runtime.util.Iterables.count;
 public class PluginsTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( "plugin-test.conf" );
+    public static final QiWebRule QIWEB = new QiWebRule( "plugin-test.conf" );
 
     @Test( expected = IllegalArgumentException.class )
     public void givenWrongPluginAPIWhenGetPluginExpectIAE()

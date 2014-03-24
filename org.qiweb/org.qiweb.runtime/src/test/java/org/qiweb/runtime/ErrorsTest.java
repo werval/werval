@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,6 @@ import static org.junit.Assert.assertThat;
  */
 public class ErrorsTest
 {
-
     @Test
     public void testErrors()
     {
@@ -72,5 +71,4 @@ public class ErrorsTest
         assertThat( errors.count(), is( 10 ) );
         assertThat( errors.last().message(), equalTo( "error-message-20" ) );
     }
-
 }

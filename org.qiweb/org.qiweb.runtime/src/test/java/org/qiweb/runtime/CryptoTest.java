@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,16 +17,15 @@ package org.qiweb.runtime;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class CryptoTest
 {
-
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule();
+    public static final QiWebRule QIWEB = new QiWebRule();
 
     @Test
     public void testGenerateNewSecret()
@@ -42,5 +41,4 @@ public class CryptoTest
         String right = QIWEB.application().crypto().hexHmacSha256( "Text to be signed." );
         assertThat( left, equalTo( right ) );
     }
-
 }

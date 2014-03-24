@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,10 +31,8 @@ import static org.qiweb.api.context.CurrentContext.request;
 
 public class QueryStringTest
 {
-
     public static class Controller
     {
-
         private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
         public Outcome echo()
@@ -43,12 +41,12 @@ public class QueryStringTest
             String json = JSON_MAPPER.writeValueAsString( request().queryString().allValues() );
             return outcomes().ok( json ).as( "application/json" ).build();
         }
-
     }
 
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /echo org.qiweb.runtime.http.QueryStringTest$Controller.echo" ) );
+        "GET /echo org.qiweb.runtime.http.QueryStringTest$Controller.echo"
+    ) );
 
     @Test
     public void testEmptyQueryString()
@@ -85,5 +83,4 @@ public class QueryStringTest
             when().
             get( "/echo" );
     }
-
 }

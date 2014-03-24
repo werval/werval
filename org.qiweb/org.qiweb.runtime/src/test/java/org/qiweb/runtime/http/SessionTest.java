@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,10 +36,8 @@ import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 
 public class SessionTest
 {
-
     public static class Controller
     {
-
         public Outcome show()
         {
             return outcomes().ok( session().asMap().toString() ).build();
@@ -56,7 +54,6 @@ public class SessionTest
             session().clear();
             return show();
         }
-
     }
 
     @ClassRule
@@ -116,5 +113,4 @@ public class SessionTest
             expect().body( equalTo( "{}" ) ).
             when().get( "/clear" );
     }
-
 }

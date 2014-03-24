@@ -20,7 +20,7 @@ import java.util.Set;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.Config;
-import org.qiweb.test.QiWebHttpRule;
+import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 public class NestedConfigTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( "nested-config.conf" );
+    public static final QiWebRule QIWEB = new QiWebRule( "nested-config.conf" );
 
     @Test
     public void nestedObjectsAndArrays()

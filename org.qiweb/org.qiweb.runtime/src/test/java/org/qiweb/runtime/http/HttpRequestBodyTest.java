@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,10 +29,8 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 
 public class HttpRequestBodyTest
 {
-
     public static class Controller
     {
-
         public Outcome echo()
         {
             return outcomes().
@@ -40,7 +38,6 @@ public class HttpRequestBodyTest
                 as( TEXT_PLAIN ).
                 build();
         }
-
     }
 
     @ClassRule
@@ -59,5 +56,4 @@ public class HttpRequestBodyTest
             when().
             post( "/echo" );
     }
-
 }
