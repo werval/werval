@@ -16,6 +16,9 @@
 package org.qiweb.runtime.routes;
 
 import java.net.MalformedURLException;
+import java.time.DateTimeException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import org.qiweb.api.exceptions.ParameterBinderException;
@@ -25,11 +28,13 @@ import org.qiweb.runtime.util.TypeResolver;
 
 /**
  * Parameter Binders instance.
+ *
+ * Include standard binders.
  */
 public final class ParameterBindersInstance
     implements ParameterBinders
 {
-    /* package */ abstract static class StrictTypingParameterBinder<T>
+    private abstract static class StrictTypingParameterBinder<T>
         implements ParameterBinder<T>
     {
         static
@@ -46,7 +51,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * String Parameter Binder.
+     * {@link java.lang.String} Parameter Binder.
      */
     public static final class String
         extends StrictTypingParameterBinder<java.lang.String>
@@ -65,7 +70,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Boolean Parameter Binder.
+     * {@link java.lang.Boolean} Parameter Binder.
      */
     public static final class Boolean
         extends StrictTypingParameterBinder<java.lang.Boolean>
@@ -84,7 +89,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Short Parameter Binder.
+     * {@link java.lang.Short} Parameter Binder.
      */
     public static final class Short
         extends StrictTypingParameterBinder<java.lang.Short>
@@ -110,7 +115,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Integer Parameter Binder.
+     * {@link java.lang.Integer} Parameter Binder.
      */
     public static final class Integer
         extends StrictTypingParameterBinder<java.lang.Integer>
@@ -136,7 +141,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Long Parameter Binder.
+     * {@link java.lang.Long} Parameter Binder.
      */
     public static final class Long
         extends StrictTypingParameterBinder<java.lang.Long>
@@ -162,7 +167,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Double Parameter Binder.
+     * {@link java.lang.Double} Parameter Binder.
      */
     public static final class Double
         extends StrictTypingParameterBinder<java.lang.Double>
@@ -188,7 +193,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Float Parameter Binder.
+     * {@link java.lang.Float} Parameter Binder.
      */
     public static final class Float
         extends StrictTypingParameterBinder<java.lang.Float>
@@ -214,7 +219,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * BigInteger Parameter Binder.
+     * {@link java.math.BigInteger} Parameter Binder.
      */
     public static final class BigInteger
         extends StrictTypingParameterBinder<java.math.BigInteger>
@@ -240,7 +245,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * BigDecimal Parameter Binder.
+     * {@link java.math.BigDecimal} Parameter Binder.
      */
     public static final class BigDecimal
         extends StrictTypingParameterBinder<java.math.BigDecimal>
@@ -266,7 +271,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * UUID Parameter Binder.
+     * {@link java.util.UUID} Parameter Binder.
      */
     public static final class UUID
         extends StrictTypingParameterBinder<java.util.UUID>
@@ -292,7 +297,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * URL Parameter Binder.
+     * {@link java.net.URL} Parameter Binder.
      */
     public static final class URL
         extends StrictTypingParameterBinder<java.net.URL>
@@ -318,7 +323,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * Class Parameter Binder.
+     * {@link java.lang.Class} Parameter Binder.
      */
     public static final class Class
         extends StrictTypingParameterBinder<java.lang.Class<?>>
@@ -340,6 +345,288 @@ public final class ParameterBindersInstance
         public java.lang.String unbind( java.lang.String name, java.lang.Class<?> value )
         {
             return value.getCanonicalName();
+        }
+    }
+
+    /**
+     * {@link java.time.Duration} Parameter Binder.
+     */
+    public static final class Duration
+        extends StrictTypingParameterBinder<java.time.Duration>
+    {
+        @Override
+        public java.time.Duration bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return java.time.Duration.parse( value );
+            }
+            catch( DateTimeParseException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.Duration value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.} Parameter Binder.
+     */
+    public static final class Period
+        extends StrictTypingParameterBinder<java.time.Period>
+    {
+        @Override
+        public java.time.Period bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return java.time.Period.parse( value );
+            }
+            catch( DateTimeParseException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.Period value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.} Parameter Binder.
+     */
+    public static final class Year
+        extends StrictTypingParameterBinder<java.time.Year>
+    {
+        @Override
+        public java.time.Year bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return java.time.Year.parse( value );
+            }
+            catch( DateTimeParseException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.Year value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.} Parameter Binder.
+     */
+    public static final class Month
+        extends StrictTypingParameterBinder<java.time.Month>
+    {
+        @Override
+        public java.time.Month bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return java.time.Month.of( java.lang.Integer.valueOf( value ) );
+            }
+            catch( NumberFormatException | DateTimeException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.Month value )
+        {
+            return java.lang.String.valueOf( value.getValue() );
+        }
+    }
+
+    /**
+     * {@link java.time.} Parameter Binder.
+     */
+    public static final class DayOfWeek
+        extends StrictTypingParameterBinder<java.time.DayOfWeek>
+    {
+        @Override
+        public java.time.DayOfWeek bind( java.lang.String name, java.lang.String value )
+        {
+            try
+            {
+                return java.time.DayOfWeek.of( java.lang.Integer.valueOf( value ) );
+            }
+            catch( NumberFormatException | DateTimeException ex )
+            {
+                throw new ParameterBinderException( "Invalid parameter '" + name + "' format: '" + value + "'", ex );
+            }
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.DayOfWeek value )
+        {
+            return java.lang.String.valueOf( value.getValue() );
+        }
+    }
+
+    /**
+     * {@link java.time.} Parameter Binder.
+     */
+    public static final class YearMonth
+        extends StrictTypingParameterBinder<java.time.YearMonth>
+    {
+        @Override
+        public java.time.YearMonth bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.YearMonth.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.YearMonth value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.} Parameter Binder.
+     */
+    public static final class MonthDay
+        extends StrictTypingParameterBinder<java.time.MonthDay>
+    {
+        @Override
+        public java.time.MonthDay bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.MonthDay.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.MonthDay value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.LocalDate} Parameter Binder.
+     */
+    public static final class LocalDate
+        extends StrictTypingParameterBinder<java.time.LocalDate>
+    {
+        @Override
+        public java.time.LocalDate bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.LocalDate.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.LocalDate value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.LocalTime} Parameter Binder.
+     */
+    public static final class LocalTime
+        extends StrictTypingParameterBinder<java.time.LocalTime>
+    {
+        @Override
+        public java.time.LocalTime bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.LocalTime.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.LocalTime value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.LocalDateTime} Parameter Binder.
+     */
+    public static final class LocalDateTime
+        extends StrictTypingParameterBinder<java.time.LocalDateTime>
+    {
+        @Override
+        public java.time.LocalDateTime bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.LocalDateTime.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.LocalDateTime value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.OffsetTime} Parameter Binder.
+     */
+    public static final class OffsetTime
+        extends StrictTypingParameterBinder<java.time.OffsetTime>
+    {
+        @Override
+        public java.time.OffsetTime bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.OffsetTime.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.OffsetTime value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.OffsetDateTime} Parameter Binder.
+     */
+    public static final class OffsetDateTime
+        extends StrictTypingParameterBinder<java.time.OffsetDateTime>
+    {
+        @Override
+        public java.time.OffsetDateTime bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.OffsetDateTime.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, java.time.OffsetDateTime value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link java.time.ZonedDateTime} Parameter Binder.
+     */
+    public static final class ZoneDateTime
+        extends StrictTypingParameterBinder<java.time.ZonedDateTime>
+    {
+        @Override
+        public ZonedDateTime bind( java.lang.String name, java.lang.String value )
+        {
+            return java.time.ZonedDateTime.parse( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, ZonedDateTime value )
+        {
+            return value.toString();
         }
     }
 
