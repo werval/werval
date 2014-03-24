@@ -27,7 +27,7 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 /**
  * Set of annotations to document reflective usage.
  *
- * Retention is {@link java.lang.annotation.RetentionPolicy#SOURCE} only.
+ * Retention is {@link java.lang.annotation.RetentionPolicy#SOURCE} only and usage isn't advertised in javadocs.
  * <p>
  * Make it easy to look for element use by name when working on the source.
  */
