@@ -375,7 +375,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * {@link java.time.} Parameter Binder.
+     * {@link java.time.Period} Parameter Binder.
      */
     public static final class Period
         extends StrictTypingParameterBinder<java.time.Period>
@@ -401,7 +401,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * {@link java.time.} Parameter Binder.
+     * {@link java.time.Year} Parameter Binder.
      */
     public static final class Year
         extends StrictTypingParameterBinder<java.time.Year>
@@ -427,7 +427,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * {@link java.time.} Parameter Binder.
+     * {@link java.time.Month} Parameter Binder.
      */
     public static final class Month
         extends StrictTypingParameterBinder<java.time.Month>
@@ -453,7 +453,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * {@link java.time.} Parameter Binder.
+     * {@link java.time.DayOfWeek} Parameter Binder.
      */
     public static final class DayOfWeek
         extends StrictTypingParameterBinder<java.time.DayOfWeek>
@@ -479,7 +479,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * {@link java.time.} Parameter Binder.
+     * {@link java.time.YearMonth} Parameter Binder.
      */
     public static final class YearMonth
         extends StrictTypingParameterBinder<java.time.YearMonth>
@@ -498,7 +498,7 @@ public final class ParameterBindersInstance
     }
 
     /**
-     * {@link java.time.} Parameter Binder.
+     * {@link java.time.MonthDay} Parameter Binder.
      */
     public static final class MonthDay
         extends StrictTypingParameterBinder<java.time.MonthDay>
