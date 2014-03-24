@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,7 +56,9 @@ import org.qiweb.api.outcomes.Outcome;
     private final Class<? extends Filter> filterType;
     private final FilterChain next;
 
-    /* package */ FilterChainInstance( Application app, Global global, Class<? extends Filter> filterType, FilterChain next )
+    /* package */ FilterChainInstance(
+        Application app, Global global, Class<? extends Filter> filterType, FilterChain next
+    )
     {
         this.app = app;
         this.global = global;

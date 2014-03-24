@@ -73,7 +73,7 @@ public class HttpBuildersInstance
         );
     }
 
-    private static class RequestBuilderInstance
+    private static final class RequestBuilderInstance
         implements RequestBuilder
     {
         private final Config config;
@@ -272,7 +272,10 @@ public class HttpBuildersInstance
         }
 
         @Override
-        public RequestBuilder bodyForm( Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads )
+        public RequestBuilder bodyForm(
+            Map<String, List<String>> attributes,
+            Map<String, List<FormUploads.Upload>> uploads
+        )
         {
             return new RequestBuilderInstance(
                 config, defaultCharset,

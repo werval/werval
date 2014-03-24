@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,9 @@ package org.qiweb.runtime.util;
 
 import static java.util.Locale.US;
 
+/**
+ * ANSI Colors.
+ */
 public final class AnsiColor
 {
     public static final String ANSI_RESET = "\u001B[0m";

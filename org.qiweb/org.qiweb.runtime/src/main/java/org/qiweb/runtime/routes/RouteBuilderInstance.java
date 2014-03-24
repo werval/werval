@@ -74,19 +74,25 @@ public class RouteBuilderInstance
     @Override
     public RouteDeclaration route()
     {
-        return new RouteDeclarationInstance( null, null, null, null, ControllerParams.EMPTY, EMPTY_SET );
+        return new RouteDeclarationInstance(
+            null, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+        );
     }
 
     @Override
     public RouteDeclaration route( String httpMethod )
     {
-        return new RouteDeclarationInstance( Method.valueOf( httpMethod ), null, null, null, ControllerParams.EMPTY, EMPTY_SET );
+        return new RouteDeclarationInstance(
+            Method.valueOf( httpMethod ), null, null, null, ControllerParams.EMPTY, EMPTY_SET
+        );
     }
 
     @Override
     public RouteDeclaration route( Method httpMethod )
     {
-        return new RouteDeclarationInstance( httpMethod, null, null, null, ControllerParams.EMPTY, EMPTY_SET );
+        return new RouteDeclarationInstance(
+            httpMethod, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+        );
     }
 
     @Override
@@ -99,7 +105,7 @@ public class RouteBuilderInstance
         return new RouteParserInstance( app );
     }
 
-    private static class RouteDeclarationInstance
+    private static final class RouteDeclarationInstance
         implements RouteDeclaration
     {
         private final Method httpMethod;
@@ -254,7 +260,7 @@ public class RouteBuilderInstance
         }
     }
 
-    private static class RouteParserInstance
+    private static final class RouteParserInstance
         implements RouteParser
     {
         private static final Logger LOG = LoggerFactory.getLogger( RouteParser.class );

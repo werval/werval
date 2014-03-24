@@ -6,11 +6,36 @@
 <!-- Checkstyle Suppressions                                             -->
 <!-- See http://checkstyle.sourceforge.net/config.html#SuppressionFilter -->
 
+<!-- org.qiweb.runtime                                                   -->
+
 <suppressions>
 
-    <!-- Add your suppression for this project here -->
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
 
-    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
-    <suppress checks=".*" files=".*"/>
+    <!-- Javadoc -->
+    <suppress checks="JavadocPackage" files=".*"/>
+
+    <!-- Builders & Big Constructors -->
+    <suppress checks="ParameterNumber" files="HttpBuildersInstance.java"/>
+    <suppress checks="ParameterNumber" files="RequestHeaderInstance.java"/>
+
+    <!-- Java 7 Try-With-Resources not supported by Checkstyle -->
+    <suppress checks=".*" files="MimeTypesInstance.java"/>
+    <suppress checks=".*" files="RoutesConfProvider.java"/>
+    <suppress checks=".*" files="DevShellRoutesProvider.java"/>
+
+    <!-- Java 8 Lambda Expressions not supported by Checkstyle -->
+    <suppress checks=".*" files="ApplicationInstance.java"/>
+    <suppress checks=".*" files="ConfigInstance.java"/>
+    <suppress checks=".*" files="ErrorsInstance.java"/>
+    <suppress checks=".*" files="FormAttributesInstance.java"/>
+    <suppress checks=".*" files="FormUploadsInstance.java"/>
+    <suppress checks=".*" files="HeadersInstance.java"/>
+    <suppress checks=".*" files="QueryStringInstance.java"/>
+    <suppress checks=".*" files="Comparators.java"/>
+    <suppress checks=".*" files="HttpServerAdapter.java"/>
+    <suppress checks=".*" files="ReverseRoutesInstance.java"/>
 
 </suppressions>

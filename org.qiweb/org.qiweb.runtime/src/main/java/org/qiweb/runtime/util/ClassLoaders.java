@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,9 @@ import org.qiweb.api.util.Strings;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
 
+/**
+ * ClassLoader utilities.
+ */
 public final class ClassLoaders
 {
     private static final String TAB = "    ";
@@ -132,7 +135,10 @@ public final class ClassLoaders
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new QiWebException( "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(), ex );
+            throw new QiWebException(
+                "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(),
+                ex
+            );
         }
     }
 

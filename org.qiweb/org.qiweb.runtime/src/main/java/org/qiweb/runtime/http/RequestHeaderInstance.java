@@ -43,6 +43,9 @@ import static org.qiweb.api.util.Strings.isEmpty;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
 
+/**
+ * RequestHeader instance.
+ */
 public class RequestHeaderInstance
     implements RequestHeader
 {

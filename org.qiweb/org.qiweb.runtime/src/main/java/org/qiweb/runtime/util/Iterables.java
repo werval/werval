@@ -25,11 +25,11 @@ import java.util.NoSuchElementException;
 /**
  * Utilities to work with Iterables.
  */
-public class Iterables
+public final class Iterables
 {
     private static final Iterable EMPTY = new Iterable()
     {
-        Iterator iterator = new Iterator()
+        private final Iterator iterator = new Iterator()
         {
             @Override
             public boolean hasNext()
@@ -58,6 +58,7 @@ public class Iterables
 
     /**
      * @param <T> Parameterized item type
+     *
      * @return An empty iterable
      */
     @SuppressWarnings( "unchecked" )
@@ -67,8 +68,9 @@ public class Iterables
     }
 
     /**
-     * @param <T> Parameterized item type
+     * @param <T>      Parameterized item type
      * @param iterable Iterable
+     *
      * @return First item or null
      */
     public static <T> T first( Iterable<T> iterable )
@@ -79,6 +81,7 @@ public class Iterables
 
     /**
      * @param iterable Iterable
+     *
      * @return Number of items in the iterable
      */
     public static long count( Iterable<?> iterable )
@@ -92,9 +95,10 @@ public class Iterables
     }
 
     /**
-     * @param <T> Parameterized item type
-     * @param skip How many items to skip
+     * @param <T>      Parameterized item type
+     * @param skip     How many items to skip
      * @param iterable Iterable
+     *
      * @return An iterable starting after skipped items
      */
     public static <T> Iterable<T> skip( final int skip, final Iterable<T> iterable )
@@ -124,10 +128,11 @@ public class Iterables
     }
 
     /**
-     * @param <T> Parameterized item type
-     * @param <C> Parameterized collection type
+     * @param <T>        Parameterized item type
+     * @param <C>        Parameterized collection type
      * @param collection Collection to add to
-     * @param iterable Items to add to the given collection
+     * @param iterable   Items to add to the given collection
+     *
      * @return Given collection
      */
     public static <T, C extends Collection<T>> C addAll( C collection, Iterable<? extends T> iterable )
@@ -140,8 +145,9 @@ public class Iterables
     }
 
     /**
-     * @param <T> Parameterized item type
+     * @param <T>   Parameterized item type
      * @param items Items to turn in an Iterable
+     *
      * @return An Iterable of given items
      */
     @SuppressWarnings( "unchecked" )
@@ -151,8 +157,9 @@ public class Iterables
     }
 
     /**
-     * @param <T> Parameterized item type
+     * @param <T>      Parameterized item type
      * @param iterable Iterable
+     *
      * @return A new List with all items from the given iterable
      */
     public static <T> List<T> toList( Iterable<T> iterable )
@@ -163,5 +170,4 @@ public class Iterables
     private Iterables()
     {
     }
-
 }

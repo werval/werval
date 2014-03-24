@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,15 @@ import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.runtime.util.TypeResolver;
 
-@SuppressWarnings(
-     {
-        "PublicInnerClass",
-        "PackageVisibleInnerClass"
-    } )
+/**
+ * Parameter Binders instance.
+ */
 public final class ParameterBindersInstance
     implements ParameterBinders
 {
-
     /* package */ abstract static class StrictTypingParameterBinder<T>
         implements ParameterBinder<T>
     {
-
         static
         {
             // TODO Only disable TypeResolver cache when in DEV mode
@@ -47,13 +43,14 @@ public final class ParameterBindersInstance
         {
             return type.equals( TypeResolver.resolveArgument( getClass(), ParameterBinder.class ) );
         }
-
     }
 
+    /**
+     * String Parameter Binder.
+     */
     public static final class String
         extends StrictTypingParameterBinder<java.lang.String>
     {
-
         @Override
         public java.lang.String bind( java.lang.String name, java.lang.String value )
         {
@@ -65,13 +62,14 @@ public final class ParameterBindersInstance
         {
             return value;
         }
-
     }
 
+    /**
+     * Boolean Parameter Binder.
+     */
     public static final class Boolean
         extends StrictTypingParameterBinder<java.lang.Boolean>
     {
-
         @Override
         public java.lang.Boolean bind( java.lang.String name, java.lang.String value )
         {
@@ -83,13 +81,14 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
-
     }
 
+    /**
+     * Short Parameter Binder.
+     */
     public static final class Short
         extends StrictTypingParameterBinder<java.lang.Short>
     {
-
         @Override
         public java.lang.Short bind( java.lang.String name, java.lang.String value )
         {
@@ -108,13 +107,14 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
-
     }
 
+    /**
+     * Integer Parameter Binder.
+     */
     public static final class Integer
         extends StrictTypingParameterBinder<java.lang.Integer>
     {
-
         @Override
         public java.lang.Integer bind( java.lang.String name, java.lang.String value )
         {
@@ -133,13 +133,14 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
-
     }
 
+    /**
+     * Long Parameter Binder.
+     */
     public static final class Long
         extends StrictTypingParameterBinder<java.lang.Long>
     {
-
         @Override
         public java.lang.Long bind( java.lang.String name, java.lang.String value )
         {
@@ -158,13 +159,14 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
-
     }
 
+    /**
+     * Double Parameter Binder.
+     */
     public static final class Double
         extends StrictTypingParameterBinder<java.lang.Double>
     {
-
         @Override
         public java.lang.Double bind( java.lang.String name, java.lang.String value )
         {
@@ -183,13 +185,14 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
-
     }
 
+    /**
+     * Float Parameter Binder.
+     */
     public static final class Float
         extends StrictTypingParameterBinder<java.lang.Float>
     {
-
         @Override
         public java.lang.Float bind( java.lang.String name, java.lang.String value )
         {
@@ -208,13 +211,14 @@ public final class ParameterBindersInstance
         {
             return java.lang.String.valueOf( value );
         }
-
     }
 
+    /**
+     * BigInteger Parameter Binder.
+     */
     public static final class BigInteger
         extends StrictTypingParameterBinder<java.math.BigInteger>
     {
-
         @Override
         public java.math.BigInteger bind( java.lang.String name, java.lang.String value )
         {
@@ -233,13 +237,14 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
-
     }
 
+    /**
+     * BigDecimal Parameter Binder.
+     */
     public static final class BigDecimal
         extends StrictTypingParameterBinder<java.math.BigDecimal>
     {
-
         @Override
         public java.math.BigDecimal bind( java.lang.String name, java.lang.String value )
         {
@@ -258,13 +263,14 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
-
     }
 
+    /**
+     * UUID Parameter Binder.
+     */
     public static final class UUID
         extends StrictTypingParameterBinder<java.util.UUID>
     {
-
         @Override
         public java.util.UUID bind( java.lang.String name, java.lang.String value )
         {
@@ -283,13 +289,14 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
-
     }
 
+    /**
+     * URL Parameter Binder.
+     */
     public static final class URL
         extends StrictTypingParameterBinder<java.net.URL>
     {
-
         @Override
         public java.net.URL bind( java.lang.String name, java.lang.String value )
         {
@@ -308,13 +315,14 @@ public final class ParameterBindersInstance
         {
             return value.toString();
         }
-
     }
 
+    /**
+     * Class Parameter Binder.
+     */
     public static final class Class
         extends StrictTypingParameterBinder<java.lang.Class<?>>
     {
-
         @Override
         public java.lang.Class<?> bind( java.lang.String name, java.lang.String value )
         {
@@ -333,7 +341,6 @@ public final class ParameterBindersInstance
         {
             return value.getCanonicalName();
         }
-
     }
 
     private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
@@ -374,5 +381,4 @@ public final class ParameterBindersInstance
         }
         throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
     }
-
 }

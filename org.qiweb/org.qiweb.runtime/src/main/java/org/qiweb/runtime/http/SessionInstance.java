@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,10 +39,12 @@ import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_PATH;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_SECURE;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 
-public class SessionInstance
+/**
+ * Session instance.
+ */
+public final class SessionInstance
     implements Session
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( SessionInstance.class );
     private static final Pattern COOKIE_VALUE_PATTERN = Pattern.compile( "\u0000([^:]*):([^\u0000]*)\u0000" );
     private final Config config;
@@ -166,5 +168,4 @@ public class SessionInstance
             signedCookieValue,
             config.bool( APP_SESSION_COOKIE_HTTPONLY ) );
     }
-
 }

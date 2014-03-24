@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,9 @@ import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.runtime.filters.FilterChainInstance.FilterChainControllerTail;
 
+/**
+ * FilterChain Factory.
+ */
 public class FilterChainFactory
 {
     public FilterChain buildFilterChain( Application app, Global global, Context context )
@@ -43,7 +46,9 @@ public class FilterChainFactory
         return buildFilterChain( app, global, filtersStack, context );
     }
 
-    private FilterChain buildFilterChain( Application app, Global global, Stack<Class<? extends Filter>> filters, Context context )
+    private FilterChain buildFilterChain(
+        Application app, Global global, Stack<Class<? extends Filter>> filters, Context context
+    )
     {
         if( filters.isEmpty() )
         {
@@ -51,7 +56,12 @@ public class FilterChainFactory
         }
         else
         {
-            return new FilterChainInstance( app, global, filters.pop(), buildFilterChain( app, global, filters, context ) );
+            return new FilterChainInstance(
+                app,
+                global,
+                filters.pop(),
+                buildFilterChain( app, global, filters, context )
+            );
         }
     }
 

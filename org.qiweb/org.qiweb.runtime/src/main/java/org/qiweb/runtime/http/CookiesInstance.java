@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,9 @@ import org.qiweb.runtime.util.Comparators;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 
+/**
+ * Cookies instance.
+ */
 public class CookiesInstance
     implements MutableCookies
 {
@@ -121,10 +124,12 @@ public class CookiesInstance
         return cookies.toString();
     }
 
+    /**
+     * Cookie instance.
+     */
     public static class CookieInstance
         implements Cookie
     {
-
         private final String name;
         private final String path;
         private final String domain;
@@ -181,7 +186,11 @@ public class CookiesInstance
         @Override
         public String toString()
         {
-            return "Cookie{" + "name=" + name + ", path=" + path + ", domain=" + domain + ", secure=" + secure + ", value=" + value + ", httpOnly=" + httpOnly + '}';
+            return "Cookie{"
+                   + "name=" + name + ", path=" + path + ", domain=" + domain + ", secure=" + secure
+                   + ", value=" + value
+                   + ", httpOnly=" + httpOnly
+                   + '}';
         }
     }
 }
