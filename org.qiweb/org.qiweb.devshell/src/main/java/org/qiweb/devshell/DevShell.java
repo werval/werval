@@ -247,7 +247,9 @@ public final class DevShell
     /**
      * Stop DevShell.
      */
-    public void stop()
+    // Can be called concurrently by client code and automatic JVM shutdown hook.
+    // This is why this method is synchronized and disposeRealm() check classWorld for null.
+    public synchronized void stop()
     {
         try
         {
@@ -306,10 +308,13 @@ public final class DevShell
     private void disposeRealms()
         throws NoSuchRealmException
     {
-        classWorld.disposeRealm( DEVSHELL_REALM_ID );
-        classWorld.disposeRealm( DEPENDENCIES_REALM_ID );
-        classWorld.disposeRealm( currentApplicationRealmID() );
-        classWorld = null;
+        if( classWorld != null )
+        {
+            classWorld.disposeRealm( DEVSHELL_REALM_ID );
+            classWorld.disposeRealm( DEPENDENCIES_REALM_ID );
+            classWorld.disposeRealm( currentApplicationRealmID() );
+            classWorld = null;
+        }
     }
 
     private void printRealms()
