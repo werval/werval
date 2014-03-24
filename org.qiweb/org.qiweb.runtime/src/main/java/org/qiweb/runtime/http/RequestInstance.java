@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@ package org.qiweb.runtime.http;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
@@ -54,7 +55,7 @@ public class RequestInstance
     }
 
     @Override
-    public String method()
+    public Method method()
     {
         return header.method();
     }

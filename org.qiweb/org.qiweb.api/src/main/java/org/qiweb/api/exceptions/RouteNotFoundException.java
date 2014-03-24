@@ -15,6 +15,8 @@
  */
 package org.qiweb.api.exceptions;
 
+import org.qiweb.api.http.Method;
+
 /**
  * Thrown when no satisfying Route found.
  */
@@ -22,7 +24,7 @@ public class RouteNotFoundException
     extends QiWebException
 {
     private static final long serialVersionUID = 1L;
-    private final String method;
+    private final Method method;
     private final String uri;
 
     /**
@@ -31,7 +33,7 @@ public class RouteNotFoundException
      * @param method HTTP method
      * @param uri    HTTP URI
      */
-    public RouteNotFoundException( String method, String uri )
+    public RouteNotFoundException( Method method, String uri )
     {
         super( "No route for " + method + " " + uri );
         this.method = method;
@@ -41,7 +43,7 @@ public class RouteNotFoundException
     /**
      * @return HTTP method
      */
-    public final String method()
+    public final Method method()
     {
         return method;
     }

@@ -44,7 +44,7 @@ public interface RequestHeader
     /**
      * @return The HTTP Request Method
      */
-    String method();
+    Method method();
 
     /**
      * @return The HTTP Request URI, URL encoded

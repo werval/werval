@@ -16,6 +16,7 @@
 package org.qiweb.api.routes;
 
 import java.util.Map;
+import org.qiweb.api.http.Method;
 
 /**
  * Mutable Reverse Route.
@@ -25,7 +26,7 @@ public interface ReverseRoute
     /**
      * @return HTTP Method
      */
-    String method();
+    Method method();
 
     /**
      * @return HTTP URI

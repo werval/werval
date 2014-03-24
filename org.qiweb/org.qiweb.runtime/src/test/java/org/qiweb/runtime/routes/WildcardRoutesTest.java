@@ -31,6 +31,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.http.Method.GET;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.api.routes.RouteBuilder.p;
 
@@ -137,7 +138,7 @@ public class WildcardRoutesTest
             "abc",
             "127.0.0.1",
             HTTP_1_1,
-            "GET",
+            GET,
             "http://localhost" + path,
             path,
             QueryStringInstance.EMPTY,

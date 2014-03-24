@@ -15,7 +15,6 @@
  */
 package org.qiweb.runtime.routes;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,12 +28,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.exceptions.ParameterBinderException;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.routes.ControllerParams;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.ControllerParams;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
@@ -49,16 +49,16 @@ import static org.qiweb.runtime.util.Iterables.toList;
     implements Route
 {
 
-    private final String httpMethod;
+    private final Method httpMethod;
     private final String path;
     private final Class<?> controllerType;
-    private Method controllerMethod;
+    private java.lang.reflect.Method controllerMethod;
     private final String controllerMethodName;
     private final ControllerParams controllerParams;
     private final Set<String> modifiers;
     private final Pattern pathRegex;
 
-    /* package */ RouteInstance( String httpMethod, String path,
+    /* package */ RouteInstance( Method httpMethod, String path,
                    Class<?> controllerType,
                    String controllerMethodName,
                    ControllerParams controllerParams,
@@ -198,7 +198,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
     }
 
     @Override
-    public String httpMethod()
+    public Method httpMethod()
     {
         return httpMethod;
     }
@@ -216,7 +216,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
     }
 
     @Override
-    public Method controllerMethod()
+    public java.lang.reflect.Method controllerMethod()
     {
         return controllerMethod;
     }

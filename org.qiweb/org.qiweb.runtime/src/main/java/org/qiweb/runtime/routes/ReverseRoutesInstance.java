@@ -16,7 +16,6 @@
 package org.qiweb.runtime.routes;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,6 +26,7 @@ import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -34,8 +34,16 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.dev.DevShellRoutesProvider;
 
 import static org.qiweb.api.Mode.DEV;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.http.Method.CONNECT;
+import static org.qiweb.api.http.Method.DELETE;
+import static org.qiweb.api.http.Method.GET;
+import static org.qiweb.api.http.Method.HEAD;
+import static org.qiweb.api.http.Method.OPTIONS;
+import static org.qiweb.api.http.Method.PATCH;
+import static org.qiweb.api.http.Method.POST;
+import static org.qiweb.api.http.Method.PUT;
+import static org.qiweb.api.http.Method.TRACE;
 
 public class ReverseRoutesInstance
     implements ReverseRoutes
@@ -50,49 +58,67 @@ public class ReverseRoutesInstance
     @Override
     public <T> ReverseRoute options( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "OPTIONS", controllerType, callRecorder );
+        return of( OPTIONS, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute get( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "GET", controllerType, callRecorder );
+        return of( GET, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute head( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "HEAD", controllerType, callRecorder );
+        return of( HEAD, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute post( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "POST", controllerType, callRecorder );
+        return of( POST, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute put( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "PUT", controllerType, callRecorder );
+        return of( PUT, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute delete( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "DELETE", controllerType, callRecorder );
+        return of( DELETE, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute trace( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        return of( "TRACE", controllerType, callRecorder );
+        return of( TRACE, controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute patch( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( PATCH, controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute connect( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        return of( CONNECT, controllerType, callRecorder );
     }
 
     @Override
     public <T> ReverseRoute of( String httpMethod, Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
     {
-        ensureNotEmpty( "HTTP method", httpMethod );
+        return of( Method.valueOf( httpMethod ), controllerType, callRecorder );
+    }
+
+    @Override
+    public <T> ReverseRoute of( Method httpMethod, Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
+    {
+        ensureNotNull( "HTTP method", httpMethod );
         ensureNotNull( "Controller Type", controllerType );
         ensureNotNull( "Call Recorder", callRecorder );
 
@@ -179,14 +205,15 @@ public class ReverseRoutesInstance
         private Object[] paramsValues;
 
         @Override
-        public Object invoke( Object proxy, Method controllerMethod, Method proceed, Object[] args )
+        public Object invoke( Object proxy, java.lang.reflect.Method controllerMethod,
+                              java.lang.reflect.Method proceed, Object[] args )
             throws Throwable
         {
             return invoke( proxy, controllerMethod, args );
         }
 
         @Override
-        public Object invoke( Object proxy, Method controllerMethod, Object[] args )
+        public Object invoke( Object proxy, java.lang.reflect.Method controllerMethod, Object[] args )
             throws Throwable
         {
             methodName = controllerMethod.getName();

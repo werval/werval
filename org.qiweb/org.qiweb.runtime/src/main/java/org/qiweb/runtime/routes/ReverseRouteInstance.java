@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.qiweb.api.context.CurrentContext;
 import org.qiweb.api.exceptions.IllegalArguments;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.util.Strings;
@@ -35,13 +36,13 @@ import org.qiweb.runtime.util.Comparators;
 public class ReverseRouteInstance
     implements ReverseRoute
 {
-    private final String method;
+    private final Method method;
     private final String uri;
     private final Charset charset;
     private final Map<String, List<String>> appendedQueryString = new TreeMap<>( Comparators.LOWER_CASE );
     private String fragmentIdentifier;
 
-    public ReverseRouteInstance( String method, String uri, Charset charset )
+    public ReverseRouteInstance( Method method, String uri, Charset charset )
     {
         this.method = method;
         this.uri = uri;
@@ -49,7 +50,7 @@ public class ReverseRouteInstance
     }
 
     @Override
-    public String method()
+    public Method method()
     {
         return method;
     }

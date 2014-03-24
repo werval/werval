@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
@@ -96,7 +97,7 @@ public class RequestHeaderInstance
     private final boolean xffCheckProxies;
     private final List<String> xffTrustedProxies;
     private final ProtocolVersion version;
-    private final String method;
+    private final Method method;
     private final String uri;
     private final String path;
     private final QueryString queryString;
@@ -105,7 +106,7 @@ public class RequestHeaderInstance
     private final Map<String, Object> parameters = new LinkedHashMap<>();
 
     public RequestHeaderInstance( String identity, String remoteSocketAddress,
-                                  ProtocolVersion version, String method,
+                                  ProtocolVersion version, Method method,
                                   String uri, String path, QueryString queryString,
                                   Headers headers, Cookies cookies )
     {
@@ -120,7 +121,7 @@ public class RequestHeaderInstance
 
     public RequestHeaderInstance( String identity, String remoteSocketAddress,
                                   boolean xffEnabled, boolean xffCheckProxies, List<String> xffTrustedProxies,
-                                  ProtocolVersion version, String method,
+                                  ProtocolVersion version, Method method,
                                   String uri, String path, QueryString queryString,
                                   Headers headers, Cookies cookies )
     {
@@ -151,7 +152,7 @@ public class RequestHeaderInstance
     }
 
     @Override
-    public String method()
+    public Method method()
     {
         return method;
     }

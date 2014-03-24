@@ -15,7 +15,6 @@
  */
 package org.qiweb.runtime.routes;
 
-import org.qiweb.api.routes.ControllerParams;
 import com.acme.app.FakeController;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +26,10 @@ import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.routes.ControllerParams;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
 import org.qiweb.api.routes.Routes;
@@ -42,6 +43,8 @@ import org.qiweb.runtime.http.RequestHeaderInstance;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.http.Method.GET;
+import static org.qiweb.api.http.Method.POST;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.api.routes.RouteBuilder.p;
 import static org.qiweb.api.util.Charsets.UTF_8;
@@ -57,7 +60,7 @@ public class RoutesTest
     @Test
     public void givenRoutesBuildFromCodeWhenToStringExpectCorrectOutput()
     {
-        Route route = new RouteBuilderInstance().route( "GET" )
+        Route route = new RouteBuilderInstance().route( GET )
             .on( "/foo/:id/bar/:slug" )
             .to( FakeController.class, c -> c.another( p( "id", String.class ), p( "slug", Integer.class ) ) )
             .modifiedBy( "service", "foo" )
@@ -77,17 +80,17 @@ public class RoutesTest
     {
         // Simple routes
         SIMPLE_1( "GET / com.acme.app.FakeController.test()",
-                  "GET", "/", FakeController.class, "test" ),
+                  GET, "/", FakeController.class, "test" ),
         SIMPLE_2( "  POST    /foo/bar    com.acme.app.FakeController.test()",
-                  "POST", "/foo/bar", FakeController.class, "test" ),
+                  POST, "/foo/bar", FakeController.class, "test" ),
         // Modifiers
         MODIFIER_TRANSIENT( "GET / com.acme.app.FakeController.test() transient",
-                            "GET", "/", FakeController.class, "test", Arrays.asList( "transient" ) ),
+                            GET, "/", FakeController.class, "test", Arrays.asList( "transient" ) ),
         MODIFIER_SERVICE( "GET / com.acme.app.FakeController.test() service",
-                          "GET", "/", FakeController.class, "test", Arrays.asList( "service" ) ),
+                          GET, "/", FakeController.class, "test", Arrays.asList( "service" ) ),
         // Controller params
         CONTROLLER_PARAMS_1( "GET /foo/:id/bar/:slug com.acme.app.FakeController.another(String    id ,Integer slug   )",
-                             "GET", "/foo/:id/bar/:slug", FakeController.class, "another",
+                             GET, "/foo/:id/bar/:slug", FakeController.class, "another",
                              new RoutesToTest.Params()
                              {
                                  @Override
@@ -100,7 +103,7 @@ public class RoutesTest
                                  }
                              } ),
         CONTROLLER_PARAMS_2( "GET /foo/bar/:slug/cathedral/:id com.acme.app.FakeController.another( String id, Integer slug )",
-                             "GET", "/foo/bar/:slug/cathedral/:id", FakeController.class, "another",
+                             GET, "/foo/bar/:slug/cathedral/:id", FakeController.class, "another",
                              new RoutesToTest.Params()
                              {
                                  @Override
@@ -114,7 +117,7 @@ public class RoutesTest
                              } ),
         // Wildcards
         WILDCARDS_1( "GET /static/*path com.acme.app.FakeController.wild( String path )",
-                     "GET", "/static/*path", FakeController.class, "wild",
+                     GET, "/static/*path", FakeController.class, "wild",
                      new RoutesToTest.Params()
                      {
                          @Override
@@ -126,7 +129,7 @@ public class RoutesTest
                          }
                      } ),
         WILDCARDS_2( "GET /d/*path/:slug com.acme.app.FakeController.another( String path, Integer slug )",
-                     "GET", "/d/*path/:slug", FakeController.class, "another",
+                     GET, "/d/*path/:slug", FakeController.class, "another",
                      new RoutesToTest.Params()
                      {
                          @Override
@@ -140,7 +143,7 @@ public class RoutesTest
                      } ),
         // Query string
         QUERY_STRING_1( "GET /nothing/at/all com.acme.app.FakeController.another( String id, Integer slug )",
-                        "GET", "/nothing/at/all", FakeController.class, "another",
+                        GET, "/nothing/at/all", FakeController.class, "another",
                         new RoutesToTest.Params()
                         {
                             @Override
@@ -153,7 +156,7 @@ public class RoutesTest
                             }
                         } ),
         QUERY_STRING_2( "GET /foo/:id/bar com.acme.app.FakeController.another( String id, Integer slug )",
-                        "GET", "/foo/:id/bar", FakeController.class, "another",
+                        GET, "/foo/:id/bar", FakeController.class, "another",
                         new RoutesToTest.Params()
                         {
                             @Override
@@ -167,9 +170,9 @@ public class RoutesTest
                         } ),
         // No parenthesis
         NO_PARENTHESIS_1( "  POST    /foo/bar    com.acme.app.FakeController.test",
-                          "POST", "/foo/bar", FakeController.class, "test" ),
+                          POST, "/foo/bar", FakeController.class, "test" ),
         NO_PARENTHESIS_2( "  POST    /foo/bar    com.acme.app.FakeController.test transient",
-                          "POST", "/foo/bar", FakeController.class, "test", Arrays.asList( "transient" ) ),
+                          POST, "/foo/bar", FakeController.class, "test", Arrays.asList( "transient" ) ),
         // Wrong route strings
         WRONG_STRING_1( "WRONG /route",
                         IllegalRouteException.class ),
@@ -210,7 +213,7 @@ public class RoutesTest
                          IllegalRouteException.class );
         // Members
         private String routeString;
-        private String httpMethod;
+        private Method httpMethod;
         private String path;
         private Class<?> controllerType;
         private String controllerMethod;
@@ -224,7 +227,7 @@ public class RoutesTest
             this.expectedException = expectedException;
         }
 
-        private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod )
+        private RoutesToTest( String routeString, Method httpMethod, String path, Class<?> controllerType, String controllerMethod )
         {
             this.routeString = routeString;
             this.httpMethod = httpMethod;
@@ -235,13 +238,13 @@ public class RoutesTest
             this.modifiers = Collections.emptyList();
         }
 
-        private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, List<String> modifiers )
+        private RoutesToTest( String routeString, Method httpMethod, String path, Class<?> controllerType, String controllerMethod, List<String> modifiers )
         {
             this( routeString, httpMethod, path, controllerType, controllerMethod );
             this.modifiers = modifiers;
         }
 
-        private RoutesToTest( String routeString, String httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
+        private RoutesToTest( String routeString, Method httpMethod, String path, Class<?> controllerType, String controllerMethod, RoutesToTest.Params params )
         {
             this( routeString, httpMethod, path, controllerType, controllerMethod );
             this.parameters = params.params();
@@ -333,7 +336,7 @@ public class RoutesTest
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
         return new RequestHeaderInstance(
             "identity", "127.0.0.1", HTTP_1_1,
-            "GET", requestUri, requestPath,
+            GET, requestUri, requestPath,
             queryString, new HeadersInstance(), new CookiesInstance()
         );
     }

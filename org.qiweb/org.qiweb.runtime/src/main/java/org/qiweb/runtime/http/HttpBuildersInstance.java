@@ -22,6 +22,7 @@ import org.qiweb.api.Config;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
@@ -34,6 +35,15 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
+import static org.qiweb.api.http.Method.CONNECT;
+import static org.qiweb.api.http.Method.DELETE;
+import static org.qiweb.api.http.Method.GET;
+import static org.qiweb.api.http.Method.HEAD;
+import static org.qiweb.api.http.Method.OPTIONS;
+import static org.qiweb.api.http.Method.PATCH;
+import static org.qiweb.api.http.Method.POST;
+import static org.qiweb.api.http.Method.PUT;
+import static org.qiweb.api.http.Method.TRACE;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
@@ -71,7 +81,7 @@ public class HttpBuildersInstance
         private final String identity;
         private final String remoteSocketAddress;
         private final ProtocolVersion version;
-        private final String method;
+        private final Method method;
         private final String uri;
         private final Headers headers;
         private final Cookies cookies;
@@ -82,7 +92,7 @@ public class HttpBuildersInstance
         private RequestBuilderInstance(
             Config config, Charset defaultCharset,
             String identity, String remoteSocketAddress,
-            ProtocolVersion version, String method, String uri,
+            ProtocolVersion version, Method method, String uri,
             Headers headers, Cookies cookies,
             ByteSource bodyBytes,
             Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads
@@ -140,6 +150,17 @@ public class HttpBuildersInstance
         {
             return new RequestBuilderInstance(
                 config, defaultCharset,
+                identity, remoteSocketAddress, version, Method.valueOf( method ), uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public RequestBuilder method( Method method )
+        {
+            return new RequestBuilderInstance(
+                config, defaultCharset,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -155,6 +176,60 @@ public class HttpBuildersInstance
                 headers, cookies,
                 bodyBytes, attributes, uploads
             );
+        }
+
+        @Override
+        public RequestBuilder get( String uri )
+        {
+            return method( GET ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder head( String uri )
+        {
+            return method( HEAD ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder options( String uri )
+        {
+            return method( OPTIONS ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder trace( String uri )
+        {
+            return method( TRACE ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder connect( String uri )
+        {
+            return method( CONNECT ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder put( String uri )
+        {
+            return method( PUT ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder post( String uri )
+        {
+            return method( POST ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder patch( String uri )
+        {
+            return method( PATCH ).uri( uri );
+        }
+
+        @Override
+        public RequestBuilder delete( String uri )
+        {
+            return method( DELETE ).uri( uri );
         }
 
         @Override
@@ -212,7 +287,7 @@ public class HttpBuildersInstance
         {
             ensureNotEmpty( "identity", identity );
             ensureNotNull( "version", version );
-            ensureNotEmpty( "method", method );
+            ensureNotNull( "method", method );
             ensureNotEmpty( "uri", uri );
             ensureNotNull( "headers", headers );
             ensureNotNull( "cookies", cookies );
@@ -241,7 +316,9 @@ public class HttpBuildersInstance
                     config.stringList( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED ),
                     version,
                     // HTTP Method Override
-                    headers.has( X_HTTP_METHOD_OVERRIDE ) ? headers.singleValue( X_HTTP_METHOD_OVERRIDE ) : method,
+                    headers.has( X_HTTP_METHOD_OVERRIDE )
+                    ? Method.valueOf( headers.singleValue( X_HTTP_METHOD_OVERRIDE ) )
+                    : method,
                     // Path & QueryString parsed from URI
                     uri, path, queryString,
                     // Headers & Cookies

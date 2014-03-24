@@ -20,6 +20,7 @@ import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
@@ -96,6 +97,17 @@ public interface HttpBuilders
         RequestBuilder method( String method );
 
         /**
+         * HTTP method.
+         *
+         * Mandatory.
+         *
+         * @param method HTTP method
+         *
+         * @return A new builder with the method set
+         */
+        RequestBuilder method( Method method );
+
+        /**
          * URI.
          *
          * Mandatory.
@@ -105,6 +117,87 @@ public interface HttpBuilders
          * @return A new builder with the URI set
          */
         RequestBuilder uri( String uri );
+
+        /**
+         * HTTP GET method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder get( String uri );
+
+        /**
+         * HTTP HEAD method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder head( String uri );
+
+        /**
+         * HTTP OPTIONS method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder options( String uri );
+
+        /**
+         * HTTP TRACE method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder trace( String uri );
+
+        /**
+         * HTTP CONNECT method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder connect( String uri );
+
+        /**
+         * HTTP PUT method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder put( String uri );
+
+        /**
+         * HTTP POST method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder post( String uri );
+
+        /**
+         * HTTP PATCH method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder patch( String uri );
+
+        /**
+         * HTTP DELETE method on URI.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the HTTP method and URI set
+         */
+        RequestBuilder delete( String uri );
 
         /**
          * Request headers.

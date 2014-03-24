@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,23 @@
  */
 package org.qiweb.api.routes;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
 
 /**
  * Route.
- * <p>HTTP RequestHeader satisfiedBy.</p>
+ *
+ * HTTP RequestHeader satisfiedBy.
  */
 public interface Route
 {
     /**
      * @return HTTP Method
      */
-    String httpMethod();
+    Method httpMethod();
 
     /**
      * @return Path
@@ -45,7 +46,7 @@ public interface Route
     /**
      * @return Controller method
      */
-    Method controllerMethod();
+    java.lang.reflect.Method controllerMethod();
 
     /**
      * @return Controller method name
@@ -54,6 +55,7 @@ public interface Route
 
     /**
      * @param requestHeader Request header
+     *
      * @return TRUE if the Route is satisfied by the given request header, otherwise return FALSE
      */
     boolean satisfiedBy( RequestHeader requestHeader );
@@ -67,8 +69,9 @@ public interface Route
      * Bind route parameters from path and query string to a Map&lt;String,Object&gt;.
      *
      * @param parameterBinders Parameter binders
-     * @param path Path
-     * @param queryString Query String
+     * @param path             Path
+     * @param queryString      Query String
+     *
      * @return Map of bound parameters
      */
     Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path, QueryString queryString );
@@ -77,7 +80,8 @@ public interface Route
      * Unbind route URI (path and query string) from parameters values Map.
      *
      * @param parameterBinders Parameter binders
-     * @param parameters Parameters values Map
+     * @param parameters       Parameters values Map
+     *
      * @return String representation to a URI of this route with the given parameters values
      */
     String unbindParameters( ParameterBinders parameterBinders, Map<String, Object> parameters );

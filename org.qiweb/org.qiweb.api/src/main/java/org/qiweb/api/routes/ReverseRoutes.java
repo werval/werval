@@ -15,6 +15,8 @@
  */
 package org.qiweb.api.routes;
 
+import org.qiweb.api.http.Method;
+
 /**
  * Reverse Routes.
  */
@@ -112,6 +114,32 @@ public interface ReverseRoutes
     <T> ReverseRoute trace( Class<T> controllerType, ControllerCallRecorder<T> callRecorder );
 
     /**
+     * ReverseRoute for a PATCH method on a Controller call.
+     *
+     * @param <T>            Parameterized type of the Controller
+     * @param controllerType Controller Type
+     * @param callRecorder   Closure to call the target Controller Method
+     *
+     * @return a ReverseRoute
+     *
+     * @throws org.qiweb.api.exceptions.RouteNotFoundException if a corresponding {@literal Route} cannot be found
+     */
+    <T> ReverseRoute patch( Class<T> controllerType, ControllerCallRecorder<T> callRecorder );
+
+    /**
+     * ReverseRoute for a CONNECT method on a Controller call.
+     *
+     * @param <T>            Parameterized type of the Controller
+     * @param controllerType Controller Type
+     * @param callRecorder   Closure to call the target Controller Method
+     *
+     * @return a ReverseRoute
+     *
+     * @throws org.qiweb.api.exceptions.RouteNotFoundException if a corresponding {@literal Route} cannot be found
+     */
+    <T> ReverseRoute connect( Class<T> controllerType, ControllerCallRecorder<T> callRecorder );
+
+    /**
      * ReverseRoute for a given method on a Controller call.
      *
      * @param <T>            Parameterized type of the Controller
@@ -124,4 +152,18 @@ public interface ReverseRoutes
      * @throws org.qiweb.api.exceptions.RouteNotFoundException if a corresponding {@literal Route} cannot be found
      */
     <T> ReverseRoute of( String httpMethod, Class<T> controllerType, ControllerCallRecorder<T> callRecorder );
+
+    /**
+     * ReverseRoute for a given method on a Controller call.
+     *
+     * @param <T>            Parameterized type of the Controller
+     * @param httpMethod     HTTP method
+     * @param controllerType Controller Type
+     * @param callRecorder   Closure to call the target Controller Method
+     *
+     * @return a ReverseRoute
+     *
+     * @throws org.qiweb.api.exceptions.RouteNotFoundException if a corresponding {@literal Route} cannot be found
+     */
+    <T> ReverseRoute of( Method httpMethod, Class<T> controllerType, ControllerCallRecorder<T> callRecorder );
 }

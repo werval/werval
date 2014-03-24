@@ -16,7 +16,6 @@
 package org.qiweb.runtime.routes;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +30,7 @@ import javassist.util.proxy.ProxyFactory;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ControllerParams;
 import org.qiweb.api.routes.Route;
@@ -80,6 +80,12 @@ public class RouteBuilderInstance
     @Override
     public RouteDeclaration route( String httpMethod )
     {
+        return new RouteDeclarationInstance( Method.valueOf( httpMethod ), null, null, null, ControllerParams.EMPTY, EMPTY_SET );
+    }
+
+    @Override
+    public RouteDeclaration route( Method httpMethod )
+    {
         return new RouteDeclarationInstance( httpMethod, null, null, null, ControllerParams.EMPTY, EMPTY_SET );
     }
 
@@ -96,7 +102,7 @@ public class RouteBuilderInstance
     private static class RouteDeclarationInstance
         implements RouteDeclaration
     {
-        private final String httpMethod;
+        private final Method httpMethod;
         private final String path;
         private final Class<?> controllerType;
         private final String controllerMethodName;
@@ -104,7 +110,7 @@ public class RouteBuilderInstance
         private final Set<String> modifiers;
 
         public RouteDeclarationInstance(
-            String httpMethod,
+            Method httpMethod,
             String path,
             Class<?> controllerType, String controllerMethodName, ControllerParams controllerParams,
             Set<String> modifiers
@@ -122,7 +128,7 @@ public class RouteBuilderInstance
         public RouteDeclaration method( String httpMethod )
         {
             return new RouteDeclarationInstance(
-                httpMethod,
+                Method.valueOf( httpMethod ),
                 path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
@@ -156,7 +162,7 @@ public class RouteBuilderInstance
                     new InvocationHandler()
                     {
                         @Override
-                        public Object invoke( Object proxy, Method method, Object[] args )
+                        public Object invoke( Object proxy, java.lang.reflect.Method method, Object[] args )
                         {
                             methodNameHolder.set( method.getName() );
                             return null;
@@ -175,7 +181,9 @@ public class RouteBuilderInstance
                         new MethodHandler()
                         {
                             @Override
-                            public Object invoke( Object self, Method controllerMethod, Method proceed, Object[] args )
+                            public Object invoke( Object self, java.lang.reflect.Method controllerMethod,
+                                                  java.lang.reflect.Method proceed, Object[] args
+                            )
                             {
                                 methodNameHolder.set( controllerMethod.getName() );
                                 return null;
@@ -388,7 +396,7 @@ public class RouteBuilderInstance
 
                 // Create new Route instance
                 return new RouteInstance(
-                    httpMethod,
+                    Method.valueOf( httpMethod ),
                     path,
                     controllerType, controllerMethodName, controllerParams,
                     modifiers

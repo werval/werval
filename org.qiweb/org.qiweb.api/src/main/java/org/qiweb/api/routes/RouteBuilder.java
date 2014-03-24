@@ -16,6 +16,7 @@
 package org.qiweb.api.routes;
 
 import java.util.List;
+import org.qiweb.api.http.Method;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
 
 /**
@@ -68,6 +69,15 @@ public interface RouteBuilder
      * @return RouteDeclaration using the given HTTP method
      */
     RouteDeclaration route( String httpMethod );
+
+    /**
+     * Start a RouteDeclaration for a HTTP method.
+     *
+     * @param httpMethod HTTP method
+     *
+     * @return RouteDeclaration using the given HTTP method
+     */
+    RouteDeclaration route( Method httpMethod );
 
     /**
      * Parse Routes from Strings.
