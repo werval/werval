@@ -772,6 +772,6 @@ public final class ApplicationInstance
 
     private void configureHttpBuilders()
     {
-        httpBuilders = new HttpBuildersInstance( config );
+        httpBuilders = new HttpBuildersInstance( config, defaultCharset );
     }
 }

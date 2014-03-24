@@ -24,18 +24,21 @@ import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
-import org.qiweb.api.http.RequestBody;
-import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
+import org.qiweb.api.util.Strings;
+import org.qiweb.api.util.URLs;
 import org.qiweb.spi.http.HttpBuilders;
 
-import static java.util.Collections.emptyMap;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
-import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
+import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
+import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
 
 /**
  * HTTP API Objects Builders Instance.
@@ -44,281 +47,211 @@ public class HttpBuildersInstance
     implements HttpBuilders
 {
     private final Config config;
+    private final Charset defaultCharset;
 
-    public HttpBuildersInstance( Config config )
+    public HttpBuildersInstance( Config config, Charset defaultCharset )
     {
         this.config = config;
+        this.defaultCharset = defaultCharset;
     }
 
     @Override
-    public QueryStringBuilder newQueryStringBuilder()
+    public RequestBuilder newRequestBuilder()
     {
-        return new QueryStringBuilderInstance( config, null, null );
+        return new RequestBuilderInstance(
+            config, defaultCharset, null, null, null, null, null, null, null, null, null, null
+        );
     }
 
-    private static class QueryStringBuilderInstance
-        implements QueryStringBuilder
+    private static class RequestBuilderInstance
+        implements RequestBuilder
     {
         private final Config config;
-        private final String queryString;
-        private final Map<String, List<String>> parameters;
-
-        private QueryStringBuilderInstance( Config config, String queryString, Map<String, List<String>> parameters )
-        {
-            this.config = config;
-            this.queryString = queryString == null ? EMPTY : queryString;
-            this.parameters = parameters == null ? emptyMap() : parameters;
-        }
-
-        @Override
-        public QueryStringBuilder query( String queryString )
-        {
-            return new QueryStringBuilderInstance( config, queryString, parameters );
-        }
-
-        @Override
-        public QueryStringBuilder parameters( Map<String, List<String>> parameters )
-        {
-            return new QueryStringBuilderInstance( config, queryString, parameters );
-        }
-
-        @Override
-        public QueryString build()
-        {
-            if( !queryString.isEmpty() && !parameters.isEmpty() )
-            {
-                throw new IllegalStateException(
-                    "Cannot build a QueryString with both 'queryString' and 'parameters' set."
-                );
-            }
-            if( !queryString.isEmpty() )
-            {
-                return new QueryStringInstance( new QueryString.Decoder( queryString ).parameters() );
-            }
-            return new QueryStringInstance( parameters );
-        }
-    }
-
-    @Override
-    public HeadersBuilder newHeadersBuilder()
-    {
-        return new HeadersBuilderInstance( config, null );
-    }
-
-    private static class HeadersBuilderInstance
-        implements HeadersBuilder
-    {
-        private final Config config;
-        private final Map<String, List<String>> headers;
-
-        private HeadersBuilderInstance( Config config, Map<String, List<String>> headers )
-        {
-            this.config = config;
-            this.headers = headers == null ? emptyMap() : headers;
-        }
-
-        @Override
-        public HeadersBuilder headers( Map<String, List<String>> headers )
-        {
-            return new HeadersBuilderInstance( config, headers );
-        }
-
-        @Override
-        public Headers build()
-        {
-            return new HeadersInstance( headers );
-        }
-    }
-
-    @Override
-    public RequestHeaderBuilder newRequestHeaderBuilder()
-    {
-        return new RequestHeaderBuilderInstance( config, null, null, null, null, null, null, null, null, null );
-    }
-
-    private static class RequestHeaderBuilderInstance
-        implements RequestHeaderBuilder
-    {
-        private final Config config;
+        private final Charset defaultCharset;
         private final String identity;
         private final String remoteSocketAddress;
         private final ProtocolVersion version;
         private final String method;
         private final String uri;
-        private final String path;
-        private final QueryString queryString;
         private final Headers headers;
         private final Cookies cookies;
-
-        private RequestHeaderBuilderInstance(
-            Config config, String identity, String remoteSocketAddress,
-            ProtocolVersion version, String method, String uri, String path,
-            QueryString queryString, Headers headers, Cookies cookies
-        )
-        {
-            this.config = config;
-            this.identity = identity;
-            this.remoteSocketAddress = remoteSocketAddress;
-            this.version = version;
-            this.method = method;
-            this.uri = uri;
-            this.path = path;
-            this.queryString = queryString;
-            this.headers = headers;
-            this.cookies = cookies;
-        }
-
-        @Override
-        public RequestHeaderBuilder identifiedBy( String identity )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder remoteSocketAddress( String remoteSocketAddress )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder version( ProtocolVersion version )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder method( String method )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder uri( String uri )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder path( String path )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder queryString( QueryString queryString )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder headers( Headers headers )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeaderBuilder cookies( Cookies cookies )
-        {
-            return new RequestHeaderBuilderInstance(
-                config, identity, remoteSocketAddress, version, method, uri, path, queryString, headers, cookies
-            );
-        }
-
-        @Override
-        public RequestHeader build()
-        {
-            ensureNotEmpty( "identity", identity );
-            ensureNotEmpty( "remoteSocketAddress", remoteSocketAddress );
-            ensureNotNull( "version", version );
-            ensureNotEmpty( "method", method );
-            ensureNotEmpty( "uri", uri );
-            ensureNotEmpty( "path", path );
-            ensureNotNull( "queryString", queryString );
-            ensureNotNull( "headers", headers );
-            ensureNotNull( "cookies", cookies );
-            return new RequestHeaderInstance(
-                identity, remoteSocketAddress,
-                config.bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED ),
-                config.bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK ),
-                config.stringList( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED ),
-                version, method, uri, path, queryString, headers, cookies
-            );
-        }
-    }
-
-    @Override
-    public RequestBodyBuilder newRequestBodyBuilder()
-    {
-        return new RequestBodyBuilderInstance( config, null, null, null, null );
-    }
-
-    private static class RequestBodyBuilderInstance
-        implements RequestBodyBuilder
-    {
-        private final Config config;
-        private final Charset charset;
         private final ByteSource bodyBytes;
         private final Map<String, List<String>> attributes;
         private final Map<String, List<FormUploads.Upload>> uploads;
 
-        private RequestBodyBuilderInstance(
-            Config config,
-            Charset charset, ByteSource bodyBytes,
+        private RequestBuilderInstance(
+            Config config, Charset defaultCharset,
+            String identity, String remoteSocketAddress,
+            ProtocolVersion version, String method, String uri,
+            Headers headers, Cookies cookies,
+            ByteSource bodyBytes,
             Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads
         )
         {
             this.config = config;
-            this.charset = charset;
+            this.defaultCharset = defaultCharset;
+            this.identity = Strings.isEmpty( identity ) ? "NO_REQUEST_ID" : identity;
+            this.remoteSocketAddress = remoteSocketAddress;
+            this.version = version == null ? HTTP_1_1 : version;
+            this.method = method;
+            this.uri = uri;
+            this.headers = headers == null ? HeadersInstance.EMPTY : headers;
+            this.cookies = cookies == null ? CookiesInstance.EMPTY : cookies;
             this.bodyBytes = bodyBytes;
             this.attributes = attributes;
             this.uploads = uploads;
         }
 
         @Override
-        public RequestBodyBuilder charset( Charset charset )
+        public RequestBuilder identifiedBy( String identity )
         {
-            return new RequestBodyBuilderInstance( config, charset, bodyBytes, attributes, uploads );
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
         }
 
         @Override
-        public RequestBodyBuilder bytes( ByteSource bodyBytes )
+        public RequestBuilder remoteSocketAddress( String remoteSocketAddress )
         {
-            return new RequestBodyBuilderInstance( config, charset, bodyBytes, attributes, uploads );
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
         }
 
         @Override
-        public RequestBodyBuilder form( Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads )
+        public RequestBuilder version( ProtocolVersion version )
         {
-            return new RequestBodyBuilderInstance( config, charset, bodyBytes, attributes, uploads );
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
         }
 
         @Override
-        public RequestBody build()
+        public RequestBuilder method( String method )
         {
-            ensureNotNull( "charset", charset );
-            if( attributes != null || uploads != null )
-            {
-                // Form
-                return new RequestBodyInstance( charset, attributes, uploads );
-            }
-            // Bytes
-            return new RequestBodyInstance( charset, bodyBytes );
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public RequestBuilder uri( String uri )
+        {
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public RequestBuilder headers( Headers headers )
+        {
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public RequestBuilder headers( Map<String, List<String>> headers )
+        {
+            return headers( new HeadersInstance( headers ) );
+        }
+
+        @Override
+        public RequestBuilder cookies( Cookies cookies )
+        {
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public RequestBuilder bodyBytes( ByteSource bodyBytes )
+        {
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public RequestBuilder bodyForm( Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads )
+        {
+            return new RequestBuilderInstance(
+                config, defaultCharset,
+                identity, remoteSocketAddress, version, method, uri,
+                headers, cookies,
+                bodyBytes, attributes, uploads
+            );
+        }
+
+        @Override
+        public Request build()
+        {
+            ensureNotEmpty( "identity", identity );
+            ensureNotNull( "version", version );
+            ensureNotEmpty( "method", method );
+            ensureNotEmpty( "uri", uri );
+            ensureNotNull( "headers", headers );
+            ensureNotNull( "cookies", cookies );
+
+            // Parse Path & QueryString from URI
+            QueryString.Decoder decoder = new QueryString.Decoder( uri, defaultCharset );
+            String path = URLs.decode( decoder.path(), defaultCharset );
+            QueryString queryString = new QueryStringInstance( decoder.parameters() );
+
+            // Request charset
+            Charset requestCharset = headers.has( CONTENT_TYPE )
+                                     ? Charset.forName( extractCharset( headers.singleValue( CONTENT_TYPE ) ) )
+                                     : defaultCharset;
+
+            // Build Request
+            return new RequestInstance(
+                // Request Header
+                new RequestHeaderInstance(
+                    // Identity
+                    identity,
+                    // Remote Address can be null
+                    remoteSocketAddress,
+                    // X-Forwarded-For configuration
+                    config.bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED ),
+                    config.bool( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK ),
+                    config.stringList( QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED ),
+                    version,
+                    // HTTP Method Override
+                    headers.has( X_HTTP_METHOD_OVERRIDE ) ? headers.singleValue( X_HTTP_METHOD_OVERRIDE ) : method,
+                    // Path & QueryString parsed from URI
+                    uri, path, queryString,
+                    // Headers & Cookies
+                    headers, cookies
+                ),
+                // Request Body
+                ( attributes != null || uploads != null )
+                ? new RequestBodyInstance( requestCharset, attributes, uploads )
+                : new RequestBodyInstance( requestCharset, bodyBytes )
+            );
         }
     }
 }

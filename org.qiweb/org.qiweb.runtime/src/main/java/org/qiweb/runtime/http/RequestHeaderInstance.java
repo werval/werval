@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,10 +46,27 @@ public class RequestHeaderInstance
     implements RequestHeader
 {
     /**
+     * Extract Content-Type information from Content-Type string value removing options such as Charset.
+     *
+     * @param contentType Content-Type string value
+     *
+     * @return Extracted Content-Type or an empty String if absent
+     */
+    public static String extractContentType( String contentType )
+    {
+        if( isEmpty( contentType ) )
+        {
+            return EMPTY;
+        }
+        return contentType.split( ";" )[0].toLowerCase( US );
+    }
+
+    /**
      * Extract charset information from Content-Type string value.
      *
      * @param contentType Content-Type string value
-     * @return Extracted charset
+     *
+     * @return Extracted charset or an empty String if absent
      */
     public static String extractCharset( String contentType )
     {
@@ -72,6 +89,7 @@ public class RequestHeaderInstance
         }
         return EMPTY;
     }
+
     private final String identity;
     private final String remoteSocketAddress;
     private final boolean xffEnabled;
@@ -248,12 +266,7 @@ public class RequestHeaderInstance
     @Override
     public String contentType()
     {
-        String contentType = headers.singleValue( CONTENT_TYPE );
-        if( isEmpty( contentType ) )
-        {
-            return EMPTY;
-        }
-        return contentType.split( ";" )[0].toLowerCase( US );
+        return extractContentType( headers.singleValue( CONTENT_TYPE ) );
     }
 
     @Override

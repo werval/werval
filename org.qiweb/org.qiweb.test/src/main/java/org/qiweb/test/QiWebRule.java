@@ -94,18 +94,6 @@ public class QiWebRule
     }
 
     @Override
-    public RequestHeaderBuilder newRequestHeaderBuilder()
-    {
-        return qiweb.newRequestHeaderBuilder();
-    }
-
-    @Override
-    public RequestBodyBuilder newRequestBodyBuilder()
-    {
-        return qiweb.newRequestBodyBuilder();
-    }
-
-    @Override
     public RequestBuilder newRequestBuilder()
     {
         return qiweb.newRequestBuilder();

@@ -36,11 +36,9 @@ import java.math.BigDecimal;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.runtime.http.RequestInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
@@ -57,9 +55,8 @@ import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
-import static org.qiweb.server.netty.NettyHttpFactories.bodyOf;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
-import static org.qiweb.server.netty.NettyHttpFactories.requestHeaderOf;
+import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
 
 /**
  * Handle plain HTTP and WebSocket UPGRADE requests.
@@ -147,27 +144,16 @@ public final class HttpRequestRouterHandler
             devSpi.rebuild();
         }
 
-        // Parse RequestHeader
-        // Can throw exceptions
-        requestHeader = requestHeaderOf(
-            app.httpBuilders(),
-            requestIdentity,
-            nettyRequest,
-            remoteAddressOf( nettyContext.channel() ),
-            app.defaultCharset()
-        );
-
-        // Parse RequestBody
-        // Can throw exceptions
-        RequestBody requestBody = bodyOf(
-            app.httpBuilders(),
-            requestHeader,
-            nettyRequest,
-            app.defaultCharset()
-        );
-
         // Create Request Instance
-        Request request = new RequestInstance( requestHeader, requestBody );
+        // Can throw exceptions
+        Request request = requestOf(
+            app.defaultCharset(),
+            app.httpBuilders(),
+            remoteAddressOf( nettyContext.channel() ),
+            requestIdentity,
+            nettyRequest
+        );
+        requestHeader = request;
 
         // Handle Request
         Outcome outcome = app.handleRequest( request );
@@ -287,7 +273,7 @@ public final class HttpRequestRouterHandler
     /**
      * Apply Headers and Cookies into Netty HttpResponse.
      *
-     * @param response QiWeb ResponseHeader
+     * @param response      QiWeb ResponseHeader
      * @param nettyResponse Netty HttpResponse
      */
     private void applyResponseHeader( ResponseHeader response, HttpResponse nettyResponse )

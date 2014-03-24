@@ -15,16 +15,13 @@
  */
 package org.qiweb.spi.http;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.QueryString;
-import org.qiweb.api.http.RequestBody;
-import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
 
 /**
@@ -38,73 +35,131 @@ import org.qiweb.api.util.ByteSource;
  */
 public interface HttpBuilders
 {
-    QueryStringBuilder newQueryStringBuilder();
-
-    HeadersBuilder newHeadersBuilder();
-
-    RequestHeaderBuilder newRequestHeaderBuilder();
-
-    RequestBodyBuilder newRequestBodyBuilder();
+    /**
+     * Create a new Request Builder.
+     *
+     * HTTP Method and URI are mandatory.
+     *
+     * @return A newRequest Builder
+     */
+    RequestBuilder newRequestBuilder();
 
     /**
-     * QueryString Builder.
+     * Request Builder.
+     *
+     * HTTP Method and URI are mandatory.
      */
-    interface QueryStringBuilder
+    interface RequestBuilder
     {
-        QueryStringBuilder query( String queryString );
+        /**
+         * Request identity.
+         *
+         * Default to {@literal NO_REQUEST_ID}.
+         *
+         * @param identity Request identity
+         *
+         * @return A new builder with the request identity set
+         */
+        RequestBuilder identifiedBy( String identity );
 
-        QueryStringBuilder parameters( Map<String, List<String>> parameters );
+        /**
+         * Remote socket address.
+         *
+         * Optional.
+         *
+         * @param remoteSocketAddress Remote socket address
+         *
+         * @return A new builder with the remote socket address set
+         */
+        RequestBuilder remoteSocketAddress( String remoteSocketAddress );
 
-        QueryString build();
-    }
+        /**
+         * Protocol version.
+         *
+         * Default to {@link ProtocolVersion#HTTP_1_1}.
+         *
+         * @param version Protocol version
+         *
+         * @return A new builder with the protocol version set
+         */
+        RequestBuilder version( ProtocolVersion version );
 
-    /**
-     * Headers Builder.
-     */
-    interface HeadersBuilder
-    {
-        HeadersBuilder headers( Map<String, List<String>> headers );
+        /**
+         * HTTP method.
+         *
+         * Mandatory.
+         *
+         * @param method HTTP method
+         *
+         * @return A new builder with the method set
+         */
+        RequestBuilder method( String method );
 
-        Headers build();
-    }
+        /**
+         * URI.
+         *
+         * Mandatory.
+         *
+         * @param uri URI
+         *
+         * @return A new builder with the URI set
+         */
+        RequestBuilder uri( String uri );
 
-    /**
-     * RequestHeader Builder.
-     */
-    interface RequestHeaderBuilder
-    {
-        RequestHeaderBuilder identifiedBy( String identity );
+        /**
+         * Request headers.
+         *
+         * @param headers Request headers
+         *
+         * @return A new builder with the headers set
+         */
+        RequestBuilder headers( Headers headers );
 
-        RequestHeaderBuilder remoteSocketAddress( String remoteSocketAddress );
+        /**
+         * Request headers.
+         *
+         * @param headers Request headers
+         *
+         * @return A new builder with the headers set
+         */
+        RequestBuilder headers( Map<String, List<String>> headers );
 
-        RequestHeaderBuilder version( ProtocolVersion version );
+        /**
+         * Request cookies.
+         *
+         * @param cookies Request cookies
+         *
+         * @return A new builder with the cookies set
+         */
+        RequestBuilder cookies( Cookies cookies );
 
-        RequestHeaderBuilder method( String method );
+        /**
+         * Body bytes.
+         *
+         * @param bodyBytes Body bytes
+         *
+         * @return A new builder with the body set
+         */
+        RequestBuilder bodyBytes( ByteSource bodyBytes );
 
-        RequestHeaderBuilder uri( String uri );
+        /**
+         * Body form and uploads.
+         *
+         *
+         * @param attributes Form attributes
+         * @param uploads    Multipart uploads
+         *
+         * @return A new builder with the body set
+         */
+        RequestBuilder bodyForm( Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads );
 
-        RequestHeaderBuilder path( String path );
-
-        RequestHeaderBuilder queryString( QueryString queryString );
-
-        RequestHeaderBuilder headers( Headers headers );
-
-        RequestHeaderBuilder cookies( Cookies cookies );
-
-        RequestHeader build();
-    }
-
-    /**
-     * RequestBody Builder.
-     */
-    interface RequestBodyBuilder
-    {
-        RequestBodyBuilder charset( Charset charset );
-
-        RequestBodyBuilder bytes( ByteSource bodyBytes );
-
-        RequestBodyBuilder form( Map<String, List<String>> attributes, Map<String, List<FormUploads.Upload>> uploads );
-
-        RequestBody build();
+        /**
+         * Build a new Request.
+         *
+         * @return A new Request
+         *
+         * @throws IllegalArgumentException if the builder state is not appropriate
+         */
+        Request build();
     }
 }

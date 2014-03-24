@@ -21,7 +21,6 @@ import io.netty.handler.codec.http.DefaultCookie;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.FileUpload;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
@@ -39,24 +38,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads.Upload;
-import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.QueryString;
-import org.qiweb.api.http.RequestBody;
-import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
 import org.qiweb.api.util.Strings;
-import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
 import org.qiweb.spi.http.HttpBuilders;
-import org.qiweb.spi.http.HttpBuilders.RequestBodyBuilder;
+import org.qiweb.spi.http.HttpBuilders.RequestBuilder;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
@@ -67,8 +61,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
-import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
-import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
+import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
 
 /**
  * Factory methods used by the server.
@@ -90,62 +83,31 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         return inetRemoteAddress.getHostAddress();
     }
 
-    /* package */ static RequestHeader requestHeaderOf(
+    /* package */ static Request requestOf(
+        Charset defaultCharset,
         HttpBuilders builders,
-        String identity, HttpRequest request,
-        String remoteSocketAddress,
-        Charset defaultCharset
+        String remoteSocketAddress, String identity,
+        FullHttpRequest request
     )
     {
         ensureNotEmpty( "Request Identity", identity );
-        ensureNotNull( "Netty HttpRequest", request );
+        ensureNotNull( "Netty FullHttpRequest", request );
 
-        // Method
-        String method = request.getMethod().name();
-        if( request.headers().get( X_HTTP_METHOD_OVERRIDE ) != null )
-        {
-            method = request.headers().get( X_HTTP_METHOD_OVERRIDE );
-        }
+        RequestBuilder builder = builders.newRequestBuilder()
+            .identifiedBy( identity )
+            .remoteSocketAddress( remoteSocketAddress )
+            .version( ProtocolVersion.valueOf( request.getProtocolVersion().text() ) )
+            .method( request.getMethod().name() )
+            .uri( request.getUri() )
+            .headers( headersToMap( request.headers() ) )
+            .cookies( cookiesOf( request ) );
 
-        // Path and QueryString
-        String requestCharset = extractCharset( request.headers().get( CONTENT_TYPE ) );
-        Charset charset = Strings.isEmpty( requestCharset ) ? defaultCharset : Charset.forName( requestCharset );
-        QueryStringDecoder queryStringDecoder = new QueryStringDecoder( request.getUri(), charset );
-        String requestPath = URLs.decode( queryStringDecoder.path(), charset );
-        QueryString queryString = builders.newQueryStringBuilder().
-            parameters( queryStringDecoder.parameters() ).
-            build();
-
-        // Headers
-        Headers headers = builders.newHeadersBuilder().headers( headersToMap( request.headers() ) ).build();
-
-        // Cookies
-        Cookies cookies = cookiesOf( request );
-
-        return builders.newRequestHeaderBuilder().
-            identifiedBy( identity ).
-            remoteSocketAddress( remoteSocketAddress ).
-            version( ProtocolVersion.valueOf( request.getProtocolVersion().text() ) ).
-            method( method ).uri( request.getUri() ).path( requestPath ).
-            queryString( queryString ).headers( headers ).cookies( cookies ).build();
-    }
-
-    /* package */ static RequestBody bodyOf(
-        HttpBuilders builders,
-        RequestHeader requestHeader, FullHttpRequest request,
-        Charset defaultCharset
-    )
-    {
-        Charset requestCharset = requestHeader.charset().isEmpty()
-                                 ? defaultCharset
-                                 : Charset.forName( requestHeader.charset() );
-        RequestBodyBuilder bodyBuilder = builders.newRequestBodyBuilder().charset( requestCharset );
         if( request.content().readableBytes() > 0
             && ( POST.equals( request.getMethod() )
                  || PUT.equals( request.getMethod() )
                  || PATCH.equals( request.getMethod() ) ) )
         {
-            switch( requestHeader.contentType() )
+            switch( extractContentType( request.headers().get( CONTENT_TYPE ) ) )
             {
                 case APPLICATION_X_WWW_FORM_URLENCODED:
                 case MULTIPART_FORM_DATA:
@@ -185,7 +147,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
                                     break;
                             }
                         }
-                        bodyBuilder = bodyBuilder.form( attributes, uploads );
+                        builder = builder.bodyForm( attributes, uploads );
                         break;
                     }
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
@@ -195,11 +157,11 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
                     }
                 default:
                     ByteSource bodyBytes = new ByteBufByteSource( request.content() );
-                    bodyBuilder = bodyBuilder.bytes( bodyBytes );
+                    builder = builder.bodyBytes( bodyBytes );
                     break;
             }
         }
-        return bodyBuilder.build();
+        return builder.build();
     }
 
     private static Map<String, List<String>> headersToMap( HttpHeaders nettyHeaders )
@@ -224,6 +186,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
         Map<String, Cookie> cookies = new HashMap<>();
         // WARN Cookie parsed here from last Cookie header value but QiWeb Application ensure later that there is only
         // one Cookie header. Stable but inefficient.
+        // TODO Move the responsibility of Cookies parsing to the Application
         String cookieHeaderValue = nettyRequest.headers().get( COOKIE );
         if( !Strings.isEmpty( cookieHeaderValue ) )
         {

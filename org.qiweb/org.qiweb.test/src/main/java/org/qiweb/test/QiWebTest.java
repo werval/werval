@@ -89,18 +89,6 @@ public class QiWebTest
     }
 
     @Override
-    public RequestHeaderBuilder newRequestHeaderBuilder()
-    {
-        return app.httpBuilders().newRequestHeaderBuilder();
-    }
-
-    @Override
-    public RequestBodyBuilder newRequestBodyBuilder()
-    {
-        return app.httpBuilders().newRequestBodyBuilder();
-    }
-
-    @Override
     public RequestBuilder newRequestBuilder()
     {
         return app.httpBuilders().newRequestBuilder();
