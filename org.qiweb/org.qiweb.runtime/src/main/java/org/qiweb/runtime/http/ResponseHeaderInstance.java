@@ -22,7 +22,6 @@ import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Status;
 
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 
 /**
@@ -83,24 +82,6 @@ public class ResponseHeaderInstance
     public boolean isKeepAlive()
     {
         return KEEP_ALIVE.equalsIgnoreCase( headers.singleValue( CONNECTION ) );
-    }
-
-    @Override
-    public ResponseHeader withKeepAliveHeaders( boolean keepAliveWanted )
-    {
-        String connection = headers.singleValue( CONNECTION );
-        if( connection.isEmpty() )
-        {
-            if( status.statusClass().isForceClose() || !keepAliveWanted )
-            {
-                headers.withSingle( CONNECTION, CLOSE );
-            }
-            else
-            {
-                headers.withSingle( CONNECTION, KEEP_ALIVE );
-            }
-        }
-        return this;
     }
 
     @Override

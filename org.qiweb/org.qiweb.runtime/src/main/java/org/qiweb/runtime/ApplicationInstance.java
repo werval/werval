@@ -76,6 +76,7 @@ import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
+import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
@@ -625,10 +626,37 @@ public final class ApplicationInstance
     private Outcome finalizeOutcome( RequestHeader request, Outcome outcome )
     {
         // Apply Keep-Alive
-        outcome.responseHeader().withKeepAliveHeaders( request.isKeepAlive() );
+        applyKeepAlive( request, outcome );
         // Add X-QiWeb-Request-ID
         outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
         return outcome;
+    }
+
+    /**
+     * Apply Keep-Alive headers if needed.
+     *
+     * Do nothing if the Outcome already has a {@literal Connection} header.
+     * <p>
+     * If status is an error or unknown status, {@literal Connection} is set to {@literal Close} if protocol version
+     * use Keep-Alive by default or if request is not Keep-Alive.
+     * <p>
+     * Otherwise, set {@literal Connection} to {@link Keep-Alive} if protocol version use Keep-Alive by default
+     * or if request is Keep-Alive.
+     */
+    private void applyKeepAlive( RequestHeader request, Outcome outcome )
+    {
+        String connection = outcome.responseHeader().headers().singleValue( CONNECTION );
+        if( connection.isEmpty() )
+        {
+            if( outcome.responseHeader().status().statusClass().isForceClose() || !request.isKeepAlive() )
+            {
+                outcome.responseHeader().headers().withSingle( CONNECTION, CLOSE );
+            }
+            else
+            {
+                outcome.responseHeader().headers().withSingle( CONNECTION, KEEP_ALIVE );
+            }
+        }
     }
 
     // SPI
