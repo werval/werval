@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
 package org.qiweb.lib.controllers;
 
 import java.io.InputStream;
-import org.qiweb.api.Application;
 import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 import org.slf4j.Logger;
@@ -35,14 +34,17 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
  * Classpath Resources Controller.
- * <p>Always use chunked transfer encoding.</p>
- * <p>MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.</p>
- * <p>Log 404 at DEBUG level.</p>
- * <p>Log 200 at TRACE level.</p>
+ *
+ * Always use chunked transfer encoding.
+ * <p>
+ * MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.
+ * <p>
+ * Log 404 at DEBUG level.
+ * <p>
+ * Log 200 at TRACE level.
  */
 public class ClasspathResources
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( ClasspathResources.class );
     // No need for heading slash as we ask a ClassLoader instance for Resources
     // Would have been needed if we asked a Class instance for Resources
@@ -52,6 +54,7 @@ public class ClasspathResources
      * Serve static files from META-INF/resources in classpath.
      *
      * @param path Path of the requested resources, relative to META-INF/resources
+     *
      * @return A Chunked Outcome if found, 404 otherwise
      */
     public Outcome metainf( String path )
@@ -63,7 +66,8 @@ public class ClasspathResources
      * Serve static files from resources in classpath.
      *
      * @param basepath Base path of the requested resources, relative to the classpath root
-     * @param path Path of the requested resources, relative to the basePath parameter
+     * @param path     Path of the requested resources, relative to the basePath parameter
+     *
      * @return A Chunked Outcome if found, 404 otherwise
      */
     public Outcome resource( String basepath, String path )
@@ -73,8 +77,9 @@ public class ClasspathResources
 
     /**
      * Serve static files from resources in classpath.
-     * 
+     *
      * @param path Path of the requested resources, relative to the classpath root
+     *
      * @return A Chunked Outcome if found, 404 otherwise
      */
     public Outcome resource( String path )
@@ -141,5 +146,4 @@ public class ClasspathResources
         LOG.trace( "Will serve '{}' with mimetype '{}'", path, mimetype );
         return outcomes().ok().withBody( input ).build();
     }
-
 }
