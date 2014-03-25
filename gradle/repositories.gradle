@@ -1,6 +1,8 @@
 
-repositories {
-    mavenLocal();
-    mavenCentral();
-}
+def localRepository = new File( "$rootProject.projectDir.absolutePath/../repository" )
+if( !localRepository.exists() ) localRepository.mkdirs()
 
+repositories {
+	mavenCentral()
+    maven { url file( "$rootProject.projectDir.absolutePath/../repository" ) }
+}

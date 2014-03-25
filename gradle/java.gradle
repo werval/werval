@@ -241,12 +241,24 @@ artifacts {
 
 // Sign archives
 apply plugin: 'signing'
-signing {
-    required { version != "0" && !version.contains( "SNAPSHOT" ) }
-    sign configurations.archives
-}
+signing { sign configurations.archives }
+signArchives.onlyIf { version != "0" && !version.contains( "SNAPSHOT" ) }
 
-// Setup artifact publication
+// Install in local internal repository
+// Generated POM is minimal here as this repository is only used for inter-build dependencies
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        build( MavenPublication ) { from components.java }
+    }
+    repositories {
+        maven { name "Internal"; url "$rootProject.projectDir.absolutePath/../repository/" }
+    }
+}
+task finalizeInstall( dependsOn: "publishBuildPublicationToInternalRepository" )
+install.finalizedBy finalizeInstall
+
+// Setup remote artifact publication
 uploadArchives.doFirst {
     if( version == "0" )
     {

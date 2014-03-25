@@ -15,7 +15,7 @@ Create a `build.gradle` file at the application root with the following content:
 apply plugin: 'java' // <1>
 
 repositories {
-    // mavenLocal();   // <2>
+    maven { url "https://repo.codeartisans.org/qiweb" } // <2>
     mavenCentral(); // <3>
 }
 
@@ -41,8 +41,8 @@ mainClassName = 'org.qiweb.server.bootstrap.Main'    // <9>
 applicationName = 'hello-qiweb'             // <10>
 ----
 <1> Make this project a Java project
-<2> Declare Maven local repository (only if you build QiWeb from sources)
-<3> Declare Maven central repository
+<2> Declare QiWeb repository
+<3> Declare Maven Central repository
 <4> Add compile scope dependency to QiWeb API
 <5> Add compile scope dependency to QiWeb Standard Library
 <6> Add runtime scope dependency to QiWeb Runtime

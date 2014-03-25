@@ -7,12 +7,16 @@ apply plugin: 'sonar-runner'
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
+repositories {
+    maven { url "http://repo.gradle.org/gradle/libs-releases-local" }
+}
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.devshell:$version"
-    compile "org.qiweb:org.qiweb.gradle-tooling:$version"
     compile localGroovy()
     compile gradleApi()
+    compile libs.gradle_tooling
     
 }
 
@@ -37,9 +41,9 @@ sourceSets {
     }
 }
 dependencies {
-    gradleTestKitCompile "org.qiweb:org.qiweb.gradle-tooling:$version"
     gradleTestKitCompile localGroovy()
     gradleTestKitCompile gradleApi()
+    gradleTestKitCompile libs.gradle_tooling
     testCompile sourceSets.gradleTestKit.output
 }
 

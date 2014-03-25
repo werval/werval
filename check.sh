@@ -33,7 +33,6 @@ echo "Checked."
 
 # gradle plugin
 $FIGLET org.qiweb.gradle
-$GRADLE -b org.qiweb.gradle-tooling/build.gradle check install
 $GRADLE -b org.qiweb.gradle/build.gradle install check
 echo "Checked."
 

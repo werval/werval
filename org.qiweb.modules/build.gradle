@@ -26,6 +26,5 @@ subprojects {
         ext.name = "the original author or authors"
     }
     // JDK8_ASM5 // apply plugin: 'jacoco'
-    repositories { mavenLocal() }
 }
 

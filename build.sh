@@ -33,7 +33,6 @@ echo "Built."
 
 # gradle plugin
 $FIGLET org.qiweb.gradle
-$GRADLE -b org.qiweb.gradle-tooling/build.gradle install
 $GRADLE -b org.qiweb.gradle/build.gradle install
 echo "Built."
 
