@@ -9,7 +9,7 @@ dependencies {
 apply plugin: 'application'
 
 mainClassName = 'org.qiweb.cli.DamnSmallDevShell'
-applicationName = 'qiweb-cli'
+applicationName = 'qiweb'
 
 distZip {
     classifier = 'dist'
@@ -18,3 +18,8 @@ distZip {
 artifacts {
     archives distZip
 }
+
+// Uncomment to publish to QiWeb Local Repository
+// publishing { publications { cliDist( MavenPublication ) { artifact distZip } } }
+// task finalizeCliInstall( dependsOn: "publishCliDistPublicationToQiWebLocalRepository" )
+// install.finalizedBy finalizeCliInstall

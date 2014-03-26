@@ -2,6 +2,6 @@ QiWeb CLI Installation Instructions
 ===================================
 
 - Prepend the `bin` directory to your PATH
-- Use the `org.qiweb.cli` executable on UN*X
-- Use the `org.qiweb.cli.bat` executable on Windows
+- Use the `qiweb` executable on UN*X
+- Use the `qiweb.bat` executable on Windows
 
