@@ -1,0 +1,7 @@
+== Manual
+
+CAUTION: Work in progress!
+
+The QiWeb Manual is intended to be a comprehensive guide to the development kit.
+
+include::src/asciidoc/manual/manual.adoc[]

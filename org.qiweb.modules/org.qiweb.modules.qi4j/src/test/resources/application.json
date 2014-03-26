@@ -1,0 +1,17 @@
+
+{
+    "name": "Qi4j Application from JSON",
+    "layers": [
+        {
+            "name": "Layer 1",
+            "modules": [
+                {
+                    "name": "Module 1",
+                    "assemblers": [
+                        "org.qiweb.modules.qi4j.HelloWorldAssembler"
+                    ]
+                }
+            ]
+        }
+    ]
+}

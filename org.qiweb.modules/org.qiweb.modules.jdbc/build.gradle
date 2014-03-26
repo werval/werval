@@ -1,0 +1,12 @@
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:$version"
+    compile 'com.jolbox:bonecp:0.8.0.RELEASE'
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+
+    testRuntime project( ":org.qiweb.modules.jndi" )
+    testRuntime libs.h2
+
+}

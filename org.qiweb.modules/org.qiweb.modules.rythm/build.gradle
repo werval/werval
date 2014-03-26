@@ -1,0 +1,11 @@
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:$version"
+    compile 'org.rythmengine:rythm-engine:1.0-b10'
+    compile 'org.eclipse.jdt.core.compiler:ecj:4.3.1'
+    
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
+
+}

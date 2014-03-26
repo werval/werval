@@ -1,0 +1,10 @@
+
+dependencies {
+
+    compile project( ':org.qiweb.server.bootstrap' )
+    compile libs.junit
+    compile libs.logback
+
+    testCompile libs.rest_assured
+
+}

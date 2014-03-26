@@ -1,0 +1,9 @@
+
+.gradle
+.gradletasknamecache
+build
+target
+.nb-gradle
+.nb-gradle-properties
+repository
+

@@ -1,0 +1,9 @@
+
+dependencies {
+
+    compile project( ":org.qiweb.runtime" )
+    // TODO Remove me!
+    compile project( ":org.qiweb.server.netty" )
+    
+}
+

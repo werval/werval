@@ -1,0 +1,11 @@
+
+=== IDE Support
+
+QiWeb ne dépendant pas d'une chaine de construction en particulier, il suffit que votre IDE supporte celle que vous
+avez choisi.
+
+Coloration syntaxique, deux particularités:
+
+- le fichier de routes
+- les fichiers de configuration
+

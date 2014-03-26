@@ -1,0 +1,62 @@
+
+apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
+apply plugin: 'groovy'
+apply plugin: 'sonar-runner'
+
+// Gradle Groovy Compiler is not JDK8_ASM5 ready
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+repositories {
+    maven { url "http://repo.gradle.org/gradle/libs-releases-local" }
+}
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.devshell:$version"
+    compile localGroovy()
+    compile gradleApi()
+    compile libs.gradle_tooling
+    
+}
+
+sonarRunner {
+    sonarProperties {
+        // property "sonar.language", "grvy"
+    }
+}
+
+// Gradle Test Kit
+// https://github.com/alkemist/gradle-test-kit
+// Use the fetchGradleTestKit task to update the sourceset
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'org.ajoberstar:gradle-git:0.6.4' }
+}
+sourceSets {
+    gradleTestKit {
+        java        { srcDir 'src/gradle-test-kit/java' }
+        //groovy      { srcDir 'src/gradle-test-kit/groovy' }
+        //resources   { srcDir 'src/gradle-test-kit/resources' }
+    }
+}
+dependencies {
+    gradleTestKitCompile localGroovy()
+    gradleTestKitCompile gradleApi()
+    gradleTestKitCompile libs.gradle_tooling
+    testCompile sourceSets.gradleTestKit.output
+}
+
+task fetchGradleTestKit( type: org.ajoberstar.gradle.git.tasks.GitClone ) {
+    uri "https://github.com/alkemist/gradle-test-kit.git"
+    destinationPath "build/tmp/gradle-test-kit-repos"
+    cloneAllBranches false
+    branchesToClone "master"
+}
+fetchGradleTestKit.doLast {
+    copy {
+        from "build/tmp/gradle-test-kit-repos/src/main/java"
+        into "src/gradle-test-kit/java"
+    }
+}
+

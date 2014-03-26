@@ -1,0 +1,2 @@
+# StringTemplate Templating Engine Plugin
+

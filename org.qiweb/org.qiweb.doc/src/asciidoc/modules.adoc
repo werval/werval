@@ -1,0 +1,99 @@
+== Modules
+
+CAUTION: Work in progress!
+
+Modules contains non-core functionnality.
+Modules are simple JARs and can contain controllers, utility classes and QiWeb Plugins.
+
+NOTE: Modules presented here are maintained by the QiWeb team, documented, tested and evolve along the core SDK.
+At the end of this document, you'll find external modules maintained by the community.
+
+=== Standard Library
+
+`org.qiweb.lib`
+
+// ==== Default Controller
+// ==== META-INF Resources & WebJars
+// ==== Static Files
+
+//  ==== Array and Hash QueryString Parameters
+//
+//  Here comes the magic.
+//
+//  WARNING: All magic comes at a price, this one comes with unsafety. Make sure you really need this and understand what is
+//  implied.
+//
+//  Some frameworks allows using special syntax to pass hashes and arrays into a query string.
+//  The most well known of this kind must be
+//  http://guides.rubyonrails.org/action_controller_overview.html#hash-and-array-parameters[Ruby on Rails].
+//
+//  QiWeb implement support for similar behaviour. It is controlled by the `qiweb.http.query-string.array-parameters.*`
+//  configuration properties.
+//
+//  Here are the default values:
+//
+//      qiweb.http.query-string.array-n-hash.enabled = no
+//      qiweb.http.query-string.array-n-hash.multi-valued-policy = single
+//
+//  Valid values for `multi-valued-policy` are `last`, `first`, and `single`.
+//
+//  In short: `foo[]=bar&foo=bazar&foo[0]=cathedral`.
+//
+//  With the former example you'll get `foo = [ "cathedral", "bar", "bazar" ]`.
+//
+//      foo=bar&foo[]=bazar&foo[2]=awesome&foo[2]=tricky&foo[0]=cathedral
+//      # LAST
+//      foo = [ "cathedral", "bar", "tricky", "bazar ]
+//      # FIRST
+//      foo = [ "cathedral", "bar", "awesome", "bazar ]
+//      # SINGLE
+//      BAD REQUEST
+
+=== Guice Plugin
+
+`org.qiweb.modules.guice`
+
+=== JDBC Plugin
+
+`org.qiweb.modules.jdbc`
+
+=== JNDI Plugin
+
+`org.qiweb.modules.jndi`
+
+=== JPA Plugin
+
+`org.qiweb.modules.jpa`
+
+=== Qi4j Plugin
+
+`org.qiweb.modules.qi4j`
+
+=== Rythm Templating Engine
+
+`org.qiweb.modules.rythm`
+
+=== SMTP Plugin
+
+`org.qiweb.modules.smtp`
+
+=== Spring Plugin
+
+`org.qiweb.modules.spring`
+
+
+// === Web Forms
+// === JavaScript Reverse Routing
+// === Password Hashing
+// === Authentication System
+
+=== Community Modules
+
+NOTE: Community Modules are maintained by the community.
+It's the community responsibility to keep them documented, tested and up to date.
+The QiWeb Team makes no guarantee regarding their shape.
+Check their activity and codebase before using in production.
+
+// ==== DevMode Ant Tasks
+// 
+// Proof of concept, we don't use it, need a maintainer

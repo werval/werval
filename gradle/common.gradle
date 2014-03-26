@@ -1,0 +1,4 @@
+
+group = 'org.qiweb'
+version = System.properties.version ?: "0"
+description = group + " module"

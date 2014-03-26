@@ -1,0 +1,329 @@
+apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
+apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
+
+// Require JDK8 at build time, JRE8 at runtime
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// Adding dependencies here will add the dependencies to each subproject.
+dependencies {
+
+    testCompile libs.junit
+    testCompile libs.logback
+
+}
+
+// Create basic folder structure
+task createFolders(description: 'Creates the source folders if they do not exist.') doLast {
+    sourceSets*.allSource*.srcDirs*.each { File srcDir ->
+        if (!srcDir.isDirectory()) {
+            println "Creating source folder: ${srcDir}"
+            srcDir.mkdirs()
+        }
+    }
+}
+
+// Filter resources
+//afterEvaluate {
+//    configure( allProcessResourcesTasks() ) {
+//        filter( ReplaceTokens, tokens: [
+//                'build.version': project.version, 
+//                'build.gradleVersion': project.gradle.gradleVersion
+//            ] )
+//    }
+//}
+//def allProcessResourcesTasks() {
+//    sourceSets.all.processResourcesTaskName.collect {
+//        tasks[it]
+//    }
+//}
+
+// Generate Version Class
+apply plugin: VersionClass
+
+class VersionClass implements Plugin<Project>
+{
+    def void apply( Project project )
+    {
+        def generatedSrcDir = new File( project.buildDir, 'generated-src/version/java' )
+        def genVersionClassTask = project.task( 'genVersionClass' ) << {
+            def commit = "git rev-parse --short HEAD".execute().text.trim()
+            def dirtyProc = "git diff --no-ext-diff --quiet".execute()
+            dirtyProc.waitFor()
+            def dirty = dirtyProc.exitValue() != 0
+            def dateFormat = new java.text.SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US )
+            dateFormat.setTimeZone( TimeZone.getTimeZone( "GMT" ) )
+            def now = dateFormat.format( new Date() )
+            def outFile = new File( generatedSrcDir, project.name.replace( '.', '/' ) + "/BuildVersion.java" )
+            outFile.getParentFile().mkdirs()
+            outFile.write( """
+/*
+ * Copyright (c) 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package """ + project.name.replace( '-', '_' ) + """;
+
+/**
+ * Generated class that store the version derived from the build system.
+ */
+public interface BuildVersion
+{
+    /**
+     * The last commit hash from the git history, that is {@literal """ + commit + """}.
+     */
+    String COMMIT = \"""" + commit + """\";
+
+    /**
+     * True if they were local changes when built, that is {@literal """ + dirty + """}.
+     */
+    boolean DIRTY = """+ dirty + """;
+
+    /**
+     * The version of the project from the gradle build, that is {@literal """ + project.version + """}.
+     */
+    String VERSION = \"""" + project.version + """\";
+
+    /**
+     * The name of the project from the gradle build, that is {@literal """ + project.name + """}.
+     */
+    String NAME = \"""" + project.name + """\";
+
+    /**
+     * The group of the project from the gradle build, that is {@literal """ + project.group + """}.
+     */
+    String GROUP = \"""" + project.group + """\";
+
+    /**
+     * The date this file was generated, usually the last date that the project was modified,
+     * that is {@literal """ + now + """}.
+     */
+    String DATE = \"""" + now + """\";
+
+    /**
+     * The full details of the version, including the build date, that is
+     * {@literal """ + project.group + ":" + project.name + ":" + project.version + " " + commit + (dirty ? "(dirty) " : "") + " " + now + """}.
+     */
+    String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " "
+                              + COMMIT + " "
+                              + ( DIRTY ? "(dirty) " : "" ) + " "
+                              + DATE;
+}
+""" )
+        }
+        genVersionClassTask.outputs.files generatedSrcDir
+        project.getTasks().getByName( 'compileJava' ).dependsOn genVersionClassTask
+        project.sourceSets.main.java.srcDir generatedSrcDir
+    }
+}
+
+// Checkstyle setup
+apply plugin: 'checkstyle'
+checkstyle {
+    configFile = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-checks.xml" )
+    configProperties = [
+        suppressionsCommon: "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-suppressions.xml",
+        suppressionsCustom: "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml"
+    ]
+    ignoreFailures = System.getProperty( "ignoreCheckstyle" ) != null
+    showViolations = false
+    sourceSets = [ project.sourceSets.main ]
+    toolVersion = 5.7
+}
+task checkstyleMainHtmlReport {
+    def xsl = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/html-report.xsl" )
+    def reportDir = file( "$project.projectDir.absolutePath/build/reports/checkstyle" )
+    inputs.file xsl
+    inputs.dir reportDir
+    outputs.dir reportDir
+    doLast {
+        reportDir.eachFile {
+            if( it.name.endsWith( ".xml" ) ) {
+                def outfile = file( "$project.projectDir.absolutePath/build/reports/checkstyle/" + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
+                ant.xslt( in: it, style: xsl, out: outfile )
+            }
+        }
+    }
+}
+checkstyleMain.doFirst {
+    def suppressions = new File( "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml" )
+    if( !suppressions.exists() )
+    {
+        suppressions.getParentFile().mkdirs()
+        suppressions.write( """<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<!-- Checkstyle Suppressions                                             -->
+<!-- See http://checkstyle.sourceforge.net/config.html#SuppressionFilter -->
+
+<suppressions>
+
+    <!-- Add your suppression for this project here -->
+
+    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
+    <suppress checks=".*" files=".*"/>
+
+</suppressions>
+""" )
+        logger.quiet "Checkstyle suppressions skeleton created in $suppressions"
+    }
+}
+checkstyleMain.finalizedBy( checkstyleMainHtmlReport )
+
+// Tests configuration
+test {
+    testLogging {
+        info {
+            exceptionFormat "full"
+        }
+    }
+    // Do not rely on ASM to scan for test classes
+    // Specify pattern instead
+    // This is mandatory for JDK 8 support until Gradle use ASM 5
+    scanForTestClasses = false
+    include '**/*Test.*'
+    exclude '**/*Test$*.*'
+    exclude '**/*Abstract*.*'
+    exclude '**/*$*Test*.*'
+}
+
+// Create sources JAR
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+// Create javadoc JAR
+javadoc {
+    title = "${project.name} (${version})"
+    options.encoding = 'UTF-8'
+    options.docFilesSubDirs = true
+    options.links(
+        "http://docs.oracle.com/javase/8/docs/api/",
+        "http://www.slf4j.org/apidocs/",
+        "http://junit.org/javadoc/latest/"
+    )
+    doLast {
+        copy {
+            from 'src/main/javadoc'
+            into "${buildDir}/docs/javadoc"
+        }
+    }
+}
+task javadocJar(type: Jar, dependsOn:javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// Attach sources JAR
+artifacts {
+    archives jar 
+    archives sourcesJar
+    archives javadocJar
+}
+
+// Sign archives
+apply plugin: 'signing'
+signing { sign configurations.archives }
+signArchives.onlyIf { version != "0" && !version.contains( "SNAPSHOT" ) }
+
+// Install in local internal repository
+// Generated POM is minimal here as this repository is only used for inter-build dependencies
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        jars( MavenPublication ) { from components.java }
+    }
+    repositories {
+        maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
+    }
+}
+task finalizeInstall( dependsOn: "publishJarsPublicationToQiWebLocalRepository" )
+install.finalizedBy finalizeInstall
+
+// Setup remote artifact publication
+uploadArchives.doFirst {
+    if( version == "0" )
+    {
+        throw new GradleException( "'version' must be given as a system property to perform a release." )
+    }
+}
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if( !version.contains( "SNAPSHOT" ) ) {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
+            }
+            repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
+                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
+            }
+            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/qiweb-snapshots" ) {
+                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
+            }
+        }
+    }
+}
+
+// POM Setup for install and deploy
+[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
+    groupId = project.group
+    artifactId = project.name
+    version = project.version
+    project {
+        description = project.description
+        url = "http://qiweb.org"
+        inceptionYear '2013'
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        scm {
+            url 'https://scm.codeartisans.org/paul/qiweb'
+            connection 'scm:git:https://scm.codeartisans.org/paul/qiweb.git'
+            developerConnection 'scm:git:git@scm.codeartisans.org:paul/qiweb.git'
+        }
+        developers {
+            developer {
+                id = "eskatos"
+                name = "Paul Merlin"
+                email = "paul@nosphere.org"
+                timezone = "CET"
+                roles {
+                    role 'Founder'
+                    role 'Developer'
+                }
+            }
+            developer {
+                id = "q"
+                name = "Quentin Gensburger"
+                email = "quentin.gensburger@free.fr"
+                timezone = "CET"
+                roles {
+                    role 'Contributor'
+                }
+            }
+        }
+    }   
+}
+

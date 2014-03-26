@@ -1,0 +1,12 @@
+
+// Gradle Groovy Compiler is not JDK8_ASM5 ready
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+dependencies {
+
+    compile project( ":org.qiweb.api" )
+
+    testCompile project( ":org.qiweb.test" )
+
+}

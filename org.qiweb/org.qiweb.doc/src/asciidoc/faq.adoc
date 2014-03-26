@@ -1,0 +1,108 @@
+== Frequenty Asked Questions
+
+:toc:
+
+NOTE: New FAQs should be submitted as a https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issue],
+once accepted it will be appended to the bottom of this document.
+
+
+=== How is "QiWeb" pronounced?
+
+QiWeb is pronouced "chee web".
+
+
+=== What the heck is this name?
+
+QiWeb is the name of QiWeb.
+
+Read it many times.
+
+...
+
+What was the question already?
+
+
+=== Why choose Java as implementation language?
+
+First, the Java programming language is widely used and well known by a lot of developpers.
+It emerged in the early 90s, that is more than 20 years ago.
+So it is old enough to be considered as mature.
+With an eventful history, it keeps moving.
+
+Second, the main Java running platform, a.k.a the JVM, is quite ubiquitous on the x86 architecture, supported on almost
+every operating system and cloud provider.
+It is now open-source and already available to ARM architectures since Java 8.
+
+Third, Java:
+
+- has excellent developer tooling (IDEs with automated complex refactorings, continuous integration, static code
+analysis etc...) ;
+- comes with a large choice of 3rd party libraries ;
+- is hugely specified and documented.
+
+And last but not least, the JVM is not tight to the Java programming language as it can run code written in
+https://en.wikipedia.org/wiki/List_of_JVM_languages[over 50 languages].
+
+
+=== Can I write my application code in {put.your.language.here}?
+
+As long as it runs on the JVM, yes!
+
+There are some guides for specific languages but the idea is pretty simple and applicable to any.
+The Global object allows you take control of controllers and filters instanciation and invocation.
+You just have to write some glue code.
+Ah, I see your Global object is already in Groovy, cool.
+
+Development mode should work in most situations provided your build system is set up correctly.
+
+
+=== Is it possible to embedd the QiWeb Runtime?
+
+The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
+This way of running a QiWeb Application can be seen as embedding QiWeb.
+
+See the XXX section of the QiWeb manual to get some know-how.
+
+
+=== I found a bug! What to do?
+
+Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issues].
+Please provide accurate and useful information when doing so.
+
+If you don't know how to properly report a bug, read
+http://www.chiark.greenend.org.uk/~sgtatham/bugs.html[How to Report Bugs Effectively] by Simon Tatham first.
+
+
+=== Can I use QiWeb in my commercial applications under a closed-source, proprietary license?
+
+Yes.
+The https://www.apache.org/licenses/LICENSE-2.0.html[Apache License] is very business-friendly.
+Please observe the obligations on your part, especially regarding notices, trademarks and patent licensing terms.
+
+
+=== What to do when I can see no logs and get a weird message from SLF4J?
+
+QiWeb use the http://www.slf4j.org[SLF4J] API (Simple Logging Facade for Java) but you have to choose what SLF4J
+implementation to use.
+We strongly recommend http://logback.qos.ch/[Logback].
+
+If you don't have any SLF4J implementation in your application classpath, you'll get the following warning:
+
+    SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+    SLF4J: Defaulting to no-operation (NOP) logger implementation
+    SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+From there you simply add Logback (or any SLF4J implementation) to your dependencies and configure it the way you want.
+And voila!
+
+
+=== Can I build QiWeb Application using {put.your.build.system.here}?
+
+Sure, QiWeb is build system agnostic.
+Integration with Gradle and Maven are provided, if you happen to use another build system you'll have to write some
+code but it's definitely possible.
+Have a look at the Gradle and Maven plugins code to get started.
+
+If you get to something reusable, please contribute it.
+We are very interested in such a contribution.
+
