@@ -3,7 +3,6 @@ dependencies {
 
     compile project( ":org.qiweb.api" )
     compile project( ":org.qiweb.spi" )
-    compile project( ":org.qiweb.lib" )
     compile libs.typesafe_config
     compile libs.javassist
     

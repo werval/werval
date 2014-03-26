@@ -9,4 +9,5 @@
 <suppressions>
     <!-- Package Javadoc for BuildVersion -->
     <suppress checks="JavadocPackage" files="BuildVersion.java"/>
+    <suppress checks="LineLength" files="BuildVersion.java"/>
 </suppressions>

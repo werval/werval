@@ -87,37 +87,39 @@ package """ + project.name.replace( '-', '_' ) + """;
 public interface BuildVersion
 {
     /**
-     * The last commit hash from the git history.
+     * The last commit hash from the git history, that is {@literal """ + commit + """}.
      */
     String COMMIT = \"""" + commit + """\";
 
     /**
-     * True if they were local changes when built.
+     * True if they were local changes when built, that is {@literal """ + dirty + """}.
      */
     boolean DIRTY = """+ dirty + """;
 
     /**
-     * The version of the project from the gradle build.
+     * The version of the project from the gradle build, that is {@literal """ + project.version + """}.
      */
     String VERSION = \"""" + project.version + """\";
 
     /**
-     * The name of the project from the gradle build.
+     * The name of the project from the gradle build, that is {@literal """ + project.name + """}.
      */
     String NAME = \"""" + project.name + """\";
 
     /**
-     * The group of the project from the gradle build.
+     * The group of the project from the gradle build, that is {@literal """ + project.group + """}.
      */
     String GROUP = \"""" + project.group + """\";
 
     /**
-     * The date this file was generated, usually the last date that the project was modified.
+     * The date this file was generated, usually the last date that the project was modified,
+     * that is {@literal """ + now + """}.
      */
     String DATE = \"""" + now + """\";
 
     /**
-     * The full details of the version, including the build date.
+     * The full details of the version, including the build date, that is
+     * {@literal """ + project.group + ":" + project.name + ":" + project.version + " " + commit + (dirty ? "(dirty) " : "") + " " + now + """}.
      */
     String DETAILED_VERSION = GROUP + ":" + NAME + ":" + VERSION + " "
                               + COMMIT + " "
@@ -249,13 +251,13 @@ signArchives.onlyIf { version != "0" && !version.contains( "SNAPSHOT" ) }
 apply plugin: 'maven-publish'
 publishing {
     publications {
-        build( MavenPublication ) { from components.java }
+        jars( MavenPublication ) { from components.java }
     }
     repositories {
-        maven { name "Internal"; url "$rootProject.projectDir.absolutePath/../repository/" }
+        maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
     }
 }
-task finalizeInstall( dependsOn: "publishBuildPublicationToInternalRepository" )
+task finalizeInstall( dependsOn: "publishJarsPublicationToQiWebLocalRepository" )
 install.finalizedBy finalizeInstall
 
 // Setup remote artifact publication
