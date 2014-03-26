@@ -20,13 +20,13 @@ The QiWeb documentation is not published online yet but it is embedded in the Qi
 
 We are going to create a first application and run it in development mode in order to access the embedded documentation.
 
-Of course, you need a Java 8 SDK installed (http://www.oracle.com/technetwork/java/javase/downloads/).
+Of course, you need a [Java 8 SDK](http://www.oracle.com/technetwork/java/javase/downloads/) installed.
 
 Then check your `JAVA_HOME` environment variable and ensure `java` and `javac` are available in `PATH`).
 
 Now, here are the steps needed to install the `qiweb` command:
 
-- Download the CLI distribution from  https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/0.1.0.Alpha/org.qiweb.cli-0.1.0.Alpha-dist.zip
+- Download the [CLI distribution](https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/0.1.0.Alpha/org.qiweb.cli-0.1.0.Alpha-dist.zip)
 - Unzip it
 - Prepend the `bin` directory to your `PATH` (ex: `export PATH="/opt/qiweb/bin:${PATH}"`)
 - Use the `qiweb` executable on UN*X
@@ -61,7 +61,7 @@ To run a QiWeb application in development mode, use the `run` command of `qiweb`
     >> QiWeb DevShell starting...
     >> Ready for requests on http(s)://127.0.0.1:23023!
 
-You can now open your browser to http://localhost:23023/ to see the welcome page.
+You can now open your browser to [http://localhost:23023/](http://localhost:23023/) to see the welcome page.
 
 You should see the following page:
 
@@ -70,16 +70,14 @@ You should see the following page:
 
 ### Browse the embedded documentation
 
-Simply open http://localhost:23023/@doc to browse the embedded documentation, including javadocs.
+Simply open [http://localhost:23023/@doc](http://localhost:23023/@doc) to browse the embedded documentation, including javadocs.
 
-If you encounter any problem, please fill an issue at https://scm.codeartisans.org/paul/qiweb/issues with the maximum information about your problem.
+If you encounter any problem, please [fill an issue](https://scm.codeartisans.org/qiweb/qiweb/issues/new) with the maximum information about your problem.
 
 
 ## Build QiWeb from the Source
 
-QiWeb is built using Gradle (http://www.gradle.org/).
-
-You need to install Java 8 JDK (http://www.oracle.com/technetwork/java/javase/downloads/) and Gradle (http://www.gradle.org/).
+You need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/) and [Gradle](http://www.gradle.org/).
 
 This git repository contains several independent projects.
 
@@ -94,7 +92,7 @@ For convenience, two shell scripts are provided:
     build.sh                Quick build without tests
     check.sh                Full build with all tests
 
-Please note that if you want to get UML diagrams generated in Javadocs you'll need to have GraphViz (http://www.graphviz.org/) installed. The build will pass without though. But with less fun.
+Please note that if you want to get UML diagrams generated in Javadocs you'll need to have [GraphViz](http://www.graphviz.org/) installed. The build will pass without though. But with less fun.
 
 When working on the QiWeb source code, it is recommended to run all tests first, giving you confidence that the whole thing work on your computer. You can do that easily by running the `check.sh` build script.
 
@@ -104,5 +102,5 @@ QiWeb artifacts produced by the build are installed in your local maven reposito
 
 By default version number `0` is used, you can override this with `-Dversion=WHATEVER`.
 
-If you encounter any problem, please fill an issue at https://scm.codeartisans.org/paul/qiweb/issues with the output of the build process.
+If you encounter any problem, please [fill an issue](https://scm.codeartisans.org/qiweb/qiweb/issues) with the output of the build process.
 
