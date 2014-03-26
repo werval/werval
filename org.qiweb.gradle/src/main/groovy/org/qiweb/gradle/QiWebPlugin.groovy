@@ -25,6 +25,7 @@ import org.gradle.internal.classloader.ClasspathUtil
  * <p>Define 'qiweb' project extension.</p>
  * <p>Create {@literal secret} and {@literal devshell} tasks.</p>
  */
+// TODO What about a src/dev SourceSet with good defaults for logback, possibility to put dev conf etc ?
 class QiWebPlugin implements Plugin<Project>
 {
     void apply( Project project )
