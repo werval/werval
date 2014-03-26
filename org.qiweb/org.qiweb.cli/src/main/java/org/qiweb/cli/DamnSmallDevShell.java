@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,17 +64,20 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 // This would help removing dependencies to apache-commons, or not ...
 public final class DamnSmallDevShell
 {
-
     private static final class SPI
         extends DevShellSPIAdapter
     {
-
         private final URL[] applicationClasspath;
         private final URL[] runtimeClasspath;
         private final Set<File> sources;
         private final File classesDir;
 
-        private SPI( URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, SourceWatcher watcher, File classesDir )
+        private SPI(
+            URL[] applicationClasspath,
+            URL[] runtimeClasspath,
+            Set<File> sources,
+            SourceWatcher watcher,
+            File classesDir )
         {
             super( applicationClasspath, runtimeClasspath, sources, watcher );
             this.applicationClasspath = applicationClasspath;
@@ -100,7 +103,6 @@ public final class DamnSmallDevShell
     private static final class ShutdownHook
         implements Runnable
     {
-
         private final DevShell devShell;
         private final File tmpDir;
 
@@ -125,12 +127,20 @@ public final class DamnSmallDevShell
         }
     }
     // figlet -f rectangles  "QiWeb DevShell"
-    private static final String LOGO = ""
-                                       + " _____ _ _ _ _     _      ____          _____ _       _ _ \n"
-                                       + "|     |_| | | |___| |_   |    \\ ___ _ _|   __| |_ ___| | |\n"
-                                       + "|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |\n"
-                                       + "|__  _|_|_____|___|___|  |____/|___|\\_/|_____|_|_|___|_|_|\n"
-                                       + "   |__|                                QiWeb v" + BuildVersion.VERSION + "-" + BuildVersion.COMMIT + ( BuildVersion.DIRTY ? " (DIRTY)" : "" ) + "\n";
+    private static final String LOGO;
+
+    static
+    {
+        LOGO
+        = ""
+          + " _____ _ _ _ _     _      ____          _____ _       _ _ \n"
+          + "|     |_| | | |___| |_   |    \\ ___ _ _|   __| |_ ___| | |\n"
+          + "|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |\n"
+          + "|__  _|_|_____|___|___|  |____/|___|\\_/|_____|_|_|___|_|_|\n"
+          + "   |__|                                "
+          + "QiWeb v" + BuildVersion.VERSION + "-" + BuildVersion.COMMIT + ( BuildVersion.DIRTY ? " (DIRTY)" : "" )
+          + "\n";
+    }
 
     public static void main( String[] args )
     {
@@ -194,7 +204,7 @@ public final class DamnSmallDevShell
                 {
                     case "new":
                         System.out.println( LOGO );
-                        newCommand( "qiweb-application", cmd );
+                        newCommand( commandsIterator.hasNext() ? commandsIterator.next() : "qiweb-application", cmd );
                         break;
                     case "clean":
                         cleanCommand( debug, tmpDir );
@@ -246,7 +256,7 @@ public final class DamnSmallDevShell
 
         // Generate controller
         String controller = "package controllers;\n\n"
-                            + "import org.qiweb.api.controllers.Outcome;\n\n"
+                            + "import org.qiweb.api.outcomes.Outcome;\n\n"
                             + "public class Application {\n\n"
                             + "    public Outcome index() {\n"
                             + "        return new org.qiweb.runtime.controllers.Welcome().welcome();\n"
@@ -494,7 +504,6 @@ public final class DamnSmallDevShell
     private static final class OptionsComparator
         implements Comparator<Option>
     {
-
         private static final List<String> OPTIONS_ORDER = Arrays.asList( new String[]
         {
             "classpath",
