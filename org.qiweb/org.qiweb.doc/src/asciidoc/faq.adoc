@@ -2,7 +2,8 @@
 
 :toc:
 
-NOTE: New FAQs are appended to the bottom of this document.
+NOTE: New FAQs should be submitted as a https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issue],
+once accepted it will be appended to the bottom of this document.
 
 
 === How is "QiWeb" pronounced?
@@ -30,8 +31,7 @@ With an eventful history, it keeps moving.
 
 Second, the main Java running platform, a.k.a the JVM, is quite ubiquitous on the x86 architecture, supported on almost
 every operating system and cloud provider.
-It is now open-source and already available to ARM architectures as a
-https://jdk8.java.net/download.html[JDK8 Early Access Releases].
+It is now open-source and already available to ARM architectures since Java 8.
 
 Third, Java:
 
@@ -69,7 +69,7 @@ See the XXX section of the QiWeb manual to get some know-how.
 Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issues].
 Please provide accurate and useful information when doing so.
 
-If you don't know how to property report a bug, read
+If you don't know how to properly report a bug, read
 http://www.chiark.greenend.org.uk/~sgtatham/bugs.html[How to Report Bugs Effectively] by Simon Tatham first.
 
 

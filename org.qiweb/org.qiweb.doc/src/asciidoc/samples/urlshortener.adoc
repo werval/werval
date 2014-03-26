@@ -50,3 +50,10 @@ gradle distZip
 
 The distribution can be located at `build/distributions/url-shortener-0.zip`.
 
+To run the whole test suite run:
+
+[source,shell]
+----
+gradle test
+----
+

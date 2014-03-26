@@ -1,16 +1,18 @@
 == Guides
 
+CAUTION: Work in progress!
+
 In this section you'll find guides for frequent and practical development use cases from build to deployment including
 Qi4j, Guice, Spring integrations and many more.
 
 include::src/asciidoc/guides/ide-support.adoc[]
-include::src/asciidoc/guides/http-file-uploads.adoc[]
-include::src/asciidoc/guides/http-security.adoc[]
-include::src/asciidoc/guides/json-jackson.adoc[]
-include::src/asciidoc/guides/xml-org-w3c.adoc[]
-include::src/asciidoc/guides/sql-bonecp.adoc[]
-include::src/asciidoc/guides/nosql-mongodb.adoc[]
-include::src/asciidoc/guides/email-apache.adoc[]
-include::src/asciidoc/guides/deploy-unix.adoc[]
+// include::src/asciidoc/guides/http-file-uploads.adoc[]
+// include::src/asciidoc/guides/http-security.adoc[]
+// include::src/asciidoc/guides/json-jackson.adoc[]
+// include::src/asciidoc/guides/xml-org-w3c.adoc[]
+// include::src/asciidoc/guides/sql-bonecp.adoc[]
+// include::src/asciidoc/guides/nosql-mongodb.adoc[]
+// include::src/asciidoc/guides/email-apache.adoc[]
+// include::src/asciidoc/guides/deploy-unix.adoc[]
 include::src/asciidoc/guides/deploy-heroku.adoc[]
 

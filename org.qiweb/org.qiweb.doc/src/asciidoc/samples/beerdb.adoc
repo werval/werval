@@ -9,11 +9,15 @@ Persistence is done using JPA 2 using http://eclipse.org/eclipselink/[EclipseLin
 By default, an in-memory http://h2database.com/[H2] database is used.
 Configuration to use http://www.postgresql.org/[PostgreSQL] as the database server is provided.
 
-Browser based front-end is built using http://getbootstrap.com/[Twitter Bootstrap] and http://angularjs.org/[AngularJS].
+Browser based front-end is built using http://getbootstrap.com/[Twitter Bootstrap] and
+http://angularjs.org/[AngularJS].
 
 The Gradle build handle Bootstrap LESS compilation and Javascript optimization.
 Thanks to this, the front-end loads in three HTTP requests only, the html host page, the CSS bundle and then the
 Javascript bundle.
+
+JSON API and UI are fully tested using respectively https://github.com/jayway/rest-assured[rest-assured] and
+http://fluentlenium.org/[FluentLenium].
 
 To stage the application run:
 
@@ -37,3 +41,11 @@ gradle distZip
 ----
 
 The distribution can be located at `build/distributions/beer-database-0.zip`.
+
+To run the whole test suite run:
+
+[source,shell]
+----
+gradle test
+----
+
