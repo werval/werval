@@ -13,4 +13,7 @@ Only use Final versions in production!
 
 ## Changelog
 
+### 0.1.0.Alpha
+
+First release!
 

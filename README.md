@@ -1,36 +1,101 @@
 # QiWeb - Zen and Energy for Web Development
 
-     _____ _ _ _ _     _      ____          _____ _ _
-    |     |_| | | |___| |_   |    \ ___ _ _|  |  |_| |_
-    |  |  | | | | | -_| . |  |  |  | -_| | |    -| |  _|
-    |__  _|_|_____|___|___|  |____/|___|\_/|__|__|_|_|
+     _____ _ _ _ _     _      _____ ____  _____ 
+    |     |_| | | |___| |_   |   __|    \|  |  |
+    |  |  | | | | | -_| . |  |__   |  |  |    -|
+    |__  _|_|_____|___|___|  |_____|____/|__|__|
        |__|
 
 > This is a work in progress!
 
 QiWeb is not published yet. If you read this, feel lucky :-)
 
-If you want to try QiWeb you'll have to build the code from source.
-The documentation is not published online yet but is embedded in the QiWeb
-Development Mode at the /@doc path.
+
+## Getting Started
+
+The QiWeb documentation is not published online yet but it is embedded in the
+QiWeb Development Mode. We'll bootstrap you there first.
+
+
+### Installing the QiWeb command line
+
+We are going to create a first application and run it in development mode in
+order to access the embedded documentation.
+
+Of course, you need a Java 8 SDK installed
+(http://www.oracle.com/technetwork/java/javase/downloads/).
+
+Then check your `JAVA_HOME` environment variable and ensure `java` and `javac`
+are available in `PATH`).
+
+Now, here are the steps needed to install the `qiweb` command:
+
+- Download the CLI distribution from 
+https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/0.1.0.Alpha/org.qiweb.cli-0.1.0.Alpha-dist.zip
+- Unzip it
+- Prepend the `bin` directory to your `PATH` (ex: `export PATH="/opt/qiweb/bin:${PATH}"`)
+- Use the `qiweb` executable on UN*X
+- Use the `qiweb.bat` executable on Windows
+
+TIP: Invoke `qiweb --help` to get a comprehensive help on each commands and options.
+
+
+### Create a new application
+
+To create a new QiWeb application, use the `new` command of `qiweb`:
+
+    user@host ~ $ qiweb new hello-qiweb
+    New QiWeb Application generated in '/home/user/hello-qiweb'.
+    user@host ~ $ cd hello-qiweb/
+    user@host ~/hello-qiweb $
+
+
+### Run the application in development mode
+
+To run a QiWeb application in development mode, use the `run` command of `qiweb`:
+
+    user@host ~/hello-qiweb $ qiweb run
+     _____ _ _ _ _     _      ____          _____ _       _ _ 
+    |     |_| | | |___| |_   |    \ ___ _ _|   __| |_ ___| | |
+    |  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |
+    |__  _|_|_____|___|___|  |____/|___|\_/|_____|_|_|___|_|_|
+       |__|
+
+    Loading...
+    Compiling Application...
+    >> QiWeb DevShell starting...
+    >> Ready for requests on http(s)://127.0.0.1:23023!
+
+You can now open your browser to http://localhost:23023/ to see the welcome page.
+
+You should see the following page:
+
+![DevShell Welcome Page](org.qiweb/org.qiweb.doc/src/assets/images/welcome.png)
+
+
+### Browse the embedded documentation
+
+Simply open http://localhost:23023/@doc to browse the embedded documentation,
+including javadocs.
+
+If you encounter any problem, please fill an issue at
+https://scm.codeartisans.org/paul/qiweb/issues with the maximum information about
+your problem.
+
+
+## Build QiWeb from the Source
 
 QiWeb is built using Gradle (http://www.gradle.org/).
 
-You don't need to install anything except a JVM >=8 (http://jdk8.java.net/download.html).
+You need to install Java 8 JDK (http://www.oracle.com/technetwork/java/javase/downloads/)
+and Gradle (http://www.gradle.org/).
 
-The `gradlew` script that can be found at the projects root will download and
-bootstrap Gradle for you.
-If you are interested in this Gradle feature, check the Gradle Wrapper
-(http://www.gradle.org/docs/current/userguide/gradle_wrapper.html)
-documentation.
-
-This repository contains several independent projects.
+This git repository contains several independent projects.
 
     org.qiweb               QiWeb Core
     org.qiweb.modules       Modules
     org.qiweb.gradle        Gradle Plugin
     org.qiweb.maven         Maven Plugin
-    org.qiweb.samples       Samples
 
 For convenience, two shell scripts are provided:
 
@@ -42,45 +107,19 @@ Please note that if you want to get UML diagrams generated in Javadocs you'll
 need to have GraphViz (http://www.graphviz.org/) installed. The build will pass
 without though. But with less fun.
 
-Note also that sample applications integration/functional tests use Selenium
-under the hood and hence need Firefox to be installed and a graphical context
-to be available.
-
 When working on the QiWeb source code, it is recommended to run all tests
 first, giving you confidence that the whole thing work on your computer.
+You can do that easily by running the `check.sh` build script.
 
 QiWeb do not have much dependencies but the build system and the tests do.
 As a consequence, a vast amount of code is downloaded the first time you
 run a build.
-Theses downloads are cached, at the time of writing running a full build
-including integration tests with every dependencies in cache take less than
-two minutes.
+Theses downloads are cached in `~/.gradle/caches`.
 
 QiWeb artifacts produced by the build are installed in your local maven
-repository (`~/.m2/repository`).
-
-Once installed you can depend on the following artifacts:
-
-- `org.qiweb:org.qiweb.api:0` in your application code
-- `org.qiweb:org.qiweb.lib:0` in your app code, this is the standard library
-- `org.qiweb:org.qiweb.server.bootstrap:0` to run or extend `org.qiweb.server.bootstrap.Main`
-- `org.qiweb:org.qiweb.test:0` in your test code to get a test environment
-
-The maven plugin is `org.qiweb:org.qiweb.maven:0`, goal `qiweb:devshell` to run the
-Development Shell.
-
-The gradle plugin is `org.qiweb:org.qiweb.gradle:0`, is applied using
-`apply: 'qiweb'` and has a `devshell` task.
-
-If you want to test drive the `qiweb-cli` command-line app-skeleton generator
-and development shell, the following commands will install it:
-
-    # Create ~/opt if it does not exist
-    if [ ! -d ~/opt ] ; then mkdir -p ~/opt ; fi
-    # Unzip qiweb-cli distribution in ~/opt
-    unzip -l ~/.m2/repository/org/qiweb/org.qiweb.cli/0/org.qiweb.cli-0-dist.zip -d ~/opt
-    # Add qiweb-cli to your $PATH
-    export PATH=~/opt/qiweb-cli-0/bin:$PATH
+repository (`~/.m2/repository`) for consumption by other applications
+and in the `repository` directory of this very git repository for use by
+different projects under this repository umbrella.
 
 By default version number `0` is used, you can override this with
 `-Dversion=WHATEVER`.
