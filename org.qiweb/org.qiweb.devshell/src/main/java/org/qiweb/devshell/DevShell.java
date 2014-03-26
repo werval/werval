@@ -27,6 +27,8 @@ import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.util.AnsiColor.cyan;
 import static org.qiweb.runtime.util.AnsiColor.red;
 import static org.qiweb.runtime.util.AnsiColor.white;
@@ -207,6 +209,9 @@ public final class DevShell
                 new DevShellSPIDecorator( spi, appInstance )
             );
 
+            // Get application URL
+            String appUrl = applicationUrl( configInstance, configClass );
+
             // Register shutdown hook and activate HttpServer
             httpServer.getClass().getMethod( "registerPassivationShutdownHook" ).invoke( httpServer );
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
@@ -225,7 +230,7 @@ public final class DevShell
                 "qiweb-devshell-shutdown"
             ) );
 
-            System.out.println( white( ">> Ready for requests!" ) );
+            System.out.println( white( ">> Ready for requests on " + appUrl + " !" ) );
             Thread.sleep( Long.MAX_VALUE );
         }
         catch( DuplicateRealmException | NoSuchRealmException | ClassNotFoundException |
@@ -242,6 +247,26 @@ public final class DevShell
             System.err.println( red( msg ) );
             throw new QiWebDevShellException( msg, cause );
         }
+    }
+
+    private String applicationUrl( Object configInstance, Class<?> configClass )
+        throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+        Class<?>[] argsTypes = new Class<?>[]
+        {
+            String.class
+        };
+        String httpHost = (String) configClass
+            .getMethod( "string", argsTypes )
+            .invoke( configInstance, QIWEB_HTTP_ADDRESS );
+        int httpPort = (int) configClass
+            .getMethod( "intNumber", argsTypes )
+            .invoke( configInstance, QIWEB_HTTP_PORT );
+        if( "127.0.0.1".equals( httpHost ) )
+        {
+            httpHost = "localhost";
+        }
+        return "http://" + httpHost + ":" + httpPort + "/";
     }
 
     /**
