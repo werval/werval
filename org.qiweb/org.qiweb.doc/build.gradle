@@ -60,7 +60,7 @@ task embeddedJavadoc( type: Javadoc ) {
     options.overview = file( "$project.projectDir.absolutePath/src/javadoc/overview.html" )
     options.docFilesSubDirs = true
     options.links(
-        "http://download.java.net/jdk8/docs/api/",
+        "http://docs.oracle.com/javase/8/docs/api/",
         "http://www.slf4j.org/apidocs/",
         "http://junit.org/javadoc/latest/"
     )
