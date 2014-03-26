@@ -1,2 +1,0 @@
-# QiWeb Sample Applications
-

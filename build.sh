@@ -41,10 +41,5 @@ $FIGLET org.qiweb.maven
 # $MAVEN -f org.qiweb.maven/pom.xml test
 echo "NOT BUILT - No Java 8 support for Maven plugins yet"
 
-# samples
-$FIGLET org.qiweb.samples
-$GRADLE -b org.qiweb.samples/build.gradle assemble
-echo "Built."
-
 echo
 
