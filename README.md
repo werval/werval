@@ -65,8 +65,11 @@ You can now open your browser to [http://localhost:23023/](http://localhost:2302
 
 You should see the following page:
 
+----
+
 ![DevShell Welcome Page](org.qiweb/org.qiweb.doc/src/assets/images/welcome.png)
 
+----
 
 ### Browse the embedded documentation
 
