@@ -273,10 +273,10 @@ uploadArchives {
             if( !version.contains( "SNAPSHOT" ) ) {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
             }
-            repository( url: "https://repo.codeartisans.org/content/repositories/trash" ) {
+            repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
                 authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
             }
-            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/trash" ) {
+            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/qiweb-snapshots" ) {
                 authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
             }
         }
