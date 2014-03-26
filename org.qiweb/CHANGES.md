@@ -9,6 +9,8 @@
 - Z Release number
 - Qualifer can be Alpha, Beta, RC or Final.
 
+Only use Final versions in production!
+
 ## Changelog
 
 

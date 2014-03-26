@@ -272,10 +272,10 @@ uploadArchives {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
             }
             repository( url: "https://repo.codeartisans.org/content/repositories/trash" ) {
-                authentication( userName: qiwebRepoUsername, password: qiwebRepoPassword)
+                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
             }
             snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/trash" ) {
-                authentication( userName: qiwebRepoUsername, password: qiwebRepoPassword)
+                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
             }
         }
     }
