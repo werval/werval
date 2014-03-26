@@ -26,7 +26,7 @@ Then check your `JAVA_HOME` environment variable and ensure `java` and `javac` a
 
 Now, here are the steps needed to install the `qiweb` command:
 
-- Login to the QiWeb Repository (username: `qiweb`, password: `qiweb`)
+- Login to the [QiWeb Repository](https://repo.codeartisans.org/) (username: `qiweb`, password: `qiweb`)
 - Download the [CLI distribution](https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/0.1.1.Alpha/org.qiweb.cli-0.1.1.Alpha-dist.zip)
 - Unzip it
 - Prepend the `bin` directory to your `PATH` (ex: `export PATH="/opt/qiweb/bin:${PATH}"`)
