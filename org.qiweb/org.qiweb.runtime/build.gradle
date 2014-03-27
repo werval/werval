@@ -7,7 +7,7 @@ dependencies {
     compile libs.javassist
     
     testCompile project( ":org.qiweb.test" )
-    testCompile libs.jackson_core
+    testCompile libs.jackson
     testCompile libs.rest_assured
 
 }
