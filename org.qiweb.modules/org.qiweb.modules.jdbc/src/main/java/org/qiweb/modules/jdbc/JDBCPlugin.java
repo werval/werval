@@ -18,6 +18,8 @@ package org.qiweb.modules.jdbc;
 import com.jolbox.bonecp.BoneCPDataSource;
 import com.jolbox.bonecp.ConnectionHandle;
 import com.jolbox.bonecp.hooks.AbstractConnectionHook;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -32,6 +34,9 @@ import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.api.util.Strings.isEmpty;
 
 /**
  * JDBC Plugin that manage DataSources using BoneCP pool.
@@ -90,8 +95,50 @@ public class JDBCPlugin
         // JDBC configuration
         String driver = dsConfig.string( "driver" );
         String url = dsConfig.string( "url" );
-        String user = dsConfig.has( "user" ) ? dsConfig.string( "user" ) : null;
-        String password = dsConfig.has( "password" ) ? dsConfig.string( "password" ) : null;
+        String user = null;
+        String password = null;
+        try
+        {
+            // Extract username/password from the URL if available
+            // This provide Heroku DATABASE_URL syntax support
+            URI uri = new URI( url );
+            if( !isEmpty( uri.getUserInfo() ) )
+            {
+                String[] userInfo = uri.getUserInfo().split( ":" );
+                if( userInfo.length > 0 )
+                {
+                    user = userInfo[0];
+                    if( userInfo.length > 1 )
+                    {
+                        password = userInfo[1];
+                    }
+                    // Remove UserInfo
+                    url = ( uri.getScheme() != null ? uri.getScheme() : EMPTY )
+                          + "://"
+                          + ( uri.getHost() != null ? uri.getHost() : EMPTY )
+                          + ( uri.getPort() != -1 ? ":" + uri.getPort() : EMPTY )
+                          + ( uri.getPath() != null ? uri.getPath() : EMPTY )
+                          + ( uri.getQuery() != null ? uri.getQuery() : EMPTY )
+                          + ( uri.getFragment() != null ? uri.getFragment() : EMPTY );
+                }
+            }
+        }
+        catch( URISyntaxException ex )
+        {
+            throw new ActivationException( "Invalid JDBC URI: " + url, ex );
+        }
+        if( !url.startsWith( "jdbc:" ) )
+        {
+            url = "jdbc:" + url;
+        }
+        if( dsConfig.has( "user" ) )
+        {
+            user = dsConfig.string( "user" );
+        }
+        if( dsConfig.has( "password" ) )
+        {
+            password = dsConfig.string( "password" );
+        }
 
         // Connection configuration
         final boolean autocommit = dsConfig.has( "autocommit" ) ? dsConfig.bool( "autocommit" ) : true;
