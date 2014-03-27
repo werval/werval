@@ -13,6 +13,11 @@ Only use Final versions in production!
 
 ## Changelog
 
+### 0.1.1.Alpha
+
+- Fix CLI new app generation bugs
+- DevShell now advertise the app URL to STDOUT on startup
+
 ### 0.1.0.Alpha
 
 First release!
