@@ -412,10 +412,10 @@ public class HttpBuildersInstance
         {
             this.version = version == null ? 0 : version;
             this.name = name;
-            this.value = value;
+            this.value = value == null ? Strings.EMPTY : value;
             this.path = path == null ? "/" : path;
             this.domain = domain;
-            this.maxAge = maxAge;
+            this.maxAge = maxAge == null ? Long.MIN_VALUE : maxAge;
             this.secure = secure == null ? false : secure;
             this.httpOnly = httpOnly == null ? true : httpOnly;
             this.comment = comment;

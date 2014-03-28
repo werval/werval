@@ -70,51 +70,80 @@ public interface Cookies
     interface Cookie
     {
         /**
+         * Version of the cookie.
+         *
          * @return Version of the cookie
          */
         int version();
 
         /**
+         * Name of the cookie.
+         *
          * @return Name of the cookie
          */
         String name();
 
         /**
+         * Value of the cookie.
+         *
          * @return The value of the cookie
          */
         String value();
 
         /**
+         * Path of the cookie.
+         *
          * @return Path of the cookie
          */
         String path();
 
         /**
+         * Domain of the cookie.
+         *
          * @return Domain of the cookie
          */
         String domain();
 
         /**
-         * @return Maximum age of the cookie
+         * Maximum age of the cookie in seconds.
+         *
+         * A positive value indicates that the cookie will expire after that many seconds have passed.
+         * Note that the value is the maximum age when the cookie will expire, not the cookie's current age.
+         * <p>
+         * A negative value means that the cookie is not stored persistently and will be deleted when the Web browser
+         * exits.
+         * <p>
+         * A zero value causes the cookie to be deleted.
+         *
+         * @return a long specifying the maximum age of the cookie in seconds; if zero, the cookie should be discarded
+         *         immediately; otherwise, the cookie's max age is unspecified
          */
         long maxAge();
 
         /**
+         * Secure flag of the cookie.
+         *
          * @return TRUE if the cookie is secure, FALSE otherwise
          */
         boolean secure();
 
         /**
+         * HTTPOnly flag of the cookie.
+         *
          * @return TRUE if the cookie is httpOnly, FALSE otherwise
          */
         boolean httpOnly();
 
         /**
+         * Comment of the cookie.
+         *
          * @return Comment of the cookie
          */
         String comment();
 
         /**
+         * Comment URL of the cookie.
+         *
          * @return Comment URL of the cookie
          */
         String commentUrl();
