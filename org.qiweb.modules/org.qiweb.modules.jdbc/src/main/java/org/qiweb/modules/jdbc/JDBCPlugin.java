@@ -112,8 +112,19 @@ public class JDBCPlugin
                     {
                         password = userInfo[1];
                     }
+                    // Resolve Scheme if needed
+                    String scheme;
+                    switch( uri.getScheme() )
+                    {
+                        case "postgres":
+                            scheme = "postgresql";
+                            break;
+                        default:
+                            scheme = uri.getScheme();
+                            break;
+                    }
                     // Remove UserInfo
-                    url = ( uri.getScheme() != null ? uri.getScheme() : EMPTY )
+                    url = scheme
                           + "://"
                           + ( uri.getHost() != null ? uri.getHost() : EMPTY )
                           + ( uri.getPort() != -1 ? ":" + uri.getPort() : EMPTY )
