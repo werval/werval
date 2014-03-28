@@ -18,6 +18,7 @@ package org.qiweb.api;
 import java.io.File;
 import java.nio.charset.Charset;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -134,6 +135,16 @@ public interface Application
      * @return Application {@link ClassLoader}
      */
     ClassLoader classLoader();
+
+    /**
+     * HTTP API Objects Builders SPI.
+     *
+     * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
+     * All builders are immutable and reusable.
+     *
+     * @return HTTP API Objects Builders SPI
+     */
+    HttpBuilders httpBuilders();
 
     /**
      * Application {@link Routes}.

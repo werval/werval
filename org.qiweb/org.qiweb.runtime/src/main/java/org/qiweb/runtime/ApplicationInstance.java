@@ -70,7 +70,7 @@ import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.runtime.util.TypeResolver;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.spi.http.HttpBuilders;
+import org.qiweb.spi.http.HttpBuildersSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +130,7 @@ public final class ApplicationInstance
     private ReverseRoutes reverseRoutes;
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
-    private HttpBuilders httpBuilders;
+    private HttpBuildersSPI httpBuilders;
     private final MetaData metaData;
     private final Errors errors;
     private final DevShellSPI devSpi;
@@ -427,7 +427,7 @@ public final class ApplicationInstance
     }
 
     @Override
-    public HttpBuilders httpBuilders()
+    public HttpBuildersSPI httpBuilders()
     {
         return httpBuilders;
     }

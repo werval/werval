@@ -32,7 +32,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
 import org.qiweb.api.util.Strings;
 import org.qiweb.api.util.URLs;
-import org.qiweb.spi.http.HttpBuilders;
+import org.qiweb.spi.http.HttpBuildersSPI;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureInRange;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
@@ -59,7 +59,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
  * HTTP API Objects Builders Instance.
  */
 public class HttpBuildersInstance
-    implements HttpBuilders
+    implements HttpBuildersSPI
 {
     private final Config config;
     private final Charset defaultCharset;

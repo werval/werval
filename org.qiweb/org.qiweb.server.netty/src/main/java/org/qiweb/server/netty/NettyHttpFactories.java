@@ -41,8 +41,8 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
-import org.qiweb.spi.http.HttpBuilders;
-import org.qiweb.spi.http.HttpBuilders.RequestBuilder;
+import org.qiweb.spi.http.HttpBuildersSPI;
+import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
@@ -76,7 +76,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
 
     /* package */ static Request requestOf(
         Charset defaultCharset,
-        HttpBuilders builders,
+        HttpBuildersSPI builders,
         String remoteSocketAddress, String identity,
         FullHttpRequest request
     )

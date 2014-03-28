@@ -30,7 +30,6 @@ import org.qiweb.api.routes.Route;
  */
 public interface Context
 {
-
     /**
      * @return Current Application
      */

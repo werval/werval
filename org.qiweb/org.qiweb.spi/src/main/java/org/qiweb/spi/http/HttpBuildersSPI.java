@@ -18,24 +18,25 @@ package org.qiweb.spi.http;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
-import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.Headers;
+import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
 
 /**
- * HTTP API Objects Builders.
+ * HTTP API Objects Builders SPI.
  *
  * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
  * <p>
- * Typically used in unit tests running an Application
+ * Typically used in unit tests running an Application.
  * <p>
  * All builders are immutable and reusable.
  */
-public interface HttpBuilders
+public interface HttpBuildersSPI
+    extends HttpBuilders
 {
     /**
      * Create a new Request Builder.
@@ -45,15 +46,6 @@ public interface HttpBuilders
      * @return A new Request Builder
      */
     RequestBuilder newRequestBuilder();
-
-    /**
-     * Create a new Cookie Builder.
-     *
-     * Name is mandatory.
-     *
-     * @return A new Cookie Builder
-     */
-    CookieBuilder newCookieBuilder();
 
     /**
      * Request Builder.
@@ -264,117 +256,5 @@ public interface HttpBuilders
          * @throws IllegalArgumentException if the builder state is not appropriate
          */
         Request build();
-    }
-
-    /**
-     * Cookie Builder.
-     *
-     * Name is mandatory.
-     */
-    interface CookieBuilder
-    {
-
-        /**
-         * Cookie version.
-         *
-         * Can be {@literal 0} or {@literal 1}, default to {@literal 0}.
-         *
-         * @param version cookie version
-         *
-         * @return A new builder with the version set
-         */
-        CookieBuilder version( int version );
-
-        /**
-         * Cookie name.
-         *
-         * @param name cookie name
-         *
-         * @return A new builder with the name set
-         */
-        CookieBuilder name( String name );
-
-        /**
-         * Cookie value.
-         *
-         * @param value cookie value
-         *
-         * @return A new builder with the value set
-         */
-        CookieBuilder value( String value );
-
-        /**
-         * Cookie path.
-         *
-         * Default to {@literal /}.
-         *
-         * @param path cookie path
-         *
-         * @return A new builder with the path set
-         */
-        CookieBuilder path( String path );
-
-        /**
-         * Cookie domain.
-         *
-         * @param domain cookie domain
-         *
-         * @return A new builder with the domain set
-         */
-        CookieBuilder domain( String domain );
-
-        /**
-         * Cookie maximum age.
-         *
-         * @param maxAge cookie maximum age
-         *
-         * @return A new builder with the maximum age set
-         */
-        CookieBuilder maxAge( long maxAge );
-
-        /**
-         * Cookie secure flag.
-         *
-         * @param secure cookie secure flag
-         *
-         * @return A new builder with the secure flag set
-         */
-        CookieBuilder secure( boolean secure );
-
-        /**
-         * Cookie httpOnly flag.
-         *
-         * @param httpOnly cookie httpOnly flag
-         *
-         * @return A new builder with the httpOnly flag set
-         */
-        CookieBuilder httpOnly( boolean httpOnly );
-
-        /**
-         * Cookie comment.
-         *
-         * @param comment cookie comment
-         *
-         * @return A new builder with the comment set
-         */
-        CookieBuilder comment( String comment );
-
-        /**
-         * Cookie comment URL.
-         *
-         * @param commentUrl cookie comment URL
-         *
-         * @return A new builder with the comment URL set
-         */
-        CookieBuilder commentUrl( String commentUrl );
-
-        /**
-         * Build a new Cookie.
-         *
-         * @return A new Cookie
-         *
-         * @throws IllegalArgumentException if the builder state is not appropriate
-         */
-        Cookie build();
     }
 }

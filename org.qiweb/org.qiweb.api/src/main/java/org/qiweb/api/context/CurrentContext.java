@@ -17,6 +17,7 @@ package org.qiweb.api.context;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
@@ -105,6 +106,16 @@ public final class CurrentContext
     public static Outcomes outcomes()
     {
         return get().outcomes();
+    }
+
+    /**
+     * @return Current HTTP Objects Builder
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static HttpBuilders builders()
+    {
+        return get().application().httpBuilders();
     }
 
     private CurrentContext()

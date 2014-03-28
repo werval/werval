@@ -22,7 +22,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Reflectively;
-import org.qiweb.spi.http.HttpBuilders;
+import org.qiweb.spi.http.HttpBuildersSPI;
 
 /**
  * Application SPI.
@@ -46,14 +46,15 @@ public interface ApplicationSPI
     Global global();
 
     /**
-     * HTTP API Objects Builders.
+     * HTTP API Objects Builders SPI.
      *
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
      * All builders are immutable and reusable.
      *
-     * @return HTTP API Objects Builders
+     * @return HTTP API Objects Builders SPI
      */
-    HttpBuilders httpBuilders();
+    @Override
+    HttpBuildersSPI httpBuilders();
 
     /**
      * Handle a HTTP Request.
