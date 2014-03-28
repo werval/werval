@@ -15,18 +15,21 @@
  */
 package org.qiweb.test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Config;
+import org.qiweb.api.Error;
 import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.spi.server.HttpServer;
 import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.spi.server.HttpServer;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
@@ -112,6 +115,7 @@ public class QiWebHttpTest
     {
         httpServer.passivate();
         httpServer = null;
+        QiWebTestHelper.printErrorsTrace( app.errors() );
         app = null;
     }
 
