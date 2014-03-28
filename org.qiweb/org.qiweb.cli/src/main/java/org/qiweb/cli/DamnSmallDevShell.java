@@ -55,6 +55,7 @@ import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
+import static java.io.File.pathSeparator;
 import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
@@ -176,7 +177,7 @@ public final class DamnSmallDevShell
             final boolean debug = cmd.hasOption( 'd' );
 
             // Temporary directory
-            final File tmpDir = new File( cmd.getOptionValue( 't', "build/devshell.tmp" ) );
+            final File tmpDir = new File( cmd.getOptionValue( 't', "build" + pathSeparator + "devshell.tmp" ) );
             if( debug )
             {
                 System.out.println( "Temporary directory set to '" + tmpDir.getAbsolutePath() + "'." );
@@ -242,8 +243,14 @@ public final class DamnSmallDevShell
         throws IOException
     {
         File baseDir = new File( name );
-        File ctrlDir = new File( baseDir, "src/main/java/controllers" );
-        File rsrcDir = new File( baseDir, "src/main/resources" );
+        File ctrlDir = new File(
+            baseDir,
+            "src" + pathSeparator + "main" + pathSeparator + "java" + pathSeparator + "controllers"
+        );
+        File rsrcDir = new File(
+            baseDir,
+            "src" + pathSeparator + "main" + pathSeparator + "resources"
+        );
         Files.createDirectories( ctrlDir.toPath() );
         Files.createDirectories( rsrcDir.toPath() );
 
@@ -300,8 +307,8 @@ public final class DamnSmallDevShell
         // Sources
         String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
         {
-            "src/main/java",
-            "src/main/resources"
+            "src" + pathSeparator + "main" + pathSeparator + "java",
+            "src" + pathSeparator + "main" + pathSeparator + "resources"
         };
         Set<File> sources = new LinkedHashSet<>();
         for( String sourcePath : sourcesPaths )
