@@ -13,7 +13,7 @@ Only use Final versions in production!
 
 ## Changelog
 
-### 0.1.2.Alpha
+### 0.1.3.Alpha
 
 - Fix Rythm Plugin template resolution in prod mode, see #74
 - Add support for DATABASE_URL Heroku syntax to the JDBC Plugin, see #69
