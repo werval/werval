@@ -111,6 +111,8 @@ public interface Plugin<API>
 
     /**
      * Void Plugin exposing no type to the Application.
+     *
+     * Use this as a base class for your under cover plugins.
      */
     abstract class Void
         implements Plugin<java.lang.Void>

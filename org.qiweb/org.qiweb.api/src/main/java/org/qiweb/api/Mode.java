@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,25 +19,29 @@ import org.qiweb.api.util.Reflectively;
 
 /**
  * {@link Application} Mode.
- * <p>Default is {@link #TEST} Mode.</p>
+ *
+ * Default is {@link #TEST} Mode.
  */
 @Reflectively.Loaded( by = "DevShell" )
 public enum Mode
 {
     /**
      * Development Mode.
-     * <p>Source is watched, Application is restarted on-demand, stacktraces are disclosed in responses.</p>
+     *
+     * Source is watched, Application is restarted on-demand, stacktraces are disclosed in responses.
      */
     @Reflectively.Get( by = "DevShell" )
     DEV( "Development" ),
     /**
      * Test Mode.
-     * <p>Intended to be used in unit tests, almost equivalent to {@link #PROD} Mode.</p>
+     *
+     * Intended to be used in unit tests, almost equivalent to {@link #PROD} Mode.
      */
     TEST( "Test" ),
     /**
      * Production Mode.
-     * <p>Run from binaries only, nothing gets reloaded.</p>
+     *
+     * Run from binaries only, nothing gets reloaded.
      */
     PROD( "Production" );
     private final String displayName;
@@ -48,6 +52,8 @@ public enum Mode
     }
 
     /**
+     * Display name of this Application Mode.
+     *
      * @return The display name of this Application Mode
      */
     @Override

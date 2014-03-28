@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,22 +29,24 @@ public final class MetaData
      * Returns the value to which the specified key is mapped,
      * or {@code null} if this map contains no mapping for the key.
      *
-     * <p>More formally, if this map contains a mapping from a key
+     * More formally, if this map contains a mapping from a key
      * {@code k} to a value {@code v} such that {@code (key==null ? k==null :
      * key.equals(k))}, then this method returns {@code v}; otherwise
-     * it returns {@code null}.  (There can be at most one such mapping.)
-     *
-     * <p>A return value of {@code null} does not <i>necessarily</i>
+     * it returns {@code null}. (There can be at most one such mapping.)
+     * <p>
+     * A return value of {@code null} does not <i>necessarily</i>
      * indicate that the map contains no mapping for the key; it's also
      * possible that the map explicitly maps the key to {@code null}.
      * The {@link #containsKey containsKey} operation may be used to
      * distinguish these two cases.
      *
-     * @param <T>   Parameterized meta-data type
-     * @param type  Requested meta-data type
-     * @param key   Key
-     * @return      The value to which the specified key is mapped,
-     *              or {@code null} if this map contains no mapping for the key.
+     * @param <T>  Parameterized meta-data type
+     * @param type Requested meta-data type
+     * @param key  Key
+     *
+     * @return The value to which the specified key is mapped,
+     *         or {@code null} if this map contains no mapping for the key.
+     *
      * @throws ClassCastException if the MetaData at the given key is not assignable to the given type.
      */
     public <T> T get( Class<T> type, String key )
@@ -58,8 +60,7 @@ public final class MetaData
     }
 
     /**
-     * Returns a shallow copy of this <tt>MetaData</tt> instance: the keys and
-     * values themselves are not cloned.
+     * Returns a shallow copy of this <tt>MetaData</tt> instance: the keys and values themselves are not cloned.
      *
      * @return a shallow copy of this MetaData
      */

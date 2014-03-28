@@ -279,7 +279,8 @@ public class Global
      *
      * Happens right before {@link Error} recording.
      * <p>
-     * Default to a minimal HTML page advertising a 500 status code and the corresponding reason phrase.
+     * Default to logging the error and producing a minimal HTML page advertising a 500 status code and the
+     * corresponding reason phrase.
      * <p>
      * Stacktrace is disclosed in development mode only, with links to project sources when available.
      * <p>

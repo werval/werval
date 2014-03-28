@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,11 +24,7 @@ import java.lang.annotation.Target;
  * Annotation to declare Filters on Controller types and methods.
  */
 @Retention( RetentionPolicy.RUNTIME )
-@Target(
-     {
-        ElementType.TYPE,
-        ElementType.METHOD
-    } )
+@Target( { ElementType.TYPE, ElementType.METHOD } )
 public @interface FilterWith
 {
 

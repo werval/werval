@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@ import java.util.TimeZone;
  */
 public final class Dates
 {
-
     /**
      * @return Now
      */
@@ -61,7 +60,6 @@ public final class Dates
      */
     public static final class HTTP
     {
-
         private static final ThreadLocal<DateFormat> HTTP_DATE_FORMAT = new ThreadLocal<DateFormat>()
         {
             @Override
@@ -76,7 +74,9 @@ public final class Dates
 
         /**
          * Format HTTP dates.
+         *
          * @param date Date
+         *
          * @return HTTP formatted date
          */
         public static String format( Date date )
@@ -86,8 +86,11 @@ public final class Dates
 
         /**
          * Parse HTTP dates.
+         *
          * @param httpFormatDateString HTTP format date String
+         *
          * @return Date
+         *
          * @throws ParseException when the given string is not in HTTP date format
          */
         public static Date parse( String httpFormatDateString )
@@ -123,7 +126,5 @@ public final class Dates
         private HTTP()
         {
         }
-
     }
-
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,67 +25,88 @@ public interface OutcomeBuilder
 {
     /**
      * Use a HTTP header value.
-     * @param name The header name
+     *
+     * @param name  The header name
      * @param value The header value
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withHeader( String name, String value );
 
     /**
      * @param contentType Outcome Content-Type
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder as( String contentType );
 
     /**
      * Use a bytes body.
-     * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
+     *
+     * Content-Length header will be set and identity Transfer-Encoding used.
+     *
      * @param body Body bytes
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( byte[] body );
 
     /**
      * Use a characters body.
-     * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
+     *
+     * Content-Length header will be set and identity Transfer-Encoding used.
+     *
      * @param body Body as CharSequence
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( CharSequence body );
 
     /**
      * Use a characters body.
-     * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
-     * @param body Body as CharSequence
+     *
+     * Content-Length header will be set and identity Transfer-Encoding used.
+     *
+     * @param body    Body as CharSequence
      * @param charset Character encoding to use
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( CharSequence body, Charset charset );
 
     /**
      * Use an InputStream body if undetermined length.
-     * <p>Content-Length header will NOT be set and chunked Transfer-Encoding used.</p>
-     * <p>Use a chunk size as configured in <code>qiweb.http.chunksize</code></p>
+     *
+     * Content-Length header will NOT be set and chunked Transfer-Encoding used.
+     * <p>
+     * Use a chunk size as configured in <code>qiweb.http.chunksize</code>
+     *
      * @param body Body InputStream
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( InputStream body );
 
     /**
-     /**
      * Use an InputStream body if undetermined length.
-     * <p>Content-Length header will NOT be set and chunked Transfer-Encoding used.</p>
-     * @param body Body InputStream
+     *
+     * Content-Length header will NOT be set and chunked Transfer-Encoding used.
+     *
+     * @param body      Body InputStream
      * @param chunkSize Desired HTTP chunk size
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( InputStream body, int chunkSize );
 
     /**
      * Use an InputStream body of known length.
-     * <p>Content-Length header will be set and identity Transfer-Encoding used.</p>
-     * @param body Body InputStream
+     *
+     * Content-Length header will be set and identity Transfer-Encoding used.
+     *
+     * @param body   Body InputStream
      * @param length Body length
+     *
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( InputStream body, long length );

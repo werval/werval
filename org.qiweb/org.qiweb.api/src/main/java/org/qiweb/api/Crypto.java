@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,21 +22,26 @@ public interface Crypto
 {
     /**
      * Generate a 256 bits long secret encoded in hexadecimal.
+     *
      * @return The generated secret encoded in hexadecimal as String
      */
     String genNew256bitsHexSecret();
 
     /**
      * Sign given message with the {@link Application}'s secret using HMAC SHA-256.
+     *
      * @param message Message to sign
+     *
      * @return Message signature
      */
     String hexHmacSha256( String message );
 
     /**
      * Sign given message with the given secret using HMAC SHA-256.
+     *
      * @param message Message to sign
-     * @param secret Secret to use
+     * @param secret  Secret to use
+     *
      * @return Message signature
      */
     String hexHmacSha256( String message, String secret );
