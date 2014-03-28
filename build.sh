@@ -23,17 +23,17 @@ fi
 
 # core
 $FIGLET org.qiweb
-$GRADLE -b org.qiweb/build.gradle install
+$GRADLE -b org.qiweb/build.gradle install check -x test
 echo "Built."
 
 # modules
 $FIGLET org.qiweb.modules
-$GRADLE -b org.qiweb.modules/build.gradle install
+$GRADLE -b org.qiweb.modules/build.gradle install check -x test
 echo "Built."
 
 # gradle plugin
 $FIGLET org.qiweb.gradle
-$GRADLE -b org.qiweb.gradle/build.gradle install
+$GRADLE -b org.qiweb.gradle/build.gradle install check -x test
 echo "Built."
 
 # maven plugin
