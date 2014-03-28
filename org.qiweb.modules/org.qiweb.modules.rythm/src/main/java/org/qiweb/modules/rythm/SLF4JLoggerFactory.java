@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  *
  * Automatically registered by {@link RythmPlugin}.
  */
-public final class SLF4JLoggerFactory
+/* package */ final class SLF4JLoggerFactory
     implements ILoggerFactory
 {
     @Override

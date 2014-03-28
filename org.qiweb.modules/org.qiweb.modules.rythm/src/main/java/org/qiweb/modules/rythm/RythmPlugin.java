@@ -27,6 +27,8 @@ import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_CLASS_LOADER_PAR
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_MODE;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_PLUGIN_VERSION;
 import static org.rythmengine.conf.RythmConfigurationKey.LOG_FACTORY_IMPL;
+import static org.rythmengine.conf.RythmConfigurationKey.RESOURCE_DEF_LOADER_ENABLED;
+import static org.rythmengine.conf.RythmConfigurationKey.RESOURCE_LOADER_IMPLS;
 
 /**
  * Rythm Template Engine Plugin.
@@ -69,12 +71,20 @@ public class RythmPlugin
             application.classLoader()
         );
         conf.put(
+            RESOURCE_DEF_LOADER_ENABLED.getKey(),
+            false
+        );
+        conf.put(
+            RESOURCE_LOADER_IMPLS.getKey(),
+            new QiWebTemplateResourceLoader( application, application.config().string( "rythm.base_path" ) )
+        );
+        conf.put(
             LOG_FACTORY_IMPL.getKey(),
             new SLF4JLoggerFactory()
         );
 
         // Load Rythm configuration, possibly overriding base configuration
-        conf.putAll( application.config().stringMap( "rythm" ) );
+        conf.putAll( application.config().stringMap( "rythm.config" ) );
 
         // Activate Rythm Engine
         rythm = new RythmEngine( conf );
