@@ -105,6 +105,7 @@ public class HttpServerAdapterTest
         server.activate();
         server.passivate();
         assertThat( slf4j.size(), greaterThan( 0 ) );
-        assertTrue( "Passivation error logged", slf4j.contains( "Exception on HttpServer.passivate" ) );
+        assertTrue( "Passivation error logged", slf4j.contains( "There were errors during passivation" ) );
+        assertTrue( "Specific exception in stacktrace", slf4j.containsExMessage( "passivateHttpServer" ) );
     }
 }

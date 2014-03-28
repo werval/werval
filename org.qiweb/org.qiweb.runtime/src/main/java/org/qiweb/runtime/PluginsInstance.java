@@ -105,7 +105,7 @@ import static java.util.Collections.EMPTY_LIST;
             {
                 ex.addSuppressed( err );
             }
-            LOG.error( ex.getMessage(), ex );
+            throw ex;
         }
     }
 

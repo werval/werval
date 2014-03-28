@@ -15,6 +15,9 @@
  */
 package org.qiweb.spi.server;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
@@ -95,9 +98,11 @@ public abstract class HttpServerAdapter
 
     @Override
     @Reflectively.Invoked( by = "DevShell" )
-    // TODO Fail-silent, log a single stacktrace with all exceptions as suppressed
     public final void passivate()
     {
+        // Record all passivation errors here to display them at once at the end
+        List<Exception> passivationErrors = new ArrayList<>();
+
         // Notify Global object that the HttpServer will stop listening to network connections
         try
         {
@@ -105,7 +110,9 @@ public abstract class HttpServerAdapter
         }
         catch( Exception ex )
         {
-            LOG.error( "Exception on Global.beforeHttpUnbind(): {}", ex.getMessage(), ex );
+            passivationErrors.add(
+                new PassivationException( "Exception(s) on Global.beforeHttpUnbind(): " + ex.getMessage(), ex )
+            );
         }
 
         // Passivate HttpServer
@@ -116,7 +123,9 @@ public abstract class HttpServerAdapter
         }
         catch( Exception ex )
         {
-            LOG.error( "Exception on HttpServer.passivate(): {}", ex.getMessage(), ex );
+            passivationErrors.add(
+                new PassivationException( "Exception(s) on HttpServer.passivate(): " + ex.getMessage(), ex )
+            );
         }
 
         // Notify Global object that the HttpServer stopped listening to network connections
@@ -126,7 +135,9 @@ public abstract class HttpServerAdapter
         }
         catch( Exception ex )
         {
-            LOG.error( "Exception on Global.afterHttpUnbind(): {}", ex.getMessage(), ex );
+            passivationErrors.add(
+                new PassivationException( "Exception(s) on Global.afterHttpUnbind(): " + ex.getMessage(), ex )
+            );
         }
 
         // Passivate Application
@@ -136,7 +147,20 @@ public abstract class HttpServerAdapter
         }
         catch( Exception ex )
         {
-            LOG.error( "Exception on Application.passivate(): {}", ex.getMessage(), ex );
+            passivationErrors.add(
+                new PassivationException( "Exception(s) on Application.passivate(): " + ex.getMessage(), ex )
+            );
+        }
+
+        // Log errors
+        if( !passivationErrors.isEmpty() )
+        {
+            PassivationException ex = new PassivationException( "There were errors during passivation" );
+            for( Exception passivationError : passivationErrors )
+            {
+                ex.addSuppressed( passivationError );
+            }
+            LOG.error( ex.getMessage(), ex );
         }
     }
 

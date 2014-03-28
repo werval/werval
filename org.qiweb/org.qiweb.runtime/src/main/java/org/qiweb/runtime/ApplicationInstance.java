@@ -31,6 +31,7 @@ import org.qiweb.api.Mode;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
+import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
 import org.qiweb.api.http.FormUploads;
@@ -259,21 +260,44 @@ public final class ApplicationInstance
         Thread.currentThread().setContextClassLoader( classLoader );
         try
         {
+            List<Exception> passivationErrors = new ArrayList<>();
             try
             {
                 global.onPassivate( this );
             }
             catch( Exception ex )
             {
-                LOG.error( "There were errors during Global passivation", ex );
+                passivationErrors.add(
+                    new PassivationException( "Exception(s) on Global::onPassivate(): " + ex.getMessage(), ex )
+                );
             }
-            plugins.onPassivate( this );
+            try
+            {
+                plugins.onPassivate( this );
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new PassivationException( "Exception(s) on Plugins::onPassivate(): " + ex.getMessage(), ex )
+                );
+            }
+            if( !passivationErrors.isEmpty() )
+            {
+                PassivationException ex = new PassivationException(
+                    "There were errors during Application passivation"
+                );
+                for( Exception err : passivationErrors )
+                {
+                    ex.addSuppressed( err );
+                }
+                throw ex;
+            }
         }
         finally
         {
             Thread.currentThread().setContextClassLoader( previousLoader );
+            activated = false;
         }
-        activated = false;
     }
 
     @Override
