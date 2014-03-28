@@ -8,5 +8,6 @@ dependencies {
 
     testRuntime project( ":org.qiweb.modules.jndi" )
     testRuntime libs.h2
+    testRuntime libs.postgres
 
 }

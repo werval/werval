@@ -2,10 +2,10 @@
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
-    compile 'org.springframework:spring-context:4.0.2.RELEASE'
+    compile 'org.springframework:spring-context:4.0.3.RELEASE'
 
     testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile 'org.springframework:spring-test:4.0.2.RELEASE'
+    testCompile 'org.springframework:spring-test:4.0.3.RELEASE'
     testCompile libs.rest_assured
 
 }
