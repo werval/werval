@@ -475,6 +475,21 @@ public final class ApplicationInstance
                 outcome.responseHeader().cookies().set( session.signedCookie() );
             }
 
+            // Add Set-Cookie headers
+            for( Cookie cookie : outcome.responseHeader().cookies() )
+            {
+                HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
+                jCookie.setVersion( cookie.version() );
+                jCookie.setPath( cookie.path() );
+                jCookie.setDomain( cookie.domain() );
+                jCookie.setMaxAge( cookie.maxAge() );
+                jCookie.setSecure( cookie.secure() );
+                jCookie.setHttpOnly( cookie.httpOnly() );
+                jCookie.setComment( cookie.comment() );
+                jCookie.setCommentURL( cookie.commentUrl() );
+                outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
+            }
+
             // Finalize!
             return finalizeOutcome( request, outcome );
         }
@@ -662,20 +677,6 @@ public final class ApplicationInstance
         applyKeepAlive( request, outcome );
         // Add X-QiWeb-Request-ID
         outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
-        // Add Set-Cookie headers
-        for( Cookie cookie : outcome.responseHeader().cookies() )
-        {
-            HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
-            jCookie.setVersion( cookie.version() );
-            jCookie.setPath( cookie.path() );
-            jCookie.setDomain( cookie.domain() );
-            jCookie.setMaxAge( cookie.maxAge() );
-            jCookie.setSecure( cookie.secure() );
-            jCookie.setHttpOnly( cookie.httpOnly() );
-            jCookie.setComment( cookie.comment() );
-            jCookie.setCommentURL( cookie.commentUrl() );
-            outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
-        }
         return outcome;
     }
 
