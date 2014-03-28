@@ -47,8 +47,10 @@ public final class Main
             {
                 String address = app.config().string( QIWEB_HTTP_ADDRESS );
                 int port = app.config().intNumber( QIWEB_HTTP_PORT );
-                LOG.info( "Ready for requests on http(s)://{}:{} - Took {}ms",
-                          address, port, System.currentTimeMillis() - start );
+                LOG.info(
+                    "Ready for requests on http(s)://{}:{} - Took {}ms",
+                    address, port, System.currentTimeMillis() - start
+                );
             }
         }
         catch( Exception ex )

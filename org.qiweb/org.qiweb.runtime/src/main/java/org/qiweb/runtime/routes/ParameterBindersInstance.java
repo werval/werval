@@ -37,12 +37,6 @@ public final class ParameterBindersInstance
     private abstract static class StrictTypingParameterBinder<T>
         implements ParameterBinder<T>
     {
-        static
-        {
-            // TODO Only disable TypeResolver cache when in DEV mode
-            TypeResolver.disableCache();
-        }
-
         @Override
         public final boolean accept( java.lang.Class<?> type )
         {

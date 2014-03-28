@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,13 +21,15 @@ import java.util.Set;
 
 /**
  * Development Shell Service Provider Interface.
- * <p>Methods of this class are used as extension points by the QiWeb Runtime in Development Mode.</p>
+ *
+ * Methods of this class are used as extension points by the QiWeb Runtime in Development Mode.
  */
 public interface DevShellSPI
 {
     /**
      * File watching abstraction.
-     * <p>Allow DevShell implementations to choose their file watching implementation.</p>
+     *
+     * Allow DevShell implementations to choose their file watching implementation.
      */
     interface SourceWatcher
     {
@@ -35,7 +37,8 @@ public interface DevShellSPI
          * Watch a set of directories.
          *
          * @param filesAndDirectories Set of files and directories to watch
-         * @param listener Listener to notify on change
+         * @param listener            Listener to notify on change
+         *
          * @return A handle to unwatch when done
          */
         SourceWatch watch( Set<File> filesAndDirectories, SourceChangeListener listener );
@@ -59,22 +62,28 @@ public interface DevShellSPI
 
     /**
      * Application Classpath.
-     * <p>Typically build output directories.</p>
+     *
+     * Typically build output directories.
+     *
      * @return Application Classpath elements
      */
     URL[] applicationClassPath();
 
     /**
      * Runtime Classpath.
-     * <p>Typically application dependencies, including QiWeb.</p>
+     *
+     * Typically application dependencies, including QiWeb.
+     *
      * @return Runtime Classpath elements
      */
     URL[] runtimeClassPath();
 
     /**
      * Build Application source file URL if it exists.
-     * @param fileName File name
+     *
+     * @param fileName   File name
      * @param lineNumber Line number
+     *
      * @return URL to the Application source file or null if not present.
      */
     String sourceURL( String fileName, int lineNumber );

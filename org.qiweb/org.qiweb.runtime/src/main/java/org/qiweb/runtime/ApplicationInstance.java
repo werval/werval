@@ -64,6 +64,7 @@ import org.qiweb.runtime.routes.RouteBuilderInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
+import org.qiweb.runtime.util.TypeResolver;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.http.HttpBuilders;
@@ -196,6 +197,11 @@ public final class ApplicationInstance
         ensureNotNull( "Application Config", config );
         ensureNotNull( "Application ClassLoader", classLoader );
         ensureNotNull( "Application RoutesProvider", routesProvider );
+        if( mode == Mode.DEV )
+        {
+            // Disable TypeResolver caching in Development Mode
+            TypeResolver.disableCache();
+        }
         this.mode = mode;
         this.config = config;
         this.routesProvider = routesProvider;

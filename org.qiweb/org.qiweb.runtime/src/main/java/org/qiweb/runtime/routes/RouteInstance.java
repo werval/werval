@@ -44,7 +44,6 @@ import static org.qiweb.runtime.util.Iterables.toList;
 /**
  * Instance of a Route.
  */
-// TODO Support quoted parameter forced values in routes.conf
 /* package */ final class RouteInstance
     implements Route
 {
@@ -58,11 +57,13 @@ import static org.qiweb.runtime.util.Iterables.toList;
     private final Set<String> modifiers;
     private final Pattern pathRegex;
 
-    /* package */ RouteInstance( Method httpMethod, String path,
-                   Class<?> controllerType,
-                   String controllerMethodName,
-                   ControllerParams controllerParams,
-                   Set<String> modifiers )
+    /* package */ RouteInstance(
+        Method httpMethod, String path,
+        Class<?> controllerType,
+        String controllerMethodName,
+        ControllerParams controllerParams,
+        Set<String> modifiers
+    )
     {
         ensureNotNull( "HTTP Method", httpMethod );
         ensureNotEmpty( "Path", path );
@@ -100,8 +101,10 @@ import static org.qiweb.runtime.util.Iterables.toList;
         {
             if( Collections.frequency( pathParamsNames, paramName ) > 1 )
             {
-                throw new IllegalRouteException( toString(),
-                                                 "Parameter '" + paramName + "' is present several times in path." );
+                throw new IllegalRouteException(
+                    toString(),
+                    "Parameter '" + paramName + "' is present several times in path."
+                );
             }
         }
 
@@ -118,13 +121,15 @@ import static org.qiweb.runtime.util.Iterables.toList;
                 if( paramName.equals( controllerParamName ) )
                 {
                     found = true;
-                    continue;
+                    break;
                 }
             }
             if( !found )
             {
-                throw new IllegalRouteException( toString(),
-                                                 "Parameter '" + paramName + "' is present in path but not bound." );
+                throw new IllegalRouteException(
+                    toString(),
+                    "Parameter '" + paramName + "' is present in path but not bound."
+                );
             }
         }
 
@@ -135,18 +140,24 @@ import static org.qiweb.runtime.util.Iterables.toList;
             controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
             if( !controllerMethod.getReturnType().isAssignableFrom( Outcome.class ) )
             {
-                throw new IllegalRouteException( toString(), "Controller Method '" + controllerType.getSimpleName()
-                                                             + "#" + controllerMethodName
-                                                             + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
-                                                             + "do not return an Outcome." );
+                throw new IllegalRouteException(
+                    toString(),
+                    "Controller Method '" + controllerType.getSimpleName()
+                    + "#" + controllerMethodName
+                    + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
+                    + "do not return an Outcome."
+                );
             }
         }
         catch( NoSuchMethodException ex )
         {
-            throw new IllegalRouteException( toString(), "Controller Method '" + controllerType.getSimpleName()
-                                                         + "#" + controllerMethodName
-                                                         + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
-                                                         + "not found.", ex );
+            throw new IllegalRouteException(
+                toString(),
+                "Controller Method '" + controllerType.getSimpleName()
+                + "#" + controllerMethodName
+                + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
+                + "not found.", ex
+            );
         }
     }
 
@@ -234,7 +245,6 @@ import static org.qiweb.runtime.util.Iterables.toList;
     }
 
     @Override
-    // TODO Fix multiple query string parameter values handling
     public Map<String, Object> bindParameters( ParameterBinders parameterBinders, String path, QueryString queryString )
     {
         Matcher matcher = pathRegex.matcher( path );
@@ -260,14 +270,17 @@ import static org.qiweb.runtime.util.Iterables.toList;
                 {
                     if( queryString.names().contains( param.name() ) )
                     {
-                        // TODO First or last value!
+                        // QUID We currently requires a single value to bind QueryString parameter.
+                        // QUID Should we provide a config property to use first/last value?
+                        // QUID Or binding to collectionish types from all values?
                         unboundValue = queryString.singleValue( param.name() );
                     }
                 }
                 if( unboundValue == null )
                 {
-                    throw new ParameterBinderException( "Parameter named '" + param.name()
-                                                        + "' not found in path nor in query string." );
+                    throw new ParameterBinderException(
+                        "Parameter named '" + param.name() + "' not found in path nor in query string."
+                    );
                 }
                 boundParams.put( param.name(), parameterBinders.bind( param.type(), param.name(), unboundValue ) );
             }
@@ -297,9 +310,13 @@ import static org.qiweb.runtime.util.Iterables.toList;
                         Object value = controllerParam.hasForcedValue()
                                        ? controllerParam.forcedValue()
                                        : parameters.get( controllerParam.name() );
-                        unboundPath.append( parameterBinders.unbind( (Class<Object>) controllerParam.type(),
-                                                                     controllerParam.name(),
-                                                                     value ) );
+                        unboundPath.append(
+                            parameterBinders.unbind(
+                                (Class<Object>) controllerParam.type(),
+                                controllerParam.name(),
+                                value
+                            )
+                        );
                         paramsToUnbind.remove( controllerParam.name() );
                         break;
                     default:
@@ -330,9 +347,13 @@ import static org.qiweb.runtime.util.Iterables.toList;
                                ? controllerParam.forcedValue()
                                : parameters.get( controllerParam.name() );
                 unboundPath.append( qsParam ).append( "=" );
-                unboundPath.append( parameterBinders.unbind( (Class<Object>) controllerParam.type(),
-                                                             controllerParam.name(),
-                                                             value ) );
+                unboundPath.append(
+                    parameterBinders.unbind(
+                        (Class<Object>) controllerParam.type(),
+                        controllerParam.name(),
+                        value
+                    )
+                );
                 if( qsit.hasNext() )
                 {
                     unboundPath.append( "&" );
@@ -352,8 +373,11 @@ import static org.qiweb.runtime.util.Iterables.toList;
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append( httpMethod ).append( " " ).append( path ).append( " " ).
-            append( controllerType.getName() ).append( "." ).append( controllerMethodName ).append( "(" );
+        sb.append( httpMethod ).append( " " )
+            .append( path ).append( " " )
+            .append( controllerType.getName() ).append( "." )
+            .append( controllerMethodName )
+            .append( "(" );
         Iterator<ControllerParams.Param> it = controllerParams.iterator();
         if( it.hasNext() )
         {
@@ -439,12 +463,7 @@ import static org.qiweb.runtime.util.Iterables.toList;
         {
             return false;
         }
-        if( this.modifiers != other.modifiers && ( this.modifiers == null || !this.modifiers.equals( other.modifiers ) ) )
-        {
-            return false;
-        }
-        return true;
+        return this.modifiers == other.modifiers || ( this.modifiers != null && this.modifiers.equals( other.modifiers ) );
         // CHECKSTYLE:ON
     }
-
 }

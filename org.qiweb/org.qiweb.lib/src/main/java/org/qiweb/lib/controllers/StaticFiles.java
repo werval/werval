@@ -47,27 +47,32 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
  * Controller to serve static files or directory tree.
- * <p>Cache behaviour can be tweeked with <code>qiweb.lib.staticfiles</code> config properties.</p>
- * <p>Always use streamed identity transfer encoding.</p>
- * <p>MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.</p>
- * <p>Log 404 at DEBUG level.</p>
- * <p>Log 200 at TRACE level.</p>
- * <p><strong>Keep in mind that not all deployment strategies will be compatible with the use of this controller.</strong></p>
+ *
+ * Cache behaviour can be tweeked with <code>qiweb.lib.staticfiles</code> config properties.
+ * <p>
+ * Always use streamed identity transfer encoding.
+ * <p>
+ * MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.
+ * <p>
+ * Log 404 at DEBUG level.
+ * <p>
+ * Log 200 at TRACE level.
+ * <p>
+ * <strong>Keep in mind that not all deployment strategies will be compatible with the use of this controller.</strong>
  */
-// TODO Add Range request support in StaticFiles
 public class StaticFiles
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( StaticFiles.class );
 
     /**
      * Serve a filesystem directory as read-only resources.
-     * <p>
-     *     If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
-     *     used to find an index file. Default value is <code>index.html</code> only.
-     * </p>
+     *
+     * If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
+     * used to find an index file. Default value is <code>index.html</code> only.
+     *
      * @param root Root of the file tree to serve
      * @param path Path of the requeted file, relative to root
+     *
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome tree( String root, String path )
@@ -78,12 +83,13 @@ public class StaticFiles
 
     /**
      * Serve a filesystem directory as read-only resources.
-     * <p>
-     *     If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
-     *     used to find an index file. Default value is <code>index.html</code> only.
-     * </p>
+     *
+     * If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
+     * used to find an index file. Default value is <code>index.html</code> only.
+     *
      * @param root Root of the file tree to serve
      * @param path Path of the requeted file, relative to root
+     *
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome tree( Path root, String path )
@@ -94,12 +100,13 @@ public class StaticFiles
 
     /**
      * Serve a filesystem directory as read-only resources.
-     * <p>
-     *     If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
-     *     used to find an index file. Default value is <code>index.html</code> only.
-     * </p>
+     *
+     * If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
+     * used to find an index file. Default value is <code>index.html</code> only.
+     *
      * @param root Root of the file tree to serve
      * @param path Path of the requeted file, relative to root
+     *
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome tree( File root, String path )
@@ -130,7 +137,9 @@ public class StaticFiles
 
     /**
      * Serve a single file.
+     *
      * @param file Path of the requested file
+     *
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome file( String file )
@@ -141,7 +150,9 @@ public class StaticFiles
 
     /**
      * Serve a single file.
+     *
      * @param file Path of the requested file
+     *
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome file( Path file )
@@ -152,7 +163,9 @@ public class StaticFiles
 
     /**
      * Serve a single file.
+     *
      * @param file Path of the requested file
+     *
      * @return The requested file or a 404 Outcome if not found
      */
     public Outcome file( File file )
@@ -269,5 +282,4 @@ public class StaticFiles
             return outcomes().notFound().build();
         }
     }
-
 }

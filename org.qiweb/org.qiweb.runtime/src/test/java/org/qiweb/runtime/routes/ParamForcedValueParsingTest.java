@@ -28,7 +28,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.routes.RouteBuilder.p;
 
-// TODO Write tests with weird forced values taking escaping and special chars into account
 public class ParamForcedValueParsingTest
 {
     @Test

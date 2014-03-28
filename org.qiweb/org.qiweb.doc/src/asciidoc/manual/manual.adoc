@@ -214,7 +214,7 @@ If your application is running on multiple nodes behind a balancer you can lower
 your clients to reconnect immediatly to another node. Pretty useful for zero-downtime upgrades.
 
 
-==== The Global object
+=== The Global object
 
 ==== Instanciation
 

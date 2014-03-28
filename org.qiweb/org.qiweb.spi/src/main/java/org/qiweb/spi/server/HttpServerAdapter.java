@@ -140,13 +140,17 @@ public abstract class HttpServerAdapter
         }
     }
 
-    // TODO Javadoc
+    /**
+     * Override this method and activate your HttpServer implementation in it.
+     */
     protected void activateHttpServer()
     {
         throw new UnsupportedOperationException( "Override activateHttpServer()!" );
     }
 
-    // TODO Javadoc
+    /**
+     * Override this method and passivate your HttpServer implementation in it.
+     */
     protected void passivateHttpServer()
     {
         throw new UnsupportedOperationException( "Override passivateHttpServer()!" );

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
 package org.qiweb.runtime;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +27,14 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Error;
 import org.qiweb.api.Errors;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 import static org.qiweb.runtime.ConfigKeys.APP_ERRORS_RECORD_MAX;
 
 /**
  * Application Errors Instance.
  */
-// TODO Document configuration of ErrorsInstance
 public final class ErrorsInstance
     implements Errors
 {
@@ -137,9 +138,8 @@ public final class ErrorsInstance
     {
         // Left pad incremented error count with zeroes
         // Pad size is max recorded error length + 1
-        return errorIdentityPrefix
-               + String.format( "%0" + ( config.string( APP_ERRORS_RECORD_MAX ).length() + 1 ) + "d",
-                                errorIdentityCount.getAndIncrement() );
+        String padFormat = "%0" + ( config.string( APP_ERRORS_RECORD_MAX ).length() + 1 ) + "d";
+        return errorIdentityPrefix + String.format( padFormat, errorIdentityCount.getAndIncrement() );
     }
 
     @Override
@@ -151,7 +151,7 @@ public final class ErrorsInstance
     @Override
     public List<Error> asList()
     {
-        return Collections.unmodifiableList( new ArrayList<>( errors.values() ) );
+        return unmodifiableList( new ArrayList<>( errors.values() ) );
     }
 
     @Override
@@ -202,18 +202,11 @@ public final class ErrorsInstance
     {
         if( errors.isEmpty() )
         {
-            return Collections.emptyList();
+            return emptyList();
         }
-        List<Error> requestErrors = new ArrayList<>();
-        for( Map.Entry<String, Error> entry : errors.entrySet() )
-        {
-            Error error = entry.getValue();
-            if( requestId.equals( error.requestId() ) )
-            {
-                requestErrors.add( error );
-            }
-        }
-        return Collections.unmodifiableList( requestErrors );
+        return unmodifiableList(
+            errors.values().stream().filter( e -> requestId.equals( e.requestId() ) ).collect( toList() )
+        );
     }
 
     @Override

@@ -60,8 +60,6 @@ import static org.qiweb.api.util.Charsets.UTF_8;
 /**
  * Damn Small QiWeb DevShell.
  */
-// TODO QUID Use embedded ant tasks under the hood to ensure cross-platform compatibility.
-// This would help removing dependencies to apache-commons, or not ...
 public final class DamnSmallDevShell
 {
     private static final class SPI
@@ -191,7 +189,6 @@ public final class DamnSmallDevShell
             {
                 commands = Collections.singletonList( "run" );
             }
-            // TODO Check if all commands are recognized before executing
             if( debug )
             {
                 System.out.println( "Commands to be executed: " + commands );
@@ -279,7 +276,9 @@ public final class DamnSmallDevShell
             // Clean
             FileUtils.deleteDirectory( tmpDir );
             // Inform user
-            System.out.println( "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted." );
+            System.out.println(
+                "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted."
+            );
         }
         catch( IOException ex )
         {
@@ -343,7 +342,7 @@ public final class DamnSmallDevShell
         };
         if( debug )
         {
-            System.out.println( "Application Classpath is: " + applicationClasspath );
+            System.out.println( "Application Classpath is: " + Arrays.toString( applicationClasspath ) );
         }
 
         // Apply System Properties
@@ -367,8 +366,12 @@ public final class DamnSmallDevShell
         rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
 
         // Run DevShell
-        final DevShell devShell = new DevShell( new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir ) );
-        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" ) );
+        final DevShell devShell = new DevShell(
+            new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir )
+        );
+        Runtime.getRuntime().addShutdownHook(
+            new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" )
+        );
         devShell.start();
     }
 
@@ -378,7 +381,9 @@ public final class DamnSmallDevShell
     }
     private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
 
-    /* package */ static void rebuild( URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, File classesDir )
+    /* package */ static void rebuild(
+        URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, File classesDir
+    )
     {
         System.out.println( "Compiling Application..." );
         ByteArrayOutputStream javacOutput = new ByteArrayOutputStream();
@@ -435,7 +440,10 @@ public final class DamnSmallDevShell
         catch( IOException | URISyntaxException ex )
         {
             String output = javacOutput.toString(); // utf-8
-            throw new QiWebDevShellException( "Unable to rebuild" + ( Strings.isEmpty( output ) ? "" : "\n" + output ), ex );
+            throw new QiWebDevShellException(
+                "Unable to rebuild" + ( Strings.isEmpty( output ) ? "" : "\n" + output ),
+                ex
+            );
         }
     }
 
@@ -445,17 +453,21 @@ public final class DamnSmallDevShell
         Option classpathOption = OptionBuilder
             .withArgName( "element" )
             .hasArgs()
-            .withDescription( "Set application classpath element. "
-                              + "Use this option several times to declare a full classpath. " )
+            .withDescription(
+                "Set application classpath element. "
+                + "Use this option several times to declare a full classpath. "
+            )
             .withLongOpt( "classpath" )
             .create( 'c' );
 
         Option sourcesOption = OptionBuilder
             .withArgName( "directory" )
             .hasArgs()
-            .withDescription( "Set application sources directories. "
-                              + "Use this option several times to declare multiple sources directories. "
-                              + "Defaults to 'src/main/java' and 'src/main/resources' in current directory." )
+            .withDescription(
+                "Set application sources directories. "
+                + "Use this option several times to declare multiple sources directories. "
+                + "Defaults to 'src/main/java' and 'src/main/resources' in current directory."
+            )
             .withLongOpt( "sources" )
             .create( 's' );
 
@@ -469,9 +481,11 @@ public final class DamnSmallDevShell
         Option propertiesOption = OptionBuilder.withArgName( "property=value" )
             .hasArgs( 2 )
             .withValueSeparator()
-            .withDescription( "Define a system property. "
-                              + "Use this option several times to define multiple system properties. "
-                              + "Particularly convenient when used to override application configuration." )
+            .withDescription(
+                "Define a system property. "
+                + "Use this option several times to define multiple system properties. "
+                + "Particularly convenient when used to override application configuration."
+            )
             .withLongOpt( "define" )
             .create( 'D' );
 
@@ -530,36 +544,50 @@ public final class DamnSmallDevShell
         HelpFormatter help = new HelpFormatter();
         help.setOptionComparator( new OptionsComparator() );
         help.printUsage( out, WIDTH, "org.qiweb.cli [options] [command(s)]" );
-        out.print( "\n"
-                   + "  The Damn Small QiWeb DevShell\n"
-                   + "  - do not manage dependencies ;\n"
-                   + "  - do not allow you to extend the build ;\n"
-                   + "  - do not assemble applications.\n" );
-        help.printWrapped( out, WIDTH, 2,
-                           "\n"
-                           + "Meaning you have to manage your application dependencies and assembly yourself. "
-                           + "Theses limitations make this DevShell suitable for quick prototyping only. "
-                           + "Prefer the Gradle or Maven build systems integration." );
-        out.println( "\n  org.qiweb.cli is part of the QiWeb Development Kit - http://qiweb.org" );
-        out.println( "\n"
-                     + "Commands:\n\n"
-                     + "  new <appdir>  Create a new skeleton application in the 'appdir' directory.\n"
-                     + "  secret        Generate a new application secret.\n"
-                     + "  clean         Delete devshell temporary directory, see 'tmpdir' option.\n"
-                     + "  run           Run the QiWeb Development Shell.\n"
-                     + "\n"
-                     + "  If no command is specified, 'run' is assumed." );
-        out.println( "\n"
-                     + "Options:"
-                     + "\n" );
+        out.print(
+            "\n"
+            + "  The Damn Small QiWeb DevShell\n"
+            + "  - do not manage dependencies ;\n"
+            + "  - do not allow you to extend the build ;\n"
+            + "  - do not assemble applications.\n"
+        );
+        help.printWrapped(
+            out, WIDTH, 2,
+            "\n"
+            + "Meaning you have to manage your application dependencies and assembly yourself. "
+            + "Theses limitations make this DevShell suitable for quick prototyping only. "
+            + "Prefer the Gradle or Maven build systems integration."
+        );
+        out.println(
+            "\n  org.qiweb.cli is part of the QiWeb Development Kit - http://qiweb.org"
+        );
+        out.println(
+            "\n"
+            + "Commands:\n\n"
+            + "  new <appdir>  Create a new skeleton application in the 'appdir' directory.\n"
+            + "  secret        Generate a new application secret.\n"
+            + "  clean         Delete devshell temporary directory, see 'tmpdir' option.\n"
+            + "  run           Run the QiWeb Development Shell.\n"
+            + "\n"
+            + "  If no command is specified, 'run' is assumed."
+        );
+        out.println(
+            "\n"
+            + "Options:"
+            + "\n"
+        );
         help.printOptions( out, WIDTH, options, 2, 2 );
-        help.printWrapped( out, WIDTH, 2,
-                           "\n"
-                           + "All paths are relative to the current working directory, "
-                           + "except if they are absolute of course." );
-        help.printWrapped( out, WIDTH, 2,
-                           "\n"
-                           + "Licensed under the Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0" );
+        help.printWrapped(
+            out, WIDTH, 2,
+            "\n"
+            + "All paths are relative to the current working directory, "
+            + "except if they are absolute of course."
+        );
+        help.printWrapped(
+            out, WIDTH, 2,
+            "\n"
+            + "Licensed under the Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0"
+        );
         out.println();
     }
 
