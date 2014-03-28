@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,22 +23,28 @@ public interface MutableCookies
 {
     /**
      * Set a cookie value.
-     * @param name Cookie name
+     *
+     * @param name  Cookie name
      * @param value Cookie value
+     *
      * @return This very MutableCookies instance
      */
     MutableCookies set( String name, String value );
 
     /**
      * Set a cookie value.
+     *
      * @param cookie Cookie
+     *
      * @return This very MutableCookies instance
      */
     MutableCookies set( Cookie cookie );
 
     /**
      * Invalidate a cookie.
+     *
      * @param name Cookie name
+     *
      * @return This very MutableCookies instance
      */
     MutableCookies invalidate( String name );

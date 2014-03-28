@@ -16,11 +16,8 @@
 package org.qiweb.server.netty;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.CookieDecoder;
-import io.netty.handler.codec.http.DefaultCookie;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.multipart.Attribute;
 import io.netty.handler.codec.http.multipart.FileUpload;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
@@ -39,15 +36,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.http.Cookies;
-import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.util.ByteSource;
-import org.qiweb.api.util.Strings;
-import org.qiweb.runtime.http.CookiesInstance;
-import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
 import org.qiweb.spi.http.HttpBuilders;
 import org.qiweb.spi.http.HttpBuilders.RequestBuilder;
@@ -60,7 +52,6 @@ import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
 
 /**
@@ -99,8 +90,7 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
             .version( ProtocolVersion.valueOf( request.getProtocolVersion().text() ) )
             .method( request.getMethod().name() )
             .uri( request.getUri() )
-            .headers( headersToMap( request.headers() ) )
-            .cookies( cookiesOf( request ) );
+            .headers( headersToMap( request.headers() ) );
 
         if( request.content().readableBytes() > 0
             && ( POST.equals( request.getMethod() )
@@ -179,43 +169,6 @@ import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
             }
         }
         return headers;
-    }
-
-    private static Cookies cookiesOf( HttpRequest nettyRequest )
-    {
-        Map<String, Cookie> cookies = new HashMap<>();
-        // WARN Cookie parsed here from last Cookie header value but QiWeb Application ensure later that there is only
-        // one Cookie header. Stable but inefficient.
-        // TODO Move the responsibility of Cookies parsing to the Application
-        String cookieHeaderValue = nettyRequest.headers().get( COOKIE );
-        if( !Strings.isEmpty( cookieHeaderValue ) )
-        {
-            for( io.netty.handler.codec.http.Cookie nettyCookie : CookieDecoder.decode( cookieHeaderValue ) )
-            {
-                cookies.put( nettyCookie.getName(), asQiWebCookie( nettyCookie ) );
-            }
-        }
-        return new CookiesInstance( cookies );
-    }
-
-    /* package */ static io.netty.handler.codec.http.Cookie asNettyCookie( Cookie cookie )
-    {
-        io.netty.handler.codec.http.Cookie nettyCookie = new DefaultCookie( cookie.name(), cookie.value() );
-        nettyCookie.setPath( cookie.path() );
-        nettyCookie.setDomain( cookie.domain() );
-        nettyCookie.setSecure( cookie.secure() );
-        nettyCookie.setHttpOnly( cookie.httpOnly() );
-        return nettyCookie;
-    }
-
-    /* package */ static Cookie asQiWebCookie( io.netty.handler.codec.http.Cookie nettyCookie )
-    {
-        return new CookieInstance( nettyCookie.getName(),
-                                   nettyCookie.getPath(),
-                                   nettyCookie.getDomain(),
-                                   nettyCookie.isSecure(),
-                                   nettyCookie.getValue(),
-                                   nettyCookie.isHttpOnly() );
     }
 
     private NettyHttpFactories()

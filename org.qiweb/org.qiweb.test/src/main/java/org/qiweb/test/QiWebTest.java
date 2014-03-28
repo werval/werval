@@ -94,6 +94,12 @@ public class QiWebTest
         return app.httpBuilders().newRequestBuilder();
     }
 
+    @Override
+    public CookieBuilder newCookieBuilder()
+    {
+        return app.httpBuilders().newCookieBuilder();
+    }
+
     /**
      * Override to provide your own configuration.
      *

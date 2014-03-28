@@ -52,7 +52,6 @@ public class CookiesTest
             }
             return outcomes().ok().build();
         }
-
     }
 
     @ClassRule
@@ -65,22 +64,29 @@ public class CookiesTest
     @Test
     public void testSetCookie()
     {
-        expect().cookie( "foo", "bar" ).
-            when().get( "/set/foo/bar" );
+        expect()
+            .cookie( "foo", "bar" )
+            .when()
+            .get( "/set/foo/bar" );
     }
 
     @Test
     public void testRemoveCookie()
     {
-        expect().cookie( "foo", "" ).
-            when().get( "/remove/foo" );
+        expect()
+            .cookie( "foo", "" )
+            .when()
+            .get( "/remove/foo" );
     }
 
     @Test
     public void testMirrorCookies()
     {
-        given().cookie( "bazar", "cathedral" ).
-            expect().cookie( "bazar", "cathedral" ).
-            when().get( "/mirror" );
+        given()
+            .cookie( "bazar", "cathedral" )
+            .expect()
+            .cookie( "bazar", "cathedral" )
+            .when()
+            .get( "/mirror" );
     }
 }

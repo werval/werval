@@ -219,6 +219,15 @@ public final class IllegalArguments
         }
     }
 
+    public static void ensureInRange( String name, Integer value, Integer from, Integer to )
+    {
+        ensureNotNull( name, value );
+        if( value < from || value > to )
+        {
+            throw new IllegalArgumentException( name + " was not in range [" + from + "," + to + "]." );
+        }
+    }
+
     private IllegalArguments()
     {
     }

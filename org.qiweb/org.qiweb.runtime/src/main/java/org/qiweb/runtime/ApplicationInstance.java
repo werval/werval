@@ -16,6 +16,7 @@
 package org.qiweb.runtime;
 
 import java.io.File;
+import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -34,6 +35,7 @@ import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
@@ -76,6 +78,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
+import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
@@ -659,6 +662,20 @@ public final class ApplicationInstance
         applyKeepAlive( request, outcome );
         // Add X-QiWeb-Request-ID
         outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
+        // Add Set-Cookie headers
+        for( Cookie cookie : outcome.responseHeader().cookies() )
+        {
+            HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
+            jCookie.setVersion( cookie.version() );
+            jCookie.setPath( cookie.path() );
+            jCookie.setDomain( cookie.domain() );
+            jCookie.setMaxAge( cookie.maxAge() );
+            jCookie.setSecure( cookie.secure() );
+            jCookie.setHttpOnly( cookie.httpOnly() );
+            jCookie.setComment( cookie.comment() );
+            jCookie.setCommentURL( cookie.commentUrl() );
+            outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
+        }
         return outcome;
     }
 

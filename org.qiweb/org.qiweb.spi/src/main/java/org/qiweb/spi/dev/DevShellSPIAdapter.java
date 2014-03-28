@@ -51,7 +51,7 @@ public class DevShellSPIAdapter
     {
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
-        // TODO Unwatch sources on DevShell passivation
+        // QUID Unwatch sources on DevShell passivation?
         watcher.watch(
             toWatch,
             new SourceChangeListener()

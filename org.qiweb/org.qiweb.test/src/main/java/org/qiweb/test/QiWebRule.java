@@ -98,4 +98,10 @@ public class QiWebRule
     {
         return qiweb.newRequestBuilder();
     }
+
+    @Override
+    public CookieBuilder newCookieBuilder()
+    {
+        return qiweb.newCookieBuilder();
+    }
 }
