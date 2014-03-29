@@ -10,12 +10,15 @@
 
 QiWeb is not published yet. If you read this, feel lucky :-)
 
+**Table of contents**
 
-- [Getting Started](README.md#start)
-- [Build from the Source](#source)
-- [Contribute to QiWeb](#contrib)
+- Getting Started
+- Build from the Source
+- Contribute to QiWeb
 
-## <a name="start"></a>Getting Started
+
+
+## Getting Started
 
 The QiWeb documentation is not published online yet but it is embedded in the QiWeb Development Mode. We'll bootstrap you there first.
 
@@ -92,7 +95,7 @@ If you found a bug or want to request a new feature, use the [issue tracker](htt
 
 
 
-## <a name="source"></a>Build QiWeb from the Source
+## Build QiWeb from the Source
 
 You need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/) and [Gradle](http://www.gradle.org/).
 
@@ -124,7 +127,7 @@ If you encounter any problem, please [fill an issue](https://scm.codeartisans.or
 
 
 
-## <a name="contrib"></a>Contribute to QiWeb
+## Contribute to QiWeb
 
 If you can read this, it means you already have full modification access to QiWeb's code and documentation.
 
@@ -157,7 +160,7 @@ If you want to contribute to the documentation effort, well that's really good n
 
 The QiWeb documentation lies alongside the source code. It is written using the `AsciiDoc` format and processed using `AsciiDoctor`, here is the [Writers Guide](http://asciidoctor.org/docs/asciidoc-writers-guide/). All you need is a text editor.
 
-The QiWeb build system generates a HTML version of the documentation. You should start by [building QiWeb](#source).
+The QiWeb build system generates a HTML version of the documentation. You should start by building QiWeb from the source, see above.
 
 Once that the build pass on your computer, see the [org.qiweb/org.qiweb.doc/src/asciidoc](org.qiweb/org.qiweb.doc/src/asciidoc) directory of the source repository, it contains the whole QiWeb documentation. That is ;
 
@@ -177,7 +180,7 @@ QiWeb is written using the Java language (but not limited to it, see the F.A.Q).
 The source code is managed using `git`.
 You'll need to use theses two technologies for contributing new code to QiWeb.
 
-Of course, the first step is to [build QiWeb from the source](#source).
+Of course, the first step is to build QiWeb from the source, see above.
 
 Once you're confident the build is working on your computer, you'll want a convy IDE supporting Java 8.
 QiWeb is built using Gradle that is supportted by many IDEs, see the [Gradle Tooling](http://www.gradle.org/tooling) page at `gradle.org`.
