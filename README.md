@@ -169,6 +169,7 @@ Once that the build pass on your computer, see the [org.qiweb/org.qiweb.doc/src/
 
 Pick one, make some changes!
 
+If you want to rebuild the documentation only after you made changes, go into the `org.qiweb/org.qiweb.doc` directory and issue `gradle asciidoctor`.
 
 #### Want to contribute somehing new?
 
