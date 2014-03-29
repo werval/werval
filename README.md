@@ -11,7 +11,7 @@
 QiWeb is not published yet. If you read this, feel lucky :-)
 
 
-- [Getting Started](#start)
+- [Getting Started](README.md#start)
 - [Build from the Source](#source)
 - [Contribute to QiWeb](#contrib)
 
