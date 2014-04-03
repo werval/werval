@@ -20,7 +20,8 @@ QiWeb is not published yet. If you read this, feel lucky :-)
 
 ## Getting Started
 
-The QiWeb documentation is not published online yet but it is embedded in the QiWeb Development Mode. We'll bootstrap you there first.
+The QiWeb documentation is not published online yet but it is embedded in the QiWeb Development Mode.
+We'll bootstrap you there first.
 
 
 ### Installing the QiWeb command line
@@ -97,9 +98,13 @@ If you found a bug or want to request a new feature, use the [issue tracker](htt
 
 ## Build QiWeb from the Source
 
-You need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/) and [Gradle](http://www.gradle.org/).
+The steps described above are for the latest QiWeb released version.
+If you want to use the development versionor contribute to QiWeb, keep reading.
 
-This git repository contains several independent projects.
+Obviously, you need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/).
+QiWeb is build using [Gradle](http://www.gradle.org/), that you need to install too.
+
+This very git repository contains several independent projects.
 
     org.qiweb               QiWeb Core
     org.qiweb.modules       Modules
@@ -112,11 +117,16 @@ For convenience, two shell scripts are provided:
     build.sh                Quick build without tests
     check.sh                Full build with all tests
 
-Please note that if you want to get UML diagrams generated in Javadocs you'll need to have [GraphViz](http://www.graphviz.org/) installed. The build will pass without though. But with less fun.
+Please note that if you want to get UML diagrams generated in Javadocs you'll need to have [GraphViz](http://www.graphviz.org/) installed.
+The build will pass without though.
+But with less fun.
 
-When working on the QiWeb source code, it is recommended to run all tests first, giving you confidence that the whole thing work on your computer. You can do that easily by running the `check.sh` build script.
+When working on the QiWeb source code, it is recommended to run all tests first, giving you confidence that the whole thing work on your computer.
+You can do that easily by running the `check.sh` build script.
 
-QiWeb do not have much dependencies but the build system and the tests do. As a consequence, a vast amount of code is downloaded the first time you run a build. Theses downloads are cached in `~/.gradle/caches`.
+QiWeb do not have much dependencies but the build system and the tests do.
+As a consequence, a vast amount of code is downloaded the first time you run a build.
+Theses downloads are cached in `~/.gradle/caches`.
 
 QiWeb artifacts produced by the build are installed in your local maven repository (`~/.m2/repository`) for consumption by other applications and in the `repository` directory of this very git repository for use by different projects under this repository umbrella.
 
@@ -131,7 +141,8 @@ If you encounter any problem, please [fill an issue](https://scm.codeartisans.or
 
 If you can read this, it means you already have full modification access to QiWeb's code and documentation.
 
-We generally uses a Commit-Then-Review policy on most changes. This allows a reasonable high velocity of development.
+We generally uses a Commit-Then-Review policy on most changes.
+This allows a reasonable high velocity of development.
 
 ### Playing field
 
@@ -141,7 +152,8 @@ If you encounter an issue, please report it by creating a [new issue](https://sc
 
 Before doing so, please search for existing issues and make sure your bug hasn't been reported yet.
 
-Remember that you can paste programs output, error traces etc.. into the issue and attach log files, screenshots to it. Anything that could allow us to reproduce the bug in order to fix it is welcome!
+Remember that you can paste programs output, error traces etc.. into the issue and attach log files, screenshots to it.
+Anything that could allow us to reproduce the bug in order to fix it is welcome!
 
 If you happen to have some coding skills but don't want to dive into QiWeb source code, a test-case that reproduce the bug would be awesome.
 
@@ -158,11 +170,15 @@ Simply report them by creating a [new issue](https://scm.codeartisans.org/qiweb/
 
 If you want to contribute to the documentation effort, well that's really good news!
 
-The QiWeb documentation lies alongside the source code. It is written using the `AsciiDoc` format and processed using `AsciiDoctor`, here is the [Writers Guide](http://asciidoctor.org/docs/asciidoc-writers-guide/). All you need is a text editor.
+The QiWeb documentation lies alongside the source code.
+It is written using the `AsciiDoc` format and processed using `AsciiDoctor`, here is the [Writers Guide](http://asciidoctor.org/docs/asciidoc-writers-guide/).
+All you need is a text editor.
 
-The QiWeb build system generates a HTML version of the documentation. You should start by building QiWeb from the source, see above.
+The QiWeb build system generates a HTML version of the documentation.
+You should start by building QiWeb from the source, see above.
 
-Once that the build pass on your computer, see the [org.qiweb/org.qiweb.doc/src/asciidoc](org.qiweb/org.qiweb.doc/src/asciidoc) directory of the source repository, it contains the whole QiWeb documentation. That is ;
+Once that the build pass on your computer, see the [org.qiweb/org.qiweb.doc/src/asciidoc](org.qiweb/org.qiweb.doc/src/asciidoc) directory of the source repository, it contains the whole QiWeb documentation.
+That is ;
 
 - Getting Started (`getting-started.adoc` and the `getting-started` directory)
 - The QiWeb Manual (`manual.adoc` and the `manual` directory)
@@ -185,7 +201,8 @@ Of course, the first step is to build QiWeb from the source, see above.
 Once you're confident the build is working on your computer, you'll want a convy IDE supporting Java 8.
 QiWeb is built using Gradle that is supportted by many IDEs, see the [Gradle Tooling](http://www.gradle.org/tooling) page at `gradle.org`.
 
-We recommand [Netbeans](https://netbeans.org/) but [IntelliJ IDEA](https://netbeans.org/) or [Eclipse](https://eclipse.org) will do. If you are adventurous, any text editor can be used.
+We recommand [Netbeans](https://netbeans.org/) but [IntelliJ IDEA](https://netbeans.org/) or [Eclipse](https://eclipse.org) will do.
+If you are adventurous, any text editor can be used.
 
 While you setup your workstation, continue reading to learn about the development workflow.
 
@@ -207,16 +224,17 @@ It looks more complicated than it is. Here are the guidelines;
 - Any changes that are not trivial, start a feature branch.
 - The following names are reserved for not feature branches; `master`, `develop`, `hotfix/*`, `release/*`
 
-Day-to-day development revolves around the develop branch and it is this branch that you typically clone from our repository if you intend to contribute to QiWeb itself. If you create a new feature, or make some larger piece of refactoring, then please create a 'feature branch' (see article for details).
+Day-to-day development revolves around the develop branch and it is this branch that you typically clone from our repository if you intend to contribute to QiWeb itself.
+If you create a new feature, or make some larger piece of refactoring, then please create a 'feature branch' (see article for details).
 
 The release/* and hotfix/* branches are for release management only, and doesn't affect most contributors from a commit perspective.
 
 For convenience you should install and use the [git-flow git extension](https://github.com/nvie/gitflow) that implement this branching model by adding git commands.
-
-You may find the [git-flow cheatsheet](http://danielkummer.github.io/git-flow-cheatsheet/) helpful. It is available in several languages.
+You may find the [git-flow cheatsheet](http://danielkummer.github.io/git-flow-cheatsheet/) helpful too. It is available in several languages.
 
 #### Using Gitlab Merge Requests
 
-Merge requests let you tell others about changes you've pushed to a Gitlab repository. Once a pull request is sent, interested parties can review the set of changes, discuss potential modifications, and even push follow-up commits if necessary.
+Merge requests let you tell others about changes you've pushed to a Gitlab repository.
+Once a pull request is sent, interested parties can review the set of changes, discuss potential modifications, and even push follow-up commits if necessary.
 
 See the [Gitlab Help](https://scm.codeartisans.org/help/workflow) about this.
