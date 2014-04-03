@@ -211,7 +211,9 @@ Day-to-day development revolves around the develop branch and it is this branch 
 
 The release/* and hotfix/* branches are for release management only, and doesn't affect most contributors from a commit perspective.
 
-For convenience you should install and use the [gitflow git extension](https://github.com/nvie/gitflow) that implement this branching model by adding git commands.
+For convenience you should install and use the [git-flow git extension](https://github.com/nvie/gitflow) that implement this branching model by adding git commands.
+
+You may find the [git-flow cheatsheet](http://danielkummer.github.io/git-flow-cheatsheet/) helpful. It is available in several languages.
 
 #### Using Gitlab Merge Requests
 
