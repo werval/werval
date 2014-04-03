@@ -99,7 +99,7 @@ If you found a bug or want to request a new feature, use the [issue tracker](htt
 ## Build QiWeb from the Source
 
 The steps described above are for the latest QiWeb released version.
-If you want to use the development versionor contribute to QiWeb, keep reading.
+If you want to use the development version or contribute to QiWeb, keep reading.
 
 Obviously, you need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/).
 QiWeb is build using [Gradle](http://www.gradle.org/), that you need to install too.
