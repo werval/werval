@@ -41,6 +41,7 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
@@ -59,6 +60,7 @@ import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.HttpBuildersInstance;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
+import org.qiweb.runtime.i18n.LangsInstance;
 import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.outcomes.OutcomesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
@@ -84,6 +86,7 @@ import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
+import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
@@ -122,6 +125,7 @@ public final class ApplicationInstance
     private PluginsInstance plugins;
     private Global global;
     private Crypto crypto;
+    private Langs langs;
     private Charset defaultCharset;
     private File tmpdir;
     private ClassLoader classLoader;
@@ -339,6 +343,12 @@ public final class ApplicationInstance
     public Crypto crypto()
     {
         return crypto;
+    }
+
+    @Override
+    public Langs langs()
+    {
+        return langs;
     }
 
     @Override
@@ -761,6 +771,7 @@ public final class ApplicationInstance
         configureGlobal();
         configureDefaultCharset();
         configureCrypto();
+        configureLangs();
         configureTmpdir();
         configureParameterBinders();
         configureMimeTypes();
@@ -788,6 +799,11 @@ public final class ApplicationInstance
     private void configureCrypto()
     {
         this.crypto = new CryptoInstance( config.string( APP_SECRET ), defaultCharset );
+    }
+
+    private void configureLangs()
+    {
+        this.langs = new LangsInstance( config.stringList( APP_LANGS ) );
     }
 
     private void configureTmpdir()
@@ -849,6 +865,6 @@ public final class ApplicationInstance
 
     private void configureHttpBuilders()
     {
-        httpBuilders = new HttpBuildersInstance( config, defaultCharset );
+        httpBuilders = new HttpBuildersInstance( config, defaultCharset, langs );
     }
 }

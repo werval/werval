@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.util.List;
 import java.util.Map;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
@@ -24,6 +25,7 @@ import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.i18n.Lang;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 
@@ -143,6 +145,18 @@ public class RequestInstance
     public Map<String, Object> parameters()
     {
         return header.parameters();
+    }
+
+    @Override
+    public List<Lang> acceptedLangs()
+    {
+        return header.acceptedLangs();
+    }
+
+    @Override
+    public Lang preferredLang()
+    {
+        return header.preferredLang();
     }
 
     @Override

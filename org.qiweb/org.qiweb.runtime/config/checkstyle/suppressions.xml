@@ -19,7 +19,6 @@
 
     <!-- Builders & Big Constructors -->
     <suppress checks="ParameterNumber" files="HttpBuildersInstance.java"/>
-    <suppress checks="ParameterNumber" files="RequestHeaderInstance.java"/>
     <suppress checks="ParameterNumber" files="CookiesInstance.java"/>
 
     <!-- Java 7 Try-With-Resources not supported by Checkstyle -->
@@ -38,5 +37,7 @@
     <suppress checks=".*" files="Comparators.java"/>
     <suppress checks=".*" files="HttpServerAdapter.java"/>
     <suppress checks=".*" files="ReverseRoutesInstance.java"/>
+    <suppress checks=".*" files="RequestHeaderInstance.java"/>
+    <suppress checks=".*" files="LangsInstance.java"/>
 
 </suppressions>

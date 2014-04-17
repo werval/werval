@@ -40,8 +40,10 @@ import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.Method.GET;
 import static org.qiweb.api.http.Method.POST;
@@ -335,8 +337,10 @@ public class RoutesTest
         String requestPath = URLs.decode( queryStringDecoder.path(), UTF_8 );
         QueryString queryString = new QueryStringInstance( queryStringDecoder.parameters() );
         return new RequestHeaderInstance(
-            "identity", "127.0.0.1", HTTP_1_1,
-            GET, requestUri, requestPath,
+            null,
+            "identity", "127.0.0.1",
+            false, false, emptyList(),
+            HTTP_1_1, GET, requestUri, requestPath,
             queryString, new HeadersInstance(), new CookiesInstance()
         );
     }

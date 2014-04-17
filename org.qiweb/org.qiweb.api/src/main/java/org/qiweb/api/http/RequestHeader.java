@@ -15,7 +15,9 @@
  */
 package org.qiweb.api.http;
 
+import java.util.List;
 import java.util.Map;
+import org.qiweb.api.i18n.Lang;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 
@@ -164,4 +166,21 @@ public interface RequestHeader
      * @return Request path and query-string bound parameters, or an empty Map if not bound
      */
     Map<String, Object> parameters();
+
+    /**
+     * Accepted Languages.
+     *
+     * @return Accepted languages, ordered by the q-values of the {@literal Accept-Language} header, preferred first
+     */
+    List<Lang> acceptedLangs();
+
+    /**
+     * Preferred Language.
+     *
+     * Guess the preferred language according to the {@literal Accept-Language} request header or Application's
+     * preferred language, or the language of the default {@literal Locale}.
+     *
+     * @return The preferred language
+     */
+    Lang preferredLang();
 }

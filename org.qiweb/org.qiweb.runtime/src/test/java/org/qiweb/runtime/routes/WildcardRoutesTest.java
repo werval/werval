@@ -27,6 +27,7 @@ import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -135,8 +136,10 @@ public class WildcardRoutesTest
     private RequestHeader reqHeadForGet( String path )
     {
         return new RequestHeaderInstance(
+            null,
             "abc",
             "127.0.0.1",
+            false, false, emptyList(),
             HTTP_1_1,
             GET,
             "http://localhost" + path,

@@ -29,6 +29,7 @@ import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
+import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.util.ByteSource;
 import org.qiweb.api.util.Strings;
 import org.qiweb.api.util.URLs;
@@ -63,24 +64,27 @@ public class HttpBuildersInstance
 {
     private final Config config;
     private final Charset defaultCharset;
+    private final Langs langs;
 
     /**
      * Create a new HttpBuilders instance.
      *
      * @param config         Configuration
      * @param defaultCharset Application default charset
+     * @param langs          Applicaiton Langs
      */
-    public HttpBuildersInstance( Config config, Charset defaultCharset )
+    public HttpBuildersInstance( Config config, Charset defaultCharset, Langs langs )
     {
         this.config = config;
         this.defaultCharset = defaultCharset;
+        this.langs = langs;
     }
 
     @Override
     public RequestBuilder newRequestBuilder()
     {
         return new RequestBuilderInstance(
-            config, defaultCharset, null, null, null, null, null, null, null, null, null, null
+            config, defaultCharset, langs, null, null, null, null, null, null, null, null, null, null
         );
     }
 
@@ -89,6 +93,7 @@ public class HttpBuildersInstance
     {
         private final Config config;
         private final Charset defaultCharset;
+        private final Langs langs;
         private final String identity;
         private final String remoteSocketAddress;
         private final ProtocolVersion version;
@@ -101,7 +106,7 @@ public class HttpBuildersInstance
         private final Map<String, List<FormUploads.Upload>> uploads;
 
         private RequestBuilderInstance(
-            Config config, Charset defaultCharset,
+            Config config, Charset defaultCharset, Langs langs,
             String identity, String remoteSocketAddress,
             ProtocolVersion version, Method method, String uri,
             Headers headers, Cookies cookies,
@@ -111,6 +116,7 @@ public class HttpBuildersInstance
         {
             this.config = config;
             this.defaultCharset = defaultCharset;
+            this.langs = langs;
             this.identity = Strings.isEmpty( identity ) ? "NO_REQUEST_ID" : identity;
             this.remoteSocketAddress = remoteSocketAddress;
             this.version = version == null ? HTTP_1_1 : version;
@@ -127,7 +133,7 @@ public class HttpBuildersInstance
         public RequestBuilder identifiedBy( String identity )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -138,7 +144,7 @@ public class HttpBuildersInstance
         public RequestBuilder remoteSocketAddress( String remoteSocketAddress )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -149,7 +155,7 @@ public class HttpBuildersInstance
         public RequestBuilder version( ProtocolVersion version )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -160,7 +166,7 @@ public class HttpBuildersInstance
         public RequestBuilder method( String method )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, Method.valueOf( method ), uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -171,7 +177,7 @@ public class HttpBuildersInstance
         public RequestBuilder method( Method method )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -182,7 +188,7 @@ public class HttpBuildersInstance
         public RequestBuilder uri( String uri )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -247,7 +253,7 @@ public class HttpBuildersInstance
         public RequestBuilder headers( Headers headers )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -264,7 +270,7 @@ public class HttpBuildersInstance
         public RequestBuilder cookies( Cookies cookies )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -275,7 +281,7 @@ public class HttpBuildersInstance
         public RequestBuilder bodyBytes( ByteSource bodyBytes )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -289,7 +295,7 @@ public class HttpBuildersInstance
         )
         {
             return new RequestBuilderInstance(
-                config, defaultCharset,
+                config, defaultCharset, langs,
                 identity, remoteSocketAddress, version, method, uri,
                 headers, cookies,
                 bodyBytes, attributes, uploads
@@ -354,6 +360,8 @@ public class HttpBuildersInstance
             return new RequestInstance(
                 // Request Header
                 new RequestHeaderInstance(
+                    // Langs
+                    langs,
                     // Identity
                     identity,
                     // Remote Address can be null

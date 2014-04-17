@@ -21,6 +21,7 @@ import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.util.Strings;
 
+import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
@@ -109,11 +110,17 @@ public class HttpRequestHeaderTest
 
     private RequestHeader withUri( String uri )
     {
-        return new RequestHeaderInstance( null, null, HTTP_1_1, null, uri, null, null, null, null );
+        return new RequestHeaderInstance(
+            null, null, null, false, false, emptyList(),
+            HTTP_1_1, null, uri, null, null, null, null
+        );
     }
 
     private RequestHeader withHeaders( Headers headers )
     {
-        return new RequestHeaderInstance( null, null, HTTP_1_1, null, null, null, null, headers, null );
+        return new RequestHeaderInstance(
+            null, null, null, false, false, emptyList(),
+            HTTP_1_1, null, null, null, null, headers, null
+        );
     }
 }

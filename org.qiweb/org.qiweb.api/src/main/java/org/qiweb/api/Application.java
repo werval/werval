@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.http.HttpBuilders;
+import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -112,6 +113,15 @@ public interface Application
      * @return Application {@link Crypto}
      */
     Crypto crypto();
+
+    /**
+     * Application {@link Langs}.
+     *
+     * Don't hold references to the Langs instance in order to make your code {@link Mode#DEV} friendly.
+     *
+     * @return Application {@link Langs}
+     */
+    Langs langs();
 
     /**
      * Application default {@link Charset}.
