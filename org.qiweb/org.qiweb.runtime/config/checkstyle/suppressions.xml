@@ -39,5 +39,6 @@
     <suppress checks=".*" files="ReverseRoutesInstance.java"/>
     <suppress checks=".*" files="RequestHeaderInstance.java"/>
     <suppress checks=".*" files="LangsInstance.java"/>
+    <suppress checks=".*" files="MediaRangeInstance.java"/>
 
 </suppressions>

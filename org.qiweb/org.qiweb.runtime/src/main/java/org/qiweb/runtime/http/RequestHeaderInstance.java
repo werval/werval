@@ -31,16 +31,19 @@ import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.i18n.Lang;
 import org.qiweb.api.i18n.Langs;
+import org.qiweb.api.mime.MediaRange;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.util.Couple;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.runtime.util.Couple;
+import org.qiweb.runtime.mime.MediaRangeInstance;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
+import static org.qiweb.api.http.Headers.Names.ACCEPT;
 import static org.qiweb.api.http.Headers.Names.ACCEPT_LANGUAGE;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
@@ -321,6 +324,24 @@ public class RequestHeaderInstance
     public Lang preferredLang()
     {
         return langs.preferred( acceptedLangs() );
+    }
+
+    @Override
+    public List<MediaRange> acceptedMimeTypes()
+    {
+        return MediaRangeInstance.parseList( headers.singleValue( ACCEPT ) );
+    }
+
+    @Override
+    public boolean acceptsMimeType( String mimeType )
+    {
+        return MediaRangeInstance.accepts( acceptedMimeTypes(), mimeType );
+    }
+
+    @Override
+    public String preferredMimeType( String... mimeTypes )
+    {
+        return MediaRangeInstance.preferred( acceptedMimeTypes(), mimeTypes );
     }
 
     /**

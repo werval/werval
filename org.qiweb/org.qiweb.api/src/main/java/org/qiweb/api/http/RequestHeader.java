@@ -18,6 +18,7 @@ package org.qiweb.api.http;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.api.i18n.Lang;
+import org.qiweb.api.mime.MediaRange;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 
@@ -183,4 +184,36 @@ public interface RequestHeader
      * @return The preferred language
      */
     Lang preferredLang();
+
+    /**
+     * Accepted content mime types.
+     *
+     * @return Accepted content mime types, ordered by the q-values of the {@literal Accept} header
+     */
+    List<MediaRange> acceptedMimeTypes();
+
+    /**
+     * Test if this request accepts the given mime type.
+     *
+     * @param mimeType Mime type
+     *
+     * @return {@literal true} if {@literal mimeType} matches the Accept header, otherwise return {@literal false}
+     */
+    boolean acceptsMimeType( String mimeType );
+
+    /**
+     * Preferred Mime Type.
+     *
+     * Guess the preferred mime types among given mime types according to the {@literal Accept} request header.
+     * <p>
+     * If the request accepts any mime type and no candidate were given, return {@literal *\/*}, otherwise return the
+     * first candidate.
+     * <p>
+     * If no candidate is accepted, return the preferred mime type according the the {@literal Accept} request header.
+     *
+     * @param mimeTypes Candidate mime types
+     *
+     * @return The preferred mime type or the wildcard mimetype, never return null
+     */
+    String preferredMimeType( String... mimeTypes );
 }

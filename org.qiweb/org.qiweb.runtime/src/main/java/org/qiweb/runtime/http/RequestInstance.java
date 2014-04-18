@@ -26,6 +26,7 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestBody;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.i18n.Lang;
+import org.qiweb.api.mime.MediaRange;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 
@@ -157,6 +158,24 @@ public class RequestInstance
     public Lang preferredLang()
     {
         return header.preferredLang();
+    }
+
+    @Override
+    public List<MediaRange> acceptedMimeTypes()
+    {
+        return header.acceptedMimeTypes();
+    }
+
+    @Override
+    public boolean acceptsMimeType( String mimeType )
+    {
+        return header.acceptsMimeType( mimeType );
+    }
+
+    @Override
+    public String preferredMimeType( String... mimeTypes )
+    {
+        return header.preferredMimeType( mimeTypes );
     }
 
     @Override

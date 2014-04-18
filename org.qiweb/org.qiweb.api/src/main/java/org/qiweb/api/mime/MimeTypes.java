@@ -66,6 +66,11 @@ public interface MimeTypes
     extends MimeTypesNames
 {
     /**
+     * Wildcard mime type.
+     */
+    String WILDCARD_MIMETYPE = "*/*";
+
+    /**
      * @param file File
      *
      * @return MimeType of a File
