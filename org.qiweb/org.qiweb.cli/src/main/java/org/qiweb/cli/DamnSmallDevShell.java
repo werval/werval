@@ -263,7 +263,7 @@ public final class DamnSmallDevShell
                             + "import org.qiweb.api.outcomes.Outcome;\n\n"
                             + "public class Application {\n\n"
                             + "    public Outcome index() {\n"
-                            + "        return new org.qiweb.runtime.controllers.Welcome().welcome();\n"
+                            + "        return new org.qiweb.api.controllers.Welcome().welcome();\n"
                             + "    }\n\n"
                             + "}\n";
         Files.write( new File( ctrlDir, "Application.java" ).toPath(), controller.getBytes( UTF_8 ) );
