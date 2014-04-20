@@ -31,6 +31,10 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Plugin Routes Test.
+ *
+ * Assert correct registration of prefixed Routes contributed by Plugins.
+ * <p>
+ * See the {@literal plugin-routes-test.conf} configuration file.
  */
 public class PluginRoutesTest
 {
@@ -55,7 +59,7 @@ public class PluginRoutesTest
             .statusCode( 200 )
             .body( equalTo( "prepended foo" ) )
             .when()
-            .get( "/prepended/foo" );
+            .get( "/pre/fix/prepended/foo" );
         expect()
             .statusCode( 200 )
             .body( equalTo( "index" ) )
@@ -65,7 +69,7 @@ public class PluginRoutesTest
             .statusCode( 200 )
             .body( equalTo( "appended bar" ) )
             .when()
-            .get( "/appended/bar" );
+            .get( "/pre/fix/appended/bar" );
     }
 
     @Test

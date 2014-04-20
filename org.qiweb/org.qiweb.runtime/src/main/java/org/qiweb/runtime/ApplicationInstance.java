@@ -50,7 +50,6 @@ import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.RouteBuilder;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.api.util.Stacktraces;
@@ -65,7 +64,6 @@ import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.outcomes.OutcomesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
-import org.qiweb.runtime.routes.RouteBuilderInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
@@ -241,9 +239,8 @@ public final class ApplicationInstance
             plugins.onActivate( this );
 
             // Plugin contributed Routes
-            RouteBuilder routeBuilder = new RouteBuilderInstance( this );
-            resolvedRoutes.addAll( 0, plugins.firstRoutes( routeBuilder ) );
-            resolvedRoutes.addAll( plugins.lastRoutes( routeBuilder ) );
+            resolvedRoutes.addAll( 0, plugins.firstRoutes( this ) );
+            resolvedRoutes.addAll( plugins.lastRoutes( this ) );
             routes = new RoutesInstance( resolvedRoutes );
 
             // Activated

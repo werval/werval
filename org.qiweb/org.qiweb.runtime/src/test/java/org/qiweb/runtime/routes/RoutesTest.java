@@ -44,7 +44,6 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertThat;
 import static org.qiweb.api.http.Method.GET;
 import static org.qiweb.api.http.Method.POST;
 import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
@@ -331,7 +330,7 @@ public class RoutesTest
         assertThat( routes.route( reqHeadForGet( "/zeng/123?slug=qs&a=b" ) ), equalTo( anotherOne ) );
     }
 
-    private RequestHeader reqHeadForGet( String requestUri )
+    /* package */ static RequestHeader reqHeadForGet( String requestUri )
     {
         QueryString.Decoder queryStringDecoder = new QueryString.Decoder( requestUri, UTF_8 );
         String requestPath = URLs.decode( queryStringDecoder.path(), UTF_8 );

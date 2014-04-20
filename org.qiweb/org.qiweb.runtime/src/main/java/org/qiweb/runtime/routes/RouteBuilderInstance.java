@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_SET;
+import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
 
 /**
@@ -50,6 +51,7 @@ public class RouteBuilderInstance
     implements org.qiweb.api.routes.RouteBuilder
 {
     private final Application app;
+    private final String pathPrefix;
 
     /**
      * Create a new RouteBuilder instance that cannot parse.
@@ -58,7 +60,19 @@ public class RouteBuilderInstance
      */
     public RouteBuilderInstance()
     {
-        this.app = null;
+        this( null, null );
+    }
+
+    /**
+     * Create a new RouteBuilder instance that cannot parse and apply a path prefix to all built routes.
+     *
+     * See {@link #RouteBuilderInstance(org.qiweb.api.Application)}.
+     *
+     * @param pathPrefix Path prefix
+     */
+    public RouteBuilderInstance( String pathPrefix )
+    {
+        this( null, pathPrefix );
     }
 
     /**
@@ -68,14 +82,40 @@ public class RouteBuilderInstance
      */
     public RouteBuilderInstance( Application app )
     {
+        this( app, EMPTY );
+    }
+
+    /**
+     * Create a new RouteBuilder instance that apply a path prefix to all built routes.
+     *
+     * @param app        ApplicationSPI
+     * @param pathPrefix Path prefix
+     */
+    public RouteBuilderInstance( Application app, String pathPrefix )
+    {
         this.app = app;
+        if( Strings.isEmpty( pathPrefix ) )
+        {
+            this.pathPrefix = EMPTY;
+        }
+        else
+        {
+            // Prepend / if necessary
+            String actualPrefix = pathPrefix.startsWith( "/" )
+                                  ? pathPrefix
+                                  : "/" + pathPrefix;
+            // Remove trailing / if necessary
+            this.pathPrefix = actualPrefix.endsWith( "/" )
+                              ? actualPrefix.substring( 0, actualPrefix.length() - 1 )
+                              : actualPrefix;
+        }
     }
 
     @Override
     public RouteDeclaration route()
     {
         return new RouteDeclarationInstance(
-            null, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            null, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
         );
     }
 
@@ -83,7 +123,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( String httpMethod )
     {
         return new RouteDeclarationInstance(
-            Method.valueOf( httpMethod ), null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            Method.valueOf( httpMethod ), pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
         );
     }
 
@@ -91,7 +131,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( Method httpMethod )
     {
         return new RouteDeclarationInstance(
-            httpMethod, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            httpMethod, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
         );
     }
 
@@ -102,13 +142,14 @@ public class RouteBuilderInstance
         {
             throw new IllegalStateException( "Cannot parse Routes without an Application" );
         }
-        return new RouteParserInstance( app );
+        return new RouteParserInstance( app, pathPrefix );
     }
 
     private static final class RouteDeclarationInstance
         implements RouteDeclaration
     {
         private final Method httpMethod;
+        private final String pathPrefix;
         private final String path;
         private final Class<?> controllerType;
         private final String controllerMethodName;
@@ -117,12 +158,13 @@ public class RouteBuilderInstance
 
         public RouteDeclarationInstance(
             Method httpMethod,
-            String path,
+            String pathPrefix, String path,
             Class<?> controllerType, String controllerMethodName, ControllerParams controllerParams,
             Set<String> modifiers
         )
         {
             this.httpMethod = httpMethod;
+            this.pathPrefix = pathPrefix;
             this.path = path;
             this.controllerType = controllerType;
             this.controllerMethodName = controllerMethodName;
@@ -135,7 +177,7 @@ public class RouteBuilderInstance
         {
             return new RouteDeclarationInstance(
                 Method.valueOf( httpMethod ),
-                path,
+                pathPrefix, path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
             );
@@ -146,7 +188,7 @@ public class RouteBuilderInstance
         {
             return new RouteDeclarationInstance(
                 httpMethod,
-                path,
+                pathPrefix, path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
             );
@@ -224,7 +266,7 @@ public class RouteBuilderInstance
                 // Done!
                 return new RouteDeclarationInstance(
                     httpMethod,
-                    path,
+                    pathPrefix, path,
                     controllerType, methodNameHolder.get(),
                     new ControllerParams( RouteBuilderContext.recordedControllerParams() ),
                     modifiers
@@ -242,7 +284,7 @@ public class RouteBuilderInstance
         {
             return new RouteDeclarationInstance(
                 httpMethod,
-                path,
+                pathPrefix, path,
                 controllerType, controllerMethodName, controllerParams,
                 new LinkedHashSet<>( Arrays.asList( modifiers ) )
             );
@@ -253,7 +295,7 @@ public class RouteBuilderInstance
         {
             return new RouteInstance(
                 httpMethod,
-                path,
+                pathPrefix + path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
             );
@@ -265,10 +307,12 @@ public class RouteBuilderInstance
     {
         private static final Logger LOG = LoggerFactory.getLogger( RouteParser.class );
         private final Application app;
+        private final String pathPrefix;
 
-        private RouteParserInstance( Application app )
+        private RouteParserInstance( Application app, String pathPrefix )
         {
             this.app = app;
+            this.pathPrefix = pathPrefix;
         }
 
         @Override
@@ -351,11 +395,14 @@ public class RouteBuilderInstance
                     );
                 }
 
-                String httpMethod = cleanRouteString.substring( 0, methodEnd );
-                String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
-                String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
-                String controllerMethodName = cleanRouteString.substring( controllerTypeEnd + 1, controllerMethodEnd );
-                String controllerMethodParams;
+                final String httpMethod = cleanRouteString.substring( 0, methodEnd );
+                final String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
+                final String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
+                final String controllerMethodName = cleanRouteString.substring(
+                    controllerTypeEnd + 1,
+                    controllerMethodEnd
+                );
+                final String controllerMethodParams;
                 if( controllerParamsEnd != -1 )
                 {
                     controllerMethodParams = cleanRouteString
@@ -403,7 +450,7 @@ public class RouteBuilderInstance
                 // Create new Route instance
                 return new RouteInstance(
                     Method.valueOf( httpMethod ),
-                    path,
+                    pathPrefix + path,
                     controllerType, controllerMethodName, controllerParams,
                     modifiers
                 );

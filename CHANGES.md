@@ -21,6 +21,7 @@ Only use Final versions in production!
 - Add HTTP Language Negotiation helpers
 - Add HTTP Content Negotiation helpers
 - Complete Cookies support
+- Routes contributed by plugins can now easily be prefixed
 - Better error reporting on passivation
 - Minor enhancements to test support
 - Some progress towards Windows support in CLI

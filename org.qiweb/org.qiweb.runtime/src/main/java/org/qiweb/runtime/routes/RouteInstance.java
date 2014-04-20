@@ -47,7 +47,6 @@ import static org.qiweb.runtime.util.Iterables.toList;
 /* package */ final class RouteInstance
     implements Route
 {
-
     private final Method httpMethod;
     private final String path;
     private final Class<?> controllerType;

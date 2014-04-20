@@ -21,6 +21,7 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
 
 import static java.util.Collections.EMPTY_LIST;
+import static org.qiweb.api.util.Strings.EMPTY;
 
 /**
  * Application Plugin.
@@ -63,6 +64,24 @@ public interface Plugin<API>
         throws ActivationException
     {
         // NOOP
+    }
+
+    /**
+     * Prefix for Routes contributed by this Plugin.
+     *
+     * Defaults to an empty string unless the Plugin declaration contains a {@literal routesPrefix} value.
+     *
+     * @param pluginConfig Plugin Config Object, null for extra plugins declared in Global
+     *
+     * @return Prefix for Routes contributed by this Plugin or an empty String
+     */
+    default String routesPrefix( Config pluginConfig )
+    {
+        if( pluginConfig == null || !pluginConfig.has( "routesPrefix" ) )
+        {
+            return EMPTY;
+        }
+        return pluginConfig.string( "routesPrefix" );
     }
 
     /**
