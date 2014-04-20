@@ -17,9 +17,15 @@ Only use Final versions in production!
 
 ### 0.2.0.Alpha - UNRELEASED
 
+- Fix QueryString multi-empty-valued parameters handling
 - Add HTTP Language Negotiation helpers
 - Add HTTP Content Negotiation helpers
 - Complete Cookies support
+- Better error reporting on passivation
+- Minor enhancements to test support
+- Some progress towards Windows support in CLI
+- Reintroduce Gradle Wrapper in all projects
+- Upgrade Netty from 4.0.17 to 4.0.18
 
 
 ### 0.1.3.Alpha
