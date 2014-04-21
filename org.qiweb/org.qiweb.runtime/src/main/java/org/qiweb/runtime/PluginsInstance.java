@@ -75,7 +75,7 @@ import static java.util.Collections.EMPTY_LIST;
             if( extraPlugin.enabled() )
             {
                 extraPlugin.onActivate( application );
-                activatedPlugins.add( Couple.of( extraPlugin, null ) );
+                activatedPlugins.add( Couple.leftOnly( extraPlugin ) );
             }
         }
         activePlugins = activatedPlugins;
