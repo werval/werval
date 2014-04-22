@@ -17,6 +17,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.i18n.Langs;
@@ -206,6 +207,15 @@ public interface Application
      * @return Application {@link MetaData}
      */
     MetaData metaData();
+
+    /**
+     * Application {@link Cache}.
+     *
+     * Don't hold references to the Cache instance in order to make your code {@link Mode#DEV} friendly.
+     *
+     * @return Application {@link Cache}
+     */
+    Cache cache();
 
     /**
      * Application {@link Errors}.

@@ -16,6 +16,7 @@
 package org.qiweb.runtime;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,9 +51,11 @@ import static java.util.Collections.EMPTY_LIST;
 
     /* package */ void onActivate( ApplicationInstance application )
     {
+        EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
         List<Couple<Plugin<?>, Config>> activatedPlugins = new ArrayList<>(
-            configuredPlugins.size() + extraPlugins.size()
+            configuredPlugins.size() + extraPlugins.size() + extensions.size()
         );
+        // Application Configured Plugins
         for( Config pluginConfig : configuredPlugins )
         {
             try
@@ -64,12 +67,14 @@ import static java.util.Collections.EMPTY_LIST;
                     plugin.onActivate( application );
                     activatedPlugins.add( Couple.of( plugin, pluginConfig ) );
                 }
+                extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
             }
             catch( ClassNotFoundException ex )
             {
                 throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
             }
         }
+        // Global Extra Plugins
         for( Plugin<?> extraPlugin : extraPlugins )
         {
             if( extraPlugin.enabled() )
@@ -77,7 +82,19 @@ import static java.util.Collections.EMPTY_LIST;
                 extraPlugin.onActivate( application );
                 activatedPlugins.add( Couple.leftOnly( extraPlugin ) );
             }
+            extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
         }
+        // Core Extensions Plugins
+        for( ExtensionPlugin extension : extensions )
+        {
+            Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
+            if( extensionPlugin.enabled() )
+            {
+                extensionPlugin.onActivate( application );
+                activatedPlugins.add( Couple.leftOnly( extensionPlugin ) );
+            }
+        }
+        // Plugins Activated
         activePlugins = activatedPlugins;
         activated = true;
     }

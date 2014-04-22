@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 /**
  * Outcomes instance.
  */
-public class OutcomesInstance
+public final class OutcomesInstance
     implements Outcomes
 {
     private final Config config;

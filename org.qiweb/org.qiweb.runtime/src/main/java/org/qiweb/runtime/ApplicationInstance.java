@@ -29,6 +29,7 @@ import org.qiweb.api.Errors;
 import org.qiweb.api.Global;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.Mode;
+import org.qiweb.api.cache.Cache;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
@@ -396,6 +397,13 @@ public final class ApplicationInstance
     public MetaData metaData()
     {
         return metaData;
+    }
+
+    @Override
+    public Cache cache()
+    {
+        ensureActive();
+        return plugins.plugin( Cache.class );
     }
 
     @Override

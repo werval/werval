@@ -40,5 +40,6 @@
     <suppress checks=".*" files="RequestHeaderInstance.java"/>
     <suppress checks=".*" files="LangsInstance.java"/>
     <suppress checks=".*" files="MediaRangeInstance.java"/>
+    <suppress checks=".*" files="PluginsInstance.java"/>
 
 </suppressions>

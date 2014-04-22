@@ -31,7 +31,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 /**
  * Cookies instance.
  */
-public class CookiesInstance
+public final class CookiesInstance
     implements MutableCookies
 {
     public static final Cookies EMPTY = new CookiesInstance();
