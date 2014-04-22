@@ -20,6 +20,7 @@ Only use Final versions in production!
 - Fix QueryString multi-empty-valued parameters handling
 - Add HTTP Language Negotiation helpers
 - Add HTTP Content Negotiation helpers
+- Add a Cache Extension Plugin and EhCache & Memcache based implementations
 - Complete Cookies support
 - Routes contributed by plugins can now easily be prefixed
 - Better error reporting on passivation
