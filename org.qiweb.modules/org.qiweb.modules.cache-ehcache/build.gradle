@@ -1,0 +1,10 @@
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.spi:$version"
+    compile 'net.sf.ehcache:ehcache:2.8.2'
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+
+}
+
