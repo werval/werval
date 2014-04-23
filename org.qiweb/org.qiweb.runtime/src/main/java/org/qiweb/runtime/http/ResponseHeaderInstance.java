@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.io.Serializable;
 import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.http.ProtocolVersion;
@@ -28,12 +29,17 @@ import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
  * Response Header Instance.
  */
 public class ResponseHeaderInstance
-    implements ResponseHeader
+    implements ResponseHeader, Serializable
 {
     private final MutableHeaders headers;
     private final MutableCookies cookies;
     private ProtocolVersion version;
     private Status status = Status.valueOf( 0 );
+
+    /* serialization */ ResponseHeaderInstance()
+    {
+        this( ProtocolVersion.HTTP_1_1 );
+    }
 
     public ResponseHeaderInstance( ProtocolVersion version )
     {

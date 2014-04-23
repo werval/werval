@@ -15,13 +15,14 @@
  */
 package org.qiweb.api.http;
 
+import java.io.Serializable;
 import org.qiweb.api.util.Charsets;
 
 /**
  * HTTP Status.
  */
 public final class Status
-    implements Comparable<Status>
+    implements Comparable<Status>, Serializable
 {
     /**
      * 100 Continue.

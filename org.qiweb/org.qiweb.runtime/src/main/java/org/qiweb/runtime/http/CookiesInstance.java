@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +33,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
  * Cookies instance.
  */
 public final class CookiesInstance
-    implements MutableCookies
+    implements MutableCookies, Serializable
 {
     public static final Cookies EMPTY = new CookiesInstance();
     private final Map<String, Cookie> cookies;

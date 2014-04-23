@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
  * Instance of HTTP Headers.
  */
 public final class HeadersInstance
-    implements MutableHeaders
+    implements MutableHeaders, Serializable
 {
     public static final Headers EMPTY = new HeadersInstance();
     private final Map<String, List<String>> headers = new TreeMap<>( LOWER_CASE );

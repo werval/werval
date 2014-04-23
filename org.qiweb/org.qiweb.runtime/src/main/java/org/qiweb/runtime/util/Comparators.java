@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -23,11 +24,21 @@ import java.util.Locale;
  */
 public final class Comparators
 {
-    public static final Comparator<String> LOWER_CASE = (o1, o2) -> lowerCaseCompare( o1, o2 );
+    public static final Comparator<String> LOWER_CASE = new LowerCase();
 
     public static int lowerCaseCompare( String o1, String o2 )
     {
         return o1.toLowerCase( Locale.US ).compareTo( o2.toLowerCase( Locale.US ) );
+    }
+
+    private static class LowerCase
+        implements Comparator<String>, Serializable
+    {
+        @Override
+        public int compare( String o1, String o2 )
+        {
+            return lowerCaseCompare( o1, o2 );
+        }
     }
 
     private Comparators()

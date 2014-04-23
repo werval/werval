@@ -28,6 +28,11 @@ public class SimpleOutcome
 {
     private ByteSource body = EMPTY_BYTES;
 
+    /* serialization */ SimpleOutcome()
+    {
+        super( null );
+    }
+
     /* package */ SimpleOutcome( ResponseHeader response )
     {
         super( response );

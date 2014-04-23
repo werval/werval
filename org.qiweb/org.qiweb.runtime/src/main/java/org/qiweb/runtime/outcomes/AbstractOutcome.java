@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.outcomes;
 
+import java.io.Serializable;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
 
@@ -24,7 +25,7 @@ import org.qiweb.api.outcomes.Outcome;
  * @param <T> Parameterized self type for easy typesafe builder-style methods in descendents
  */
 /* package */ abstract class AbstractOutcome<T extends AbstractOutcome<?>>
-    implements Outcome
+    implements Outcome, Serializable
 {
     protected final ResponseHeader response;
 

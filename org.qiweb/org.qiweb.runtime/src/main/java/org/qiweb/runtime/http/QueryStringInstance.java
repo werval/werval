@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
 
 public class QueryStringInstance
-    implements QueryString
+    implements QueryString, Serializable
 {
     public static final QueryString EMPTY = new QueryStringInstance();
     private final Map<String, List<String>> parameters;
