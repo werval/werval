@@ -15,7 +15,6 @@
  */
 package org.qiweb.api.cache;
 
-import java.time.Duration;
 import java.util.Optional;
 
 /**
@@ -30,7 +29,10 @@ public interface Cache
      *
      * @return {@literal true} if the cache has an object for the given key
      */
-    boolean has( String key );
+    default boolean has( String key )
+    {
+        return get( key ) != null;
+    }
 
     /**
      * Fetch cached object for a given key.
@@ -50,7 +52,10 @@ public interface Cache
      *
      * @return An Optional of the cached object for the given key
      */
-    <T> Optional<T> getOptional( String key );
+    default <T> Optional<T> getOptional( String key )
+    {
+        return Optional.ofNullable( get( key ) );
+    }
 
     /**
      * Fetch cached object for a given key or set a non-expiring default value.
@@ -65,7 +70,10 @@ public interface Cache
      *
      * @return The existing cached object for the given key, or the given default value, never return {@literal null}
      */
-    <T> T getOrSetDefault( String key, T defaultValue );
+    default <T> T getOrSetDefault( String key, T defaultValue )
+    {
+        return getOrSetDefault( key, 0, defaultValue );
+    }
 
     /**
      * Fetch cached object for a given key or set an expiring default value.
@@ -76,12 +84,13 @@ public interface Cache
      *
      * @param <T>          Object Type
      * @param key          Cache Key
-     * @param ttl          Default Value Time To Live Duration, only seconds will be used, not nano nor milliseconds
+     * @param ttlSeconds   Default Value Time To Live in seconds.
+     *                     If {@literal 0} ({@literal ZERO}), then the entry will never expire
      * @param defaultValue Default Value
      *
      * @return The existing cached object for the given key, or the given default value, never return {@literal null}
      */
-    <T> T getOrSetDefault( String key, Duration ttl, T defaultValue );
+    <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue );
 
     /**
      * Set a non-expiring object for a given key in the Cache.
@@ -90,27 +99,21 @@ public interface Cache
      * @param key   Cache Key
      * @param value Value Object
      */
-    <T> void set( String key, T value );
+    default <T> void set( String key, T value )
+    {
+        set( 0, key, value );
+    }
 
     /**
      * Set an expiring object for a given key in the Cache.
      *
      * @param <T>        Object Type
-     * @param ttlSeconds Time To Live in Seconds
+     * @param ttlSeconds Time To Live in seconds.
+     *                   If {@literal 0} ({@literal ZERO}), then the entry will not expire
      * @param key        Cache Key
      * @param value      Value Object
      */
     <T> void set( int ttlSeconds, String key, T value );
-
-    /**
-     * Set an expiring object for a given key in the Cache.
-     *
-     * @param <T>   Object Type
-     * @param ttl   Time To Live Duration, only seconds will be used, not nano nor milliseconds
-     * @param key   Cache Key
-     * @param value Value Object
-     */
-    <T> void set( Duration ttl, String key, T value );
 
     /**
      * Remove a Cache entry.

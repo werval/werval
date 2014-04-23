@@ -15,11 +15,8 @@
  */
 package org.qiweb.modules.cache;
 
-import java.time.Duration;
-import java.util.Optional;
 import net.sf.ehcache.Element;
 import org.qiweb.api.cache.Cache;
-import org.qiweb.api.util.Numbers;
 
 /**
  * EhCache.
@@ -35,12 +32,6 @@ import org.qiweb.api.util.Numbers;
     }
 
     @Override
-    public boolean has( String key )
-    {
-        return backingCache.get( key ) != null;
-    }
-
-    @Override
     public <T> T get( String key )
     {
         Element element = backingCache.get( key );
@@ -52,66 +43,40 @@ import org.qiweb.api.util.Numbers;
     }
 
     @Override
-    public <T> Optional<T> getOptional( String key )
-    {
-        return Optional.ofNullable( get( key ) );
-    }
-
-    @Override
-    public <T> T getOrSetDefault( String key, T defaultValue )
+    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
     {
         Element element = backingCache.get( key );
         if( element == null )
         {
-            element = new Element( key, defaultValue );
-            element.setEternal( true );
-            backingCache.put( element );
+            backingCache.put( element( ttlSeconds, key, defaultValue ) );
             return defaultValue;
         }
         return (T) element.getObjectValue();
-    }
-
-    @Override
-    public <T> T getOrSetDefault( String key, Duration ttl, T defaultValue )
-    {
-        Element element = backingCache.get( key );
-        if( element == null )
-        {
-            element = new Element( key, defaultValue );
-            element.setTimeToLive( Numbers.safeIntValueOf( ttl.getSeconds() ) );
-            backingCache.put( element );
-            return defaultValue;
-        }
-        return (T) element.getObjectValue();
-    }
-
-    @Override
-    public <T> void set( String key, T value )
-    {
-        Element element = new Element( key, value );
-        element.setEternal( true );
-        backingCache.put( element );
     }
 
     @Override
     public <T> void set( int ttlSeconds, String key, T value )
     {
-        Element element = new Element( key, value );
-        element.setTimeToLive( ttlSeconds );
-        backingCache.put( element );
-    }
-
-    @Override
-    public <T> void set( Duration ttl, String key, T value )
-    {
-        Element element = new Element( key, value );
-        element.setTimeToLive( Numbers.safeIntValueOf( ttl.getSeconds() ) );
-        backingCache.put( element );
+        backingCache.put( element( ttlSeconds, key, value ) );
     }
 
     @Override
     public void remove( String key )
     {
         backingCache.remove( key );
+    }
+
+    private Element element( int ttlSeconds, String key, Object value )
+    {
+        Element element = new Element( key, value );
+        if( ttlSeconds == 0 )
+        {
+            element.setEternal( true );
+        }
+        else
+        {
+            element.setTimeToLive( ttlSeconds );
+        }
+        return element;
     }
 }

@@ -15,13 +15,10 @@
  */
 package org.qiweb.modules.cache;
 
-import java.time.Duration;
-import java.util.Optional;
 import java.util.UUID;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import org.qiweb.api.cache.Cache;
-import org.qiweb.api.util.Numbers;
 
 /**
  * Memcache Cache.
@@ -39,62 +36,41 @@ import org.qiweb.api.util.Numbers;
     }
 
     @Override
-    public boolean has( String key )
-    {
-        return client.get( prefix + key ) != null;
-    }
-
-    @Override
     public <T> T get( String key )
     {
         return (T) client.get( prefix + key, new SerializingTranscoder() );
     }
 
     @Override
-    public <T> Optional<T> getOptional( String key )
-    {
-        return Optional.ofNullable( (T) client.get( prefix + key, new SerializingTranscoder() ) );
-    }
-
-    @Override
-    public <T> T getOrSetDefault( String key, T defaultValue )
-    {
-        return getOrSetDefault( key, Duration.ofMillis( Long.MAX_VALUE ), defaultValue );
-    }
-
-    @Override
-    public <T> T getOrSetDefault( String key, Duration ttl, T defaultValue )
+    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
     {
         Object value = client.get( prefix + key, new SerializingTranscoder() );
         if( value == null )
         {
-            client.set( prefix + key, Numbers.safeIntValueOf( ttl.getSeconds() ), defaultValue, new SerializingTranscoder() );
+            client.set( prefix + key, ttl( ttlSeconds ), defaultValue, new SerializingTranscoder() );
             return defaultValue;
         }
         return (T) value;
     }
 
     @Override
-    public <T> void set( String key, T value )
-    {
-        client.set( prefix + key, Integer.MAX_VALUE, value, new SerializingTranscoder() );
-    }
-
-    @Override
     public <T> void set( int ttlSeconds, String key, T value )
     {
-        client.set( prefix + key, ttlSeconds, value, new SerializingTranscoder() );
-    }
-
-    @Override
-    public <T> void set( Duration ttl, String key, T value )
-    {
-        client.set( prefix + key, Numbers.safeIntValueOf( ttl.getSeconds() ), value, new SerializingTranscoder() );
+        client.set( prefix + key, ttl( ttlSeconds ), value, new SerializingTranscoder() );
     }
 
     @Override
     public void remove( String key )
     {
         client.delete( prefix + key );
+    }
+
+    private static int ttl( int ttlSeconds )
+    {
+        if( ttlSeconds == 0 )
+        {
+            return Integer.MAX_VALUE;
+        }
+        return ttlSeconds;
     }
 }

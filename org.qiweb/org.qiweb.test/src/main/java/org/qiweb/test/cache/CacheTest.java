@@ -15,7 +15,6 @@
  */
 package org.qiweb.test.cache;
 
-import java.time.Duration;
 import org.junit.Test;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.test.QiWebTest;
@@ -35,81 +34,103 @@ import static org.junit.Assert.assertTrue;
 public abstract class CacheTest
     extends QiWebTest
 {
+    private static final String FOO = "foo";
+    private static final String BAR = "bar";
+
     @Test
     public void hasSetHasGetRemoveHas()
     {
         Cache cache = application().cache();
-        assertFalse( cache.has( "foo" ) );
-        cache.set( "foo", "bar" );
-        assertTrue( cache.has( "foo" ) );
-        assertThat( cache.get( "foo" ), equalTo( "bar" ) );
-        cache.remove( "foo" );
-        assertFalse( cache.has( "foo" ) );
+        assertFalse( cache.has( FOO ) );
+        cache.set( FOO, BAR );
+        assertTrue( cache.has( FOO ) );
+        assertThat( cache.get( FOO ), equalTo( BAR ) );
+        cache.remove( FOO );
+        assertFalse( cache.has( FOO ) );
     }
 
     @Test
     public void getOptional()
     {
         Cache cache = application().cache();
-        assertFalse( cache.getOptional( "foo" ).isPresent() );
-        cache.set( "foo", "bar" );
-        assertTrue( cache.getOptional( "foo" ).isPresent() );
-        assertThat( cache.getOptional( "foo" ).get(), equalTo( "bar" ) );
-        cache.remove( "foo" );
-        assertFalse( cache.getOptional( "foo" ).isPresent() );
+        assertFalse( cache.getOptional( FOO ).isPresent() );
+        cache.set( FOO, BAR );
+        assertTrue( cache.getOptional( FOO ).isPresent() );
+        assertThat( cache.getOptional( FOO ).get(), equalTo( BAR ) );
+        cache.remove( FOO );
+        assertFalse( cache.getOptional( FOO ).isPresent() );
     }
 
     @Test
     public void getOrSetDefault()
     {
         Cache cache = application().cache();
-        assertFalse( cache.has( "foo" ) );
-        assertThat( cache.getOrSetDefault( "foo", "bar" ), equalTo( "bar" ) );
-        assertTrue( cache.has( "foo" ) );
-        cache.set( "foo", "bazar" );
-        assertThat( cache.getOrSetDefault( "foo", "bar" ), equalTo( "bazar" ) );
+        assertFalse( cache.has( FOO ) );
+        assertThat( cache.getOrSetDefault( FOO, BAR ), equalTo( BAR ) );
+        assertTrue( cache.has( FOO ) );
+        cache.set( FOO, "bazar" );
+        assertThat( cache.getOrSetDefault( FOO, BAR ), equalTo( "bazar" ) );
     }
 
     @Test
-    public void setExpirationSeconds()
+    public void setTimeToLive()
         throws InterruptedException
     {
         Cache cache = application().cache();
-        assertFalse( cache.has( "foo" ) );
-        cache.set( 1, "foo", "bar" );
-        assertThat( cache.get( "foo" ), equalTo( "bar" ) );
+        assertFalse( cache.has( FOO ) );
+        cache.set( 1, FOO, BAR );
+        assertThat( cache.get( FOO ), equalTo( BAR ) );
         Thread.sleep( 1100 );
-        assertFalse( cache.has( "foo" ) );
+        assertFalse( cache.has( FOO ) );
     }
 
     @Test
-    public void setExpirationDuration()
+    public void getOrSetDefaultTimeToLive()
         throws InterruptedException
     {
         Cache cache = application().cache();
-        assertFalse( cache.has( "foo" ) );
-        cache.set( Duration.ofSeconds( 1 ), "foo", "bar" );
-        assertThat( cache.get( "foo" ), equalTo( "bar" ) );
+        assertFalse( cache.has( FOO ) );
+        assertThat( cache.getOrSetDefault( FOO, 1, BAR ), equalTo( BAR ) );
         Thread.sleep( 1100 );
-        assertFalse( cache.has( "foo" ) );
+        assertFalse( cache.has( FOO ) );
+        cache.set( 1, FOO, "bazar" );
+        assertThat( cache.getOrSetDefault( FOO, 1, BAR ), equalTo( "bazar" ) );
+        Thread.sleep( 1100 );
+        assertThat( cache.getOrSetDefault( FOO, BAR ), equalTo( BAR ) );
     }
 
     @Test
-    public void getOrSetDefaultExpiration()
+    public void setTimeToLiveZero()
         throws InterruptedException
     {
         Cache cache = application().cache();
-        assertFalse( cache.has( "foo" ) );
-        assertThat( cache.getOrSetDefault( "foo", Duration.ofSeconds( 1 ), "bar" ), equalTo( "bar" ) );
+        assertFalse( cache.has( FOO ) );
+        cache.set( 0, FOO, BAR );
+        assertThat( cache.get( FOO ), equalTo( BAR ) );
         Thread.sleep( 1100 );
-        assertFalse( cache.has( "foo" ) );
+        assertTrue( cache.has( FOO ) );
+    }
+
+    @Test
+    public void getOrSetDefaultTimeToZero()
+        throws InterruptedException
+    {
+        Cache cache = application().cache();
+        assertFalse( cache.has( FOO ) );
+        assertThat( cache.getOrSetDefault( FOO, 0, BAR ), equalTo( BAR ) );
+        Thread.sleep( 1100 );
+        assertTrue( cache.has( FOO ) );
+        cache.set( 0, FOO, "bazar" );
+        assertThat( cache.getOrSetDefault( FOO, 0, BAR ), equalTo( "bazar" ) );
+        Thread.sleep( 1100 );
+        assertThat( cache.get( FOO ), equalTo( "bazar" ) );
     }
 
     @Test
     public void removeAbsent()
     {
         Cache cache = application().cache();
-        assertFalse( cache.has( "foo" ) );
-        cache.remove( "foo" );
+        assertFalse( cache.has( FOO ) );
+        cache.remove( FOO );
     }
 }

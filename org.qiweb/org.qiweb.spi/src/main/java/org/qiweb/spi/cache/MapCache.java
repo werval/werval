@@ -15,10 +15,8 @@
  */
 package org.qiweb.spi.cache;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.util.Couple;
 import org.qiweb.api.util.Numbers;
@@ -26,19 +24,17 @@ import org.qiweb.api.util.Numbers;
 /**
  * In-Memory Cache backed by a HashMap.
  *
- * Expiration is applied on access only. This may not suit your usage pattern.
- * Look at the EhCache and Memcache based Cache Plugins for alternatives.
+ * This is the default Cache Extension used if your Application do not declare any Cache Plugin.
+ * <p>
+ * Expiration is applied on access only.
+ * This may not suit your usage pattern.
+ * <p>
+ * See the the EhCache and Memcache based Cache Plugins for alternatives.
  */
 /* package */ class MapCache
     implements Cache
 {
     /* package */ final Map<String, Couple<Long, Object>> map = new HashMap<>();
-
-    @Override
-    public boolean has( String key )
-    {
-        return getOrExpires( key ) != null;
-    }
 
     @Override
     public <T> T get( String key )
@@ -47,61 +43,42 @@ import org.qiweb.api.util.Numbers;
     }
 
     @Override
-    public <T> T getOrSetDefault( String key, T defaultValue )
-    {
-        return getOrSetDefault( key, Duration.ofMillis( Long.MAX_VALUE ), defaultValue );
-    }
-
-    @Override
-    public <T> T getOrSetDefault( String key, Duration ttl, T defaultValue )
+    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
     {
         long now = System.currentTimeMillis();
         if( !map.containsKey( key ) )
         {
-            long expiration = Numbers.safeLongValueOfSum( now, ttl.toMillis() );
-            map.put( key, Couple.of( expiration, (Object) defaultValue ) );
+            map.put( key, Couple.of( expiration( now, ttlSeconds ), (Object) defaultValue ) );
             return defaultValue;
         }
         Couple<Long, Object> entry = map.get( key );
         if( now > entry.left() )
         {
-            long expiration = Numbers.safeLongValueOfSum( now, ttl.toMillis() );
-            map.put( key, Couple.of( expiration, (Object) defaultValue ) );
+            map.put( key, Couple.of( expiration( now, ttlSeconds ), (Object) defaultValue ) );
             return defaultValue;
         }
         return (T) entry.right();
     }
 
     @Override
-    public <T> Optional<T> getOptional( String key )
-    {
-        return Optional.ofNullable( (T) getOrExpires( key ) );
-    }
-
-    @Override
-    public <T> void set( String key, T value )
-    {
-        map.put( key, Couple.of( Long.MAX_VALUE, (Object) value ) );
-    }
-
-    @Override
     public <T> void set( int ttlSeconds, String key, T value )
     {
-        long expiration = Numbers.safeLongValueOfSum( System.currentTimeMillis() + ( ttlSeconds * 1000 ) );
-        map.put( key, Couple.of( expiration, (Object) value ) );
-    }
-
-    @Override
-    public <T> void set( Duration ttl, String key, T value )
-    {
-        long expiration = Numbers.safeLongValueOfSum( System.currentTimeMillis() + ttl.toMillis() );
-        map.put( key, Couple.of( expiration, (Object) value ) );
+        map.put( key, Couple.of( expiration( System.currentTimeMillis(), ttlSeconds ), (Object) value ) );
     }
 
     @Override
     public void remove( String key )
     {
         map.remove( key );
+    }
+
+    private long expiration( long now, int ttlSeconds )
+    {
+        if( ttlSeconds == 0 )
+        {
+            return Long.MAX_VALUE;
+        }
+        return Numbers.safeLongValueOfSum( now, Numbers.safeLongValueOfMultiply( ttlSeconds, 1000 ) );
     }
 
     private Object getOrExpires( String key )

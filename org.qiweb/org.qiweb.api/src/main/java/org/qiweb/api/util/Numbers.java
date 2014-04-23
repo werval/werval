@@ -35,14 +35,7 @@ public final class Numbers
      */
     public static int safeIntValueOf( long aLong )
     {
-        try
-        {
-            return BigInteger.valueOf( aLong ).intValueExact();
-        }
-        catch( ArithmeticException tooBIG )
-        {
-            return aLong > 0 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-        }
+        return safeIntValueOf( BigInteger.valueOf( aLong ) );
     }
 
     /**
@@ -65,6 +58,46 @@ public final class Numbers
         {
             bigint = bigint.add( BigInteger.valueOf( each ) );
         }
+        return safeLongValueOf( bigint );
+    }
+
+    /**
+     * Safely compute the product of the given {@literal long}s.
+     *
+     * If the product of all the {@literal long}s is greater than {@link Long#MAX_VALUE} then {@link Long#MAX_VALUE} is
+     * returned.
+     * <p>
+     * If the product of all the {@literal long}s is lesser than {@link Long#MIN_VALUE} then {@link Long#MIN_VALUE} is
+     * returned.
+     *
+     * @param longs {@literal long}s to multiply
+     *
+     * @return Computed product
+     */
+    public static long safeLongValueOfMultiply( long... longs )
+    {
+        BigInteger bigint = BigInteger.ONE;
+        for( long each : longs )
+        {
+            bigint = bigint.multiply( BigInteger.valueOf( each ) );
+        }
+        return safeLongValueOf( bigint );
+    }
+
+    private static int safeIntValueOf( BigInteger bigint )
+    {
+        try
+        {
+            return bigint.intValueExact();
+        }
+        catch( ArithmeticException tooBIG )
+        {
+            return bigint.signum() == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        }
+    }
+
+    private static long safeLongValueOf( BigInteger bigint )
+    {
         try
         {
             return bigint.longValueExact();
