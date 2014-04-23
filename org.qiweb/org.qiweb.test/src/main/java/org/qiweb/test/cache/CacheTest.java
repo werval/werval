@@ -17,12 +17,18 @@ package org.qiweb.test.cache;
 
 import org.junit.Test;
 import org.qiweb.api.cache.Cache;
+import org.qiweb.api.cache.Cached;
+import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Cache Test.
@@ -34,8 +40,53 @@ import static org.junit.Assert.assertTrue;
 public abstract class CacheTest
     extends QiWebTest
 {
+    public static class Controller
+    {
+        private static int hits = 0;
+
+        @Cached( key = "cached" )
+        public Outcome cached()
+        {
+            hits++;
+            return outcomes().ok( "CACHED" ).build();
+        }
+    }
+
     private static final String FOO = "foo";
     private static final String BAR = "bar";
+
+    @Override
+    protected RoutesProvider routesProvider()
+    {
+        return new RoutesParserProvider( "GET /cached org.qiweb.test.cache.CacheTest$Controller.cached" );
+    }
+
+    @Test
+    public void cachedControllerMethod()
+    {
+        Controller.hits = 0;
+
+        Cache cache = application().cache();
+        assertFalse( cache.has( "cached" ) );
+
+        assertThat( Controller.hits, is( 0 ) );
+        assertThat(
+            application().handleRequest(
+                newRequestBuilder().method( "GET" ).uri( "/cached" ).build()
+            ).responseHeader().status().code(),
+            is( 200 )
+        );
+        assertThat( Controller.hits, is( 1 ) );
+        assertTrue( cache.has( "cached" ) );
+
+        assertThat(
+            application().handleRequest(
+                newRequestBuilder().method( "GET" ).uri( "/cached" ).build()
+            ).responseHeader().status().code(),
+            is( 200 )
+        );
+        assertThat( Controller.hits, is( 1 ) );
+    }
 
     @Test
     public void hasSetHasGetRemoveHas()
