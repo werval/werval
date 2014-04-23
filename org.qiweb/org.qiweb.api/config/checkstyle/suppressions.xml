@@ -29,6 +29,7 @@
 
     <!-- Java 8 Defender Methods not supported by Checkstyle -->
     <suppress checks=".*" files="Plugin.java"/>
+    <suppress checks=".*" files="Cache.java"/>
 
     <!-- Java 8 Static Interface Methods not supported by Checkstyle -->
     <suppress checks="RedundantModifier" files="RouteBuilder.java"/>    

@@ -16,6 +16,7 @@
 package org.qiweb.runtime.filters;
 
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.context.Context;
@@ -72,6 +73,6 @@ import org.qiweb.api.util.Couple;
     public Outcome next( Context context )
     {
         Filter filter = global.getFilterInstance( app, filterInfo.left() );
-        return filter.filter( filterInfo.right(), next, context );
+        return filter.filter( next, context, Optional.ofNullable( filterInfo.right() ) );
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.filters;
 
+import java.util.Optional;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.outcomes.Outcome;
 
@@ -28,11 +29,11 @@ public interface Filter<T>
     /**
      * Filter a request.
      *
-     * @param filterConfig Filter configuration Annotation or null if none
      * @param chain        Filter Chain
      * @param context      Request Context
+     * @param filterConfig Optional filter configuration Annotation
      *
      * @return Filtered Outcome
      */
-    public abstract Outcome filter( T filterConfig, FilterChain chain, Context context );
+    Outcome filter( FilterChain chain, Context context, Optional<T> filterConfig );
 }
