@@ -33,6 +33,8 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ControllerParams;
+import org.qiweb.api.routes.ControllerParams.Param;
+import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
 import org.qiweb.api.util.Strings;
@@ -472,46 +474,69 @@ public class RouteBuilderInstance
         )
             throws ClassNotFoundException
         {
-            Map<String, ControllerParams.Param> controllerParams = new LinkedHashMap<>();
+            Map<String, Param> controllerParams = new LinkedHashMap<>();
             if( controllerMethodParams.length() > 0 )
             {
                 List<String> controllerMethodParamsSegments = splitControllerMethodParams( controllerMethodParams );
                 for( String controllerMethodParamSegment : controllerMethodParamsSegments )
                 {
-                    if( controllerMethodParamSegment.contains( "=" ) )
+                    switch( valueKindOfSegment( controllerMethodParamSegment ) )
                     {
-                        // Parameter with forced value
-                        String[] equalSplitted = controllerMethodParamSegment.split( "=", 2 );
-                        String[] typeAndName = equalSplitted[0].trim().split( " " );
-                        String name = typeAndName[1];
-                        Class<?> type = lookupParamType( application, typeAndName[0] );
-                        String forcedValueString = equalSplitted[1].trim();
-                        if( forcedValueString.startsWith( "'" ) && forcedValueString.endsWith( "'" ) )
-                        {
-                            forcedValueString = forcedValueString
-                                .substring( 1, forcedValueString.length() - 1 )
-                                .replaceAll( "\\\\'", "'" );
-                        }
-                        Object forcedValue = application.parameterBinders().bind( type, name, forcedValueString );
-                        controllerParams.put( name, new ControllerParams.Param( name, type, forcedValue ) );
-                    }
-                    else
-                    {
-                        // Parameter without forced value
-                        String[] splitted = controllerMethodParamSegment.split( " " );
-                        if( splitted.length != 2 )
-                        {
-                            throw new IllegalRouteException(
-                                routeString,
-                                "Unable to parse parameter: " + controllerMethodParamSegment
+                        case DEFAULTED:
+                            // Parameter with default value
+                            String[] dEqualSplitted = controllerMethodParamSegment.split( "\\?=", 2 );
+                            String[] dTypeAndName = dEqualSplitted[0].trim().split( " " );
+                            String dName = dTypeAndName[1];
+                            Class<?> dType = lookupParamType( application, dTypeAndName[0] );
+                            String defaultValueString = dEqualSplitted[1].trim();
+                            if( defaultValueString.startsWith( "'" ) && defaultValueString.endsWith( "'" ) )
+                            {
+                                defaultValueString = defaultValueString
+                                    .substring( 1, defaultValueString.length() - 1 )
+                                    .replaceAll( "\\\\'", "'" );
+                            }
+                            Object defaultValue = application.parameterBinders().bind(
+                                dType, dName, defaultValueString
                             );
-                        }
-                        String paramName = splitted[1];
-                        String paramTypeName = splitted[0];
-                        controllerParams.put(
-                            paramName,
-                            new ControllerParams.Param( paramName, lookupParamType( application, paramTypeName ) )
-                        );
+                            controllerParams.put(
+                                dName,
+                                new Param( dName, dType, ParamValue.DEFAULTED, defaultValue )
+                            );
+                            break;
+                        case FORCED:
+                            // Parameter with forced value
+                            String[] fEqualSplitted = controllerMethodParamSegment.split( "=", 2 );
+                            String[] fTypeAndName = fEqualSplitted[0].trim().split( " " );
+                            String fName = fTypeAndName[1];
+                            Class<?> fType = lookupParamType( application, fTypeAndName[0] );
+                            String forcedValueString = fEqualSplitted[1].trim();
+                            if( forcedValueString.startsWith( "'" ) && forcedValueString.endsWith( "'" ) )
+                            {
+                                forcedValueString = forcedValueString
+                                    .substring( 1, forcedValueString.length() - 1 )
+                                    .replaceAll( "\\\\'", "'" );
+                            }
+                            Object forcedValue = application.parameterBinders().bind(
+                                fType, fName, forcedValueString
+                            );
+                            controllerParams.put( fName, new Param( fName, fType, ParamValue.FORCED, forcedValue ) );
+                            break;
+                        case NONE:
+                            // Parameter without forced value
+                            String[] splitted = controllerMethodParamSegment.split( " " );
+                            if( splitted.length != 2 )
+                            {
+                                throw new IllegalRouteException(
+                                    routeString,
+                                    "Unable to parse parameter: " + controllerMethodParamSegment
+                                );
+                            }
+                            String name = splitted[1];
+                            String paramTypeName = splitted[0];
+                            Class<?> type = lookupParamType( application, paramTypeName );
+                            controllerParams.put( name, new Param( name, type ) );
+                            break;
+                        default:
                     }
                 }
             }
@@ -544,6 +569,34 @@ public class RouteBuilderInstance
             }
             segments.add( sb.toString().trim() );
             return segments;
+        }
+
+        private static ParamValue valueKindOfSegment( String segment )
+        {
+            if( segment.length() < 2 )
+            {
+                return ParamValue.NONE;
+            }
+            boolean insideQuotes = false;
+            char previous = segment.charAt( 0 );
+            for( int idx = 1; idx < segment.length(); idx++ )
+            {
+                char character = segment.charAt( idx );
+                if( character == '\'' && previous != '\\' )
+                {
+                    insideQuotes = !insideQuotes;
+                }
+                if( '=' == character && !insideQuotes )
+                {
+                    if( '?' == previous )
+                    {
+                        return ParamValue.DEFAULTED;
+                    }
+                    return ParamValue.FORCED;
+                }
+                previous = character;
+            }
+            return ParamValue.NONE;
         }
 
         private static Class<?> lookupParamType( Application application, String paramTypeName )

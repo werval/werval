@@ -85,29 +85,37 @@ public final class ControllerParams
     }
 
     /**
+     * Route Controller Param Value Kind.
+     */
+    public static enum ParamValue
+    {
+        FORCED, DEFAULTED, NONE
+    }
+
+    /**
      * Route Controller Param.
      */
     public static final class Param
     {
         private final String name;
         private final Class<?> type;
-        private final boolean hasForcedValue;
-        private final Object forcedValue;
+        private final ParamValue valueKind;
+        private final Object value;
 
         public Param( String name, Class<?> type )
         {
             this.name = name;
             this.type = type;
-            this.hasForcedValue = false;
-            this.forcedValue = null;
+            this.valueKind = ParamValue.NONE;
+            this.value = null;
         }
 
-        public Param( String name, Class<?> type, Object forcedValue )
+        public Param( String name, Class<?> type, ParamValue valueKind, Object value )
         {
             this.name = name;
             this.type = type;
-            this.hasForcedValue = true;
-            this.forcedValue = forcedValue;
+            this.valueKind = valueKind;
+            this.value = value;
         }
 
         /**
@@ -127,11 +135,11 @@ public final class ControllerParams
         }
 
         /**
-         * @return TRUE if this ControllerParam has a forced value, otherwise return FALSE
+         * @return The Param Value Kind
          */
-        public boolean hasForcedValue()
+        public ParamValue valueKind()
         {
-            return hasForcedValue;
+            return valueKind;
         }
 
         /**
@@ -141,11 +149,25 @@ public final class ControllerParams
          */
         public Object forcedValue()
         {
-            if( !hasForcedValue )
+            if( ParamValue.FORCED != valueKind )
             {
                 throw new IllegalStateException( "ControllerParam " + name + " has no forced value!" );
             }
-            return forcedValue;
+            return value;
+        }
+
+        /**
+         * @return Defaulted value of the Controller Param
+         *
+         * @throws IllegalStateException if no defaulted value
+         */
+        public Object defaultedValue()
+        {
+            if( ParamValue.DEFAULTED != valueKind )
+            {
+                throw new IllegalStateException( "ControllerParam " + name + " has no defaulted value!" );
+            }
+            return value;
         }
 
         @Override
@@ -153,9 +175,15 @@ public final class ControllerParams
         {
             StringBuilder sb = new StringBuilder( "Param{name=" );
             sb.append( name ).append( ", type=" ).append( type );
-            if( hasForcedValue )
+            switch( valueKind )
             {
-                sb.append( ", forcedValue=" ).append( forcedValue );
+                case FORCED:
+                    sb.append( ", forcedValue=" ).append( value );
+                    break;
+                case DEFAULTED:
+                    sb.append( ", defaultedValue=" ).append( value );
+                    break;
+                default:
             }
             sb.append( '}' );
             return sb.toString();

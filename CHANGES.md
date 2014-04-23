@@ -18,10 +18,12 @@ Only use Final versions in production!
 ### 0.2.0.Alpha - UNRELEASED
 
 - Fix QueryString multi-empty-valued parameters handling
+- Fix parsing of escaped quotes in forced/defaulted route parameters
 - Add HTTP Language Negotiation helpers
 - Add HTTP Content Negotiation helpers
 - Add a Cache Extension Plugin and EhCache & Memcache based implementations
 - Complete Cookies support
+- Add support for default parameters values in Routes
 - Routes contributed by plugins can now easily be prefixed
 - Filters can now be declared using custom annotations
 - Add @Cached annotation that leverage both server-side and client-side caching
