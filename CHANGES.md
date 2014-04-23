@@ -23,6 +23,9 @@ Only use Final versions in production!
 - Add a Cache Extension Plugin and EhCache & Memcache based implementations
 - Complete Cookies support
 - Routes contributed by plugins can now easily be prefixed
+- Filters can now be declared using custom annotations
+- Add @Cached annotation that leverage both server-side and client-side caching
+- Crypto helpers for SHA-256
 - Better error reporting on passivation
 - Minor enhancements to test support
 - Some progress towards Windows support in CLI
