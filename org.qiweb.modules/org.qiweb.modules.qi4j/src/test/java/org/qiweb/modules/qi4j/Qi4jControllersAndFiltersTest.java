@@ -96,10 +96,10 @@ public class Qi4jControllersAndFiltersTest
         extends Filter
     {
         public static class Mixin
-            implements Filter
+            implements Filter<Void>
         {
             @Override
-            public Outcome filter( FilterChain chain, Context context )
+            public Outcome filter( Void filterConfig, FilterChain chain, Context context )
             {
                 filtered = true;
                 return chain.next( context );

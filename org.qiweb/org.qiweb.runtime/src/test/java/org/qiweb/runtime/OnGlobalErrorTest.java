@@ -57,10 +57,10 @@ public class OnGlobalErrorTest
     };
 
     public static class TestFilter
-        implements Filter
+        implements Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context )
+        public Outcome filter( Void filterConfig, FilterChain chain, Context context )
         {
             return chain.next( context );
         }

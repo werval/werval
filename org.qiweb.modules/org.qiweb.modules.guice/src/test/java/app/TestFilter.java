@@ -24,12 +24,12 @@ import org.qiweb.api.outcomes.Outcome;
  * TestFilter.
  */
 public class TestFilter
-    implements Filter
+    implements Filter<Void>
 {
     public static int invocations = 0;
 
     @Override
-    public Outcome filter( FilterChain chain, Context context )
+    public Outcome filter( Void filterConfig, FilterChain chain, Context context )
     {
         invocations++;
         return chain.next( context );

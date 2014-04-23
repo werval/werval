@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,19 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Controller invocation Filter.
+ *
+ * @param <T> Configuration Type
  */
-public interface Filter
+public interface Filter<T>
 {
     /**
      * Filter a request.
      *
-     * @param chain   Filter Chain
-     * @param context Request Context
+     * @param filterConfig Filter configuration Annotation or null if none
+     * @param chain        Filter Chain
+     * @param context      Request Context
      *
      * @return Filtered Outcome
      */
-    Outcome filter( FilterChain chain, Context context );
+    public abstract Outcome filter( T filterConfig, FilterChain chain, Context context );
 }

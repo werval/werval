@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
  */
 package org.qiweb.runtime.filters;
 
-import java.util.Arrays;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import org.qiweb.api.Application;
@@ -25,6 +27,7 @@ import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
+import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.filters.FilterChainInstance.FilterChainControllerTail;
 
 /**
@@ -34,20 +37,62 @@ public class FilterChainFactory
 {
     public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
-        Set<Class<? extends Filter>> uniqueFilters = new LinkedHashSet<>();
-        uniqueFilters.addAll( findFilterWithOnType( context.route().controllerType() ) );
-        FilterWith filterWith = context.route().controllerMethod().getAnnotation( FilterWith.class );
-        if( filterWith != null )
-        {
-            uniqueFilters.addAll( Arrays.asList( filterWith.value() ) );
-        }
-        Stack<Class<? extends Filter>> filtersStack = new Stack<>();
+        Set<Couple<Class<? extends Filter>, Annotation>> uniqueFilters = new LinkedHashSet<>();
+        uniqueFilters.addAll( findFiltersOnType( context.route().controllerType() ) );
+        uniqueFilters.addAll( findFilters( context.route().controllerMethod().getAnnotations() ) );
+        Stack<Couple<Class<? extends Filter>, Annotation>> filtersStack = new Stack<>();
         filtersStack.addAll( uniqueFilters );
         return buildFilterChain( app, global, filtersStack, context );
     }
 
+    private List<Couple<Class<? extends Filter>, Annotation>> findFiltersOnType( Class<?> controllerType )
+    {
+        List<Couple<Class<? extends Filter>, Annotation>> filters = new ArrayList<>();
+        if( controllerType.getSuperclass() != null )
+        {
+            filters.addAll( findFiltersOnType( controllerType.getSuperclass() ) );
+        }
+        if( controllerType.getInterfaces() != null )
+        {
+            for( Class<?> clazz : controllerType.getInterfaces() )
+            {
+                filters.addAll( findFiltersOnType( clazz ) );
+            }
+        }
+        filters.addAll( findFilters( controllerType.getAnnotations() ) );
+        return filters;
+    }
+
+    private List<Couple<Class<? extends Filter>, Annotation>> findFilters( Annotation[] annotations )
+    {
+        List<Couple<Class<? extends Filter>, Annotation>> filters = new ArrayList<>();
+        for( Annotation annotation : annotations )
+        {
+            if( FilterWith.class.equals( annotation.annotationType() ) )
+            {
+                FilterWith filterWith = (FilterWith) annotation;
+                for( Class<? extends Filter> filterClass : filterWith.value() )
+                {
+                    filters.add( Couple.leftOnly( filterClass ) );
+                }
+            }
+            else
+            {
+                FilterWith filterWith = annotation.annotationType().getAnnotation( FilterWith.class );
+                if( filterWith != null )
+                {
+                    for( Class<? extends Filter> filterClass : filterWith.value() )
+                    {
+                        filters.add( Couple.of( filterClass, annotation ) );
+                    }
+                }
+            }
+        }
+        return filters;
+    }
+
     private FilterChain buildFilterChain(
-        Application app, Global global, Stack<Class<? extends Filter>> filters, Context context
+        Application app, Global global, Stack<Couple<Class<? extends Filter>, Annotation>> filters, Context context
     )
     {
         if( filters.isEmpty() )
@@ -63,27 +108,5 @@ public class FilterChainFactory
                 buildFilterChain( app, global, filters, context )
             );
         }
-    }
-
-    private Set<Class<? extends Filter>> findFilterWithOnType( Class<?> controllerType )
-    {
-        Set<Class<? extends Filter>> filters = new LinkedHashSet<>();
-        if( controllerType.getSuperclass() != null )
-        {
-            filters.addAll( findFilterWithOnType( controllerType.getSuperclass() ) );
-        }
-        if( controllerType.getInterfaces() != null )
-        {
-            for( Class<?> clazz : controllerType.getInterfaces() )
-            {
-                filters.addAll( findFilterWithOnType( clazz ) );
-            }
-        }
-        FilterWith filterWith = controllerType.getAnnotation( FilterWith.class );
-        if( filterWith != null )
-        {
-            filters.addAll( Arrays.asList( filterWith.value() ) );
-        }
-        return filters;
     }
 }

@@ -30,10 +30,10 @@ import static org.hamcrest.Matchers.equalTo;
 public class FiltersTest
 {
     public static class Filter
-        implements org.qiweb.api.filters.Filter
+        implements org.qiweb.api.filters.Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context )
+        public Outcome filter( Void filterConfig, FilterChain chain, Context context )
         {
             context.response().headers().with( "X-QiWeb-Filtered", "true" );
             return chain.next( context );
