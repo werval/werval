@@ -480,24 +480,24 @@ public class RouteBuilderInstance
                 {
                     if( controllerMethodParamSegment.contains( "=" ) )
                     {
-                        // Route with forced values
+                        // Parameter with forced value
                         String[] equalSplitted = controllerMethodParamSegment.split( "=", 2 );
-                        String[] typeAndName = equalSplitted[0].split( " " );
+                        String[] typeAndName = equalSplitted[0].trim().split( " " );
                         String name = typeAndName[1];
                         Class<?> type = lookupParamType( application, typeAndName[0] );
-                        String forcedValueString = equalSplitted[1].substring( 1 ).trim();
-                        if( forcedValueString.startsWith( "'" ) )
+                        String forcedValueString = equalSplitted[1].trim();
+                        if( forcedValueString.startsWith( "'" ) && forcedValueString.endsWith( "'" ) )
                         {
-                            forcedValueString = forcedValueString.
-                                substring( 1, forcedValueString.length() - 1 ).
-                                replaceAll( "\\'", "'" );
+                            forcedValueString = forcedValueString
+                                .substring( 1, forcedValueString.length() - 1 )
+                                .replaceAll( "\\\\'", "'" );
                         }
                         Object forcedValue = application.parameterBinders().bind( type, name, forcedValueString );
                         controllerParams.put( name, new ControllerParams.Param( name, type, forcedValue ) );
                     }
                     else
                     {
-                        // Route without forced values
+                        // Parameter without forced value
                         String[] splitted = controllerMethodParamSegment.split( " " );
                         if( splitted.length != 2 )
                         {
@@ -540,6 +540,7 @@ public class RouteBuilderInstance
                     segments.add( sb.toString().trim() );
                     sb = new StringBuilder();
                 }
+                previous = character;
             }
             segments.add( sb.toString().trim() );
             return segments;

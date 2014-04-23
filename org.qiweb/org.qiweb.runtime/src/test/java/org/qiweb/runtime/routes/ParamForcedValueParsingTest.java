@@ -19,6 +19,7 @@ import com.acme.app.FakeController;
 import java.util.Map;
 import org.junit.Test;
 import org.qiweb.api.Application;
+import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
@@ -106,6 +107,65 @@ public class ParamForcedValueParsingTest
                 QueryStringInstance.EMPTY
             );
             assertThat( (String) boundParams.get( "path" ), equalTo( "cathedral" ) );
+            assertThat( (Integer) boundParams.get( "num" ), equalTo( 42 ) );
+        }
+        finally
+        {
+            application.passivate();
+        }
+    }
+
+    @Test( expected = IllegalRouteException.class )
+    public void quoteInQuotedForcedValue()
+    {
+        Application application = new ApplicationInstance( new RoutesParserProvider(
+            "GET / com.acme.app.FakeControllerInstance.another( String path = ''', Integer num = '42' )"
+        ) );
+        application.activate();
+    }
+
+    @Test
+    public void escapedQuoteInQuotedForcedValue()
+    {
+        Application application = new ApplicationInstance( new RoutesParserProvider(
+            "GET / com.acme.app.FakeControllerInstance.another( String path = '\\'', Integer num = '42' )"
+        ) );
+        application.activate();
+        try
+        {
+            Route route = application.routes().iterator().next();
+            System.out.println( route );
+            Map<String, Object> boundParams = route.bindParameters(
+                application.parameterBinders(),
+                "/",
+                QueryStringInstance.EMPTY
+            );
+            assertThat( (String) boundParams.get( "path" ), equalTo( "'" ) );
+            assertThat( (Integer) boundParams.get( "num" ), equalTo( 42 ) );
+        }
+        finally
+        {
+            application.passivate();
+        }
+    }
+
+    @Test
+    public void commaInQuotedForcedValue()
+    {
+        Application application = new ApplicationInstance( new RoutesParserProvider(
+            "GET / com.acme.app.FakeControllerInstance.another( String path = ',', Integer num = '42' )"
+        ) );
+        application.activate();
+        try
+        {
+            Route route = application.routes().iterator().next();
+            System.out.println( route );
+            Map<String, Object> boundParams = route.bindParameters(
+                application.parameterBinders(),
+                "/",
+                QueryStringInstance.EMPTY
+            );
+            assertThat( (String) boundParams.get( "path" ), equalTo( "," ) );
             assertThat( (Integer) boundParams.get( "num" ), equalTo( 42 ) );
         }
         finally

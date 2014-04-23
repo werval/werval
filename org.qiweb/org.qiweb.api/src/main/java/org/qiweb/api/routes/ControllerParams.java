@@ -147,5 +147,18 @@ public final class ControllerParams
             }
             return forcedValue;
         }
+
+        @Override
+        public String toString()
+        {
+            StringBuilder sb = new StringBuilder( "Param{name=" );
+            sb.append( name ).append( ", type=" ).append( type );
+            if( hasForcedValue )
+            {
+                sb.append( ", forcedValue=" ).append( forcedValue );
+            }
+            sb.append( '}' );
+            return sb.toString();
+        }
     }
 }
