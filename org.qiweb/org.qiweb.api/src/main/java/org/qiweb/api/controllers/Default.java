@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.lib.controllers;
+package org.qiweb.api.controllers;
 
 import java.util.List;
 import java.util.Map;
@@ -23,11 +23,11 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Controller providing default outcomes.
- * <p>Intended to be used in routes directly.</p>
+ *
+ * Intended to be used in routes directly.
  */
 public class Default
 {
-
     /**
      * @return a 404 NOT FOUND Outcome
      */
@@ -38,6 +38,7 @@ public class Default
 
     /**
      * @param url Target URL
+     *
      * @return a 302 FOUND Outcome
      */
     public Outcome found( String url )
@@ -46,8 +47,9 @@ public class Default
     }
 
     /**
-     * @param url Target URL
+     * @param url         Target URL
      * @param queryString Query String elements
+     *
      * @return a 302 FOUND Outcome
      */
     public Outcome found( String url, Map<String, List<String>> queryString )
@@ -57,6 +59,7 @@ public class Default
 
     /**
      * @param url Target URL
+     *
      * @return a 303 SEE_OTHER Outcome
      */
     public Outcome seeOther( String url )
@@ -65,8 +68,9 @@ public class Default
     }
 
     /**
-     * @param url Target URL
+     * @param url         Target URL
      * @param queryString Query String elements
+     *
      * @return a 303 SEE_OTHER Outcome
      */
     public Outcome seeOther( String url, Map<String, List<String>> queryString )
@@ -89,5 +93,4 @@ public class Default
     {
         return outcomes().notImplemented().withBody( "501 Not Implemented" ).build();
     }
-
 }

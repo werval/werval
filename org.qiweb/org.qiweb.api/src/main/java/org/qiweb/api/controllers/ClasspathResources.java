@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.lib.controllers;
+package org.qiweb.api.controllers;
 
 import java.io.InputStream;
 import org.qiweb.api.Mode;
@@ -131,7 +131,8 @@ public class ClasspathResources
         String resourceName = path.substring( path.lastIndexOf( '/' ) + 1 );
         String filename = US_ASCII.newEncoder().canEncode( resourceName )
                           ? "; filename=\"" + resourceName + "\""
-                          : "; filename*=" + application().defaultCharset().name().toLowerCase( US ) + "; filename=\"" + resourceName + "\"";
+                          : "; filename*=" + application().defaultCharset().name().toLowerCase( US )
+                            + "; filename=\"" + resourceName + "\"";
         if( APPLICATION_OCTET_STREAM.equals( mimetype ) )
         {
             // Browser will prompt the user, we should provide a filename

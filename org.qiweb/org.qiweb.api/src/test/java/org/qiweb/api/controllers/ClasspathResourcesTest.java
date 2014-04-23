@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.lib.controllers;
+package org.qiweb.api.controllers;
 
 import com.jayway.restassured.response.Response;
 import java.io.IOException;
@@ -30,10 +30,9 @@ import static org.junit.Assert.assertThat;
 
 public class ClasspathResourcesTest
 {
-
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /*path org.qiweb.lib.controllers.ClasspathResources.metainf( String path )" ) );
+        "GET /*path org.qiweb.api.controllers.ClasspathResources.metainf( String path )" ) );
 
     @Test
     public void givenNonExistentResourceWhenRequestingExpectNotFound()
@@ -126,5 +125,4 @@ public class ClasspathResourcesTest
             when().
             get( path );
     }
-
 }

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * QiWeb API Controllers.
+ * QiWeb Standard Controllers.
  */
 package org.qiweb.api.controllers;

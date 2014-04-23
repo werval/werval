@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.lib.controllers;
+package org.qiweb.api.controllers;
 
 import com.jayway.restassured.response.Response;
 import java.io.File;
@@ -29,14 +29,15 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Assert that the StaticFiles controller behave correctly.
- * <p>Please note that this test rely on the fact that the current working directory is set to the module base dir.</p>
+ *
+ * Please note that this test rely on the fact that the current working directory is set to the module base dir.
  */
 public class StaticFilesTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /single org.qiweb.lib.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
-        + "GET /tree/*path org.qiweb.lib.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )"
+        "GET /single org.qiweb.api.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
+        + "GET /tree/*path org.qiweb.api.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )"
     ) );
 
     private static final File ROOT = new File( "src/test/resources" );

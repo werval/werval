@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.lib.controllers;
+package org.qiweb.api.controllers;
 
 import org.qiweb.api.outcomes.Outcome;
 
@@ -28,14 +28,16 @@ import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 
 /**
  * Controller with methods to introspect QiWeb Runtime.
- * <p>Used by the QiWeb DevShell.</p>
- * <p>When using in application code, know that theses methods disclose internal data.</p>
+ *
+ * Used by the QiWeb DevShell.
+ * <p>
+ * When using in application code, know that theses methods disclose internal data.
  */
 public class Introspect
 {
-
     /**
      * Render QiWeb Config as JSON.
+     *
      * @return QiWeb Config as JSON
      */
     public Outcome config()
@@ -45,7 +47,8 @@ public class Introspect
 
     /**
      * Render QiWeb Version information as JSON.
-     * <p>Here is a sample:</p>
+     *
+     * Here is a sample:
      * <pre>
      * {
      *   "version": "0",
@@ -54,6 +57,7 @@ public class Introspect
      *   "date": "Tue, 03 Sep 2013 16:01:24 GMT",
      * }
      * </pre>
+     *
      * @return QiWeb Version information as JSON
      */
     public Outcome version()
@@ -65,8 +69,7 @@ public class Introspect
             + "  \"dirty\": " + String.valueOf( DIRTY ) + ",\n"
             + "  \"date\": \"" + DATE + "\",\n"
             + "  \"detail\": \"" + DETAILED_VERSION + "\"\n"
-            + "}\n" ).
-            as( APPLICATION_JSON ).build();
+            + "}\n"
+        ).as( APPLICATION_JSON ).build();
     }
-
 }

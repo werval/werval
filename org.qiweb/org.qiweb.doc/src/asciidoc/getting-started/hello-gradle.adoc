@@ -38,13 +38,12 @@ applicationName = 'hello-qiweb'                   // <8>
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:{qiweb-version}" // <9>
-    compile "org.qiweb:org.qiweb.lib:{qiweb-version}" // <10>
     // Add application compile dependencies
 
-    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}" // <11>
+    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}" // <10>
     // Add application runtime dependencies
 
-    testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <12>
+    testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <11>
     // Add application test dependencies
 
 }
@@ -59,9 +58,8 @@ dependencies {
 <7> Set the application main class to `org.qiweb.server.bootstrap.Main` for production mode
 <8> Name the application archive and startup scripts
 <9> Add compile scope dependency to QiWeb API
-<10> Add compile scope dependency to QiWeb Standard Library
-<11> Add runtime scope dependency to QiWeb Netty Server Bootstrap
-<12> Add test scope dependency to QiWeb Test Support
+<10> Add runtime scope dependency to QiWeb Netty Server Bootstrap
+<11> Add test scope dependency to QiWeb Test Support
 
 
 And that's it!

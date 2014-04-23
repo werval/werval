@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.lib.controllers;
+package org.qiweb.api.controllers;
 
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -37,8 +37,8 @@ public class IntrospectTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-        + "GET /@version org.qiweb.lib.controllers.Introspect.version\n"
+        "GET /@config org.qiweb.api.controllers.Introspect.config\n"
+        + "GET /@version org.qiweb.api.controllers.Introspect.version\n"
     ) );
 
     @Test
