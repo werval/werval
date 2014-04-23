@@ -85,6 +85,18 @@ public final class Dates
         }
 
         /**
+         * Format HTTP dates.
+         *
+         * @param millis Milliseconds
+         *
+         * @return HTTP formatted date
+         */
+        public static String format( long millis )
+        {
+            return format( new Date( millis ) );
+        }
+
+        /**
          * Parse HTTP dates.
          *
          * @param httpFormatDateString HTTP format date String

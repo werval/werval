@@ -18,22 +18,28 @@ package org.qiweb.test.cache;
 import org.junit.Test;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.cache.Cached;
+import org.qiweb.api.http.Request;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.http.Headers.Names.ETAG;
+import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
+import static org.qiweb.api.http.Method.GET;
 
 /**
  * Cache Test.
  *
- * Assert that a Cache Plugin is working as expected.
+ * Assert that a Cache Plugin and the @{@link Cached} annotation work as expected.
  * <p>
  * Extends in your Cache Plugin implementations to test it easily.
  */
@@ -44,7 +50,7 @@ public abstract class CacheTest
     {
         private static int hits = 0;
 
-        @Cached( key = "cached" )
+        @Cached
         public Outcome cached()
         {
             hits++;
@@ -66,24 +72,30 @@ public abstract class CacheTest
     {
         Controller.hits = 0;
 
-        Cache cache = application().cache();
-        assertFalse( cache.has( "cached" ) );
+        Request request = newRequestBuilder().method( GET ).uri( "/cached" ).build();
 
-        assertThat( Controller.hits, is( 0 ) );
+        // Request
         assertThat(
-            application().handleRequest(
-                newRequestBuilder().method( "GET" ).uri( "/cached" ).build()
-            ).responseHeader().status().code(),
+            application().handleRequest( request ).responseHeader().status().code(),
             is( 200 )
         );
         assertThat( Controller.hits, is( 1 ) );
-        assertTrue( cache.has( "cached" ) );
 
+        // Assert Server-Side Cache
+        Outcome outcome = application().handleRequest( request );
         assertThat(
-            application().handleRequest(
-                newRequestBuilder().method( "GET" ).uri( "/cached" ).build()
-            ).responseHeader().status().code(),
+            outcome.responseHeader().status().code(),
             is( 200 )
+        );
+        assertThat( Controller.hits, is( 1 ) );
+
+        // Assert Client-Side Cache
+        request = newRequestBuilder().method( GET ).uri( "/cached" ).headers(
+            singletonMap( IF_NONE_MATCH, singletonList( outcome.responseHeader().headers().singleValue( ETAG ) ) )
+        ).build();
+        assertThat(
+            application().handleRequest( request ).responseHeader().status().code(),
+            is( 304 )
         );
         assertThat( Controller.hits, is( 1 ) );
     }
