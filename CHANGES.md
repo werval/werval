@@ -30,6 +30,7 @@ Only use Final versions in production!
 - Crypto helpers for SHA-256
 - Better error reporting on passivation
 - Minor enhancements to test support
+- The CLI now generate a build.gradle file in new applications
 - Some progress towards Windows support in CLI
 - Reintroduce Gradle Wrapper in all projects
 - Upgrade Netty from 4.0.17 to 4.0.18
