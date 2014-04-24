@@ -15,7 +15,7 @@ Only use Final versions in production!
 ## Changelog
 
 
-### 0.2.0.Alpha - UNRELEASED
+### 0.2.0.Alpha
 
 - Fix QueryString multi-empty-valued parameters handling
 - Fix parsing of escaped quotes in forced/defaulted route parameters
