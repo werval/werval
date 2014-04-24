@@ -38,13 +38,13 @@ applicationName = 'hello-qiweb'                   // <8>
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:{qiweb-version}" // <9>
-    // Add application compile dependencies
+    // Add application compile dependencies here
 
     runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}" // <10>
-    // Add application runtime dependencies
+    // Add application runtime dependencies here
 
     testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <11>
-    // Add application test dependencies
+    // Add application test dependencies here
 
 }
 

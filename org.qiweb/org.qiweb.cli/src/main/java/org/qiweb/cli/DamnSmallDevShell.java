@@ -55,8 +55,12 @@ import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
-import static java.io.File.pathSeparator;
+import static java.io.File.separator;
 import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.cli.BuildVersion.COMMIT;
+import static org.qiweb.cli.BuildVersion.DATE;
+import static org.qiweb.cli.BuildVersion.DIRTY;
+import static org.qiweb.cli.BuildVersion.VERSION;
 
 /**
  * Damn Small QiWeb DevShell.
@@ -137,7 +141,7 @@ public final class DamnSmallDevShell
           + "|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |\n"
           + "|__  _|_|_____|___|___|  |____/|___|\\_/|_____|_|_|___|_|_|\n"
           + "   |__|                                "
-          + "QiWeb v" + BuildVersion.VERSION + "-" + BuildVersion.COMMIT + ( BuildVersion.DIRTY ? " (DIRTY)" : "" )
+          + "QiWeb v" + VERSION + "-" + COMMIT + ( DIRTY ? " (DIRTY)" : "" )
           + "\n";
     }
 
@@ -163,8 +167,8 @@ public final class DamnSmallDevShell
             if( cmd.hasOption( "version" ) )
             {
                 System.out.println(
-                    "QiWeb CLI v" + BuildVersion.VERSION + "\n"
-                    + "Git commit: " + BuildVersion.COMMIT + ( BuildVersion.DIRTY ? " (DIRTY)" : "" ) + ", built on: " + BuildVersion.DATE + "\n"
+                    "QiWeb CLI v" + VERSION + "\n"
+                    + "Git commit: " + COMMIT + ( DIRTY ? " (DIRTY)" : "" ) + ", built on: " + DATE + "\n"
                     + "Licence: Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0\n"
                     + "Java version: " + System.getProperty( "java.version" ) + ", vendor: " + System.getProperty( "java.vendor" ) + "\n"
                     + "Java home: " + System.getProperty( "java.home" ) + "\n"
@@ -177,7 +181,7 @@ public final class DamnSmallDevShell
             final boolean debug = cmd.hasOption( 'd' );
 
             // Temporary directory
-            final File tmpDir = new File( cmd.getOptionValue( 't', "build" + pathSeparator + "devshell.tmp" ) );
+            final File tmpDir = new File( cmd.getOptionValue( 't', "build" + separator + "devshell.tmp" ) );
             if( debug )
             {
                 System.out.println( "Temporary directory set to '" + tmpDir.getAbsolutePath() + "'." );
@@ -245,11 +249,11 @@ public final class DamnSmallDevShell
         File baseDir = new File( name );
         File ctrlDir = new File(
             baseDir,
-            "src" + pathSeparator + "main" + pathSeparator + "java" + pathSeparator + "controllers"
+            "src" + separator + "main" + separator + "java" + separator + "controllers"
         );
         File rsrcDir = new File(
             baseDir,
-            "src" + pathSeparator + "main" + pathSeparator + "resources"
+            "src" + separator + "main" + separator + "resources"
         );
         Files.createDirectories( ctrlDir.toPath() );
         Files.createDirectories( rsrcDir.toPath() );
@@ -271,6 +275,45 @@ public final class DamnSmallDevShell
         // Generate routes
         String routes = "\nGET / controllers.Application.index\n";
         Files.write( new File( rsrcDir, "routes.conf" ).toPath(), routes.getBytes( UTF_8 ) );
+
+        // Generate Gradle build file
+        String gradle = "buildscript {	\n"
+                        + "	repositories {\n"
+                        + "    	maven {\n"
+                        + "    		url \"https://repo.codeartisans.org/qiweb\"\n"
+                        + "    		credentials { username = \"qiweb\"; password = \"qiweb\" }\n"
+                        + "		}\n"
+                        + "	}\n"
+                        + "	dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
+                        + "}\n"
+                        + "repositories {\n"
+                        + "    maven {\n"
+                        + "    	url \"https://repo.codeartisans.org/qiweb\"\n"
+                        + "    	credentials { username = \"qiweb\"; password = \"qiweb\" }\n"
+                        + "	}\n"
+                        + "}\n"
+                        + "\n"
+                        + "apply plugin: 'java'\n"
+                        + "apply plugin: 'qiweb'\n"
+                        + "apply plugin: 'application'\n"
+                        + "\n"
+                        + "mainClassName = 'org.qiweb.server.bootstrap.Main'\n"
+                        + "applicationName = '" + name + "'\n"
+                        + "\n"
+                        + "dependencies {\n"
+                        + "\n"
+                        + "    compile \"org.qiweb:org.qiweb.api:" + VERSION + "\"\n"
+                        + "    // Add application compile dependencies here\n"
+                        + "\n"
+                        + "    runtime \"org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "\"\n"
+                        + "    // Add application runtime dependencies here\n"
+                        + "\n"
+                        + "    testCompile \"org.qiweb:org.qiweb.test:" + VERSION + "\"\n"
+                        + "    // Add application test dependencies here\n"
+                        + "\n"
+                        + "}\n"
+                        + "";
+        Files.write( new File( baseDir, "build.gradle.example" ).toPath(), gradle.getBytes( UTF_8 ) );
 
         // Inform user
         System.out.println( "New QiWeb Application generated in '" + baseDir.getAbsolutePath() + "'." );
@@ -307,8 +350,8 @@ public final class DamnSmallDevShell
         // Sources
         String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
         {
-            "src" + pathSeparator + "main" + pathSeparator + "java",
-            "src" + pathSeparator + "main" + pathSeparator + "resources"
+            "src" + separator + "main" + separator + "java",
+            "src" + separator + "main" + separator + "resources"
         };
         Set<File> sources = new LinkedHashSet<>();
         for( String sourcePath : sourcesPaths )
