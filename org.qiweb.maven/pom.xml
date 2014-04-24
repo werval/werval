@@ -26,6 +26,10 @@
     
     <repositories>
         <repository>
+            <id>qiwebLocalRepository</id>
+            <url>file:${project.basedir}/../repository</url>
+        </repository>
+        <repository>
             <id>mojo-executor-repository</id>
             <url>http://twdata-m2-repository.googlecode.com/svn/</url>
         </repository>
@@ -59,14 +63,25 @@
         </dependency>
     </dependencies>
     
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>http://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.2</version>
+                <version>3.3-SNAPSHOT</version>
                 <configuration>
                     <goalPrefix>qiweb</goalPrefix>
                 </configuration>
+                <goals>
+                    <goal>descriptor</goal>
+                    <goal>helpmojo</goal>
+                </goals>
             </plugin>
         </plugins>
     </build>
