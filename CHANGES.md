@@ -25,7 +25,7 @@ Only use Final versions in production!
 - Add @Cached annotation that leverage both server-side and client-side caching, see #90
 - Complete Cookies support, see #61
 - Add support for default parameters values in Routes, see #76
-- Routes contributed by plugins can now easily be prefixed, see 86
+- Routes contributed by plugins can now easily be prefixed, see #86
 - Filters can now be declared using custom annotations, see #89
 - The CLI now generate a build.gradle file in new applications, see #92
 - Moved `org.qiweb.lib.controllers` into `org.qiweb.api.controllers`, see #87 & #91
