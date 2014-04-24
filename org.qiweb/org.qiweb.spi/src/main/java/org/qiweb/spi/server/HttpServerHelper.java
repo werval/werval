@@ -34,12 +34,13 @@ public class HttpServerHelper
      * One instance of {@link HttpServerHelper} holds a final {@link UUID} and an {@link AtomicLong} based counter.
      * <p>
      * Each call to this method concatenates the UUID and the counter, the later is incremented along the way.
-     * 
+     *
      * @return a new request identity.
      */
     public String generateNewRequestIdentity()
     {
-        return new StringBuilder( requestIdentityPrefix ).
-            append( requestIdentityCount.getAndIncrement() ).toString();
+        return new StringBuilder( requestIdentityPrefix )
+            .append( requestIdentityCount.getAndIncrement() )
+            .toString();
     }
 }

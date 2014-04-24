@@ -17,6 +17,7 @@ package org.qiweb.api.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import org.qiweb.api.exceptions.IllegalArguments;
 
@@ -24,7 +25,7 @@ import org.qiweb.api.exceptions.IllegalArguments;
  * ByteSource backed by a byte[].
  */
 public final class ByteArrayByteSource
-    implements ByteSource
+    implements ByteSource, Serializable
 {
     private final byte[] bytes;
 

@@ -16,6 +16,7 @@
 package org.qiweb.runtime;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,9 +26,8 @@ import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.RouteBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.qiweb.api.util.Couple;
+import org.qiweb.runtime.routes.RouteBuilderInstance;
 
 import static java.util.Collections.EMPTY_LIST;
 
@@ -38,46 +38,63 @@ import static java.util.Collections.EMPTY_LIST;
  */
 /* package */ class PluginsInstance
 {
-    private static final Logger LOG = LoggerFactory.getLogger( PluginsInstance.class );
     private volatile boolean activated = false;
-    private final List<String> pluginsFQCNs;
+    private final List<Config> configuredPlugins;
     private final List<Plugin<?>> extraPlugins;
-    private List<Plugin<?>> activePlugins = EMPTY_LIST;
+    private List<Couple<Plugin<?>, Config>> activePlugins = EMPTY_LIST;
 
     /* package */ PluginsInstance( Config config, List<Plugin<?>> extraPlugins )
     {
-        this.pluginsFQCNs = config.stringList( "app.plugins" );
+        this.configuredPlugins = config.array( "app.plugins" );
         this.extraPlugins = extraPlugins;
     }
 
     /* package */ void onActivate( ApplicationInstance application )
     {
-        List<Plugin<?>> activatedPlugins = new ArrayList<>( pluginsFQCNs.size() + extraPlugins.size() );
-        for( String pluginFQCN : pluginsFQCNs )
+        EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
+        List<Couple<Plugin<?>, Config>> activatedPlugins = new ArrayList<>(
+            configuredPlugins.size() + extraPlugins.size() + extensions.size()
+        );
+        // Application Configured Plugins
+        for( Config pluginConfig : configuredPlugins )
         {
             try
             {
-                Class<?> pluginClass = application.classLoader().loadClass( pluginFQCN );
+                Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
                 Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, pluginClass );
                 if( plugin.enabled() )
                 {
                     plugin.onActivate( application );
-                    activatedPlugins.add( plugin );
+                    activatedPlugins.add( Couple.of( plugin, pluginConfig ) );
                 }
+                extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
             }
             catch( ClassNotFoundException ex )
             {
                 throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
             }
         }
+        // Global Extra Plugins
         for( Plugin<?> extraPlugin : extraPlugins )
         {
             if( extraPlugin.enabled() )
             {
                 extraPlugin.onActivate( application );
-                activatedPlugins.add( extraPlugin );
+                activatedPlugins.add( Couple.leftOnly( extraPlugin ) );
+            }
+            extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
+        }
+        // Core Extensions Plugins
+        for( ExtensionPlugin extension : extensions )
+        {
+            Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
+            if( extensionPlugin.enabled() )
+            {
+                extensionPlugin.onActivate( application );
+                activatedPlugins.add( Couple.leftOnly( extensionPlugin ) );
             }
         }
+        // Plugins Activated
         activePlugins = activatedPlugins;
         activated = true;
     }
@@ -85,11 +102,11 @@ import static java.util.Collections.EMPTY_LIST;
     /* package */ void onPassivate( Application application )
     {
         List<Exception> errors = new ArrayList<>();
-        for( Plugin<?> activePlugin : activePlugins )
+        for( Couple<Plugin<?>, Config> activePlugin : activePlugins )
         {
             try
             {
-                activePlugin.onPassivate( application );
+                activePlugin.left().onPassivate( application );
             }
             catch( Exception ex )
             {
@@ -105,26 +122,28 @@ import static java.util.Collections.EMPTY_LIST;
             {
                 ex.addSuppressed( err );
             }
-            LOG.error( ex.getMessage(), ex );
+            throw ex;
         }
     }
 
-    /* package */ List<Route> firstRoutes( RouteBuilder routeBuilder )
+    /* package */ List<Route> firstRoutes( Application app )
     {
         List<Route> firstRoutes = new ArrayList<>();
-        for( Plugin plugin : activePlugins )
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            firstRoutes.addAll( plugin.firstRoutes( routeBuilder ) );
+            String routesPrefix = plugin.left().routesPrefix( plugin.right() );
+            firstRoutes.addAll( plugin.left().firstRoutes( new RouteBuilderInstance( app, routesPrefix ) ) );
         }
         return firstRoutes;
     }
 
-    /* package */ List<Route> lastRoutes( RouteBuilder routeBuilder )
+    /* package */ List<Route> lastRoutes( Application app )
     {
         List<Route> lastRoutes = new ArrayList<>();
-        for( Plugin plugin : activePlugins )
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            lastRoutes.addAll( plugin.lastRoutes( routeBuilder ) );
+            String routesPrefix = plugin.left().routesPrefix( plugin.right() );
+            lastRoutes.addAll( plugin.left().lastRoutes( new RouteBuilderInstance( app, routesPrefix ) ) );
         }
         return lastRoutes;
     }
@@ -136,20 +155,20 @@ import static java.util.Collections.EMPTY_LIST;
             throw new IllegalStateException( "Plugins are passivated." );
         }
         Set<T> result = new LinkedHashSet<>();
-        for( Plugin<?> plugin : activePlugins )
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            if( plugin.apiType().equals( pluginApiType ) && plugin.api() != null )
+            if( plugin.left().apiType().equals( pluginApiType ) && plugin.left().api() != null )
             {
                 // Type equals
-                result.add( pluginApiType.cast( plugin.api() ) );
+                result.add( pluginApiType.cast( plugin.left().api() ) );
             }
         }
-        for( Plugin<?> plugin : activePlugins )
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            if( plugin.apiType().isAssignableFrom( pluginApiType ) && plugin.api() != null )
+            if( plugin.left().apiType().isAssignableFrom( pluginApiType ) && plugin.left().api() != null )
             {
                 // Type is assignable
-                result.add( pluginApiType.cast( plugin.api() ) );
+                result.add( pluginApiType.cast( plugin.left().api() ) );
             }
         }
         return result;
@@ -161,20 +180,20 @@ import static java.util.Collections.EMPTY_LIST;
         {
             throw new IllegalStateException( "Plugins are passivated." );
         }
-        for( Plugin<?> plugin : activePlugins )
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            if( plugin.apiType().equals( pluginApiType ) && plugin.api() != null )
+            if( plugin.left().apiType().equals( pluginApiType ) && plugin.left().api() != null )
             {
                 // Type equals
-                return pluginApiType.cast( plugin.api() );
+                return pluginApiType.cast( plugin.left().api() );
             }
         }
-        for( Plugin<?> plugin : activePlugins )
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            if( plugin.apiType().isAssignableFrom( pluginApiType ) && plugin.api() != null )
+            if( plugin.left().apiType().isAssignableFrom( pluginApiType ) && plugin.left().api() != null )
             {
                 // Type is assignable
-                return pluginApiType.cast( plugin.api() );
+                return pluginApiType.cast( plugin.left().api() );
             }
         }
         // No Plugin found

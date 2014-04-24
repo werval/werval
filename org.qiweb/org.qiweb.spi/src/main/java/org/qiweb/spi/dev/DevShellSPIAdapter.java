@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,8 +32,10 @@ import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
- * <p>Extend and override {@link #doRebuild()} method to your will.</p>
- * <p>Note that this is the QiWeb HttpServer responsibility to trigger rebuilds.</p>
+ *
+ * Extend and override {@link #doRebuild()} method to your will.
+ * <p>
+ * Note that this is the QiWeb HttpServer responsibility to trigger rebuilds.
  */
 public class DevShellSPIAdapter
     implements DevShellSPI
@@ -42,12 +44,14 @@ public class DevShellSPIAdapter
     private final URL[] runtimeClassPath;
     private boolean sourceChanged = true;
 
-    public DevShellSPIAdapter( URL[] applicationClassPath, URL[] runtimeClassPath,
-                               Set<File> toWatch, SourceWatcher watcher )
+    public DevShellSPIAdapter(
+        URL[] applicationClassPath, URL[] runtimeClassPath,
+        Set<File> toWatch, SourceWatcher watcher
+    )
     {
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
-        // TODO Unwatch sources on DevShell passivation
+        // QUID Unwatch sources on DevShell passivation?
         watcher.watch(
             toWatch,
             new SourceChangeListener()

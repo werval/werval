@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,9 +24,9 @@ import java.util.Map;
  */
 public interface Outcomes
 {
-
     /**
      * @param status HTTP Status Code
+     *
      * @return Builder for an Outcome of the given status
      */
     OutcomeBuilder status( int status );
@@ -38,19 +38,22 @@ public interface Outcomes
 
     /**
      * @param body Response body as bytes
+     *
      * @return Builder for a 200 OK Outcome
      */
     OutcomeBuilder ok( byte[] body );
 
     /**
      * @param body Response body as String using the default character encoding
+     *
      * @return Builder for a 200 OK Outcome
      */
     OutcomeBuilder ok( String body );
 
     /**
-     * @param body Response body as String
+     * @param body    Response body as String
      * @param charset Body charset
+     *
      * @return Builder for a 200 OK Outcome
      */
     OutcomeBuilder ok( String body, Charset charset );
@@ -92,26 +95,30 @@ public interface Outcomes
 
     /**
      * @param url Redirect target
+     *
      * @return Builder for a 302 FOUND Outcome
      */
     OutcomeBuilder found( String url );
 
     /**
-     * @param url Redirect target
+     * @param url         Redirect target
      * @param queryString QueryString values
+     *
      * @return Builder for a 302 FOUND Outcome
      */
     OutcomeBuilder found( String url, Map<String, List<String>> queryString );
 
     /**
      * @param url Redirect target
+     *
      * @return Builder for a 303 SEE_OTHER Outcome
      */
     OutcomeBuilder seeOther( String url );
 
     /**
-     * @param url Redirect target
+     * @param url         Redirect target
      * @param queryString QueryString values
+     *
      * @return Builder for a 303 SEE_OTHER Outcome
      */
     OutcomeBuilder seeOther( String url, Map<String, List<String>> queryString );
@@ -123,13 +130,15 @@ public interface Outcomes
 
     /**
      * @param url Redirect target
+     *
      * @return Builder for a 307 TEMPORARY_REDIRECT Outcome
      */
     OutcomeBuilder temporaryRedirect( String url );
 
     /**
-     * @param url Redirect target
+     * @param url         Redirect target
      * @param queryString QueryString values
+     *
      * @return Builder for a 307 TEMPORARY_REDIRECT Outcome
      */
     OutcomeBuilder temporaryRedirect( String url, Map<String, List<String>> queryString );
@@ -258,5 +267,4 @@ public interface Outcomes
      * @return Builder for a 507 INSUFFICIENT_STORAGE Outcome
      */
     OutcomeBuilder insufficientStorage();
-
 }

@@ -15,12 +15,15 @@
  */
 package org.qiweb.api.http;
 
+import java.io.Serializable;
+
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 
 /**
  * HTTP Protocol Version.
  */
 public final class ProtocolVersion
+    implements Serializable
 {
     private static final String HTTP_1_0_STRING = "HTTP/1.0";
     private static final String HTTP_1_1_STRING = "HTTP/1.1";

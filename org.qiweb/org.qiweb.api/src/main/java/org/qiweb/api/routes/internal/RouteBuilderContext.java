@@ -17,21 +17,22 @@ package org.qiweb.api.routes.internal;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.qiweb.api.routes.ControllerParams;
+import org.qiweb.api.routes.ControllerParams.Param;
+import org.qiweb.api.routes.ControllerParams.ParamValue;
 
 /**
  * RouteBuilder Context, used internally by Routebuilder, do not use in Application code.
  */
 public final class RouteBuilderContext
 {
-    private static final ThreadLocal<Map<String, ControllerParams.Param>> CTRL_PARAM_RECORD;
+    private static final ThreadLocal<Map<String, Param>> CTRL_PARAM_RECORD;
 
     static
     {
-        CTRL_PARAM_RECORD = new ThreadLocal<Map<String, ControllerParams.Param>>()
+        CTRL_PARAM_RECORD = new ThreadLocal<Map<String, Param>>()
         {
             @Override
-            protected Map<String, ControllerParams.Param> initialValue()
+            protected Map<String, Param> initialValue()
             {
                 return new LinkedHashMap<>();
             }
@@ -40,15 +41,15 @@ public final class RouteBuilderContext
 
     public static void recordMethodParameter( String name, Class<?> type )
     {
-        CTRL_PARAM_RECORD.get().put( name, new ControllerParams.Param( name, type ) );
+        CTRL_PARAM_RECORD.get().put( name, new Param( name, type ) );
     }
 
-    public static <T> void recordMethodParameter( String name, Class<T> type, T forcedValue )
+    public static <T> void recordMethodParameter( String name, Class<T> type, ParamValue valueKind, T value )
     {
-        CTRL_PARAM_RECORD.get().put( name, new ControllerParams.Param( name, type, forcedValue ) );
+        CTRL_PARAM_RECORD.get().put( name, new Param( name, type, valueKind, value ) );
     }
 
-    public static Map<String, ControllerParams.Param> recordedControllerParams()
+    public static Map<String, Param> recordedControllerParams()
     {
         return CTRL_PARAM_RECORD.get();
     }

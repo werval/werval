@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,14 @@ public class SessionTest
     public void testSetSession()
     {
         String cookieValue = expect().when().get( "/set/foo/bar" ).cookie( sessionCookieName );
-        Cookie sessionCookie = new CookieInstance( sessionCookieName, "/", null, false, cookieValue, true );
+        Cookie sessionCookie = new CookieInstance(
+            0,
+            sessionCookieName, cookieValue,
+            "/", null,
+            Long.MIN_VALUE,
+            false, true,
+            null, null
+        );
         Session session = new SessionInstance( QIWEB.application().config(), QIWEB.application().crypto(), sessionCookie );
         assertThat( session.get( "foo" ), equalTo( "bar" ) );
     }

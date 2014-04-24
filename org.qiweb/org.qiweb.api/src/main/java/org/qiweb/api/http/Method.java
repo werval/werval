@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.http;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
@@ -23,6 +24,7 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
  * HTTP Method.
  */
 public final class Method
+    implements Serializable
 {
     private static final String GET_NAME = "GET";
     private static final String HEAD_NAME = "HEAD";

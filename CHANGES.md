@@ -11,7 +11,30 @@
 
 Only use Final versions in production!
 
+
 ## Changelog
+
+
+### 0.2.0.Alpha - UNRELEASED
+
+- Fix QueryString multi-empty-valued parameters handling
+- Fix parsing of escaped quotes in forced/defaulted route parameters
+- Add HTTP Language Negotiation helpers
+- Add HTTP Content Negotiation helpers
+- Add a Cache Extension Plugin and EhCache & Memcache based implementations
+- Complete Cookies support
+- Add support for default parameters values in Routes
+- Routes contributed by plugins can now easily be prefixed
+- Filters can now be declared using custom annotations
+- Add @Cached annotation that leverage both server-side and client-side caching
+- Crypto helpers for SHA-256
+- Better error reporting on passivation
+- Minor enhancements to test support
+- The CLI now generate a build.gradle file in new applications
+- Some progress towards Windows support in CLI
+- Reintroduce Gradle Wrapper in all projects
+- Upgrade Netty from 4.0.17 to 4.0.18
+
 
 ### 0.1.3.Alpha
 
@@ -19,10 +42,12 @@ Only use Final versions in production!
 - Add support for DATABASE_URL Heroku syntax to the JDBC Plugin, see #69
 - Upgrade Spring dependency from 4.0.2 to 4.0.3 that comes with [Java 8 support](http://spring.io/blog/2014/03/27/spring-framework-4-0-3-released-with-java-8-support-now-production-ready)
 
+
 ### 0.1.1.Alpha
 
 - Fix CLI new app generation bugs
 - DevShell now advertise the app URL to STDOUT on startup
+
 
 ### 0.1.0.Alpha
 

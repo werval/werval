@@ -18,7 +18,7 @@ package org.qiweb.runtime.routes;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.http.Status;
-import org.qiweb.spi.http.HttpBuilders.RequestBuilder;
+import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
 import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;

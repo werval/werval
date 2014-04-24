@@ -16,6 +16,7 @@
 package org.qiweb.runtime;
 
 import java.io.File;
+import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,16 +29,20 @@ import org.qiweb.api.Errors;
 import org.qiweb.api.Global;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.Mode;
+import org.qiweb.api.cache.Cache;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.api.exceptions.ParameterBinderException;
+import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
@@ -46,7 +51,6 @@ import org.qiweb.api.routes.ParameterBinder;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.RouteBuilder;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.api.util.Stacktraces;
@@ -56,17 +60,18 @@ import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.HttpBuildersInstance;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
+import org.qiweb.runtime.i18n.LangsInstance;
 import org.qiweb.runtime.mime.MimeTypesInstance;
 import org.qiweb.runtime.outcomes.OutcomesInstance;
 import org.qiweb.runtime.routes.ParameterBindersInstance;
 import org.qiweb.runtime.routes.ReverseRoutesInstance;
-import org.qiweb.runtime.routes.RouteBuilderInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesInstance;
 import org.qiweb.runtime.routes.RoutesProvider;
+import org.qiweb.runtime.util.TypeResolver;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.spi.http.HttpBuilders;
+import org.qiweb.spi.http.HttpBuildersSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,11 +79,13 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
+import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
+import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_NAME;
 import static org.qiweb.runtime.ConfigKeys.APP_SESSION_COOKIE_ONLYIFCHANGED;
@@ -117,6 +124,7 @@ public final class ApplicationInstance
     private PluginsInstance plugins;
     private Global global;
     private Crypto crypto;
+    private Langs langs;
     private Charset defaultCharset;
     private File tmpdir;
     private ClassLoader classLoader;
@@ -125,7 +133,7 @@ public final class ApplicationInstance
     private ReverseRoutes reverseRoutes;
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
-    private HttpBuilders httpBuilders;
+    private HttpBuildersSPI httpBuilders;
     private final MetaData metaData;
     private final Errors errors;
     private final DevShellSPI devSpi;
@@ -196,6 +204,11 @@ public final class ApplicationInstance
         ensureNotNull( "Application Config", config );
         ensureNotNull( "Application ClassLoader", classLoader );
         ensureNotNull( "Application RoutesProvider", routesProvider );
+        if( mode == Mode.DEV )
+        {
+            // Disable TypeResolver caching in Development Mode
+            TypeResolver.disableCache();
+        }
         this.mode = mode;
         this.config = config;
         this.routesProvider = routesProvider;
@@ -227,9 +240,8 @@ public final class ApplicationInstance
             plugins.onActivate( this );
 
             // Plugin contributed Routes
-            RouteBuilder routeBuilder = new RouteBuilderInstance( this );
-            resolvedRoutes.addAll( 0, plugins.firstRoutes( routeBuilder ) );
-            resolvedRoutes.addAll( plugins.lastRoutes( routeBuilder ) );
+            resolvedRoutes.addAll( 0, plugins.firstRoutes( this ) );
+            resolvedRoutes.addAll( plugins.lastRoutes( this ) );
             routes = new RoutesInstance( resolvedRoutes );
 
             // Activated
@@ -253,21 +265,44 @@ public final class ApplicationInstance
         Thread.currentThread().setContextClassLoader( classLoader );
         try
         {
+            List<Exception> passivationErrors = new ArrayList<>();
             try
             {
                 global.onPassivate( this );
             }
             catch( Exception ex )
             {
-                LOG.error( "There were errors during Global passivation", ex );
+                passivationErrors.add(
+                    new PassivationException( "Exception(s) on Global::onPassivate(): " + ex.getMessage(), ex )
+                );
             }
-            plugins.onPassivate( this );
+            try
+            {
+                plugins.onPassivate( this );
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new PassivationException( "Exception(s) on Plugins::onPassivate(): " + ex.getMessage(), ex )
+                );
+            }
+            if( !passivationErrors.isEmpty() )
+            {
+                PassivationException ex = new PassivationException(
+                    "There were errors during Application passivation"
+                );
+                for( Exception err : passivationErrors )
+                {
+                    ex.addSuppressed( err );
+                }
+                throw ex;
+            }
         }
         finally
         {
             Thread.currentThread().setContextClassLoader( previousLoader );
+            activated = false;
         }
-        activated = false;
     }
 
     @Override
@@ -306,6 +341,12 @@ public final class ApplicationInstance
     public Crypto crypto()
     {
         return crypto;
+    }
+
+    @Override
+    public Langs langs()
+    {
+        return langs;
     }
 
     @Override
@@ -359,6 +400,13 @@ public final class ApplicationInstance
     }
 
     @Override
+    public Cache cache()
+    {
+        ensureActive();
+        return plugins.plugin( Cache.class );
+    }
+
+    @Override
     public Errors errors()
     {
         return errors;
@@ -394,7 +442,7 @@ public final class ApplicationInstance
     }
 
     @Override
-    public HttpBuilders httpBuilders()
+    public HttpBuildersSPI httpBuilders()
     {
         return httpBuilders;
     }
@@ -440,6 +488,21 @@ public final class ApplicationInstance
             if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
             {
                 outcome.responseHeader().cookies().set( session.signedCookie() );
+            }
+
+            // Add Set-Cookie headers
+            for( Cookie cookie : outcome.responseHeader().cookies() )
+            {
+                HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
+                jCookie.setVersion( cookie.version() );
+                jCookie.setPath( cookie.path() );
+                jCookie.setDomain( cookie.domain() );
+                jCookie.setMaxAge( cookie.maxAge() );
+                jCookie.setSecure( cookie.secure() );
+                jCookie.setHttpOnly( cookie.httpOnly() );
+                jCookie.setComment( cookie.comment() );
+                jCookie.setCommentURL( cookie.commentUrl() );
+                outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
             }
 
             // Finalize!
@@ -713,6 +776,7 @@ public final class ApplicationInstance
         configureGlobal();
         configureDefaultCharset();
         configureCrypto();
+        configureLangs();
         configureTmpdir();
         configureParameterBinders();
         configureMimeTypes();
@@ -740,6 +804,11 @@ public final class ApplicationInstance
     private void configureCrypto()
     {
         this.crypto = new CryptoInstance( config.string( APP_SECRET ), defaultCharset );
+    }
+
+    private void configureLangs()
+    {
+        this.langs = new LangsInstance( config.stringList( APP_LANGS ) );
     }
 
     private void configureTmpdir()
@@ -801,6 +870,6 @@ public final class ApplicationInstance
 
     private void configureHttpBuilders()
     {
-        httpBuilders = new HttpBuildersInstance( config, defaultCharset );
+        httpBuilders = new HttpBuildersInstance( config, defaultCharset, langs );
     }
 }

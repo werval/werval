@@ -24,6 +24,8 @@ import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.util.Stacktraces;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_LIST;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
@@ -40,6 +42,8 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
  */
 public class Global
 {
+    private static final Logger LOG = LoggerFactory.getLogger( Global.class );
+
     /**
      * Chance to provide extra Plugins instances programmatically.
      *
@@ -275,7 +279,8 @@ public class Global
      *
      * Happens right before {@link Error} recording.
      * <p>
-     * Default to a minimal HTML page advertising a 500 status code and the corresponding reason phrase.
+     * Default to logging the error and producing a minimal HTML page advertising a 500 status code and the
+     * corresponding reason phrase.
      * <p>
      * Stacktrace is disclosed in development mode only, with links to project sources when available.
      * <p>
@@ -291,6 +296,10 @@ public class Global
      */
     public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
     {
+        // Log error
+        LOG.error( cause.getMessage(), cause );
+
+        // Generate Error Outcome
         StringBuilder html = new StringBuilder();
         html.append( "<html>\n<head><title>500 Internal Server Error</title></head>\n" );
         html.append( "<body>\n<h1>500 Internal Server Error</h1>\n" );

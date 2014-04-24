@@ -33,6 +33,8 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ControllerParams;
+import org.qiweb.api.routes.ControllerParams.Param;
+import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
 import org.qiweb.api.util.Strings;
@@ -41,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_SET;
+import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
 
 /**
@@ -50,6 +53,7 @@ public class RouteBuilderInstance
     implements org.qiweb.api.routes.RouteBuilder
 {
     private final Application app;
+    private final String pathPrefix;
 
     /**
      * Create a new RouteBuilder instance that cannot parse.
@@ -58,7 +62,19 @@ public class RouteBuilderInstance
      */
     public RouteBuilderInstance()
     {
-        this.app = null;
+        this( null, null );
+    }
+
+    /**
+     * Create a new RouteBuilder instance that cannot parse and apply a path prefix to all built routes.
+     *
+     * See {@link #RouteBuilderInstance(org.qiweb.api.Application)}.
+     *
+     * @param pathPrefix Path prefix
+     */
+    public RouteBuilderInstance( String pathPrefix )
+    {
+        this( null, pathPrefix );
     }
 
     /**
@@ -68,14 +84,40 @@ public class RouteBuilderInstance
      */
     public RouteBuilderInstance( Application app )
     {
+        this( app, EMPTY );
+    }
+
+    /**
+     * Create a new RouteBuilder instance that apply a path prefix to all built routes.
+     *
+     * @param app        ApplicationSPI
+     * @param pathPrefix Path prefix
+     */
+    public RouteBuilderInstance( Application app, String pathPrefix )
+    {
         this.app = app;
+        if( Strings.isEmpty( pathPrefix ) )
+        {
+            this.pathPrefix = EMPTY;
+        }
+        else
+        {
+            // Prepend / if necessary
+            String actualPrefix = pathPrefix.startsWith( "/" )
+                                  ? pathPrefix
+                                  : "/" + pathPrefix;
+            // Remove trailing / if necessary
+            this.pathPrefix = actualPrefix.endsWith( "/" )
+                              ? actualPrefix.substring( 0, actualPrefix.length() - 1 )
+                              : actualPrefix;
+        }
     }
 
     @Override
     public RouteDeclaration route()
     {
         return new RouteDeclarationInstance(
-            null, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            null, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
         );
     }
 
@@ -83,7 +125,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( String httpMethod )
     {
         return new RouteDeclarationInstance(
-            Method.valueOf( httpMethod ), null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            Method.valueOf( httpMethod ), pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
         );
     }
 
@@ -91,7 +133,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( Method httpMethod )
     {
         return new RouteDeclarationInstance(
-            httpMethod, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            httpMethod, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
         );
     }
 
@@ -102,13 +144,14 @@ public class RouteBuilderInstance
         {
             throw new IllegalStateException( "Cannot parse Routes without an Application" );
         }
-        return new RouteParserInstance( app );
+        return new RouteParserInstance( app, pathPrefix );
     }
 
     private static final class RouteDeclarationInstance
         implements RouteDeclaration
     {
         private final Method httpMethod;
+        private final String pathPrefix;
         private final String path;
         private final Class<?> controllerType;
         private final String controllerMethodName;
@@ -117,12 +160,13 @@ public class RouteBuilderInstance
 
         public RouteDeclarationInstance(
             Method httpMethod,
-            String path,
+            String pathPrefix, String path,
             Class<?> controllerType, String controllerMethodName, ControllerParams controllerParams,
             Set<String> modifiers
         )
         {
             this.httpMethod = httpMethod;
+            this.pathPrefix = pathPrefix;
             this.path = path;
             this.controllerType = controllerType;
             this.controllerMethodName = controllerMethodName;
@@ -135,7 +179,7 @@ public class RouteBuilderInstance
         {
             return new RouteDeclarationInstance(
                 Method.valueOf( httpMethod ),
-                path,
+                pathPrefix, path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
             );
@@ -146,7 +190,7 @@ public class RouteBuilderInstance
         {
             return new RouteDeclarationInstance(
                 httpMethod,
-                path,
+                pathPrefix, path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
             );
@@ -224,7 +268,7 @@ public class RouteBuilderInstance
                 // Done!
                 return new RouteDeclarationInstance(
                     httpMethod,
-                    path,
+                    pathPrefix, path,
                     controllerType, methodNameHolder.get(),
                     new ControllerParams( RouteBuilderContext.recordedControllerParams() ),
                     modifiers
@@ -242,7 +286,7 @@ public class RouteBuilderInstance
         {
             return new RouteDeclarationInstance(
                 httpMethod,
-                path,
+                pathPrefix, path,
                 controllerType, controllerMethodName, controllerParams,
                 new LinkedHashSet<>( Arrays.asList( modifiers ) )
             );
@@ -253,7 +297,7 @@ public class RouteBuilderInstance
         {
             return new RouteInstance(
                 httpMethod,
-                path,
+                pathPrefix + path,
                 controllerType, controllerMethodName, controllerParams,
                 modifiers
             );
@@ -265,10 +309,12 @@ public class RouteBuilderInstance
     {
         private static final Logger LOG = LoggerFactory.getLogger( RouteParser.class );
         private final Application app;
+        private final String pathPrefix;
 
-        private RouteParserInstance( Application app )
+        private RouteParserInstance( Application app, String pathPrefix )
         {
             this.app = app;
+            this.pathPrefix = pathPrefix;
         }
 
         @Override
@@ -351,11 +397,14 @@ public class RouteBuilderInstance
                     );
                 }
 
-                String httpMethod = cleanRouteString.substring( 0, methodEnd );
-                String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
-                String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
-                String controllerMethodName = cleanRouteString.substring( controllerTypeEnd + 1, controllerMethodEnd );
-                String controllerMethodParams;
+                final String httpMethod = cleanRouteString.substring( 0, methodEnd );
+                final String path = cleanRouteString.substring( methodEnd + 1, pathEnd );
+                final String controllerTypeName = cleanRouteString.substring( pathEnd + 1, controllerTypeEnd );
+                final String controllerMethodName = cleanRouteString.substring(
+                    controllerTypeEnd + 1,
+                    controllerMethodEnd
+                );
+                final String controllerMethodParams;
                 if( controllerParamsEnd != -1 )
                 {
                     controllerMethodParams = cleanRouteString
@@ -403,7 +452,7 @@ public class RouteBuilderInstance
                 // Create new Route instance
                 return new RouteInstance(
                     Method.valueOf( httpMethod ),
-                    path,
+                    pathPrefix + path,
                     controllerType, controllerMethodName, controllerParams,
                     modifiers
                 );
@@ -425,46 +474,69 @@ public class RouteBuilderInstance
         )
             throws ClassNotFoundException
         {
-            Map<String, ControllerParams.Param> controllerParams = new LinkedHashMap<>();
+            Map<String, Param> controllerParams = new LinkedHashMap<>();
             if( controllerMethodParams.length() > 0 )
             {
                 List<String> controllerMethodParamsSegments = splitControllerMethodParams( controllerMethodParams );
                 for( String controllerMethodParamSegment : controllerMethodParamsSegments )
                 {
-                    if( controllerMethodParamSegment.contains( "=" ) )
+                    switch( valueKindOfSegment( controllerMethodParamSegment ) )
                     {
-                        // Route with forced values
-                        String[] equalSplitted = controllerMethodParamSegment.split( "=", 2 );
-                        String[] typeAndName = equalSplitted[0].split( " " );
-                        String name = typeAndName[1];
-                        Class<?> type = lookupParamType( application, typeAndName[0] );
-                        String forcedValueString = equalSplitted[1].substring( 1 ).trim();
-                        if( forcedValueString.startsWith( "'" ) )
-                        {
-                            forcedValueString = forcedValueString.
-                                substring( 1, forcedValueString.length() - 1 ).
-                                replaceAll( "\\'", "'" );
-                        }
-                        Object forcedValue = application.parameterBinders().bind( type, name, forcedValueString );
-                        controllerParams.put( name, new ControllerParams.Param( name, type, forcedValue ) );
-                    }
-                    else
-                    {
-                        // Route without forced values
-                        String[] splitted = controllerMethodParamSegment.split( " " );
-                        if( splitted.length != 2 )
-                        {
-                            throw new IllegalRouteException(
-                                routeString,
-                                "Unable to parse parameter: " + controllerMethodParamSegment
+                        case DEFAULTED:
+                            // Parameter with default value
+                            String[] dEqualSplitted = controllerMethodParamSegment.split( "\\?=", 2 );
+                            String[] dTypeAndName = dEqualSplitted[0].trim().split( " " );
+                            String dName = dTypeAndName[1];
+                            Class<?> dType = lookupParamType( application, dTypeAndName[0] );
+                            String defaultValueString = dEqualSplitted[1].trim();
+                            if( defaultValueString.startsWith( "'" ) && defaultValueString.endsWith( "'" ) )
+                            {
+                                defaultValueString = defaultValueString
+                                    .substring( 1, defaultValueString.length() - 1 )
+                                    .replaceAll( "\\\\'", "'" );
+                            }
+                            Object defaultValue = application.parameterBinders().bind(
+                                dType, dName, defaultValueString
                             );
-                        }
-                        String paramName = splitted[1];
-                        String paramTypeName = splitted[0];
-                        controllerParams.put(
-                            paramName,
-                            new ControllerParams.Param( paramName, lookupParamType( application, paramTypeName ) )
-                        );
+                            controllerParams.put(
+                                dName,
+                                new Param( dName, dType, ParamValue.DEFAULTED, defaultValue )
+                            );
+                            break;
+                        case FORCED:
+                            // Parameter with forced value
+                            String[] fEqualSplitted = controllerMethodParamSegment.split( "=", 2 );
+                            String[] fTypeAndName = fEqualSplitted[0].trim().split( " " );
+                            String fName = fTypeAndName[1];
+                            Class<?> fType = lookupParamType( application, fTypeAndName[0] );
+                            String forcedValueString = fEqualSplitted[1].trim();
+                            if( forcedValueString.startsWith( "'" ) && forcedValueString.endsWith( "'" ) )
+                            {
+                                forcedValueString = forcedValueString
+                                    .substring( 1, forcedValueString.length() - 1 )
+                                    .replaceAll( "\\\\'", "'" );
+                            }
+                            Object forcedValue = application.parameterBinders().bind(
+                                fType, fName, forcedValueString
+                            );
+                            controllerParams.put( fName, new Param( fName, fType, ParamValue.FORCED, forcedValue ) );
+                            break;
+                        case NONE:
+                            // Parameter without forced value
+                            String[] splitted = controllerMethodParamSegment.split( " " );
+                            if( splitted.length != 2 )
+                            {
+                                throw new IllegalRouteException(
+                                    routeString,
+                                    "Unable to parse parameter: " + controllerMethodParamSegment
+                                );
+                            }
+                            String name = splitted[1];
+                            String paramTypeName = splitted[0];
+                            Class<?> type = lookupParamType( application, paramTypeName );
+                            controllerParams.put( name, new Param( name, type ) );
+                            break;
+                        default:
                     }
                 }
             }
@@ -493,9 +565,38 @@ public class RouteBuilderInstance
                     segments.add( sb.toString().trim() );
                     sb = new StringBuilder();
                 }
+                previous = character;
             }
             segments.add( sb.toString().trim() );
             return segments;
+        }
+
+        private static ParamValue valueKindOfSegment( String segment )
+        {
+            if( segment.length() < 2 )
+            {
+                return ParamValue.NONE;
+            }
+            boolean insideQuotes = false;
+            char previous = segment.charAt( 0 );
+            for( int idx = 1; idx < segment.length(); idx++ )
+            {
+                char character = segment.charAt( idx );
+                if( character == '\'' && previous != '\\' )
+                {
+                    insideQuotes = !insideQuotes;
+                }
+                if( '=' == character && !insideQuotes )
+                {
+                    if( '?' == previous )
+                    {
+                        return ParamValue.DEFAULTED;
+                    }
+                    return ParamValue.FORCED;
+                }
+                previous = character;
+            }
+            return ParamValue.NONE;
         }
 
         private static Class<?> lookupParamType( Application application, String paramTypeName )

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.Iterator;
  */
 public final class Strings
 {
-
     /**
      * Empty string.
      */
@@ -31,7 +30,9 @@ public final class Strings
 
     /**
      * Check if a String is null or empty.
+     *
      * @param value String
+     *
      * @return TRUE if the String is null or empty, otherwise return FALSE
      */
     public static boolean isEmpty( String value )
@@ -41,7 +42,9 @@ public final class Strings
 
     /**
      * Join strings.
+     *
      * @param strings Strings to join
+     *
      * @return Joined String
      */
     public static String join( String[] strings )
@@ -51,8 +54,10 @@ public final class Strings
 
     /**
      * Join strings with a given delimiter.
-     * @param strings Strings to join
+     *
+     * @param strings   Strings to join
      * @param delimiter Delimiter
+     *
      * @return Joined String
      */
     public static String join( String[] strings, String delimiter )
@@ -62,18 +67,22 @@ public final class Strings
 
     /**
      * Join strings.
+     *
      * @param strings Strings to join
+     *
      * @return Joined String
      */
     public static String join( Iterable<? extends CharSequence> strings )
     {
-        return join( strings, "" );
+        return join( strings, EMPTY );
     }
 
     /**
      * Join strings with a given delimiter.
-     * @param strings Strings to join
+     *
+     * @param strings   Strings to join
      * @param delimiter Delimiter
+     *
      * @return Joined String
      */
     public static String join( Iterable<? extends CharSequence> strings, String delimiter )
@@ -102,5 +111,4 @@ public final class Strings
     private Strings()
     {
     }
-
 }

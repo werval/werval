@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.qi4j;
 
+import java.util.Optional;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qi4j.api.mixin.Mixins;
@@ -93,13 +94,13 @@ public class Qi4jControllersAndFiltersTest
      */
     @Mixins( TestFilter.Mixin.class )
     public static interface TestFilter
-        extends Filter
+        extends Filter<Void>
     {
         public static class Mixin
-            implements Filter
+            implements Filter<Void>
         {
             @Override
-            public Outcome filter( FilterChain chain, Context context )
+            public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
             {
                 filtered = true;
                 return chain.next( context );

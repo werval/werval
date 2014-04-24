@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,11 +161,16 @@ public final class SessionInstance
         String sessionData = URLs.encode( sb.toString(), config.charset( QIWEB_CHARACTER_ENCODING ) );
         String signedCookieValue = crypto.hexHmacSha256( sessionData ) + "-" + sessionData;
         return new CookieInstance(
+            0,
             config.string( APP_SESSION_COOKIE_NAME ),
+            signedCookieValue,
             config.string( APP_SESSION_COOKIE_PATH ),
             config.has( APP_SESSION_COOKIE_DOMAIN ) ? config.string( APP_SESSION_COOKIE_DOMAIN ) : null,
+            Long.MIN_VALUE,
             config.bool( APP_SESSION_COOKIE_SECURE ),
-            signedCookieValue,
-            config.bool( APP_SESSION_COOKIE_HTTPONLY ) );
+            config.bool( APP_SESSION_COOKIE_HTTPONLY ),
+            null,
+            null
+        );
     }
 }

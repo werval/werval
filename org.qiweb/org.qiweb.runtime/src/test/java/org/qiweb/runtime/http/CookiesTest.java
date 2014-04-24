@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static org.qiweb.api.context.CurrentContext.builders;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.response;
@@ -53,34 +54,71 @@ public class CookiesTest
             return outcomes().ok().build();
         }
 
+        public Outcome builderCookie()
+        {
+            response().cookies().set(
+                builders().newCookieBuilder()
+                .name( "empty" )
+                .build()
+            );
+            response().cookies().set(
+                builders().newCookieBuilder()
+                .name( "valued" )
+                .value( "value" )
+                .build()
+            );
+            return outcomes().ok().build();
+        }
     }
 
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET /set/:name/:value org.qiweb.runtime.http.CookiesTest$Controller.setCookie( String name, String value )\n"
         + "GET /remove/:name org.qiweb.runtime.http.CookiesTest$Controller.removeCookie( String name )\n"
-        + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies"
+        + "GET /mirror org.qiweb.runtime.http.CookiesTest$Controller.mirrorCookies\n"
+        + "GET /builder org.qiweb.runtime.http.CookiesTest$Controller.builderCookie"
     ) );
 
     @Test
-    public void testSetCookie()
+    public void setCookie()
     {
-        expect().cookie( "foo", "bar" ).
-            when().get( "/set/foo/bar" );
+        expect()
+            .statusCode( 200 )
+            .cookie( "foo", "bar" )
+            .when()
+            .get( "/set/foo/bar" );
     }
 
     @Test
-    public void testRemoveCookie()
+    public void removeCookie()
     {
-        expect().cookie( "foo", "" ).
-            when().get( "/remove/foo" );
+        expect()
+            .statusCode( 200 )
+            .cookie( "foo", "" )
+            .when()
+            .get( "/remove/foo" );
     }
 
     @Test
-    public void testMirrorCookies()
+    public void mirrorCookies()
     {
-        given().cookie( "bazar", "cathedral" ).
-            expect().cookie( "bazar", "cathedral" ).
-            when().get( "/mirror" );
+        given()
+            .cookie( "bazar", "cathedral" )
+            .expect()
+            .statusCode( 200 )
+            .cookie( "bazar", "cathedral" )
+            .when()
+            .get( "/mirror" );
+    }
+
+    @Test
+    public void builderCookie()
+    {
+        expect()
+            .statusCode( 200 )
+            .cookie( "empty", "" )
+            .cookie( "valued", "value" )
+            .when()
+            .get( "/builder" );
     }
 }

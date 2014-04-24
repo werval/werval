@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,15 @@ package org.qiweb.runtime;
 
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.runtime.util.Hex;
 
 /**
  * Cryptography service instance.
@@ -30,17 +33,19 @@ import org.qiweb.api.exceptions.QiWebException;
 public class CryptoInstance
     implements Crypto
 {
-    private static final char[] HEX_DIGITS =
-    {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-    };
-
     private final byte[] secretBytes;
     private final Charset charset;
 
     public CryptoInstance( String secret, Charset charset )
     {
-        this.secretBytes = decodeHex( secret.toCharArray() );
+        try
+        {
+            this.secretBytes = Hex.decode( secret.toCharArray() );
+        }
+        catch( IllegalArgumentException ex )
+        {
+            throw new QiWebException( "Wrong Application Secret: " + ex.getMessage(), ex );
+        }
         if( this.secretBytes.length < 32 )
         {
             throw new QiWebException( "Wrong Application Secret: must be at least 256bits long" );
@@ -59,7 +64,7 @@ public class CryptoInstance
         byte[] bytes = new byte[ 32 ];
         new SecureRandom().nextBytes( bytes );
         new SecureRandom( bytes ).nextBytes( bytes );
-        return new String( encodeHex( bytes ) );
+        return Hex.encode( bytes );
     }
 
     @Override
@@ -71,7 +76,7 @@ public class CryptoInstance
     @Override
     public String hexHmacSha256( String message, String secret )
     {
-        return hexHmacSha256( message, decodeHex( secret.toCharArray() ) );
+        return hexHmacSha256( message, Hex.decode( secret.toCharArray() ) );
     }
 
     private String hexHmacSha256( String message, byte[] secret )
@@ -82,55 +87,42 @@ public class CryptoInstance
             Mac mac = Mac.getInstance( "HmacSHA256" );
             mac.init( signingKey );
             byte[] rawHmac = mac.doFinal( message.getBytes( charset ) );
-            return new String( encodeHex( rawHmac ) );
+            return Hex.encode( rawHmac );
         }
-        catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e )
+        catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException ex )
         {
-            throw new QiWebException( "Unable to HMAC message", e );
+            throw new QiWebException( "Unable to HMAC message", ex );
         }
     }
 
-    private static byte[] decodeHex( char[] data )
+    @Override
+    public byte[] sha256( byte[] message )
     {
-        int len = data.length;
-        if( ( len & 0x01 ) != 0 )
+        try
         {
-            throw new QiWebException( "Wrong Secret: Odd number of characters in hexadecimal encoded." );
+            return MessageDigest.getInstance( "SHA-256" ).digest( message );
         }
-        byte[] out = new byte[ len >> 1 ];
-        // two characters form the hex value.
-        for( int i = 0, j = 0; j < len; i++ )
+        catch( NoSuchAlgorithmException ex )
         {
-            int f = toDigit( data[j], j ) << 4;
-            j++;
-            f |= toDigit( data[j], j );
-            j++;
-            out[i] = (byte) ( f & 0xFF );
+            throw new QiWebException( "Unable to SHA256 message", ex );
         }
-        return out;
     }
 
-    private static int toDigit( char ch, int index )
+    @Override
+    public byte[] sha256( CharSequence message )
     {
-        int digit = Character.digit( ch, 16 );
-        if( digit == -1 )
-        {
-            throw new QiWebException( "Wrong Secret: Illegal hexadecimal character " + ch + " at index " + index );
-        }
-        return digit;
+        return sha256( message.toString().getBytes( charset ) );
     }
 
-    @SuppressWarnings( "ValueOfIncrementOrDecrementUsed" )
-    private static char[] encodeHex( byte[] data )
+    @Override
+    public String hexSha256( CharSequence message )
     {
-        int l = data.length;
-        char[] out = new char[ l << 1 ];
-        // two characters form the hex value.
-        for( int i = 0, j = 0; i < l; i++ )
-        {
-            out[j++] = HEX_DIGITS[( 0xF0 & data[i] ) >>> 4];
-            out[j++] = HEX_DIGITS[ 0x0F & data[i]];
-        }
-        return out;
+        return Hex.encode( sha256( message ) );
+    }
+
+    @Override
+    public String base64Sha256( CharSequence message )
+    {
+        return Base64.getEncoder().encodeToString( sha256( message ) );
     }
 }

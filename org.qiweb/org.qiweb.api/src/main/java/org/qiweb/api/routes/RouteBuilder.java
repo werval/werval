@@ -17,6 +17,7 @@ package org.qiweb.api.routes;
 
 import java.util.List;
 import org.qiweb.api.http.Method;
+import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
 
 /**
@@ -192,9 +193,25 @@ public interface RouteBuilder
      *
      * @return the forced value
      */
-    static <T> T p( String name, Class<T> type, T forcedValue )
+    static <T> T f( String name, Class<T> type, T forcedValue )
     {
-        RouteBuilderContext.recordMethodParameter( name, type, forcedValue );
+        RouteBuilderContext.recordMethodParameter( name, type, ParamValue.FORCED, forcedValue );
         return forcedValue;
+    }
+
+    /**
+     * Record a new method parameter with defaulted value.
+     *
+     * @param <T>          the parameterized parameter type
+     * @param name         the parameter name
+     * @param type         the parmeter type
+     * @param defaultedValue the default value
+     *
+     * @return the defaulted value
+     */
+    static <T> T d( String name, Class<T> type, T defaultedValue )
+    {
+        RouteBuilderContext.recordMethodParameter( name, type, ParamValue.DEFAULTED, defaultedValue );
+        return defaultedValue;
     }
 }

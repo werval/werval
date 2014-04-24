@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,17 @@
  */
 package org.qiweb.runtime.outcomes;
 
+import java.io.Serializable;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Base Outcome class.
+ *
  * @param <T> Parameterized self type for easy typesafe builder-style methods in descendents
  */
 /* package */ abstract class AbstractOutcome<T extends AbstractOutcome<?>>
-    implements Outcome
+    implements Outcome, Serializable
 {
     protected final ResponseHeader response;
 

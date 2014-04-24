@@ -8,9 +8,7 @@ Modules are simple JARs and can contain controllers, utility classes and QiWeb P
 NOTE: Modules presented here are maintained by the QiWeb team, documented, tested and evolve along the core SDK.
 At the end of this document, you'll find external modules maintained by the community.
 
-=== Standard Library
-
-`org.qiweb.lib`
+// === Standard Library
 
 // ==== Default Controller
 // ==== META-INF Resources & WebJars

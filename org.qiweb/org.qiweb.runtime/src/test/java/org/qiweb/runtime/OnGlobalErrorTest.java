@@ -17,6 +17,7 @@ package org.qiweb.runtime;
 
 import com.jayway.restassured.response.Response;
 import java.util.List;
+import java.util.Optional;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.Application;
@@ -57,10 +58,10 @@ public class OnGlobalErrorTest
     };
 
     public static class TestFilter
-        implements Filter
+        implements Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context )
+        public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
         {
             return chain.next( context );
         }

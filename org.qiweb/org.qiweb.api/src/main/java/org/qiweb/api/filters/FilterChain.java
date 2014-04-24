@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,7 @@ public interface FilterChain
      * Pass the Context to the next Filter in the chain.
      *
      * @param context Request Context
+     *
      * @return Next Outcome
      */
     Outcome next( Context context );

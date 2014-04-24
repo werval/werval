@@ -171,10 +171,9 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParamSeveralTimes()
         throws Exception
     {
-        // FIXME This should be 400 but the Netty HTTP Codec flatten no-value query string parameters
         String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
         expect()
-            .statusCode( 200 )
+            .statusCode( 400 )
             .when()
             .get( url );
     }

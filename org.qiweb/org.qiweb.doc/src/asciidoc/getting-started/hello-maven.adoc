@@ -30,11 +30,6 @@ Create a `pom.xml` file at the application root with the following content:
             <artifactId>org.qiweb.api</artifactId>
             <version>{qiweb-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.lib</artifactId>
-            <version>{qiweb-version}</version>
-        </dependency>
         
         <!-- Runtime -->
         <dependency>

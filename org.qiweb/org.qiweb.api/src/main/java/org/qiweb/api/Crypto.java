@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,63 @@ public interface Crypto
 {
     /**
      * Generate a 256 bits long secret encoded in hexadecimal.
+     *
      * @return The generated secret encoded in hexadecimal as String
      */
     String genNew256bitsHexSecret();
 
     /**
      * Sign given message with the {@link Application}'s secret using HMAC SHA-256.
+     *
      * @param message Message to sign
-     * @return Message signature
+     *
+     * @return Message signature encoded in hexadecimal as String
      */
     String hexHmacSha256( String message );
 
     /**
      * Sign given message with the given secret using HMAC SHA-256.
+     *
      * @param message Message to sign
-     * @param secret Secret to use
-     * @return Message signature
+     * @param secret  Secret to use
+     *
+     * @return Message signature encoded in hexadecimal as String
      */
     String hexHmacSha256( String message, String secret );
+
+    /**
+     * Generate a hash of the given message using SHA-256.
+     *
+     * @param message Message to hash
+     *
+     * @return Message hash
+     */
+    byte[] sha256( byte[] message );
+
+    /**
+     * Generate a hash of the given message using SHA-256.
+     *
+     * @param message Message to hash
+     *
+     * @return Message hash
+     */
+    byte[] sha256( CharSequence message );
+
+    /**
+     * Generate a hash of the given message using SHA-256.
+     *
+     * @param message Message to hash
+     *
+     * @return Message hash encoded in hexadecimal as String
+     */
+    String hexSha256( CharSequence message );
+
+    /**
+     * Generate a hash of the given message using SHA-256.
+     *
+     * @param message Message to hash
+     *
+     * @return Message hash encoded in Base64, {@literal Basic} profile, as String
+     */
+    String base64Sha256( CharSequence message );
 }

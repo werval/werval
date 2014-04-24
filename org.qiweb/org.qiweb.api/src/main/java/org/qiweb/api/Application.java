@@ -17,7 +17,10 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.api.http.HttpBuilders;
+import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
@@ -113,6 +116,15 @@ public interface Application
     Crypto crypto();
 
     /**
+     * Application {@link Langs}.
+     *
+     * Don't hold references to the Langs instance in order to make your code {@link Mode#DEV} friendly.
+     *
+     * @return Application {@link Langs}
+     */
+    Langs langs();
+
+    /**
      * Application default {@link Charset}.
      *
      * @return Application default {@link Charset}
@@ -134,6 +146,16 @@ public interface Application
      * @return Application {@link ClassLoader}
      */
     ClassLoader classLoader();
+
+    /**
+     * HTTP API Objects Builders SPI.
+     *
+     * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
+     * All builders are immutable and reusable.
+     *
+     * @return HTTP API Objects Builders SPI
+     */
+    HttpBuilders httpBuilders();
 
     /**
      * Application {@link Routes}.
@@ -185,6 +207,15 @@ public interface Application
      * @return Application {@link MetaData}
      */
     MetaData metaData();
+
+    /**
+     * Application {@link Cache}.
+     *
+     * Don't hold references to the Cache instance in order to make your code {@link Mode#DEV} friendly.
+     *
+     * @return Application {@link Cache}
+     */
+    Cache cache();
 
     /**
      * Application {@link Errors}.

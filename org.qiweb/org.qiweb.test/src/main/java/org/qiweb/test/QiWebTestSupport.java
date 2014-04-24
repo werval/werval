@@ -16,15 +16,15 @@
 package org.qiweb.test;
 
 import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.http.HttpBuilders;
+import org.qiweb.spi.http.HttpBuildersSPI;
 
 /**
  * QiWeb Test Support contract.
  *
- * Provide access to the {@link ApplicationSPI} and {@link HttpBuilders}.
+ * Provide access to the {@link ApplicationSPI} and {@link HttpBuildersSPI}.
  */
 public interface QiWebTestSupport
-    extends HttpBuilders
+    extends HttpBuildersSPI
 {
     /**
      * @return QiWeb Application SPI

@@ -47,11 +47,11 @@ public class DevShellRoutesProvider
 
     private static final String DEVSHELL_ROUTES
                                 = "\n"
-                                  + "GET /@doc org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
-                                  + "GET /@doc/api org.qiweb.lib.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
-                                  + "GET /@doc/*path org.qiweb.lib.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n"
-                                  + "GET /@config org.qiweb.lib.controllers.Introspect.config\n"
-                                  + "GET /@version org.qiweb.lib.controllers.Introspect.version\n";
+                                  + "GET /@doc org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
+                                  + "GET /@doc/api org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
+                                  + "GET /@doc/*path org.qiweb.api.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html/', String path )\n"
+                                  + "GET /@config org.qiweb.api.controllers.Introspect.config\n"
+                                  + "GET /@version org.qiweb.api.controllers.Introspect.version\n";
 
     @Reflectively.Invoked( by = "DevShell" )
     public DevShellRoutesProvider()

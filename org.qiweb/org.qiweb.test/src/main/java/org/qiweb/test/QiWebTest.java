@@ -78,6 +78,7 @@ public class QiWebTest
     @After
     public final void afterEachQiWebTestMethod()
     {
+        QiWebTestHelper.printErrorsTrace( app.errors() );
         app.passivate();
         app = null;
     }
@@ -92,6 +93,12 @@ public class QiWebTest
     public RequestBuilder newRequestBuilder()
     {
         return app.httpBuilders().newRequestBuilder();
+    }
+
+    @Override
+    public CookieBuilder newCookieBuilder()
+    {
+        return app.httpBuilders().newCookieBuilder();
     }
 
     /**

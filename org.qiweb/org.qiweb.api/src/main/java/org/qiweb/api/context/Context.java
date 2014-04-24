@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,11 +25,11 @@ import org.qiweb.api.routes.Route;
 
 /**
  * HTTP Interaction Context.
- * <p>Accessible using {@link CurrentContext#get()} and other static helpers in {@link CurrentContext}.</p>
+ *
+ * Accessible using {@link CurrentContext#get()} and other static helpers in {@link CurrentContext}.
  */
 public interface Context
 {
-
     /**
      * @return Current Application
      */
@@ -64,13 +64,4 @@ public interface Context
      * @return Current Context MetaData
      */
     MetaData metaData();
-    //
-    // TODO State on Context ThreadFactory in API
-    // ThreadFactory that carry the current context to another thread
-    // Maybe somewhere else ...
-    // Could be useful for small needs or bigger integrations
-    // How to share a ThreadLocal to the new thread?
-    // All context objects should then be made thread safe!
-    // Could be someting like: ThreadFactory threadFactory()
-
 }

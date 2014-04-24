@@ -25,7 +25,6 @@ import org.qiweb.api.http.Request;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.InputStreamByteSource;
 import org.qiweb.api.util.InputStreams;
-import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
@@ -82,7 +81,6 @@ public class QiWebHttpHandler
             .method( exchange.getRequestMethod() )
             .uri( exchange.getRequestURI().toString() )
             .headers( exchange.getRequestHeaders() )
-            .cookies( new CookiesInstance() ) // TODO
             .bodyBytes( new InputStreamByteSource( exchange.getRequestBody(), HTTP_BUF_SIZE ) )
             .build();
     }
@@ -93,9 +91,6 @@ public class QiWebHttpHandler
         // Headers
         Headers headers = exchange.getResponseHeaders();
         headers.putAll( outcome.responseHeader().headers().allValues() );
-
-        // Cookies
-        outcome.responseHeader().cookies(); // TODO
 
         // Body
         InputStream bodyStream = null;

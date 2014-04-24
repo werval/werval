@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,13 +44,14 @@ public interface RequestBody
     byte[] asBytes();
 
     /**
-     * @return  Body data as a String using the body character encoding if defined, the QiWeb default character
-     *          encoding otherwise.
+     * @return Body data as a String using the body character encoding if defined, the QiWeb default character
+     *         encoding otherwise.
      */
     String asString();
 
     /**
      * @param charset Charset to use
+     *
      * @return Body data as a String
      */
     String asString( Charset charset );

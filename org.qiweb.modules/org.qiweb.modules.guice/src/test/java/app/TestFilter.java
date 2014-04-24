@@ -15,6 +15,7 @@
  */
 package app;
 
+import java.util.Optional;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
@@ -24,12 +25,12 @@ import org.qiweb.api.outcomes.Outcome;
  * TestFilter.
  */
 public class TestFilter
-    implements Filter
+    implements Filter<Void>
 {
     public static int invocations = 0;
 
     @Override
-    public Outcome filter( FilterChain chain, Context context )
+    public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
     {
         invocations++;
         return chain.next( context );

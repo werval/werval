@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.filters;
 
+import java.util.Optional;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.context.Context;
@@ -30,10 +31,10 @@ import static org.hamcrest.Matchers.equalTo;
 public class FiltersTest
 {
     public static class Filter
-        implements org.qiweb.api.filters.Filter
+        implements org.qiweb.api.filters.Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context )
+        public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
         {
             context.response().headers().with( "X-QiWeb-Filtered", "true" );
             return chain.next( context );

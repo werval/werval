@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
  */
 package org.qiweb.runtime.filters;
 
+import java.lang.annotation.Annotation;
+import java.util.Optional;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.util.Couple;
 
 /**
  * Instance of FilterChain.
@@ -53,23 +56,23 @@ import org.qiweb.api.outcomes.Outcome;
 
     private final Application app;
     private final Global global;
-    private final Class<? extends Filter> filterType;
+    private final Couple<Class<? extends Filter>, Annotation> filterInfo;
     private final FilterChain next;
 
     /* package */ FilterChainInstance(
-        Application app, Global global, Class<? extends Filter> filterType, FilterChain next
+        Application app, Global global, Couple<Class<? extends Filter>, Annotation> filterInfo, FilterChain next
     )
     {
         this.app = app;
         this.global = global;
-        this.filterType = filterType;
+        this.filterInfo = filterInfo;
         this.next = next;
     }
 
     @Override
     public Outcome next( Context context )
     {
-        Filter filter = global.getFilterInstance( app, filterType );
-        return filter.filter( next, context );
+        Filter filter = global.getFilterInstance( app, filterInfo.left() );
+        return filter.filter( next, context, Optional.ofNullable( filterInfo.right() ) );
     }
 }

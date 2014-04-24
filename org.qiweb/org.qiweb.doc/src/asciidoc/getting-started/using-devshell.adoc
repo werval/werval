@@ -41,7 +41,7 @@ public class Application {
     public Outcome index()
     {
         THIS WON'T COMPILE
-        return new org.qiweb.runtime.controllers.Welcome().welcome();
+        return new org.qiweb.api.controllers.Welcome().welcome();
     }
 
 }
@@ -71,7 +71,7 @@ public class Application {
             Exception crash = new RuntimeException( "Wow, it crashed!" );
             throw new java.io.IOException( "And this would be an explicit error message.", crash );
         }
-        return new org.qiweb.runtime.controllers.Welcome().welcome();
+        return new org.qiweb.api.controllers.Welcome().welcome();
     }
 
 }

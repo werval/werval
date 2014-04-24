@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,8 +32,8 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 /**
  * Cookies instance.
  */
-public class CookiesInstance
-    implements MutableCookies
+public final class CookiesInstance
+    implements MutableCookies, Serializable
 {
     public static final Cookies EMPTY = new CookiesInstance();
     private final Map<String, Cookie> cookies;
@@ -89,8 +90,17 @@ public class CookiesInstance
     public MutableCookies set( String name, String value )
     {
         ensureNotEmpty( "Cookie Name", name );
-        // TODO Implement serious Cookie creation
-        cookies.put( name, new CookieInstance( name, "", "", false, value == null ? Strings.EMPTY : value, true ) );
+        cookies.put(
+            name,
+            new CookieInstance(
+                0,
+                name, value == null ? Strings.EMPTY : value,
+                Strings.EMPTY, Strings.EMPTY,
+                Long.MIN_VALUE,
+                false, true,
+                Strings.EMPTY, Strings.EMPTY
+            )
+        );
         return this;
     }
 
@@ -108,7 +118,17 @@ public class CookiesInstance
         ensureNotEmpty( "Cookie Name", name );
         // TODO Add expires NOW to remove the cookie from the browser asap
         // See http://stackoverflow.com/questions/5285940/correct-way-to-delete-cookies-server-side
-        cookies.put( name, new CookieInstance( name, Strings.EMPTY, Strings.EMPTY, false, Strings.EMPTY, true ) );
+        cookies.put(
+            name,
+            new CookieInstance(
+                0,
+                name, Strings.EMPTY,
+                Strings.EMPTY, Strings.EMPTY,
+                0,
+                false, true,
+                Strings.EMPTY, Strings.EMPTY
+            )
+        );
         return this;
     }
 
@@ -130,27 +150,54 @@ public class CookiesInstance
     public static class CookieInstance
         implements Cookie
     {
+        private final int version;
         private final String name;
+        private final String value;
         private final String path;
         private final String domain;
+        private final long maxAge;
         private final boolean secure;
-        private final String value;
         private final boolean httpOnly;
+        private final String comment;
+        private final String commentUrl;
 
-        public CookieInstance( String name, String path, String domain, boolean secure, String value, boolean httpOnly )
+        public CookieInstance(
+            int version,
+            String name, String value,
+            String path, String domain,
+            long maxAge,
+            boolean secure, boolean httpOnly,
+            String comment, String commentUrl
+        )
         {
+            this.version = version;
             this.name = name;
+            this.value = value;
             this.path = path;
             this.domain = domain;
+            this.maxAge = maxAge;
             this.secure = secure;
-            this.value = value;
             this.httpOnly = httpOnly;
+            this.comment = comment;
+            this.commentUrl = commentUrl;
+        }
+
+        @Override
+        public int version()
+        {
+            return version;
         }
 
         @Override
         public String name()
         {
             return name;
+        }
+
+        @Override
+        public String value()
+        {
+            return value;
         }
 
         @Override
@@ -166,15 +213,15 @@ public class CookiesInstance
         }
 
         @Override
-        public boolean secure()
+        public long maxAge()
         {
-            return secure;
+            return maxAge;
         }
 
         @Override
-        public String value()
+        public boolean secure()
         {
-            return value;
+            return secure;
         }
 
         @Override
@@ -184,13 +231,33 @@ public class CookiesInstance
         }
 
         @Override
+        public String comment()
+        {
+            return comment;
+        }
+
+        @Override
+        public String commentUrl()
+        {
+            return commentUrl;
+        }
+
+        @Override
         public String toString()
         {
-            return "Cookie{"
-                   + "name=" + name + ", path=" + path + ", domain=" + domain + ", secure=" + secure
+            return "CookieInstance{"
+                   + "version=" + version
+                   + ", name=" + name
                    + ", value=" + value
+                   + ", path=" + path
+                   + ", domain=" + domain
+                   + ", maxAge=" + maxAge
+                   + ", secure=" + secure
                    + ", httpOnly=" + httpOnly
+                   + ", comment=" + comment
+                   + ", commentUrl=" + commentUrl
                    + '}';
         }
+
     }
 }

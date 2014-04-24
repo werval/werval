@@ -25,6 +25,7 @@ public interface ConfigKeys
     //
     String APP_ERRORS_RECORD_MAX = "app.errors.record.max";
     String APP_GLOBAL = "app.global";
+    String APP_LANGS = "app.langs";
     String APP_SECRET = "app.secret";
     String APP_SESSION_COOKIE_NAME = "app.session.cookie.name";
     String APP_SESSION_COOKIE_DOMAIN = "app.session.cookie.domain";

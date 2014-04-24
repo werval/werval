@@ -15,23 +15,36 @@
  */
 package org.qiweb.runtime.http;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.i18n.Lang;
+import org.qiweb.api.i18n.Langs;
+import org.qiweb.api.mime.MediaRange;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
+import org.qiweb.api.util.Couple;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
+import org.qiweb.runtime.mime.MediaRangeInstance;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Locale.US;
+import static java.util.stream.Collectors.toList;
+import static org.qiweb.api.http.Headers.Names.ACCEPT;
+import static org.qiweb.api.http.Headers.Names.ACCEPT_LANGUAGE;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.HOST;
@@ -94,6 +107,7 @@ public class RequestHeaderInstance
         return EMPTY;
     }
 
+    private final Langs langs;
     private final String identity;
     private final String remoteSocketAddress;
     private final boolean xffEnabled;
@@ -108,26 +122,16 @@ public class RequestHeaderInstance
     private final Cookies cookies;
     private final Map<String, Object> parameters = new LinkedHashMap<>();
 
-    public RequestHeaderInstance( String identity, String remoteSocketAddress,
-                                  ProtocolVersion version, Method method,
-                                  String uri, String path, QueryString queryString,
-                                  Headers headers, Cookies cookies )
+    public RequestHeaderInstance(
+        Langs langs,
+        String identity, String remoteSocketAddress,
+        boolean xffEnabled, boolean xffCheckProxies, List<String> xffTrustedProxies,
+        ProtocolVersion version, Method method,
+        String uri, String path, QueryString queryString,
+        Headers headers, Cookies cookies
+    )
     {
-        this(
-            identity, remoteSocketAddress,
-            false, false, emptyList(),
-            version, method,
-            uri, path, queryString,
-            headers, cookies
-        );
-    }
-
-    public RequestHeaderInstance( String identity, String remoteSocketAddress,
-                                  boolean xffEnabled, boolean xffCheckProxies, List<String> xffTrustedProxies,
-                                  ProtocolVersion version, Method method,
-                                  String uri, String path, QueryString queryString,
-                                  Headers headers, Cookies cookies )
-    {
+        this.langs = langs;
         this.identity = identity;
         this.remoteSocketAddress = remoteSocketAddress;
         this.xffEnabled = xffEnabled;
@@ -305,6 +309,79 @@ public class RequestHeaderInstance
     @Override
     public Map<String, Object> parameters()
     {
-        return Collections.unmodifiableMap( parameters );
+        return unmodifiableMap( parameters );
+    }
+
+    @Override
+    public List<Lang> acceptedLangs()
+    {
+        SortedSet<Couple<Double, String>> parsed = new TreeSet<>( (o1, o2) -> o2.left().compareTo( o1.left() ) );
+        parsed.addAll( parseAcceptHeader( ACCEPT_LANGUAGE ) );
+        return parsed.stream().map( e -> langs.fromCode( e.right() ) ).collect( toList() );
+    }
+
+    @Override
+    public Lang preferredLang()
+    {
+        return langs.preferred( acceptedLangs() );
+    }
+
+    @Override
+    public List<MediaRange> acceptedMimeTypes()
+    {
+        return MediaRangeInstance.parseList( headers.singleValue( ACCEPT ) );
+    }
+
+    @Override
+    public boolean acceptsMimeType( String mimeType )
+    {
+        return MediaRangeInstance.accepts( acceptedMimeTypes(), mimeType );
+    }
+
+    @Override
+    public String preferredMimeType( String... mimeTypes )
+    {
+        return MediaRangeInstance.preferred( acceptedMimeTypes(), mimeTypes );
+    }
+
+    /**
+     * Pattern that match q-values of {@literal Accept*} headers.
+     */
+    private static final Pattern Q_PATTERN = Pattern.compile( ";\\s*q=([0-9.]+)" );
+
+    /**
+     * Parse {@literal Accept*} headers.
+     *
+     * @param acceptHeaderName Any {@literal Accept*} header name
+     *
+     * @return Parsed {@literal Accept*} header items with their q-values
+     */
+    private List<Couple<Double, String>> parseAcceptHeader( String acceptHeaderName )
+    {
+        if( !headers.has( acceptHeaderName ) )
+        {
+            return emptyList();
+        }
+        List<Couple<Double, String>> parsed = new ArrayList<>();
+        List<String> acceptLangHeaders = headers.values( acceptHeaderName );
+        for( String acceptLangHeader : acceptLangHeaders )
+        {
+            for( String acceptLang : acceptLangHeader.split( "," ) )
+            {
+                Matcher matcher = Q_PATTERN.matcher( acceptLang );
+                if( matcher.find() )
+                {
+                    parsed.add( Couple.of(
+                        Double.valueOf( matcher.group( 1 ) ),
+                        acceptLang.substring( 0, matcher.start() ).trim()
+                    ) );
+                }
+                else
+                {
+                    parsed.add( Couple.of( 1D, acceptLang.trim() ) );
+                }
+            }
+        }
+        return parsed;
     }
 }

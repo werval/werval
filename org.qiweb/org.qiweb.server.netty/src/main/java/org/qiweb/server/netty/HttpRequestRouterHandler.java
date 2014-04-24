@@ -26,14 +26,12 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.ServerCookieEncoder;
 import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
@@ -49,29 +47,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
-import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.TRAILER;
 import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
-import static org.qiweb.server.netty.NettyHttpFactories.asNettyCookie;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
 import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
 
 /**
- * Handle plain HTTP and WebSocket UPGRADE requests.
+ * Handle HTTP Requests.
  *
- * <strong>HTTP Requests</strong>
- * <p>
  * Any HTTP request message is allowed to contain a message body, and thus must be parsed with that in mind.
  * This implementation consume the request body for any requests methods but it is only parsed for POST, PUT
  * and PATCH methods. Parsing is done only for URL-encoded forms and multipart form data. For other request body
  * types, it's the application responsibility to do the parsing.
- * <p>
- * <strong>WebSocket UPGRADE Requests</strong>
- * <p>
- * TODO WebSocket UPGRADE
  */
+// TODO WebSocket UPGRADE
 public final class HttpRequestRouterHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
 {
@@ -283,13 +274,6 @@ public final class HttpRequestRouterHandler
             nettyResponse.headers().add(
                 name,
                 response.headers().values( name )
-            );
-        }
-        for( Cookie cookie : response.cookies() )
-        {
-            nettyResponse.headers().add(
-                SET_COOKIE,
-                ServerCookieEncoder.encode( asNettyCookie( cookie ) )
             );
         }
     }

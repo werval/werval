@@ -18,9 +18,12 @@ package org.qiweb.test.util;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.read.ListAppender;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.LoggerFactory;
@@ -97,6 +100,38 @@ public class Slf4jRule
     public boolean contains( String loggingStatement )
     {
         return appender.list.stream().anyMatch( event -> event.getFormattedMessage().contains( loggingStatement ) );
+    }
+
+    public boolean containsExMessage( String exceptionMessage )
+    {
+        return appender.list.stream().anyMatch(
+            event ->
+            {
+                IThrowableProxy ex = event.getThrowableProxy();
+                if( ex == null )
+                {
+                    return false;
+                }
+                if( ex.getMessage().contains( exceptionMessage ) )
+                {
+                    return true;
+                }
+                Stack<IThrowableProxy> stack = new Stack<>();
+                stack.add( ex.getCause() );
+                stack.addAll( Arrays.asList( ex.getSuppressed() ) );
+                while( !stack.empty() )
+                {
+                    IThrowableProxy candidate = stack.pop();
+                    if( candidate.getMessage().contains( exceptionMessage ) )
+                    {
+                        return true;
+                    }
+                    stack.add( candidate.getCause() );
+                    stack.addAll( Arrays.asList( candidate.getSuppressed() ) );
+                }
+                return false;
+            }
+        );
     }
 
     public int size()

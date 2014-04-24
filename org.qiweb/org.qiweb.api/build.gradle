@@ -1,6 +1,13 @@
 
 dependencies {
+
     compile libs.slf4j
+
+    testCompile project( ':org.qiweb.test' )
+    testCompile libs.rest_assured
+
+    testRuntime webjars.bootstrap
+
 }
 
 

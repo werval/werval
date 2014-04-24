@@ -214,7 +214,7 @@ If your application is running on multiple nodes behind a balancer you can lower
 your clients to reconnect immediatly to another node. Pretty useful for zero-downtime upgrades.
 
 
-==== The Global object
+=== The Global object
 
 ==== Instanciation
 
@@ -225,6 +225,22 @@ your clients to reconnect immediatly to another node. Pretty useful for zero-dow
 
 - Controllers
 - Filters
+
+
+=== Error Handling
+
+==== Error Records
+
+When an error happen inside the Application it is recorded.
+
+Theses record are held in-memory, if you want to persist them someway, you'll have to provide the appropriate mechanism.
+See the section about the Global object above.
+
+Each recorded Error has an `ID`, a timestamp, the related request `ID` and the original exception.
+This is pretty useful as is to write unit/integration tests that check error handling in your Application.
+
+By default, a maximum of `100` errors are held into memory in a *first-in/first-out* fashion.
+You can increase or decrease this number by setting the `app.errors.record.max` configuration property.
 
 
 === Routes
