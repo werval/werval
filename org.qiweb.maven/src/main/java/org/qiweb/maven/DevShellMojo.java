@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors.
+ * Copyright (c) 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,27 +22,21 @@ import java.util.Set;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JavaWatcher;
 
-/**
- * @goal devshell
- * @requiresDependencyResolution runtime
- */
+@Mojo( name = "devshell", requiresDependencyResolution = ResolutionScope.RUNTIME )
 public class DevShellMojo
     extends AbstractMojo
 {
-
-    /**
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
+    @Parameter( property = "project", required = true, readonly = true )
     private MavenProject project;
-    /**
-     * @parameter default-value="compile"
-     */
+
+    @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
 
     @Override
@@ -75,18 +69,27 @@ public class DevShellMojo
             {
                 new File( rootDir, "target/classes" ).toURI().toURL()
             };
-            final DevShell devShell = new DevShell( new MavenDevShellSPI( applicationClasspath, runtimeClassPath,
-                                                                          sources, new JavaWatcher(),
-                                                                          rootDir, rebuildPhase ) );
+            final DevShell devShell = new DevShell(
+                new MavenDevShellSPI(
+                    applicationClasspath, runtimeClassPath,
+                    sources, new JavaWatcher(),
+                    rootDir, rebuildPhase
+                )
+            );
 
-            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    devShell.stop();
-                }
-            }, "qiweb-devshell-shutdown" ) );
+            Runtime.getRuntime().addShutdownHook(
+                new Thread(
+                    new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            devShell.stop();
+                        }
+                    },
+                    "qiweb-devshell-shutdown"
+                )
+            );
 
             devShell.start();
         }
