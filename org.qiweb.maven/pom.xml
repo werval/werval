@@ -36,15 +36,20 @@
     </repositories>
 
     <dependencies>
+
+        <!--
+        _________                       .__.__
+        \_   ___ \  ____   _____ ______ |__|  |   ____
+        /    \  \/ /  _ \ /     \\____ \|  |  | _/ __ \
+        \     \___(  <_> )  Y Y  \  |_> >  |  |_\  ___/
+         \______  /\____/|__|_|  /   __/|__|____/\___  >
+                \/             \/|__|                \/
+        -->
+
         <dependency>
             <groupId>org.qiweb</groupId>
             <artifactId>org.qiweb.devshell</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twdata.maven</groupId>
-            <artifactId>mojo-executor</artifactId>
-            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -52,21 +57,66 @@
             <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>3.0.17</version>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>3.2.1</version>
+            <version>3.0.5</version>
         </dependency>
+
+        <!--
+        __________                    .__    .___         .___
+        \______   \_______  _______  _|__| __| _/____   __| _/
+         |     ___/\_  __ \/  _ \  \/ /  |/ __ |/ __ \ / __ |
+         |    |     |  | \(  <_> )   /|  / /_/ \  ___// /_/ |
+         |____|     |__|   \____/ \_/ |__\____ |\___  >____ |
+                                              \/    \/     \/
+        -->
+        
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.2</version>
+            <version>3.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--
+        ___________              __
+        \__    ___/___   _______/  |_
+          |    |_/ __ \ /  ___/\   __\
+          |    |\  ___/ \___ \  |  |
+          |____| \___  >____  > |__|
+                     \/     \/
+        -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>3.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>2.1</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     
     <pluginRepositories>
@@ -78,6 +128,16 @@
 
     <build>
         <plugins>
+
+            <!--
+                _____                              __________.__               .__
+               /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
+              /  \ /  \\__  \\  \/ // __ \ /    \   |     ___/  | |  |  \/ ___\|  |/    \
+             /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  >  |   |  \
+             \____|__  (____  /\_/  \___  >___|  /  |____|   |____/____/\___  /|__|___|  /
+                     \/     \/          \/     \/                      /_____/         \/
+            -->
+
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.3-SNAPSHOT</version>
@@ -85,23 +145,43 @@
                     <goalPrefix>qiweb</goalPrefix>
                     <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    <helpPackageName>org.qiweb.maven</helpPackageName>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>mojo-descriptor</id>
-                        <goals>
-                            <goal>descriptor</goal>
-                        </goals>
-                    </execution>
                     <execution>
                         <id>help-goal</id>
                         <goals>
                             <goal>helpmojo</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>mojos-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
+
+            <!--
+            ____ ___      .__  __    ___________              __
+           |    |   \____ |__|/  |_  \__    ___/___   _______/  |_  ______
+           |    |   /    \|  \   __\   |    |_/ __ \ /  ___/\   __\/  ___/
+           |    |  /   |  \  ||  |     |    |\  ___/ \___ \  |  |  \___ \
+           |______/|___|  /__||__|     |____| \___  >____  > |__| /____  >
+                        \/                        \/     \/            \/
+            -->
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <forkCount>0</forkCount>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 
 </project>
