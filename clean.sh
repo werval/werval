@@ -11,6 +11,7 @@ fi
 # builds
 $FIGLET builds
 find . -type d -name build | xargs rm -rf
+rm -rf org.qiweb.maven/target
 echo "Clean."
 
 # repository

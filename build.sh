@@ -2,12 +2,12 @@
 
 set -e
 
-#if hash mvn 2>/dev/null; then
-#	MAVEN="mvn -q -e"
-#else
-#	echo >&2 "I require Maven but it's not installed.  Aborting."
-#	exit 1
-#fi
+if hash mvn 2>/dev/null; then
+	MAVEN="mvn -q -e"
+else
+	echo >&2 "I require Maven but it's not installed.  Aborting."
+	exit 1
+fi
 if hash figlet 2>/dev/null; then
 	FIGLET="figlet -w 114 -W -f rectangles"
 else
@@ -32,8 +32,8 @@ echo "Built."
 
 # maven plugin
 $FIGLET org.qiweb.maven
-# $MAVEN -f org.qiweb.maven/pom.xml test
-echo "NOT BUILT - No Java 8 support for Maven plugins yet"
+$MAVEN -f org.qiweb.maven/pom.xml clean package -DskipTests
+echo "Built."
 
 echo
 
