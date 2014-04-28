@@ -2,6 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+    ________  .__ __      __      ___.        _____                              __________.__               .__
+    \_____  \ |__/  \    /  \ ____\_ |__     /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
+     /  / \  \|  \   \/\/   // __ \| __ \   /  \ /  \\__  \\  \/ // __ \ /    \   |     ___/  | |  |  \/ ___\|  |/    \
+    /   \_/.  \  |\        /\  ___/| \_\ \ /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  >  |   |  \
+    \_____\ \_/__| \__/\__/  \_____)_____/ \____|____(______/\_/  \_____)___|__/  |____|   |____/____/\___  /|__|___|__/
+           \__)                                                                                      /_____/
+    -->
+
     <parent>
         <groupId>org.codeartisans</groupId>
         <artifactId>codeartisans-parent</artifactId>
@@ -34,10 +43,6 @@
             <id>qiwebLocalRepository</id>
             <url>file:${project.basedir}/../repository</url>
         </repository>
-        <repository>
-            <id>mojo-executor-repository</id>
-            <url>http://twdata-m2-repository.googlecode.com/svn/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -47,8 +52,8 @@
         \_   ___ \  ____   _____ ______ |__|  |   ____
         /    \  \/ /  _ \ /     \\____ \|  |  | _/ __ \
         \     \___(  (_) )  Y Y  \  |_) )  |  |_\  ___/
-         \______  /\____/|__|_|  /   __/|__|____/\___  )
-                \/             \/|__|                \/
+         \________/\____/|__|_|__/   __/|__|____/\_____)
+                                 |__|
         -->
 
         <dependency>
@@ -77,8 +82,7 @@
         \______   \_______  _______  _|__| __| _/____   __| _/
          |     ___/\_  __ \/  _ \  \/ /  |/ __ |/ __ \ / __ |
          |    |     |  | \(  (_) )   /|  / /_/ \  ___// /_/ |
-         |____|     |__|   \____/ \_/ |__\____ |\___  >____ |
-                                              \/    \/     \/
+         |____|     |__|   \____/ \_/ |__\_____|\_____)_____|
         -->
         
         <dependency>
@@ -93,8 +97,7 @@
         \__    ___/___   _______/  |_
           |    |_/ __ \ /  ___/\   __\
           |    |\  ___/ \___ \  |  |
-          |____| \___  >____  > |__|
-                     \/     \/
+          |____| \_____)______) |__|
         -->
 
         <dependency>
@@ -158,7 +161,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -170,8 +177,8 @@
                /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
               /  \ /  \\__  \\  \/ // __ \ /    \   |     ___/  | |  |  \/ ___\|  |/    \
              /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  )  |   |  \
-             \____|__  (____  /\_/  \___  >___|  /  |____|   |____/____/\___  /|__|___|  /
-                     \/     \/          \/     \/                      /_____/         \/
+             \____|____(______/\_/  \_____)___|__/  |____|   |____/____/\___  /|__|___|__/
+                                                                       /_____/
             -->
 
             <plugin>
@@ -204,8 +211,7 @@
            |    |   \____ |__|/  |_  \__    ___/___   _______/  |_  ______
            |    |   /    \|  \   __\   |    |_/ __ \ /  ___/\   __\/  ___/
            |    |  /   |  \  ||  |     |    |\  ___/ \___ \  |  |  \___ \
-           |______/|___|  /__||__|     |____| \___  >____  > |__| /____  >
-                        \/                        \/     \/            \/
+           |______/|___|__/__||__|     |____| \_____)______) |__| /______)
             -->
 
             <plugin>
@@ -225,8 +231,8 @@
             |   | _____/  |_  ____   ________________ _/  |_|__| ____   ____   \__    ___/___   _______/  |_  ______
             |   |/    \   __\/ __ \ / ___\_  __ \__  \\   __\  |/  _ \ /    \    |    |_/ __ \ /  ___/\   __\/  ___/
             |   |   |  \  | \  ___// /_/  >  | \// __ \|  | |  (  (_) )   |  \   |    |\  ___/ \___ \  |  |  \___ \
-            |___|___|  /__|  \___  >___  /|__|  (____  /__| |__|\____/|___|  /   |____| \___  >____  > |__| /____  >
-                     \/          \/_____/            \/                    \/               \/     \/            \/
+            |___|___|__/__|  \_____>___  /|__|  (______/__| |__|\____/|___|__/   |____| \_____)______) |__| /______)
+                                  /_____/
             -->
 
             <plugin>
@@ -240,7 +246,7 @@
                         <extraArtifact>org.codehaus.plexus:plexus-classworlds:2.4</extraArtifact>
                         <extraArtifact>org.slf4j:slf4j-simple:1.7.7</extraArtifact>
                         <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.6</extraArtifact>
-                        <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:2.5.1</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:3.1</extraArtifact>
                         <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12.4</extraArtifact>
                         <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.4</extraArtifact>
                     </extraArtifacts>

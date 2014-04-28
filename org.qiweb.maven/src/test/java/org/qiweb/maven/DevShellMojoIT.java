@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.concurrent.Callable;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -90,7 +89,7 @@ public class DevShellMojoIT
           + "            </plugin>\n"
           + "            <plugin>\n"
           + "                <artifactId>maven-compiler-plugin</artifactId>\n"
-          + "                <version>2.5.1</version>\n"
+          + "                <version>3.1</version>\n"
           + "            </plugin>\n"
           + "            <plugin>\n"
           + "                <artifactId>maven-surefire-plugin</artifactId>\n"
@@ -211,7 +210,7 @@ public class DevShellMojoIT
     public void devshell()
         throws InterruptedException, IOException
     {
-        final Holder<Throwable> devshellError = new Holder<Throwable>();
+        final Holder<Throwable> devshellError = new Holder<>();
         Runnable devshellRunnable = new Runnable()
         {
             @Override
@@ -252,17 +251,7 @@ public class DevShellMojoIT
         {
             devshellThread.start();
 
-            await().atMost( 30, SECONDS ).until(
-                new Callable<Boolean>()
-                {
-                    @Override
-                    public Boolean call()
-                    throws Exception
-                    {
-                        return lock.exists();
-                    }
-                }
-            );
+            await().atMost( 30, SECONDS ).until( () -> lock.exists() );
 
             if( devshellError.isSet() )
             {

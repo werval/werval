@@ -57,7 +57,7 @@ public class DevShellMojo
             File rootDir = project.getBasedir();
 
             // Classpath
-            Set<URL> classPathSet = new LinkedHashSet<URL>();
+            Set<URL> classPathSet = new LinkedHashSet<>();
             for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
             {
                 classPathSet.add( new URL( "file://" + runtimeClassPathElement ) );
@@ -65,7 +65,7 @@ public class DevShellMojo
             URL[] runtimeClassPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
 
             // Sources
-            Set<File> sources = new LinkedHashSet<File>();
+            Set<File> sources = new LinkedHashSet<>();
             for( String sourceRoot : project.getCompileSourceRoots() )
             {
                 sources.add( new File( sourceRoot ) );
@@ -84,19 +84,7 @@ public class DevShellMojo
                 )
             );
 
-            Runtime.getRuntime().addShutdownHook(
-                new Thread(
-                    new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            devShell.stop();
-                        }
-                    },
-                    "qiweb-devshell-shutdown"
-                )
-            );
+            Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
 
             devShell.start();
         }
