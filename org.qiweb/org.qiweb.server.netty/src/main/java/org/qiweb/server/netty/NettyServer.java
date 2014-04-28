@@ -20,7 +20,8 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
@@ -34,6 +35,7 @@ import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_EXECUTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
@@ -50,6 +52,7 @@ public class NettyServer
     private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
+    private EventExecutorGroup httpExecutors;
 
     @Reflectively.Invoked( by = "DevShell" )
     public NettyServer()
@@ -89,9 +92,35 @@ public class NettyServer
             new NioEventLoopGroup( devSpi == null ? iothreads : 1, new ThreadFactories.IO() )
         );
 
+        // Eventual Controller Executors Pool
+        if( devSpi != null )
+        {
+            // Development mode, single controller executor thread
+            httpExecutors = new DefaultEventExecutorGroup( 1, new ThreadFactories.HttpExecutors() );
+        }
+        else if( app.config().has( QIWEB_HTTP_EXECUTORS ) )
+        {
+            int executors = app.config().intNumber( QIWEB_HTTP_EXECUTORS );
+            if( executors <= 0 )
+            {
+                // Config set to 0, no controller executors
+                httpExecutors = null;
+            }
+            else
+            {
+                // Configured controller executors count
+                httpExecutors = new DefaultEventExecutorGroup( executors, new ThreadFactories.HttpExecutors() );
+            }
+        }
+        else
+        {
+            // No configuration, no controller executors
+            httpExecutors = null;
+        }
+
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
-        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, app, devSpi ) );
+        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, httpExecutors, app, devSpi ) );
 
         // See http://www.unixguide.net/network/socketfaq/2.16.shtml
         bootstrap.option( TCP_NODELAY, true );
@@ -124,18 +153,29 @@ public class NettyServer
             long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
             long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
 
-            Future<?> shutdownFuture = bootstrap.group().shutdownGracefully(
+            bootstrap.childGroup().shutdownGracefully(
                 shutdownQuietPeriod,
                 shutdownTimeout,
                 TimeUnit.MILLISECONDS
-            );
-            shutdownFuture.addListener(
-                future ->
-                {
-                    allChannels.clear();
-                }
-            );
-            shutdownFuture.awaitUninterruptibly();
+            ).syncUninterruptibly();
+
+            bootstrap.group().shutdownGracefully(
+                shutdownQuietPeriod,
+                shutdownTimeout,
+                TimeUnit.MILLISECONDS
+            ).syncUninterruptibly();
+
+            if( httpExecutors != null )
+            {
+                httpExecutors.shutdownGracefully(
+                    shutdownQuietPeriod,
+                    shutdownTimeout,
+                    TimeUnit.MILLISECONDS
+                ).syncUninterruptibly();
+            }
+
+            allChannels.close();
+            allChannels.clear();
         }
     }
 }
