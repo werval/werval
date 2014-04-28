@@ -24,6 +24,7 @@ def v_jpa = '2.1.0'
 def v_gradle_tooling = '1.11'
 
 // Testing Tools libraries versions
+def v_awaitility = '1.6.0'
 def v_fluentlenium = '0.9.2'
 def v_junit = '4.11'
 def v_rest_assured = '2.3.1'
@@ -62,6 +63,7 @@ rootProject.ext {
         gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
 
         // Testing Tools libraries
+        awaitility:         "com.jayway.awaitility:awaitility:$v_awaitility",
         fluentlenium: [
                             "org.fluentlenium:fluentlenium-festassert:$v_fluentlenium",
                             "org.seleniumhq.selenium:selenium-java:2.37.1"

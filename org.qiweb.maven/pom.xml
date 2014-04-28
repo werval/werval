@@ -133,6 +133,12 @@
             <version>4.3.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jayway.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>1.6.0</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
     
@@ -208,6 +214,9 @@
                 <configuration>
                     <forkCount>0</forkCount>
                     <useSystemClassLoader>false</useSystemClassLoader>
+                    <systemProperties>
+                        <project.basedir>${basedir}</project.basedir>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
@@ -260,6 +269,7 @@
                             <forkCount>0</forkCount>
                             <useSystemClassloader>false</useSystemClassloader>
                             <systemPropertyVariables>
+                                <project.basedir>${basedir}</project.basedir>
                                 <maven.home>${maven.home}</maven.home>
                             </systemPropertyVariables>
                         </configuration>

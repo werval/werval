@@ -17,6 +17,8 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
     compile libs.gradle_tooling
+
+    testCompile libs.awaitility
     
 }
 

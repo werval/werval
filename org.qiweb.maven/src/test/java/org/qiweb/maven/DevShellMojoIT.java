@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -30,12 +31,15 @@ import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.qiweb.runtime.util.Holder;
 
+import static com.jayway.awaitility.Awaitility.await;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.BuildVersion.VERSION;
@@ -53,6 +57,7 @@ public class DevShellMojoIT
     private static final String CONFIG;
     private static final String CONTROLLER;
     private static final String CONTROLLER_CHANGED;
+    private static final File BASEDIR = new File( System.getProperty( "project.basedir", "" ) );
 
     static
     {
@@ -146,11 +151,11 @@ public class DevShellMojoIT
           + "        return outcomes().ok( \"I ran changed!\" ).build();\n"
           + "    }\n"
           + "}\n";
-        new File( "target/it-tmp" ).mkdirs();
+        new File( BASEDIR, "target/it-tmp" ).mkdirs();
     }
 
     @ClassRule
-    public static TemporaryFolder tmp = new TemporaryFolder( new File( "target/it-tmp" ) )
+    public static TemporaryFolder tmp = new TemporaryFolder( new File( BASEDIR, "target/it-tmp" ) )
     {
         @Override
         public void delete()
@@ -158,6 +163,8 @@ public class DevShellMojoIT
             // NOOP
         }
     };
+
+    private static File lock;
 
     @BeforeClass
     public static void setupProjectLayout()
@@ -183,6 +190,21 @@ public class DevShellMojoIT
             new File( controllers, "Application.java" ).toPath(),
             CONTROLLER.getBytes( UTF_8 )
         );
+        lock = new File( tmp.getRoot(), ".devshell.lock" );
+    }
+
+    @AfterClass
+    public static void forceDevShellStopIfAny()
+        throws Exception
+    {
+        if( lock.exists() )
+        {
+            Files.delete( lock.toPath() );
+        }
+        else
+        {
+            System.err.println( "No devshell lock file at " + lock + ". Lookout for zombies!" );
+        }
     }
 
     @Test
@@ -198,7 +220,7 @@ public class DevShellMojoIT
                 try
                 {
                     Invoker invoker = new DefaultInvoker();
-                    invoker.setLocalRepositoryDirectory( new File( "target/it-local-repository" ) );
+                    invoker.setLocalRepositoryDirectory( new File( BASEDIR, "target/it-local-repository" ) );
                     invoker.setWorkingDirectory( tmp.getRoot() );
 
                     InvocationRequest request = new DefaultInvocationRequest();
@@ -230,8 +252,17 @@ public class DevShellMojoIT
         {
             devshellThread.start();
 
-            // TODO Find a way to run ASAP, devshell run lock file?
-            Thread.sleep( 10 * 1000 );
+            await().atMost( 30, SECONDS ).until(
+                new Callable<Boolean>()
+                {
+                    @Override
+                    public Boolean call()
+                    throws Exception
+                    {
+                        return lock.exists();
+                    }
+                }
+            );
 
             if( devshellError.isSet() )
             {
@@ -262,6 +293,8 @@ public class DevShellMojoIT
                 client.execute( get, handler ),
                 containsString( "I ran changed!" )
             );
+
+            client.getConnectionManager().shutdown();
         }
         finally
         {

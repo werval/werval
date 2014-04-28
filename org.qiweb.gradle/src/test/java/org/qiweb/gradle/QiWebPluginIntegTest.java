@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -31,13 +32,16 @@ import org.gradle.internal.classloader.ClasspathUtil;
 import org.gradle.testkit.functional.ExecutionResult;
 import org.gradle.testkit.functional.GradleRunner;
 import org.gradle.testkit.functional.GradleRunnerFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.qiweb.runtime.util.Holder;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
@@ -117,6 +121,8 @@ public class QiWebPluginIntegTest
           + "}\n";
     }
 
+    private final File lock = new File( ".devshell.lock" );
+
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
@@ -144,6 +150,20 @@ public class QiWebPluginIntegTest
             new File( controllers, "Application.java" ).toPath(),
             CONTROLLER.getBytes( UTF_8 )
         );
+    }
+
+    @After
+    public void forceDevShellStopIfAny()
+        throws Exception
+    {
+        if( lock.exists() )
+        {
+            Files.delete( lock.toPath() );
+        }
+        else
+        {
+            System.err.println( "No devshell lock file at " + lock + ". Lookout for zombies!" );
+        }
     }
 
     @Test
@@ -181,18 +201,27 @@ public class QiWebPluginIntegTest
                 }
             }
         };
-        Thread devshellThread = new Thread( devshellRunnable, "devshell-thread" );
+        Thread devshellThread = new Thread( devshellRunnable, "devshell-gradlerunner" );
         try
         {
             devshellThread.start();
 
-            // TODO Find a way to run ASAP, devshell run lock file?
-            Thread.sleep( 30 * 1000 );
+            await().atMost( 30, SECONDS ).until(
+                new Callable<Boolean>()
+                {
+                    @Override
+                    public Boolean call()
+                    throws Exception
+                    {
+                        return lock.exists();
+                    }
+                }
+            );
 
             if( devshellError.isSet() )
             {
                 throw new RuntimeException(
-                    "Error during deshell invocation: " + devshellError.get().getMessage(),
+                    "Error during Gradle DevShell invocation: " + devshellError.get().getMessage(),
                     devshellError.get()
                 );
             }
@@ -218,6 +247,8 @@ public class QiWebPluginIntegTest
                 client.execute( get, handler ),
                 containsString( "I ran changed!" )
             );
+
+            client.getConnectionManager().shutdown();
         }
         finally
         {

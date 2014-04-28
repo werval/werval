@@ -27,10 +27,12 @@ import static junit.framework.TestCase.assertTrue;
 public class HelpMojoTest
     extends AbstractMojoTestCase
 {
+    private final File basedir = new File( System.getProperty( "project.basedir", "" ) );
+
     public void testHelp()
         throws Exception
     {
-        File pom = new File( "src/test/resources/org/qiweb/maven/unittest-pom.xml" );
+        File pom = new File( basedir, "src/test/resources/org/qiweb/maven/unittest-pom.xml" );
         assertTrue( pom.exists() );
 
         HelpMojo helpMojo = (HelpMojo) lookupMojo( "help", pom );

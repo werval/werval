@@ -29,10 +29,12 @@ import static org.junit.Assert.assertThat;
 public class SecretMojoTest
     extends AbstractMojoTestCase
 {
+    private final File basedir = new File( System.getProperty( "project.basedir", "" ) );
+
     public void testSecret()
         throws Exception
     {
-        File pom = new File( "src/test/resources/org/qiweb/maven/unittest-pom.xml" );
+        File pom = new File( basedir, "src/test/resources/org/qiweb/maven/unittest-pom.xml" );
         assertTrue( pom.exists() );
 
         SecretMojo secretMojo = (SecretMojo) lookupMojo( "secret", pom );
