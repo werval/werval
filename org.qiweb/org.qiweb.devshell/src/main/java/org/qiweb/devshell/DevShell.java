@@ -23,11 +23,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
+import org.qiweb.api.exceptions.PassivationException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RuntimeIOException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
@@ -275,23 +279,54 @@ public final class DevShell
         {
             running = false;
             System.out.println( white( ">> QiWeb DevShell stopping..." ) );
+
+            // Record all passivation errors here to report them at once at the end
+            List<Exception> passivationErrors = new ArrayList<>();
+
+            // Passivate HTTP Server
             try
             {
                 passivateHttpServer();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while passivating HTTP Server: " + ex.getMessage(), ex )
+                );
+            }
+
+            // Dispose Realms
+            try
+            {
                 disposeRealms();
             }
             catch( Exception ex )
             {
-                String msg = "Unable to stop QiWeb DevShell: " + ex.getMessage();
-                System.err.println( red( msg ) );
-                throw new QiWebDevShellException( msg, ex );
+                passivationErrors.add(
+                    new QiWebException( "Error while disposing Classworld Realms: " + ex.getMessage(), ex )
+                );
             }
-            finally
+
+            // Remove lock file
+            try
             {
-                if( lockFileExist() )
+                deleteLockFile();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add( ex );
+            }
+
+            // Report errors if any
+            if( !passivationErrors.isEmpty() )
+            {
+                PassivationException ex = new PassivationException( "Unable to stop QiWeb DevShell" );
+                System.err.println( red( ex.getMessage() ) );
+                for( Exception passivationError : passivationErrors )
                 {
-                    deleteLockFile();
+                    ex.addSuppressed( passivationError );
                 }
+                throw ex;
             }
         }
     }
@@ -320,13 +355,16 @@ public final class DevShell
 
     private void deleteLockFile()
     {
-        try
+        if( RUN_LOCK_FILE.exists() )
         {
-            Files.delete( RUN_LOCK_FILE.toPath() );
-        }
-        catch( IOException ex )
-        {
-            throw new RuntimeIOException( ex );
+            try
+            {
+                Files.delete( RUN_LOCK_FILE.toPath() );
+            }
+            catch( IOException ex )
+            {
+                throw new RuntimeIOException( ex );
+            }
         }
     }
 
