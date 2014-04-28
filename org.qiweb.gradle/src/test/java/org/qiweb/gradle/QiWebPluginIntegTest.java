@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.qiweb.runtime.util.Holder;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.core.StringContains.containsString;
@@ -42,7 +43,8 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Assert that the {@literal secret} and {@literal devshell} tasks execute successfuly.
- * <p>Generates a project, run it in dev mode using the plugin, change source code and assert code is reloaded.</p>
+ *
+ * Generates a project, run it in dev mode using the plugin, change source code and assert code is reloaded.
  */
 public class QiWebPluginIntegTest
 {
@@ -119,7 +121,7 @@ public class QiWebPluginIntegTest
     public TemporaryFolder tmp = new TemporaryFolder();
 
     @Before
-    public void before()
+    public void setupProjectLayout()
         throws IOException
     {
         Files.write(
@@ -160,15 +162,23 @@ public class QiWebPluginIntegTest
     public void devshellTask()
         throws InterruptedException, IOException
     {
+        final Holder<Throwable> devshellError = new Holder<>();
         Runnable devshellRunnable = new Runnable()
         {
             @Override
             public void run()
             {
-                GradleRunner runner = GradleRunnerFactory.create();
-                runner.setDirectory( tmp.getRoot() );
-                runner.setArguments( singletonList( "devshell" ) );
-                runner.run();
+                try
+                {
+                    GradleRunner runner = GradleRunnerFactory.create();
+                    runner.setDirectory( tmp.getRoot() );
+                    runner.setArguments( singletonList( "devshell" ) );
+                    runner.run();
+                }
+                catch( Exception ex )
+                {
+                    devshellError.set( ex );
+                }
             }
         };
         Thread devshellThread = new Thread( devshellRunnable, "devshell-thread" );
@@ -178,6 +188,14 @@ public class QiWebPluginIntegTest
 
             // TODO Find a way to run ASAP, devshell run lock file?
             Thread.sleep( 30 * 1000 );
+
+            if( devshellError.isSet() )
+            {
+                throw new RuntimeException(
+                    "Error during deshell invocation: " + devshellError.get().getMessage(),
+                    devshellError.get()
+                );
+            }
 
             HttpClient client = new DefaultHttpClient();
             HttpGet get = new HttpGet( "http://localhost:23023/" );
