@@ -100,7 +100,7 @@ public abstract class HttpServerAdapter
     @Reflectively.Invoked( by = "DevShell" )
     public final void passivate()
     {
-        // Record all passivation errors here to display them at once at the end
+        // Record all passivation errors here to report them at once at the end
         List<Exception> passivationErrors = new ArrayList<>();
 
         // Notify Global object that the HttpServer will stop listening to network connections

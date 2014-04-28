@@ -22,7 +22,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.qiweb.api.exceptions.PassivationException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.spi.ApplicationSPI;
@@ -153,29 +157,86 @@ public class NettyServer
             long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
             long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
 
-            bootstrap.childGroup().shutdownGracefully(
-                shutdownQuietPeriod,
-                shutdownTimeout,
-                TimeUnit.MILLISECONDS
-            ).syncUninterruptibly();
+            // Record all passivation errors here to report them at once at the end
+            List<Exception> passivationErrors = new ArrayList<>();
 
-            bootstrap.group().shutdownGracefully(
-                shutdownQuietPeriod,
-                shutdownTimeout,
-                TimeUnit.MILLISECONDS
-            ).syncUninterruptibly();
-
-            if( httpExecutors != null )
+            // Shutdown IO Threads
+            try
             {
-                httpExecutors.shutdownGracefully(
+                bootstrap.childGroup().shutdownGracefully(
                     shutdownQuietPeriod,
                     shutdownTimeout,
                     TimeUnit.MILLISECONDS
                 ).syncUninterruptibly();
             }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while shutting down IO Threads: " + ex.getMessage(), ex )
+                );
+            }
 
-            allChannels.close();
-            allChannels.clear();
+            // Shutdown Accept Threads
+            try
+            {
+                bootstrap.group().shutdownGracefully(
+                    shutdownQuietPeriod,
+                    shutdownTimeout,
+                    TimeUnit.MILLISECONDS
+                ).syncUninterruptibly();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while shutting down Accept Threads: " + ex.getMessage(), ex )
+                );
+            }
+
+            if( httpExecutors != null )
+            {
+                // Shutdown HTTP Executors
+                try
+                {
+                    httpExecutors.shutdownGracefully(
+                        shutdownQuietPeriod,
+                        shutdownTimeout,
+                        TimeUnit.MILLISECONDS
+                    ).syncUninterruptibly();
+                }
+                catch( Exception ex )
+                {
+                    passivationErrors.add(
+                        new QiWebException( "Error while shutting down HTTP Executors: " + ex.getMessage(), ex )
+                    );
+                }
+            }
+
+            // Force close all channels
+            try
+            {
+                allChannels.close();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while force-closing remaining open channels: " + ex.getMessage(), ex )
+                );
+            }
+            finally
+            {
+                allChannels.clear();
+            }
+
+            // Report errors if any
+            if( !passivationErrors.isEmpty() )
+            {
+                PassivationException ex = new PassivationException( "Errors during NettyServer passivation" );
+                for( Exception passivationError : passivationErrors )
+                {
+                    ex.addSuppressed( passivationError );
+                }
+                throw ex;
+            }
         }
     }
 }
