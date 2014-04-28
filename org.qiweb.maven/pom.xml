@@ -23,6 +23,11 @@
             <comments>Copyrights retained by each developer.</comments>
         </license>
     </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
     
     <repositories>
         <repository>
@@ -41,8 +46,8 @@
         _________                       .__.__
         \_   ___ \  ____   _____ ______ |__|  |   ____
         /    \  \/ /  _ \ /     \\____ \|  |  | _/ __ \
-        \     \___(  <_> )  Y Y  \  |_> >  |  |_\  ___/
-         \______  /\____/|__|_|  /   __/|__|____/\___  >
+        \     \___(  (_) )  Y Y  \  |_) )  |  |_\  ___/
+         \______  /\____/|__|_|  /   __/|__|____/\___  )
                 \/             \/|__|                \/
         -->
 
@@ -71,7 +76,7 @@
         __________                    .__    .___         .___
         \______   \_______  _______  _|__| __| _/____   __| _/
          |     ___/\_  __ \/  _ \  \/ /  |/ __ |/ __ \ / __ |
-         |    |     |  | \(  <_> )   /|  / /_/ \  ___// /_/ |
+         |    |     |  | \(  (_) )   /|  / /_/ \  ___// /_/ |
          |____|     |__|   \____/ \_/ |__\____ |\___  >____ |
                                               \/    \/     \/
         -->
@@ -116,6 +121,18 @@
             <version>2.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>2.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.3</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
     
@@ -129,11 +146,24 @@
     <build>
         <plugins>
 
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+
             <!--
                 _____                              __________.__               .__
                /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
               /  \ /  \\__  \\  \/ // __ \ /    \   |     ___/  | |  |  \/ ___\|  |/    \
-             /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  >  |   |  \
+             /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  )  |   |  \
              \____|__  (____  /\_/  \___  >___|  /  |____|   |____/____/\___  /|__|___|  /
                      \/     \/          \/     \/                      /_____/         \/
             -->
@@ -180,8 +210,71 @@
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
-        </plugins>
 
+            <!--
+            .___        __                              __  .__                ___________              __
+            |   | _____/  |_  ____   ________________ _/  |_|__| ____   ____   \__    ___/___   _______/  |_  ______
+            |   |/    \   __\/ __ \ / ___\_  __ \__  \\   __\  |/  _ \ /    \    |    |_/ __ \ /  ___/\   __\/  ___/
+            |   |   |  \  | \  ___// /_/  >  | \// __ \|  | |  (  (_) )   |  \   |    |\  ___/ \___ \  |  |  \___ \
+            |___|___|  /__|  \___  >___  /|__|  (____  /__| |__|\____/|___|  /   |____| \___  >____  > |__| /____  >
+                     \/          \/_____/            \/                    \/               \/     \/            \/
+            -->
+
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>1.8</version>
+                <configuration>
+                    <localRepositoryPath>${project.build.directory}/it-local-repository</localRepositoryPath>
+                    <extraArtifacts>
+                        <extraArtifact>org.codehaus.plexus:plexus-utils:2.1</extraArtifact>
+                        <extraArtifact>org.codehaus.plexus:plexus-utils:1.5.5</extraArtifact>
+                        <extraArtifact>org.codehaus.plexus:plexus-classworlds:2.4</extraArtifact>
+                        <extraArtifact>org.slf4j:slf4j-simple:1.7.7</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.6</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:2.5.1</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12.4</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.4</extraArtifact>
+                    </extraArtifacts>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.17</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>0</forkCount>
+                            <useSystemClassloader>false</useSystemClassloader>
+                            <systemPropertyVariables>
+                                <maven.home>${maven.home}</maven.home>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verify-integration-tests</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+      
+        </plugins>
     </build>
 
 </project>

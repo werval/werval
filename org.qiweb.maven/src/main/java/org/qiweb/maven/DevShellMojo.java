@@ -22,14 +22,21 @@ import java.util.Set;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JavaWatcher;
 
-@Mojo( name = "devshell", requiresDependencyResolution = ResolutionScope.RUNTIME )
+import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
+
+/**
+ * Development Shell Mojo.
+ */
+@Mojo( name = "devshell", requiresDependencyResolution = RUNTIME )
+@Execute( phase = COMPILE )
 public class DevShellMojo
     extends AbstractMojo
 {
