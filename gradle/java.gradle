@@ -251,7 +251,58 @@ signArchives.onlyIf { version != "0" && !version.contains( "SNAPSHOT" ) }
 apply plugin: 'maven-publish'
 publishing {
     publications {
-        jars( MavenPublication ) { from components.java }
+        jars( MavenPublication ) {
+            from components.java
+            pom.withXml {
+                // Append additional metadata
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name project.name
+                    description project.description
+                    url "http://qiweb.org"
+                    inceptionYear '2013'
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    scm {
+                        url 'https://scm.codeartisans.org/qiweb/qiweb'
+                        connection 'scm:git:https://scm.codeartisans.org/qiweb/qiweb.git'
+                        developerConnection 'scm:git:git@scm.codeartisans.org:qiweb/qiweb.git'
+                    }
+                    developers {
+                        developer {
+                            id "eskatos"
+                            name "Paul Merlin"
+                            email "paul@nosphere.org"
+                            timezone "CET"
+                            roles {
+                                role 'Founder'
+                                role 'Developer'
+                            }
+                        }
+                        developer {
+                            id "q"
+                            name "Quentin Gensburger"
+                            email "quentin.gensburger@free.fr"
+                            timezone "CET"
+                            roles {
+                                role 'Contributor'
+                            }
+                        }
+                    }
+                }
+                // Gradle Publishing feature is exporting dependencies as 'runtime' scope,
+                // rather than 'compile'; fix that.
+                if( asNode().dependencies[0] ) {
+                    asNode().dependencies[0].dependency.each {
+                        it.scope[0].value = 'compile'
+                    }
+                }
+            }
+        }
     }
     repositories {
         maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
@@ -283,7 +334,7 @@ uploadArchives {
     }
 }
 
-// POM Setup for install and deploy
+// POM Setup for old maven support at install and deploy
 [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
     groupId = project.group
     artifactId = project.name
@@ -299,26 +350,26 @@ uploadArchives {
             }
         }
         scm {
-            url 'https://scm.codeartisans.org/paul/qiweb'
-            connection 'scm:git:https://scm.codeartisans.org/paul/qiweb.git'
-            developerConnection 'scm:git:git@scm.codeartisans.org:paul/qiweb.git'
+            url 'https://scm.codeartisans.org/qiweb/qiweb'
+            connection 'scm:git:https://scm.codeartisans.org/qiweb/qiweb.git'
+            developerConnection 'scm:git:git@scm.codeartisans.org:qiweb/qiweb.git'
         }
         developers {
             developer {
-                id = "eskatos"
-                name = "Paul Merlin"
-                email = "paul@nosphere.org"
-                timezone = "CET"
+                id "eskatos"
+                name "Paul Merlin"
+                email "paul@nosphere.org"
+                timezone "CET"
                 roles {
                     role 'Founder'
                     role 'Developer'
                 }
             }
             developer {
-                id = "q"
-                name = "Quentin Gensburger"
-                email = "quentin.gensburger@free.fr"
-                timezone = "CET"
+                id "q"
+                name "Quentin Gensburger"
+                email "quentin.gensburger@free.fr"
+                timezone "CET"
                 roles {
                     role 'Contributor'
                 }
