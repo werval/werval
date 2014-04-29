@@ -320,6 +320,10 @@ public final class DamnSmallDevShell
                         + "";
         Files.write( new File( baseDir, "build.gradle.example" ).toPath(), gradle.getBytes( UTF_8 ) );
 
+        // Generate .gitignore
+        String gitignore = "target\nbuild\n.devshell.lock\n";
+        Files.write( new File( baseDir, ".gitignore" ).toPath(), gitignore.getBytes( UTF_8 ) );
+
         // Inform user
         System.out.println( "New QiWeb Application generated in '" + baseDir.getAbsolutePath() + "'." );
     }
