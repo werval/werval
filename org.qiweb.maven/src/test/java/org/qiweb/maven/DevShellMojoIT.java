@@ -283,6 +283,11 @@ public class DevShellMojoIT
                 containsString( "I ran changed!" )
             );
 
+            assertThat(
+                client.execute( new HttpGet( "http://localhost:23023/@doc" ), handler ),
+                containsString( "QiWeb Documentation" )
+            );
+
             client.getConnectionManager().shutdown();
         }
         finally

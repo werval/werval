@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JavaWatcher;
+import org.qiweb.runtime.util.ClassLoaders;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
@@ -61,6 +62,21 @@ public class DevShellMojo
             for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
             {
                 classPathSet.add( new URL( "file://" + runtimeClassPathElement ) );
+            }
+            File qiwebDoc = ClassLoaders.classpathForResource(
+                getClass().getClassLoader(),
+                "org/qiweb/doc/html/index.html"
+            );
+            if( qiwebDoc != null )
+            {
+                classPathSet.add( qiwebDoc.toURI().toURL() );
+            }
+            else
+            {
+                getLog().warn(
+                    "QiWeb Documentation not in the Maven Plugin Classpath, please report the issue: "
+                    + "https://scm.codeartisans.org/qiweb/qiweb/issues/new"
+                );
             }
             URL[] runtimeClassPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
 
