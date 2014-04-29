@@ -61,7 +61,7 @@ public class DevShellMojo
             Set<URL> classPathSet = new LinkedHashSet<>();
             for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
             {
-                classPathSet.add( new URL( "file://" + runtimeClassPathElement ) );
+                classPathSet.add( new File( runtimeClassPathElement ).toURI().toURL() );
             }
             File qiwebDoc = ClassLoaders.classpathForResource(
                 getClass().getClassLoader(),
