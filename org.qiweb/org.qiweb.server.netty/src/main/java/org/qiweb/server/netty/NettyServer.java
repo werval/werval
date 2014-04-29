@@ -214,7 +214,10 @@ public class NettyServer
             // Force close all channels
             try
             {
-                allChannels.close();
+                if( !allChannels.isEmpty() )
+                {
+                    allChannels.close();
+                }
             }
             catch( Exception ex )
             {
