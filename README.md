@@ -87,6 +87,19 @@ Simply open [http://localhost:23023/@doc](http://localhost:23023/@doc) to browse
 If you encounter any problem, please [fill an issue](https://scm.codeartisans.org/qiweb/qiweb/issues/new) with the maximum information about your problem.
 
 
+### Going further
+
+You'll certainly want a build system to help you manage your application construction, its dependencies, packaging and so on.
+The generated application contains sample build files for two build systems: Gradle and Maven.
+
+To use Gradle, rename `build.gradle.example` as `build.gradle`.
+
+To use Maven, rename `pom.xml.example` as `pom.xml`.
+
+Both builds produce executables applications and allow you to run in development mode.
+Respectively `gradle devshell` and `mvn qiweb:devshell`.
+
+
 ### Get help
 
 To discuss with the QiWeb community, post questions and get answers, it is easiest to do so at the project's [wall](https://scm.codeartisans.org/qiweb/qiweb/wall).
@@ -103,6 +116,9 @@ If you want to use the development version or contribute to QiWeb, keep reading.
 
 Obviously, you need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/).
 QiWeb is build using [Gradle](http://www.gradle.org/), that you don't need to install, it will be downloaded automatically.
+
+The only exception is the Maven Plugin that is built using Maven itself.
+You'll have to install [Maven](http://maven.apache.org/).
 
 This very git repository contains several independent projects.
 
