@@ -15,9 +15,12 @@
  */
 package org.qiweb.runtime.util;
 
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -43,6 +46,83 @@ public final class ClassLoaders
             throw new IllegalArgumentException( "ClassLoader is not an instance of URLClassLoader" );
         }
         return new ArrayList<>( Arrays.asList( ( (URLClassLoader) classLoader ).getURLs() ) );
+    }
+
+    public static File classpathForClass( Class<?> targetClass )
+    {
+        URI location;
+        try
+        {
+            location = targetClass.getProtectionDomain().getCodeSource().getLocation().toURI();
+        }
+        catch( URISyntaxException e )
+        {
+            throw new RuntimeException( e.getMessage(), e );
+        }
+        if( !location.getScheme().equals( "file" ) )
+        {
+            throw new QiWebException(
+                String.format(
+                    "Cannot determine classpath for %s from codebase '%s'.",
+                    targetClass.getName(),
+                    location
+                )
+            );
+        }
+        return new File( location.getPath() );
+    }
+
+    public static File classpathForResource( String name )
+    {
+        return classpathForResource( (ClassLoader) null, name );
+    }
+
+    public static File classpathForResource( ClassLoader classLoader, String name )
+    {
+        if( classLoader == null )
+        {
+            return classpathForResource( ClassLoader.getSystemResource( name ), name );
+        }
+        else
+        {
+            return classpathForResource( classLoader.getResource( name ), name );
+        }
+    }
+
+    public static File classpathForResource( URL resource, String name )
+    {
+        URI location;
+        try
+        {
+            location = resource.toURI();
+            switch( location.getScheme() )
+            {
+                case "file":
+                    String path = location.getPath();
+                    assert path.endsWith( "/" + name );
+                    return new File( path.substring( 0, path.length() - ( name.length() + 1 ) ) );
+                case "jar":
+                    String schemeSpecificPart = location.getRawSchemeSpecificPart();
+                    int pos = schemeSpecificPart.indexOf( "!" );
+                    if( pos > 0 )
+                    {
+                        assert schemeSpecificPart.substring( pos + 1 ).equals( "/" + name );
+                        URI jarFile = new URI( schemeSpecificPart.substring( 0, pos ) );
+                        if( jarFile.getScheme().equals( "file" ) )
+                        {
+                            return new File( jarFile.getPath() );
+                        }
+                    }
+                    break;
+            }
+        }
+        catch( URISyntaxException e )
+        {
+            throw new RuntimeException( e.getMessage(), e );
+        }
+        throw new QiWebException(
+            String.format( "Cannot determine classpath for resource '%s' from location '%s'.", name, location )
+        );
     }
 
     public static void printURLs( ClassLoader classLoader )
@@ -99,11 +179,6 @@ public final class ClassLoaders
         printLoadedClasses( classLoader, new PrintWriter( new OutputStreamWriter( System.out, UTF_8 ) ) );
     }
 
-    @SuppressWarnings(
-        {
-        "unchecked",
-        "UseOfObsoleteCollectionType"
-    } )
     public static void printLoadedClasses( ClassLoader classLoader, PrintWriter output )
     {
         try
