@@ -59,6 +59,44 @@ public final class CurrentContext
     }
 
     /**
+     * Lookup a Plugin's API.
+     *
+     * Don't hold references to the Plugins API instances in order to make your code {@link org.qiweb.api.Mode#DEV}
+     * friendly.
+     *
+     * @param <T>           Parameterized Plugin API type
+     * @param pluginApiType Plugin type
+     *
+     * @return The first Plugin API found that match given type (Type equals first, then assignable).
+     *
+     * @throws IllegalArgumentException if no {@literal Plugin} is found for the given API type
+     * @throws IllegalStateException    if the {@literal Application} is not active
+     */
+    public static <T> T plugin( Class<T> pluginApiType )
+    {
+        return application().plugin( pluginApiType );
+    }
+
+    /**
+     * Lookup possibly several Plugin's API.
+     *
+     * Don't hold references to the Plugins API instances in order to make your code {@link org.qiweb.api.Mode#DEV}
+     * friendly.
+     *
+     * @param <T>           Parameterized Plugin API type
+     * @param pluginApiType Plugin type
+     *
+     * @return All Plugin APIs found that match the he given type (Type equals first, then assignables), or none if no
+     *         Plugin is found for the given API type.
+     *
+     * @throws IllegalStateException if the {@literal Application} is not active
+     */
+    public static <T> Iterable<T> plugins( Class<T> pluginApiType )
+    {
+        return application().plugins( pluginApiType );
+    }
+
+    /**
      * @return Current ReverseRoutes
      *
      * @throws QiWebException if no Context in current Thread
