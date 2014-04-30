@@ -96,8 +96,8 @@ To use Gradle, rename `build.gradle.example` as `build.gradle`.
 
 To use Maven, rename `pom.xml.example` as `pom.xml`.
 
-Both builds produce executables applications and allow you to run in development mode.
-Respectively `gradle devshell` and `mvn qiweb:devshell`.
+Both builds produce executables applications and allow you to run your application in production or development mode.
+Respectively `gradle start` or `gradle devshell` and `mvn qiweb:start` or `mvn qiweb:devshell`.
 
 
 ### Get help
