@@ -32,7 +32,7 @@ echo "Checked."
 
 # maven plugin
 $FIGLET org.qiweb.maven
-$MAVEN -f org.qiweb.maven/pom.xml clean verify
+$MAVEN -f org.qiweb.maven/pom.xml clean verify -Dgpg.skip
 echo "Checked."
 
 echo

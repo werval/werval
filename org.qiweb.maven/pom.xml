@@ -24,6 +24,12 @@
     <packaging>maven-plugin</packaging>
     <name>${project.artifactId}</name>
   
+    <scm>
+        <url>https://scm.codeartisans.org/qiweb/qiweb</url>
+        <connection>scm:git:https://scm.codeartisans.org/qiweb/qiweb.git</connection>
+        <developerConnection>scm:git:git@scm.codeartisans.org:qiweb/qiweb.git</developerConnection>
+    </scm>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -198,6 +204,29 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.2,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>1.8</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!--
                 _____                              __________.__               .__
                /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
@@ -341,7 +370,38 @@
                     </execution>
                 </executions>
             </plugin>
-      
+
+            <!--
+            __________       .__                               
+            \______   \ ____ |  |   ____ _____    ______ ____  
+             |       _// __ \|  | _/ __ \\__  \  /  ___// __ \ 
+             |    |   \  ___/|  |_\  ___/ / __ \_\___ \\  ___/ 
+             |____|___/\_____)____/\_____)______/______)\_____)
+            -->
+
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <updateReleaseInfo>true</updateReleaseInfo>
+                    <altReleaseDeploymentRepository>codeartisansNexus::default::https://repo.codeartisans.org/content/repositories/qiweb-releases</altReleaseDeploymentRepository>
+                    <altSnapshotDeploymentRepository>codeartisansNexus::default::https://repo.codeartisans.org/content/repositories/qiweb-snapshots</altSnapshotDeploymentRepository>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

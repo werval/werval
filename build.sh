@@ -32,7 +32,7 @@ echo "Built."
 
 # maven plugin
 $FIGLET org.qiweb.maven
-$MAVEN -f org.qiweb.maven/pom.xml install -DskipTests
+$MAVEN -f org.qiweb.maven/pom.xml install -DskipTests -Dgpg.skip
 echo "Built."
 
 echo
