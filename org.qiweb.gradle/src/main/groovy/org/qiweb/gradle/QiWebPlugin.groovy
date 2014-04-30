@@ -23,7 +23,7 @@ import org.gradle.internal.classloader.ClasspathUtil
  * QiWeb Gradle Plugin.
  * <p>Apply the 'java' plugin on the project if absent.</p>
  * <p>Define 'qiweb' project extension.</p>
- * <p>Create {@literal secret} and {@literal devshell} tasks.</p>
+ * <p>Create {@literal secret}, {@literal start} and {@literal devshell} tasks.</p>
  */
 // TODO What about a src/dev SourceSet with good defaults for logback, possibility to put dev conf etc ?
 class QiWebPlugin implements Plugin<Project>
@@ -62,20 +62,30 @@ class QiWebPlugin implements Plugin<Project>
             QiWebPluginExtension
         )
 
-        project.task( 
-            "devshell",
-            type: QiWebDevShellTask,
-            group: "QiWeb",
-            description: "Start the QiWeb DevShell.",
-            // FIXME This use the default value as the project value is not set yet !!!! Chicken and egg problem again..
-            dependsOn: project.tasks.getByName( project.qiweb.rebuildTask )
-        )
-
-        project.task( 
+        project.task(
             "secret",
             type: QiWebSecretTask,
             group:"QiWeb",
             description: 'Generate a new Application Secret.'
         )
+
+        project.task(
+            "devshell",
+            type: QiWebDevShellTask,
+            group: "QiWeb",
+            description: "Start the Application in development mode.",
+            // FIXME This use the default value as the project value is not set yet !!!! Chicken and egg problem again..
+            dependsOn: project.tasks.getByName( project.qiweb.rebuildTask )
+        )
+
+        project.task(
+            "start",
+            type: QiWebStartTask,
+            group: "QiWeb",
+            description: "Start the Application in production mode.",
+            // FIXME This use the default value as the project value is not set yet !!!! Chicken and egg problem again..
+            dependsOn: project.tasks.getByName( project.qiweb.rebuildTask )
+        )
+
     }
 }

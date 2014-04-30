@@ -51,6 +51,7 @@ public class QiWebPluginTest
     public void taskRegistration()
     {
         assertThat( project.getTasks().getByName( "secret" ), instanceOf( QiWebSecretTask.class ) );
+        assertThat( project.getTasks().getByName( "start" ), instanceOf( QiWebStartTask.class ) );
         assertThat( project.getTasks().getByName( "devshell" ), instanceOf( QiWebDevShellTask.class ) );
     }
 }

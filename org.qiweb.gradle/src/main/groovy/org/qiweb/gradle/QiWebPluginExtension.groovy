@@ -18,10 +18,9 @@ package org.qiweb.gradle
 /**
  * QiWeb Gradle Plugin Configuration.
  */
-class QiWebPluginExtension {
-
+class QiWebPluginExtension
+{
     def String rebuildTask = "classes"
 
     def Set<String> extraWatch = new HashSet<>();
-
 }

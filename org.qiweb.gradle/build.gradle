@@ -18,6 +18,7 @@ dependencies {
     compile gradleApi()
     compile libs.gradle_tooling
 
+    testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.awaitility
     
 }
