@@ -114,6 +114,7 @@ public final class ClassLoaders
                         }
                     }
                     break;
+                default:
             }
         }
         catch( URISyntaxException e )
