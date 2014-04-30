@@ -19,16 +19,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JavaWatcher;
-import org.qiweb.runtime.util.ClassLoaders;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
@@ -36,14 +33,11 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 /**
  * Development Shell Mojo.
  */
-@Mojo( name = "devshell", requiresDependencyResolution = RUNTIME )
+@Mojo( name = "devshell", requiresDependencyResolution = RUNTIME, threadSafe = true )
 @Execute( phase = COMPILE )
 public class DevShellMojo
-    extends AbstractMojo
+    extends AbstractQiWebMojo
 {
-    @Parameter( property = "project", required = true, readonly = true )
-    private MavenProject project;
-
     @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
 
@@ -55,30 +49,8 @@ public class DevShellMojo
 
         try
         {
-            File rootDir = project.getBasedir();
-
             // Classpath
-            Set<URL> classPathSet = new LinkedHashSet<>();
-            for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
-            {
-                classPathSet.add( new File( runtimeClassPathElement ).toURI().toURL() );
-            }
-            File qiwebDoc = ClassLoaders.classpathForResource(
-                getClass().getClassLoader(),
-                "org/qiweb/doc/html/index.html"
-            );
-            if( qiwebDoc != null )
-            {
-                classPathSet.add( qiwebDoc.toURI().toURL() );
-            }
-            else
-            {
-                getLog().warn(
-                    "QiWeb Documentation not in the Maven Plugin Classpath, please report the issue: "
-                    + "https://scm.codeartisans.org/qiweb/qiweb/issues/new"
-                );
-            }
-            URL[] runtimeClassPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
+            URL[] runtimeClassPath = runtimeClassPath();
 
             // Sources
             Set<File> sources = new LinkedHashSet<>();
@@ -87,7 +59,8 @@ public class DevShellMojo
                 sources.add( new File( sourceRoot ) );
             }
 
-            // Run DevShell
+            // Create DevShell
+            File rootDir = project.getBasedir();
             URL[] applicationClasspath = new URL[]
             {
                 new File( rootDir, "target/classes" ).toURI().toURL()
@@ -100,8 +73,10 @@ public class DevShellMojo
                 )
             );
 
+            // Register shutdown hook
             Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
 
+            // Start
             devShell.start();
         }
         catch( Exception ex )
