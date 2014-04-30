@@ -86,7 +86,7 @@ user@host ~/hello-qiweb $ gradle check
 .Run in production mode
 [source]
 ----
-user@host ~/hello-qiweb $ gradle run
+user@host ~/hello-qiweb $ gradle start
 ----
 
 .Generate ZIP distribution

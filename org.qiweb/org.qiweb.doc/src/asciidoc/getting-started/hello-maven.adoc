@@ -131,10 +131,10 @@ user@host ~/hello-qiweb $ mvn test
 .Run in production mode
 [source]
 ----
-user@host ~/hello-qiweb $ mvn exec:java
+user@host ~/hello-qiweb $ mvn qiweb:start
 ----
 
-.Generate ZIP distribution
+.Generate distribution
 [source]
 ----
 user@host ~/hello-qiweb $ mvn package
