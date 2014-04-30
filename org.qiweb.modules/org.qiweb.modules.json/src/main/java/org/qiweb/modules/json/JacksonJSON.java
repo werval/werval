@@ -50,7 +50,7 @@ public class JacksonJSON
     {
         try
         {
-            return mapper.writer().writeValueAsBytes( object );
+            return mapper.writeValueAsBytes( object );
         }
         catch( JsonProcessingException ex )
         {
