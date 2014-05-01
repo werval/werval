@@ -21,7 +21,7 @@ def v_eclipselink = '2.5.1'
 def v_jpa = '2.1.0'
 
 // Build Plugins libraries versions
-def v_gradle_tooling = '1.11'
+def v_gradle_tooling = '1.12'
 
 // Testing Tools libraries versions
 def v_awaitility = '1.6.0'
