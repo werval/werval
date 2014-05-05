@@ -17,9 +17,18 @@ def v_exec = '1.2'
 def v_io = '1.3.2'
 
 // Modules libraries versions
+def v_bonecp = '0.8.0.RELEASE'
 def v_eclipselink = '2.5.1'
+def v_ehcache = '2.8.2'
+def v_email = '1.3.2'
+def v_guice = '4.0-beta4' // FIXME Final!
 def v_jackson = '2.4.0-rc2' // FIXME Final!
 def v_jpa = '2.1.0'
+def v_memcache = '2.11.1'
+def v_qi4j = '2.1-SNAPSHOT' // FIXME Final!
+def v_rythm = '1.0'
+def v_spring = '4.0.4.RELEASE'
+def v_tyrex = '1.0.1'
 
 // Build Plugins libraries versions
 def v_gradle_tooling = '1.12'
@@ -31,6 +40,7 @@ def v_junit = '4.11'
 def v_rest_assured = '2.3.1'
 
 // Test libraries versions
+def v_dumbster = '1.6'
 def v_h2 = '1.4.178'
 def v_logback = '1.1.2'
 def v_postgres = '9.3-1101-jdbc41'
@@ -56,8 +66,22 @@ rootProject.ext {
         io:                 "org.apache.commons:commons-io:$v_io",
 
         // Modules libraries
+        bonecp:             "com.jolbox:bonecp:$v_bonecp",
         eclipselink:        "org.eclipse.persistence:eclipselink:$v_eclipselink",
+        ehcache:            "net.sf.ehcache:ehcache:$v_ehcache",
+        email:              "org.apache.commons:commons-email:$v_email",
+        guice:              "com.google.inject:guice:$v_guice",
         jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
+        memcache:           "net.spy:spymemcached:$v_memcache",
+        qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
+        qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
+        rythm: [
+                            "org.rythmengine:rythm-engine:$v_rythm",
+                            'org.eclipse.jdt.core.compiler:ecj:4.3.1'
+        ],
+        spring_context:     "org.springframework:spring-context:$v_spring",
+        spring_test:        "org.springframework:spring-test:$v_spring",
+        tyrex:              "tyrex:tyrex:$v_tyrex",
 
         // Build Plugins libraries
         gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
@@ -75,6 +99,7 @@ rootProject.ext {
         ],
 
         // Test libraries
+        dumbster:           "dumbster:dumbster:$v_dumbster",
         h2:                 "com.h2database:h2:$v_h2",
         jackson: [
                             "com.fasterxml.jackson.core:jackson-core:$v_jackson",

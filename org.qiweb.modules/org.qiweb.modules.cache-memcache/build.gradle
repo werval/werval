@@ -2,7 +2,7 @@
 dependencies {
 
     compile "org.qiweb:org.qiweb.spi:$version"
-    compile 'net.spy:spymemcached:2.11.1'
+    compile libs.memcache
 
     testCompile "org.qiweb:org.qiweb.test:$version"
 
