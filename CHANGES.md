@@ -15,9 +15,12 @@ Only use Final versions in production!
 ## Changelog
 
 This log of changes only contains security fixes, bug fixes, breaking changes, new features or enhancements and dependencies changes.
-For minor changes, build system or test changes, see the full [source code history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.3.Alpha).
+For minor changes, build system or test changes, see the full [source code history](https://scm.codeartisans.org/qiweb/qiweb/network/master).
 
-### develop
+
+### develop - [history](https://scm.codeartisans.org/qiweb/qiweb/network/develop)
+
+> This is the current development branch, unreleased!
 
 - New features
 	- Maven plugin, see #97
@@ -32,7 +35,7 @@ For minor changes, build system or test changes, see the full [source code histo
 	- Upgrade Gradle from `1.11` to `1.12`, see the [release notes](http://www.gradle.org/docs/1.12/release-notes)
 
 
-### 0.2.0.Alpha
+### 0.2.0.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.2.0.Alpha)
 
 - Breaking changes
 	- Moved `org.qiweb.lib.controllers` into `org.qiweb.api.controllers`, see #87 & #91
@@ -53,13 +56,12 @@ For minor changes, build system or test changes, see the full [source code histo
 	- The CLI now generate a `build.gradle` file in new applications, see #92
 	- Better error reporting on passivation
 	- Minor enhancements to test support
-	- Some progress towards Windows support in CLI
-	- Reintroduce Gradle Wrapper in all projects
+	- Some progress towards Windows support in CLI, untested!
 - Dependency changes
 	- Upgrade Netty from `4.0.17` to `4.0.18`, see the [announcement](http://netty.io/news/2014/04/01/4-0-18-Final.html)
 
 
-### 0.1.3.Alpha
+### 0.1.3.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.3.Alpha)
 
 - Bug fixes
 	- Fix Rythm Plugin template resolution in prod mode, see #74
@@ -68,14 +70,14 @@ For minor changes, build system or test changes, see the full [source code histo
 	- Upgrade Spring dependency from `4.0.2` to `4.0.3` that comes with [Java 8 support](http://spring.io/blog/2014/03/27/spring-framework-4-0-3-released-with-java-8-support-now-production-ready)
 
 
-### 0.1.1.Alpha
+### 0.1.1.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.1.Alpha)
 
 - Bug fixes
 	- Fix CLI new app generation bugs
 	- DevShell now advertise the app `URL` to `STDOUT` on startup
 
 
-### 0.1.0.Alpha
+### 0.1.0.Alpha -  - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.0.Alpha)
 
 First release!
 
