@@ -84,7 +84,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### 0.1.3.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.3.Alpha)
 
-#### Bug fixes
+> Hotfix!
 
 - Add support for `DATABASE_URL` Heroku syntax to the JDBC Plugin, fixes samples deployment on Heroku, see #69
 
@@ -92,7 +92,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### 0.1.2.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.2.Alpha)
 
-#### Bug fixes
+> Hotfix!
 
 - Fix Rythm Plugin template resolution in prod mode, see #74
 
@@ -100,7 +100,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### 0.1.1.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.1.Alpha)
 
-#### Bug fixes
+> Hotfix!
 
 - Fix CLI new app generation bugs
 - DevShell now advertise the app `URL` to `STDOUT` on startup
