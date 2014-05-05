@@ -188,14 +188,20 @@ public abstract class AbstractQiWebMojoIT
     public static void killZombies()
         throws Exception
     {
-        Processes.killJvms(
-            line -> line.contains( "org.codehaus.plexus.classworlds.launcher.Launcher" )
-                    && line.contains( "maven.repo.local" )
-                    && line.contains( new File( BASEDIR, "target/it-local-repository" ).getAbsolutePath() )
-        );
-        if( lock.exists() )
+        try
         {
-            Files.delete( lock.toPath() );
+            String self = Processes.currentPID( "NO_PID" );
+            Processes.killJvms(
+                line -> line.contains( "org.codehaus.plexus.classworlds.launcher.Launcher" )
+                        && !line.startsWith( self )
+            );
+        }
+        finally
+        {
+            if( lock.exists() )
+            {
+                Files.delete( lock.toPath() );
+            }
         }
     }
 

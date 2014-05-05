@@ -164,12 +164,12 @@ public class QiWebPluginIntegTest
     }
 
     @After
-    public void killAllGradleDaemonsButUs()
+    public void killZombies()
         throws Exception
     {
         try
         {
-            final String self = Processes.currentPID( null );
+            final String self = Processes.currentPID( "NO_PID" );
             Processes.killJvms(
                 new Predicate<String>()
                 {
@@ -177,7 +177,7 @@ public class QiWebPluginIntegTest
                     public boolean test( String line )
                     {
                         return line.contains( "org.gradle.launcher.daemon.bootstrap.GradleDaemon" )
-                               && ( self == null || !line.startsWith( self ) );
+                               && !line.startsWith( self );
                     }
                 }
             );
