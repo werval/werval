@@ -28,6 +28,8 @@ public final class Numbers
      * If the {@literal long} is greater than {@link Integer#MAX_VALUE} then {@link Integer#MAX_VALUE} is returned.
      * <p>
      * If the {@literal long} is lesser than {@link Integer#MIN_VALUE} then {@link Integer#MIN_VALUE} is returned.
+     * <p>
+     * Implementation use {@literal BigInteger}s. See {@link Math#toIntExact(long)} for a throwing equivalent.
      *
      * @param aLong A {@literal long}
      *
@@ -46,6 +48,8 @@ public final class Numbers
      * <p>
      * If the sum of all the {@literal long}s is lesser than {@link Long#MIN_VALUE} then {@link Long#MIN_VALUE} is
      * returned.
+     * <p>
+     * Implementation use {@literal BigInteger}s. See {@link Math#addExact(long, long)} for a throwing equivalent.
      *
      * @param longs {@literal long}s to sum
      *
@@ -69,6 +73,8 @@ public final class Numbers
      * <p>
      * If the product of all the {@literal long}s is lesser than {@link Long#MIN_VALUE} then {@link Long#MIN_VALUE} is
      * returned.
+     * <p>
+     * Implementation use {@literal BigInteger}s. See {@link Math#multiplyExact(long, long)} for a throwing equivalent.
      *
      * @param longs {@literal long}s to multiply
      *
