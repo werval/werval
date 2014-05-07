@@ -318,9 +318,19 @@ public class HttpBuildersInstance
             QueryString queryString = new QueryStringInstance( decoder.parameters() );
 
             // Request charset
-            Charset requestCharset = headers.has( CONTENT_TYPE )
-                                     ? Charset.forName( extractCharset( headers.singleValue( CONTENT_TYPE ) ) )
-                                     : defaultCharset;
+            Charset requestCharset = null;
+            if( headers.has( CONTENT_TYPE ) )
+            {
+                String extractedCharset = extractCharset( headers.singleValue( CONTENT_TYPE ) );
+                if( !Strings.isEmpty( extractedCharset ) )
+                {
+                    requestCharset = Charset.forName( extractedCharset );
+                }
+            }
+            if( requestCharset == null )
+            {
+                requestCharset = defaultCharset;
+            }
 
             // Parse Cookies from Headers
             Map<String, Cookie> allCookies = new HashMap<>();
