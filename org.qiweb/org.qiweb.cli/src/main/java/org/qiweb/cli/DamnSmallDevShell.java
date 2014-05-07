@@ -429,7 +429,7 @@ public final class DamnSmallDevShell
         Files.write( new File( baseDir, "pom.xml.example" ).toPath(), pom.getBytes( UTF_8 ) );
 
         // Generate .gitignore
-        String gitignore = "target\nbuild\n.devshell.lock\nbuild.gradle.example\npom.xml.example\n";
+        String gitignore = "target\nbuild\n.devshell.lock\nbuild.gradle.example\npom.xml.example\n.gradle\n";
         Files.write( new File( baseDir, ".gitignore" ).toPath(), gitignore.getBytes( UTF_8 ) );
 
         // Inform user
