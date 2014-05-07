@@ -339,23 +339,26 @@ public class HttpBuildersInstance
                 List<String> cookieHeaders = headers.values( COOKIE );
                 for( String cookieHeader : cookieHeaders )
                 {
-                    for( HttpCookie jCookie : HttpCookie.parse( cookieHeader ) )
+                    for( String splitCookieHeader : splitMultiCookies( cookieHeader ) )
                     {
-                        allCookies.put(
-                            jCookie.getName(),
-                            new CookiesInstance.CookieInstance(
-                                jCookie.getVersion(),
+                        for( HttpCookie jCookie : HttpCookie.parse( splitCookieHeader ) )
+                        {
+                            allCookies.put(
                                 jCookie.getName(),
-                                jCookie.getValue(),
-                                jCookie.getPath(),
-                                jCookie.getDomain(),
-                                jCookie.getMaxAge(),
-                                jCookie.getSecure(),
-                                jCookie.isHttpOnly(),
-                                jCookie.getComment(),
-                                jCookie.getCommentURL()
-                            )
-                        );
+                                new CookiesInstance.CookieInstance(
+                                    jCookie.getVersion(),
+                                    jCookie.getName(),
+                                    jCookie.getValue(),
+                                    jCookie.getPath(),
+                                    jCookie.getDomain(),
+                                    jCookie.getMaxAge(),
+                                    jCookie.getSecure(),
+                                    jCookie.isHttpOnly(),
+                                    jCookie.getComment(),
+                                    jCookie.getCommentURL()
+                                )
+                            );
+                        }
                     }
                 }
             }
@@ -529,5 +532,28 @@ public class HttpBuildersInstance
                 version, name, value, path, domain, maxAge, secure, httpOnly, comment, commentUrl
             );
         }
+    }
+
+    private static List<String> splitMultiCookies( String header )
+    {
+        List<String> cookies = new java.util.ArrayList<>();
+        int quoteCount = 0;
+        int p, q;
+        for( p = 0, q = 0; p < header.length(); p++ )
+        {
+            char c = header.charAt( p );
+            if( c == '"' )
+            {
+                quoteCount++;
+            }
+            if( c == ';' && ( quoteCount % 2 == 0 ) )
+            {
+                // it is ; and not surrounded by double-quotes
+                cookies.add( header.substring( q, p ) );
+                q = p + 1;
+            }
+        }
+        cookies.add( header.substring( q ) );
+        return cookies;
     }
 }
