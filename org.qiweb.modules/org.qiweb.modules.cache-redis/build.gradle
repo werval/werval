@@ -1,0 +1,10 @@
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.spi:$version"
+    compile libs.jedis
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+
+}
+
