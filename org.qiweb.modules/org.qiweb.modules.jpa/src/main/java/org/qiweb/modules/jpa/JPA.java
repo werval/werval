@@ -20,12 +20,16 @@ import java.util.Map;
 import java.util.function.Supplier;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUtil;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 
-public class JPA
+/**
+ * JPA 2 Plugin API.
+ */
+public final class JPA
 {
     private final ClassLoader loader;
     private final Map<String, Map<String, ?>> unitsProperties;
@@ -81,11 +85,77 @@ public class JPA
         return emf( persistenceUnitName ).createEntityManager();
     }
 
+    public <T> T withReadOnlyTx( Supplier<T> block )
+    {
+        return withReadOnlyTx( defaultPersistanceUnitName, block );
+    }
+
+    public <T> T withReadOnlyTx( String persistenceUnitName, Supplier<T> block )
+    {
+        return withTransaction( persistenceUnitName, true, block );
+    }
+
+    public <T> T withReadWriteTx( Supplier<T> block )
+    {
+        return withReadWriteTx( defaultPersistanceUnitName, block );
+    }
+
+    public <T> T withReadWriteTx( String persistenceUnitName, Supplier<T> block )
+    {
+        return withTransaction( persistenceUnitName, false, block );
+    }
+
     public <T> T withTransaction( boolean readOnly, Supplier<T> block )
     {
-        // TODO https://github.com/playframework/playframework/blob/2.2.x/framework/src/play-java-jpa/src/main/java/play/db/jpa/JPA.java#L173
-        T result = block.get();
-        return result;
+        return withTransaction( defaultPersistanceUnitName, readOnly, block );
+    }
+
+    public <T> T withTransaction( String persistenceUnitName, boolean readOnly, Supplier<T> block )
+    {
+        EntityManager em = em( persistenceUnitName );
+        EntityTransaction tx = null;
+        if( !readOnly )
+        {
+            tx = em.getTransaction();
+            tx.begin();
+        }
+        try
+        {
+            T result = block.get();
+            if( tx != null )
+            {
+                if( tx.getRollbackOnly() )
+                {
+                    tx.rollback();
+                }
+                else
+                {
+                    tx.commit();
+                }
+            }
+            return result;
+        }
+        catch( Exception ex )
+        {
+            if( tx != null )
+            {
+                try
+                {
+                    if( tx.isActive() )
+                    {
+                        tx.rollback();
+                    }
+                }
+                catch( Exception ignored )
+                {
+                }
+            }
+            throw ex;
+        }
+        finally
+        {
+            em.close();
+        }
     }
 
     /* package */ void passivate()
