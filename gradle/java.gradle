@@ -269,7 +269,7 @@ publishing {
                         license {
                             name 'The Apache Software License, Version 2.0'
                             url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution: 'repo'
+                            distribution 'repo'
                         }
                     }
                     issueManagement {
@@ -363,9 +363,9 @@ uploadArchives {
 
 // POM Setup for old maven support at install and deploy
 [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
-    groupId project.group
-    artifactId project.name
-    version project.version
+    groupId = project.group
+    artifactId = project.name
+    version = project.version
     project {
         name project.name
         description project.description
@@ -379,7 +379,7 @@ uploadArchives {
             license {
                 name 'The Apache Software License, Version 2.0'
                 url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution: 'repo'
+                distribution 'repo'
             }
         }
         issueManagement {
