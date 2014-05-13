@@ -434,7 +434,10 @@ public final class ApplicationInstance
     @Reflectively.Invoked( by = "DevShell" )
     public void reload( ClassLoader newClassLoader )
     {
-        passivate();
+        if( activated )
+        {
+            passivate();
+        }
         this.classLoader = newClassLoader;
         this.config = new ConfigInstance( newClassLoader );
         configure();
