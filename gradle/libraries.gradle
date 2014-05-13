@@ -71,6 +71,11 @@ rootProject.ext {
         ehcache:            "net.sf.ehcache:ehcache:$v_ehcache",
         email:              "org.apache.commons:commons-email:$v_email",
         guice:              "com.google.inject:guice:$v_guice",
+        jackson: [
+                            "com.fasterxml.jackson.core:jackson-core:$v_jackson",
+                            "com.fasterxml.jackson.core:jackson-annotations:$v_jackson",
+                            "com.fasterxml.jackson.core:jackson-databind:$v_jackson",
+        ],
         jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
         memcache:           "net.spy:spymemcached:$v_memcache",
         qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
@@ -101,11 +106,6 @@ rootProject.ext {
         // Test libraries
         dumbster:           "dumbster:dumbster:$v_dumbster",
         h2:                 "com.h2database:h2:$v_h2",
-        jackson: [
-                            "com.fasterxml.jackson.core:jackson-core:$v_jackson",
-                            "com.fasterxml.jackson.core:jackson-annotations:$v_jackson",
-                            "com.fasterxml.jackson.core:jackson-databind:$v_jackson",
-        ],
         logback:            "ch.qos.logback:logback-classic:$v_logback",
         postgres:           "org.postgresql:postgresql:$v_postgres",
 
