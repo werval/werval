@@ -277,19 +277,37 @@ publishing {
                             id "eskatos"
                             name "Paul Merlin"
                             email "paul@nosphere.org"
-                            timezone "CET"
+                            timezone "Europe/Paris"
                             roles {
                                 role 'Founder'
                                 role 'Developer'
                             }
                         }
-                        developer {
-                            id "q"
+                    }
+                    contributors {
+                        contributor {
                             name "Quentin Gensburger"
                             email "quentin.gensburger@free.fr"
-                            timezone "CET"
+                            timezone "Europe/Paris"
                             roles {
+                                role 'Tester'
                                 role 'Contributor'
+                            }
+                        }
+                        contributor {
+                            name "Lionel Chanson"
+                            email "lionel@soreia.com"
+                            timezone "Europe/Paris"
+                            roles {
+                                role 'Tester'
+                            }
+                        }
+                        contributor {
+                            name "Jean-Michel Tonneau"
+                            email "jmichel.tonneau@gmail.com"
+                            timezone "Europe/London"
+                            roles {
+                                role 'Tester'
                             }
                         }
                     }
@@ -359,19 +377,37 @@ uploadArchives {
                 id "eskatos"
                 name "Paul Merlin"
                 email "paul@nosphere.org"
-                timezone "CET"
+                timezone "Europe/Paris"
                 roles {
                     role 'Founder'
                     role 'Developer'
                 }
             }
-            developer {
-                id "q"
+        }
+        contributors {
+            contributor {
                 name "Quentin Gensburger"
                 email "quentin.gensburger@free.fr"
-                timezone "CET"
+                timezone "Europe/Paris"
                 roles {
+                    role 'Tester'
                     role 'Contributor'
+                }
+            }
+            contributor {
+                name "Lionel Chanson"
+                email "lionel@soreia.com"
+                timezone "Europe/Paris"
+                roles {
+                    role 'Tester'
+                }
+            }
+            contributor {
+                name "Jean-Michel Tonneau"
+                email "jmichel.tonneau@gmail.com"
+                timezone "Europe/London"
+                roles {
+                    role 'Tester'
                 }
             }
         }
