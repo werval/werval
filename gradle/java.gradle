@@ -261,11 +261,20 @@ publishing {
                     description project.description
                     url "http://qiweb.org"
                     inceptionYear '2013'
+                    organization {
+                        name 'QiWeb Community'
+                        url 'https://scm.codeartisans.org/qiweb'
+                    }
                     licenses {
                         license {
                             name 'The Apache Software License, Version 2.0'
                             url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution: 'repo'
                         }
+                    }
+                    issueManagement {
+                        system 'Gitlab'
+                        url 'https://scm.codeartisans.org/qiweb/qiweb/issues'
                     }
                     scm {
                         url 'https://scm.codeartisans.org/qiweb/qiweb'
@@ -354,18 +363,28 @@ uploadArchives {
 
 // POM Setup for old maven support at install and deploy
 [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
-    groupId = project.group
-    artifactId = project.name
-    version = project.version
+    groupId project.group
+    artifactId project.name
+    version project.version
     project {
-        description = project.description
-        url = "http://qiweb.org"
+        name project.name
+        description project.description
+        url "http://qiweb.org"
         inceptionYear '2013'
+        organization {
+            name 'QiWeb Community'
+            url 'https://scm.codeartisans.org/qiweb'
+        }
         licenses {
             license {
                 name 'The Apache Software License, Version 2.0'
                 url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution: 'repo'
             }
+        }
+        issueManagement {
+            system 'Gitlab'
+            url 'https://scm.codeartisans.org/qiweb/qiweb/issues'
         }
         scm {
             url 'https://scm.codeartisans.org/qiweb/qiweb'
