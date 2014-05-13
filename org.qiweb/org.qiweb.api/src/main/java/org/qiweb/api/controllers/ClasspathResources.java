@@ -48,7 +48,7 @@ public class ClasspathResources
     private static final Logger LOG = LoggerFactory.getLogger( ClasspathResources.class );
     // No need for heading slash as we ask a ClassLoader instance for Resources
     // Would have been needed if we asked a Class instance for Resources
-    private static final String META_INF_RESOURCES = "META-INF/resources/";
+    private static final String META_INF_RESOURCES = "META-INF/resources";
 
     /**
      * Serve static files from META-INF/resources in classpath.
@@ -59,7 +59,7 @@ public class ClasspathResources
      */
     public Outcome metainf( String path )
     {
-        return resource( META_INF_RESOURCES + path );
+        return resource( META_INF_RESOURCES + '/'  + path );
     }
 
     /**
@@ -72,7 +72,7 @@ public class ClasspathResources
      */
     public Outcome resource( String basepath, String path )
     {
-        return resource( basepath + path );
+        return resource( basepath + '/' + path );
     }
 
     /**
