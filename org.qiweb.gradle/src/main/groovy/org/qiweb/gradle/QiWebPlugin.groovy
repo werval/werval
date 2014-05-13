@@ -74,8 +74,7 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebDevShellTask,
             group: "QiWeb",
             description: "Start the Application in development mode.",
-            // FIXME This use the default value as the project value is not set yet !!!! Chicken and egg problem again..
-            dependsOn: project.tasks.getByName( project.qiweb.rebuildTask )
+            dependsOn: project.tasks.getByName( "build" )
         )
 
         project.task(
@@ -83,8 +82,7 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebStartTask,
             group: "QiWeb",
             description: "Start the Application in production mode.",
-            // FIXME This use the default value as the project value is not set yet !!!! Chicken and egg problem again..
-            dependsOn: project.tasks.getByName( project.qiweb.rebuildTask )
+            dependsOn: project.tasks.getByName( "build" )
         )
 
     }

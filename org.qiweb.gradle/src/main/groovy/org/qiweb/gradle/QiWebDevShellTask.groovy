@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,13 @@ import org.qiweb.devshell.DevShell
 
 class QiWebDevShellTask extends DefaultTask
 {
+    List<String> rebuildTasks = new ArrayList<>();
+    Set<String> extraWatch = new HashSet<>()
+
+    QiWebDevShellTask() {
+        rebuildTasks.add( "classes" );
+    }
+    
     @TaskAction
     void runDevShell()
     {
@@ -40,7 +47,7 @@ class QiWebDevShellTask extends DefaultTask
             f.toURI().toURL()
         }
         sources.each { f -> runtimeClasspath << f.toURI().toURL() }
-        sources += project.qiweb.extraWatch.collect { s -> project.file( s ) }
+        sources += extraWatch.collect { s -> project.file( s ) }
 
         // == Start the DevShell
 
@@ -50,7 +57,7 @@ class QiWebDevShellTask extends DefaultTask
             sources,
             new JavaWatcher(),
             project.getProjectDir(),
-            project.qiweb.rebuildTask
+            rebuildTasks
         )
 
         def devshell = new DevShell( devShellSPI )
@@ -58,4 +65,3 @@ class QiWebDevShellTask extends DefaultTask
         devshell.start()
     }
 }
-
