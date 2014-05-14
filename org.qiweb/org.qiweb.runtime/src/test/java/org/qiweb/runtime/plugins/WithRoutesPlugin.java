@@ -17,6 +17,7 @@ package org.qiweb.runtime.plugins;
 
 import java.io.IOException;
 import java.util.List;
+import org.qiweb.api.Mode;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.Route;
@@ -47,7 +48,7 @@ public class WithRoutesPlugin
     }
 
     @Override
-    public List<Route> firstRoutes( RouteBuilder routeBuilder )
+    public List<Route> firstRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return singletonList( routeBuilder
             .route( "GET" )
@@ -58,7 +59,7 @@ public class WithRoutesPlugin
     }
 
     @Override
-    public List<Route> lastRoutes( RouteBuilder routeBuilder )
+    public List<Route> lastRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return singletonList( routeBuilder
             .route( "GET" )

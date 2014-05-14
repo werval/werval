@@ -91,11 +91,12 @@ public interface Plugin<API>
      * <p>
      * Called by {@literal Application} once activated.
      *
+     * @param mode         Application Mode
      * @param routeBuilder Builder for Routes
      *
      * @return Routes this plugin prepend to the {@literal Application} routes
      */
-    default List<Route> firstRoutes( RouteBuilder routeBuilder )
+    default List<Route> firstRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return EMPTY_LIST;
     }
@@ -107,11 +108,12 @@ public interface Plugin<API>
      * <p>
      * Called by {@literal Application} once activated.
      *
+     * @param mode         Application Mode
      * @param routeBuilder Builder for Routes
      *
      * @return Routes this plugin append to the {@literal Application} routes
      */
-    default List<Route> lastRoutes( RouteBuilder routeBuilder )
+    default List<Route> lastRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return EMPTY_LIST;
     }

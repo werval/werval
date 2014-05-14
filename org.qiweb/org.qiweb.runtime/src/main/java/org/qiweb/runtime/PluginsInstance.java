@@ -132,7 +132,7 @@ import static java.util.Collections.EMPTY_LIST;
         for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
             String routesPrefix = plugin.left().routesPrefix( plugin.right() );
-            firstRoutes.addAll( plugin.left().firstRoutes( new RouteBuilderInstance( app, routesPrefix ) ) );
+            firstRoutes.addAll( plugin.left().firstRoutes( app.mode(), new RouteBuilderInstance( app, routesPrefix ) ) );
         }
         return firstRoutes;
     }
@@ -143,7 +143,7 @@ import static java.util.Collections.EMPTY_LIST;
         for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
             String routesPrefix = plugin.left().routesPrefix( plugin.right() );
-            lastRoutes.addAll( plugin.left().lastRoutes( new RouteBuilderInstance( app, routesPrefix ) ) );
+            lastRoutes.addAll( plugin.left().lastRoutes( app.mode(), new RouteBuilderInstance( app, routesPrefix ) ) );
         }
         return lastRoutes;
     }
