@@ -118,7 +118,8 @@ public final class ApplicationInstance
     implements Application, ApplicationSPI
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationInstance.class );
-    private volatile boolean activated;
+    private volatile boolean activated = false;
+    private boolean activatingOrPassivating = false;
     private final Mode mode;
     private Config config;
     private PluginsInstance plugins;
@@ -227,8 +228,12 @@ public final class ApplicationInstance
         {
             throw new IllegalStateException( "Application already activated." );
         }
+
         ClassLoader previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( classLoader );
+
+        activatingOrPassivating = true;
+
         try
         {
             // Application Routes
@@ -251,6 +256,7 @@ public final class ApplicationInstance
         finally
         {
             Thread.currentThread().setContextClassLoader( previousLoader );
+            activatingOrPassivating = false;
         }
     }
 
@@ -261,8 +267,11 @@ public final class ApplicationInstance
         {
             throw new IllegalStateException( "Application already passivated." );
         }
+
         ClassLoader previousLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( classLoader );
+
+        activatingOrPassivating = true;
         try
         {
             List<Exception> passivationErrors = new ArrayList<>();
@@ -302,6 +311,7 @@ public final class ApplicationInstance
         {
             Thread.currentThread().setContextClassLoader( previousLoader );
             activated = false;
+            activatingOrPassivating = false;
         }
     }
 
@@ -768,7 +778,7 @@ public final class ApplicationInstance
 
     private void ensureActive()
     {
-        if( !activated )
+        if( !activated && !activatingOrPassivating )
         {
             throw new IllegalStateException( "Application is not active." );
         }

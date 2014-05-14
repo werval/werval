@@ -16,7 +16,9 @@
 package org.qiweb.runtime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +41,7 @@ import static java.util.Collections.EMPTY_LIST;
 /* package */ class PluginsInstance
 {
     private volatile boolean activated = false;
+    private boolean activatingOrPassivating = false;
     private final List<Config> configuredPlugins;
     private final List<Plugin<?>> extraPlugins;
     private List<Couple<Plugin<?>, Config>> activePlugins = EMPTY_LIST;
@@ -51,78 +54,103 @@ import static java.util.Collections.EMPTY_LIST;
 
     /* package */ void onActivate( ApplicationInstance application )
     {
-        EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
-        List<Couple<Plugin<?>, Config>> activatedPlugins = new ArrayList<>(
-            configuredPlugins.size() + extraPlugins.size() + extensions.size()
-        );
-        // Application Configured Plugins
-        for( Config pluginConfig : configuredPlugins )
+        activatingOrPassivating = true;
+        try
         {
-            try
+            EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
+            activePlugins = new ArrayList<>( configuredPlugins.size() + extraPlugins.size() + extensions.size() );
+
+            // Application Configured Plugins
+            for( Config pluginConfig : configuredPlugins )
             {
-                Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
-                Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, pluginClass );
-                if( plugin.enabled() )
+                try
                 {
-                    plugin.onActivate( application );
-                    activatedPlugins.add( Couple.of( plugin, pluginConfig ) );
+                    Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
+                    Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, pluginClass );
+                    if( plugin.enabled() )
+                    {
+                        plugin.onActivate( application );
+                        activePlugins.add( Couple.of( plugin, pluginConfig ) );
+                    }
+                    extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
                 }
-                extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
+                catch( ClassNotFoundException ex )
+                {
+                    throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
+                }
             }
-            catch( ClassNotFoundException ex )
+            // Global Extra Plugins
+            for( Plugin<?> extraPlugin : extraPlugins )
             {
-                throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
+                if( extraPlugin.enabled() )
+                {
+                    extraPlugin.onActivate( application );
+                    activePlugins.add( Couple.leftOnly( extraPlugin ) );
+                }
+                extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
             }
+            // Core Extensions Plugins
+            for( ExtensionPlugin extension : extensions )
+            {
+                Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
+                if( extensionPlugin.enabled() )
+                {
+                    extensionPlugin.onActivate( application );
+                    activePlugins.add( Couple.leftOnly( extensionPlugin ) );
+                }
+            }
+            // Plugins Activated
+            activated = true;
         }
-        // Global Extra Plugins
-        for( Plugin<?> extraPlugin : extraPlugins )
+        catch( Exception ex )
         {
-            if( extraPlugin.enabled() )
-            {
-                extraPlugin.onActivate( application );
-                activatedPlugins.add( Couple.leftOnly( extraPlugin ) );
-            }
-            extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
+            activePlugins = EMPTY_LIST;
+            throw ex;
         }
-        // Core Extensions Plugins
-        for( ExtensionPlugin extension : extensions )
+        finally
         {
-            Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
-            if( extensionPlugin.enabled() )
-            {
-                extensionPlugin.onActivate( application );
-                activatedPlugins.add( Couple.leftOnly( extensionPlugin ) );
-            }
+            activatingOrPassivating = false;
         }
-        // Plugins Activated
-        activePlugins = activatedPlugins;
-        activated = true;
     }
 
     /* package */ void onPassivate( Application application )
     {
-        List<Exception> errors = new ArrayList<>();
-        for( Couple<Plugin<?>, Config> activePlugin : activePlugins )
+        activatingOrPassivating = true;
+        try
         {
-            try
+            Collections.reverse( activePlugins );
+            Iterator<Couple<Plugin<?>, Config>> it = activePlugins.iterator();
+            List<Exception> errors = new ArrayList<>();
+            while( it.hasNext() )
             {
-                activePlugin.left().onPassivate( application );
+                try
+                {
+                    it.next().left().onPassivate( application );
+                }
+                catch( Exception ex )
+                {
+                    errors.add( ex );
+                }
+                finally
+                {
+                    it.remove();
+                }
             }
-            catch( Exception ex )
+            activePlugins = EMPTY_LIST;
+            activated = false;
+            if( !errors.isEmpty() )
             {
-                errors.add( ex );
+                PassivationException ex = new PassivationException( "There were errors during Plugins passivation" );
+                for( Exception err : errors )
+                {
+                    ex.addSuppressed( err );
+                }
+                throw ex;
             }
         }
-        activePlugins = EMPTY_LIST;
-        activated = false;
-        if( !errors.isEmpty() )
+        finally
         {
-            PassivationException ex = new PassivationException( "There were errors during Plugins passivation" );
-            for( Exception err : errors )
-            {
-                ex.addSuppressed( err );
-            }
-            throw ex;
+            activatingOrPassivating = false;
         }
     }
 
@@ -150,7 +178,7 @@ import static java.util.Collections.EMPTY_LIST;
 
     /* package */ <T> Iterable<T> plugins( Class<T> pluginApiType )
     {
-        if( !activated )
+        if( !activated && !activatingOrPassivating )
         {
             throw new IllegalStateException( "Plugins are passivated." );
         }
@@ -176,7 +204,7 @@ import static java.util.Collections.EMPTY_LIST;
 
     /* package */ <T> T plugin( Class<T> pluginApiType )
     {
-        if( !activated )
+        if( !activated && !activatingOrPassivating )
         {
             throw new IllegalStateException( "Plugins are passivated." );
         }
