@@ -238,7 +238,7 @@
 
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.3-SNAPSHOT</version>
+                <version>3.3</version>
                 <configuration>
                     <goalPrefix>qiweb</goalPrefix>
                     <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
