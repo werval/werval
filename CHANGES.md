@@ -28,8 +28,8 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Bug fixes
 
 - Fix Application reload after global error in DevShell, see #113
-- Fix multi-cookies parsing from requests
-- Fix handling of request with Content-Type but no Charset
+- Fix multi-cookies parsing from requests, see #120
+- Fix handling of request with Content-Type but no Charset, see #121
 - First request in development mode no longer trigger a superflous rebuild, this is snappier!, see #116
 
 #### New features
