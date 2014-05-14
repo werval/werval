@@ -63,7 +63,7 @@ public class ClasspathResources
     }
 
     /**
-     * Serve static files from resources in classpath.
+     * Serve static resources from classpath.
      *
      * @param basepath Base path of the requested resources, relative to the classpath root
      * @param path     Path of the requested resources, relative to the basePath parameter
@@ -76,9 +76,9 @@ public class ClasspathResources
     }
 
     /**
-     * Serve static files from resources in classpath.
+     * Serve a resource from classpath.
      *
-     * @param path Path of the requested resources, relative to the classpath root
+     * @param path Path of the requested resource, relative to the classpath root
      *
      * @return A Chunked Outcome if found, 404 otherwise
      */
