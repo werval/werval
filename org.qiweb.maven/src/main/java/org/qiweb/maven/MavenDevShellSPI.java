@@ -38,7 +38,7 @@ public class MavenDevShellSPI
         String rebuildPhase
     )
     {
-        super( applicationClassPath, runtimeClassPath, sources, watcher );
+        super( applicationClassPath, runtimeClassPath, sources, watcher, false );
         executor = new DefaultExecutor();
         cmdLine = new CommandLine( "mvn" );
         cmdLine.addArgument( "-f" );

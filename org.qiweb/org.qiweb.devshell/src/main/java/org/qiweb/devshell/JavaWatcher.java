@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,10 +43,9 @@ import static org.qiweb.runtime.util.Iterables.first;
 
 /**
  * Java WatchService based SourceWatcher.
- * <p>
- *     Based on the <a href="http://docs.oracle.com/javase/tutorial/essential/io/notification.html">Watching a Directory
- *     for Changes</a> Java Tutorial.
- * </p>
+ *
+ * Based on the <a href="http://docs.oracle.com/javase/tutorial/essential/io/notification.html">Watching a Directory
+ * for Changes</a> Java Tutorial.
  */
 public class JavaWatcher
     implements SourceWatcher
@@ -59,7 +58,11 @@ public class JavaWatcher
         private final SourceChangeListener listener;
         private boolean run = true;
 
-        private SourceChangeWatcher( WatchService watchService, Map<WatchKey, Path> keys, SourceChangeListener listener )
+        private SourceChangeWatcher(
+            WatchService watchService,
+            Map<WatchKey, Path> keys,
+            SourceChangeListener listener
+        )
             throws IOException
         {
             this.watchService = watchService;
@@ -218,16 +221,19 @@ public class JavaWatcher
         else
         {
             // register directory and sub-directories
-            Files.walkFileTree( start, new SimpleFileVisitor<Path>()
-                            {
-                                @Override
-                                public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
-                                    throws IOException
-                                {
-                                    register( dir, watchService, keys );
-                                    return FileVisitResult.CONTINUE;
-                                }
-            } );
+            Files.walkFileTree(
+                start,
+                new SimpleFileVisitor<Path>()
+                {
+                    @Override
+                    public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
+                    throws IOException
+                    {
+                        register( dir, watchService, keys );
+                        return FileVisitResult.CONTINUE;
+                    }
+                }
+            );
         }
     }
 

@@ -46,7 +46,8 @@ public class DevShellSPIAdapter
 
     public DevShellSPIAdapter(
         URL[] applicationClassPath, URL[] runtimeClassPath,
-        Set<File> toWatch, SourceWatcher watcher
+        Set<File> toWatch, SourceWatcher watcher,
+        boolean initialSourceChanged
     )
     {
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
@@ -64,6 +65,7 @@ public class DevShellSPIAdapter
                 }
             }
         );
+        sourceChanged = initialSourceChanged;
     }
 
     @Override

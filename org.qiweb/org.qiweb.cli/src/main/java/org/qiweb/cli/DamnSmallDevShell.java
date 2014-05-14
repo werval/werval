@@ -82,7 +82,7 @@ public final class DamnSmallDevShell
             SourceWatcher watcher,
             File classesDir )
         {
-            super( applicationClasspath, runtimeClasspath, sources, watcher );
+            super( applicationClasspath, runtimeClasspath, sources, watcher, false );
             this.applicationClasspath = applicationClasspath;
             this.runtimeClasspath = runtimeClasspath;
             this.sources = sources;

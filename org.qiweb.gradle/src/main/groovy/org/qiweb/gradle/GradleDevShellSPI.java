@@ -49,7 +49,7 @@ public final class GradleDevShellSPI
         File rootDir, List<String> rebuildTasks
     )
     {
-        super( applicationClassPath, runtimeClassPath, toWatch, watcher );
+        super( applicationClassPath, runtimeClassPath, toWatch, watcher, false );
         this.connector.forProjectDirectory( rootDir );
         this.rebuildTasks = rebuildTasks;
     }
