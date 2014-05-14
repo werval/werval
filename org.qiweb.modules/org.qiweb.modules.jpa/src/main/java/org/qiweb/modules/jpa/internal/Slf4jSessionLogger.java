@@ -63,11 +63,11 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The mapping between EclipseLink and SLF4J log levels is as follows:
  * <ul>
- * <li>ALL,FINER,FINEST -> TRACE</li>
- * <li>FINE -> DEBUG</li>
- * <li>CONFIG,INFO -> INFO</li>
- * <li>WARNING -> WARN</li>
- * <li>SEVERE -> ERROR</li>
+ * <li>ALL,FINER,FINEST -&gt; TRACE</li>
+ * <li>FINE -&gt; DEBUG</li>
+ * <li>CONFIG,INFO -&gt; INFO</li>
+ * <li>WARNING -&gt; WARN</li>
+ * <li>SEVERE -&gt; ERROR</li>
  * </ul>
  */
 // TODO Move into its own Gradle SourceSet so that org.qiweb.modules.jpa do not depend on eclipselink at compile time
