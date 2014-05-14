@@ -35,13 +35,16 @@ public class JPAPlugin
         throws ActivationException
     {
         Config config = application.config();
-        Map<String, Map<String, ?>> properties = new HashMap<>();
+        Map<String, Map<String, Object>> properties = new HashMap<>();
         if( config.has( "jpa.units" ) )
         {
             Config units = config.object( "jpa.units" );
-            units.subKeys().stream().forEach( unit -> properties.put( unit, units.stringMap( unit ) ) );
+            units.subKeys().stream().forEach(
+                unit -> properties.put( unit, (Map<String, Object>) (Map) units.stringMap( unit ) )
+            );
         }
         jpa = new JPA(
+            application.mode(),
             application.classLoader(),
             properties,
             config.has( "jpa.default_pu" ) ? config.string( "jpa.default_pu" ) : null

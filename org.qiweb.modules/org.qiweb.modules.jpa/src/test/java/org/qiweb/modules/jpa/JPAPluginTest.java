@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.qiweb.modules.jdbc.JDBC;
 import org.qiweb.test.QiWebRule;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -58,15 +59,13 @@ public class JPAPluginTest
     public void actualUsage()
         throws SQLException
     {
-        // Create schema using plain JDBC, you'll want to use something like Liquibase in a real application
+        // Create schema using plain JDBC, you'll want to use something like Liquibase or Flyway in a real application
         JDBC jdbc = QIWEB.application().plugin( JDBC.class );
         String createTable = "CREATE TABLE FOOENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
-        try( Connection connection = jdbc.connection() )
+        try( Connection connection = jdbc.connection();
+             PreparedStatement statement = connection.prepareStatement( createTable ) )
         {
-            try( PreparedStatement statement = connection.prepareStatement( createTable ) )
-            {
-                statement.execute();
-            }
+            statement.execute();
         }
 
         // Use JPA
@@ -90,5 +89,37 @@ public class JPAPluginTest
         {
             em.close();
         }
+    }
+
+    @Test
+    public void withTransaction()
+        throws SQLException
+    {
+        // Create schema using plain JDBC, you'll want to use something like Liquibase or Flyway in a real application
+        JDBC jdbc = QIWEB.application().plugin( JDBC.class );
+        String createTable = "CREATE TABLE BARENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
+        try( Connection connection = jdbc.connection( "another" );
+             PreparedStatement statement = connection.prepareStatement( createTable ) )
+        {
+            statement.execute();
+        }
+
+        // Use JPA.withTransaction
+        JPA jpa = QIWEB.application().plugin( JPA.class );
+        jpa.withReadWriteTx(
+            "another",
+            (EntityManager em) ->
+            {
+                System.out.println( "WILL PERSIST" );
+                BarEntity bar = new BarEntity( "BAR" );
+                em.persist( bar );
+                System.out.println( "HAS PERSISTED: " + bar.getId() );
+            }
+        );
+        int count = jpa.withReadOnlyTx(
+            "another",
+            (EntityManager em) -> em.createQuery( "from BarEntity b" ).getResultList().size()
+        );
+        assertThat( count, is( 1 ) );
     }
 }
