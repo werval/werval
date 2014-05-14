@@ -25,6 +25,7 @@ def v_guice = '4.0-beta4' // FIXME Final!
 def v_jackson = '2.4.0-rc3' // FIXME Final!
 def v_jedis = '2.4.2'
 def v_jpa = '2.1.0'
+def v_liquibase = '3.1.1'
 def v_memcache = '2.11.2'
 def v_qi4j = '2.1-SNAPSHOT' // FIXME Final!
 def v_rythm = '1.0'
@@ -79,6 +80,10 @@ rootProject.ext {
         ],
         jedis:              "redis.clients:jedis:$v_jedis",
         jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
+        liquibase: [
+                            "org.liquibase:liquibase-core:$v_liquibase",
+                            'com.mattbertolini:liquibase-slf4j:1.2.1'
+        ],
         memcache:           "net.spy:spymemcached:$v_memcache",
         qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
         qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",

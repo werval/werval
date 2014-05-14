@@ -1,0 +1,14 @@
+
+dependencies {
+
+    compile project( ":org.qiweb.modules.jdbc" )
+    compile libs.liquibase
+
+    runtime project( ":org.qiweb.modules.jndi" )
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+
+    testRuntime libs.h2
+
+}
+
