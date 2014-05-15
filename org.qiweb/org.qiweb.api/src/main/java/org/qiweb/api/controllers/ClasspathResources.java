@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Locale.US;
 import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.response;
@@ -127,7 +128,7 @@ public class ClasspathResources
         }
 
         // Mime Type
-        String mimetype = application().mimeTypes().ofPathWithCharset( path );
+        String mimetype = mimeTypes().ofPathWithCharset( path );
         response().headers().with( CONTENT_TYPE, mimetype );
 
         // Disposition and filename

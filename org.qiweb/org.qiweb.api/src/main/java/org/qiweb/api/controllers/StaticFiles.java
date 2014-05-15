@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Locale.US;
 import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.response;
@@ -248,7 +249,7 @@ public class StaticFiles
         response().headers().with( LAST_MODIFIED, Dates.HTTP.format( new Date( lastModified ) ) );
 
         // MimeType
-        String mimetype = application().mimeTypes().ofFileWithCharset( file );
+        String mimetype = mimeTypes().ofFileWithCharset( file );
         response().headers().with( CONTENT_TYPE, mimetype );
 
         // Disposition and filename

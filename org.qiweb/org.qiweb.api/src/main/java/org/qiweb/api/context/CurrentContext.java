@@ -21,6 +21,7 @@ import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ReverseRoutes;
 
@@ -154,6 +155,16 @@ public final class CurrentContext
     public static HttpBuilders builders()
     {
         return get().application().httpBuilders();
+    }
+
+    /**
+     * @return Application MimeTypes
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static MimeTypes mimeTypes()
+    {
+        return get().application().mimeTypes();
     }
 
     private CurrentContext()

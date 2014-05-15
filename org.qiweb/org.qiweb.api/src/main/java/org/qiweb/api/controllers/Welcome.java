@@ -19,6 +19,7 @@ import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 
 import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
@@ -46,7 +47,7 @@ public class Welcome
                       : "org/qiweb/api/controllers/welcome.html";
         return outcomes()
             .ok()
-            .as( application().mimeTypes().withCharsetOfTextual( TEXT_HTML ) )
+            .as( mimeTypes().withCharsetOfTextual( TEXT_HTML ) )
             .withBody( application().classLoader().getResourceAsStream( path ) )
             .build();
     }
