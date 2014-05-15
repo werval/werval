@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -47,9 +48,10 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.util.DeltreeFileVisitor;
 import org.qiweb.api.util.Strings;
-import org.qiweb.devshell.DevShell;
+import org.qiweb.commands.DevShellCommand;
+import org.qiweb.commands.SecretCommand;
+import org.qiweb.commands.StartCommand;
 import org.qiweb.devshell.JavaWatcher;
-import org.qiweb.devshell.QiWebDevShellException;
 import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
@@ -106,19 +108,16 @@ public final class DamnSmallDevShell
     private static final class ShutdownHook
         implements Runnable
     {
-        private final DevShell devShell;
         private final File tmpDir;
 
-        private ShutdownHook( DevShell devShell, File tmpDir )
+        private ShutdownHook( File tmpDir )
         {
-            this.devShell = devShell;
             this.tmpDir = tmpDir;
         }
 
         @Override
         public void run()
         {
-            devShell.stop();
             try
             {
                 if( tmpDir.exists() )
@@ -195,7 +194,7 @@ public final class DamnSmallDevShell
             List<String> commands = cmd.getArgList();
             if( commands.isEmpty() )
             {
-                commands = Collections.singletonList( "run" );
+                commands = Collections.singletonList( "start" );
             }
             if( debug )
             {
@@ -214,9 +213,13 @@ public final class DamnSmallDevShell
                     case "clean":
                         cleanCommand( debug, tmpDir );
                         break;
-                    case "run":
+                    case "devshell":
                         System.out.println( LOGO );
-                        runCommand( debug, tmpDir, cmd );
+                        devshellCommand( debug, tmpDir, cmd );
+                        break;
+                    case "start":
+                        System.out.println( LOGO );
+                        startCommand( debug, tmpDir, cmd );
                         break;
                     case "secret":
                         secretCommand();
@@ -459,18 +462,69 @@ public final class DamnSmallDevShell
         }
     }
 
-    private static void runCommand( boolean debug, File tmpDir, CommandLine cmd )
+    private static void devshellCommand( boolean debug, File tmpDir, CommandLine cmd )
         throws IOException
     {
-        // Classes directory
+        final File classesDir = createClassesDirectory( debug, tmpDir );
+        Set<File> sources = prepareSourcesDirectories( debug, cmd );
+        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sources, cmd );
+        URL[] applicationClasspath = prepareApplicationClasspath( debug, classesDir );
+        applySystemProperties( debug, cmd );
+        System.out.println( "Loading..." );
+
+        // Watch Sources
+        SourceWatcher watcher = new JavaWatcher();
+
+        // First build
+        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+
+        // Run DevShell
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
+        new DevShellCommand(
+            new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir )
+        ).run();
+    }
+
+    private static void startCommand( boolean debug, File tmpDir, CommandLine cmd )
+        throws IOException, MalformedURLException
+    {
+        final File classesDir = createClassesDirectory( debug, tmpDir );
+        Set<File> sources = prepareSourcesDirectories( debug, cmd );
+        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sources, cmd );
+        URL[] applicationClasspath = prepareApplicationClasspath( debug, classesDir );
+        applySystemProperties( debug, cmd );
+        System.out.println( "Loading..." );
+
+        // Build
+        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+
+        // Start
+        System.out.println( "Starting!" );
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
+        List<URL> globalClasspath = new ArrayList<>( Arrays.asList( runtimeClasspath ) );
+        globalClasspath.addAll( Arrays.asList( applicationClasspath ) );
+        new StartCommand(
+            StartCommand.ExecutionModel.FORK,
+            org.qiweb.server.bootstrap.Main.class.getName(),
+            new String[ 0 ],
+            globalClasspath.toArray( new URL[ globalClasspath.size() ] )
+        ).run();
+    }
+
+    private static File createClassesDirectory( boolean debug, File tmpDir )
+        throws IOException
+    {
         final File classesDir = new File( tmpDir, "classes" );
         Files.createDirectories( classesDir.toPath() );
         if( debug )
         {
             System.out.println( "Classes directory is: " + classesDir.getAbsolutePath() );
         }
+        return classesDir;
+    }
 
-        // Sources
+    private static Set<File> prepareSourcesDirectories( boolean debug, CommandLine cmd )
+    {
         String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
         {
             "src" + separator + "main" + separator + "java",
@@ -485,8 +539,12 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Sources directories are: " + sources );
         }
+        return sources;
+    }
 
-        // Classpath
+    private static URL[] prepareRuntimeClasspath( boolean debug, Set<File> sources, CommandLine cmd )
+        throws MalformedURLException
+    {
         List<URL> classpathList = new ArrayList<>();
         // First, current classpath
         classpathList.addAll( ClassLoaders.urlsOf( DamnSmallDevShell.class.getClassLoader() ) );
@@ -508,7 +566,12 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Runtime Classpath is: " + classpathList );
         }
-        // Then Application classpath
+        return runtimeClasspath;
+    }
+
+    private static URL[] prepareApplicationClasspath( boolean debug, File classesDir )
+        throws MalformedURLException
+    {
         URL[] applicationClasspath = new URL[]
         {
             classesDir.toURI().toURL()
@@ -517,8 +580,11 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Application Classpath is: " + Arrays.toString( applicationClasspath ) );
         }
+        return applicationClasspath;
+    }
 
-        // Apply System Properties
+    private static void applySystemProperties( boolean debug, CommandLine cmd )
+    {
         Properties systemProperties = cmd.getOptionProperties( "D" );
         for( Iterator<Map.Entry<Object, Object>> it = systemProperties.entrySet().iterator(); it.hasNext(); )
         {
@@ -529,29 +595,13 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Applied System Properties are: " + systemProperties );
         }
-
-        System.out.println( "Loading..." );
-
-        // Watch Sources
-        SourceWatcher watcher = new JavaWatcher();
-
-        // First build
-        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
-
-        // Run DevShell
-        final DevShell devShell = new DevShell(
-            new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir )
-        );
-        Runtime.getRuntime().addShutdownHook(
-            new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" )
-        );
-        devShell.start();
     }
 
     private static void secretCommand()
     {
-        System.out.println( CryptoInstance.genRandom256bitsHexSecret() );
+        new SecretCommand().run();
     }
+
     private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
 
     /* package */ static void rebuild(
@@ -579,10 +629,10 @@ public final class DamnSmallDevShell
                     EXECUTOR.execute( findJava );
                 }
             }
-            // Write list in a temporary file
             String javaFiles = findJavaOutput.toString( "UTF-8" );
             if( !Strings.isEmpty( javaFiles ) )
             {
+                // Write list in a temporary file
                 File javaListFile = new File( classesDir, ".devshell-java-list" );
                 try( FileWriter writer = new FileWriter( javaListFile ) )
                 {
@@ -594,7 +644,7 @@ public final class DamnSmallDevShell
                 javac.addArgument( "-encoding" );
                 javac.addArgument( "UTF-8" );
                 javac.addArgument( "-source" );
-                javac.addArgument( "1.7" );
+                javac.addArgument( "1.8" );
                 javac.addArgument( "-d" );
                 javac.addArgument( classesDir.getAbsolutePath() );
                 javac.addArgument( "-classpath" );
@@ -613,7 +663,7 @@ public final class DamnSmallDevShell
         catch( IOException | URISyntaxException ex )
         {
             String output = javacOutput.toString(); // utf-8
-            throw new QiWebDevShellException(
+            throw new QiWebException(
                 "Unable to rebuild" + ( Strings.isEmpty( output ) ? "" : "\n" + output ),
                 ex
             );
@@ -740,9 +790,10 @@ public final class DamnSmallDevShell
             + "  new <appdir>  Create a new skeleton application in the 'appdir' directory.\n"
             + "  secret        Generate a new application secret.\n"
             + "  clean         Delete devshell temporary directory, see 'tmpdir' option.\n"
-            + "  run           Run the QiWeb Development Shell.\n"
+            + "  devshell      Run the Application in development mode.\n"
+            + "  start         Run the Application in production mode.\n"
             + "\n"
-            + "  If no command is specified, 'run' is assumed."
+            + "  If no command is specified, 'start' is assumed."
         );
         out.println(
             "\n"

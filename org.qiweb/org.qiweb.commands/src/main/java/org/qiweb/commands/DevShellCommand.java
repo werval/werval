@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package org.qiweb.commands;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.qiweb.commands.SecretCommand;
+import org.qiweb.devshell.DevShell;
+import org.qiweb.spi.dev.DevShellSPI;
 
-@Mojo( name = "secret", requiresProject = false, threadSafe = true )
-public class SecretMojo
-    extends AbstractMojo
+/**
+ * DevShell Command.
+ */
+public class DevShellCommand
+    implements Runnable
 {
-    @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    private final DevShellSPI spi;
+
+    public DevShellCommand( DevShellSPI spi )
     {
-        new SecretCommand().run();
+        this.spi = spi;
+    }
+
+    @Override
+    public void run()
+    {
+        DevShell devShell = new DevShell( spi );
+        Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
+        devShell.start();
     }
 }

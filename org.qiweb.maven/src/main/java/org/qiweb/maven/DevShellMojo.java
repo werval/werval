@@ -24,8 +24,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.qiweb.devshell.DevShell;
+import org.qiweb.commands.DevShellCommand;
 import org.qiweb.devshell.JavaWatcher;
+import org.qiweb.spi.dev.DevShellSPI;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
@@ -59,25 +60,21 @@ public class DevShellMojo
                 sources.add( new File( sourceRoot ) );
             }
 
-            // Create DevShell
             File rootDir = project.getBasedir();
             URL[] applicationClasspath = new URL[]
             {
                 new File( rootDir, "target/classes" ).toURI().toURL()
             };
-            final DevShell devShell = new DevShell(
-                new MavenDevShellSPI(
-                    applicationClasspath, runtimeClassPath,
-                    sources, new JavaWatcher(),
-                    rootDir, rebuildPhase
-                )
+
+            // Start DevShell
+            DevShellSPI devShellSPI = new MavenDevShellSPI(
+                applicationClasspath, runtimeClassPath,
+                sources,
+                new JavaWatcher(),
+                rootDir,
+                rebuildPhase
             );
-
-            // Register shutdown hook
-            Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
-
-            // Start
-            devShell.start();
+            new DevShellCommand( devShellSPI ).run();
         }
         catch( Exception ex )
         {

@@ -18,17 +18,34 @@ package org.qiweb.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-import org.qiweb.server.bootstrap.BuildPluginRun
+import org.qiweb.commands.StartCommand
 
 /**
  * QiWeb Start Task.
  */
 class QiWebStartTask extends DefaultTask
 {
+    private String mainClass = "org.qiweb.server.bootstrap.Main"
+    private String[] arguments = new String[ 0 ]
+
     @TaskAction
     void startProductionMode()
     {
         project.logger.lifecycle ">> QiWeb Production Mode for " + project.getName() + " starting..."
+
+        StringBuffer msg = new StringBuffer( "Invoking : " );
+        msg.append( mainClass );
+        msg.append( ".main(" );
+        for( int i = 0; i < arguments.length; i++ )
+        {
+            if( i > 0 )
+            {
+                msg.append( ", " );
+            }
+            msg.append( arguments[i] );
+        }
+        msg.append( ")" );
+        project.logger.debug msg.toString()
 
         def applicationClasspath = [
             project.sourceSets.main.output.classesDir.toURI().toURL(),
@@ -36,9 +53,10 @@ class QiWebStartTask extends DefaultTask
         ]
         def runtimeClasspath = project.configurations.runtime.files.collect { f -> f.toURI().toURL() }
 
-        new BuildPluginRun(
-            "org.qiweb.server.bootstrap.Main",
-            new String[ 0 ],
+        new StartCommand(
+            StartCommand.ExecutionModel.ISOLATED_THREADS,
+            mainClass,
+            arguments,
             ( applicationClasspath + runtimeClasspath ) as URL[]
         ).run();
     }

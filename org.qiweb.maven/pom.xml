@@ -64,7 +64,7 @@
 
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.devshell</artifactId>
+            <artifactId>org.qiweb.commands</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

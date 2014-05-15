@@ -20,7 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.qiweb.server.bootstrap.BuildPluginRun;
+import org.qiweb.commands.StartCommand;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
@@ -69,7 +69,12 @@ public class StartMojo
 
         try
         {
-            new BuildPluginRun( mainClass, arguments, runtimeClassPath() ).run();
+            new StartCommand(
+                StartCommand.ExecutionModel.ISOLATED_THREADS,
+                mainClass,
+                arguments,
+                runtimeClassPath()
+            ).run();
         }
         catch( Exception ex )
         {

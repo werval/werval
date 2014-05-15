@@ -19,8 +19,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
+import org.qiweb.commands.DevShellCommand
 import org.qiweb.devshell.JavaWatcher
-import org.qiweb.devshell.DevShell
 
 class QiWebDevShellTask extends DefaultTask
 {
@@ -50,7 +50,6 @@ class QiWebDevShellTask extends DefaultTask
         sources += extraWatch.collect { s -> project.file( s ) }
 
         // == Start the DevShell
-
         def devShellSPI = new GradleDevShellSPI(
             applicationClasspath as URL[],
             runtimeClasspath as URL[],
@@ -59,9 +58,6 @@ class QiWebDevShellTask extends DefaultTask
             project.getProjectDir(),
             rebuildTasks
         )
-
-        def devshell = new DevShell( devShellSPI )
-        addShutdownHook { devshell.stop() }
-        devshell.start()
+        new DevShellCommand( devShellSPI ).run();
     }
 }

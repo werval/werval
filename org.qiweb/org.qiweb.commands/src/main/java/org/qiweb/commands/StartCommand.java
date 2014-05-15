@@ -13,40 +13,121 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.bootstrap;
+package org.qiweb.commands;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.qiweb.api.exceptions.QiWebException;
 
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+
 /**
- * Build Plugin Run.
+ * Start Command.
  */
-public class BuildPluginRun
+public class StartCommand
+    implements Runnable
 {
+    public static enum ExecutionModel
+    {
+        /**
+         * Run in isolated threads, good for build plugins.
+         */
+        ISOLATED_THREADS,
+        /**
+         * Fork a java process, good for CLI.
+         */
+        FORK
+    }
+
     private static final long DAEMON_THREAD_JOIN_TIMEOUT = 15000;
     private static final boolean STOP_UNRESPONSIVE_DAEMON_THREADS = false;
     private static final boolean CLEANUP_DAEMON_THREADS = true;
 
+    private final ExecutionModel executionModel;
     private final String mainClass;
     private final String[] arguments;
     private final URL[] classpath;
 
-    public BuildPluginRun( String mainClass, String[] arguments, URL[] classpath )
+    public StartCommand( ExecutionModel executionModel, String mainClass, String[] arguments, URL[] classpath )
     {
+        ensureNotNull( "Execution Model", executionModel );
+        ensureNotEmpty( "Main class", mainClass );
+        this.executionModel = executionModel;
         this.mainClass = mainClass;
-        this.arguments = arguments;
-        this.classpath = classpath;
+        this.arguments = arguments == null ? new String[ 0 ] : arguments;
+        this.classpath = classpath == null ? new URL[ 0 ] : classpath;
     }
 
+    @Override
     public void run()
+    {
+        switch( executionModel )
+        {
+            case ISOLATED_THREADS:
+                runIsolatedThreads();
+                break;
+            case FORK:
+                runFork();
+                break;
+            default:
+                throw new InternalError();
+        }
+    }
+
+    private void runFork()
+    {
+        // java -cp class:path mainClass arg um ents
+        List<String> cmd = new ArrayList<>();
+        cmd.add( "java" );
+        cmd.add( "-cp" );
+        StringBuilder cpBuilder = new StringBuilder();
+        Iterator<URL> cpIt = Arrays.asList( classpath ).iterator();
+        while( cpIt.hasNext() )
+        {
+            cpBuilder.append( cpIt.next().toString() );
+            if( cpIt.hasNext() )
+            {
+                cpBuilder.append( ":" );
+            }
+        }
+        cmd.add( cpBuilder.toString() );
+        cmd.add( mainClass );
+        cmd.addAll( Arrays.asList( arguments ) );
+        try
+        {
+            Process process = new ProcessBuilder( cmd ).start();
+            int status = process.waitFor();
+            if( status != 0 )
+            {
+                throw new QiWebException(
+                    "An exception occured while executing the QiWeb Application, status was: " + status
+                );
+            }
+        }
+        catch( IOException ex )
+        {
+            throw new QiWebException( "An exception occured while executing the QiWeb Application.", ex );
+        }
+        catch( InterruptedException ex )
+        {
+            Thread.interrupted();
+            throw new QiWebException( "An exception occured while executing the QiWeb Application.", ex );
+        }
+    }
+
+    private void runIsolatedThreads()
     {
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup( mainClass /* name */ );
         Thread bootstrapThread = new Thread(

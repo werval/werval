@@ -48,7 +48,7 @@ import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
 /**
- * Assert that the {@literal secret} and {@literal devshell} tasks execute successfuly.
+ * Assert that the {@literal secret}, {@literal start} and {@literal devshell} tasks execute successfuly.
  *
  * Generates a project, run it in dev mode using the plugin, change source code and assert code is reloaded.
  * <p>

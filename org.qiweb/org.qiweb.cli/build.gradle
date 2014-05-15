@@ -1,6 +1,6 @@
 
 dependencies {
-    compile project( ':org.qiweb.devshell' )
+    compile project( ':org.qiweb.commands' )
     compile libs.cli
     compile libs.exec
 }
