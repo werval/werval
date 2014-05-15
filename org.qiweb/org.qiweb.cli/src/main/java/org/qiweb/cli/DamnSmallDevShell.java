@@ -44,8 +44,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.io.FileUtils;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.util.DeltreeFileVisitor;
 import org.qiweb.api.util.Strings;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.devshell.JavaWatcher;
@@ -121,7 +121,10 @@ public final class DamnSmallDevShell
             devShell.stop();
             try
             {
-                FileUtils.deleteDirectory( tmpDir );
+                if( tmpDir.exists() )
+                {
+                    Files.walkFileTree( tmpDir.toPath(), new DeltreeFileVisitor() );
+                }
             }
             catch( IOException ex )
             {
@@ -441,7 +444,10 @@ public final class DamnSmallDevShell
         try
         {
             // Clean
-            FileUtils.deleteDirectory( tmpDir );
+            if( tmpDir.exists() )
+            {
+                Files.walkFileTree( tmpDir.toPath(), new DeltreeFileVisitor() );
+            }
             // Inform user
             System.out.println(
                 "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted."

@@ -14,7 +14,6 @@ def v_classworlds = '2.5.1'
 // CLI libraries versions
 def v_cli = '1.2'
 def v_exec = '1.2'
-def v_io = '1.3.2'
 
 // Modules libraries versions
 def v_bonecp = '0.8.0.RELEASE'
@@ -65,7 +64,6 @@ rootProject.ext {
         // CLI libraries
         cli:                "commons-cli:commons-cli:$v_cli",
         exec:               "org.apache.commons:commons-exec:$v_exec",
-        io:                 "org.apache.commons:commons-io:$v_io",
 
         // Modules libraries
         bonecp:             "com.jolbox:bonecp:$v_bonecp",
