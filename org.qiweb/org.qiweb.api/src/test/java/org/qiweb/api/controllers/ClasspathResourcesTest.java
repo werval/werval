@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,6 @@ public class ClasspathResourcesTest
         throws Exception
     {
         // Simple directory traversal
-
         assertDirectoryTraversalAttemptFailed( "/qiweb/../../../shadow" );
         assertDirectoryTraversalAttemptFailed( "/../shadow" );
 
@@ -124,5 +123,31 @@ public class ClasspathResourcesTest
             statusCode( either( is( 400 ) ).or( is( 404 ) ) ).
             when().
             get( path );
+    }
+
+    @Test
+    public void removeHeadingSlash()
+    {
+        assertThat( ClasspathResources.removeHeadingSlash( null ), equalTo( "" ) );
+        assertThat( ClasspathResources.removeHeadingSlash( "" ), equalTo( "" ) );
+        assertThat( ClasspathResources.removeHeadingSlash( "/" ), equalTo( "" ) );
+        assertThat( ClasspathResources.removeHeadingSlash( "///////" ), equalTo( "" ) );
+
+        assertThat( ClasspathResources.removeHeadingSlash( "/foo" ), equalTo( "foo" ) );
+        assertThat( ClasspathResources.removeHeadingSlash( "///////foo" ), equalTo( "foo" ) );
+        assertThat( ClasspathResources.removeHeadingSlash( "bar/" ), equalTo( "bar/" ) );
+    }
+
+    @Test
+    public void removeTrailingSlash()
+    {
+        assertThat( ClasspathResources.removeTrailingSlash( null ), equalTo( "" ) );
+        assertThat( ClasspathResources.removeTrailingSlash( "" ), equalTo( "" ) );
+        assertThat( ClasspathResources.removeTrailingSlash( "/" ), equalTo( "" ) );
+        assertThat( ClasspathResources.removeTrailingSlash( "///////" ), equalTo( "" ) );
+
+        assertThat( ClasspathResources.removeTrailingSlash( "/foo" ), equalTo( "/foo" ) );
+        assertThat( ClasspathResources.removeTrailingSlash( "bar/" ), equalTo( "bar" ) );
+        assertThat( ClasspathResources.removeTrailingSlash( "bar///////" ), equalTo( "bar" ) );
     }
 }

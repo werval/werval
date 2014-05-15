@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
 import static org.qiweb.api.util.Charsets.US_ASCII;
+import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.api.util.Strings.isEmpty;
 
 /**
  * Classpath Resources Controller.
@@ -59,7 +61,7 @@ public class ClasspathResources
      */
     public Outcome metainf( String path )
     {
-        return resource( META_INF_RESOURCES + '/'  + path );
+        return resource( META_INF_RESOURCES + '/' + removeHeadingSlash( path ) );
     }
 
     /**
@@ -72,7 +74,7 @@ public class ClasspathResources
      */
     public Outcome resource( String basepath, String path )
     {
-        return resource( basepath + '/' + path );
+        return resource( basepath + '/' + removeHeadingSlash( path ) );
     }
 
     /**
@@ -85,6 +87,7 @@ public class ClasspathResources
     public Outcome resource( String path )
     {
         ensureNotEmpty( "Path", path );
+        path = removeHeadingSlash( path );
         if( path.contains( ".." ) )
         {
             LOG.warn( "Directory traversal attempt: '{}'", path );
@@ -146,5 +149,41 @@ public class ClasspathResources
 
         LOG.trace( "Will serve '{}' with mimetype '{}'", path, mimetype );
         return outcomes().ok().withBody( input ).build();
+    }
+
+    /* package */ static String removeHeadingSlash( String str )
+    {
+        if( isEmpty( str ) )
+        {
+            return EMPTY;
+        }
+        String result = str;
+        while( result.startsWith( "/" ) )
+        {
+            if( result.length() < 2 )
+            {
+                return EMPTY;
+            }
+            result = result.substring( 1 );
+        }
+        return result;
+    }
+
+    /* package */ static String removeTrailingSlash( String str )
+    {
+        if( isEmpty( str ) )
+        {
+            return EMPTY;
+        }
+        String result = str;
+        while( result.endsWith( "/" ) )
+        {
+            if( result.length() < 2 )
+            {
+                return EMPTY;
+            }
+            result = result.substring( 0, result.length() - 1 );
+        }
+        return result;
     }
 }
