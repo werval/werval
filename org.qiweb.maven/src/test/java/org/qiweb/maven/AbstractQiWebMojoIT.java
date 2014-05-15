@@ -24,7 +24,8 @@ import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.InvokerLogger;
+import org.apache.maven.shared.invoker.PrintStreamLogger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -211,9 +212,10 @@ public abstract class AbstractQiWebMojoIT
         {
             try
             {
-                Invoker invoker = new DefaultInvoker();
+                DefaultInvoker invoker = new DefaultInvoker();
                 invoker.setLocalRepositoryDirectory( new File( BASEDIR, "target/it-local-repository" ) );
                 invoker.setWorkingDirectory( tmp.getRoot() );
+                invoker.setLogger( new PrintStreamLogger( System.err, InvokerLogger.INFO ) );
 
                 InvocationRequest request = new DefaultInvocationRequest();
                 request.setOffline( true );
