@@ -74,7 +74,15 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebDevShellTask,
             group: "QiWeb",
             description: "Start the Application in development mode.",
-            dependsOn: project.tasks.getByName( "build" )
+            dependsOn: project.tasks.getByName( "classes" )
+        )
+
+        project.task(
+            "devshell_rebuild",
+            type: QiWebRebuildTask,
+            group: "QiWeb",
+            description: "Rebuild the Application while in development mode. Do not invoke directly.",
+            dependsOn: project.tasks.getByName( "classes" )
         )
 
         project.task(
@@ -82,7 +90,7 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebStartTask,
             group: "QiWeb",
             description: "Start the Application in production mode.",
-            dependsOn: project.tasks.getByName( "build" )
+            dependsOn: project.tasks.getByName( "classes" )
         )
 
     }

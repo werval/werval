@@ -53,5 +53,6 @@ public class QiWebPluginTest
         assertThat( project.getTasks().getByName( "secret" ), instanceOf( QiWebSecretTask.class ) );
         assertThat( project.getTasks().getByName( "start" ), instanceOf( QiWebStartTask.class ) );
         assertThat( project.getTasks().getByName( "devshell" ), instanceOf( QiWebDevShellTask.class ) );
+        assertThat( project.getTasks().getByName( "devshell_rebuild" ), instanceOf( QiWebRebuildTask.class ) );
     }
 }

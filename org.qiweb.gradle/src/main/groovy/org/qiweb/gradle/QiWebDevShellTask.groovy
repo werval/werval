@@ -24,20 +24,14 @@ import org.qiweb.devshell.JavaWatcher
 
 class QiWebDevShellTask extends DefaultTask
 {
-    List<String> rebuildTasks = new ArrayList<>();
     Set<String> extraWatch = new HashSet<>()
 
-    QiWebDevShellTask() {
-        rebuildTasks.add( "classes" );
-    }
-    
     @TaskAction
     void runDevShell()
     {
         project.logger.lifecycle ">> QiWeb DevShell for " + project.getName() + " starting..."
 
         // == Gather build info
-
         def sources = project.sourceSets*.allSource*.srcDirs[0]
         def applicationClasspath = [
             project.sourceSets.main.output.classesDir.toURI().toURL(),
@@ -56,7 +50,7 @@ class QiWebDevShellTask extends DefaultTask
             sources,
             new JavaWatcher(),
             project.getProjectDir(),
-            rebuildTasks
+            ["devshell_rebuild"]
         )
         new DevShellCommand( devShellSPI ).run();
     }
