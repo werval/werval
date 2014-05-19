@@ -16,6 +16,7 @@
 package org.qiweb.api.context;
 
 import org.qiweb.api.Application;
+import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.http.Request;
@@ -165,6 +166,16 @@ public final class CurrentContext
     public static MimeTypes mimeTypes()
     {
         return get().application().mimeTypes();
+    }
+
+    /**
+     * @return Application Cache
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Cache cache()
+    {
+        return get().application().cache();
     }
 
     private CurrentContext()
