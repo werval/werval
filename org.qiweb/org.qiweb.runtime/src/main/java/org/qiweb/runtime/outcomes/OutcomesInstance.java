@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import org.qiweb.api.Config;
 import org.qiweb.api.http.Status;
+import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.OutcomeBuilder;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.util.URLs;
@@ -73,84 +74,86 @@ public final class OutcomesInstance
     implements Outcomes
 {
     private final Config config;
+    private final MimeTypes mimeTypes;
     private final ResponseHeaderInstance response;
 
-    public OutcomesInstance( Config config, ResponseHeaderInstance response )
+    public OutcomesInstance( Config config, MimeTypes mimeTypes, ResponseHeaderInstance response )
     {
         this.config = config;
+        this.mimeTypes = mimeTypes;
         this.response = response;
     }
 
     @Override
     public OutcomeBuilder status( int status )
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( status ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( status ) );
     }
 
     @Override
     public OutcomeBuilder ok()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( OK ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( OK ) );
     }
 
     @Override
     public OutcomeBuilder ok( byte[] body )
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( OK ) ).withBody( body );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( OK ) ).withBody( body );
     }
 
     @Override
     public OutcomeBuilder ok( String body )
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( OK ) ).withBody( body );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( OK ) ).withBody( body );
     }
 
     @Override
     public OutcomeBuilder ok( String body, Charset charset )
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( OK ) ).withBody( body, charset );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( OK ) ).withBody( body, charset );
     }
 
     @Override
     public OutcomeBuilder created()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( CREATED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( CREATED ) );
     }
 
     @Override
     public OutcomeBuilder accepted()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( ACCEPTED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( ACCEPTED ) );
     }
 
     @Override
     public OutcomeBuilder nonAuthoritativeInformation()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( NON_AUTHORITATIVE_INFORMATION ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( NON_AUTHORITATIVE_INFORMATION ) );
     }
 
     @Override
     public OutcomeBuilder noContent()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( NO_CONTENT ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( NO_CONTENT ) );
     }
 
     @Override
     public OutcomeBuilder resetContent()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( RESET_CONTENT ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( RESET_CONTENT ) );
     }
 
     @Override
     public OutcomeBuilder partialContent()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( PARTIAL_CONTENT ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( PARTIAL_CONTENT ) );
     }
 
     @Override
     public OutcomeBuilder multiStatus()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( MULTI_STATUS ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( MULTI_STATUS ) );
     }
 
     @Override
@@ -180,7 +183,7 @@ public final class OutcomesInstance
     @Override
     public OutcomeBuilder notModified()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( NOT_MODIFIED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( NOT_MODIFIED ) );
     }
 
     @Override
@@ -198,157 +201,163 @@ public final class OutcomesInstance
     @Override
     public OutcomeBuilder badRequest()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( BAD_REQUEST ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( BAD_REQUEST ) );
     }
 
     @Override
     public OutcomeBuilder unauthorized()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( UNAUTHORIZED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( UNAUTHORIZED ) );
     }
 
     @Override
     public OutcomeBuilder forbidden()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( FORBIDDEN ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( FORBIDDEN ) );
     }
 
     @Override
     public OutcomeBuilder notFound()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( NOT_FOUND ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( NOT_FOUND ) );
     }
 
     @Override
     public OutcomeBuilder methodNotAllowed()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( METHOD_NOT_ALLOWED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( METHOD_NOT_ALLOWED ) );
     }
 
     @Override
     public OutcomeBuilder notAcceptable()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( NOT_ACCEPTABLE ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( NOT_ACCEPTABLE ) );
     }
 
     @Override
     public OutcomeBuilder requestTimeout()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( REQUEST_TIMEOUT ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( REQUEST_TIMEOUT ) );
     }
 
     @Override
     public OutcomeBuilder conflict()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( CONFLICT ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( CONFLICT ) );
     }
 
     @Override
     public OutcomeBuilder gone()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( GONE ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( GONE ) );
     }
 
     @Override
     public OutcomeBuilder preconditionFailed()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( PRECONDITION_FAILED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( PRECONDITION_FAILED ) );
     }
 
     @Override
     public OutcomeBuilder requestEntityTooLarge()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( REQUEST_ENTITY_TOO_LARGE ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( REQUEST_ENTITY_TOO_LARGE ) );
     }
 
     @Override
     public OutcomeBuilder requestUriTooLong()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( REQUEST_URI_TOO_LONG ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( REQUEST_URI_TOO_LONG ) );
     }
 
     @Override
     public OutcomeBuilder unsupportedMediaType()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( UNSUPPORTED_MEDIA_TYPE ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( UNSUPPORTED_MEDIA_TYPE ) );
     }
 
     @Override
     public OutcomeBuilder expectationFailed()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( EXPECTATION_FAILED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( EXPECTATION_FAILED ) );
     }
 
     @Override
     public OutcomeBuilder unprocessableEntity()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( UNPROCESSABLE_ENTITY ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( UNPROCESSABLE_ENTITY ) );
     }
 
     @Override
     public OutcomeBuilder locked()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( LOCKED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( LOCKED ) );
     }
 
     @Override
     public OutcomeBuilder failedDependency()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( FAILED_DEPENDENCY ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( FAILED_DEPENDENCY ) );
     }
 
     @Override
     public OutcomeBuilder tooManyRequest()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( TOO_MANY_REQUESTS ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( TOO_MANY_REQUESTS ) );
     }
 
     @Override
     public OutcomeBuilder internalServerError()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( INTERNAL_SERVER_ERROR ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( INTERNAL_SERVER_ERROR ) );
     }
 
     @Override
     public OutcomeBuilder notImplemented()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( NOT_IMPLEMENTED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( NOT_IMPLEMENTED ) );
     }
 
     @Override
     public OutcomeBuilder badGateway()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( BAD_GATEWAY ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( BAD_GATEWAY ) );
     }
 
     @Override
     public OutcomeBuilder serviceUnavailable()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( SERVICE_UNAVAILABLE ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( SERVICE_UNAVAILABLE ) );
     }
 
     @Override
     public OutcomeBuilder gatewayTimeout()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( GATEWAY_TIMEOUT ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( GATEWAY_TIMEOUT ) );
     }
 
     @Override
     public OutcomeBuilder httpVersionNotSupported()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( HTTP_VERSION_NOT_SUPPORTED ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( HTTP_VERSION_NOT_SUPPORTED ) );
     }
 
     @Override
     public OutcomeBuilder insufficientStorage()
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( INSUFFICIENT_STORAGE ) );
+        return new OutcomeBuilderInstance( config, mimeTypes, response.withStatus( INSUFFICIENT_STORAGE ) );
     }
 
     private OutcomeBuilder redirect( String url, Map<String, List<String>> queryString, Status status )
     {
-        return new OutcomeBuilderInstance( config, response.withStatus( status ) ).
-            withHeader( LOCATION, URLs.appendQueryString( url, queryString,
-                                                          config.charset( QIWEB_CHARACTER_ENCODING ) ) );
+        OutcomeBuilder builder = new OutcomeBuilderInstance(
+            config,
+            mimeTypes,
+            response.withStatus( status )
+        );
+        return builder.withHeader(
+            LOCATION,
+            URLs.appendQueryString( url, queryString, config.charset( QIWEB_CHARACTER_ENCODING ) )
+        );
     }
 }

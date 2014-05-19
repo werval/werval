@@ -41,6 +41,57 @@ public interface OutcomeBuilder
     OutcomeBuilder as( String contentType );
 
     /**
+     * @param contentType Outcome Content-Type
+     *
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asTextual( String contentType );
+
+    /**
+     * @param contentType Outcome Content-Type
+     * @param charset     Charset
+     *
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asTextual( String contentType, Charset charset );
+
+    /**
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asJson();
+
+    /**
+     * @param charset Charset
+     *
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asJson( Charset charset );
+
+    /**
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asXml();
+
+    /**
+     * @param charset Charset
+     *
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asXml( Charset charset );
+
+    /**
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asHtml();
+
+    /**
+     * @param charset Charset
+     *
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asHtml( Charset charset );
+
+    /**
      * Use a bytes body.
      *
      * Content-Length header will be set and identity Transfer-Encoding used.

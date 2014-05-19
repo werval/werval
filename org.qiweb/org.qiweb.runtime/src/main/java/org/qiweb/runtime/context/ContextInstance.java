@@ -48,7 +48,7 @@ public final class ContextInstance
         this.route = route;
         this.request = request;
         this.response = responseHeader;
-        this.outcomes = new OutcomesInstance( application.config(), responseHeader );
+        this.outcomes = new OutcomesInstance( application.config(), application().mimeTypes(), responseHeader );
         this.metaData = new MetaData();
     }
 

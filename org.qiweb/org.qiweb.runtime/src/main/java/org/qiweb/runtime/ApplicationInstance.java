@@ -617,6 +617,7 @@ public final class ApplicationInstance
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
             config,
+            mimeTypes,
             new ResponseHeaderInstance( request.version() )
         );
 
@@ -756,6 +757,7 @@ public final class ApplicationInstance
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
             config,
+            mimeTypes,
             new ResponseHeaderInstance( version )
         );
 
