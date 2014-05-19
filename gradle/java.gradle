@@ -1,8 +1,14 @@
+
+// Apply common qiweb build logic
 apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
 
+// This is Java!
 apply plugin: 'java'
+
+// For publication purpose only
 apply plugin: 'maven'
 
+// Apply repositories and libraries versions
 apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
 apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
 
@@ -12,7 +18,7 @@ targetCompatibility = '1.8'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-// Adding dependencies here will add the dependencies to each subproject.
+// All projects gets basic test dependencies
 dependencies {
 
     testCompile libs.junit
@@ -254,73 +260,6 @@ publishing {
         jars( MavenPublication ) {
             from components.java
             pom.withXml {
-                // Append additional metadata
-                asNode().children().last() + {
-                    resolveStrategy = Closure.DELEGATE_FIRST
-                    name project.name
-                    description project.description
-                    url "http://qiweb.org"
-                    inceptionYear '2013'
-                    organization {
-                        name 'QiWeb Community'
-                        url 'https://scm.codeartisans.org/qiweb'
-                    }
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-                    issueManagement {
-                        system 'Gitlab'
-                        url 'https://scm.codeartisans.org/qiweb/qiweb/issues'
-                    }
-                    scm {
-                        url 'https://scm.codeartisans.org/qiweb/qiweb'
-                        connection 'scm:git:https://scm.codeartisans.org/qiweb/qiweb.git'
-                        developerConnection 'scm:git:git@scm.codeartisans.org:qiweb/qiweb.git'
-                    }
-                    developers {
-                        developer {
-                            id "eskatos"
-                            name "Paul Merlin"
-                            email "paul@nosphere.org"
-                            timezone "Europe/Paris"
-                            roles {
-                                role 'Founder'
-                                role 'Developer'
-                            }
-                        }
-                    }
-                    contributors {
-                        contributor {
-                            name "Quentin Gensburger"
-                            email "quentin.gensburger@free.fr"
-                            timezone "Europe/Paris"
-                            roles {
-                                role 'Tester'
-                                role 'Contributor'
-                            }
-                        }
-                        contributor {
-                            name "Lionel Chanson"
-                            email "lionel@soreia.com"
-                            timezone "Europe/Paris"
-                            roles {
-                                role 'Tester'
-                            }
-                        }
-                        contributor {
-                            name "Jean-Michel Tonneau"
-                            email "jmichel.tonneau@gmail.com"
-                            timezone "Europe/London"
-                            roles {
-                                role 'Tester'
-                            }
-                        }
-                    }
-                }
                 // Gradle Publishing feature is exporting dependencies as 'runtime' scope,
                 // rather than 'compile'; fix that.
                 if( asNode().dependencies[0] ) {
@@ -361,7 +300,8 @@ uploadArchives {
     }
 }
 
-// POM Setup for old maven support at install and deploy
+// POM Setup for publication
+// Use the now deprecated maven publication support in gradle
 [install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
     groupId = project.group
     artifactId = project.name

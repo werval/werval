@@ -1,0 +1,3 @@
+# `config`
+
+This is where are put configuration resources for the `org.qiweb` build like licence headers, CheckStyle rules etc...
