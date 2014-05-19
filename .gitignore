@@ -6,4 +6,10 @@ target
 .nb-gradle
 .nb-gradle-properties
 repository
+.classpath
+.project
+.settings
+*.iml
+*.ipr
+*.iws
 

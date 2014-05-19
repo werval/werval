@@ -17,22 +17,22 @@ fi
 
 # core
 $FIGLET org.qiweb
-./org.qiweb/gradlew -b org.qiweb/build.gradle install check -x test
+./org.qiweb/gradlew -b org.qiweb/build.gradle install check idea -x test
 echo "Built."
 
 # modules
 $FIGLET org.qiweb.modules
-./org.qiweb.modules/gradlew -b org.qiweb.modules/build.gradle install check -x test
+./org.qiweb.modules/gradlew -b org.qiweb.modules/build.gradle install check idea -x test
 echo "Built."
 
 # gradle plugin
 $FIGLET org.qiweb.gradle
-./org.qiweb.gradle/gradlew -b org.qiweb.gradle/build.gradle install check -x test
+./org.qiweb.gradle/gradlew -b org.qiweb.gradle/build.gradle install check idea -x test
 echo "Built."
 
 # maven plugin
 $FIGLET org.qiweb.maven
-$MAVEN -f org.qiweb.maven/pom.xml install -DskipTests -Dgpg.skip
+$MAVEN -f org.qiweb.maven/pom.xml install dependency:sources -DskipTests -Dgpg.skip
 echo "Built."
 
 echo

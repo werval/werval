@@ -8,6 +8,12 @@ apply plugin: 'java'
 // For publication purpose only
 apply plugin: 'maven'
 
+// Basic IDE Support
+// When using Netbeans, simply issue 'gradle idea', the sources will then be available in your IDE.
+apply plugin: 'idea'
+idea { module { downloadJavadoc = true; downloadSources = true } }
+apply plugin: 'eclipse'
+
 // Apply repositories and libraries versions
 apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
 apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
@@ -259,6 +265,8 @@ publishing {
     publications {
         jars( MavenPublication ) {
             from components.java
+            artifact javadocJar
+            artifact sourcesJar
             pom.withXml {
                 // Gradle Publishing feature is exporting dependencies as 'runtime' scope,
                 // rather than 'compile'; fix that.
