@@ -15,8 +15,8 @@
  */
 package org.qiweb.modules.smtp;
 
-import com.dumbster.smtp.SimpleSmtpServer;
-import com.dumbster.smtp.SmtpMessage;
+import java.util.List;
+import javax.mail.MessagingException;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.junit.After;
@@ -24,6 +24,8 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
+import org.subethamail.wiser.Wiser;
+import org.subethamail.wiser.WiserMessage;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -37,26 +39,28 @@ public class SmtpPluginTest
 {
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule();
-    private SimpleSmtpServer smtpServer;
+    private Wiser wiser;
 
     @Before
-    public void setDumbsterUp()
+    public void setUpWiser()
     {
-        smtpServer = SimpleSmtpServer.start( 23025 );
+        wiser = new Wiser();
+        wiser.setPort( 23025 );
+        wiser.start();
     }
 
     @After
-    public void tearDumbsterDown()
+    public void tearDownWiser()
     {
-        if( smtpServer != null )
+        if( wiser != null )
         {
-            smtpServer.stop();
+            wiser.stop();
         }
     }
 
     @Test
     public void testSimpleEmail()
-        throws EmailException
+        throws EmailException, MessagingException
     {
         Smtp smtp = QIWEB.application().plugin( Smtp.class );
         assertThat( smtp, notNullValue() );
@@ -67,10 +71,11 @@ public class SmtpPluginTest
         email.setSubject( "Simple Email" );
         email.send();
 
-        assertThat( smtpServer.getReceivedEmailSize(), is( 1 ) );
-        SmtpMessage received = (SmtpMessage) smtpServer.getReceivedEmail().next();
-        assertThat( received.getHeaderValue( "From" ), equalTo( "from@qiweb.org" ) );
-        assertThat( received.getHeaderValue( "To" ), equalTo( "to@qiweb.org" ) );
-        assertThat( received.getHeaderValue( "Subject" ), equalTo( "Simple Email" ) );
+        List<WiserMessage> messages = wiser.getMessages();
+        assertThat( messages.size(), is( 1 ) );
+        WiserMessage message = messages.get( 0 );
+        assertThat( message.getMimeMessage().getHeader( "From" )[0], equalTo( "from@qiweb.org" ) );
+        assertThat( message.getMimeMessage().getHeader( "To" )[0], equalTo( "to@qiweb.org" ) );
+        assertThat( message.getMimeMessage().getHeader( "Subject" )[0], equalTo( "Simple Email" ) );
     }
 }

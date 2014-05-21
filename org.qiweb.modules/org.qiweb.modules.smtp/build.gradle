@@ -6,7 +6,7 @@ dependencies {
     compile libs.email
     
     testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.dumbster
+    testCompile libs.subethasmtp
 
 }
 

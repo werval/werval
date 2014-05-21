@@ -41,10 +41,10 @@ def v_junit = '4.11'
 def v_rest_assured = '2.3.1'
 
 // Test libraries versions
-def v_dumbster = '1.6'
 def v_h2 = '1.4.178'
 def v_logback = '1.1.2'
 def v_postgres = '9.3-1101-jdbc41'
+def v_subethasmtp = '3.1.7'
 
 // Libraries extension
 rootProject.ext {
@@ -109,10 +109,10 @@ rootProject.ext {
         ],
 
         // Test libraries
-        dumbster:           "dumbster:dumbster:$v_dumbster",
         h2:                 "com.h2database:h2:$v_h2",
         logback:            "ch.qos.logback:logback-classic:$v_logback",
         postgres:           "org.postgresql:postgresql:$v_postgres",
+        subethasmtp:        "org.subethamail:subethasmtp:$v_subethasmtp",
 
     ]
 }
