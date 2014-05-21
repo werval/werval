@@ -322,7 +322,7 @@ public class HttpBuildersInstance
             if( headers.has( CONTENT_TYPE ) )
             {
                 String extractedCharset = extractCharset( headers.singleValue( CONTENT_TYPE ) );
-                if( !Strings.isEmpty( extractedCharset ) )
+                if( Strings.hasText( extractedCharset ) )
                 {
                     requestCharset = Charset.forName( extractedCharset );
                 }

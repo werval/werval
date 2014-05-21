@@ -17,6 +17,7 @@ package org.qiweb.api.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import org.qiweb.api.exceptions.IllegalArguments;
 
 /**
  * Utilities to work with Strings.
@@ -38,6 +39,18 @@ public final class Strings
     public static boolean isEmpty( String value )
     {
         return value == null || value.length() == 0;
+    }
+
+    /**
+     * Check if a String is not null nor empty.
+     *
+     * @param value String
+     *
+     * @return TRUE if the String is not null nor empty, otherwise return FALSE
+     */
+    public static boolean hasText( String value )
+    {
+        return value != null && value.length() > 0;
     }
 
     /**
@@ -106,6 +119,54 @@ public final class Strings
             }
         }
         return buffer.toString();
+    }
+
+    public static String rightPad( int length, String string, char pad )
+    {
+        IllegalArguments.ensureGreaterOrEqual( "length", length, 0 );
+        if( isEmpty( string ) )
+        {
+            return repeat( pad, length );
+        }
+        if( string.length() > length )
+        {
+            return string;
+        }
+        return string + repeat( pad, length - string.length() );
+    }
+
+    public static String leftPad( int length, String string, char pad )
+    {
+        IllegalArguments.ensureGreaterOrEqual( "length", length, 0 );
+        if( isEmpty( string ) )
+        {
+            return repeat( pad, length );
+        }
+        if( string.length() > length )
+        {
+            return string;
+        }
+        return repeat( pad, length - string.length() ) + string;
+    }
+
+    public static String repeat( char character, int times )
+    {
+        StringBuilder sb = new StringBuilder();
+        for( int index = 0; index < times; index++ )
+        {
+            sb.append( character );
+        }
+        return sb.toString();
+    }
+
+    public static String repeat( CharSequence characters, int times )
+    {
+        StringBuilder sb = new StringBuilder();
+        for( int index = 0; index < times; index++ )
+        {
+            sb.append( characters );
+        }
+        return sb.toString();
     }
 
     private Strings()

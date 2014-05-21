@@ -59,6 +59,7 @@ import org.qiweb.spi.dev.DevShellSPIAdapter;
 
 import static java.io.File.separator;
 import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.api.util.Strings.hasText;
 import static org.qiweb.cli.BuildVersion.COMMIT;
 import static org.qiweb.cli.BuildVersion.DATE;
 import static org.qiweb.cli.BuildVersion.DIRTY;
@@ -630,7 +631,7 @@ public final class DamnSmallDevShell
                 }
             }
             String javaFiles = findJavaOutput.toString( "UTF-8" );
-            if( !Strings.isEmpty( javaFiles ) )
+            if( hasText( javaFiles ) )
             {
                 // Write list in a temporary file
                 File javaListFile = new File( classesDir, ".devshell-java-list" );

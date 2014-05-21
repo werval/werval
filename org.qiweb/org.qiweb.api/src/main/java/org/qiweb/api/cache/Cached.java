@@ -116,7 +116,7 @@ public @interface Cached
             sb.append( context.request().parameters().toString() );
             for( String varyHeader : vary )
             {
-                if( !Strings.isEmpty( varyHeader ) )
+                if( Strings.hasText( varyHeader ) )
                 {
                     List<String> variables = context.request().headers().values( varyHeader );
                     if( !variables.isEmpty() )

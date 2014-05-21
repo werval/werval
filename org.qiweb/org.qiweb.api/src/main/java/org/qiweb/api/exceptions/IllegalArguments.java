@@ -228,6 +228,42 @@ public final class IllegalArguments
         }
     }
 
+    public static void ensureGreaterOrEqual( String name, Integer value, Integer lower )
+    {
+        ensureNotNull( name, value );
+        if( value < lower )
+        {
+            throw new IllegalArgumentException( name + " was lesser than " + lower );
+        }
+    }
+
+    public static void ensureGreater( String name, Integer value, Integer lower )
+    {
+        ensureNotNull( name, value );
+        if( value <= lower )
+        {
+            throw new IllegalArgumentException( name + " was lesser than or equal to " + lower );
+        }
+    }
+
+    public static void ensureLesser( String name, Integer value, Integer higher )
+    {
+        ensureNotNull( name, value );
+        if( value >= higher )
+        {
+            throw new IllegalArgumentException( name + " was higher than or equal to " + higher );
+        }
+    }
+
+    public static void ensureLesserOrEqual( String name, Integer value, Integer higher )
+    {
+        ensureNotNull( name, value );
+        if( value > higher )
+        {
+            throw new IllegalArgumentException( name + " was higher than " + higher );
+        }
+    }
+
     private IllegalArguments()
     {
     }

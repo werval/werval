@@ -225,7 +225,7 @@ public class StaticFiles
         if( request().headers().names().contains( IF_MODIFIED_SINCE ) )
         {
             String ifModifiedSince = request().headers().singleValue( IF_MODIFIED_SINCE );
-            if( !Strings.isEmpty( ifModifiedSince ) )
+            if( Strings.hasText( ifModifiedSince ) )
             {
                 try
                 {
