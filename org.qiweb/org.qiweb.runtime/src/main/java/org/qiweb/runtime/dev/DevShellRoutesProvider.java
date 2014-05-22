@@ -49,7 +49,7 @@ public class DevShellRoutesProvider
                                 = "\n"
                                   + "GET /@doc org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/index.html' )\n"
                                   + "GET /@doc/api org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/api/index.html' )\n"
-                                  + "GET /@doc/*path org.qiweb.api.controllers.ClasspathResources.resource( String basepath = 'org/qiweb/doc/html', String path )\n"
+                                  + "GET /@doc/*path org.qiweb.api.controllers.Classpath.resource( String basepath = 'org/qiweb/doc/html', String path )\n"
                                   + "GET /@config org.qiweb.api.controllers.Introspect.config\n"
                                   + "GET /@version org.qiweb.api.controllers.Introspect.version\n";
 

@@ -28,11 +28,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ClasspathResourcesTest
+public class ClasspathTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /*path org.qiweb.api.controllers.ClasspathResources.metainf( String path )" ) );
+        "GET /*path org.qiweb.api.controllers.Classpath.metainf( String path )" ) );
 
     @Test
     public void givenNonExistentResourceWhenRequestingExpectNotFound()
@@ -128,26 +128,26 @@ public class ClasspathResourcesTest
     @Test
     public void removeHeadingSlash()
     {
-        assertThat( ClasspathResources.removeHeadingSlash( null ), equalTo( "" ) );
-        assertThat( ClasspathResources.removeHeadingSlash( "" ), equalTo( "" ) );
-        assertThat( ClasspathResources.removeHeadingSlash( "/" ), equalTo( "" ) );
-        assertThat( ClasspathResources.removeHeadingSlash( "///////" ), equalTo( "" ) );
+        assertThat( Classpath.removeHeadingSlash( null ), equalTo( "" ) );
+        assertThat( Classpath.removeHeadingSlash( "" ), equalTo( "" ) );
+        assertThat( Classpath.removeHeadingSlash( "/" ), equalTo( "" ) );
+        assertThat( Classpath.removeHeadingSlash( "///////" ), equalTo( "" ) );
 
-        assertThat( ClasspathResources.removeHeadingSlash( "/foo" ), equalTo( "foo" ) );
-        assertThat( ClasspathResources.removeHeadingSlash( "///////foo" ), equalTo( "foo" ) );
-        assertThat( ClasspathResources.removeHeadingSlash( "bar/" ), equalTo( "bar/" ) );
+        assertThat( Classpath.removeHeadingSlash( "/foo" ), equalTo( "foo" ) );
+        assertThat( Classpath.removeHeadingSlash( "///////foo" ), equalTo( "foo" ) );
+        assertThat( Classpath.removeHeadingSlash( "bar/" ), equalTo( "bar/" ) );
     }
 
     @Test
     public void removeTrailingSlash()
     {
-        assertThat( ClasspathResources.removeTrailingSlash( null ), equalTo( "" ) );
-        assertThat( ClasspathResources.removeTrailingSlash( "" ), equalTo( "" ) );
-        assertThat( ClasspathResources.removeTrailingSlash( "/" ), equalTo( "" ) );
-        assertThat( ClasspathResources.removeTrailingSlash( "///////" ), equalTo( "" ) );
+        assertThat( Classpath.removeTrailingSlash( null ), equalTo( "" ) );
+        assertThat( Classpath.removeTrailingSlash( "" ), equalTo( "" ) );
+        assertThat( Classpath.removeTrailingSlash( "/" ), equalTo( "" ) );
+        assertThat( Classpath.removeTrailingSlash( "///////" ), equalTo( "" ) );
 
-        assertThat( ClasspathResources.removeTrailingSlash( "/foo" ), equalTo( "/foo" ) );
-        assertThat( ClasspathResources.removeTrailingSlash( "bar/" ), equalTo( "bar" ) );
-        assertThat( ClasspathResources.removeTrailingSlash( "bar///////" ), equalTo( "bar" ) );
+        assertThat( Classpath.removeTrailingSlash( "/foo" ), equalTo( "/foo" ) );
+        assertThat( Classpath.removeTrailingSlash( "bar/" ), equalTo( "bar" ) );
+        assertThat( Classpath.removeTrailingSlash( "bar///////" ), equalTo( "bar" ) );
     }
 }

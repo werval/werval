@@ -46,9 +46,9 @@ import static org.qiweb.api.util.Strings.isEmpty;
  * <p>
  * Log 200 at TRACE level.
  */
-public class ClasspathResources
+public class Classpath
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ClasspathResources.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Classpath.class );
     // No need for heading slash as we ask a ClassLoader instance for Resources
     // Would have been needed if we asked a Class instance for Resources
     private static final String META_INF_RESOURCES = "META-INF/resources";
@@ -116,7 +116,7 @@ public class ClasspathResources
         }
         else
         {
-            Long maxAge = application().config().seconds( "qiweb.lib.classpath.cache.maxage" );
+            Long maxAge = application().config().seconds( "qiweb.controllers.classpath.cache.maxage" );
             if( maxAge.equals( 0L ) )
             {
                 response().headers().with( CACHE_CONTROL, "no-cache" );

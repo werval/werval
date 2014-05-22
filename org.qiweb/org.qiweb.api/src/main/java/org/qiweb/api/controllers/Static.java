@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
 /**
  * Controller to serve static files or directory tree.
  *
- * Cache behaviour can be tweeked with <code>qiweb.lib.staticfiles</code> config properties.
+ * Cache behaviour can be tweeked with <code>qiweb.controllers.static</code> config properties.
  * <p>
  * Always use streamed identity transfer encoding.
  * <p>
@@ -61,14 +61,14 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
  * <p>
  * <strong>Keep in mind that not all deployment strategies will be compatible with the use of this controller.</strong>
  */
-public class StaticFiles
+public class Static
 {
-    private static final Logger LOG = LoggerFactory.getLogger( StaticFiles.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Static.class );
 
     /**
      * Serve a filesystem directory as read-only resources.
      *
-     * If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property is
      * used to find an index file. Default value is <code>index.html</code> only.
      *
      * @param root Root of the file tree to serve
@@ -85,7 +85,7 @@ public class StaticFiles
     /**
      * Serve a filesystem directory as read-only resources.
      *
-     * If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property is
      * used to find an index file. Default value is <code>index.html</code> only.
      *
      * @param root Root of the file tree to serve
@@ -102,7 +102,7 @@ public class StaticFiles
     /**
      * Serve a filesystem directory as read-only resources.
      *
-     * If a directory is requested, filenames set in the <code>qiweb.lib.staticfiles.index</code> config property is
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property is
      * used to find an index file. Default value is <code>index.html</code> only.
      *
      * @param root Root of the file tree to serve
@@ -122,7 +122,7 @@ public class StaticFiles
         File file = new File( root, path );
         if( file.isDirectory() )
         {
-            List<String> indexFileNames = application().config().stringList( "qiweb.lib.staticfiles.index" );
+            List<String> indexFileNames = application().config().stringList( "qiweb.controllers.static.index" );
             for( String indexFileName : indexFileNames )
             {
                 File indexFile = new File( file, indexFileName );
@@ -199,7 +199,7 @@ public class StaticFiles
         }
         else
         {
-            Long maxAge = application().config().seconds( "qiweb.lib.staticfiles.cache.maxage" );
+            Long maxAge = application().config().seconds( "qiweb.controllers.static.cache.maxage" );
             if( maxAge.equals( 0L ) )
             {
                 response().headers().with( CACHE_CONTROL, "no-cache" );
@@ -212,7 +212,7 @@ public class StaticFiles
         // ETag
         long lastModified = file.lastModified();
         final String etag = "\"" + lastModified + "-" + file.hashCode() + "\"";
-        if( application().config().bool( "qiweb.lib.staticfiles.cache.etag" ) )
+        if( application().config().bool( "qiweb.controllers.static.cache.etag" ) )
         {
             response().headers().with( ETAG, etag );
         }

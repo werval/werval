@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,16 +28,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
- * Assert that the StaticFiles controller behave correctly.
+ * Assert that the Static controller behave correctly.
  *
  * Please note that this test rely on the fact that the current working directory is set to the module base dir.
  */
-public class StaticFilesTest
+public class StaticTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /single org.qiweb.api.controllers.StaticFiles.file( String file = 'src/test/resources/logback.xml' )\n"
-        + "GET /tree/*path org.qiweb.api.controllers.StaticFiles.tree( String root = 'src/test/resources', String path )"
+        "GET /single org.qiweb.api.controllers.Static.file( String file = 'src/test/resources/logback.xml' )\n"
+        + "GET /tree/*path org.qiweb.api.controllers.Static.tree( String root = 'src/test/resources', String path )"
     ) );
 
     private static final File ROOT = new File( "src/test/resources" );
