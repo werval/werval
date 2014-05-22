@@ -24,6 +24,8 @@ buildscript {
 }
 apply plugin: 'asciidoctor'
 asciidoctor {
+    inputs.dir file( asciidocSource )
+    inputs.dir file( assetsSource )
     sourceDir = file( asciidocSource )
     outputDir = file( htmlTarget )
     backend = 'html5'
