@@ -84,6 +84,8 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
+import static org.qiweb.api.util.Strings.NEWLINE;
+import static org.qiweb.api.util.Strings.indentTwoSpaces;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
@@ -258,6 +260,21 @@ public final class ApplicationInstance
             Thread.currentThread().setContextClassLoader( previousLoader );
             activatingOrPassivating = false;
         }
+
+        LOG.info( "QiWeb Application Activated" );
+        if( ( mode == Mode.DEV && LOG.isInfoEnabled() ) || LOG.isDebugEnabled() )
+        {
+            String msg = "All routes defined by the application, in order:\n\n"
+                         + indentTwoSpaces( routes.toString(), 2 ) + NEWLINE;
+            if( mode == Mode.DEV )
+            {
+                LOG.info( msg );
+            }
+            else
+            {
+                LOG.debug( msg );
+            }
+        }
     }
 
     @Override
@@ -313,6 +330,8 @@ public final class ApplicationInstance
             activated = false;
             activatingOrPassivating = false;
         }
+
+        LOG.info( "QiWeb Application Passivated" );
     }
 
     @Override
