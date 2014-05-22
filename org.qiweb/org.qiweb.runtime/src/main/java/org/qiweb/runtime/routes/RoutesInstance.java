@@ -24,6 +24,8 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.util.Iterables;
 
+import static org.qiweb.api.util.Strings.NEWLINE;
+
 /**
  * Instance of Routes.
  */
@@ -60,13 +62,26 @@ public class RoutesInstance
     @Override
     public String toString()
     {
+        int methodPadLen = 0, pathPadLen = 0;
+        for( Route route : this )
+        {
+            if( route.httpMethod().name().length() > methodPadLen )
+            {
+                methodPadLen = route.httpMethod().name().length();
+            }
+            if( route.path().length() > pathPadLen )
+            {
+                pathPadLen = route.path().length();
+            }
+        }
         StringBuilder sb = new StringBuilder();
         for( Iterator<Route> it = iterator(); it.hasNext(); )
         {
-            sb.append( it.next().toString() );
+            RouteInstance route = (RouteInstance) it.next();
+            sb.append( route.toString( methodPadLen, pathPadLen, null ) );
             if( it.hasNext() )
             {
-                sb.append( "\n" );
+                sb.append( NEWLINE );
             }
         }
         return sb.toString();

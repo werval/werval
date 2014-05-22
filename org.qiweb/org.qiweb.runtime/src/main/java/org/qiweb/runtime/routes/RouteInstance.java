@@ -39,6 +39,8 @@ import org.qiweb.api.routes.Route;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.Strings.SPACE;
+import static org.qiweb.api.util.Strings.rightPad;
 import static org.qiweb.runtime.util.Iterables.addAll;
 import static org.qiweb.runtime.util.Iterables.toList;
 
@@ -404,52 +406,68 @@ import static org.qiweb.runtime.util.Iterables.toList;
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append( httpMethod ).append( " " )
-            .append( path ).append( " " )
-            .append( controllerType.getName() ).append( "." )
-            .append( controllerMethodName )
-            .append( "(" );
+        return toString( null, null, null );
+    }
+
+    public String toString( Integer methodPadLen, Integer pathPadLen, Integer actionPadLen )
+    {
+        StringBuilder builder = new StringBuilder();
+
+        // HTTP Method
+        builder.append( methodPadLen == null ? httpMethod : rightPad( methodPadLen, httpMethod.name() ) );
+        builder.append( SPACE );
+
+        // Path
+        builder.append( pathPadLen == null ? path : rightPad( pathPadLen, path ) );
+        builder.append( SPACE );
+
+        // Action
+        StringBuilder actionBuilder = new StringBuilder();
+        actionBuilder.append( controllerType.getName() ).append( '.' ).append( controllerMethodName ).append( '(' );
         Iterator<ControllerParams.Param> it = controllerParams.iterator();
         if( it.hasNext() )
         {
-            sb.append( " " );
+            actionBuilder.append( SPACE );
             while( it.hasNext() )
             {
                 ControllerParams.Param param = it.next();
-                sb.append( param.type().getSimpleName() ).append( " " ).append( param.name() );
+                actionBuilder.append( param.type().getSimpleName() ).append( SPACE ).append( param.name() );
                 switch( param.valueKind() )
                 {
                     case FORCED:
-                        sb.append( " = '" ).append( param.forcedValue() ).append( "'" );
+                        actionBuilder.append( " = '" ).append( param.forcedValue() ).append( "'" );
                         break;
                     case DEFAULTED:
-                        sb.append( " ?= '" ).append( param.defaultedValue() ).append( "'" );
+                        actionBuilder.append( " ?= '" ).append( param.defaultedValue() ).append( "'" );
                         break;
                     default:
                 }
                 if( it.hasNext() )
                 {
-                    sb.append( ", " );
+                    actionBuilder.append( ", " );
                 }
             }
-            sb.append( " " );
+            actionBuilder.append( SPACE );
         }
-        sb.append( ")" );
+        actionBuilder.append( ')' );
+        String action = actionBuilder.toString();
+        builder.append( actionPadLen == null ? action : rightPad( actionPadLen, action ) );
+
+        // Modifiers
         Iterator<String> modifiersIt = modifiers.iterator();
         if( modifiersIt.hasNext() )
         {
-            sb.append( " " );
+            builder.append( SPACE );
             while( modifiersIt.hasNext() )
             {
-                sb.append( modifiersIt.next() );
+                builder.append( modifiersIt.next() );
                 if( modifiersIt.hasNext() )
                 {
-                    sb.append( " " );
+                    builder.append( SPACE );
                 }
             }
         }
-        return sb.toString();
+        return builder.toString();
     }
 
     @Override
