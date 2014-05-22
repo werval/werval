@@ -40,6 +40,8 @@ public class StringsTest
         assertThat( Strings.rightPad( 7, null, 'c' ), equalTo( "ccccccc" ) );
         assertThat( Strings.rightPad( 7, "", 'c' ), equalTo( "ccccccc" ) );
         assertThat( Strings.rightPad( 7, "FOO", 'c' ), equalTo( "FOOcccc" ) );
+        assertThat( Strings.rightPad( 7, "FOOOOOO", 'c' ), equalTo( "FOOOOOO" ) );
+        assertThat( Strings.rightPad( 7, "FOOOOOO---", 'c' ), equalTo( "FOOOOOO---" ) );
     }
 
     @Test
@@ -56,5 +58,7 @@ public class StringsTest
         assertThat( Strings.leftPad( 7, null, 'c' ), equalTo( "ccccccc" ) );
         assertThat( Strings.leftPad( 7, "", 'c' ), equalTo( "ccccccc" ) );
         assertThat( Strings.leftPad( 7, "FOO", 'c' ), equalTo( "ccccFOO" ) );
+        assertThat( Strings.leftPad( 7, "FOOOOOO", 'c' ), equalTo( "FOOOOOO" ) );
+        assertThat( Strings.leftPad( 7, "FOOOOOO---", 'c' ), equalTo( "FOOOOOO---" ) );
     }
 }

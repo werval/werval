@@ -15,9 +15,14 @@
  */
 package org.qiweb.api.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Iterator;
 import org.qiweb.api.exceptions.IllegalArguments;
+import org.qiweb.api.exceptions.RuntimeIOException;
 
 /**
  * Utilities to work with Strings.
@@ -28,6 +33,26 @@ public final class Strings
      * Empty string.
      */
     public static final String EMPTY = "";
+    /**
+     * Space.
+     */
+    public static final String SPACE = " ";
+    /**
+     * Tabulation.
+     */
+    public static final String TAB = "\t";
+    /**
+     * New line.
+     */
+    public static final String NEWLINE = "\n";
+    /**
+     * ….
+     */
+    public static final String ETC = "…";
+    /**
+     * Empty {@literal char} array.
+     */
+    public static final char[] EMPTY_CHAR_ARRAY = EMPTY.toCharArray();
 
     /**
      * Check if a String is null or empty.
@@ -121,6 +146,36 @@ public final class Strings
         return buffer.toString();
     }
 
+    /**
+     * Right pad a given string with spaces.
+     *
+     * If the given String length is greater than {@literal length}, the String is returned as is.
+     *
+     * @param length Total length of the padded String
+     * @param string String to pad
+     *
+     * @return Right padded String
+     *
+     * @throws IllegalArgumentException if {@literal length} is negative
+     */
+    public static String rightPad( int length, String string )
+    {
+        return rightPad( length, string, ' ' );
+    }
+
+    /**
+     * Right pad a given string.
+     *
+     * If the given String length is greater than {@literal length}, the String is returned as is.
+     *
+     * @param length Total length of the padded String
+     * @param string String to pad
+     * @param pad    Character to use for padding
+     *
+     * @return Right padded String
+     *
+     * @throws IllegalArgumentException if {@literal length} is negative
+     */
     public static String rightPad( int length, String string, char pad )
     {
         IllegalArguments.ensureGreaterOrEqual( "length", length, 0 );
@@ -135,6 +190,36 @@ public final class Strings
         return string + repeat( pad, length - string.length() );
     }
 
+    /**
+     * Left pad a given string with spaces.
+     *
+     * If the given String length is greater than {@literal length}, the String is returned as is.
+     *
+     * @param length Total length of the padded String
+     * @param string String to pad
+     *
+     * @return Left padded String
+     *
+     * @throws IllegalArgumentException if {@literal length} is negative
+     */
+    public static String leftPad( int length, String string )
+    {
+        return leftPad( length, string, ' ' );
+    }
+
+    /**
+     * Left pad a given string.
+     *
+     * If the given String length is greater than {@literal length}, the String is returned as is.
+     *
+     * @param length Total length of the padded String
+     * @param string String to pad
+     * @param pad    Character to use for padding
+     *
+     * @return Left padded String
+     *
+     * @throws IllegalArgumentException if {@literal length} is negative
+     */
     public static String leftPad( int length, String string, char pad )
     {
         IllegalArguments.ensureGreaterOrEqual( "length", length, 0 );
@@ -149,6 +234,14 @@ public final class Strings
         return repeat( pad, length - string.length() ) + string;
     }
 
+    /**
+     * Repeat a character.
+     *
+     * @param character Character to repeat
+     * @param times     Times to repeat
+     *
+     * @return A String of {@literal times} length that contains only {@literal character}.
+     */
     public static String repeat( char character, int times )
     {
         StringBuilder sb = new StringBuilder();
@@ -159,6 +252,14 @@ public final class Strings
         return sb.toString();
     }
 
+    /**
+     * Repeat a String.
+     *
+     * @param characters Characters to repeat
+     * @param times      Times to repeat
+     *
+     * @return A String of {@literal characters.length()*times} length that contains repeated {@literal characters}.
+     */
     public static String repeat( CharSequence characters, int times )
     {
         StringBuilder sb = new StringBuilder();
@@ -167,6 +268,189 @@ public final class Strings
             sb.append( characters );
         }
         return sb.toString();
+    }
+
+    /**
+     * Indent a String with two spaces levels.
+     *
+     * @param input String to indent
+     * @param level Indent levels count
+     *
+     * @return Indented String
+     */
+    public static String indentTwoSpaces( String input, int level )
+    {
+        try
+        {
+            return indentTwoSpaces( new StringReader( input ), level );
+        }
+        catch( IOException ex )
+        {
+            throw new RuntimeIOException( ex );
+        }
+    }
+
+    /**
+     * Indent a String with tabulation levels.
+     *
+     * @param input String to indent
+     * @param level Indent levels count
+     *
+     * @return Indented String
+     */
+    public static String indentTab( String input, int level )
+    {
+        try
+        {
+            return indentTab( new StringReader( input ), level );
+        }
+        catch( IOException ex )
+        {
+            throw new RuntimeIOException( ex );
+        }
+    }
+
+    /**
+     * Indent a String.
+     *
+     * @param input String to indent
+     * @param level Indent levels count
+     * @param tab   Level String
+     *
+     * @return Indented String
+     */
+    public static String indent( String input, int level, String tab )
+    {
+        try
+        {
+            return indent( new StringReader( input ), level, tab, EMPTY );
+        }
+        catch( IOException ex )
+        {
+            throw new RuntimeIOException( ex );
+        }
+    }
+
+    /**
+     * Indent a String using a prefix.
+     *
+     * @param input  String to indent
+     * @param level  Indent levels count
+     * @param tab    Level String
+     * @param prefix Prefix
+     *
+     * @return Indented String
+     */
+    public static String indent( String input, int level, String tab, String prefix )
+    {
+        try
+        {
+            return indent( new StringReader( input ), level, tab, prefix );
+        }
+        catch( IOException ex )
+        {
+            throw new RuntimeIOException( ex );
+        }
+    }
+
+    /**
+     * Read a String and indent it with two spaces levels.
+     *
+     * @param input Reader input
+     * @param level Indent levels count
+     *
+     * @return Indented String
+     *
+     * @throws IOException If unable to read input
+     */
+    public static String indentTwoSpaces( Reader input, int level )
+        throws IOException
+    {
+        return indent( input, level, "  " );
+    }
+
+    /**
+     * Read a String and indent it with tabulation levels.
+     *
+     * @param input Reader input
+     * @param level Indent levels count
+     *
+     * @return Indented String
+     *
+     * @throws IOException If unable to read input
+     */
+    public static String indentTab( Reader input, int level )
+        throws IOException
+    {
+        return indent( input, level, TAB );
+    }
+
+    /**
+     * Read a String and indent it.
+     *
+     * @param input Reader input
+     * @param level Indent levels count
+     * @param tab   Level String
+     *
+     * @return Indented String
+     *
+     * @throws IOException If unable to read input
+     */
+    public static String indent( Reader input, int level, String tab )
+        throws IOException
+    {
+        return indent( input, level, tab, EMPTY );
+    }
+
+    /**
+     * Read a String and indent it using a prefix.
+     *
+     * @param input  Reader input
+     * @param level  Indent levels count
+     * @param tab    Level String
+     * @param prefix Prefix
+     *
+     * @return Indented String
+     *
+     * @throws IOException If unable to read input
+     */
+    public static String indent( Reader input, int level, String tab, String prefix )
+        throws IOException
+    {
+        BufferedReader reader = new BufferedReader( input );
+        StringBuilder output = new StringBuilder();
+        try
+        {
+
+            String eachLine = reader.readLine();
+            if( !isEmpty( eachLine ) )
+            {
+                appendIndent( output, level, tab ).append( prefix ).append( eachLine );
+                while( ( eachLine = reader.readLine() ) != null )
+                {
+                    output.append( NEWLINE );
+                    if( !isEmpty( eachLine ) )
+                    {
+                        appendIndent( output, level, tab ).append( prefix ).append( eachLine );
+                    }
+                }
+            }
+            return output.toString();
+
+        }
+        finally
+        {
+            Closeables.closeSilently( reader );
+        }
+    }
+
+    private static StringBuilder appendIndent( StringBuilder output, int level, String tab )
+    {
+        for( int indent = 0; indent < level; indent++ )
+        {
+            output.append( tab );
+        }
+        return output;
     }
 
     private Strings()
