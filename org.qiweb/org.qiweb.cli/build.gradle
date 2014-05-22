@@ -2,7 +2,6 @@
 dependencies {
     compile project( ':org.qiweb.commands' )
     compile libs.cli
-    compile libs.exec
 }
 
 apply plugin: 'application'

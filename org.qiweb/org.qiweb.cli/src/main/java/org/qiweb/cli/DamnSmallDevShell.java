@@ -15,7 +15,6 @@
  */
 package org.qiweb.cli;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -43,10 +42,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.PumpStreamHandler;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.util.DeltreeFileVisitor;
+import org.qiweb.api.util.InputStreams;
 import org.qiweb.api.util.Strings;
 import org.qiweb.commands.DevShellCommand;
 import org.qiweb.commands.SecretCommand;
@@ -59,6 +57,8 @@ import org.qiweb.spi.dev.DevShellSPIAdapter;
 
 import static java.io.File.separator;
 import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.api.util.Strings.NEWLINE;
 import static org.qiweb.api.util.Strings.hasText;
 import static org.qiweb.cli.BuildVersion.COMMIT;
 import static org.qiweb.cli.BuildVersion.DATE;
@@ -603,34 +603,32 @@ public final class DamnSmallDevShell
         new SecretCommand().run();
     }
 
-    private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
-
     /* package */ static void rebuild(
         URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, File classesDir
     )
     {
         System.out.println( "Compiling Application..." );
-        ByteArrayOutputStream javacOutput = new ByteArrayOutputStream();
+        String javacOutput = EMPTY;
         try
         {
             // Collect java files
-            ByteArrayOutputStream findJavaOutput = new ByteArrayOutputStream();
+            String javaFiles = EMPTY;
             for( File source : sources )
             {
                 if( source.exists() )
                 {
-                    org.apache.commons.exec.CommandLine findJava = new org.apache.commons.exec.CommandLine( "find" );
-                    findJava.addArgument( source.getAbsolutePath() );
-                    findJava.addArgument( "-type" );
-                    findJava.addArgument( "f" );
-                    findJava.addArgument( "-iname" );
-                    findJava.addArgument( "*.java" );
-
-                    EXECUTOR.setStreamHandler( new PumpStreamHandler( findJavaOutput ) );
-                    EXECUTOR.execute( findJava );
+                    ProcessBuilder findBuilder = new ProcessBuilder(
+                        "find", source.getAbsolutePath(), "-type", "f", "-iname", "*.java"
+                    );
+                    Process find = findBuilder.start();
+                    int returnCode = find.waitFor();
+                    if( returnCode != 0 )
+                    {
+                        throw new IOException( "Unable to find java source files in " + source );
+                    }
+                    javaFiles += NEWLINE + new String( InputStreams.readAllBytes( find.getInputStream(), 4096 ), UTF_8 );
                 }
             }
-            String javaFiles = findJavaOutput.toString( "UTF-8" );
             if( hasText( javaFiles ) )
             {
                 // Write list in a temporary file
@@ -641,31 +639,32 @@ public final class DamnSmallDevShell
                     writer.close();
                 }
                 // Compile
-                org.apache.commons.exec.CommandLine javac = new org.apache.commons.exec.CommandLine( "javac" );
-                javac.addArgument( "-encoding" );
-                javac.addArgument( "UTF-8" );
-                javac.addArgument( "-source" );
-                javac.addArgument( "1.8" );
-                javac.addArgument( "-d" );
-                javac.addArgument( classesDir.getAbsolutePath() );
-                javac.addArgument( "-classpath" );
                 String[] classpathStrings = new String[ runtimeClasspath.length ];
                 for( int idx = 0; idx < runtimeClasspath.length; idx++ )
                 {
                     classpathStrings[idx] = runtimeClasspath[idx].toURI().toASCIIString();
                 }
-                javac.addArgument( Strings.join( classpathStrings, ":" ) );
-                javac.addArgument( "@" + javaListFile.getAbsolutePath() );
-
-                EXECUTOR.setStreamHandler( new PumpStreamHandler( javacOutput ) );
-                EXECUTOR.execute( javac );
+                ProcessBuilder javacBuilder = new ProcessBuilder(
+                    "javac",
+                    "-encoding", "UTF-8",
+                    "-source", "1.8",
+                    "-d", classesDir.getAbsolutePath(),
+                    "-classpath", Strings.join( classpathStrings, ":" ),
+                    "@" + javaListFile.getAbsolutePath()
+                );
+                Process javac = javacBuilder.start();
+                int returnCode = javac.waitFor();
+                if( returnCode != 0 )
+                {
+                    throw new IOException( "Unable to build java source files." );
+                }
+                javacOutput = new String( InputStreams.readAllBytes( javac.getInputStream(), 4096 ), UTF_8 );
             }
         }
-        catch( IOException | URISyntaxException ex )
+        catch( InterruptedException | IOException | URISyntaxException ex )
         {
-            String output = javacOutput.toString(); // utf-8
             throw new QiWebException(
-                "Unable to rebuild" + ( Strings.isEmpty( output ) ? "" : "\n" + output ),
+                "Unable to rebuild" + ( Strings.isEmpty( javacOutput ) ? "" : "\n" + javacOutput ),
                 ex
             );
         }
