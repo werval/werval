@@ -28,6 +28,8 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Breaking changes
 
 - Gradle Plugin development mode build logic revamped, see #125
+- Renamed StaticFiles to Static, see #124
+- Renamed ClasspathResources to Classpath, see #123
 
 #### Bug fixes
 
@@ -53,6 +55,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Outome builder API now expose helpers for common Content-Types and Charsets, see #128
 - The Cache API now leverage Java 8 Lambdas, see #127
 - The JPA Plugin now redirects all EclipseLink logging to SLF4J, see #115
+- The DevShell can now watch individual files, see #19
 - CLI, Gradle and Maven support converged in `org.qiweb.commands`, see #111
 - Move Gradle Plugin tasks configuration into tasks, see #103
 - Add a file based run lock for the DevShell for easier process monitoring by both the build plugins and their integration tests, #98
