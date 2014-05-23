@@ -63,9 +63,13 @@ For minor changes, build system or test changes, see the full [source code histo
 
 #### Dependency changes
 
-- Upgrade Netty from `4.0.18` to `4.0.19`, see the [announcement](http://netty.io/news/2014/04/30/release-day.html)
-- Upgrade Typesafe Config from `1.2.0` to `1.2.1`, see the [history](https://github.com/typesafehub/config)
-- Upgrade Gradle from `1.11` to `1.12`, see the [release notes](http://www.gradle.org/docs/1.12/release-notes)
+- Core
+    - Upgrade Netty from `4.0.18` to `4.0.19`, see the [announcement](http://netty.io/news/2014/04/30/release-day.html)
+    - Upgrade Typesafe Config from `1.2.0` to `1.2.1`, see the [history](https://github.com/typesafehub/config)
+- Modules
+    - Upgrade Spring from `4.0.0` to `4.0.5`
+- Tooling
+    - Upgrade Gradle from `1.11` to `1.12`, see the [release notes](http://www.gradle.org/docs/1.12/release-notes)
 
 
 
@@ -103,7 +107,8 @@ For minor changes, build system or test changes, see the full [source code histo
 
 #### Dependency changes
 
-- Upgrade Netty from `4.0.17` to `4.0.18`, see the [announcement](http://netty.io/news/2014/04/01/4-0-18-Final.html)
+- Core
+    - Upgrade Netty from `4.0.17` to `4.0.18`, see the [announcement](http://netty.io/news/2014/04/01/4-0-18-Final.html)
 
 
 

@@ -27,7 +27,7 @@ def v_liquibase = '3.1.1'
 def v_memcache = '2.11.2'
 def v_qi4j = '2.1-SNAPSHOT' // FIXME Final!
 def v_rythm = '1.0'
-def v_spring = '4.0.4.RELEASE'
+def v_spring = '4.0.5.RELEASE'
 def v_tyrex = '1.0.1'
 
 // Build Plugins libraries versions
@@ -117,18 +117,14 @@ rootProject.ext {
 
 
 // WebJARs versions
-def v_angular = '1.2.13'
 def v_bootstrap = '3.0.3'
 def v_jquery = '2.1.0-2'
-def v_marked = '0.2.10'
 
 // WebJARs extension
 rootProject.ext {
     webjars = [
-        angular:            "org.webjars:angularjs:$v_angular",
         bootstrap:          "org.webjars:bootstrap:$v_bootstrap",
         jquery:             "org.webjars:jquery:$v_jquery",
-        marked:             "org.webjars:marked:$v_marked",
     ]
 }
 
