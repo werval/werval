@@ -51,6 +51,9 @@ import static org.qiweb.runtime.util.ClassLoaders.printURLs;
  * Bind a build plugin to a QiWeb runtime using a DevShellSPI.
  * <p>
  * Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.
+ * <p>
+ * See {@literal src/doc/classloader-hierary.png} in the source tree for an overview of how the ClassLoader hierarchy is
+ * set up.
  */
 public final class DevShell
 {
