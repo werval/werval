@@ -44,6 +44,9 @@ import static java.util.Collections.EMPTY_LIST;
     private boolean activatingOrPassivating = false;
     private final List<Config> configuredPlugins;
     private final List<Plugin<?>> extraPlugins;
+    /**
+     * Couple left is the actual plugin instance, right is its Config node.
+     */
     private List<Couple<Plugin<?>, Config>> activePlugins = EMPTY_LIST;
 
     /* package */ PluginsInstance( Config config, List<Plugin<?>> extraPlugins )
