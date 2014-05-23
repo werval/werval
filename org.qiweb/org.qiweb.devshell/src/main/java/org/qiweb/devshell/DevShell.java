@@ -111,8 +111,6 @@ public final class DevShell
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
     private static final String CONFIG_API_CLASS = "org.qiweb.api.Config";
     private static final String CONFIG_RUNTIME_CLASS = "org.qiweb.runtime.ConfigInstance";
-    private static final String ROUTES_PROVIDER_CLASS = "org.qiweb.runtime.routes.RoutesProvider";
-    private static final String DEVSHELL_ROUTES_PROVIDER_CLASS = "org.qiweb.runtime.dev.DevShellRoutesProvider";
     private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
     private static final String MODE_API_CLASS = "org.qiweb.api.Mode";
     private static final String APPLICATION_SPI_CLASS = "org.qiweb.spi.ApplicationSPI";
@@ -177,10 +175,6 @@ public final class DevShell
                 }
             );
 
-            // RoutesProvider
-            Class<?> routesProviderClass = appRealm.loadClass( ROUTES_PROVIDER_CLASS );
-            Object routesProviderInstance = appRealm.loadClass( DEVSHELL_ROUTES_PROVIDER_CLASS ).newInstance();
-
             // Application
             Class<?> appClass = appRealm.loadClass( APPLICATION_RUNTIME_CLASS );
             Class<?> modeClass = appRealm.loadClass( MODE_API_CLASS );
@@ -190,7 +184,6 @@ public final class DevShell
                     modeClass,
                     configClass,
                     ClassLoader.class,
-                    routesProviderClass,
                     DevShellSPI.class
                 }
             ).newInstance(
@@ -200,7 +193,6 @@ public final class DevShell
                     modeClass.getEnumConstants()[0],
                     configInstance,
                     appRealm,
-                    routesProviderInstance,
                     spi
                 }
             );

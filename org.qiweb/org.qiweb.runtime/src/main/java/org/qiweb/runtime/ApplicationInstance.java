@@ -194,14 +194,29 @@ public final class ApplicationInstance
     /**
      * Create a new Application instance in given {@link Mode}.
      *
-     * @param mode           Application Mode, must be not null
-     * @param config         Application config, must be not null
-     * @param classLoader    Application ClassLoader, must be not null
-     * @param routesProvider Routes provider, must be not null
-     * @param devSpi         DevShell SPI, can be null
+     * @param mode        Application Mode, must be not null
+     * @param config      Application config, must be not null
+     * @param classLoader Application ClassLoader, must be not null
+     * @param devSpi      DevShell SPI, can be null
      */
     @Reflectively.Invoked( by = "DevShell" )
-    public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider, DevShellSPI devSpi )
+    public ApplicationInstance(
+        Mode mode,
+        Config config,
+        ClassLoader classLoader,
+        DevShellSPI devSpi
+    )
+    {
+        this( mode, config, classLoader, new RoutesConfProvider(), devSpi );
+    }
+
+    private ApplicationInstance(
+        Mode mode,
+        Config config,
+        ClassLoader classLoader,
+        RoutesProvider routesProvider,
+        DevShellSPI devSpi
+    )
     {
         ensureNotNull( "Application Mode", mode );
         ensureNotNull( "Application Config", config );
@@ -243,7 +258,11 @@ public final class ApplicationInstance
             resolvedRoutes.addAll( routesProvider.routes( this ) );
 
             // Activate Plugins
-            plugins = new PluginsInstance( config, global.extraPlugins() );
+            plugins = new PluginsInstance(
+                config,
+                global.extraPlugins(),
+                devSpi != null
+            );
             plugins.onActivate( this );
 
             // Plugin contributed Routes
