@@ -65,23 +65,26 @@ import org.slf4j.LoggerFactory;
                     );
                     break;
                 }
-                list.add( new DynamicDocumentation( id, basePath, entryPoint ) );
+                String name = dyndocConfig.has( "name" ) ? dyndocConfig.string( "name" ) : id;
+                list.add( new DynamicDocumentation( id, basePath, entryPoint, name ) );
             }
         }
         return list;
     }
-    private final String id;
+    /* package */ final String id;
     private final String basePath;
     private final String entryPoint;
+    /* package */ final String name;
 
-    private DynamicDocumentation( String id, String basePath, String entryPoint )
+    /* package */ DynamicDocumentation( String id, String basePath, String entryPoint, String name )
     {
         this.id = id;
         this.basePath = basePath;
         this.entryPoint = entryPoint;
+        this.name = name;
     }
 
-    /* package */ List<Route> buildRoutes( RouteBuilder routeBuilder )
+    List<Route> buildRoutes( RouteBuilder routeBuilder )
     {
         // Redirect /@doc/{id} to /@doc/{id}/{entry_point}
         StringBuilder redirect = new StringBuilder();
@@ -99,5 +102,14 @@ import org.slf4j.LoggerFactory;
             routeBuilder.parse().route( redirect.toString() ),
             routeBuilder.parse().route( index.toString() )
         );
+    }
+
+    @Override
+    public String toString()
+    {
+        return "DynDoc{" + "id=" + id
+               + ", basePath=" + basePath
+               + ", entryPoint=" + entryPoint
+               + ", name=" + name + '}';
     }
 }

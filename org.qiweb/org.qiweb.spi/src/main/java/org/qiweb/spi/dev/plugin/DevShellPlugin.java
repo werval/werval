@@ -56,7 +56,8 @@ public class DevShellPlugin
             "GET /@config org.qiweb.api.controllers.Introspect.config",
             "GET /@version org.qiweb.api.controllers.Introspect.version",
             "GET /@doc org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/index.html' )",
-            "GET /@doc/api org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/api/index.html' )"
+            "GET /@doc/api org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/api/index.html' )",
+            "GET /@doc/modules org.qiweb.spi.dev.plugin.DynamicDocumentations.index"
         ) );
 
         // Setup dynamic documentation routes
