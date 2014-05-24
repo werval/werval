@@ -1,4 +1,6 @@
 
+description = "Qi4j Module"
+
 repositories {
     maven { url = "https://repository-qi4j.forge.cloudbees.com/release/" }
     maven { url = "https://repository-qi4j.forge.cloudbees.com/snapshot/" }

@@ -1,4 +1,6 @@
 
+description = "EhCache Cache Module"
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.spi:$version"

@@ -1,4 +1,6 @@
 
+description = "Liquibase Module"
+
 dependencies {
 
     compile project( ":org.qiweb.modules.jdbc" )

@@ -1,4 +1,6 @@
 
+description = "Guice Module"
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
