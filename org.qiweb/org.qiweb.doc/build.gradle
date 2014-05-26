@@ -1,65 +1,103 @@
+
+//
+//  _____ _ _ _ _     _      ____                            _       _   _
+// |     |_| | | |___| |_   |    \ ___ ___ _ _ _____ ___ ___| |_ ___| |_|_|___ ___
+// |  |  | | | | | -_| . |  |  |  | . |  _| | |     | -_|   |  _| .'|  _| | . |   |
+// |__  _|_|_____|___|___|  |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
+//    |__|
+// _____________________________________________________________________________________________________________________
 // QiWeb Documentation
+//
 
-def asciidocSource = "$project.projectDir.absolutePath/src/asciidoc"
-def assetsSource = "$project.projectDir.absolutePath/src/assets"
-def htmlTarget = "$project.projectDir.absolutePath/build/classes/main/org/qiweb/doc/html"
-
-
-// Static assets
-task copyAssets( type: Copy ) {
-    from assetsSource
-    into htmlTarget
-}
+def assetsSourcesPath = "$project.projectDir.absolutePath/src/assets"
+def asciidocSourcesPath = "$project.projectDir.absolutePath/src/asciidoc"
+def javadocSourcesPath = "$project.projectDir.absolutePath/src/javadoc"
+def asciidocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/asciidoc"
+def javadocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/embedded-javadoc"
+def docResourcesSourceSetPath = "$project.projectDir.absolutePath/build/generated-src/doc/resources"
+def docResourcesSubPath = 'org/qiweb/doc/html'
 
 
-// Asciidoc processing
+
+//
+//  _____         _ _   _
+// |  _  |___ ___|_|_|_| |___ ___
+// |     |_ -|  _| | | . | . |  _|
+// |__|__|___|___|_|_|___|___|___|
+// _____________________________________________________________________________________________________________________
+// Generate asciidoc into build/docs/asciidoc
+//
+
 buildscript {
     repositories {
         maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
         maven { url 'http://jcenter.bintray.com' }
     }
-    dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
-    }
+    dependencies { classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0' }
 }
 apply plugin: 'asciidoctor'
 asciidoctor {
-    inputs.dir file( asciidocSource )
-    inputs.dir file( assetsSource )
-    sourceDir = file( asciidocSource )
-    outputDir = file( htmlTarget )
+    sourceDir = file( asciidocSourcesPath )
+    outputDir = file( asciidocGenResourcesPath )
     backend = 'html5'
+    logDocuments = true
     options = [
         compact: true,
         attributes: [
             'qiweb-version': version,
             'toc2': '',
-            'stylesheet': "$assetsSource/stylesheets/foundation.css",
+            'stylesheet': "$assetsSourcesPath/stylesheets/foundation.css",
             'icons': 'font',
             'docinfo1': '',
         ]
     ]
-    logDocuments = true
+    doLast {
+        copy {
+            from assetsSourcesPath
+            into asciidocGenResourcesPath
+        }
+    }
+    inputs.dir file( assetsSourcesPath )
+    inputs.dir file( asciidocSourcesPath )
+    outputs.dir file( asciidocGenResourcesPath )
 }
-asciidoctor.dependsOn copyAssets
-jar.dependsOn asciidoctor
 
 
-// Embedded Javadoc
-configurations { umlgraphDoclet }
-dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
+
+//
+//     __               _
+//  __|  |___ _ _ ___ _| |___ ___
+// |  |  | .'| | | .'| . | . |  _|
+// |_____|__,|\_/|__,|___|___|___|
+// _____________________________________________________________________________________________________________________
+// Generate javadoc into build/docs/embedded-javadoc
+//
+
+// Included projects
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p ->
         p.name == 'org.qiweb.api' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test'
     }
 }
-task embeddedJavadoc( type: Javadoc ) {
+
+// Dependency to included projects
+configurations { embeddedJavadocConfiguration }
+dependencies { embeddedJavadocProjects().each { p -> embeddedJavadocConfiguration p } }
+
+// Dependency to UMLGraph
+// QUID Replace with http://www.yworks.com/en/products_ydoc.html ?
+configurations { umlgraphDoclet }
+dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
+
+// Javadoc Task
+task generateEmbeddedJavadoc( type: Javadoc ) {
     title = "QiWeb API Reference (${version})"
-    source = embeddedJavadocProjects().collect { p -> p.sourceSets.main.allJava }
     classpath = files( embeddedJavadocProjects().collect { p -> p.sourceSets.main.compileClasspath } )
-    destinationDir = file( "$htmlTarget/api" )
+    source = embeddedJavadocProjects().collect { p -> p.sourceSets.main.allJava }
+    exclude               "**/internal/**"
+    destinationDir = file( javadocGenResourcesPath )
     options.encoding = 'UTF-8'
-    options.overview = file( "$project.projectDir.absolutePath/src/javadoc/overview.html" )
+    options.overview = file( "$javadocSourcesPath/overview.html" )
     options.docFilesSubDirs = true
     options.links(
         "http://docs.oracle.com/javase/8/docs/api/",
@@ -67,23 +105,55 @@ task embeddedJavadoc( type: Javadoc ) {
         "http://junit.org/javadoc/latest/"
     )
     options.group( [
-            "QiWeb API":               [ "org.qiweb.api",       "org.qiweb.api.*"     ],
-            "QiWeb Test Support":      [ "org.qiweb.test",      "org.qiweb.test.*"    ],
-            "QiWeb SPI":               [ "org.qiweb.spi",       "org.qiweb.spi.*"     ]
+            "QiWeb API":               [ "org.qiweb.api",       "org.qiweb.api.*"       ],
+            "QiWeb Test Support":      [ "org.qiweb.test",      "org.qiweb.test.*"      ],
+            "QiWeb SPI":               [ "org.qiweb.spi",       "org.qiweb.spi.*"       ]
         ] )
-    options.docletpath = configurations.umlgraphDoclet.files.asType( List )
+    options.docletpath = configurations.umlgraphDoclet.files as List
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
     doLast {
         copy {
-            from "$assetsSource/images"
-            into "$htmlTarget/api/images"
+            from "$assetsSourcesPath/images"
+            into "$javadocGenResourcesPath/images"
+        }
+        copy {
+            from embeddedJavadocProjects().collect { p -> p.file( "$p.projectDir.absolutePath/src/main/javadoc" ) }
+            into javadocGenResourcesPath
         }
     }
+    // embeddedJavadocProjects().each { p -> inputs.dir p.file( "$p.projectDir.absolutePath/src/main/javadoc" ) }
+    // inputs.dir file( assetsSourcesPath )
+    // inputs.dir file( javadocSourcesPath )
+    // outputs.dir file( javadocGenResourcesPath )
+}
+
+
+
+//
+//  _____                   _   _
+// |  _  |___ ___ ___ _____| |_| |_ _
+// |     |_ -|_ -| -_|     | . | | | |
+// |__|__|___|___|___|_|_|_|___|_|_  |
+//                               |___|
+// _____________________________________________________________________________________________________________________
+// Put all documentation resources into build/generated-src/doc/resources
+//
+
+task generateDocumentation( dependsOn: [ asciidoctor, generateEmbeddedJavadoc ] ) {
     doLast {
         copy {
-            from embeddedJavadocProjects().collect { p -> p.file( "$project.projectDir.absolutePath/src/main/javadoc" ) }
-            into "$htmlTarget/api"
+            from asciidocGenResourcesPath
+            into docResourcesSourceSetPath + '/' + docResourcesSubPath
+        }
+        copy {
+            from javadocGenResourcesPath
+            into docResourcesSourceSetPath + '/' + docResourcesSubPath + '/api'
         }
     }
+    inputs.dir file(asciidocGenResourcesPath )
+    inputs.dir file( javadocGenResourcesPath )
+    outputs.dir file( docResourcesSourceSetPath )
 }
-jar.dependsOn embeddedJavadoc
+sourceSets.main.resources.srcDir file( docResourcesSourceSetPath )
+
+jar.dependsOn generateDocumentation
