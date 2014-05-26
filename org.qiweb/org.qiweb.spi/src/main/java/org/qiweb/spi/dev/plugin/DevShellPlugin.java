@@ -32,7 +32,7 @@ import org.qiweb.api.routes.RouteBuilder;
  * <p>
  * Due to DevShell classloading mechanism, this should not use Javassist hence use Route parsing instead of the API.
  * Moreover, this class shall not be put in `org.qiweb.devshell`, nor `org.qiweb.spi.dev` because the loading of classes
- * of theses packages has to be done in the original DevShell classloader hierarchy.
+ * in theses packages is done in the original DevShell classloader hierarchy, not in the application one.
  */
 public class DevShellPlugin
     extends Plugin.Void
