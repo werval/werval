@@ -15,13 +15,10 @@
  */
 package org.qiweb.test;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Config;
-import org.qiweb.api.Error;
 import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;

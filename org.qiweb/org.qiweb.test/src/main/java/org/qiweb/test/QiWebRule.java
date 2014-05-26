@@ -29,15 +29,10 @@ import org.qiweb.spi.ApplicationSPI;
  * Can be used to activate/passivate around each method test as a {@literal @}{@link org.junit.Rule}
  * or around each test class as a {@literal @}{@link org.junit.ClassRule}.
  * <p>
- * By default, configuration is loaded from the <code>application.conf</code> file.
- * Use {@link #QiWebRule(java.lang.String)} or
- * {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider)} constructor to to provide your own
- * test configuration.
+ * By default, configuration is loaded from the <code>application.conf</code> file and routes are loaded from the
+ * <code>routes.conf</code> file.
  * <p>
- * By default, routes are loaded from the <code>routes.conf</code> file.
- * Use {@link #QiWebRule(org.qiweb.runtime.routes.RoutesProvider)} or
- * {@link #QiWebRule(java.lang.String, org.qiweb.runtime.routes.RoutesProvider) } constructor to provide your own
- * test routes.
+ * Use the various constructors to to provide your own test configuration and routes.
  */
 public class QiWebRule
     implements QiWebTestSupport, TestRule
