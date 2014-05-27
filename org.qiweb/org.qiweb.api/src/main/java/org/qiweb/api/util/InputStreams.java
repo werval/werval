@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import org.qiweb.api.exceptions.RuntimeIOException;
 
 /**
@@ -26,6 +27,21 @@ import org.qiweb.api.exceptions.RuntimeIOException;
  */
 public final class InputStreams
 {
+    /**
+     * 4K buffer size.
+     */
+    public static final int BUF_SIZE_4K = 4096;
+
+    /**
+     * 8K buffer size.
+     */
+    public static final int BUF_SIZE_8K = 8192;
+
+    /**
+     * 16K buffer size.
+     */
+    public static final int BUF_SIZE_16K = 16384;
+
     /**
      * Read all InputStream into a byte[].
      *
@@ -41,6 +57,22 @@ public final class InputStreams
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         transferTo( input, buffer, bufsize );
         return buffer.toByteArray();
+    }
+
+    /**
+     * Read all InputStream into a String.
+     *
+     * @param input   InputStream
+     * @param bufsize Size of the read buffer
+     * @param charset Charset
+     *
+     * @return All InputStream as String
+     *
+     * @throws RuntimeIOException if something goes wrong
+     */
+    public static String readAllAsString( InputStream input, int bufsize, Charset charset )
+    {
+        return new String( readAllBytes( input, bufsize ), charset );
     }
 
     /**

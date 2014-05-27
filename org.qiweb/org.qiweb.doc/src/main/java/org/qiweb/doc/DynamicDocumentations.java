@@ -16,41 +16,51 @@
 package org.qiweb.doc;
 
 import java.io.IOException;
-import java.nio.CharBuffer;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import org.qiweb.api.Application;
+import org.qiweb.api.Config;
 import org.qiweb.api.controllers.Classpath;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
-import org.qiweb.api.util.InputStreams;
-import org.sitemesh.builder.SiteMeshOfflineBuilder;
-import org.sitemesh.offline.SiteMeshOffline;
-import org.sitemesh.offline.directory.Directory;
-import org.sitemesh.offline.directory.InMemoryDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
+import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
 import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.api.util.InputStreams.BUF_SIZE_4K;
+import static org.qiweb.api.util.InputStreams.readAllAsString;
 
 /**
  * Dynamic Documentations Controller.
  */
 public class DynamicDocumentations
 {
+    private static final Logger LOG = LoggerFactory.getLogger( DynamicDocumentations.class );
+
     public Outcome index()
         throws IOException
     {
-        Map<String, DynamicDocumentation> dyndocs = DynamicDocumentation.discover( application() );
-        String html = "<!doctype html><html><head><title>Dynamic Documentation</title><body><h1>Dynamic Documentation</h1></body></html>";
-        return outcomes().ok( decorate( html ) ).asHtml().build();
+        Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
+        String html = "<!doctype html><html><head><title>Dynamic Documentation</title></head>"
+                      + "<body><h1>Dynamic Documentation</h1><ul>";
+        for( DynDoc dyndoc : dyndocs.values() )
+        {
+            String dyndocUrl = reverseRoutes().get( getClass(), c -> c.module( dyndoc.id ) ).httpUrl();
+            html += "<li><a href=\"" + dyndocUrl + "\">" + dyndoc.name + "</a></li>";
+        }
+        html += "</ul></body></html>";
+        return outcomes().ok( SiteMeshHelper.decorate( html ) ).asHtml().build();
     }
 
     public Outcome module( String id )
     {
-        Map<String, DynamicDocumentation> dyndocs = DynamicDocumentation.discover( application() );
-        DynamicDocumentation dyndoc = dyndocs.get( id );
+        Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
+        DynDoc dyndoc = dyndocs.get( id );
         if( dyndoc == null )
         {
             return outcomes().notFound().asHtml().build();
@@ -62,58 +72,101 @@ public class DynamicDocumentations
     public Outcome resource( String id, String path )
         throws IOException
     {
-        Map<String, DynamicDocumentation> dyndocs = DynamicDocumentation.discover( application() );
-        DynamicDocumentation dyndoc = dyndocs.get( id );
+        Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
+        DynDoc dyndoc = dyndocs.get( id );
         if( dyndoc == null )
         {
+            // Module not found
             return outcomes().notFound().asHtml().build();
         }
         String resourcePath = dyndoc.basePath + "/" + path;
         if( application().classLoader().getResource( resourcePath ) == null )
         {
+            // Resource not found
             return outcomes().notFound().asHtml().build();
         }
         String mimetype = mimeTypes().ofPath( resourcePath );
-        if( TEXT_HTML.equals( mimetype ) )
+        if( !TEXT_HTML.equals( mimetype ) )
         {
-            String html = new String(
-                InputStreams.readAllBytes( application().classLoader().getResourceAsStream( resourcePath ), 4096 ),
-                UTF_8
-            );
-            String decorated = decorate( html );
-            return outcomes().ok( decorated ).asHtml().build();
+            // Do not decorate non-HTML files
+            return new Classpath().resource( resourcePath );
         }
-        return new Classpath().resource( resourcePath );
+        String html = readAllAsString(
+            application().classLoader().getResourceAsStream( resourcePath ),
+            BUF_SIZE_4K,
+            UTF_8
+        );
+        String decoratedHtml = SiteMeshHelper.decorate( html );
+        return outcomes().ok( decoratedHtml ).asHtml().build();
     }
 
-    private String decorate( String html )
-        throws IOException
+    /**
+     * Dynamic Documentation.
+     *
+     * Dynamic documentations are declared in either a module's `reference.conf` or the `application.conf`.
+     * <p>
+     * Each dynamic documentation produce routes under the DevShell's `/@doc` umbrella that points to classpath
+     * resources.
+     */
+    private static class DynDoc
     {
-        Directory source = new InMemoryDirectory( UTF_8 );
-        Directory destination = new InMemoryDirectory( UTF_8 );
+        private final String id;
+        private final String basePath;
+        private final String entryPoint;
+        private final String name;
 
-        String decorator = "<!doctype html>\n"
-                           + "<html>\n"
-                           + "  <head>\n"
-                           + "    <title><sitemesh:write property='title'/></title>\n"
-                           + "    <sitemesh:write property='head'></sitemesh:write>\n"
-                           + "  </head>\n"
-                           + "  <body>\n"
-                           + "    <div id=\"qiweb-doc-header\">QiWeb Documentation Global Header</div>\n"
-                           + "    <sitemesh:write property='body'/>\n"
-                           + "  </body>\n"
-                           + "</html>";
-        source.save( "decorator.html", CharBuffer.wrap( decorator.toCharArray() ) );
+        private DynDoc( String id, String basePath, String entryPoint, String name )
+        {
+            this.id = id;
+            this.basePath = basePath;
+            this.entryPoint = entryPoint;
+            this.name = name;
+        }
 
-        SiteMeshOffline sitemesh = new SiteMeshOfflineBuilder()
-            .setSourceDirectory( source )
-            .setDestinationDirectory( destination )
-            .addDecoratorPath( "/*", "decorator.html" )
-            .create();
-
-        CharBuffer result = sitemesh.processContent( "/anypath", CharBuffer.wrap( html.toCharArray() ) );
-
-        return result.toString();
+        @Override
+        public String toString()
+        {
+            return "DynDoc{" + "id=" + id
+                   + ", basePath=" + basePath
+                   + ", entryPoint=" + entryPoint
+                   + ", name=" + name + '}';
+        }
     }
 
+    private static Map<String, DynDoc> discoverDynDocs( Application application )
+    {
+        Map<String, DynDoc> map = new LinkedHashMap<>();
+        if( application.config().has( "qiweb.devshell.dyndocs" ) )
+        {
+            Config dyndocsConfig = application.config().object( "qiweb.devshell.dyndocs" );
+            for( String id : dyndocsConfig.subKeys() )
+            {
+                Config dyndocConfig = dyndocsConfig.object( id );
+                if( !dyndocConfig.has( "base_path" ) )
+                {
+                    LOG.warn(
+                        "Dynamic Documentation for '{}' will not be registered as no 'base_path' is defined.",
+                        id
+                    );
+                    break;
+                }
+                String basePath = dyndocConfig.string( "base_path" );
+                String entryPoint = dyndocConfig.has( "entry_point" )
+                                    ? dyndocConfig.string( "entry_point" )
+                                    : "index.html";
+                String entryPointResource = basePath + "/" + entryPoint;
+                if( application.classLoader().getResource( entryPointResource ) == null )
+                {
+                    LOG.warn(
+                        "Dynamic Documentation for '{}' will not be served as '{}' can not be found.",
+                        id, entryPointResource
+                    );
+                    break;
+                }
+                String name = dyndocConfig.has( "name" ) ? dyndocConfig.string( "name" ) : id;
+                map.put( id, new DynDoc( id, basePath, entryPoint, name ) );
+            }
+        }
+        return map;
+    }
 }

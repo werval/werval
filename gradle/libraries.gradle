@@ -60,7 +60,7 @@ rootProject.ext {
         // HTTP Server libraries
         netty_http:         "io.netty:netty-codec-http:$v_netty",
 
-        // Documentation libraries versions
+        // Documentation libraries
         sitemesh:           "org.sitemesh:sitemesh:$v_sitemesh",
 
         // DevShell librairies

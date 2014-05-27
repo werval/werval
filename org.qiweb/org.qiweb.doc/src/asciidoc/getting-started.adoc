@@ -18,10 +18,10 @@ quickly.
 After that we'll take a look at the QiWeb development shell features.
 We hope you'll find your way through.
 
-include::src/asciidoc/getting-started/hello-cli.adoc[]
-include::src/asciidoc/getting-started/hello-gradle.adoc[]
-include::src/asciidoc/getting-started/hello-maven.adoc[]
-include::src/asciidoc/getting-started/using-devshell.adoc[]
+include::getting-started/hello-cli.adoc[]
+include::getting-started/hello-gradle.adoc[]
+include::getting-started/hello-maven.adoc[]
+include::getting-started/using-devshell.adoc[]
 
 === Next steps
 

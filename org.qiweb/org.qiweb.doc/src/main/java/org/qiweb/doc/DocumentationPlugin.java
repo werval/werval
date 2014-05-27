@@ -40,12 +40,12 @@ public class DocumentationPlugin
         return routeBuilder.parse().routes(
             "GET /@config org.qiweb.api.controllers.Introspect.config",
             "GET /@version org.qiweb.api.controllers.Introspect.version",
-            "GET /@doc org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/index.html' )",
-            "GET /@doc/api org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/api/index.html' )",
+            "GET /@doc org.qiweb.doc.CoreDocumentations.index",
+            "GET /@doc/api org.qiweb.doc.CoreDocumentations.api",
             "GET /@doc/modules org.qiweb.doc.DynamicDocumentations.index",
             "GET /@doc/modules/:id org.qiweb.doc.DynamicDocumentations.module( String id )",
             "GET /@doc/modules/:id/*path org.qiweb.doc.DynamicDocumentations.resource( String id, String path )",
-            "GET /@doc/*path org.qiweb.api.controllers.Classpath.resource( String basepath = 'org/qiweb/doc/html', String path )"
+            "GET /@doc/*path org.qiweb.doc.CoreDocumentations.catchAll( String path )"
         );
     }
 }

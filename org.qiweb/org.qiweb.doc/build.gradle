@@ -27,10 +27,8 @@ dependencies {
 def assetsSourcesPath = "$project.projectDir.absolutePath/src/assets"
 def asciidocSourcesPath = "$project.projectDir.absolutePath/src/asciidoc"
 def javadocSourcesPath = "$project.projectDir.absolutePath/src/javadoc"
-def sitemeshSourcesPath = "$project.projectDir.absolutePath/src/sitemesh"
 def asciidocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/asciidoc"
 def javadocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/embedded-javadoc"
-def sitemeshGenResourcesPath = "$project.projectDir.absolutePath/build/docs/sitemesh"
 def docResourcesSourceSetPath = "$project.projectDir.absolutePath/build/generated-src/doc/resources"
 
 
@@ -54,8 +52,7 @@ buildscript {
 apply plugin: 'asciidoctor'
 asciidoctor {
     inputs.dir file( assetsSourcesPath )
-    inputs.dir file( asciidocSourcesPath )
-    outputs.dir file( asciidocGenResourcesPath )
+    baseDir = file( asciidocSourcesPath )
     sourceDir = file( asciidocSourcesPath )
     outputDir = file( asciidocGenResourcesPath )
     backend = 'html5'
@@ -75,54 +72,6 @@ asciidoctor {
             from assetsSourcesPath
             into asciidocGenResourcesPath
         }
-    }
-}
-
-
-
-//
-//  _____ _ _       _____         _
-// |   __|_| |_ ___|     |___ ___| |_
-// |__   | |  _| -_| | | | -_|_ -|   |
-// |_____|_|_| |___|_|_|_|___|___|_|_|
-// _____________________________________________________________________________________________________________________
-// Generate sitemesh into build/docs/sitemesh
-//
-
-configurations { sitemesh }
-dependencies { sitemesh libs.sitemesh }
-task sitemesh( dependsOn: [ asciidoctor ] ) {
-    inputs.dir file( asciidocGenResourcesPath )
-    inputs.dir file( sitemeshSourcesPath )
-    outputs.dir file( sitemeshGenResourcesPath )
-    doLast {
-        def sitemeshTemp = 'build/tmp/sitemesh'
-        copy {
-            from asciidocGenResourcesPath
-            into sitemeshTemp
-            include '**/*.html'
-        }
-        copy {
-            from sitemeshSourcesPath + '/decorator.html'
-            into sitemeshTemp
-        }
-        ant.taskdef(
-            name: 'sitemesh',
-            classname: 'org.sitemesh.ant.SiteMeshTask',
-            classpath: configurations.sitemesh.asPath
-        )
-        ant.sitemesh(
-            config: sitemeshSourcesPath + '/sitemesh.xml',
-            srcdir: sitemeshTemp,
-            destdir: sitemeshGenResourcesPath,
-            excludes: 'decorator.html'
-        )
-        copy {
-            from asciidocGenResourcesPath
-            into sitemeshGenResourcesPath
-            exclude '**/*.html'
-        }
-        delete sitemeshTemp
     }
 }
 
@@ -158,7 +107,7 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
     title = "QiWeb API Reference (${version})"
     classpath = files( embeddedJavadocProjects().collect { p -> p.sourceSets.main.compileClasspath } )
     source = embeddedJavadocProjects().collect { p -> p.sourceSets.main.allJava }
-    exclude               "**/internal/**"
+    exclude "**/internal/**"
     destinationDir = file( javadocGenResourcesPath )
     options.encoding = 'UTF-8'
     options.overview = file( "$javadocSourcesPath/overview.html" )
@@ -175,6 +124,7 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
         ] )
     options.docletpath = configurations.umlgraphDoclet.files as List
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
+    inputs.dir file( assetsSourcesPath )
     doLast {
         copy {
             from "$assetsSourcesPath/images"
@@ -199,13 +149,11 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
 // Put all documentation resources into build/generated-src/doc/resources
 //
 
-task generateDocumentation( dependsOn: [ sitemesh, generateEmbeddedJavadoc ] ) {
-    inputs.dir file( sitemeshGenResourcesPath )
-    inputs.dir file( javadocGenResourcesPath )
+task generateDocumentation( dependsOn: [ asciidoctor, generateEmbeddedJavadoc ] ) {
     outputs.dir file( docResourcesSourceSetPath )
     doLast {
         copy {
-            from sitemeshGenResourcesPath
+            from asciidocGenResourcesPath
             into docResourcesSourceSetPath + '/org/qiweb/doc/html'
         }
         copy {
