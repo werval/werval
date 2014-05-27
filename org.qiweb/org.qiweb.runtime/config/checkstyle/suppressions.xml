@@ -24,7 +24,6 @@
     <!-- Java 7 Try-With-Resources not supported by Checkstyle -->
     <suppress checks=".*" files="MimeTypesInstance.java"/>
     <suppress checks=".*" files="RoutesConfProvider.java"/>
-    <suppress checks=".*" files="DevShellRoutesProvider.java"/>
 
     <!-- Java 8 Lambda Expressions not supported by Checkstyle -->
     <suppress checks=".*" files="ApplicationInstance.java"/>
@@ -41,5 +40,6 @@
     <suppress checks=".*" files="LangsInstance.java"/>
     <suppress checks=".*" files="MediaRangeInstance.java"/>
     <suppress checks=".*" files="PluginsInstance.java"/>
+    <suppress checks=".*" files="Versions.java"/>
 
 </suppressions>
