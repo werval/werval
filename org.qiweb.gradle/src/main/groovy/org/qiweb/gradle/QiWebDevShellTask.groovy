@@ -37,7 +37,7 @@ class QiWebDevShellTask extends DefaultTask
             project.sourceSets.main.output.classesDir.toURI().toURL(),
             project.sourceSets.main.output.resourcesDir.toURI().toURL()
         ]
-        def runtimeClasspath = project.configurations.qiweb.files.collect { f ->
+        def runtimeClasspath = project.configurations.devshell.files.collect { f ->
             f.toURI().toURL()
         }
         sources.each { f -> runtimeClasspath << f.toURI().toURL() }

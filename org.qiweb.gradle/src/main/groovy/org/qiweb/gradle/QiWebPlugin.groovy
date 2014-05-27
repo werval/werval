@@ -17,15 +17,16 @@ package org.qiweb.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.internal.classloader.ClasspathUtil
 
 /**
  * QiWeb Gradle Plugin.
- * <p>Apply the 'java' plugin on the project if absent.</p>
- * <p>Define 'qiweb' project extension.</p>
- * <p>Create {@literal secret}, {@literal start} and {@literal devshell} tasks.</p>
+ *
+ * Apply the 'java' plugin on the project if absent.
+ * <p>
+ * Create {@literal secret}, {@literal start} and {@literal devshell} tasks.
+ * <p>
+ * Define 'devshell' configuration for dev mode classpath injection.
  */
-// TODO What about a src/dev SourceSet with good defaults for logback, possibility to put dev conf etc ?
 class QiWebPlugin implements Plugin<Project>
 {
     void apply( Project project )
@@ -34,33 +35,7 @@ class QiWebPlugin implements Plugin<Project>
             project.apply plugin: 'java'
         }
         
-        project.configurations.create( "qiweb" )
-        project.configurations.qiweb {
-            description = "QiWeb Runtime Configuration"
-            visible = false
-            extendsFrom project.configurations.runtime
-        }
-
-        project.dependencies {
-            // Get the JAR from this plugin classpath if available, depend on it if not
-            def qiweb_doc = ClasspathUtil.getClasspathForResource(
-                getClass().getClassLoader(),
-                "org/qiweb/doc/html/index.html"
-            )
-            if( qiweb_doc != null )
-            {
-                qiweb project.files( qiweb_doc )
-            }
-            else
-            {
-                qiweb "org.qiweb:org.qiweb.doc:" + BuildVersion.VERSION
-            }
-        }
-
-        project.extensions.create(
-            "qiweb",
-            QiWebPluginExtension
-        )
+        project.extensions.create( "qiweb", QiWebPluginExtension )
 
         project.task(
             "secret",
@@ -68,6 +43,24 @@ class QiWebPlugin implements Plugin<Project>
             group:"QiWeb",
             description: 'Generate a new Application Secret.'
         )
+
+        project.task(
+            "start",
+            type: QiWebStartTask,
+            group: "QiWeb",
+            description: "Start the Application in production mode.",
+            dependsOn: project.tasks.getByName( "classes" )
+        )
+
+        project.configurations.create( "devshell" )
+        project.configurations.devshell {
+            description = "QiWeb DevShell Configuration"
+            visible = false
+            extendsFrom project.configurations.runtime
+        }
+        project.dependencies {
+            devshell "org.qiweb:org.qiweb.doc:" + BuildVersion.VERSION
+        }
 
         project.task(
             "devshell",
@@ -82,14 +75,6 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebRebuildTask,
             group: "QiWeb",
             description: "Rebuild the Application while in development mode. Do not invoke directly.",
-            dependsOn: project.tasks.getByName( "classes" )
-        )
-
-        project.task(
-            "start",
-            type: QiWebStartTask,
-            group: "QiWeb",
-            description: "Start the Application in production mode.",
             dependsOn: project.tasks.getByName( "classes" )
         )
 
