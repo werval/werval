@@ -31,9 +31,7 @@ import org.qiweb.api.routes.ControllerCallRecorder;
 import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
-import org.qiweb.runtime.dev.DevShellRoutesProvider;
 
-import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Method.CONNECT;
 import static org.qiweb.api.http.Method.DELETE;
@@ -166,11 +164,6 @@ public class ReverseRoutesInstance
         // Find Route
         for( Route route : application.routes() )
         {
-            if( application.mode() == DEV && DevShellRoutesProvider.isDevShell( route ) )
-            {
-                // Skip DevShell Routes
-                continue;
-            }
             if( route.httpMethod().equals( httpMethod )
                 && route.controllerType().getName().equals( controllerType.getName() )
                 && route.controllerMethodName().equals( handler.methodName )
