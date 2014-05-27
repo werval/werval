@@ -24,7 +24,6 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.qiweb.runtime.util.ClassLoaders;
 
 /**
  * AbstractQiWebMojo.
@@ -42,21 +41,6 @@ public abstract class AbstractQiWebMojo
         for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
         {
             classPathSet.add( new File( runtimeClassPathElement ).toURI().toURL() );
-        }
-        File qiwebDoc = ClassLoaders.classpathForResource(
-            getClass().getClassLoader(),
-            "org/qiweb/doc/html/index.html"
-        );
-        if( qiwebDoc != null )
-        {
-            classPathSet.add( qiwebDoc.toURI().toURL() );
-        }
-        else
-        {
-            getLog().warn(
-                "QiWeb Documentation not in the Maven Plugin Classpath, please report the issue: "
-                + "https://scm.codeartisans.org/qiweb/qiweb/issues/new"
-            );
         }
         return classPathSet.toArray( new URL[ classPathSet.size() ] );
     }

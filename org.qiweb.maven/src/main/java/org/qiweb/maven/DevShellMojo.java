@@ -16,9 +16,12 @@
 package org.qiweb.maven;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -28,6 +31,7 @@ import org.qiweb.commands.DevShellCommand;
 import org.qiweb.devshell.JavaWatcher;
 import org.qiweb.spi.dev.DevShellSPI;
 
+import static java.util.Collections.EMPTY_SET;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
@@ -42,6 +46,9 @@ public class DevShellMojo
     @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
 
+    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
+    private List<Artifact> pluginArtifacts;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -50,8 +57,13 @@ public class DevShellMojo
 
         try
         {
-            // Classpath
+            // Runtime Classpath
             URL[] runtimeClassPath = runtimeClassPath();
+
+            // Application Classpath
+            Set<URL> appCP = qiwebDocArtifacts();
+            appCP.add( new File( project.getBasedir(), "target/classes" ).toURI().toURL() );
+            URL[] applicationClasspath = appCP.toArray( new URL[ appCP.size() ] );
 
             // Sources
             Set<File> sources = new LinkedHashSet<>();
@@ -60,18 +72,12 @@ public class DevShellMojo
                 sources.add( new File( sourceRoot ) );
             }
 
-            File rootDir = project.getBasedir();
-            URL[] applicationClasspath = new URL[]
-            {
-                new File( rootDir, "target/classes" ).toURI().toURL()
-            };
-
             // Start DevShell
             DevShellSPI devShellSPI = new MavenDevShellSPI(
                 applicationClasspath, runtimeClassPath,
                 sources,
                 new JavaWatcher(),
-                rootDir,
+                project.getBasedir(),
                 rebuildPhase
             );
             new DevShellCommand( devShellSPI ).run();
@@ -80,5 +86,39 @@ public class DevShellMojo
         {
             throw new MojoExecutionException( ex.getMessage(), ex );
         }
+    }
+
+    protected Set<URL> qiwebDocArtifacts()
+        throws MalformedURLException
+    {
+        Artifact qiwebDocArtifact = null;
+        Artifact sitemeshArtifact = null;
+        for( Artifact pluginArtifact : pluginArtifacts )
+        {
+            if( "org.qiweb".equals( pluginArtifact.getGroupId() )
+                && "org.qiweb.doc".equals( pluginArtifact.getArtifactId() ) )
+            {
+                qiwebDocArtifact = pluginArtifact;
+            }
+            else if( "org.sitemesh".equals( pluginArtifact.getGroupId() )
+                     && "sitemesh".equals( pluginArtifact.getArtifactId() ) )
+            {
+                sitemeshArtifact = pluginArtifact;
+            }
+        }
+
+        if( qiwebDocArtifact == null || sitemeshArtifact == null )
+        {
+            getLog().warn(
+                "QiWeb Documentation not in the Maven Plugin Classpath, please report the issue: "
+                + "https://scm.codeartisans.org/qiweb/qiweb/issues/new"
+            );
+            return EMPTY_SET;
+        }
+
+        Set<URL> result = new LinkedHashSet<>();
+        result.add( qiwebDocArtifact.getFile().toURI().toURL() );
+        result.add( sitemeshArtifact.getFile().toURI().toURL() );
+        return result;
     }
 }
