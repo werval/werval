@@ -17,11 +17,8 @@ package org.qiweb.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import org.apache.http.client.HttpClient;
@@ -29,7 +26,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.gradle.internal.classloader.ClasspathUtil;
 import org.gradle.testkit.functional.ExecutionResult;
 import org.gradle.testkit.functional.GradleRunner;
 import org.gradle.testkit.functional.GradleRunnerFactory;
@@ -46,6 +42,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.BuildVersion.VERSION;
 
 /**
  * Assert that the {@literal secret}, {@literal start} and {@literal devshell} tasks execute successfuly.
@@ -65,30 +62,33 @@ public class QiWebPluginIntegTest
 
     static
     {
-        List<URL> classpathUrls = ClasspathUtil.getClasspath( QiWebPluginIntegTest.class.getClassLoader() );
-        StringBuilder builder = new StringBuilder( "files(" );
-        Iterator<URL> it = classpathUrls.iterator();
-        while( it.hasNext() )
-        {
-            builder.append( " '" ).append( it.next() ).append( "'" );
-            if( it.hasNext() )
-            {
-                builder.append( "," );
-            }
-        }
-        builder.append( " )" );
-        String classpath = builder.toString();
         BUILD
         = "\n"
           + "buildscript {\n"
-          + "  dependencies {\n"
-          + "    classpath " + classpath + "\n"
+          + "  repositories {\n"
+          + "    maven { url qiwebLocalRepository }\n"
+          + "    maven {\n"
+          + "      url 'https://repo.codeartisans.org/qiweb'\n"
+          + "      credentials { username = 'qiweb'; password = 'qiweb' }"
+          + "    }\n"
+          + "    mavenCentral()\n"
           + "  }\n"
+          + "  dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
+          + "}\n"
+          + "repositories {\n"
+          + "  maven { url qiwebLocalRepository }\n"
+          + "  maven {\n"
+          + "    url 'https://repo.codeartisans.org/qiweb'\n"
+          + "    credentials { username = 'qiweb'; password = 'qiweb' }"
+          + "  }\n"
+          + "  mavenCentral()\n"
           + "}\n"
           + "apply plugin: \"java\"\n"
           + "apply plugin: \"qiweb\"\n"
           + "dependencies {\n"
-          + "  compile " + classpath + "\n"
+          + "  compile 'org.qiweb:org.qiweb.api:" + VERSION + "'\n"
+          + "  runtime 'org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "'\n"
+          + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
           + "}\n"
           + "\n";
         CONFIG
