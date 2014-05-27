@@ -1,4 +1,6 @@
 
+description = "QiWeb Server - Bootstrap"
+
 dependencies {
 
     compile project( ":org.qiweb.runtime" )

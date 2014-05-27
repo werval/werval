@@ -10,6 +10,8 @@ buildscript {
 
 apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
 
+description = "QiWeb Modules"
+
 apply plugin: 'base' // To add "clean" task to the root project.
 apply plugin: 'sonar-runner'
 
@@ -37,7 +39,7 @@ buildscript {
     dependencies { classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0' }
 }
 subprojects {
-    if( file('src/doc').exists() ) {
+    if( file( 'src/doc' ).exists() ) {
         // Generate documentation resources using Asciidoctor
         def docResourcesPath = 'src/doc'
         def docGenResourcesPath = 'build/generated-src/asciidoc/resources'
@@ -53,6 +55,7 @@ subprojects {
                 compact: true,
                 attributes: [
                     'toc': '',
+                    'linkattrs': '',
                     // 'linkcss':''
                     'source-highlighter': 'coderay', 'coderay-css': 'class',
                     'qiweb-version': version

@@ -1,4 +1,6 @@
 
+description = "QiWeb Runtime"
+
 dependencies {
 
     compile project( ":org.qiweb.api" )

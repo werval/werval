@@ -1,4 +1,6 @@
 
+description = "QiWeb CLI"
+
 dependencies {
     compile project( ':org.qiweb.commands' )
     compile libs.cli

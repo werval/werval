@@ -11,6 +11,8 @@ repositories {
     maven { url "http://repo.gradle.org/gradle/libs-releases-local" }
 }
 
+description = "QiWeb Gradle Plugin"
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.commands:$version"

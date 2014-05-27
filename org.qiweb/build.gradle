@@ -10,6 +10,8 @@ buildscript {
 
 apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
 
+description = "QiWeb"
+
 apply plugin: 'base' // To add "clean" task to the root project.
 apply plugin: 'sonar-runner'
 

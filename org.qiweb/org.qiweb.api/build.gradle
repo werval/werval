@@ -1,4 +1,6 @@
 
+description = "QiWeb API"
+
 dependencies {
 
     compile libs.slf4j

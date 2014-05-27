@@ -23,6 +23,7 @@
 
     <packaging>maven-plugin</packaging>
     <name>${project.artifactId}</name>
+    <description>QiWeb Maven Plugin</description>
   
     <scm>
         <url>https://scm.codeartisans.org/qiweb/qiweb</url>
