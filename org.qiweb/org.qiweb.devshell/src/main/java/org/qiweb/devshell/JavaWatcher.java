@@ -72,7 +72,6 @@ public class JavaWatcher
             if( Files.isRegularFile( fileOrDir ) )
             {
                 ensureNotNull( "Watched File Predicate", filePredicate );
-                LOG.warn( "This one is a file:" + fileOrDir );
             }
             this.filePredicate = filePredicate;
         }
