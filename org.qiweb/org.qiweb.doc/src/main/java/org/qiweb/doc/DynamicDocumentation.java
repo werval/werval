@@ -15,9 +15,10 @@
  */
 package org.qiweb.doc;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.routes.Route;
@@ -35,9 +36,10 @@ import org.slf4j.LoggerFactory;
 /* package */ final class DynamicDocumentation
 {
     private static final Logger LOG = LoggerFactory.getLogger( DocumentationPlugin.class );
-    /* package */ static List<DynamicDocumentation> discover( Application application )
+
+    /* package */ static Map<String, DynamicDocumentation> discover( Application application )
     {
-        List<DynamicDocumentation> list = new ArrayList<>();
+        Map<String, DynamicDocumentation> map = new LinkedHashMap<>();
         if( application.config().has( "qiweb.devshell.dyndocs" ) )
         {
             Config dyndocsConfig = application.config().object( "qiweb.devshell.dyndocs" );
@@ -66,14 +68,14 @@ import org.slf4j.LoggerFactory;
                     break;
                 }
                 String name = dyndocConfig.has( "name" ) ? dyndocConfig.string( "name" ) : id;
-                list.add( new DynamicDocumentation( id, basePath, entryPoint, name ) );
+                map.put( id, new DynamicDocumentation( id, basePath, entryPoint, name ) );
             }
         }
-        return list;
+        return map;
     }
     /* package */ final String id;
-    private final String basePath;
-    private final String entryPoint;
+    /* package */ final String basePath;
+    /* package */ final String entryPoint;
     /* package */ final String name;
 
     /* package */ DynamicDocumentation( String id, String basePath, String entryPoint, String name )

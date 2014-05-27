@@ -9,6 +9,7 @@ description = "QiWeb Documentation"
 
 dependencies {
     compile project( ":org.qiweb.api" )
+    compile libs.sitemesh
 }
 
 
@@ -89,7 +90,7 @@ asciidoctor {
 //
 
 configurations { sitemesh }
-dependencies { sitemesh 'org.sitemesh:sitemesh:3.0-alpha-2' }
+dependencies { sitemesh libs.sitemesh }
 task sitemesh( dependsOn: [ asciidoctor ] ) {
     inputs.dir file( asciidocGenResourcesPath )
     inputs.dir file( sitemeshSourcesPath )

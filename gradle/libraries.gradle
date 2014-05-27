@@ -8,6 +8,9 @@ def v_javassist = '3.18.1-GA'
 // HTTP Server libraries versions
 def v_netty = '4.0.19.Final'
 
+// Documentation libraries versions
+def v_sitemesh = '3.0-alpha-2'
+
 // DevShell librairies versions
 def v_classworlds = '2.5.1'
 
@@ -56,6 +59,9 @@ rootProject.ext {
 
         // HTTP Server libraries
         netty_http:         "io.netty:netty-codec-http:$v_netty",
+
+        // Documentation libraries versions
+        sitemesh:           "org.sitemesh:sitemesh:$v_sitemesh",
 
         // DevShell librairies
         classworlds:        "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
