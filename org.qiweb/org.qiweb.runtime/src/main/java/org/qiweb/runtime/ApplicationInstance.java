@@ -120,6 +120,12 @@ public final class ApplicationInstance
     implements Application, ApplicationSPI
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationInstance.class );
+
+    static
+    {
+        org.qiweb.runtime.util.Versions.ensureQiWebComponentsVersions();
+    }
+
     private volatile boolean activated = false;
     private boolean activatingOrPassivating = false;
     private final Mode mode;
