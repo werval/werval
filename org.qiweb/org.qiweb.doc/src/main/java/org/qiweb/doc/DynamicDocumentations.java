@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.spi.dev.plugin;
+package org.qiweb.doc;
 
 import java.util.List;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.util.InputStreams;
 
 import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.util.Charsets.UTF_8;
 
 /**
  * Dynamic Documentations Controller.
@@ -28,23 +30,28 @@ public class DynamicDocumentations
 {
     public Outcome index()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append(
-            "<!doctype html>\n<html lang=\"en\">\n<head><title>Dynamic Documentations</title></head>\n<body>\n"
-        );
-        builder.append( "<ul>\n" );
+        StringBuilder menu = new StringBuilder();
         List<DynamicDocumentation> dyndocs = DynamicDocumentation.discover( application() );
         for( DynamicDocumentation dyndoc : dyndocs )
         {
-            builder.append( "<li>\n" );
-            builder.append( "<a href=\"/@doc/" ).append( dyndoc.id ).append( "\" " )
-                .append( "title=\"" ).append( dyndoc.name ).append( "\">" );
-            builder.append( dyndoc.name );
-            builder.append( "</a>\n" );
-            builder.append( "</li>\n" );
+            menu.append( "<li><a href=\"" ).append( dyndoc.id ).append( "\">" )
+                .append( dyndoc.name ).append( "</a></li>\n" );
         }
-        builder.append( "</ul>\n" );
-        builder.append( "</body>\n</html>\n" );
-        return outcomes().ok( builder.toString() ).asHtml().build();
+        String html = new String(
+            InputStreams.readAllBytes( getClass().getResourceAsStream( "dyndocs/index.html" ), 4096 ),
+            UTF_8
+        );
+        String jquery = new String(
+            InputStreams.readAllBytes( getClass().getResourceAsStream( "dyndocs/jquery-2.1.1.min.js" ), 4096 ),
+            UTF_8
+        );
+        String historyjs = new String(
+            InputStreams.readAllBytes( getClass().getResourceAsStream( "dyndocs/jquery.history.js" ), 4096 ),
+            UTF_8
+        );
+        html = html.replace( "<!-- MENU -->", menu.toString() );
+        html = html.replace( "// JQUERY", jquery );
+        html = html.replace( "// HISTORY.JS", historyjs );
+        return outcomes().ok( html ).asHtml().build();
     }
 }

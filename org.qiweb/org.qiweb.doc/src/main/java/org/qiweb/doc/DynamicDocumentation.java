@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.spi.dev.plugin;
+package org.qiweb.doc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 /* package */ final class DynamicDocumentation
 {
-    private static final Logger LOG = LoggerFactory.getLogger( DevShellPlugin.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DocumentationPlugin.class );
     /* package */ static List<DynamicDocumentation> discover( Application application )
     {
         List<DynamicDocumentation> list = new ArrayList<>();
@@ -86,15 +86,15 @@ import org.slf4j.LoggerFactory;
 
     List<Route> buildRoutes( RouteBuilder routeBuilder )
     {
-        // Redirect /@doc/{id} to /@doc/{id}/{entry_point}
+        // Redirect /@doc/modules/{id} to /@doc/modules/{id}/{entry_point}
         StringBuilder redirect = new StringBuilder();
-        redirect.append( "GET /@doc/" ).append( id )
+        redirect.append( "GET /@doc/modules/" ).append( id )
             .append( " org.qiweb.api.controllers.Default.seeOther( String url = '" )
-            .append( "/@doc/" ).append( id ).append( "/" ).append( entryPoint )
+            .append( "/@doc/modules/" ).append( id ).append( "/" ).append( entryPoint )
             .append( "' )" );
         StringBuilder index = new StringBuilder();
-        // Serve all resources from {base_path} on /@doc/{id}/*
-        index.append( "GET /@doc/" ).append( id ).append( "/*path" )
+        // Serve all resources from {base_path} on /@doc/modules/{id}/*
+        index.append( "GET /@doc/modules/" ).append( id ).append( "/*path" )
             .append( " org.qiweb.api.controllers.Classpath.resource( String basepath = '" )
             .append( basePath )
             .append( "', String path )" );

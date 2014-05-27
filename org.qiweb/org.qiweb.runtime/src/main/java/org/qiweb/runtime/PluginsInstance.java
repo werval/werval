@@ -30,7 +30,6 @@ import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
-import org.qiweb.spi.dev.plugin.DevShellPlugin;
 
 import static java.util.Collections.EMPTY_LIST;
 
@@ -45,17 +44,20 @@ import static java.util.Collections.EMPTY_LIST;
     private boolean activatingOrPassivating = false;
     private final List<Config> configuredPlugins;
     private final List<Plugin<?>> extraPlugins;
-    private final boolean devShellPlugin;
+
     /**
      * Couple left is the actual plugin instance, right is its Config node.
      */
     private List<Couple<Plugin<?>, Config>> activePlugins = EMPTY_LIST;
 
-    /* package */ PluginsInstance( Config config, List<Plugin<?>> extraPlugins, boolean devShellPlugin )
+    /* package */ PluginsInstance( Config config, List<Plugin<?>> extraPlugins, boolean devMode )
     {
         this.configuredPlugins = config.array( "app.plugins" );
+        if( devMode )
+        {
+            this.configuredPlugins.addAll( 0, config.array( "qiweb.devshell.plugins" ) );
+        }
         this.extraPlugins = extraPlugins;
-        this.devShellPlugin = devShellPlugin;
     }
 
     /* package */ void onActivate( ApplicationInstance application )
@@ -66,13 +68,6 @@ import static java.util.Collections.EMPTY_LIST;
             EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
             activePlugins = new ArrayList<>( configuredPlugins.size() + extraPlugins.size() + extensions.size() );
 
-            // Eventual Development Mode Plugin
-            if( devShellPlugin )
-            {
-                Plugin<?> plugin = new DevShellPlugin();
-                plugin.onActivate( application );
-                activePlugins.add( Couple.leftOnly( plugin ) );
-            }
             // Application Configured Plugins
             for( Config pluginConfig : configuredPlugins )
             {

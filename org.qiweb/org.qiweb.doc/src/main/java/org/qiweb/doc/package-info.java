@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /**
- * Application Plugin of the Development Shell.
+ * Documentation Plugin of the Development Shell.
  *
  * This one is put in a separate package to tackle developement mode classloading complexity, see {@literal DevShell}.
  */
-package org.qiweb.spi.dev.plugin;
+package org.qiweb.doc;

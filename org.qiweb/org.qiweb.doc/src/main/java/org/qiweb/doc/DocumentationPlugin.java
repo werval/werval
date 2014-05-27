@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.spi.dev.plugin;
+package org.qiweb.doc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,10 @@ import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
+import org.qiweb.api.util.Reflectively;
 
 /**
- * DevShell Plugin.
+ * Documentation Plugin.
  *
  * Provide routes that serve HTML documentation and Javadocs at {@literal /@doc} and configuration and version
  * information as JSON respectively at {@literal /@config} and {@literal /@version}.
@@ -34,7 +35,11 @@ import org.qiweb.api.routes.RouteBuilder;
  * Moreover, this class shall not be put in `org.qiweb.devshell`, nor `org.qiweb.spi.dev` because the loading of classes
  * in theses packages is done in the original DevShell classloader hierarchy, not in the application one.
  */
-public class DevShellPlugin
+// TODO Register in org.qiweb.devshell reference.conf --> This won't work!
+// TODO Make org.qiweb.devshell depend on sitemesh and try to apply --> This will lead to classloading headaches
+// TODO Finally move to org.qiweb.doc if we get this to work...
+@Reflectively.Loaded( by = "org.qiweb.runtime.PluginsInstance" )
+public class DocumentationPlugin
     extends Plugin.Void
 {
     private List<DynamicDocumentation> dynamicDocumentations;
@@ -57,7 +62,7 @@ public class DevShellPlugin
             "GET /@version org.qiweb.api.controllers.Introspect.version",
             "GET /@doc org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/index.html' )",
             "GET /@doc/api org.qiweb.api.controllers.Default.seeOther( String url = '/@doc/api/index.html' )",
-            "GET /@doc/modules org.qiweb.spi.dev.plugin.DynamicDocumentations.index"
+            "GET /@doc/modules org.qiweb.doc.DynamicDocumentations.index"
         ) );
 
         // Setup dynamic documentation routes

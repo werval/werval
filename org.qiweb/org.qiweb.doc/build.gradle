@@ -1,8 +1,14 @@
 
 description = "QiWeb Documentation"
 
-dependencies {
+// The produced JAR contains:
+// - QiWeb Core documentation and javadocs
+// - a Plugin for development mode that serve the core and dynamically discovered modules documentations at /@doc
+//
+// It is made available to application classloader by DevShell frontends (CLI, Gradle & Maven plugins).
 
+dependencies {
+    compile project( ":org.qiweb.api" )
 }
 
 
@@ -14,7 +20,7 @@ dependencies {
 // |__  _|_|_____|___|___|  |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
 //    |__|
 // _____________________________________________________________________________________________________________________
-// QiWeb Documentation
+// QiWeb Documentation Generation
 //
 
 def assetsSourcesPath = "$project.projectDir.absolutePath/src/assets"
