@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Clean the QiWeb source tree
+#
+# Don't run from outside of the QiWeb source tree, it is pretty greedy :)
 
 set -e
 
@@ -19,6 +23,4 @@ $FIGLET repository
 rm -rf repository/org
 echo "Clean."
 
-echo
-
-
+echo ""
