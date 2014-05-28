@@ -4,20 +4,31 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><sitemesh:write property='title'/></title>
+        <!-- Decorated page <head> -->
         <sitemesh:write property='head'></sitemesh:write>
+        <!-- Decorated page </head> -->
         <style>
-            html, body { margin: 0; padding: 0; }
+            /* Decorator menu styles */
+            html { margin: 0; padding: 0; }
             #qiweb-doc-header {
-                font-size: 12px;
-                line-height: 12px;
+                z-index: 23023;
                 display: block;
-                position: relative;
+                position: fixed;
+                top: 0; left: 0;
                 width: 100%;
                 margin: 0;
-                padding: 1em;
-                background-color: white;
-                border: 1px solid white;
-                border-bottom: 1px solid lightgrey;
+                padding: 6px 0 4px 8px;
+                border: 1px solid whitesmoke;
+                border-bottom: 1px solid lightslategray;
+                background-color: whitesmoke;
+                font-family: Georgia, "URW Bookman L", Helvetica, Arial, sans-serif;
+                font-variant: petite-caps;
+                font-size: 13px;
+                text-rendering: optimizeLegibility;
+            }
+            #qiweb-doc-header img {
+                margin: 0; padding: 0;
+                height: 24px;
             }
             #qiweb-doc-header ul {
                 margin: 0; padding: 0;
@@ -27,32 +38,76 @@
                 list-style-type: none;
             }
             #qiweb-doc-header ul li a {
+                margin: 2px 0 0 0;
+                padding: 0;
                 text-decoration: none;
-                border-radius: 5px;
-                padding: 5px 10px;
-                color: darkred;
             }
-            #qiweb-doc-header ul li a:hover {
+            #qiweb-doc-header ul li a.qiweb-doc-link {
+                border-radius: 4px;
+                padding: 4px 8px;
                 text-decoration: none;
-                background-color: darkolivegreen;
-                color: yellow;
+                color: #ba3925;
+                font-weight: bold;
+            }
+            #qiweb-doc-header ul li a.qiweb-doc-link:hover {
+                background-color: #ba3925;
+                color: whitesmoke;
+            }
+            #qiweb-doc-header ul li a.qiweb-doc-link.qiweb-doc-link-active {
+                background-color: #ba3925;
+                color: white;
+            }
+            #qiweb-doc-body {
+                padding-top: 2em;
+            }
+            /* Asciidoc ToC layout adaptation */
+            #toc.toc2 {
+                padding-top: 2.5em;
             }
         </style>
+        <!-- Intentionaly placed in <head/> so that it is available for decorated pages. -->
+        <script type="text/javascript" src="/@doc/javascripts/jquery-1.9.1.min.js"></script>
     </head>
-    <body>
+    <body class="article toc2 toc-right">
         <div id="qiweb-doc-header">
             <nav>
                 <ul>
-                    <li><a href="/@doc">QiWeb Documentation</a></li>
-                    <li><a href="/@doc/getting-started.html">Getting started</a></li>
-                    <li><a href="/@doc/guides.html">Guides</a></li>
-                    <li><a href="/@doc/manual.html">Manual</a></li>
-                    <li><a href="/@doc/modules">Modules</a></li>
-                    <li><a href="/@doc/api">API</a></li>
-                    <li><a href="/@doc/faq.html">FAQ</a></li>
+                    <li><a href="/@doc/index.html"><img src="/@doc/images/logo.png" alt="logo"/></a></li>
+                    <li><a class="qiweb-doc-link" href="/@doc/getting-started.html">Getting started</a></li>
+                    <li><a class="qiweb-doc-link" href="/@doc/guides.html">Guides</a></li>
+                    <li><a class="qiweb-doc-link" href="/@doc/manual.html">Manual</a></li>
+                    <li><a class="qiweb-doc-link" href="/@doc/modules">Modules</a></li>
+                    <li><a class="qiweb-doc-link" href="/@doc/api" target="_blank">API</a></li>
+                    <li><a class="qiweb-doc-link" href="/@doc/faq.html">FAQ</a></li>
                 </ul>
             </nav>
         </div>
-        <sitemesh:write property='body'/>
+        <div id="qiweb-doc-body">
+            <!-- Decorated page <body> -->
+            <sitemesh:write property='body'/>
+            <!-- Decorated page </body> -->
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // Highlight current menu item
+                $("#qiweb-doc-header a").each(function(index,link){
+                    if(window.location.href.indexOf(link.href) === 0) {
+                        $(link).addClass("qiweb-doc-link-active");
+                    } else {
+                        $(link).removeClass("qiweb-doc-link-active");
+                    }
+                });
+                // Open absolute links to other domains in a new window/tab
+                $("a").each(function(index, link) {
+                    var $link = $(link);
+                    if (($link.attr('href').indexOf('http:') === 0
+                            || $link.attr('href').indexOf('https:') === 0
+                            || $link.attr('href').indexOf('//') === 0
+                            ) && link.href.indexOf(window.location.protocol + '//' + window.location.host) !== 0) {
+                        $link.attr('target', '_blank');
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

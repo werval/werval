@@ -10,6 +10,9 @@ description = "QiWeb Documentation"
 dependencies {
     compile project( ":org.qiweb.api" )
     compile libs.sitemesh
+
+    testCompile project( ":org.qiweb.test" )
+    testCompile libs.rest_assured
 }
 
 
@@ -60,7 +63,7 @@ asciidoctor {
     options = [
         compact: true,
         attributes: [
-            'toc': '',
+            'toc': 'right',
             'linkattrs': '',
             'linkcss':'',
             'docinfo1':'',

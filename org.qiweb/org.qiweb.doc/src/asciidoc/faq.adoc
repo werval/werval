@@ -66,7 +66,7 @@ See the XXX section of the QiWeb manual to get some know-how.
 
 == I found a bug! What to do?
 
-Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issues].
+Create a new issue in https://scm.codeartisans.org/qiweb/qiweb/issues[GitLab Issues].
 Please provide accurate and useful information when doing so.
 
 If you don't know how to properly report a bug, read

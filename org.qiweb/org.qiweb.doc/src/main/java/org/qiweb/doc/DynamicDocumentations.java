@@ -46,8 +46,10 @@ public class DynamicDocumentations
         throws IOException
     {
         Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
-        String html = "<!doctype html><html><head><title>Dynamic Documentation</title></head>"
-                      + "<body><h1>Dynamic Documentation</h1>"
+        String html = "<!doctype html><html><head><title>Dynamic Documentation</title>"
+                      + "<link rel=\"stylesheet\" href=\"asciidoctor.css\"></link></head>"
+                      + "<body><div id=\"header\"><h1>Dynamic Documentation</h1></div>"
+                      + "<div id=\"content\">"
                       + "<p>Modules contains non-core functionnality. "
                       + "Modules are simple JARs and can contain controllers, utility classes and QiWeb Plugins.</p>"
                       + "<ul>";
@@ -56,8 +58,13 @@ public class DynamicDocumentations
             String dyndocUrl = reverseRoutes().get( getClass(), c -> c.module( dyndoc.id ) ).httpUrl();
             html += "<li><a href=\"" + dyndocUrl + "\">" + dyndoc.name + "</a></li>";
         }
-        html += "</ul></body></html>";
-        return outcomes().ok( SiteMeshHelper.decorate( html ) ).asHtml().build();
+        html += "</ul></div><div id=\"footer\"></div></body></html>";
+        String decorated = SiteMeshHelper.decorate(
+            reverseRoutes().get( getClass(), c -> c.index() ).uri(),
+            html,
+            reverseRoutes()
+        );
+        return outcomes().ok( decorated ).asHtml().build();
     }
 
     public Outcome module( String id )
@@ -99,7 +106,11 @@ public class DynamicDocumentations
             BUF_SIZE_4K,
             UTF_8
         );
-        String decoratedHtml = SiteMeshHelper.decorate( html );
+        String decoratedHtml = SiteMeshHelper.decorate(
+            reverseRoutes().get( getClass(), c -> c.resource( id, path ) ).uri(),
+            html,
+            reverseRoutes()
+        );
         return outcomes().ok( decoratedHtml ).asHtml().build();
     }
 

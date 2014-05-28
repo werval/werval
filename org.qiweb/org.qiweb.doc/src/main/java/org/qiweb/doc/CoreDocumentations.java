@@ -70,6 +70,11 @@ public class CoreDocumentations
             BUF_SIZE_4K,
             UTF_8
         );
-        return outcomes().ok( SiteMeshHelper.decorate( html ) ).asHtml().build();
+        String decorated = SiteMeshHelper.decorate(
+            reverseRoutes().get( getClass(), c -> c.catchAll( path ) ).uri(),
+            html,
+            reverseRoutes()
+        );
+        return outcomes().ok( decorated ).asHtml().build();
     }
 }

@@ -17,13 +17,15 @@ package org.qiweb.doc;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
-import org.qiweb.api.util.InputStreams;
+import org.qiweb.api.routes.ReverseRoutes;
 import org.sitemesh.builder.SiteMeshOfflineBuilder;
 import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.offline.directory.InMemoryDirectory;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.api.util.InputStreams.BUF_SIZE_4K;
+import static org.qiweb.api.util.InputStreams.readAllAsString;
 
 /**
  * SiteMesh Helper.
@@ -34,17 +36,17 @@ import static org.qiweb.api.util.Charsets.UTF_8;
  */
 /* package */ final class SiteMeshHelper
 {
-    /* package */ static String decorate( String html )
+    /* package */ static String decorate( String path, String html, ReverseRoutes revRoutes )
         throws IOException
     {
         Directory source = new InMemoryDirectory( UTF_8 );
         Directory destination = new InMemoryDirectory( UTF_8 );
 
-        String decorator = new String(
-            InputStreams.readAllBytes( SiteMeshHelper.class.getResourceAsStream( "decorator.html" ), 4096 ),
+        String decorator = readAllAsString(
+            SiteMeshHelper.class.getResourceAsStream( "decorator.html" ),
+            BUF_SIZE_4K,
             UTF_8
         );
-
         source.save( "decorator.html", CharBuffer.wrap( decorator.toCharArray() ) );
 
         SiteMeshOffline sitemesh = new SiteMeshOfflineBuilder()
@@ -53,7 +55,7 @@ import static org.qiweb.api.util.Charsets.UTF_8;
             .addDecoratorPath( "/*", "decorator.html" )
             .create();
 
-        CharBuffer result = sitemesh.processContent( "/anypath", CharBuffer.wrap( html.toCharArray() ) );
+        CharBuffer result = sitemesh.processContent( path, CharBuffer.wrap( html.toCharArray() ) );
 
         return result.toString();
     }

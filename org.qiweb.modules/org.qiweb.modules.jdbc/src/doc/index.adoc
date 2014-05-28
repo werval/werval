@@ -50,7 +50,7 @@ When using Maven:
 <dependency>
     <groupId>org.qiweb</groupId>
     <artifactId>org.qiweb.modules.jdbc</artifactId>
-    <version>{qiweb-version}</version
+    <version>{qiweb-version}</version>
 </dependency>
 ----
 
