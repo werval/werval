@@ -1,11 +1,58 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><sitemesh:write property='title'/></title>
         <sitemesh:write property='head'></sitemesh:write>
+        <style>
+            html, body { margin: 0; padding: 0; }
+            #qiweb-doc-header {
+                font-size: 12px;
+                line-height: 12px;
+                display: block;
+                position: relative;
+                width: 100%;
+                margin: 0;
+                padding: 1em;
+                background-color: white;
+                border: 1px solid white;
+                border-bottom: 1px solid lightgrey;
+            }
+            #qiweb-doc-header ul {
+                margin: 0; padding: 0;
+            }
+            #qiweb-doc-header ul li {
+                display: inline;
+                list-style-type: none;
+            }
+            #qiweb-doc-header ul li a {
+                text-decoration: none;
+                border-radius: 5px;
+                padding: 5px 10px;
+                color: darkred;
+            }
+            #qiweb-doc-header ul li a:hover {
+                text-decoration: none;
+                background-color: darkolivegreen;
+                color: yellow;
+            }
+        </style>
     </head>
     <body>
-        <div id="qiweb-doc-header">QiWeb Documentation Global Header</div>
+        <div id="qiweb-doc-header">
+            <nav>
+                <ul>
+                    <li><a href="/@doc">QiWeb Documentation</a></li>
+                    <li><a href="/@doc/getting-started.html">Getting started</a></li>
+                    <li><a href="/@doc/guides.html">Guides</a></li>
+                    <li><a href="/@doc/manual.html">Manual</a></li>
+                    <li><a href="/@doc/modules">Modules</a></li>
+                    <li><a href="/@doc/api">API</a></li>
+                    <li><a href="/@doc/faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
         <sitemesh:write property='body'/>
     </body>
 </html>

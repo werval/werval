@@ -1,5 +1,5 @@
 
-=== Hello Maven QiWeb
+== Hello Maven QiWeb
 
 > Build managed
 

@@ -1,4 +1,4 @@
-=== Using the DevShell
+== Using the DevShell
 
 From now on we'll take a closer look at QiWeb Development Shell features.
 Whether you use `qiweb-cli`, Gradle, Maven or any other build system, start the DevShell.
@@ -24,7 +24,7 @@ user@host ~/hello-qiweb $ mvn org.qiweb:org.qiweb.maven:devshell
 Open http://localhost:23023/, you should see the now well known Welcome page.
 
 
-==== Instant feedback
+=== Instant feedback
 
 // Add compilation error
 At first we will introduce a compilation error in the application sources.
@@ -113,7 +113,7 @@ This time you should see **Hello World!**.
 This is how the QiWeb Development Shell gives you instant feedback when coding.
 
 
-==== Embedded documentation
+=== Embedded documentation
 
 When running the Development Shell, the whole QiWeb documentation is available right from the HTTP server that run
 your application.

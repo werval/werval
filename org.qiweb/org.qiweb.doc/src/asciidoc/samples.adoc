@@ -1,9 +1,0 @@
-== Samples
-
-Samples applications provide actual example code for you to read, run, modify.
-
-TIP: Source code of the samples applications are in the `org.qiweb.samples` directory of the QiWeb source.
-
-include::samples/urlshortener.adoc[]
-include::samples/beerdb.adoc[]
-

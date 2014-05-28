@@ -1,5 +1,5 @@
 
-=== Hello Gradle QiWeb
+== Hello Gradle QiWeb
 
 > Automation evolved
 
@@ -98,7 +98,7 @@ user@host ~/hello-qiweb $ gradle distZip
 TIP: If you need RPM or DEB packaging, use the https://github.com/nebula-plugins/gradle-ospackage-plugin[gradle-ospackage-plugin]
 
 
-==== Development mode build logic
+=== Development mode build logic
 
 
 The QiWeb Gradle plugin:

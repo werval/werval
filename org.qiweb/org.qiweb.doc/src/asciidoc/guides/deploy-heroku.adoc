@@ -1,4 +1,4 @@
-=== Deploy on Heroku
+== Deploy on Heroku
 
 Déployer une Application QiWeb sur Heroku est plutôt simple: il suffit de lancer la classe principale avec le bon
 classpath.
@@ -25,7 +25,7 @@ Ce qui est présenté ici devrait s'appliquer à toute situation moyennant quelq
 Le paramètre Heroku à passer à l'application pour ces deux exemples est le port d'écoute de votre service HTTP.
 Heroku définit le port à utiliser dans la variable d'environnement `PORT`.
 
-==== Using Gradle
+=== Using Gradle
 
 .`build.gradle`
 ["source","groovy",subs="attributes"]
@@ -72,6 +72,6 @@ Procfile
 web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
 ----
 
-==== Using Maven
+=== Using Maven
 
 NOTE: TODO Write Heroku Maven based deployment walkthrough

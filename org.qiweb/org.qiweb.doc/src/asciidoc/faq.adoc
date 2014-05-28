@@ -1,4 +1,4 @@
-== Frequenty Asked Questions
+= Frequenty Asked Questions
 
 :toc:
 
@@ -6,12 +6,12 @@ NOTE: New FAQs should be submitted as a https://scm.codeartisans.org/paul/qiweb/
 once accepted it will be appended to the bottom of this document.
 
 
-=== How is "QiWeb" pronounced?
+== How is "QiWeb" pronounced?
 
 QiWeb is pronouced "chee web".
 
 
-=== What the heck is this name?
+== What the heck is this name?
 
 QiWeb is the name of QiWeb.
 
@@ -22,7 +22,7 @@ Read it many times.
 What was the question already?
 
 
-=== Why choose Java as implementation language?
+== Why choose Java as implementation language?
 
 First, the Java programming language is widely used and well known by a lot of developpers.
 It emerged in the early 90s, that is more than 20 years ago.
@@ -44,7 +44,7 @@ And last but not least, the JVM is not tight to the Java programming language as
 https://en.wikipedia.org/wiki/List_of_JVM_languages[over 50 languages].
 
 
-=== Can I write my application code in {put.your.language.here}?
+== Can I write my application code in {put.your.language.here}?
 
 As long as it runs on the JVM, yes!
 
@@ -56,7 +56,7 @@ Ah, I see your Global object is already in Groovy, cool.
 Development mode should work in most situations provided your build system is set up correctly.
 
 
-=== Is it possible to embedd the QiWeb Runtime?
+== Is it possible to embedd the QiWeb Runtime?
 
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
 This way of running a QiWeb Application can be seen as embedding QiWeb.
@@ -64,7 +64,7 @@ This way of running a QiWeb Application can be seen as embedding QiWeb.
 See the XXX section of the QiWeb manual to get some know-how.
 
 
-=== I found a bug! What to do?
+== I found a bug! What to do?
 
 Create a new issue in https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issues].
 Please provide accurate and useful information when doing so.
@@ -73,14 +73,14 @@ If you don't know how to properly report a bug, read
 http://www.chiark.greenend.org.uk/~sgtatham/bugs.html[How to Report Bugs Effectively] by Simon Tatham first.
 
 
-=== Can I use QiWeb in my commercial applications under a closed-source, proprietary license?
+== Can I use QiWeb in my commercial applications under a closed-source, proprietary license?
 
 Yes.
 The https://www.apache.org/licenses/LICENSE-2.0.html[Apache License] is very business-friendly.
 Please observe the obligations on your part, especially regarding notices, trademarks and patent licensing terms.
 
 
-=== What to do when I can see no logs and get a weird message from SLF4J?
+== What to do when I can see no logs and get a weird message from SLF4J?
 
 QiWeb use the http://www.slf4j.org[SLF4J] API (Simple Logging Facade for Java) but you have to choose what SLF4J
 implementation to use.
@@ -96,7 +96,7 @@ From there you simply add Logback (or any SLF4J implementation) to your dependen
 And voila!
 
 
-=== Can I build QiWeb Application using {put.your.build.system.here}?
+== Can I build QiWeb Application using {put.your.build.system.here}?
 
 Sure, QiWeb is build system agnostic.
 Integration with Gradle and Maven are provided, if you happen to use another build system you'll have to write some

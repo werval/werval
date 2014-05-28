@@ -1,5 +1,5 @@
 
-=== Introduction
+== Introduction
 
 QiWeb is a HTTP development kit.
 QiWeb is not a full stack framework.
@@ -10,19 +10,19 @@ You are free to choose whatever may suit your needs.
 image::images/overview.png[Overview,640]
 
 
-=== Application
+== Application
 
 A QiWeb Application is nothing but a plain old Java program.
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
 The minimal requirement is a configuration file named `application.conf` containing a `app.secret` entry.
 
 
-==== Structure
+=== Structure
 
 // TODO Application Structure Diagram - Code PoV
 
 
-==== Modes
+=== Modes
 
 A QiWeb Application can run in three different modes:
 
@@ -32,7 +32,7 @@ on-demand and stacktraces are disclosed in responses.
 . **Production**: the HTTP stack is multi-threaded and Application run from compiled bytecode.
 
 
-==== Runtime Models
+=== Runtime Models
 
 A QiWeb Application can run according to three different runtime models:
 
@@ -44,7 +44,7 @@ application code in a lightweight process.
 TIP: See the Deploy on Heroku guide for lightweight mode usage example implementing Heroku workers.
 
 
-==== Threading Model
+=== Threading Model
 
 QiWeb has a quite simple threading model based on the Netty one.
 
@@ -57,7 +57,7 @@ QiWeb has a quite simple threading model based on the Netty one.
       blocking operations will slow your application down.
 
 
-==== Summary
+=== Summary
 
 [cols="2a,4a,4a,4a"]
 |===
@@ -103,7 +103,7 @@ QiWeb has a quite simple threading model based on the Netty one.
 |===
 
 
-=== Logging
+== Logging
 
 QiWeb use the http://www.slf4j.org[SLF4J] API (Simple Logging Facade for Java) but you have to choose what SLF4J
 implementation to use.
@@ -126,7 +126,7 @@ IP address at the `X-QiWeb-Client-IP` key.
 You can use theses keys in your loggers output patterns.
 
 
-=== Character encoding
+== Character encoding
 
 By default all character encoding is done in UTF-8.
 Character encoding can be changed by setting the `qiweb.character-encoding` configuration property.
@@ -143,7 +143,7 @@ default Java character encoding] using the `file.encoding` system property.
 All QiWeb APIs allows you to override character encoding when relevant.
 
 
-=== Configuration
+== Configuration
 
 NOTE: QiWeb configuration use the https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON format] ("Human
 Optimized Config Object Notation"). It is parsed using https://github.com/typesafehub/config[Typesafe Config].
@@ -190,11 +190,11 @@ You still can leverage the inclusion mechanism of HOCON to include your `applica
 specified using one of the System Properties described above.
 
 
-=== Lifecycle
+== Lifecycle
 
-==== Startup explained
+=== Startup explained
 
-==== Shutdown explained
+=== Shutdown explained
 
 Shutting your application down gracefully is as critical as running it.
 
@@ -214,22 +214,22 @@ If your application is running on multiple nodes behind a balancer you can lower
 your clients to reconnect immediatly to another node. Pretty useful for zero-downtime upgrades.
 
 
-=== The Global object
+== The Global object
 
-==== Instanciation
-
-- Controllers
-- Filters
-
-==== Invocation
+=== Instanciation
 
 - Controllers
 - Filters
 
+=== Invocation
 
-=== Error Handling
+- Controllers
+- Filters
 
-==== Error Records
+
+== Error Handling
+
+=== Error Records
 
 When an error happen inside the Application it is recorded.
 
@@ -243,7 +243,7 @@ By default, a maximum of `100` errors are held into memory in a *first-in/first-
 You can increase or decrease this number by setting the `app.errors.record.max` configuration property.
 
 
-=== Routes
+== Routes
 
 Routes are defined by:
 
@@ -267,16 +267,16 @@ NOTE: URI Fragment identifier is considered useful on the client side only, henc
 However, the reverse routing API allow you to append a fragment identifier to generated URIs.
 
 
-=== Controllers
+== Controllers
 
 
-=== Outcomes
+== Outcomes
 
 
-=== Filters
+== Filters
 
 
-=== Session
+== Session
 
 As QiWeb is stateless oriented, it provides no way to keep session state server side.
 Instead a simple session Cookie is used to keep state accross user requests.
@@ -287,17 +287,17 @@ The Session Cookie contains a `Map<String,String>` and is signed using the manda
 Signature use the HmacSHA1 algorithm.
 
 
-=== Cookies
+== Cookies
 
 
-=== Forms & Uploads
+== Forms & Uploads
 
 
-=== WebSockets
+== WebSockets
 
-=== SSL
+== SSL
 
-=== Query String
+== Query String
 
 // TODO put intro, ??? wikipedia ???? build plugin to fetch wikipedia and update ???
 
@@ -314,7 +314,7 @@ public MyController {
 ----
 
 
-==== Multiple values
+=== Multiple values
 
 Query strings can contain multiple values for the same parameter.
 How this is handled is not stated in the HTTP 1.0 nor 1.1 RFCs and, by so, open to interpretation.
@@ -370,7 +370,7 @@ http://guides.rubyonrails.org/action_controller_overview.html#hash-and-array-par
 could be implemented as a library, pull-requests are welcome!
 
 
-=== Testing
+== Testing
 
 The `org.qiweb.test` module provide http://junit.org[JUnit] based construct to ease tests implementation.
 
@@ -385,7 +385,7 @@ detected on the tests classpath.
 rest-assured base URL is automatically set accordingly to the QiWeb configuration so can use relative paths when using
 it.
 
-==== QiWebTest usage
+=== QiWebTest usage
 
 [source,java]
 ----
@@ -403,7 +403,7 @@ public class MyTest extends QiWebTest {
 Your Application will be activated/passivated around each test method.
 
 
-==== QiWebRule usage
+=== QiWebRule usage
 
 [source,java]
 ----
@@ -441,7 +441,7 @@ public class MyTest {
 ----
 
 
-==== In practice
+=== In practice
 
 - HTTP or not HTTP
 - Automatic free port usage, allowing tests to be run in parallel
@@ -451,20 +451,20 @@ public class MyTest {
 - Routes
 
 
-==== Testing HTTP
+=== Testing HTTP
 
-The QiWeb Team recommand https://code.google.com/p/rest-assured/[rest-assured].
+The QiWeb Team recommend https://code.google.com/p/rest-assured/[rest-assured].
 All HTTP assertions in the SDK are done using `rest-assured`, see the tests source code for numerous examples.
 
 
-==== Testing browser based UIs
+=== Testing browser based UIs
 
 The QiWeb Team recommand http://fluentlenium.org/[FluentLenium].
 All browser based UI assertions in the samples are done using `FluentLenium`, see the tests source code for numerous
 examples.
 
 
-=== Plugins
+== Plugins
 
 QiWeb Plugins are bound to the Application lifecycle and provide an API to the Application code.
 In other words, Plugins are activated/passivated alongside the Application and they provide a facade you can use in your
@@ -534,3 +534,22 @@ To go further, the `Plugin` interface declare two lifecycle methods:
 
 Theses two are NOOP methods in the `PluginAdapter` class used above.
 Override theses to hook your Plugin in the Application lifecycle.
+
+== Core Controllers
+
+// === Default Controller
+// === META-INF Resources & WebJars
+// === Static Files
+
+== Modules
+
+Modules contains non-core functionnality.
+Modules are simple JARs and can contain controllers, utility classes and QiWeb Plugins.
+
+The QiWeb team maintains a collection of documented, tested modules that evolve along the core SDK.
+
+NOTE: Community Modules are maintained by the community.
+It's the community responsibility to keep them documented, tested and up to date.
+The QiWeb Team makes no guarantee regarding their shape.
+Check their activity and codebase before using in production.
+

@@ -60,11 +60,12 @@ asciidoctor {
     options = [
         compact: true,
         attributes: [
-            'qiweb-version': version,
-            'toc2': '',
-            'stylesheet': "$assetsSourcesPath/stylesheets/foundation.css",
-            'icons': 'font',
-            'docinfo1': '',
+            'toc': '',
+            'linkattrs': '',
+            'linkcss':'',
+            'docinfo1':'',
+            'source-highlighter': 'coderay', 'coderay-css': 'class',
+            'qiweb-version': version
         ]
     ]
     doLast {
@@ -72,6 +73,9 @@ asciidoctor {
             from assetsSourcesPath
             into asciidocGenResourcesPath
         }
+        delete asciidocGenResourcesPath + '/getting-started'
+        delete asciidocGenResourcesPath + '/guides'
+        delete asciidocGenResourcesPath + '/manual'
     }
 }
 

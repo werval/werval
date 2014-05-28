@@ -47,7 +47,10 @@ public class DynamicDocumentations
     {
         Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
         String html = "<!doctype html><html><head><title>Dynamic Documentation</title></head>"
-                      + "<body><h1>Dynamic Documentation</h1><ul>";
+                      + "<body><h1>Dynamic Documentation</h1>"
+                      + "<p>Modules contains non-core functionnality. "
+                      + "Modules are simple JARs and can contain controllers, utility classes and QiWeb Plugins.</p>"
+                      + "<ul>";
         for( DynDoc dyndoc : dyndocs.values() )
         {
             String dyndocUrl = reverseRoutes().get( getClass(), c -> c.module( dyndoc.id ) ).httpUrl();

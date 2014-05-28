@@ -1,2 +1,0 @@
-=== JSON using Jackson
-

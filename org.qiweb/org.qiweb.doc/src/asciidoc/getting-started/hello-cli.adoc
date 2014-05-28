@@ -1,5 +1,5 @@
 
-=== Hello CLI QiWeb
+== Hello CLI QiWeb
 
 To get started we will build a simple Hello World style example using the QiWeb CLI.
 
@@ -14,7 +14,7 @@ Meaning you have to manage your application dependencies and assembly yourself.
 Theses limitations make this DevShell suitable for quick prototyping only.
 Prefer the Gradle or Maven build systems integration.
 
-==== Install qiweb CLI
+=== Install qiweb CLI
 
 Of course, you need a http://www.oracle.com/technetwork/java/javase/downloads/[Java 8 SDK] installed (check your
 `JAVA_HOME` environment variable and ensure `java` and `javac` are available in `PATH`).
@@ -30,7 +30,7 @@ https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/{qiweb-version}/org.
 
 TIP: Invoke `qiweb --help` to get a comprehensive help on each commands and options.
 
-==== Create a new application
+=== Create a new application
 
 To create a new QiWeb application, use the `new` command of `qiweb`:
 
@@ -43,7 +43,7 @@ user@host ~/hello-qiweb $
 ----
 
 
-==== Run the application in development mode
+=== Run the application in development mode
 
 To run a QiWeb application in development mode, use the `run` command of `qiweb`:
 
@@ -71,7 +71,7 @@ You can now open your browser to http://localhost:23023/ to see the welcome page
 image::images/welcome.png[Welcome,640]
 
 
-==== Created application walkthrough
+=== Created application walkthrough
 
 The newly created application has a single HTTP route:
 
