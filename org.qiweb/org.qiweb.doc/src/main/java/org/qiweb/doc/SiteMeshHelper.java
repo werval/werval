@@ -17,7 +17,6 @@ package org.qiweb.doc;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
-import org.qiweb.api.routes.ReverseRoutes;
 import org.sitemesh.builder.SiteMeshOfflineBuilder;
 import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.directory.Directory;
@@ -36,7 +35,7 @@ import static org.qiweb.api.util.InputStreams.readAllAsString;
  */
 /* package */ final class SiteMeshHelper
 {
-    /* package */ static String decorate( String path, String html, ReverseRoutes revRoutes )
+    /* package */ static String decorate( String path, String html )
         throws IOException
     {
         Directory source = new InMemoryDirectory( UTF_8 );

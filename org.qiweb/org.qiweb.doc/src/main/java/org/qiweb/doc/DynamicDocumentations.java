@@ -61,8 +61,7 @@ public class DynamicDocumentations
         html += "</ul></div><div id=\"footer\"></div></body></html>";
         String decorated = SiteMeshHelper.decorate(
             reverseRoutes().get( getClass(), c -> c.index() ).uri(),
-            html,
-            reverseRoutes()
+            html
         );
         return outcomes().ok( decorated ).asHtml().build();
     }
@@ -108,8 +107,7 @@ public class DynamicDocumentations
         );
         String decoratedHtml = SiteMeshHelper.decorate(
             reverseRoutes().get( getClass(), c -> c.resource( id, path ) ).uri(),
-            html,
-            reverseRoutes()
+            html
         );
         return outcomes().ok( decoratedHtml ).asHtml().build();
     }

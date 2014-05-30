@@ -72,8 +72,7 @@ public class CoreDocumentations
         );
         String decorated = SiteMeshHelper.decorate(
             reverseRoutes().get( getClass(), c -> c.catchAll( path ) ).uri(),
-            html,
-            reverseRoutes()
+            html
         );
         return outcomes().ok( decorated ).asHtml().build();
     }

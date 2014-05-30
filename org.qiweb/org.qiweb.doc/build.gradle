@@ -54,6 +54,10 @@ buildscript {
 }
 apply plugin: 'asciidoctor'
 asciidoctor {
+    doFirst {
+        // Workaround for https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/61
+        System.setProperty('jruby.logger.class','org.jruby.util.log.StandardErrorLogger')
+    }
     inputs.dir file( assetsSourcesPath )
     baseDir = file( asciidocSourcesPath )
     sourceDir = file( asciidocSourcesPath )
@@ -64,6 +68,8 @@ asciidoctor {
         compact: true,
         attributes: [
             'toc': 'right',
+            'sectlink': '',
+            'sectanchors':'',
             'linkattrs': '',
             'linkcss':'',
             'docinfo1':'',

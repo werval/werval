@@ -1,7 +1,12 @@
 = Manual
-
-CAUTION: Work in progress!
+Building HTTP Applications using QiWeb
+:title: QiWeb Manual
+:description: Building HTTP Applications using QiWeb
+:keywords: qiweb, documentation, manual, userguide
+:numbered:
 
 The QiWeb Manual is intended to be a comprehensive guide to the development kit.
+
+CAUTION: Work in progress!
 
 include::manual/manual.adoc[]

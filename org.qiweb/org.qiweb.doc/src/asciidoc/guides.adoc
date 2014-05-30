@@ -1,11 +1,17 @@
 = Guides
-
-CAUTION: Work in progress!
+Guides to some things QiWeb
+:title: Practical QiWeb guides
+:description: Practical QiWeb guides
+:keywords: qiweb, documentation, guide, tutorial
 
 In this section you'll find guides for frequent and practical development use cases from IDE support to deployment.
 
+CAUTION: Work in progress!
+
+include::guides/build-gradle.adoc[]
+include::guides/build-maven.adoc[]
 include::guides/ide-support.adoc[]
+include::guides/write-modules.adoc[]
 include::guides/deploy-unix.adoc[]
 include::guides/deploy-heroku.adoc[]
 include::guides/offline-usage.adoc[]
-

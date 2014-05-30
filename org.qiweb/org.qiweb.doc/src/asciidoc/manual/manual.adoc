@@ -535,21 +535,18 @@ To go further, the `Plugin` interface declare two lifecycle methods:
 Theses two are NOOP methods in the `PluginAdapter` class used above.
 Override theses to hook your Plugin in the Application lifecycle.
 
-== Core Controllers
+== Core Controllers and Filters
 
-// === Default Controller
-// === META-INF Resources & WebJars
-// === Static Files
+=== Controllers
 
-== Modules
+- `Default`
+- `Classpath`
+- `Static`
 
-Modules contains non-core functionnality.
-Modules are simple JARs and can contain controllers, utility classes and QiWeb Plugins.
 
-The QiWeb team maintains a collection of documented, tested modules that evolve along the core SDK.
+=== Filters
 
-NOTE: Community Modules are maintained by the community.
-It's the community responsibility to keep them documented, tested and up to date.
-The QiWeb Team makes no guarantee regarding their shape.
-Check their activity and codebase before using in production.
+- `@Cached`
+- `@MDCSessionID`
+- ...
 

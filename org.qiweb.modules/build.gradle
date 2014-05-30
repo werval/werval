@@ -47,6 +47,10 @@ subprojects {
         def docBuildPath = docGenResourcesPath + '/' + projectSubPath
         apply plugin: 'asciidoctor'
         asciidoctor {
+            doFirst {
+                // Workaround for https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/61
+                System.setProperty('jruby.logger.class','org.jruby.util.log.StandardErrorLogger')
+            }
             sourceDir = file( docResourcesPath )
             outputDir = file( docBuildPath )
             backend = 'html5'
@@ -55,6 +59,8 @@ subprojects {
                 compact: true,
                 attributes: [
                     'toc': 'right',
+                    'sectlink': '',
+                    'sectanchors':'',
                     'linkattrs': '',
                     'linkcss':'',
                     'source-highlighter': 'coderay', 'coderay-css': 'class',

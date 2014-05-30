@@ -1,6 +1,11 @@
 = Getting Started
+Quick walkthrough writing some HTTP "Hello World"
+:title: Getting started using QiWeb
+:description: Getting started using QiWeb
+:keywords: qiweb, documentation, start, tutorial
 
 As a starting point we'll see how to build a "Hello World" style example.
+
 As QiWeb is build system agnostic we'll do this in three flavours: using the `qiweb` command line, Gradle and then
 Maven.
 
