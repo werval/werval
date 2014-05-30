@@ -3,6 +3,7 @@ Guides to some things QiWeb
 :title: Practical QiWeb guides
 :description: Practical QiWeb guides
 :keywords: qiweb, documentation, guide, tutorial
+:toc-title: Guides
 
 In this section you'll find guides for frequent and practical development use cases from IDE support to deployment.
 
@@ -15,3 +16,4 @@ include::guides/write-modules.adoc[]
 include::guides/deploy-unix.adoc[]
 include::guides/deploy-heroku.adoc[]
 include::guides/offline-usage.adoc[]
+include::guides/write-doc.adoc[]

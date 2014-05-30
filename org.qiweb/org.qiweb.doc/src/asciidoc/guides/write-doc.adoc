@@ -1,0 +1,93 @@
+= Write QiWeb Documentation
+How QiWeb documentation is built
+:title: QiWeb Documentation Guide
+:description: QiWeb Documentation Guide
+:keywords: qiweb, documentation
+:toc-title: QiWeb Documentation
+
+The whole QiWeb documentation is built using Gradle alongside the codebase.
+
+toc::[]
+
+
+== Overview
+
+The complete documentation toolchain involve more than Gradle itself, it is use as an orchestrator of Asciidoctor for
+Asciidoc support, Freemarker for templating and finally, JBake to bake the static websites
+
+Documentation of a given QiWeb version include core documentation plus dynamic documentations for officially supported
+modules.
+
+The documentation build is organized to allow documentation:
+
+- to be hosted in development mode, including the documentation of modules found in your application classpath ;
+- to be packaged as downloadable archives including documentation for all officialy supported modules ;
+- and to be included in the QiWeb website, versionned, for all QiWeb releases.
+
+
+== Core & Dynamic documentation
+
+Both core and dynamic documentation are written using Asciidoc and can contain other static assets such as images and
+the like.
+
+=== Core documentation
+
+Core documentation includes a getting started guide, the other guides, the manual, the release-notes and the API
+javadoc.
+Its sources are in the `org.qiweb:org.qiweb.doc` project.
+
+The `org.qiweb:org.qiweb.doc` build generates the core documentation using JBake.
+The resulting files are included in the JAR at `org/qiweb/doc/html`.
+
+All documentation source is assembled in a ZIP artifact published with the `doc` classifier.
+It contains the complete JBake project.
+
+
+=== Dynamic documentation
+
+Each QiWeb module can have its own documentation included thanks to dynamic documentation.
+This is not called *modules documentation* on purpose, *dynamic documentation* way better convey what is going on under
+the hood.
+
+Dynamic documentations are registered by adding the following lines to a `reference.conf` in its classpath root:
+
+    qiweb.devshell.dyndoc.your-module-id {
+        name = "Your shiny module's name"
+        base_path = org/qiweb/modules/your-module-id/doc
+    }
+
+Static documentation should then be generated at `base_path` in the module's classpath.
+
+All documentation source is assembled in a ZIP artifact published with the `doc` classifier.
+
+
+== Documentation targets
+
+=== Development shell
+
+The `org.qiweb:org.qiweb:doc` project host the `DocumentationPlugin` that gets automatically registered in development
+mode and setup routes to serve documentation at `/@doc`.
+
+The `DocumentationPlugin` serve core and dynamic documentations directly from the classpath.
+It generates a dynamic page with links to all registered dynamic documentations found in the application classpath.
+
+
+=== Documentations archives
+
+The `org.qiweb:org.qiweb.dist` project that create distributions, does the job of assembling documentation archives.
+
+It depends on `org.qiweb:org.qiweb.doc::doc@zip` and all the `doc` classified ZIP artifacts from officially supported
+modules.
+
+Documentation website is then generated from an aggregated JBake project.
+The result is assembled in a ZIP archive published with the `doc` classifier for easy download and offline browsing.
+
+
+=== Website
+
+The QiWeb website provide general information about QiWeb and its community and embedd documentation sites for all past,
+current and develop versions documentations mini-sites.
+
+Notable things included in the website are out of the QiWeb releases lifecycle, like Skeletons and Samples.
+Thus, this is built in a separate project, in a separate git repository named `qiweb-website`.
+

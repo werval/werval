@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><sitemesh:write property='title'/></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title><sitemesh:write property='title'></sitemesh:write></title>
         <!-- Decorated page <head> -->
         <sitemesh:write property='head'></sitemesh:write>
         <!-- Decorated page </head> -->
-        <style>
+        <style type="text/css">
             /* Decorator menu styles */
             html { margin: 0; padding: 0; }
             #qiweb-doc-header {
@@ -41,12 +41,15 @@
                 margin: 2px 0 0 0;
                 padding: 0 8px 0 0;
                 text-decoration: none;
+                color: black;
+                font-size: 16px;
             }
             #qiweb-doc-header ul li a.qiweb-doc-link {
                 border-radius: 4px;
                 padding: 4px 8px;
                 text-decoration: none;
                 color: #ba3925;
+                font-size: 14px;
                 font-weight: bold;
             }
             #qiweb-doc-header ul li a.qiweb-doc-link:hover {
@@ -72,7 +75,7 @@
         <div id="qiweb-doc-header">
             <nav>
                 <ul>
-                    <li><a href="/@doc/index.html"><img src="/@doc/images/logo.png" alt="logo"/></a> <strong>qiweb</strong> 0.3.0.Alpha</li>
+                    <li><a href="/@doc/index.html"><img src="/@doc/images/logo.png" alt="logo"/><strong>qiweb</strong></a> 0.3.0.Alpha</li>
                     <li><a class="qiweb-doc-link" href="/@doc/getting-started.html">Getting started</a></li>
                     <li><a class="qiweb-doc-link" href="/@doc/guides.html">Guides</a></li>
                     <li><a class="qiweb-doc-link" href="/@doc/manual.html">Manual</a></li>
@@ -84,7 +87,7 @@
         </div>
         <div id="qiweb-doc-body">
             <!-- Decorated page <body> -->
-            <sitemesh:write property='body'/>
+            <sitemesh:write property='body'></sitemesh:write>
             <!-- Decorated page </body> -->
         </div>
         <script type="text/javascript">
@@ -101,7 +104,7 @@
                 $("a").each(function(index, link) {
                     var $link = $(link);
                     if (($link.attr('href').indexOf('http:') === 0
-                            || $link.attr('href').indexOf('https:') === 0
+                            || $link.attr('href').indexOf('https:') === 0
                             || $link.attr('href').indexOf('//') === 0
                             ) && link.href.indexOf(window.location.protocol + '//' + window.location.host) !== 0) {
                         $link.attr('target', '_blank');

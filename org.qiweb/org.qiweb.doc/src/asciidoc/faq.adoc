@@ -3,6 +3,7 @@ This and that
 :title: Frequenty Asked Questions about QiWeb
 :description: Frequenty Asked Questions about QiWeb
 :keywords: qiweb, documentation, faq, questions
+:toc-title: Questions
 
 
 New FAQs should be submitted as a https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issue],

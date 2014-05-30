@@ -1,0 +1,39 @@
+= QiWeb Release Notes
+Version {qiweb-version}
+:title: QiWeb Release Notes
+:description: QiWeb {qiweb-version} Release Notes
+:keywords: qiweb, documentation, release, release-notes
+:toc-title: Release Notes
+
+QiWeb {qiweb-version} brings many improvements for developer productivity.
+
+== New and noteworthy
+
+Here are the new features introduced in this QiWeb release.
+
+
+
+== Fixed issues
+
+XX issues have been fixed in QiWeb {qiweb-version}.
+
+
+== Deprecations
+
+== Potential breaking changes
+
+== External contributions
+
+We would like to thank the following community members for making contributions to this release of QiWeb.
+
+- link:[John Doe] - doing something
+
+We love getting contributions from the community. For information on contributing, please read
+link:/community.html[this].
+
+
+
+== Known issues
+
+Known issues are problems that were discovered post release that are directly related to changes made in this release.
+
