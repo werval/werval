@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,6 +242,11 @@ public final class ApplicationInstance
         this.metaData = new MetaData();
         this.errors = new ErrorsInstance( config );
         this.devSpi = devSpi;
+        if( devSpi != null && LOG.isDebugEnabled() )
+        {
+            LOG.debug( "Runtime classpath: {}", Arrays.toString( devSpi.runtimeClassPath() ) );
+            LOG.debug( "Application classpath: {}", Arrays.toString( devSpi.applicationClassPath() ) );
+        }
         configure();
     }
 
