@@ -25,12 +25,13 @@ The documentation build is organized to allow documentation:
 - and to be included in the QiWeb website, versionned, for all QiWeb releases.
 
 
-== Core & Dynamic documentation
+=== Core & Dynamic documentation
 
 Both core and dynamic documentation are written using Asciidoc and can contain other static assets such as images and
 the like.
 
-=== Core documentation
+[discrete]
+==== Core documentation
 
 Core documentation includes a getting started guide, the other guides, the manual, the release-notes and the API
 javadoc.
@@ -42,8 +43,8 @@ The resulting files are included in the JAR at `org/qiweb/doc/html`.
 All documentation source is assembled in a ZIP artifact published with the `doc` classifier.
 It contains the complete JBake project.
 
-
-=== Dynamic documentation
+[discrete]
+==== Dynamic documentation
 
 Each QiWeb module can have its own documentation included thanks to dynamic documentation.
 This is not called *modules documentation* on purpose, *dynamic documentation* way better convey what is going on under
@@ -61,9 +62,10 @@ Static documentation should then be generated at `base_path` in the module's cla
 All documentation source is assembled in a ZIP artifact published with the `doc` classifier.
 
 
-== Documentation targets
+=== Documentation targets
 
-=== Development shell
+[discrete]
+==== Development shell
 
 The `org.qiweb:org.qiweb:doc` project host the `DocumentationPlugin` that gets automatically registered in development
 mode and setup routes to serve documentation at `/@doc`.
@@ -71,8 +73,8 @@ mode and setup routes to serve documentation at `/@doc`.
 The `DocumentationPlugin` serve core and dynamic documentations directly from the classpath.
 It generates a dynamic page with links to all registered dynamic documentations found in the application classpath.
 
-
-=== Documentations archives
+[discrete]
+==== Documentations archives
 
 The `org.qiweb:org.qiweb.dist` project that create distributions, does the job of assembling documentation archives.
 
@@ -82,12 +84,30 @@ modules.
 Documentation website is then generated from an aggregated JBake project.
 The result is assembled in a ZIP archive published with the `doc` classifier for easy download and offline browsing.
 
-
-=== Website
+[discrete]
+==== Website
 
 The QiWeb website provide general information about QiWeb and its community and embedd documentation sites for all past,
 current and develop versions documentations mini-sites.
 
 Notable things included in the website are out of the QiWeb releases lifecycle, like Skeletons and Samples.
 Thus, this is built in a separate project, in a separate git repository named `qiweb-website`.
+
+
+== Contributing to Documentation
+
+The documents can use code snippets which will extract code from the project.
+This is preferred way to include source code in the documentation, since any refactoring will be reflected in the
+documentation.
+
+Try to put one sentence on each line.
+Lines without empty lines between them still belongs to the same paragraph.
+This makes it easy to move content around, and also easy to spot (too) long sentences.
+
+As `{}` are used for Asciidoc attributes, everything inside will be treated as an attribute.
+What you have to do is to escape the opening brace: `\{`.
+If you don’t, the braces and the text inside them will be removed without any warning being issued!
+
+
+== Document your modules
 
