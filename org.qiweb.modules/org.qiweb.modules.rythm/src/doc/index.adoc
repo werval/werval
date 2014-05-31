@@ -1,5 +1,6 @@
 = Rythm Templating Module
 Server-side templating for your Application
+:jbake-type: module
 
 The Rythm module provide a `RythmPlugin` that brings first class server-side templating thanks to
 http://rythmengine.org/[RythmEngine].

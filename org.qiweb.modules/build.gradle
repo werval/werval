@@ -116,5 +116,12 @@ subprojects {
             sourceSets.main.resources.srcDir file( dynDocsRefConfPath )
             processResources.dependsOn genDynDocsReferenceConf
         }
+        // Publish documentation sources ZIP with qiweb-doc classifier
+        task qiwebDocZip(type: Zip, dependsOn: asciidoctor) {
+            classifier = 'qiweb-doc'
+            from asciidoctor.sourceDir
+        }
+        artifacts { archives qiwebDocZip }
+        publishing { publications { jars(MavenPublication) { artifact(qiwebDocZip) { classifier = 'qiweb-doc'; extension = 'zip' } } } }
     }
 }

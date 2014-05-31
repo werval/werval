@@ -4,6 +4,7 @@ Version {qiweb-version}
 :description: QiWeb {qiweb-version} Release Notes
 :keywords: qiweb, documentation, release, release-notes
 :toc-title: Release Notes
+:jbake-type: page
 
 QiWeb {qiweb-version} brings many improvements for developer productivity.
 

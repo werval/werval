@@ -1,5 +1,6 @@
 = JDBC Module
 Database connectivity for your Application
+:jbake-type: module
 
 The JDBC module provide a `JDBCPlugin` that brings easy database connectivity and solid connection pooling thanks to
 http://jolbox.com/[BoneCP].

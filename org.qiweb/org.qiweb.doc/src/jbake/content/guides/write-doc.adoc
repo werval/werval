@@ -40,8 +40,11 @@ Its sources are in the `org.qiweb:org.qiweb.doc` project.
 The `org.qiweb:org.qiweb.doc` build generates the core documentation using JBake.
 The resulting files are included in the JAR at `org/qiweb/doc/html`.
 
+NOTE: `org.qiweb:org.qiweb.doc` contains the JBake project that is used later to build the QiWeb Documentation
+
 All documentation source is assembled in a ZIP artifact published with the `doc` classifier.
 It contains the complete JBake project.
+
 
 [discrete]
 ==== Dynamic documentation
@@ -96,6 +99,10 @@ Thus, this is built in a separate project, in a separate git repository named `q
 
 == Contributing to Documentation
 
+As the documentation is stored alongside the code, the contribution workflow is the same as for code contributions.
+
+=== Content
+
 The documents can use code snippets which will extract code from the project.
 This is preferred way to include source code in the documentation, since any refactoring will be reflected in the
 documentation.
@@ -107,6 +114,13 @@ This makes it easy to move content around, and also easy to spot (too) long sent
 As `{}` are used for Asciidoc attributes, everything inside will be treated as an attribute.
 What you have to do is to escape the opening brace: `\{`.
 If you don’t, the braces and the text inside them will be removed without any warning being issued!
+
+
+=== Styling
+
+`org.qiweb:org.qiweb.doc` styles the QiWeb Documentation for DevShell and distributions archives.
+
+`org.qiweb:org.qiweb.website` embed the QiWeb Documentation as is and styles the website home and some other root pages.
 
 
 == Document your modules

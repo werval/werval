@@ -4,6 +4,7 @@ This and that
 :description: Frequenty Asked Questions about QiWeb
 :keywords: qiweb, documentation, faq, questions
 :toc-title: Questions
+:jbake-type: page
 
 
 New FAQs should be submitted as a https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issue],

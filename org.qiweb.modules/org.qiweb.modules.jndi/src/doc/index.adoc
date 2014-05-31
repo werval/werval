@@ -1,5 +1,6 @@
 = JNDI Module
 JNDI service for your Application
+:jbake-type: module
 
 The JNDI module provide a lightweight `JNDI` context thanks to http://tyrex.sourceforge.net/naming.html[Tyrex Naming].
 

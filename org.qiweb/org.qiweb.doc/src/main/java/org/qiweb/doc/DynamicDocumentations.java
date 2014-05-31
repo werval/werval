@@ -22,7 +22,6 @@ import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.controllers.Classpath;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.ReverseRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +45,7 @@ public class DynamicDocumentations
         throws IOException
     {
         Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
-        String html = "<!doctype html><html><head><title>Dynamic Documentation</title>"
-                      + "<link rel=\"stylesheet\" href=\"asciidoctor.css\"></link></head>"
+        String html = "<!doctype html><html><head><title>Dynamic Documentation</title></head>"
                       + "<body><div id=\"header\"><h1>Dynamic Documentation</h1></div>"
                       + "<div id=\"content\">"
                       + "<p>Modules contains non-core functionnality. "
@@ -55,7 +53,7 @@ public class DynamicDocumentations
                       + "<ul>";
         for( DynDoc dyndoc : dyndocs.values() )
         {
-            String dyndocUrl = reverseRoutes().get( getClass(), c -> c.module( dyndoc.id ) ).httpUrl();
+            String dyndocUrl = reverseRoutes().get( getClass(), c -> c.resource( dyndoc.id, dyndoc.entryPoint ) ).httpUrl();
             html += "<li><a href=\"" + dyndocUrl + "\">" + dyndoc.name + "</a></li>";
         }
         html += "</ul></div><div id=\"footer\"></div></body></html>";
@@ -64,18 +62,6 @@ public class DynamicDocumentations
             html
         );
         return outcomes().ok( decorated ).asHtml().build();
-    }
-
-    public Outcome module( String id )
-    {
-        Map<String, DynDoc> dyndocs = discoverDynDocs( application() );
-        DynDoc dyndoc = dyndocs.get( id );
-        if( dyndoc == null )
-        {
-            return outcomes().notFound().asHtml().build();
-        }
-        ReverseRoute redirect = reverseRoutes().get( getClass(), c -> c.resource( dyndoc.id, dyndoc.entryPoint ) );
-        return outcomes().seeOther( redirect.httpUrl() ).build();
     }
 
     public Outcome resource( String id, String path )
@@ -112,14 +98,6 @@ public class DynamicDocumentations
         return outcomes().ok( decoratedHtml ).asHtml().build();
     }
 
-    /**
-     * Dynamic Documentation.
-     *
-     * Dynamic documentations are declared in either a module's `reference.conf` or the `application.conf`.
-     * <p>
-     * Each dynamic documentation produce routes under the DevShell's `/@doc` umbrella that points to classpath
-     * resources.
-     */
     private static class DynDoc
     {
         private final String id;

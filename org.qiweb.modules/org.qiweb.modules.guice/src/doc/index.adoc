@@ -1,5 +1,6 @@
 = Guice Module
 Dependency Injection for your Application
+:jbake-type: module
 
 The Guice module provide a `GuicePlugin` that brings dependency injection thanks to
 https://code.google.com/p/google-guice/[Google Guice].

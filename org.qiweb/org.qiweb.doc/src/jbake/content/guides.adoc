@@ -4,6 +4,7 @@ Guides to some things QiWeb
 :description: Practical QiWeb guides
 :keywords: qiweb, documentation, guide, tutorial
 :toc-title: Guides
+:jbake-type: page
 
 In this section you'll find guides for frequent and practical development use cases from IDE support to deployment.
 

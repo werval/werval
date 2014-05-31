@@ -4,6 +4,7 @@ Quick walkthrough writing some HTTP "Hello World"
 :description: Getting started using QiWeb
 :keywords: qiweb, documentation, start, tutorial
 :toc-title: Getting Started
+:jbake-type: page
 
 As a starting point we'll see how to build a "Hello World" style example.
 
