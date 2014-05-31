@@ -1,0 +1,99 @@
+apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
+
+description = "QiWeb Distributions"
+
+// Generates three archives
+// - dist: binary distribution
+// - src: sources distribution, that is an export of the qiweb repository
+// - doc: documentation website distribution
+
+
+//
+//  ____                            _       _   _
+// |    \ ___ ___ _ _ _____ ___ ___| |_ ___| |_|_|___ ___
+// |  |  | . |  _| | |     | -_|   |  _| .'|  _| | . |   |
+// |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
+// _____________________________________________________________________________________________________________________
+// Generate static documentation archive using JBake
+//
+//
+def modules = ['jndi','jdbc']
+
+configurations {
+    docDist { transitive = false }
+}
+dependencies {
+    docDist "org.qiweb:org.qiweb.doc:$version:qiweb-doc@zip"
+    modules.each { module ->
+        docDist "org.qiweb:org.qiweb.modules.$module:$version:qiweb-doc@zip"
+    }
+}
+task extractCoreDoc(type: Copy) {
+    inputs.file configurations.docDist
+    from zipTree( configurations.docDist.fileCollection{ it.name == 'org.qiweb.doc' }.singleFile )
+    into file('build/tmp/core-doc')
+    includeEmptyDirs = false
+}
+task extractModules {
+    inputs.file configurations.docDist
+    outputs.file file('build/tmp/dyn-doc')
+    doLast {
+        modules.each { module ->
+            copy {
+                from zipTree( configurations.docDist.fileCollection{ it.name == "org.qiweb.modules.$module" }.singleFile )
+                into file("build/tmp/dyn-doc/$module")
+                includeEmptyDirs = false
+            }
+        }
+    }
+}
+task generateModulesIndex {
+    outputs.dir file('build/tmp/dyn-idx')
+    doLast {
+        file('build/tmp/dyn-idx').mkdirs()
+        file('build/tmp/dyn-idx/index.adoc').write(
+"""= Modules
+:jbake-type: modules
+:toc: right
+
+Modules are bla bla ...
+
+toc::[]
+
+""" )
+    }
+}
+task prepareJBakeInput {
+    dependsOn extractCoreDoc, extractModules, generateModulesIndex
+    outputs.dir file('build/tmp/jbake')
+    doLast {
+        copy { from file('build/tmp/core-doc'); into file('build/tmp/jbake') }
+        copy { from file('build/tmp/dyn-idx'); into file('build/tmp/jbake/content/modules') }
+        copy { from file('build/tmp/dyn-doc'); into file('build/tmp/jbake/content/modules'); include '**/*.adoc' }
+        copy { from file('build/tmp/dyn-doc'); into file('build/tmp/jbake/assets/modules'); exclude '**/*.adoc' }
+    }
+}
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://dl.bintray.com/melix/jbake-gradle-plugin' }
+    }
+    dependencies {
+        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.1'
+        classpath 'org.asciidoctor:asciidoctor-java-integration:0.1.4'
+        classpath 'org.freemarker:freemarker:2.3.19'
+    }
+}
+apply plugin: 'jbake'
+jbake {
+    dependsOn prepareJBakeInput
+    input file( 'build/tmp/jbake' )
+}
+
+task documentationArchive(type: Zip, dependsOn: jbake) {
+    classifier 'doc'
+    from jbake.output
+}
+artifacts { archives documentationArchive }
+publishing { publications { jars(MavenPublication) { artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' } } } }
