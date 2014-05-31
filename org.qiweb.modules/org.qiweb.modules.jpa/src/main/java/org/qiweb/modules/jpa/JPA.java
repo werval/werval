@@ -15,6 +15,12 @@
  */
 package org.qiweb.modules.jpa;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +32,11 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUtil;
 import org.qiweb.api.Mode;
+import org.qiweb.api.context.Context;
+import org.qiweb.api.filters.Filter;
+import org.qiweb.api.filters.FilterChain;
+import org.qiweb.api.filters.FilterWith;
+import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.util.Strings;
 import org.qiweb.modules.jpa.internal.Slf4jSessionLogger;
 import org.slf4j.Logger;
@@ -41,8 +52,43 @@ import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 // JPA Properties -> http://eclipse.org/eclipselink/documentation/2.4/jpa/extensions/persistenceproperties_ref.htm
 public final class JPA
 {
+    // WARN Not fully functionnal
+    @FilterWith( TransactionalFilter.class )
+    @Target( { ElementType.METHOD, ElementType.TYPE } )
+    @Retention( RetentionPolicy.RUNTIME )
+    @Inherited
+    @Documented
+    public static @interface Transactional
+    {
+        String persistenceUnit() default "";
+
+        boolean readOnly() default false;
+    }
+
+    // WARN Not fully functionnal
+    public static class TransactionalFilter
+        implements Filter<Transactional>
+    {
+        @Override
+        public Outcome filter( FilterChain chain, Context context, Optional<Transactional> config )
+        {
+            JPA jpa = context.application().plugin( JPA.class );
+            Function<EntityManager, Outcome> action = (em) -> chain.next( context );
+            if( config.isPresent() )
+            {
+                String persistenceUnit = config.get().persistenceUnit();
+                boolean readOnly = config.get().readOnly();
+                if( Strings.isEmpty( persistenceUnit ) )
+                {
+                    return jpa.withTransaction( readOnly, action );
+                }
+                return jpa.withTransaction( persistenceUnit, readOnly, action );
+            }
+            return jpa.withTransaction( false, action );
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger( JPA.class );
-    private static final String QIWEB_AUTODETECT_PU = "qiweb-autotedect-persistence-unit";
     private static final Map<String, Object> GLOBAL_UNITS_PROPERTIES;
 
     static
@@ -89,6 +135,7 @@ public final class JPA
 
     public EntityManager em()
     {
+        // We should distinguish newEM() and curentEm(), JPAContext?
         return emf().createEntityManager();
     }
 

@@ -33,6 +33,7 @@ import static org.junit.Assert.assertThat;
 /**
  * JPA Plugin Test.
  */
+// TODO Unit test @Transactional
 public class JPAPluginTest
 {
     @ClassRule

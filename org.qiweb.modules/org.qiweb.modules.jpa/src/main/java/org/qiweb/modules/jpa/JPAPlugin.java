@@ -34,6 +34,8 @@ public class JPAPlugin
     public void onActivate( Application application )
         throws ActivationException
     {
+        boolean hasXml = application.classLoader().getResource( "META-INF/persistence.xml" ) != null;
+
         Config config = application.config();
         Map<String, Map<String, Object>> properties = new HashMap<>();
         if( config.has( "jpa.units" ) )
