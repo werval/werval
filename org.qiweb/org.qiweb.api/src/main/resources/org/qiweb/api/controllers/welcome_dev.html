@@ -121,7 +121,7 @@
                 border-radius: 0;
                 text-shadow: none;
             }
-            blockquote {
+            blockquote, pre {
                 margin: 0 0 1.25em;
                 padding: 0.5625em 1.25em 0 1.1875em;
                 border-left: 1px solid #ddd;
@@ -182,44 +182,15 @@
                 <code>GET / controllers.Application.index</code>
             </blockquote>
             <p>
+                And your <code>src/main/java/controllers/Application.java</code> contains the following code:
+            </p>
+            <pre><code>public Outcome index() {
+    return new Welcome().welcome();
+}</code></pre>
+            <p>
                 Your Application is being run by the Development Shell that serve it alongside the QiWeb Documentation
                 at <a href="/@doc">/@doc</a>.
             </p>
-            <p><br/></p>
-            <div class="row">
-                <div class="four columns">
-                    <h4>Getting Started</h4>
-                    <p>Get started using QiWeb Development Shell using the command-line, Gradle or Maven.</p>
-                    <p><a href="/@doc/getting-started.html">Getting Started</a></p>
-                </div>
-                <div class="four columns">
-                    <h4>Guides</h4>
-                    <p>Browse a growing list of howto-like guides covering HTTP applications development, testing and production.</p>
-                    <p><a href="/@doc/guides.html">Samples</a></p>
-                </div>
-                <div class="four columns">
-                    <h4>Manual</h4>
-                    <p>Read the comprehensive QiWeb manual to master every aspects of HTTP applications development.</p>
-                    <p><a href="/@doc/manual.html">Manual</a></p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="four columns">
-                    <h4>API</h4>
-                    <p>Read the reference documentation of the QiWeb Core API and Standard Library.</p>
-                    <p><a href="/@doc/api/index.html" target="_blank">QiWeb API</a></p>
-                </div>
-                <div class="four columns">
-                    <h4>Modules</h4>
-                    <p>Leverage high quality modules allowing you to build awesome HTTP applications.</p>
-                    <p><a href="/@doc/modules">Modules</a></p>
-                </div>
-                <div class="four columns">
-                    <h4>F.A.Q</h4>
-                    <p>Get answers to frequently asked questions in the QiWeb F.A.Q.</p>
-                    <p><a href="/@doc/faq.html">F.A.Q</a></p>
-                </div>
-            </div>
         </div>
     </body>
 </html>

@@ -60,7 +60,7 @@ public final class ClassLoaders
                 return false;
             }
         }
-        catch( URISyntaxException ex )
+        catch( URISyntaxException | IllegalArgumentException ex )
         {
             try
             {

@@ -17,7 +17,7 @@ description = "QiWeb Distributions"
 // Generate static documentation archive using JBake
 //
 //
-def modules = ['jndi','jdbc']
+def modules = [ 'guice', 'jndi', 'jdbc', 'rythm' ]
 
 configurations {
     docDist { transitive = false }

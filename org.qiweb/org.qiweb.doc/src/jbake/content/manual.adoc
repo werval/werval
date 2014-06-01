@@ -1,14 +1,32 @@
 = Manual
 Building HTTP Applications using QiWeb
+:jbake-type: page
 :title: QiWeb Manual
 :description: Building HTTP Applications using QiWeb
 :keywords: qiweb, documentation, manual, userguide
-:numbered:
+:toc: right
 :toc-title: QiWeb Manual
-:jbake-type: page
+:numbered:
 
 The QiWeb Manual is intended to be a comprehensive guide to the development kit.
 
 CAUTION: Work in progress!
 
-include::manual/manual.adoc[]
+toc::[]
+
+include::manual/intro.adoc[]
+
+include::manual/application.adoc[]
+include::manual/configuration.adoc[]
+include::manual/global.adoc[]
+include::manual/lifecycle.adoc[]
+
+include::manual/interaction.adoc[]
+include::manual/http.adoc[]
+
+include::manual/plugins.adoc[]
+include::manual/core-lib.adoc[]
+
+include::manual/testing.adoc[]
+
+include::manual/_unsorted_.adoc[]

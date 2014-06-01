@@ -121,7 +121,7 @@
                 border-radius: 0;
                 text-shadow: none;
             }
-            blockquote {
+            blockquote, pre {
                 margin: 0 0 1.25em;
                 padding: 0.5625em 1.25em 0 1.1875em;
                 border-left: 1px solid #ddd;
@@ -181,6 +181,12 @@
             <blockquote>
                 <code>GET / controllers.Application.index</code>
             </blockquote>
+            <p>
+                And your <code>src/main/java/controllers/Application.java</code> contains the following code:
+            </p>
+            <pre><code>public Outcome index() {
+    return new Welcome().welcome();
+}</code></pre>
         </div>
     </body>
 </html>

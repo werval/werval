@@ -1,0 +1,23 @@
+
+== Lifecycle
+
+=== Startup explained
+
+=== Shutdown explained
+
+Shutting your application down gracefully is as critical as running it.
+
+When shut down is requested (Ctrl-C, kill command etc...) the runtime is put in shutting down state for a maximum
+amount of time defined by the `qiweb.shutdown.timeout` configuration property that default to 5 seconds.
+Obviously, if there are no requests to process your application will shutdown immediatly.
+
+While shutting down, your application will continue to serve running requests till they complete.
+Clients using HTTP 1.1 Keep-Alive will see your application respond with a `Connection` header with `Close` value and
+effectively close the connection.
+
+Moreover, your application will respond to new incoming requests with a `503 Service Unavailable` status.
+You can set the `qiweb.shutdown.retry-after` configuration property so that a `Retry-After` header is added to theses
+responses.
+
+If your application is running on multiple nodes behind a balancer you can lower this value to 0, yes *zero*, allowing
+your clients to reconnect immediatly to another node. Pretty useful for zero-downtime upgrades.

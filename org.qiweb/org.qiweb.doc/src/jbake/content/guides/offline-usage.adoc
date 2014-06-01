@@ -1,2 +1,2 @@
 
-== QiWeb offline usage
+== Use QiWeb offline

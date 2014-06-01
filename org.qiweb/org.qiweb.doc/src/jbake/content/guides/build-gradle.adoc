@@ -1,2 +1,2 @@
 
-== QiWeb Gradle Plugin
+== Gradle Plugin

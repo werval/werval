@@ -1,19 +1,16 @@
 = Getting Started
 Quick walkthrough writing some HTTP "Hello World"
+:jbake-type: page
 :title: Getting started using QiWeb
 :description: Getting started using QiWeb
 :keywords: qiweb, documentation, start, tutorial
+:toc: right
 :toc-title: Getting Started
-:jbake-type: page
 
 As a starting point we'll see how to build a "Hello World" style example.
 
 As QiWeb is build system agnostic we'll do this in three flavours: using the `qiweb` command line, Gradle and then
 Maven.
-
-TIP: New to Java? See theses two presentations about Java build tools by ZeroTurnaround.
-First one is http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-1.pdf[An Introductory Crash Course to Getting Started with Maven Gradle and Ant + Ivy].
-Second one is http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-2.pdf[A Decision Maker’s Comparison of Maven Gradle and Ant + Ivy].
 
 Even if you plan to use Gradle, Maven or any other build system, continue reading as you'll get
 accustomed to the way QiWeb applications are layed out and will learn how to generate skeleton applications
@@ -23,7 +20,14 @@ quickly.
 // the code presented in theses sections.
 
 After that we'll take a look at the QiWeb development shell features.
+
 We hope you'll find your way through.
+
+toc::[]
+
+TIP: New to Java? See theses two presentations about Java build tools by ZeroTurnaround.
+First one is http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-1.pdf[An Introductory Crash Course to Getting Started with Maven Gradle and Ant + Ivy].
+Second one is http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-2.pdf[A Decision Maker’s Comparison of Maven Gradle and Ant + Ivy].
 
 include::getting-started/hello-cli.adoc[]
 include::getting-started/hello-gradle.adoc[]

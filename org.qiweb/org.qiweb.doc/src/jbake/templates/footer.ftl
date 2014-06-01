@@ -3,8 +3,8 @@
     </div>
     
     <div id="footer">
-      <div class="container">
-        <p class="muted credit">&copy; 2014 | Mixed with <a href="http://getbootstrap.com/">Bootstrap</a> | Baked with <a href="http://jbake.org">JBake</a></p>
+        <p class="muted credit">&copy; 2014 | The QiWeb Community</p>
+        <p class="muted credit">Mixed with <a href="http://getbootstrap.com/">Bootstrap</a> | Baked with <a href="http://jbake.org">JBake</a></p>
       </div>
     </div>
     
@@ -14,6 +14,7 @@
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/jquery-1.11.1.min.js"></script>
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/bootstrap.min.js"></script>
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/prettify.js"></script>
+    <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/org.qiweb.doc.js"></script>
     
   </body>
 </html>

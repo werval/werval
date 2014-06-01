@@ -1,0 +1,29 @@
+
+== The Global object
+
+=== Instanciation
+
+- Controllers
+- Filters
+
+=== Invocation
+
+- Controllers
+- Filters
+
+=== Error handling
+
+When an error happen inside the Application it is recorded.
+
+Each recorded Error has an `ID`, a timestamp, the related request `ID` and the original exception.
+This is pretty useful as is to write unit/integration tests that check error handling in your Application.
+And of course to track down bugs when used in conjunction with SLF4J MDC.
+
+You can override the `Global::onApplicationError()` method to hook into the error handling system.
+Errors will be recorded _after_ this method is called.
+That way, if your Global object throws, it gets recorded too.
+
+Error records are held in-memory, if you want to persist them someway, you'll have to provide the appropriate mechanism.
+
+By default, a maximum of `100` errors are held into memory in a *first-in/first-out* fashion.
+You can increase or decrease this number by setting the `app.errors.record.max` configuration property.

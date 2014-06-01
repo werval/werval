@@ -1,2 +1,25 @@
+== Write Modules
 
-== Write QiWeb Modules
+=== Overview
+
+=== Plugins
+
+=== Configuration
+
+=== Documentation
+
+Use Asciidoc.
+
+Generate html using Asciidoctor defaults into your modules resources so it ends up on the classpath,
+in `com/acme/your-module-id/doc` for example.
+
+Add the following to a `reference.conf` file at your module's classpath root:
+
+    qiweb.devshell.dyndoc.your-module-id {
+        name = "Your shiny module's name"
+        base_path = com/acme/your-module-id/doc
+    }
+
+When your module is present in an application classpath, its documentation will be automatically listed at
+`/@doc/modules/index.html` and integrated at `/@doc/modules/your-module-id` in development mode.
+

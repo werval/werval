@@ -1,12 +1,15 @@
 = QiWeb Release Notes
 Version {qiweb-version}
+:jbake-type: page
 :title: QiWeb Release Notes
 :description: QiWeb {qiweb-version} Release Notes
 :keywords: qiweb, documentation, release, release-notes
+:toc: right
 :toc-title: Release Notes
-:jbake-type: page
 
 QiWeb {qiweb-version} brings many improvements for developer productivity.
+
+toc::[]
 
 == New and noteworthy
 

@@ -1,15 +1,16 @@
 = Frequenty Asked Questions
 This and that
+:jbake-type: page
 :title: Frequenty Asked Questions about QiWeb
 :description: Frequenty Asked Questions about QiWeb
 :keywords: qiweb, documentation, faq, questions
+:toc: right
 :toc-title: Questions
-:jbake-type: page
-
 
 New FAQs should be submitted as a https://scm.codeartisans.org/paul/qiweb/issues[GitLab Issue],
 once accepted it will be appended to the bottom of this document.
 
+toc::[]
 
 == How is "QiWeb" pronounced?
 

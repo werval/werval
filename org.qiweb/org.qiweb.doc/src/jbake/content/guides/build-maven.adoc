@@ -1,2 +1,2 @@
 
-== QiWeb Maven Plugin
+== Maven Plugin
