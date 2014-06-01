@@ -16,7 +16,9 @@
 package org.qiweb.api.controllers;
 
 import com.jayway.restassured.response.Response;
+import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.runtime.routes.RoutesParserProvider;
@@ -89,6 +91,26 @@ public class ClasspathTest
             when().
             get( "/qiweb/8858B" );
         assertThat( response.asByteArray().length, equalTo( 8858 ) );
+    }
+
+    @Test
+    public void indexFiles()
+    {
+        int expectedLength = new BigDecimal(
+            new File( "src/test/resources/META-INF/resources/qiweb/index.html" ).length()
+        ).intValueExact();
+
+        Response response = expect()
+            .statusCode( 200 )
+            .when()
+            .get( "/qiweb/index.html" );
+        assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
+
+        response = expect()
+            .statusCode( 200 )
+            .when()
+            .get( "/qiweb" );
+        assertThat( response.body().asByteArray().length, equalTo( expectedLength ) );
     }
 
     @Test

@@ -15,7 +15,7 @@
  */
 package org.qiweb.api.controllers;
 
-import java.io.InputStream;
+import java.util.List;
 import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 import org.slf4j.Logger;
@@ -32,6 +32,7 @@ import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
 import static org.qiweb.api.util.Charsets.US_ASCII;
+import static org.qiweb.api.util.ClassLoaders.resourceExists;
 import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.api.util.Strings.isEmpty;
 
@@ -56,6 +57,9 @@ public class Classpath
     /**
      * Serve static files from META-INF/resources in classpath.
      *
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
+     * are used to find an index file. Default value is <strong>no index file support</strong>.
+     *
      * @param path Path of the requested resources, relative to META-INF/resources
      *
      * @return A Chunked Outcome if found, 404 otherwise
@@ -68,6 +72,9 @@ public class Classpath
     /**
      * Serve static resources from classpath.
      *
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
+     * are used to find an index file. Default value is <strong>no index file support</strong>.
+     *
      * @param basepath Base path of the requested resources, relative to the classpath root
      * @param path     Path of the requested resources, relative to the basePath parameter
      *
@@ -79,7 +86,10 @@ public class Classpath
     }
 
     /**
-     * Serve a resource from classpath.
+     * Serve static resources from classpath.
+     *
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
+     * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param path Path of the requested resource, relative to the classpath root
      *
@@ -98,8 +108,20 @@ public class Classpath
                 withBody( "Did you just attempted a directory traversal attack? Keep out." ).
                 build();
         }
-        InputStream input = application().classLoader().getResourceAsStream( path );
-        if( input == null )
+        if( !resourceExists( application().classLoader(), path ) )
+        {
+            List<String> indexFileNames = application().config().stringList( "qiweb.controllers.classpath.index" );
+            for( String indexFileName : indexFileNames )
+            {
+                String indexPath = path + "/" + indexFileName;
+                if( resourceExists( application().classLoader(), indexPath ) )
+                {
+                    path = indexPath;
+                    break;
+                }
+            }
+        }
+        if( !resourceExists( application().classLoader(), path ) )
         {
             LOG.debug( "Requested resource '{}' not found", path );
             return outcomes().
@@ -149,7 +171,7 @@ public class Classpath
         }
 
         LOG.trace( "Will serve '{}' with mimetype '{}'", path, mimetype );
-        return outcomes().ok().withBody( input ).build();
+        return outcomes().ok().withBody( application().classLoader().getResourceAsStream( path ) ).build();
     }
 
     /* package */ static String removeHeadingSlash( String str )
