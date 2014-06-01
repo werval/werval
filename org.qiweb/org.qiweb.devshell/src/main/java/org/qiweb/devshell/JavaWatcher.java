@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent;
@@ -243,7 +244,17 @@ public class JavaWatcher
             final Map<WatchKey, List<WatchedFileOrDir>> keys = new HashMap<>();
             for( File fileOrDirectory : filesAndDirectories )
             {
-                registerAll( fileOrDirectory.toPath(), watchService, keys );
+                try
+                {
+                    registerAll( fileOrDirectory.toPath(), watchService, keys );
+                }
+                catch( NoSuchFileException ex )
+                {
+                    LOG.warn(
+                        "{} absent, not watched, you'll need to restart the DevShell if you create it",
+                        fileOrDirectory
+                    );
+                }
             }
             String watchThreadName = "qiweb-devshell-watcher-" + THREAD_NUMBER.getAndIncrement();
             final SourceChangeWatcher sourceChangeWatcher = new SourceChangeWatcher( watchService, keys, listener );
@@ -268,7 +279,7 @@ public class JavaWatcher
         }
         catch( IOException ex )
         {
-            throw new QiWebDevShellException( "Unable to watch sources for changes", ex );
+            throw new QiWebDevShellException( "Unable to watch sources for changes: " + ex.getMessage(), ex );
         }
     }
 
