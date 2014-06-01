@@ -21,7 +21,7 @@ buildscript {
     		credentials { username = "qiweb"; password = "qiweb" } // <1>
 		}
 	}
-	dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb-version}' }      // <2>
+	dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb_version}' }      // <2>
 }
 repositories {
     maven {
@@ -39,13 +39,13 @@ applicationName = 'hello-qiweb'                   // <8>
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:{qiweb-version}" // <9>
+    compile "org.qiweb:org.qiweb.api:{qiweb_version}" // <9>
     // Add application compile dependencies here
 
-    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}" // <10>
+    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb_version}" // <10>
     // Add application runtime dependencies here
 
-    testCompile "org.qiweb:org.qiweb.test:{qiweb-version}" // <11>
+    testCompile "org.qiweb:org.qiweb.test:{qiweb_version}" // <11>
     // Add application test dependencies here
 
 }

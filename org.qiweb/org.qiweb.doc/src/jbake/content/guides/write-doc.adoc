@@ -36,7 +36,7 @@ NOTE: `org.qiweb.doc` contains the JBake project that is used later to build the
 
 All documentation source is assembled in a ZIP artifact published with the `doc` classifier:
 
-    org.qiweb:org.qiweb.doc:{qiweb-version}:doc@zip
+    org.qiweb:org.qiweb.doc:{qiweb_version}:doc@zip
 
 It contains the complete JBake project.
 
@@ -66,7 +66,7 @@ All documentation source is assembled in a ZIP artifact published with the `doc`
 
 Example for the SMTP Module:
 
-    org.qiweb:org.qiweb.modules.smtp:{qiweb-version}:doc@zip
+    org.qiweb:org.qiweb.modules.smtp:{qiweb_version}:doc@zip
 
 The build system of `org.qiweb.modules` do all that automatically as soon as it can find the `src/doc` directory in a
 module's project.
@@ -108,7 +108,7 @@ Dynamic documentation index is generated as an Asciidoc file.
 Aggregated documentation JBake project is then processed.
 The result is assembled in a ZIP archive published with the `doc` classifier for easy download and offline browsing.
 
-    org.qiweb:org.qiweb.dist:{qiweb-version}:doc@zip
+    org.qiweb:org.qiweb.dist:{qiweb_version}:doc@zip
 
 [discrete]
 ===== Website
@@ -152,7 +152,7 @@ Here are the QiWeb specific attributes that are set while rendering the document
 
 [role="table table-hover"]
 |=======================================================================================================================
-|`qiweb-version`            |The version of QiWeb that is being built
+|`qiweb_version`            |The version of QiWeb that is being built
 |=======================================================================================================================
 
 

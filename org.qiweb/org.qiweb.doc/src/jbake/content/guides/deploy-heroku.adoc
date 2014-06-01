@@ -34,13 +34,13 @@ apply plugin: 'java'
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:{qiweb-version}"
+    compile "org.qiweb:org.qiweb.api:{qiweb_version}"
     // Add application compile dependencies
 
-    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb-version}"
+    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb_version}"
     // Add application runtime dependencies
 
-    test "org.qiweb:org.qiweb.test:{qiweb-version}"
+    test "org.qiweb:org.qiweb.test:{qiweb_version}"
     // Add application test dependencies
 
 }

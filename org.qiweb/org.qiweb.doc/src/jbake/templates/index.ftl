@@ -3,7 +3,7 @@
 	<#include "menu.ftl">
 
 	<div class="page-header">
-		<h1><img src="images/logo.png" alt="Logo" height="84"/> QiWeb Documentation</h1>
+		<h1><img src="images/logo.png" alt="Logo" height="84"/> QiWeb ${config.qiweb_version} Documentation</h1>
 	</div>
 
     <div id="content">

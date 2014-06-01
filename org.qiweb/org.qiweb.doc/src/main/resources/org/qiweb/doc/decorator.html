@@ -53,19 +53,5 @@
         </div>
         <script type="text/javascript" src="/@doc/js/prettify.js"></script>
         <script type="text/javascript" src="/@doc/js/org.qiweb.doc.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                // Open absolute links to other domains in a new window/tab
-                $("a").each(function(index, link) {
-                    var $link = $(link);
-                    if (($link.attr('href').indexOf('http:') === 0
-                            || $link.attr('href').indexOf('https:') === 0
-                            || $link.attr('href').indexOf('//') === 0
-                            ) && link.href.indexOf(window.location.protocol + '//' + window.location.host) !== 0) {
-                        $link.attr('target', '_blank');
-                    }
-                });
-            });
-        </script>
     </body>
 </html>

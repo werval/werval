@@ -22,7 +22,7 @@ Of course, you need a http://www.oracle.com/technetwork/java/javase/downloads/[J
 Now, here are the steps needed to install the `qiweb` command:
 
 - Download the
-https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/{qiweb-version}/org.qiweb.cli-{qiweb-version}-dist.zip[CLI distribution].
+link:https://repo.codeartisans.org/qiweb/org/qiweb/org.qiweb.cli/{qiweb_version}/org.qiweb.cli-{qiweb_version}-dist.zip[CLI distribution].
 - Unzip it
 - Prepend the `bin` directory to your `PATH` (ex: `export PATH="/opt/qiweb/bin:${PATH}"`)
 - Use the `qiweb` executable on UN*X

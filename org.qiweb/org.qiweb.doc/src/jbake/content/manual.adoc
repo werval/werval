@@ -1,14 +1,13 @@
-= Manual
+= QiWeb Manual
 Building HTTP Applications using QiWeb
 :jbake-type: page
-:title: QiWeb Manual
 :description: Building HTTP Applications using QiWeb
 :keywords: qiweb, documentation, manual, userguide
 :toc: right
 :toc-title: QiWeb Manual
 :numbered:
 
-The QiWeb Manual is intended to be a comprehensive guide to the development kit.
+The QiWeb Manual is intended to be a comprehensive guide to the development kit version {qiweb_version}.
 
 CAUTION: Work in progress!
 

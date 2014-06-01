@@ -1,13 +1,13 @@
 = QiWeb Release Notes
-Version {qiweb-version}
+Version {qiweb_version}
 :jbake-type: page
 :title: QiWeb Release Notes
-:description: QiWeb {qiweb-version} Release Notes
+:description: QiWeb {qiweb_version} Release Notes
 :keywords: qiweb, documentation, release, release-notes
 :toc: right
 :toc-title: Release Notes
 
-QiWeb {qiweb-version} brings many improvements for developer productivity.
+QiWeb {qiweb_version} brings many improvements for developer productivity.
 
 toc::[]
 
@@ -19,7 +19,7 @@ Here are the new features introduced in this QiWeb release.
 
 == Fixed issues
 
-XX issues have been fixed in QiWeb {qiweb-version}.
+Issues fixed in QiWeb {qiweb_version}.
 
 
 == Deprecations

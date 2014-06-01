@@ -115,6 +115,9 @@ task prepareJBakeJavadoc(type: Copy) {
 jbake {
     dependsOn prepareJBakeInput, prepareJBakeJavadoc
     input file( 'build/tmp/jbake' )
+    configuration = [
+        'qiweb_version': version
+    ]
 }
 
 // Publish documentation sources ZIP with qiweb-doc classifier

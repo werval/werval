@@ -89,6 +89,9 @@ apply plugin: 'jbake'
 jbake {
     dependsOn prepareJBakeInput
     input file( 'build/tmp/jbake' )
+    configuration = [
+        'qiweb_version': version
+    ]
 }
 
 task documentationArchive(type: Zip, dependsOn: jbake) {

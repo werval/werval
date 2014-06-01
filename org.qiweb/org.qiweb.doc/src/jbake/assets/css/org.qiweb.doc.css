@@ -14,10 +14,11 @@
     content: "\e012";
 }
 
-ol.breadcumbs {
+.breadcrumb {
     margin: 15px 0 0 0;
     padding: 4px 8px;
     font-size: 11px;
+    background-color: transparent;
 }
 
 .imageblock {

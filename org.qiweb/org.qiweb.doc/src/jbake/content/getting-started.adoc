@@ -40,8 +40,8 @@ Now that you have a minimal skeleton, the obvious next step is to write your app
 
 You can use the following resources to learn what you need:
 
-- link:samples.html[Sample applications], ready to run, with documentation and tests
-- link:manual.html[Manual]
-- link:api/index.html[API Docs]
-- link:libraries.html[Libraries]
 - link:guides.html[Guides]
+- link:manual.html[Manual]
+- link:api/index.html[API Docs,window="_blank"]
+- link:modules/index.html[Modules]
+- link:release-notes.html[Release notes]
