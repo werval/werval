@@ -68,8 +68,8 @@ public class Static
     /**
      * Serve a filesystem directory as read-only resources.
      *
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property is
-     * used to find an index file. Default value is <code>index.html</code> only.
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
+     * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param root Root of the file tree to serve
      * @param path Path of the requeted file, relative to root
@@ -85,8 +85,8 @@ public class Static
     /**
      * Serve a filesystem directory as read-only resources.
      *
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property is
-     * used to find an index file. Default value is <code>index.html</code> only.
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
+     * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param root Root of the file tree to serve
      * @param path Path of the requeted file, relative to root
@@ -102,8 +102,8 @@ public class Static
     /**
      * Serve a filesystem directory as read-only resources.
      *
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property is
-     * used to find an index file. Default value is <code>index.html</code> only.
+     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
+     * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param root Root of the file tree to serve
      * @param path Path of the requeted file, relative to root
