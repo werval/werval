@@ -43,6 +43,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.api.util.ClassLoaders;
 import org.qiweb.api.util.DeltreeFileVisitor;
 import org.qiweb.api.util.InputStreams;
 import org.qiweb.api.util.Strings;
@@ -51,7 +52,6 @@ import org.qiweb.commands.SecretCommand;
 import org.qiweb.commands.StartCommand;
 import org.qiweb.devshell.JavaWatcher;
 import org.qiweb.runtime.CryptoInstance;
-import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 

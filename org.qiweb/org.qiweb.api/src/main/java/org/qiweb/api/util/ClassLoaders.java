@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.util;
+package org.qiweb.api.util;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.util.Strings;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
 
@@ -37,7 +36,46 @@ import static org.qiweb.api.util.Charsets.UTF_8;
  */
 public final class ClassLoaders
 {
-    private static final String TAB = "    ";
+    /**
+     * Check if a resource exists.
+     *
+     * Reliabily report directories as non existing resources whether the classpath is a directory or a jar file.
+     *
+     * @param loader ClassLoader
+     * @param path   Resource path
+     *
+     * @return {@literal true} if the resource exists, {@literal false} otherwise
+     */
+    public static boolean resourceExists( ClassLoader loader, String path )
+    {
+        URL resource = loader.getResource( path );
+        if( resource == null )
+        {
+            return false;
+        }
+        try
+        {
+            if( new File( resource.toURI() ).isDirectory() )
+            {
+                return false;
+            }
+        }
+        catch( URISyntaxException ex )
+        {
+            try
+            {
+                if( new File( resource.getPath() ).isDirectory() )
+                {
+                    return false;
+                }
+            }
+            catch( IllegalArgumentException skip )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static List<URL> urlsOf( ClassLoader classLoader )
     {
@@ -143,11 +181,11 @@ public final class ClassLoaders
             int idx = 0;
             while( urlLoader != null )
             {
-                String indent = indents( idx ) + "+ ";
+                String indent = Strings.indentTab( "+ ", idx );
                 output.println( indent + urlLoader );
                 for( URL url : urlLoader.getURLs() )
                 {
-                    output.println( indent + TAB + url );
+                    output.println( indent + Strings.TAB + url );
                 }
                 ClassLoader parent = urlLoader.getParent();
                 if( parent == null )
@@ -161,7 +199,7 @@ public final class ClassLoaders
                 }
                 else
                 {
-                    output.println( indent + TAB + "Not URLClassLoader parent: " + parent );
+                    output.println( indent + Strings.TAB + "Not URLClassLoader parent: " + parent );
                     // break
                     urlLoader = null;
                 }
@@ -190,7 +228,7 @@ public final class ClassLoaders
             int idx = 0;
             while( cl != null )
             {
-                String indent = indents( idx ) + "+ ";
+                String indent = Strings.indentTab( "+ ", idx );
                 output.println( indent + cl );
                 java.util.Vector<Class<?>> classes = (java.util.Vector<Class<?>>) clClassesField.get( cl );
                 List<String> classNames = new ArrayList<>();
@@ -201,7 +239,7 @@ public final class ClassLoaders
                 Collections.sort( classNames );
                 for( String className : classNames )
                 {
-                    output.println( indent + TAB + className );
+                    output.println( indent + Strings.TAB + className );
                 }
                 cl = cl.getParent();
                 idx++;
@@ -216,13 +254,6 @@ public final class ClassLoaders
                 ex
             );
         }
-    }
-
-    private static String indents( int count )
-    {
-        String[] indents = new String[ count ];
-        Arrays.fill( indents, TAB );
-        return Strings.join( indents );
     }
 
     private ClassLoaders()
