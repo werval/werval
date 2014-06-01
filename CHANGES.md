@@ -3,14 +3,14 @@
 
 ## Versioning Scheme
 
-    X.Y.Z.Qualifer
+    X.Y.Z-Qualifier
 
 - X Major version number
 - Y Minor version number
 - Z Release number
-- Qualifer can be Alpha, Beta, RC or Final.
+- Qualifer can be alpha, beta or rc
 
-Only use Final versions in production!
+Absence of qualifier means it's a final release.
 
 
 
@@ -54,10 +54,11 @@ For minor changes, build system or test changes, see the full [source code histo
 - Application Routes are now logged upon activation, see #130
 - Outome builder API now expose helpers for common Content-Types and Charsets, see #128
 - The Cache API now leverage Java 8 Lambdas, see #127
+- The `Classpath` and `Static` controllers gets uniform index files support, see #134 and #137
 - The JPA Plugin now redirects all EclipseLink logging to SLF4J, see #115
 - Resources at `/@doc` in development mode are now all in a dedicated DocumentationPlugin, see #106 and #71
 - Modules can now contribute dynamic documentation to `/@doc`, see #71
-- The DevShell can now watch individual files, see #19
+- Development mode can now watch individual files, see #19
 - Add a file based run lock for the DevShell for easier process monitoring by both the build plugins and their integration tests, #98
 - CLI, Gradle and Maven support converged in `org.qiweb.commands`, see #111
 - Move Gradle Plugin tasks configuration into tasks, see #103
