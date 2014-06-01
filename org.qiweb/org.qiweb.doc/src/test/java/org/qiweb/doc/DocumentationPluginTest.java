@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static org.qiweb.api.http.Headers.Names.LOCATION;
 
 /**
  * Documentation Plugin Test.
@@ -41,11 +40,6 @@ public class DocumentationPluginTest
         expect()
             .statusCode( 200 )
             .when()
-            .get( "/@doc/api" );
-
-        expect()
-            .statusCode( 200 )
-            .when()
             .get( "/@doc/index.html" );
     }
 
@@ -55,6 +49,6 @@ public class DocumentationPluginTest
         expect()
             .statusCode( 200 )
             .when()
-            .get( "/@doc/modules" );
+            .get( "/@doc/modules/index.html" );
     }
 }
