@@ -1,0 +1,23 @@
+
+== Preliminary Setup
+
+Next step is to add the QiWeb SSL certificate to the certificates trusted by your Java 8 installation.
+
+NOTE: This step is necessary while the project is private.
+Once published we'll be able to remove this step.
+
+This will fetch the certifcate and put it in a file named `qiweb-certificate.pem`:
+
+[source,bash]
+----
+openssl s_client -connect scm.codeartisans.org:443 < /dev/null | openssl x509 -outform pem > qiweb-certificate.pem
+----
+
+This will import the certificate in the Java `cacerts` truststore:
+
+[source,bash]
+----
+sudo keytool -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit -import -trustcacerts -v -alias qiweb-certificate -file qiweb-certificate.pem
+----
+
+Once your environment is correctly set up on your computer, you can go on to the next step.

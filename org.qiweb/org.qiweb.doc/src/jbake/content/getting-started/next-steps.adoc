@@ -1,0 +1,12 @@
+
+== Next steps
+
+Now that you have a minimal skeleton, the obvious next step is to write your application.
+
+You can use the following resources to learn what you need:
+
+- link:guides.html[Guides]
+- link:manual.html[Manual]
+- link:modules/index.html[Modules]
+- link:api/index.html[API Docs,window="_blank"]
+- link:release-notes.html[Release notes]

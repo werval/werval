@@ -1,47 +1,69 @@
 = Getting Started
-Quick walkthrough writing some HTTP "Hello World"
+Get started using QiWeb
 :jbake-type: page
-:title: Getting started using QiWeb
-:description: Getting started using QiWeb
+:title: Get started using QiWeb
+:description: Get started using QiWeb
 :keywords: qiweb, documentation, start, tutorial
 :toc: right
 :toc-title: Getting Started
 
-As a starting point we'll see how to build a "Hello World" style example.
-
-As QiWeb is build system agnostic we'll do this in three flavours: using the `qiweb` command line, Gradle and then
-Maven.
-
-Even if you plan to use Gradle, Maven or any other build system, continue reading as you'll get
-accustomed to the way QiWeb applications are layed out and will learn how to generate skeleton applications
-quickly.
-
-// For the code-impatients, our https://github.com/qiweb/org.qiweb.getting-started[getting-started repository] contains
-// the code presented in theses sections.
-
-After that we'll take a look at the QiWeb development shell features.
-
-We hope you'll find your way through.
-
 toc::[]
 
-TIP: New to Java? See theses two presentations about Java build tools by ZeroTurnaround.
-First one is http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-1.pdf[An Introductory Crash Course to Getting Started with Maven Gradle and Ant + Ivy].
-Second one is http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-2.pdf[A Decision Maker’s Comparison of Maven Gradle and Ant + Ivy].
+== Gradle, Maven, huh!?
 
-include::getting-started/hello-cli.adoc[]
-include::getting-started/hello-gradle.adoc[]
-include::getting-started/hello-maven.adoc[]
-include::getting-started/using-devshell.adoc[]
+link:http://gradle.org/[Gradle] and link:http://maven.apache.org/[Maven] are both tools you use to build your code.
+In their family you'll perhaps recognize one of make, cmake, slang, scons, rake, sbt, grunt, and the list goes on ....
 
-== Next steps
+QiWeb support both of Gradle and Maven hence the Getting Started guide being available for each one of them.
 
-Now that you have a minimal skeleton, the obvious next step is to write your application.
+[TIP]
+.New to Java?
+====
+See theses two presentations about Java build tools:
 
-You can use the following resources to learn what you need:
+- http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-1.pdf[An Introductory Crash Course to Getting Started with Maven Gradle and Ant + Ivy].
+- http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-2.pdf[A Decision Maker’s Comparison of Maven Gradle and Ant + Ivy].
+====
 
-- link:guides.html[Guides]
-- link:manual.html[Manual]
-- link:api/index.html[API Docs,window="_blank"]
-- link:modules/index.html[Modules]
-- link:release-notes.html[Release notes]
+
+== Choose your side of the force
+
+- link:get-started-gradle.html[Get started using Gradle]
+- link:get-started-maven.html[Get started using Maven]
+
+
+== Our advice
+
+_TL;DR_ If you are not forced to use Maven, don't use it.
+
+Everything QiWeb is automated using Gradle, from the SDK build to the baking and publication of a website embedding
+versioned documentation for past, current and development releases.
+The only exception is the Maven support that is built using, well, Maven.
+
+We love Gradle.
+Mainly for its DSL expressiveness and extensibility.
+
+But, Maven is very commonly used and changing the build tool used in an organisation can be challenging.
+
+We implement new features in Gradle support and port them to Maven support afterwards, if even possible.
+
+In other words, work on the QiWeb Maven support is motivated by ease of adoption only.
+
+So, do we need to say more?
+Gradle is where our build love goes.
+
+Choose your side of the force.
+
+
+== Some other build tool?
+
+If you prefer another build tool or even want to write shell scripts on your own, its still possible to use QiWeb.
+
+A QiWeb application is a plain old java program (main class) so it's a no brainer to run it production mode.
+
+Tests of QiWeb applications are simple JUnit tests, again, no brainer to run.
+
+Obvisouly, the classpath should be set up properly with regard to your application dependencies.
+
+Finally, to make QiWeb development mode work in another build tool you'll probably need to write some code.
+Take a look at the Gradle and Maven support source code for insights in this matter.

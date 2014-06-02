@@ -1,2 +1,13 @@
 
 == Maven Plugin
+
+=== Overview
+
+=== Development mode build logic
+
+=== Packaging
+
+TIP: If you need RPM or DEB packaging, use the http://mojo.codehaus.org/rpm-maven-plugin[rpm-maven-plugin]
+and https://github.com/tcurdt/jdeb[jdeb-maven-plugin]
+
+

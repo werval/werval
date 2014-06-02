@@ -1,2 +1,49 @@
 
 == Gradle Plugin
+
+=== Overview
+
+=== Development mode build logic
+
+The QiWeb Gradle plugin:
+
+- declare a `devshell` task that depend on the `classes` task.
+- declare a `devshell_rebuild` task that depend on the `classes` task too.
+
+When running the `devshell` task it will run `classes` and other dependents tasks and then the QiWeb DevShell, embedded.
+The application is now running in development mode.
+
+Once a source code change is detected, the first request received by the application summon a gradle daemon to run
+the `devshell_rebuild` task on the application project.
+
+You add dependent tasks to the `devshell` and `devshell_rebuild` that way;
+
+[source]
+----
+devshell.dependsOn grunt_bower, grunt_dev
+devshell_rebuild.dependsOn grunt_dev
+----
+
+This example is from an application that use `bower` and `grunt` for client javascript build,
+thanks to the `gradle-grunt-plugin`.
+
+Configuring theses tasks in your build allow you to fine tune the work needed to get your app in dev mode and what
+should be done when the source has changed.
+
+Moreover, the `devshell` task has an `extraWatch` property that allow one to add directories to watch for changes in
+dev mode:
+
+[source]
+----
+devshell.extraWatch += "path/to/dir"
+devshell.extraWatch += [ "path/to/elsewhere", "and/anywhere" ]
+----
+
+Thanks to Gradle's incredible incremental build behaviour, handling complex build scenarios is both confy and
+productive.
+
+=== Packaging
+
+TIP: If you need RPM or DEB packaging, use the
+https://github.com/nebula-plugins/gradle-ospackage-plugin[gradle-ospackage-plugin]
+

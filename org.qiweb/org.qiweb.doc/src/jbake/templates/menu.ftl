@@ -12,7 +12,15 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>getting-started.html">Getting started</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting started <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>get-started-gradle.html">Get started using Gradle</a></li>
+                <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>get-started-maven.html">Get started using Maven</a></li>
+                <li class="divider"></li>
+                <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>getting-started.html">What are Gradle & Maven?</a></li>
+              </ul>
+            </li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>guides.html">Guides</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>manual.html">Manual</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>modules/index.html">Modules</a></li>

@@ -10,8 +10,12 @@
         <div class="row">
             <div class="col-md-4">
                 <h4>Getting Started</h4>
-                <p>Get started using QiWeb Development Shell using the command-line, Gradle or Maven.</p>
-                <p><a href="getting-started.html">Getting Started</a></p>
+                <p>Get started using the build tool of your choice.</p>
+                <p>
+                    Get Started <a href="get-started-gradle.html">using Gradle</a>
+                    <br/>
+                    Get Started <a href="get-started-maven.html">using Maven</a>
+                </p>
             </div>
             <div class="col-md-4">
                 <h4>Guides</h4>
@@ -36,9 +40,9 @@
                 <p><a href="modules/index.html">Modules</a></p>
             </div>
             <div class="col-md-4">
-                <h4>F.A.Q</h4>
-                <p>Get answers to frequently asked questions in the QiWeb F.A.Q.</p>
-                <p><a href="faq.html">F.A.Q</a></p>
+                <h4>Release notes</h4>
+                <p>See what's new and noteworthy in this release.</p>
+                <p><a href="release-notes.html">Release notes</a></p>
             </div>
         </div>
     </div>

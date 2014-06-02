@@ -9,8 +9,6 @@ Guides to some things QiWeb
 
 In this section you'll find guides for frequent and practical development use cases from IDE support to deployment.
 
-CAUTION: Work in progress!
-
 toc::[]
 
 include::guides/build-gradle.adoc[]
@@ -22,7 +20,7 @@ include::guides/write-modules.adoc[]
 include::guides/deploy-unix.adoc[]
 include::guides/deploy-heroku.adoc[]
 
-include::guides/offline-usage.adoc[]
-
-include::guides/write-doc.adoc[]
 include::guides/build-qiweb.adoc[]
+include::guides/write-doc.adoc[]
+
+include::guides/offline-usage.adoc[]

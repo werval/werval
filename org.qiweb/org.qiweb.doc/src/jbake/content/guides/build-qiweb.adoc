@@ -81,24 +81,24 @@ Java home: /path/to/your/java/installation <3>
 <2> Using Java 8
 <3> From the right JAVA_HOME
 
-Next step is to add the CodeArtisans SSL certificate to the certificates trusted by your Java 8 installation.
-
 [discrete]
 ==== Install SSL Certificate
+
+Next step is to add the QiWeb SSL certificate to the certificates trusted by your Java 8 installation.
+
+This will fetch the certifcate and put it in a file named `qiweb-certificate.pem`:
 
 [source,bash]
 ----
 openssl s_client -connect scm.codeartisans.org:443 < /dev/null | openssl x509 -outform pem > qiweb-certificate.pem
 ----
 
-This will fetch the certifcate and put it in a file named `qiweb-certificate.pem`.
+This will import the certificate in the Java `cacerts` truststore:
 
 [source,bash]
 ----
-keytool -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit -import -trustcacerts -v -alias qiweb-certificate -file qiweb-certificate.pem
+sudo keytool -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit -import -trustcacerts -v -alias qiweb-certificate -file qiweb-certificate.pem
 ----
-
-This will import the certificate in the Java `cacerts` truststore, you'll probably need to add `sudo` here.
 
 Once your environment is correctly set up on your computer, you can go on to the next step.
 

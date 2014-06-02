@@ -1,27 +1,11 @@
+
 == Using the DevShell
 
 From now on we'll take a closer look at QiWeb Development Shell features.
-Whether you use `qiweb-cli`, Gradle, Maven or any other build system, start the DevShell.
 
-.Run in development mode using `qiweb-cli`
-[source]
-----
-user@host ~/hello-qiweb $ qiweb-cli run
-----
+Begin by starting the application in development mode, see above.
 
-.Run in development mode using Gradle
-[source]
-----
-user@host ~/hello-qiweb $ gradle devshell
-----
-
-.Run in development mode using Maven
-[source]
-----
-user@host ~/hello-qiweb $ mvn org.qiweb:org.qiweb.maven:devshell
-----
-
-Open http://localhost:23023/, you should see the now well known Welcome page.
+Then, open http://localhost:23023/, you should see the now well known Welcome page.
 
 
 === Instant feedback
