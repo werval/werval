@@ -1,11 +1,75 @@
-apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
+
+//apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
+apply from: file( '../gradle/java.gradle' )
 
 description = "QiWeb Distributions"
 
+
 // Generates three archives
-// - dist: binary distribution
+// - bin: binary distribution, that is a maven repository tree with all QiWeb artifacts
 // - src: sources distribution, that is an export of the qiweb repository
 // - doc: documentation website distribution
+
+
+def modules = [ 'guice', 'jndi', 'jdbc', 'rythm' ]
+
+
+
+//
+//  _____ _             _
+// | __  |_|___ ___ ___|_|___ ___ 
+// | __ -| |   | .'|  _| | -_|_ -|
+// |_____|_|_|_|__,|_| |_|___|___|
+// _____________________________________________________________________________________________________________________
+// Generate binary archive from the local repository
+//
+
+repositories { maven { url "http://repo.gradle.org/gradle/libs-releases-local" } }
+configurations { binDist }
+dependencies {
+    binDist "org.qiweb:org.qiweb.server.bootstrap:$version:javadoc"
+    binDist "org.qiweb:org.qiweb.test:$version:javadoc"
+    modules.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
+    binDist "org.qiweb:org.qiweb.gradle:$version:javadoc"
+    binDist "org.qiweb:org.qiweb.maven:$version:javadoc"
+}
+task binariesArchive( type: Zip, dependsOn: configurations.binDist ) {
+    classifier 'bin'
+    from fileTree( '../repository' )
+    exclude '**/*-sources.*', '**/*-qiweb-doc.*'
+    exclude 'org/qiweb/org.qiweb.dist/**'
+    includeEmptyDirs = false
+    // into "$project.name-$project.version-bin"
+}
+artifacts { archives binariesArchive }
+publishing.publications { jars(MavenPublication) { artifact(binariesArchive) { classifier = 'bin'; extension = 'zip' } } }
+
+
+
+//
+//  _____
+// |   __|___ _ _ ___ ___ ___ ___ 
+// |__   | . | | |  _|  _| -_|_ -|
+// |_____|___|___|_| |___|___|___|
+// _____________________________________________________________________________________________________________________
+// Generate sources archives, that is a copy of this git repository content
+//
+task sourcesArchive(type: Zip) {
+    classifier 'src'
+    from fileTree('..')
+    exclude 'repository'
+    exclude '**/build/**'
+    exclude '**/target/**'
+    exclude '**/*.iml'
+    exclude '**/*.ipr'
+    exclude '**/*.iws'
+    exclude '**/.*'
+    includeEmptyDirs = false
+    // into "$project.name-$project.version-src"
+}
+artifacts { archives sourcesArchive }
+publishing.publications { jars(MavenPublication) { artifact(sourcesArchive) { classifier = 'src'; extension = 'zip' } } }
+
 
 
 //
@@ -17,16 +81,22 @@ description = "QiWeb Distributions"
 // Generate static documentation archive using JBake
 //
 //
-def modules = [ 'guice', 'jndi', 'jdbc', 'rythm' ]
 
-configurations {
-    docDist { transitive = false }
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://dl.bintray.com/melix/jbake-gradle-plugin' }
+    }
+    dependencies {
+        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.1'
+        classpath 'org.asciidoctor:asciidoctor-java-integration:0.1.4'
+        classpath 'org.freemarker:freemarker:2.3.19'
+    }
 }
+configurations { docDist { transitive = false } }
 dependencies {
     docDist "org.qiweb:org.qiweb.doc:$version:qiweb-doc@zip"
-    modules.each { module ->
-        docDist "org.qiweb:org.qiweb.modules.$module:$version:qiweb-doc@zip"
-    }
+    modules.each { module -> docDist "org.qiweb:org.qiweb.modules.$module:$version:qiweb-doc@zip" }
 }
 task extractCoreDoc(type: Copy) {
     inputs.file configurations.docDist
@@ -55,6 +125,7 @@ task generateModulesIndex {
 """= Modules
 :jbake-type: modules
 :toc: right
+:toc-title: Modules
 
 Modules are bla bla ...
 
@@ -73,30 +144,17 @@ task prepareJBakeInput {
         copy { from file('build/tmp/dyn-doc'); into file('build/tmp/jbake/assets/modules'); exclude '**/*.adoc' }
     }
 }
-
-buildscript {
-    repositories {
-        jcenter()
-        maven { url 'http://dl.bintray.com/melix/jbake-gradle-plugin' }
-    }
-    dependencies {
-        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.1'
-        classpath 'org.asciidoctor:asciidoctor-java-integration:0.1.4'
-        classpath 'org.freemarker:freemarker:2.3.19'
-    }
-}
 apply plugin: 'jbake'
 jbake {
     dependsOn prepareJBakeInput
     input file( 'build/tmp/jbake' )
-    configuration = [
-        'qiweb_version': version
-    ]
+    configuration = [ 'qiweb_version': version ]
 }
-
 task documentationArchive(type: Zip, dependsOn: jbake) {
     classifier 'doc'
     from jbake.output
+    // into "$project.name-$project.version-doc"
 }
 artifacts { archives documentationArchive }
-publishing { publications { jars(MavenPublication) { artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' } } } }
+publishing.publications { jars(MavenPublication) { artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' } } }
+
