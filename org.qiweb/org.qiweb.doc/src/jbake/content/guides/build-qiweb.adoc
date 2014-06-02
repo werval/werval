@@ -1,1 +1,239 @@
 == Build QiWeb from sources
+
+IMPORTANT: This guide is intended for developers who want to build applications against the development version of QiWeb or want to
+contribute code or documentation.
+
+=== Install needed programs
+
+You need to install:
+
+- The link:http://www.oracle.com/technetwork/java/javase/downloads/[Java 8 JDK]
+- link:http://www.gradle.org/[Gradle]
+- http://maven.apache.org/[Maven]
+- http://www.graphviz.org/[GraphViz], optional
+
+Before going any further, ensure that the following commands show proper versions:
+
+[discrete]
+==== Java
+
+[source,bash]
+----
+java -version
+----
+
+Should output something like:
+
+[source,bash]
+----
+java version "1.8.0" <1>
+Java(TM) SE Runtime Environment (build 1.8.0-bXXX)
+Java HotSpot(TM) 64-Bit Server VM (build 25.0-bXX, mixed mode)
+----
+<1> This is Java 8
+
+[discrete]
+==== Gradle
+
+[source,bash]
+----
+gradle --version
+----
+
+Should output something like:
+
+[source,bash]
+----
+------------------------------------------------------------
+Gradle 1.12 <1>
+------------------------------------------------------------
+
+Build time:   2014-04-29 09:24:31 UTC
+Build number: none
+Revision:     a831fa866d46cbee94e61a09af15f9dd95987421
+
+Groovy:       1.8.6
+Ant:          Apache Ant(TM) version 1.9.3 compiled on December 23 2013
+Ivy:          2.2.0
+JVM:          1.8.0 (Oracle Corporation 25.0-b70) <2>
+----
+<1> This is Gradle 1.12
+<2> Using Java 8
+
+[discrete]
+==== Maven
+
+[source,bash]
+----
+mvn --version
+----
+
+Should output something like:
+
+[source,bash]
+----
+Apache Maven 3.2.1 <1>
+Maven home: /path/to/your/maven/installation
+Java version: 1.8.0, vendor: Oracle Corporation <2>
+Java home: /path/to/your/java/installation <3>
+----
+<1> This is Maven 3.2.x
+<2> Using Java 8
+<3> From the right JAVA_HOME
+
+Next step is to add the CodeArtisans SSL certificate to the certificates trusted by your Java 8 installation.
+
+[discrete]
+==== Install SSL Certificate
+
+[source,bash]
+----
+openssl s_client -connect scm.codeartisans.org:443 < /dev/null | openssl x509 -outform pem > qiweb-certificate.pem
+----
+
+This will fetch the certifcate and put it in a file named `qiweb-certificate.pem`.
+
+[source,bash]
+----
+keytool -keystore "$JAVA_HOME/jre/lib/security/cacerts" -storepass changeit -import -trustcacerts -v -alias qiweb-certificate -file qiweb-certificate.pem
+----
+
+This will import the certificate in the Java `cacerts` truststore, you'll probably need to add `sudo` here.
+
+Once your environment is correctly set up on your computer, you can go on to the next step.
+
+
+=== Clone the QiWeb repositories
+
+We recommend to create a local directory to put all QiWeb repositories.
+
+[source,bash]
+----
+mkdir -p ~/src/qiweb-related    <1>
+cd ~/src/qiweb-related          <2>
+----
+<1> Create a `qiweb-related` directory
+<2> Move into the `qiweb-related` directory
+
+[discrete]
+==== QiWeb SDK
+
+[source,bash]
+----
+git clone git@scm.codeartisans.org:qiweb/qiweb.git
+----
+
+[discrete]
+==== QiWeb WebSite
+
+[source,bash]
+----
+git clone git@scm.codeartisans.org:qiweb/qiweb-website.git
+----
+
+[discrete]
+==== QiWeb Samples
+
+[source,bash]
+----
+git clone git@scm.codeartisans.org:qiweb/qiweb-sample-beerdb.git
+----
+
+
+=== Configure Gradle & Maven
+
+Gradle and Maven both need some configuration before going any further.
+
+Until QiWeb goes public, the artifact repository used for dependencies and QiWeb releases is password protected.
+Yes, `qiweb:qiweb` are pretty loosy credentials but that's the way it works for now.
+
+Moreover, the core QiWeb build create a local repository to deploy development versions locally.
+
+Theses two needs proper configuration.
+
+.~/.gradle/gradle.properties
+[source,groovy]
+----
+// QiWeb Repo Account
+qiwebRepoUsername=qiweb
+qiwebRepoPassword=qiweb
+
+// Qiweb Local Repository
+qiwebLocalRepository=file:///home/you/src/qiweb-related/qiweb/repository
+----
+
+.~/.m2/settings.xml
+[source,xml]
+----
+<settings>
+    <servers>
+        <server>
+            <id>qiwebRepos</id>
+            <username>qiweb</username>
+            <password>qiweb</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>qiwebDevelopment</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>qiwebLocalRepository</id>
+                    <url>file:///home/you/src/qiweb-related/qiweb/repository</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>qiwebLocalRepository</id>
+                    <url>file:///home/you/src/qiweb-related/qiweb/repository</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+</settings>
+----
+
+We're now done with the setup, time to build!
+
+
+=== Build the SDK
+
+The QiWeb SDK lies in the `qiweb` repository, previously cloned into `~/src/qiweb/related/qiweb`.
+
+This very git repository contains several independent projects.
+
+    org.qiweb               QiWeb Core
+    org.qiweb.modules       Modules
+    org.qiweb.gradle        Gradle Plugin
+    org.qiweb.maven         Maven Plugin
+    org.qiweb.dist          QiWeb Distributions
+
+For convenience, four shell scripts are provided:
+
+    clean.sh                Clean the repository of built artifacts
+    build.sh                Quick build without tests
+    check.sh                Full build with all tests
+    dist.sh                 Create distributions archives, without tests
+
+Please note that if you want to get UML diagrams generated in Javadocs you'll need to have GraphViz installed.
+The build will pass without though.
+But with less fun.
+
+When working on the QiWeb source code, it is recommended to run all tests first, giving you confidence that the whole
+thing work on your computer.
+You can do that easily by running the `check.sh` build script.
+
+QiWeb do not have much dependencies but the build system and the tests do.
+As a consequence, a vast amount of code is downloaded the first time you run a build.
+Theses downloads are cached in `~/.gradle/caches`.
+
+QiWeb artifacts produced by the build are installed in the local QiWeb repository
+(`~/src/qiweb-related/qiweb/repository`) for use by other projects.
+
+By default version number `0` is used, you can override this with `-Dversion=WHATEVER`.
+
+If you encounter any problem, please link:https://scm.codeartisans.org/qiweb/qiweb/issues[fill an issue] with the output
+of the build process.

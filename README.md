@@ -13,7 +13,6 @@ QiWeb is not published yet. If you read this, feel lucky :-)
 **Table of contents**
 
 - Getting Started
-- Build from the Source
 - Contribute to QiWeb
 
 
@@ -105,51 +104,6 @@ Respectively `gradle start` or `gradle devshell` and `mvn qiweb:start` or `mvn q
 To discuss with the QiWeb community, post questions and get answers, it is easiest to do so at the project's [wall](https://scm.codeartisans.org/qiweb/qiweb/wall).
 
 If you found a bug or want to request a new feature, use the [issue tracker](https://scm.codeartisans.org/qiweb/qiweb/issues) and read about [contributing to QiWeb](#contrib).
-
-
-
-
-## Build QiWeb from the Source
-
-The steps described above are for the latest QiWeb released version.
-If you want to use the development version or contribute to QiWeb, keep reading.
-
-Obviously, you need to install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/).
-QiWeb is build using [Gradle](http://www.gradle.org/), that you don't need to install, it will be downloaded automatically.
-
-The only exception is the Maven Plugin that is built using Maven itself.
-You'll have to install [Maven](http://maven.apache.org/).
-
-This very git repository contains several independent projects.
-
-    org.qiweb               QiWeb Core
-    org.qiweb.modules       Modules
-    org.qiweb.gradle        Gradle Plugin
-    org.qiweb.maven         Maven Plugin
-
-For convenience, two shell scripts are provided:
-
-    clean.sh                Clean the repository of built artifacts
-    build.sh                Quick build without tests
-    check.sh                Full build with all tests
-
-Please note that if you want to get UML diagrams generated in Javadocs you'll need to have [GraphViz](http://www.graphviz.org/) installed.
-The build will pass without though.
-But with less fun.
-
-When working on the QiWeb source code, it is recommended to run all tests first, giving you confidence that the whole thing work on your computer.
-You can do that easily by running the `check.sh` build script.
-
-QiWeb do not have much dependencies but the build system and the tests do.
-As a consequence, a vast amount of code is downloaded the first time you run a build.
-Theses downloads are cached in `~/.gradle/caches`.
-
-QiWeb artifacts produced by the build are installed in your local maven repository (`~/.m2/repository`) for consumption by other applications and in the `repository` directory of this very git repository for use by different projects under this repository umbrella.
-
-By default version number `0` is used, you can override this with `-Dversion=WHATEVER`.
-
-If you encounter any problem, please [fill an issue](https://scm.codeartisans.org/qiweb/qiweb/issues) with the output of the build process.
-
 
 
 
