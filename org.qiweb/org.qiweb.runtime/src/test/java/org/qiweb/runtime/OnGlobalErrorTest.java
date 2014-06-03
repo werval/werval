@@ -35,6 +35,7 @@ import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpTest;
 import org.qiweb.test.util.Slf4jRule;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -479,8 +480,8 @@ public class OnGlobalErrorTest
                 .header( CONNECTION, KEEP_ALIVE )
                 .when()
                 .get( "/" );
+            await().until( () -> SLF4J.contains( "onHttpRequestComplete" ) );
             assertThat( qiweb.application().errors().count(), is( 0 ) );
-            assertThat( SLF4J.contains( "onHttpRequestComplete" ), is( true ) );
         }
         finally
         {
