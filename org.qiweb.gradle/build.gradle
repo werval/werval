@@ -1,5 +1,5 @@
 
-rootProject.file( '../gradle/java.gradle' )
+apply from: rootProject.file( '../gradle/java.gradle' )
 apply plugin: 'groovy'
 apply plugin: 'sonar-runner'
 

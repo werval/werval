@@ -120,15 +120,6 @@ jbake {
     ]
 }
 
-// Publish documentation sources ZIP with qiweb-doc classifier
-task qiwebDocZip(type: Zip, dependsOn: jbake) {
-    classifier = 'qiweb-doc'
-    from jbake.input
-}
-artifacts { archives qiwebDocZip }
-publishing { publications { jars(MavenPublication) { artifact(qiwebDocZip) { classifier = 'qiweb-doc'; extension = 'zip' } } } }
-
-
 
 //
 //  _____                   _   _
@@ -146,3 +137,21 @@ task generateDocumentation(type: Copy, dependsOn: jbake ) {
 }
 sourceSets.main.resources.srcDirs += file( docResourcesSourceSetPath )
 processResources.dependsOn generateDocumentation
+
+
+//
+//  _____     _   _ _         _   _
+// |  _  |_ _| |_| |_|___ ___| |_|_|___ ___
+// |   __| | | . | | |  _| .'|  _| | . |   |
+// |__|  |___|___|_|_|___|__,|_| |_|___|_|_|
+// _____________________________________________________________________________________________________________________
+//
+
+// Publish documentation sources ZIP with qiweb-doc classifier
+task qiwebDocZip(type: Zip, dependsOn: jbake) {
+    classifier = 'qiweb-doc'
+    from jbake.input
+}
+artifacts { archives qiwebDocZip }
+publishing { publications { qiWebLocalRepoPub { artifact(qiwebDocZip) { classifier = 'qiweb-doc'; extension = 'zip' } } } }
+

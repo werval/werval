@@ -1,22 +1,14 @@
 
-// Apply common qiweb build logic
-apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
-
-// This is Java!
-apply plugin: 'java'
-
-// For publication purpose only
-apply plugin: 'maven'
+// Apply common qiweb publication build logic
+apply from: rootProject.file( '../gradle/publication.gradle' )
+apply from: rootProject.file( '../gradle/repositories.gradle' )
+apply from: rootProject.file( '../gradle/libraries.gradle' )
 
 // Basic IDE Support
 // When using Netbeans, simply issue 'gradle idea', the sources will then be available in your IDE.
 apply plugin: 'idea'
 idea { module { downloadJavadoc = true; downloadSources = true } }
 apply plugin: 'eclipse'
-
-// Apply repositories and libraries versions
-apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
-apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
 
 // Require JDK8 at build time, JRE8 at runtime
 sourceCompatibility = '1.8'
@@ -253,131 +245,11 @@ artifacts {
     archives javadocJar
 }
 
-// Sign archives
-apply plugin: 'signing'
-signing { sign configurations.archives }
-signArchives.onlyIf { version != "0" && !version.contains( "SNAPSHOT" ) }
-
-// Install in local internal repository
-// Generated POM is minimal here as this repository is only used for inter-build dependencies
-apply plugin: 'maven-publish'
+// For local publication
 publishing {
-    publications {
-        jars( MavenPublication ) {
-            from components.java
-            artifact javadocJar
-            artifact sourcesJar
-            pom.withXml {
-                // Gradle Publishing feature is exporting dependencies as 'runtime' scope,
-                // rather than 'compile'; fix that.
-                if( asNode().dependencies[0] ) {
-                    asNode().dependencies[0].dependency.each {
-                        it.scope[0].value = 'compile'
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
+    publications.qiWebLocalRepoPub {
+        from components.java
+        artifact javadocJar
+        artifact sourcesJar
     }
 }
-task finalizeInstall( dependsOn: "publishJarsPublicationToQiWebLocalRepository" )
-install.finalizedBy finalizeInstall
-
-// Setup remote artifact publication
-uploadArchives.doFirst {
-    if( version == "0" )
-    {
-        throw new GradleException( "'version' must be given as a system property to perform a release." )
-    }
-}
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            if( !version.contains( "SNAPSHOT" ) ) {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
-            }
-            repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
-                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
-            }
-            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/qiweb-snapshots" ) {
-                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
-            }
-        }
-    }
-}
-
-// POM Setup for publication
-// Use the now deprecated maven publication support in gradle
-[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
-    groupId = project.group
-    artifactId = project.name
-    version = project.version
-    project {
-        name project.name
-        description project.description
-        url "http://qiweb.org"
-        inceptionYear '2013'
-        organization {
-            name 'QiWeb Community'
-            url 'https://scm.codeartisans.org/qiweb'
-        }
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
-            }
-        }
-        issueManagement {
-            system 'Gitlab'
-            url 'https://scm.codeartisans.org/qiweb/qiweb/issues'
-        }
-        scm {
-            url 'https://scm.codeartisans.org/qiweb/qiweb'
-            connection 'scm:git:https://scm.codeartisans.org/qiweb/qiweb.git'
-            developerConnection 'scm:git:git@scm.codeartisans.org:qiweb/qiweb.git'
-        }
-        developers {
-            developer {
-                id "eskatos"
-                name "Paul Merlin"
-                email "paul@nosphere.org"
-                timezone "Europe/Paris"
-                roles {
-                    role 'Founder'
-                    role 'Developer'
-                }
-            }
-        }
-        contributors {
-            contributor {
-                name "Quentin Gensburger"
-                email "quentin.gensburger@free.fr"
-                timezone "Europe/Paris"
-                roles {
-                    role 'Tester'
-                    role 'Contributor'
-                }
-            }
-            contributor {
-                name "Lionel Chanson"
-                email "lionel@soreia.com"
-                timezone "Europe/Paris"
-                roles {
-                    role 'Tester'
-                }
-            }
-            contributor {
-                name "Jean-Michel Tonneau"
-                email "jmichel.tonneau@gmail.com"
-                timezone "Europe/London"
-                roles {
-                    role 'Tester'
-                }
-            }
-        }
-    }   
-}
-

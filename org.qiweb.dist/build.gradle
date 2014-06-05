@@ -1,5 +1,6 @@
 
-apply from: file( '../gradle/java.gradle' )
+apply from: file( '../gradle/publication.gradle' )
+apply from: file( '../gradle/repositories.gradle' )
 
 description = "QiWeb Distributions"
 
@@ -88,10 +89,7 @@ jbake {
 task documentationArchive(type: Zip, dependsOn: jbake) {
     classifier 'doc'
     from jbake.output
-    // into "$project.name-$project.version-doc"
 }
-artifacts { archives documentationArchive }
-publishing.publications { jars(MavenPublication) { artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' } } }
 // TODO DELETE END
 
 
@@ -222,5 +220,21 @@ task distributionArchive( type: Zip ) {
         into "qiweb-$project.version/"
     }
 }
-artifacts { archives distributionArchive }
-publishing.publications { jars(MavenPublication) { artifact(distributionArchive) { classifier = 'distribution'; extension = 'zip' } } }
+
+
+//
+//  _____     _   _ _         _   _         
+// |  _  |_ _| |_| |_|___ ___| |_|_|___ ___ 
+// |   __| | | . | | |  _| .'|  _| | . |   |
+// |__|  |___|___|_|_|___|__,|_| |_|___|_|_|
+// _____________________________________________________________________________________________________________________
+// Publish distribution archives locally and remotely
+//
+artifacts {
+    archives documentationArchive
+    archives distributionArchive
+}
+publishing { publications { qiWebLocalRepoPub {
+    artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' }
+    artifact(distributionArchive) { classifier = 'distribution'; extension = 'zip' }
+} } }

@@ -9,7 +9,7 @@
 
     <!-- Le styles -->
     <!-- See https://github.com/nerk/asciidoctor-bs-themes -->
-    <link href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>css/bootstrap_spacelab.css" rel="stylesheet">
+    <link href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>css/bootstrap_lumen.css" rel="stylesheet">
     <link href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>css/base.css" rel="stylesheet">
     <link href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>css/org.qiweb.doc.css" rel="stylesheet">
     <link href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>css/prettify.css" rel="stylesheet">

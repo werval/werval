@@ -122,6 +122,6 @@ subprojects {
             from asciidoctor.sourceDir
         }
         artifacts { archives qiwebDocZip }
-        publishing { publications { jars(MavenPublication) { artifact(qiwebDocZip) { classifier = 'qiweb-doc'; extension = 'zip' } } } }
+        publishing { publications { qiWebLocalRepoPub { artifact(qiwebDocZip) { classifier = 'qiweb-doc'; extension = 'zip' } } } }
     }
 }
