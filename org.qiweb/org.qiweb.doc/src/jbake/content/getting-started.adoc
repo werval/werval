@@ -55,7 +55,7 @@ Gradle is where our build love goes.
 Choose your side of the force.
 
 
-== Some other build tool?
+== {put.your.build.system.here}
 
 If you prefer another build tool or even want to write shell scripts on your own, its still possible to use QiWeb.
 
@@ -66,4 +66,7 @@ Tests of QiWeb applications are simple JUnit tests, again, no brainer to run.
 Obvisouly, the classpath should be set up properly with regard to your application dependencies.
 
 Finally, to make QiWeb development mode work in another build tool you'll probably need to write some code.
-Take a look at the Gradle and Maven support source code for insights in this matter.
+Have a look at the Gradle and Maven support source code for insights in this matter.
+
+If you get to something reusable, please contribute it.
+We are very interested in such a contribution.
