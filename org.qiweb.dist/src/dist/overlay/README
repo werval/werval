@@ -1,0 +1,6 @@
+
+
+run `mvn -f dependencies/pom.xml package` to download all dependencies.
+They will be deployed in a maven repository structure at `dependencies/repo/`.
+
+Add `artifacts/` and `dependencies/repo/` as repositories to your project and you're done.

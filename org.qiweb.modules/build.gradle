@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
+apply from: rootProject.file( '../gradle/common.gradle' )
 
 description = "QiWeb Modules"
 
@@ -19,7 +19,7 @@ subprojects {
     apply from: rootProject.file( 'common.gradle' )
     apply plugin: 'license'
     license {
-        header new File( "$rootProject.projectDir.absolutePath/../config/license/header.txt" )
+        header rootProject.file( '../config/license/header.txt' )
         strictCheck true
         mapping {
             conf="DOUBLESLASH_STYLE"

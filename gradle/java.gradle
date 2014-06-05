@@ -149,10 +149,10 @@ public interface BuildVersion
 // Checkstyle setup
 apply plugin: 'checkstyle'
 checkstyle {
-    configFile = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-checks.xml" )
+    configFile = rootProject.file( '../config/checkstyle/qiweb-checks.xml' )
     configProperties = [
-        suppressionsCommon: "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-suppressions.xml",
-        suppressionsCustom: "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml"
+        suppressionsCommon: rootProject.file( '../config/checkstyle/qiweb-suppressions.xml' ).absolutePath,
+        suppressionsCustom: project.file( 'config/checkstyle/suppressions.xml' ).absolutePath
     ]
     ignoreFailures = System.getProperty( "ignoreCheckstyle" ) != null
     showViolations = false
@@ -160,22 +160,22 @@ checkstyle {
     toolVersion = 5.7
 }
 task checkstyleMainHtmlReport {
-    def xsl = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/html-report.xsl" )
-    def reportDir = file( "$project.projectDir.absolutePath/build/reports/checkstyle" )
+    def xsl = rootProject.file( '../config/checkstyle/html-report.xsl' )
+    def reportDir = project.file( "build/reports/checkstyle" )
     inputs.file xsl
     inputs.dir reportDir
     outputs.dir reportDir
     doLast {
         reportDir.eachFile {
             if( it.name.endsWith( ".xml" ) ) {
-                def outfile = file( "$project.projectDir.absolutePath/build/reports/checkstyle/" + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
+                def outfile = project.file( 'build/reports/checkstyle/' + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
                 ant.xslt( in: it, style: xsl, out: outfile )
             }
         }
     }
 }
 checkstyleMain.doFirst {
-    def suppressions = new File( "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml" )
+    def suppressions = project.file( 'config/checkstyle/suppressions.xml' )
     if( !suppressions.exists() )
     {
         suppressions.getParentFile().mkdirs()
@@ -246,7 +246,7 @@ task javadocJar(type: Jar, dependsOn:javadoc) {
     from javadoc.destinationDir
 }
 
-// Attach sources JAR
+// For remote publication
 artifacts {
     archives jar 
     archives sourcesJar

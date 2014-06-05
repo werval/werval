@@ -1,75 +1,10 @@
 
-//apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
 apply from: file( '../gradle/java.gradle' )
 
 description = "QiWeb Distributions"
 
-
-// Generates three archives
-// - bin: binary distribution, that is a maven repository tree with all QiWeb artifacts
-// - src: sources distribution, that is an export of the qiweb repository
-// - doc: documentation website distribution
-
-
+// Modules included in the distribution
 def modules = [ 'guice', 'jndi', 'jdbc', 'rythm' ]
-
-
-
-//
-//  _____ _             _
-// | __  |_|___ ___ ___|_|___ ___ 
-// | __ -| |   | .'|  _| | -_|_ -|
-// |_____|_|_|_|__,|_| |_|___|___|
-// _____________________________________________________________________________________________________________________
-// Generate binary archive from the local repository
-//
-
-repositories { maven { url "http://repo.gradle.org/gradle/libs-releases-local" } }
-configurations { binDist }
-dependencies {
-    binDist "org.qiweb:org.qiweb.server.bootstrap:$version:javadoc"
-    binDist "org.qiweb:org.qiweb.test:$version:javadoc"
-    modules.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
-    binDist "org.qiweb:org.qiweb.gradle:$version:javadoc"
-    binDist "org.qiweb:org.qiweb.maven:$version:javadoc"
-}
-task binariesArchive( type: Zip, dependsOn: configurations.binDist ) {
-    classifier 'bin'
-    from fileTree( '../repository' )
-    exclude '**/*-sources.*', '**/*-qiweb-doc.*'
-    exclude 'org/qiweb/org.qiweb.dist/**'
-    includeEmptyDirs = false
-    // into "$project.name-$project.version-bin"
-}
-artifacts { archives binariesArchive }
-publishing.publications { jars(MavenPublication) { artifact(binariesArchive) { classifier = 'bin'; extension = 'zip' } } }
-
-
-
-//
-//  _____
-// |   __|___ _ _ ___ ___ ___ ___ 
-// |__   | . | | |  _|  _| -_|_ -|
-// |_____|___|___|_| |___|___|___|
-// _____________________________________________________________________________________________________________________
-// Generate sources archives, that is a copy of this git repository content
-//
-task sourcesArchive(type: Zip) {
-    classifier 'src'
-    from fileTree('..')
-    exclude 'repository'
-    exclude '**/build/**'
-    exclude '**/target/**'
-    exclude '**/*.iml'
-    exclude '**/*.ipr'
-    exclude '**/*.iws'
-    exclude '**/.*'
-    includeEmptyDirs = false
-    // into "$project.name-$project.version-src"
-}
-artifacts { archives sourcesArchive }
-publishing.publications { jars(MavenPublication) { artifact(sourcesArchive) { classifier = 'src'; extension = 'zip' } } }
-
 
 
 //
@@ -79,7 +14,6 @@ publishing.publications { jars(MavenPublication) { artifact(sourcesArchive) { cl
 // |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
 // _____________________________________________________________________________________________________________________
 // Generate static documentation archive using JBake
-//
 //
 
 buildscript {
@@ -150,6 +84,7 @@ jbake {
     input file( 'build/tmp/jbake' )
     configuration = [ 'qiweb_version': version ]
 }
+// TODO DELETE BEGIN
 task documentationArchive(type: Zip, dependsOn: jbake) {
     classifier 'doc'
     from jbake.output
@@ -157,4 +92,135 @@ task documentationArchive(type: Zip, dependsOn: jbake) {
 }
 artifacts { archives documentationArchive }
 publishing.publications { jars(MavenPublication) { artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' } } }
+// TODO DELETE END
 
+
+
+//
+//  ____  _     _       _ _       _   _
+// |    \|_|___| |_ ___|_| |_ _ _| |_|_|___ ___
+// |  |  | |_ -|  _|  _| | . | | |  _| | . |   |
+// |____/|_|___|_| |_| |_|___|___|_| |_|___|_|_|
+// _____________________________________________________________________________________________________________________
+// Generate distribution archive
+//
+
+// In fact, a single archive with all bundled would be much simpler.
+//
+// org.qiweb.dist-VERSION-zip/
+//               src/                   Full copy of the SDK sources, with build system, tests etc...
+//               artifacts/             Maven repository with all QiWeb artifacts (binaries, javadoc and source jars)
+//               dependencies/          Generated maven project allowing to go offline in a single command
+//               doc/                   Static website with full documentation
+//               README
+//               LICENCE
+//               NOTICE
+
+// ~/dependencies/
+// - Generate a pom.xml that depends on everything QiWeb
+// - Run maven dependencies plugin on it to create the dependencies repository
+//
+// See http://maven.apache.org/plugins/maven-dependency-plugin/copy-dependencies-mojo.html
+// There seems to be enough options to create proper repositories for offline usage.
+
+// The offline usage guide should reflect this structure and give pointers on how to use it from Gradle and Maven
+// projects. That is, defining two repositories from the ~/artifacts and ~/dependencies directories.
+
+task distributionArchive_src {
+    doLast {
+        copy {
+            from fileTree( '..' )
+            include '*'
+            include 'config/**'
+            include 'gradle/**'
+            include 'org.qiweb/**'
+            include 'org.qiweb.modules/*'
+            include 'org.qiweb.modules/gradle/**'
+            modules.each { m -> include "org.qiweb.modules/org.qiweb.modules.$m/**" }
+            include 'org.qiweb.gradle/**'
+            include 'org.qiweb.maven/**'
+            exclude '**/build/**'
+            exclude '**/target/**'
+            exclude '**/*.iml'
+            exclude '**/*.ipr'
+            exclude '**/*.iws'
+            exclude '**/.*'
+            includeEmptyDirs = false
+            into 'build/tmp/distributionArchive_src'
+        }
+    }
+}
+
+repositories { maven { url "http://repo.gradle.org/gradle/libs-releases-local" } }
+configurations { binDist }
+dependencies {
+    binDist "org.qiweb:org.qiweb.server.bootstrap:$version:javadoc"
+    binDist "org.qiweb:org.qiweb.test:$version:javadoc"
+    modules.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
+    binDist "org.qiweb:org.qiweb.gradle:$version:javadoc"
+    binDist "org.qiweb:org.qiweb.maven:$version:javadoc"
+}
+task distributionArchive_artifacts {
+    dependsOn configurations.binDist
+    doLast {
+        copy {
+            from fileTree( '../repository' )
+            modules.each { m -> include "org/qiweb/org.qiweb.modules.$m/**" }
+            exclude '**/*-qiweb-doc.*'
+            includeEmptyDirs = false
+            into 'build/tmp/distributionArchive_artifacts'
+        }
+        copy {
+            from fileTree( '../repository' )
+            exclude 'org/qiweb/org.qiweb.modules.*/**'
+            exclude 'org/qiweb/org.qiweb.server.jre/**'
+            exclude 'org/qiweb/org.qiweb.dist/**'
+            exclude '**/*-qiweb-doc.*'
+            includeEmptyDirs = false
+            into 'build/tmp/distributionArchive_artifacts'
+        }
+    }
+}
+
+task distributionArchive_dependencies {
+    doLast {
+        def modulesDeps = "\n"
+        modules.each { m ->
+            modulesDeps += "        <dependency><groupId>org.qiweb</groupId><artifactId>org.qiweb.modules.$m</artifactId><version>$project.version</version></dependency>\n"
+        }
+        def pom = file( 'src/dist/dependencies-pom.xml').text
+        pom = pom.replaceAll( 'QIWEB_VERSION', project.version )
+        pom = pom.replaceAll( 'QIWEB_MODULES', modulesDeps )
+        file( 'build/tmp/distributionArchive_dependencies' ).mkdirs()
+        file( 'build/tmp/distributionArchive_dependencies/pom.xml' ).write( pom )
+    }
+}
+
+task distributionArchive( type: Zip ) {
+    dependsOn distributionArchive_src, distributionArchive_artifacts, distributionArchive_dependencies, jbake
+    classifier 'distribution'
+    // Sources
+    from( 'build/tmp/distributionArchive_src' ) {
+        into "qiweb-$project.version/src"
+    }
+    // Artifacts
+    from( 'build/tmp/distributionArchive_artifacts' ) {
+        into "qiweb-$project.version/artifacts"
+    }
+    // Dependencies
+    from( 'build/tmp/distributionArchive_dependencies' ) {
+        into "qiweb-$project.version/dependencies"
+    }
+    // Documentation
+    from( jbake ) {
+        includeEmptyDirs = false
+        into "qiweb-$project.version/doc"
+    }
+    // Overlay
+    from( 'src/dist/overlay' ) {
+        includeEmptyDirs = false
+        into "qiweb-$project.version/"
+    }
+}
+artifacts { archives distributionArchive }
+publishing.publications { jars(MavenPublication) { artifact(distributionArchive) { classifier = 'distribution'; extension = 'zip' } } }
