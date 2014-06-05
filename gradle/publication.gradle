@@ -111,7 +111,7 @@ uploadArchives {
             /*
             contributor {
             name "Lionel Chanson"
-            email "lionel@soreia.com"
+            email "lionel@lionelchanson.fr"
             timezone "Europe/Paris"
             roles {
             role 'Contributor'
