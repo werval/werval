@@ -108,15 +108,15 @@ uploadArchives {
                     role 'Contributor'
                 }
             }
-            /*
             contributor {
-            name "Lionel Chanson"
-            email "lionel@lionelchanson.fr"
-            timezone "Europe/Paris"
-            roles {
-            role 'Contributor'
+                name "Lionel Chanson"
+                email "lionel@lionelchanson.fr"
+                timezone "Europe/Paris"
+                roles {
+                    role 'Contributor'
+                }
             }
-            }
+            /*
             contributor {
             name "Jean-Michel Tonneau"
             email "jmichel.tonneau@gmail.com"
