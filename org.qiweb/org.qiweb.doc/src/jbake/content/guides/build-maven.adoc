@@ -5,6 +5,14 @@
 
 === Development mode build logic
 
+The `qiweb:devshell` goal depends on the `compile` phase by default.
+
+Rebuilds trigger the `compile` phase by default too.
+
+In other words, the project is compiled before running the development mode and at each rebuild triggered by a source
+code change.
+
+
 === Packaging
 
 TIP: If you need RPM or DEB packaging, use the http://mojo.codehaus.org/rpm-maven-plugin[rpm-maven-plugin]
