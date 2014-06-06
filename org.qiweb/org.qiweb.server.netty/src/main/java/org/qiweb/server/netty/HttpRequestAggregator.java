@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import org.qiweb.api.Application;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,17 +56,18 @@ import static org.qiweb.api.util.Charsets.US_ASCII;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.
- * 
- * <p>HTTP decoders always generates multiple message objects per a single HTTP message:</p>
+ *
+ * <p>
+ * HTTP decoders always generates multiple message objects per a single HTTP message:</p>
  * <pre>
  *  1       * HttpRequest / HttpResponse
  *  0 - n   * HttpContent
  *  1       * LastHttpContent
  * </pre>
  * <p>
- *     This handler aggregate all messages pertaining to a request as a FullHttpRequest. The body chunks, if any, are
- *     written to a file thus preventing OOMEs.
- *     The file is deleted when the channel is closed.
+ * This handler aggregate all messages pertaining to a request as a FullHttpRequest. The body chunks, if any, are
+ * written to a file thus preventing OOMEs.
+ * The file is deleted when the channel is closed.
  * </p>
  */
 public class HttpRequestAggregator
@@ -83,19 +83,19 @@ public class HttpRequestAggregator
         return new StringBuilder( TEMP_FILE_IDENTITY_PREFIX ).
             append( TEMP_FILE_IDENTITY_COUNT.getAndIncrement() ).toString();
     }
-    private final Application app;
     private final int maxContentLength;
     private final int diskThreshold;
+    private final File diskOverflowDirectory;
     private HttpRequest aggregatedRequestHeader;
     private int consumedContentlength = 0;
     private ByteBuf bodyBuf;
     private File bodyFile;
 
-    public HttpRequestAggregator( Application app, int maxContentLength, int diskThreshold )
+    public HttpRequestAggregator( int maxContentLength, int diskThreshold, File diskOverflowDirectory )
     {
-        this.app = app;
         this.maxContentLength = maxContentLength;
         this.diskThreshold = diskThreshold;
+        this.diskOverflowDirectory = diskOverflowDirectory;
     }
 
     @Override
@@ -181,7 +181,7 @@ public class HttpRequestAggregator
             LOG.warn( "Request Entity is too large, content length exceeded {} bytes.", maxContentLength );
             ByteBuf body = copiedBuffer( "HTTP content length exceeded " + maxContentLength + " bytes.", US_ASCII );
             FullHttpResponse response = new DefaultFullHttpResponse( HTTP_1_1, REQUEST_ENTITY_TOO_LARGE, body );
-            response.headers().set( CONTENT_TYPE, "text/plain; charset=" + app.defaultCharset().name().toLowerCase( US ) );
+            response.headers().set( CONTENT_TYPE, "text/plain; charset=" + US_ASCII.name().toLowerCase( US ) );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
             context.write( response ).addListener( ChannelFutureListener.CLOSE );
@@ -198,7 +198,7 @@ public class HttpRequestAggregator
                 if( bodyFile == null )
                 {
                     // Start
-                    bodyFile = new File( app.tmpdir(), generateNewTempFileIdentity() );
+                    bodyFile = new File( diskOverflowDirectory, generateNewTempFileIdentity() );
                     try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile ) )
                     {
                         if( bodyBuf != null )

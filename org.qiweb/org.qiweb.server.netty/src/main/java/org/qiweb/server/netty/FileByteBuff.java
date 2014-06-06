@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,7 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 /**
  * Read-only ByteBuff wrapping a File.
  * <p>Used by {@link HttpRequestAggregator} to aggregate requests bodies.</p>
- * <p>Used by {@link HttpRequestRouterHandler} to parse requests bodies.</p>
+ * <p>Used by {@link QiWebHttpHandler} to parse requests bodies.</p>
  */
 // CHECKSTYLE:OFF
 public final class FileByteBuff

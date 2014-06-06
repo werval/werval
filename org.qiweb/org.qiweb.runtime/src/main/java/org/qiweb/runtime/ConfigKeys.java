@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ public interface ConfigKeys
     // Application configuration keys
     //
     String APP_ERRORS_RECORD_MAX = "app.errors.record.max";
+    String APP_EXECUTORS = "app.executors";
+    String APP_EXECUTORS_DEFAULT = "app.executors.default";
+    String APP_EXECUTORS_SHUTDOWN_TIMEOUT = "app.executors.shutdown.timeout";
     String APP_GLOBAL = "app.global";
     String APP_LANGS = "app.langs";
     String APP_SECRET = "app.secret";
@@ -37,17 +40,10 @@ public interface ConfigKeys
     // Framework configuration keys
     //
     String QIWEB_CHARACTER_ENCODING = "qiweb.character_encoding";
-    String QIWEB_TMPDIR = "qiweb.tmpdir";
-    String QIWEB_MIMETYPES_SUPPLEMENTARY = "qiweb.mimetypes.supplementary";
-    String QIWEB_MIMETYPES_TEXTUAL = "qiweb.mimetypes.textual";
-    String QIWEB_SHUTDOWN_QUIETPERIOD = "qiweb.shutdown.quiet_period";
-    String QIWEB_SHUTDOWN_TIMEOUT = "qiweb.shutdown.timeout";
-    String QIWEB_SHUTDOWN_RETRYAFTER = "qiweb.shutdown.retry_after";
     String QIWEB_HTTP_ADDRESS = "qiweb.http.address";
     String QIWEB_HTTP_PORT = "qiweb.http.port";
     String QIWEB_HTTP_ACCEPTORS = "qiweb.http.acceptors";
     String QIWEB_HTTP_IOTHREADS = "qiweb.http.iothreads";
-    String QIWEB_HTTP_EXECUTORS = "qiweb.http.executors";
     String QIWEB_HTTP_TIMEOUT_READ = "qiweb.http.timeout.read";
     String QIWEB_HTTP_TIMEOUT_WRITE = "qiweb.http.timeout.write";
     String QIWEB_HTTP_CHUNKSIZE = "qiweb.http.chunksize";
@@ -62,6 +58,12 @@ public interface ConfigKeys
     String QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED = "qiweb.http.headers.x_forwarded_for.trusted_proxies";
     String QIWEB_HTTP_QUERYSTRING_MULTIVALUED = "qiweb.http.query_string.multi_valued";
     String QIWEB_HTTP_UPLOADS_MULTIVALUED = "qiweb.http.uploads.multi_valued";
+    String QIWEB_MIMETYPES_SUPPLEMENTARY = "qiweb.mimetypes.supplementary";
+    String QIWEB_MIMETYPES_TEXTUAL = "qiweb.mimetypes.textual";
     String QIWEB_ROUTES_IMPORTEDPACKAGES = "qiweb.routes.imported_packages";
     String QIWEB_ROUTES_PARAMETERBINDERS = "qiweb.routes.parameter_binders";
+    String QIWEB_SHUTDOWN_QUIETPERIOD = "qiweb.shutdown.quiet_period";
+    String QIWEB_SHUTDOWN_TIMEOUT = "qiweb.shutdown.timeout";
+    String QIWEB_SHUTDOWN_RETRYAFTER = "qiweb.shutdown.retry_after";
+    String QIWEB_TMPDIR = "qiweb.tmpdir";
 }

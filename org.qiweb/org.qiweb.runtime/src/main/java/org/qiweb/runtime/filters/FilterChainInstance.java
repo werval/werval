@@ -17,9 +17,11 @@ package org.qiweb.runtime.filters;
 
 import java.lang.annotation.Annotation;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.context.Context;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.outcomes.Outcome;
@@ -47,10 +49,35 @@ import org.qiweb.api.util.Couple;
         }
 
         @Override
-        public Outcome next( Context context )
+        public CompletableFuture<Outcome> next( Context context )
         {
             Object controller = global.getControllerInstance( app, context.route().controllerType() );
-            return global.invokeControllerMethod( context, controller );
+            Object result = global.invokeControllerMethod( context, controller );
+            if( CompletableFuture.class.isAssignableFrom( result.getClass() ) )
+            {
+                try
+                {
+                    return (CompletableFuture<Outcome>) result;
+                }
+                catch( ClassCastException ex )
+                {
+                    throw new QiWebException(
+                        context.route().controllerMethod()
+                        + " returned a CompletableFuture of something else than Outcome. Check your Global object.",
+                        ex
+                    );
+                }
+            }
+            if( Outcome.class.isAssignableFrom( result.getClass() ) )
+            {
+                return CompletableFuture.completedFuture( (Outcome) result );
+            }
+            throw new QiWebException(
+                context.route().controllerMethod()
+                + " did not return an Outcome nor a CompletableFuture<Outcome> but a "
+                + result.getClass()
+                + ". Check your Global object."
+            );
         }
     }
 
@@ -70,7 +97,7 @@ import org.qiweb.api.util.Couple;
     }
 
     @Override
-    public Outcome next( Context context )
+    public CompletableFuture<Outcome> next( Context context )
     {
         Filter filter = global.getFilterInstance( app, filterInfo.left() );
         return filter.filter( next, context, Optional.ofNullable( filterInfo.right() ) );

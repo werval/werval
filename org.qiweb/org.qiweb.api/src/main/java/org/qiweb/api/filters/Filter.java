@@ -16,6 +16,7 @@
 package org.qiweb.api.filters;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.outcomes.Outcome;
 
@@ -33,7 +34,7 @@ public interface Filter<T>
      * @param context      Request Context
      * @param filterConfig Optional filter configuration Annotation
      *
-     * @return Filtered Outcome
+     * @return Filtered Future Outcome
      */
-    Outcome filter( FilterChain chain, Context context, Optional<T> filterConfig );
+    CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<T> filterConfig );
 }

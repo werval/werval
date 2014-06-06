@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,14 +23,14 @@ import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebSocketRouterHandler
+public class QiWebSocketHandler
     extends SimpleChannelInboundHandler<WebSocketFrame>
 {
-    private static final Logger LOG = LoggerFactory.getLogger( WebSocketRouterHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( QiWebSocketHandler.class );
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
 
-    public WebSocketRouterHandler( ApplicationSPI app, DevShellSPI devSpi )
+    public QiWebSocketHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.app = app;

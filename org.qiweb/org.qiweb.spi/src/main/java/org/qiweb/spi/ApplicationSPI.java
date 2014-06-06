@@ -15,6 +15,8 @@
  */
 package org.qiweb.spi;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.http.ProtocolVersion;
@@ -57,13 +59,24 @@ public interface ApplicationSPI
     HttpBuildersSPI httpBuilders();
 
     /**
+     * Application Executor.
+     *
+     * Convey the current {@literal Context} to parallel threads if any.
+     * <p>
+     * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
+     *
+     * @return Application Executor.
+     */
+    ExecutorService executor();
+
+    /**
      * Handle a HTTP Request.
      *
      * @param request HTTP Request
      *
-     * @return Outcome
+     * @return Future of Outcome
      */
-    Outcome handleRequest( Request request );
+    CompletableFuture<Outcome> handleRequest( Request request );
 
     /**
      * Handle an exception throwed in a HTTP Request context.
@@ -71,9 +84,9 @@ public interface ApplicationSPI
      * @param requestHeader HTTP Request Header
      * @param cause         Exception throwed
      *
-     * @return Error Outcome
+     * @return Future of error Outcome
      */
-    Outcome handleError( RequestHeader requestHeader, Throwable cause );
+    CompletableFuture<Outcome> handleError( RequestHeader requestHeader, Throwable cause );
 
     /**
      * Callback for completed HTTP requests.
@@ -93,9 +106,9 @@ public interface ApplicationSPI
      * @param version         Protocol version of the HTTP request
      * @param requestIdentity Identity of the HTTP request
      *
-     * @return Shutting down Outcome
+     * @return Future of shutting down Outcome
      */
-    Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity );
+    CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity );
 
     /**
      * Reload Application with a new ClassLoader.

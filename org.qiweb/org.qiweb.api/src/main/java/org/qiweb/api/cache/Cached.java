@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
@@ -54,7 +55,10 @@ import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
  * variable headers declared using {@link #vary()}.
  */
 @FilterWith( Cached.Filter.class )
-@Target( { ElementType.TYPE, ElementType.METHOD } )
+@Target(
+     {
+        ElementType.TYPE, ElementType.METHOD
+    } )
 @Retention( RetentionPolicy.RUNTIME )
 public @interface Cached
 {
@@ -75,39 +79,45 @@ public @interface Cached
         implements org.qiweb.api.filters.Filter<Cached>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context, Optional<Cached> filterConfig )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Cached> filterConfig )
         {
             String key = key( context, filterConfig.get().vary() );
             String etagKey = key + "-etag";
 
             String requestEtag = context.request().headers().singleValue( IF_NONE_MATCH );
-            String etag = context.application().cache().get( etagKey );
-            if( "*".equals( requestEtag ) || Objects.equals( etag, requestEtag ) )
+            String cacheEtag = context.application().cache().get( etagKey );
+            if( "*".equals( requestEtag ) || Objects.equals( cacheEtag, requestEtag ) )
             {
-                return context.outcomes().notModified().build();
+                return CompletableFuture.completedFuture( context.outcomes().notModified().build() );
             }
 
             Optional<Object> cached = context.application().cache().getOptional( key );
             if( cached.isPresent() )
             {
-                return (Outcome) cached.get();
+                return CompletableFuture.completedFuture( (Outcome) cached.get() );
             }
 
-            Outcome outcome = chain.next( context );
+            CompletableFuture<Outcome> futureOutcome = chain.next( context );
 
-            int ttl = filterConfig.get().ttl();
-            String expiration = Dates.HTTP.format(
-                System.currentTimeMillis() + ( ttl == 0 ? 1000 * 60 * 60 * 24 * 365 : ttl * 1000 )
+            return futureOutcome.thenApplyAsync(
+                outcome ->
+                {
+                    int ttl = filterConfig.get().ttl();
+                    String expiration = Dates.HTTP.format(
+                        System.currentTimeMillis() + ( ttl == 0 ? 1000 * 60 * 60 * 24 * 365 : ttl * 1000 )
+                    );
+                    String etag = expiration;
+
+                    outcome.responseHeader().headers().withSingle( EXPIRES, expiration );
+                    outcome.responseHeader().headers().withSingle( ETAG, etag );
+
+                    context.application().cache().set( ttl, key, outcome );
+                    context.application().cache().set( ttl, etagKey, etag );
+
+                    return outcome;
+                },
+                context.executor()
             );
-            etag = expiration;
-
-            outcome.responseHeader().headers().withSingle( EXPIRES, expiration );
-            outcome.responseHeader().headers().withSingle( ETAG, etag );
-
-            context.application().cache().set( ttl, key, outcome );
-            context.application().cache().set( ttl, etagKey, etag );
-
-            return outcome;
         }
 
         private String key( Context context, String[] vary )

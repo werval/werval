@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.filters;
 
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.outcomes.Outcome;
 
@@ -28,7 +29,7 @@ public interface FilterChain
      *
      * @param context Request Context
      *
-     * @return Next Outcome
+     * @return Next Future Outcome
      */
-    Outcome next( Context context );
+    CompletableFuture<Outcome> next( Context context );
 }

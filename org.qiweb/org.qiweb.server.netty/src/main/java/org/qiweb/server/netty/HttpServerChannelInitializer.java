@@ -26,7 +26,6 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import io.netty.util.concurrent.EventExecutorGroup;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 
@@ -41,17 +40,12 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
     extends ChannelInitializer<Channel>
 {
     private final ChannelGroup allChannels;
-    private final EventExecutorGroup httpExecutors;
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
 
-    /* package */ HttpServerChannelInitializer(
-        ChannelGroup allChannels, EventExecutorGroup httpExecutors,
-        ApplicationSPI httpApp, DevShellSPI devSpi
-    )
+    /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, ApplicationSPI httpApp, DevShellSPI devSpi )
     {
         this.allChannels = allChannels;
-        this.httpExecutors = httpExecutors;
         this.app = httpApp;
         this.devSpi = devSpi;
     }
@@ -91,6 +85,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         pipeline.addLast( "chunked-write-handler", new ChunkedWriteHandler() );
 
         // Protocol Switching Handler
-        pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, httpExecutors, app, devSpi ) );
+        pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, app, devSpi ) );
     }
 }

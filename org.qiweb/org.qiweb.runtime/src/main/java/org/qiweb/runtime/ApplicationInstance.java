@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
@@ -144,6 +146,7 @@ public final class ApplicationInstance
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
     private HttpBuildersSPI httpBuilders;
+    private ApplicationExecutors executors;
     private final MetaData metaData;
     private final Errors errors;
     private final DevShellSPI devSpi;
@@ -269,6 +272,10 @@ public final class ApplicationInstance
             List<Route> resolvedRoutes = new ArrayList<>();
             resolvedRoutes.addAll( routesProvider.routes( this ) );
 
+            // Executors
+            executors = new ApplicationExecutors( mode, config );
+            executors.activate();
+
             // Activate Plugins
             plugins = new PluginsInstance(
                 config,
@@ -341,6 +348,16 @@ public final class ApplicationInstance
             {
                 passivationErrors.add(
                     new PassivationException( "Exception(s) on Plugins::onPassivate(): " + ex.getMessage(), ex )
+                );
+            }
+            try
+            {
+                executors.passivate();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new PassivationException( "Exception(s) on Executors::onPassivate(): " + ex.getMessage(), ex )
                 );
             }
             if( !passivationErrors.isEmpty() )
@@ -510,77 +527,95 @@ public final class ApplicationInstance
         return httpBuilders;
     }
 
+    @Override
+    public ExecutorService executor()
+    {
+        ensureActive();
+        return executors.defaultExecutor();
+    }
+
     // SPI
     @Override
-    public Outcome handleRequest( Request request )
+    public CompletableFuture<Outcome> handleRequest( Request request )
     {
-        // Prepare Controller Context
-        ThreadContextHelper contextHelper = new ThreadContextHelper();
-        try
-        {
-            // Validates incoming request
-            validatesRequestHeader( request );
-            validatesRequestBody( request );
-
-            // Route the request
-            final Route route = routes().route( request );
-            LOG.debug( "{} Routing request to: {}", request.identity(), route );
-
-            // Bind parameters
-            request.bind( parameterBinders(), route );
-
-            // Parse Session Cookie
-            Session session = new SessionInstance(
-                config,
-                crypto(),
-                request.cookies().get( config.string( APP_SESSION_COOKIE_NAME ) )
-            );
-
-            // Prepare Response Header
-            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance( request.version() );
-
-            // Set Controller Context
-            Context context = new ContextInstance( this, session, route, request, responseHeader );
-            contextHelper.setOnCurrentThread( context );
-
-            // Invoke Controller FilterChain, ended by Controller Method Invokation
-            LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
-            Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context );
-
-            // Apply Session to ResponseHeader
-            if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+        return CompletableFuture.supplyAsync(
+            () ->
             {
-                outcome.responseHeader().cookies().set( session.signedCookie() );
-            }
+                // Prepare Controller Context
+                ThreadContextHelper contextHelper = new ThreadContextHelper();
+                try
+                {
+                    // Validates incoming request
+                    validatesRequestHeader( request );
+                    validatesRequestBody( request );
 
-            // Add Set-Cookie headers
-            for( Cookie cookie : outcome.responseHeader().cookies() )
-            {
-                HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
-                jCookie.setVersion( cookie.version() );
-                jCookie.setPath( cookie.path() );
-                jCookie.setDomain( cookie.domain() );
-                jCookie.setMaxAge( cookie.maxAge() );
-                jCookie.setSecure( cookie.secure() );
-                jCookie.setHttpOnly( cookie.httpOnly() );
-                jCookie.setComment( cookie.comment() );
-                jCookie.setCommentURL( cookie.commentUrl() );
-                outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
-            }
+                    // Route the request
+                    final Route route = routes().route( request );
+                    LOG.debug( "{} Routing request to: {}", request.identity(), route );
 
-            // Finalize!
-            return finalizeOutcome( request, outcome );
-        }
-        catch( Throwable cause )
-        {
-            // Handle error
-            return handleError( request, cause );
-        }
-        finally
-        {
-            // Clean up Controller Context
-            contextHelper.clearCurrentThread();
-        }
+                    // Bind parameters
+                    request.bind( parameterBinders(), route );
+
+                    // Parse Session Cookie
+                    Session session = new SessionInstance(
+                        config,
+                        crypto(),
+                        request.cookies().get( config.string( APP_SESSION_COOKIE_NAME ) )
+                    );
+
+                    // Prepare Response Header
+                    ResponseHeaderInstance responseHeader = new ResponseHeaderInstance( request.version() );
+
+                    // Set Controller Context
+                    Context context = new ContextInstance(
+                        this,
+                        session, route, request,
+                        responseHeader,
+                        executors.defaultExecutor()
+                    );
+                    contextHelper.setOnCurrentThread( context );
+
+                    // Invoke Controller FilterChain, ended by Controller Method Invokation
+                    LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
+                    Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context ).join();
+
+                    // Apply Session to ResponseHeader
+                    if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+                    {
+                        outcome.responseHeader().cookies().set( session.signedCookie() );
+                    }
+
+                    // Add Set-Cookie headers
+                    for( Cookie cookie : outcome.responseHeader().cookies() )
+                    {
+                        HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
+                        jCookie.setVersion( cookie.version() );
+                        jCookie.setPath( cookie.path() );
+                        jCookie.setDomain( cookie.domain() );
+                        jCookie.setMaxAge( cookie.maxAge() );
+                        jCookie.setSecure( cookie.secure() );
+                        jCookie.setHttpOnly( cookie.httpOnly() );
+                        jCookie.setComment( cookie.comment() );
+                        jCookie.setCommentURL( cookie.commentUrl() );
+                        outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
+                    }
+
+                    // Finalize!
+                    return finalizeOutcome( request, outcome );
+                }
+                catch( Throwable cause )
+                {
+                    // Handle error
+                    return handleError( request, cause ).join();
+                }
+                finally
+                {
+                    // Clean up Controller Context
+                    contextHelper.clearCurrentThread();
+                }
+            },
+            executors.defaultExecutor()
+        );
     }
 
     private void validatesRequestHeader( RequestHeader requestHeader )
@@ -645,99 +680,105 @@ public final class ApplicationInstance
     }
 
     @Override
-    public Outcome handleError( RequestHeader request, Throwable cause )
+    public CompletableFuture<Outcome> handleError( RequestHeader request, Throwable cause )
     {
-        // Clean-up stacktrace
-        Throwable rootCause;
-        try
-        {
-            rootCause = global.getRootCause( cause );
-        }
-        catch( Exception ex )
-        {
-            LOG.warn(
-                "An error occured in Global::getRootCause() method "
-                + "and has been added as suppressed exception to the original error stacktrace. Message: {}",
-                ex.getMessage(), ex
-            );
-            cause.addSuppressed( ex );
-            rootCause = cause;
-        }
-
-        // Outcomes
-        Outcomes outcomes = new OutcomesInstance(
-            config,
-            mimeTypes,
-            new ResponseHeaderInstance( request.version() )
-        );
-
-        // Handle contingencies
-        if( rootCause instanceof RouteNotFoundException )
-        {
-            LOG.trace( rootCause.getMessage() + " will return 404." );
-            StringBuilder details = new StringBuilder();
-            if( mode == Mode.DEV )
+        return CompletableFuture.supplyAsync(
+            () ->
             {
-                details.append( "<p>Tried:</p>\n<pre>\n" );
-                for( Route route : routes )
+                // Clean-up stacktrace
+                Throwable rootCause;
+                try
                 {
-                    if( !route.path().startsWith( "/@" ) )
-                    {
-                        details.append( route.toString() ).append( "\n" );
-                    }
+                    rootCause = global.getRootCause( cause );
                 }
-                details.append( "</pre>\n" );
-            }
-            return finalizeOutcome(
-                request,
-                outcomes.notFound().
-                withBody( errorHtml( "404 Route Not Found", details ) ).
-                as( TEXT_HTML ).
-                build()
-            );
-        }
-        else if( rootCause instanceof ParameterBinderException )
-        {
-            LOG.warn( "ParameterBinderException, will return 400.", rootCause );
-            return finalizeOutcome(
-                request,
-                outcomes.badRequest().
-                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                as( TEXT_HTML ).
-                build()
-            );
-        }
-        else if( rootCause instanceof BadRequestException )
-        {
-            LOG.warn( "BadRequestException, will return 400.", rootCause );
-            return finalizeOutcome(
-                request,
-                outcomes.badRequest().
-                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                as( TEXT_HTML ).
-                build()
-            );
-        }
+                catch( Exception ex )
+                {
+                    LOG.warn(
+                        "An error occured in Global::getRootCause() method "
+                        + "and has been added as suppressed exception to the original error stacktrace. Message: {}",
+                        ex.getMessage(), ex
+                    );
+                    cause.addSuppressed( ex );
+                    rootCause = cause;
+                }
 
-        // Handle faults
-        Outcome outcome;
-        try
-        {
-            // Delegates Outcome generation to Global object
-            outcome = global.onApplicationError( this, outcomes, rootCause );
-        }
-        catch( Exception ex )
-        {
-            // Add as suppressed and replay Global default behaviour. This serve as a fault barrier
-            rootCause.addSuppressed( ex );
-            outcome = new Global().onApplicationError( this, outcomes, rootCause );
-        }
+                // Outcomes
+                Outcomes outcomes = new OutcomesInstance(
+                    config,
+                    mimeTypes,
+                    new ResponseHeaderInstance( request.version() )
+                );
 
-        // Record error
-        errors.record( request.identity(), rootCause.getMessage(), rootCause );
+                // Handle contingencies
+                if( rootCause instanceof RouteNotFoundException )
+                {
+                    LOG.trace( rootCause.getMessage() + " will return 404." );
+                    StringBuilder details = new StringBuilder();
+                    if( mode == Mode.DEV )
+                    {
+                        details.append( "<p>Tried:</p>\n<pre>\n" );
+                        for( Route route : routes )
+                        {
+                            if( !route.path().startsWith( "/@" ) )
+                            {
+                                details.append( route.toString() ).append( "\n" );
+                            }
+                        }
+                        details.append( "</pre>\n" );
+                    }
+                    return finalizeOutcome(
+                        request,
+                        outcomes.notFound().
+                        withBody( errorHtml( "404 Route Not Found", details ) ).
+                        as( TEXT_HTML ).
+                        build()
+                    );
+                }
+                else if( rootCause instanceof ParameterBinderException )
+                {
+                    LOG.warn( "ParameterBinderException, will return 400.", rootCause );
+                    return finalizeOutcome(
+                        request,
+                        outcomes.badRequest().
+                        withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
+                        as( TEXT_HTML ).
+                        build()
+                    );
+                }
+                else if( rootCause instanceof BadRequestException )
+                {
+                    LOG.warn( "BadRequestException, will return 400.", rootCause );
+                    return finalizeOutcome(
+                        request,
+                        outcomes.badRequest().
+                        withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
+                        as( TEXT_HTML ).
+                        build()
+                    );
+                }
 
-        // Done!
-        return finalizeOutcome( request, outcome );
+                // Handle faults
+                Outcome outcome;
+                try
+                {
+                    // Delegates Outcome generation to Global object
+                    outcome = global.onApplicationError( this, outcomes, rootCause );
+                }
+                catch( Exception ex )
+                {
+                    // Add as suppressed and replay Global default behaviour. This serve as a fault barrier
+                    rootCause.addSuppressed( ex );
+                    outcome = new Global().onApplicationError( this, outcomes, rootCause );
+                }
+
+                // Record error
+                errors.record( request.identity(), rootCause.getMessage(), rootCause );
+
+                // Done!
+                return finalizeOutcome( request, outcome );
+            },
+            executors.defaultExecutor()
+        );
     }
 
     private CharSequence errorHtml( CharSequence title, CharSequence content )
@@ -802,30 +843,36 @@ public final class ApplicationInstance
 
     // SPI
     @Override
-    public Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
+    public CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
     {
-        // Outcomes
-        Outcomes outcomes = new OutcomesInstance(
-            config,
-            mimeTypes,
-            new ResponseHeaderInstance( version )
+        return CompletableFuture.supplyAsync(
+            () ->
+            {
+                // Outcomes
+                Outcomes outcomes = new OutcomesInstance(
+                    config,
+                    mimeTypes,
+                    new ResponseHeaderInstance( version )
+                );
+
+                // Return 503 to incoming requests while shutting down
+                OutcomeBuilder builder = outcomes.serviceUnavailable().
+                withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
+                as( TEXT_HTML ).
+                withHeader( CONNECTION, CLOSE ).
+                withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
+
+                // By default, no Retry-After, only if defined in configuration
+                if( config.has( QIWEB_SHUTDOWN_RETRYAFTER ) )
+                {
+                    builder.withHeader( RETRY_AFTER, String.valueOf( config.seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
+                }
+
+                // Build!
+                return builder.build();
+            },
+            executors.defaultExecutor()
         );
-
-        // Return 503 to incoming requests while shutting down
-        OutcomeBuilder builder = outcomes.serviceUnavailable().
-            withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
-            as( TEXT_HTML ).
-            withHeader( CONNECTION, CLOSE ).
-            withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
-
-        // By default, no Retry-After, only if defined in configuration
-        if( config.has( QIWEB_SHUTDOWN_RETRYAFTER ) )
-        {
-            builder.withHeader( RETRY_AFTER, String.valueOf( config.seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
-        }
-
-        // Build!
-        return builder.build();
     }
 
     private void ensureActive()

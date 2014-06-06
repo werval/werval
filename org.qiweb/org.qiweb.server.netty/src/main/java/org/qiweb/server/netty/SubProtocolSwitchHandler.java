@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.util.concurrent.EventExecutorGroup;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
@@ -38,16 +37,13 @@ public class SubProtocolSwitchHandler
 {
     private static final Logger LOG = LoggerFactory.getLogger( SubProtocolSwitchHandler.class );
     private final ChannelGroup allChannels;
-    private final EventExecutorGroup httpExecutors;
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
 
-    public SubProtocolSwitchHandler( ChannelGroup allChannels, EventExecutorGroup httpExecutors,
-                                     ApplicationSPI app, DevShellSPI devSpi )
+    public SubProtocolSwitchHandler( ChannelGroup allChannels, ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.allChannels = allChannels;
-        this.httpExecutors = httpExecutors;
         this.app = app;
         this.devSpi = devSpi;
     }
@@ -70,16 +66,14 @@ public class SubProtocolSwitchHandler
 
             int maxBodySize = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE );
             int diskThreshold = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
-            pipeline.addLast( "http-aggregator", new HttpRequestAggregator( app, maxBodySize, diskThreshold ) );
-
-            if( httpExecutors != null )
-            {
-                pipeline.addLast( httpExecutors, "router", new HttpRequestRouterHandler( app, devSpi ) );
-            }
-            else
-            {
-                pipeline.addLast( "router", new HttpRequestRouterHandler( app, devSpi ) );
-            }
+            pipeline.addLast(
+                "http-aggregator",
+                new HttpRequestAggregator( maxBodySize, diskThreshold, app.tmpdir() )
+            );
+            pipeline.addLast(
+                "qiweb-http",
+                new QiWebHttpHandler( app, devSpi )
+            );
 
             pipeline.remove( this );
 
@@ -91,7 +85,10 @@ public class SubProtocolSwitchHandler
             LOG.trace( "Switching to WebSocket protocol" );
             ChannelPipeline pipeline = context.pipeline();
 
-            pipeline.addLast( "router", new WebSocketRouterHandler( app, devSpi ) );
+            pipeline.addLast(
+                "qiweb-websocket",
+                new QiWebSocketHandler( app, devSpi )
+            );
 
             pipeline.remove( this );
 
