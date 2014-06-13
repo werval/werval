@@ -174,10 +174,7 @@ public final class QiWebHttpHandler
         }
         else if( requestHeader != null )
         {
-            app.handleError( requestHeader, cause ).thenAcceptAsync(
-                errorOutcome -> writeOutcome( nettyContext, errorOutcome ),
-                app.executor()
-            );
+            writeOutcome( nettyContext, app.handleError( requestHeader, cause ) );
         }
         else
         {

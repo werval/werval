@@ -84,9 +84,9 @@ public interface ApplicationSPI
      * @param requestHeader HTTP Request Header
      * @param cause         Exception throwed
      *
-     * @return Future of error Outcome
+     * @return Error Outcome
      */
-    CompletableFuture<Outcome> handleError( RequestHeader requestHeader, Throwable cause );
+    Outcome handleError( RequestHeader requestHeader, Throwable cause );
 
     /**
      * Callback for completed HTTP requests.

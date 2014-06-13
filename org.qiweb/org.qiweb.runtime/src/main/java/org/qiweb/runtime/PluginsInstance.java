@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
+import org.qiweb.api.Global;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
@@ -60,7 +61,7 @@ import static java.util.Collections.EMPTY_LIST;
         this.extraPlugins = extraPlugins;
     }
 
-    /* package */ void onActivate( ApplicationInstance application )
+    /* package */ void onActivate( ApplicationInstance application, Global global )
     {
         activatingOrPassivating = true;
         try
@@ -74,7 +75,7 @@ import static java.util.Collections.EMPTY_LIST;
                 try
                 {
                     Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
-                    Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, pluginClass );
+                    Plugin<?> plugin = (Plugin<?>) global.getPluginInstance( application, pluginClass );
                     if( plugin.enabled() )
                     {
                         plugin.onActivate( application );

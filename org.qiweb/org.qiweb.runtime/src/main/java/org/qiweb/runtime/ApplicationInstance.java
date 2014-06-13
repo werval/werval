@@ -78,6 +78,8 @@ import org.qiweb.spi.http.HttpBuildersSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
@@ -118,6 +120,8 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
  * <p>
  * Others are based on Application Config and created by Application instances.
  */
+// TODO Instanciate Global in the Application Executor
+// TODO Handle error Global calls in the Application Executor
 @Reflectively.Loaded( by = "DevShell" )
 public final class ApplicationInstance
     implements Application, ApplicationSPI
@@ -130,7 +134,7 @@ public final class ApplicationInstance
     }
 
     private volatile boolean activated = false;
-    private boolean activatingOrPassivating = false;
+    private volatile boolean activatingOrPassivating = false;
     private final Mode mode;
     private Config config;
     private PluginsInstance plugins;
@@ -268,30 +272,32 @@ public final class ApplicationInstance
 
         try
         {
-            // Application Routes
-            List<Route> resolvedRoutes = new ArrayList<>();
-            resolvedRoutes.addAll( routesProvider.routes( this ) );
-
             // Executors
             executors = new ApplicationExecutors( mode, config );
             executors.activate();
+            ExecutorService defaultExecutor = executors.defaultExecutor();
 
+            // Application Routes
+            List<Route> resolvedRoutes = new ArrayList<>();
+            resolvedRoutes.addAll( supplyAsync( () -> routesProvider.routes( this ), defaultExecutor ).join() );
+
+            // Application Global
             // Activate Plugins
             plugins = new PluginsInstance(
                 config,
-                global.extraPlugins(),
+                supplyAsync( () -> global.extraPlugins(), defaultExecutor ).join(),
                 devSpi != null
             );
-            plugins.onActivate( this );
+            runAsync( () -> plugins.onActivate( this, global ), defaultExecutor ).join();
 
             // Plugin contributed Routes
-            resolvedRoutes.addAll( 0, plugins.firstRoutes( this ) );
-            resolvedRoutes.addAll( plugins.lastRoutes( this ) );
+            resolvedRoutes.addAll( 0, supplyAsync( () -> plugins.firstRoutes( this ), defaultExecutor ).join() );
+            resolvedRoutes.addAll( supplyAsync( () -> plugins.lastRoutes( this ), defaultExecutor ).join() );
             routes = new RoutesInstance( resolvedRoutes );
 
             // Activated
             activated = true;
-            global.onActivate( this );
+            runAsync( () -> global.onActivate( this ), defaultExecutor ).join();
         }
         finally
         {
@@ -332,7 +338,7 @@ public final class ApplicationInstance
             List<Exception> passivationErrors = new ArrayList<>();
             try
             {
-                global.onPassivate( this );
+                runAsync( () -> global.onPassivate( this ), executors.defaultExecutor() ).join();
             }
             catch( Exception ex )
             {
@@ -342,7 +348,7 @@ public final class ApplicationInstance
             }
             try
             {
-                plugins.onPassivate( this );
+                runAsync( () -> plugins.onPassivate( this ), executors.defaultExecutor() ).join();
             }
             catch( Exception ex )
             {
@@ -503,6 +509,7 @@ public final class ApplicationInstance
     @Override
     public Global global()
     {
+        ensureActive();
         return global;
     }
 
@@ -538,7 +545,7 @@ public final class ApplicationInstance
     @Override
     public CompletableFuture<Outcome> handleRequest( Request request )
     {
-        return CompletableFuture.supplyAsync(
+        return supplyAsync(
             () ->
             {
                 // Prepare Controller Context
@@ -577,7 +584,7 @@ public final class ApplicationInstance
 
                     // Invoke Controller FilterChain, ended by Controller Method Invokation
                     LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
-                    Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context ).join();
+                    Outcome outcome = new FilterChainFactory().buildFilterChain( this, global, context ).next( context ).join();
 
                     // Apply Session to ResponseHeader
                     if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
@@ -606,7 +613,7 @@ public final class ApplicationInstance
                 catch( Throwable cause )
                 {
                     // Handle error
-                    return handleError( request, cause ).join();
+                    return handleError( request, cause );
                 }
                 finally
                 {
@@ -680,105 +687,99 @@ public final class ApplicationInstance
     }
 
     @Override
-    public CompletableFuture<Outcome> handleError( RequestHeader request, Throwable cause )
+    public Outcome handleError( RequestHeader request, Throwable cause )
     {
-        return CompletableFuture.supplyAsync(
-            () ->
-            {
-                // Clean-up stacktrace
-                Throwable rootCause;
-                try
-                {
-                    rootCause = global.getRootCause( cause );
-                }
-                catch( Exception ex )
-                {
-                    LOG.warn(
-                        "An error occured in Global::getRootCause() method "
-                        + "and has been added as suppressed exception to the original error stacktrace. Message: {}",
-                        ex.getMessage(), ex
-                    );
-                    cause.addSuppressed( ex );
-                    rootCause = cause;
-                }
+        // Clean-up stacktrace
+        Throwable rootCause;
+        try
+        {
+            rootCause = global.getRootCause( cause ); // TODO Application Executor
+        }
+        catch( Exception ex )
+        {
+            LOG.warn(
+                "An error occured in Global::getRootCause() method "
+                + "and has been added as suppressed exception to the original error stacktrace. Message: {}",
+                ex.getMessage(), ex
+            );
+            cause.addSuppressed( ex );
+            rootCause = cause;
+        }
 
-                // Outcomes
-                Outcomes outcomes = new OutcomesInstance(
-                    config,
-                    mimeTypes,
-                    new ResponseHeaderInstance( request.version() )
-                );
-
-                // Handle contingencies
-                if( rootCause instanceof RouteNotFoundException )
-                {
-                    LOG.trace( rootCause.getMessage() + " will return 404." );
-                    StringBuilder details = new StringBuilder();
-                    if( mode == Mode.DEV )
-                    {
-                        details.append( "<p>Tried:</p>\n<pre>\n" );
-                        for( Route route : routes )
-                        {
-                            if( !route.path().startsWith( "/@" ) )
-                            {
-                                details.append( route.toString() ).append( "\n" );
-                            }
-                        }
-                        details.append( "</pre>\n" );
-                    }
-                    return finalizeOutcome(
-                        request,
-                        outcomes.notFound().
-                        withBody( errorHtml( "404 Route Not Found", details ) ).
-                        as( TEXT_HTML ).
-                        build()
-                    );
-                }
-                else if( rootCause instanceof ParameterBinderException )
-                {
-                    LOG.warn( "ParameterBinderException, will return 400.", rootCause );
-                    return finalizeOutcome(
-                        request,
-                        outcomes.badRequest().
-                        withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                        as( TEXT_HTML ).
-                        build()
-                    );
-                }
-                else if( rootCause instanceof BadRequestException )
-                {
-                    LOG.warn( "BadRequestException, will return 400.", rootCause );
-                    return finalizeOutcome(
-                        request,
-                        outcomes.badRequest().
-                        withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                        as( TEXT_HTML ).
-                        build()
-                    );
-                }
-
-                // Handle faults
-                Outcome outcome;
-                try
-                {
-                    // Delegates Outcome generation to Global object
-                    outcome = global.onApplicationError( this, outcomes, rootCause );
-                }
-                catch( Exception ex )
-                {
-                    // Add as suppressed and replay Global default behaviour. This serve as a fault barrier
-                    rootCause.addSuppressed( ex );
-                    outcome = new Global().onApplicationError( this, outcomes, rootCause );
-                }
-
-                // Record error
-                errors.record( request.identity(), rootCause.getMessage(), rootCause );
-
-                // Done!
-                return finalizeOutcome( request, outcome );
-            },
-            executors.defaultExecutor()
+        // Outcomes
+        Outcomes outcomes = new OutcomesInstance(
+            config,
+            mimeTypes,
+            new ResponseHeaderInstance( request.version() )
         );
+
+        // Handle contingencies
+        if( rootCause instanceof RouteNotFoundException )
+        {
+            LOG.trace( rootCause.getMessage() + " will return 404." );
+            StringBuilder details = new StringBuilder();
+            if( mode == Mode.DEV )
+            {
+                details.append( "<p>Tried:</p>\n<pre>\n" );
+                for( Route route : routes )
+                {
+                    if( !route.path().startsWith( "/@" ) )
+                    {
+                        details.append( route.toString() ).append( "\n" );
+                    }
+                }
+                details.append( "</pre>\n" );
+            }
+            return finalizeOutcome(
+                request,
+                outcomes.notFound().
+                withBody( errorHtml( "404 Route Not Found", details ) ).
+                asHtml().
+                build()
+            );
+        }
+        else if( rootCause instanceof ParameterBinderException )
+        {
+            LOG.warn( "ParameterBinderException, will return 400.", rootCause );
+            return finalizeOutcome(
+                request,
+                outcomes.badRequest().
+                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
+                asHtml().
+                build()
+            );
+        }
+        else if( rootCause instanceof BadRequestException )
+        {
+            LOG.warn( "BadRequestException, will return 400.", rootCause );
+            return finalizeOutcome(
+                request,
+                outcomes.badRequest().
+                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
+                asHtml().
+                build()
+            );
+        }
+
+        // Handle faults
+        Outcome outcome;
+        try
+        {
+            // Delegates Outcome generation to Global object
+            outcome = global.onApplicationError( this, outcomes, rootCause ); // TODO Application Executor
+        }
+        catch( Exception ex )
+        {
+            // Add as suppressed and replay Global default behaviour. This serve as a fault barrier
+            rootCause.addSuppressed( ex );
+            outcome = new Global().onApplicationError( this, outcomes, rootCause );
+        }
+
+        // Record error
+        errors.record( request.identity(), rootCause.getMessage(), rootCause );
+
+        // Done!
+        return finalizeOutcome( request, outcome );
     }
 
     private CharSequence errorHtml( CharSequence title, CharSequence content )
@@ -831,21 +832,23 @@ public final class ApplicationInstance
     @Override
     public void onHttpRequestComplete( RequestHeader requestHeader )
     {
-        try
-        {
-            global.onHttpRequestComplete( this, requestHeader );
-        }
-        catch( Exception ex )
-        {
-            LOG.error( "An error occured in Global::onHttpRequestComplete(): {}", ex.getMessage(), ex );
-        }
+        runAsync(
+            () -> global.onHttpRequestComplete( this, requestHeader ),
+            executors.defaultExecutor()
+        ).exceptionally(
+            ex ->
+            {
+                LOG.error( "An error occured in Global::onHttpRequestComplete(): {}", ex.getMessage(), ex );
+                return null;
+            }
+        );
     }
 
     // SPI
     @Override
     public CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
     {
-        return CompletableFuture.supplyAsync(
+        return supplyAsync(
             () ->
             {
                 // Outcomes
@@ -900,7 +903,7 @@ public final class ApplicationInstance
         String globalClassName = config.string( APP_GLOBAL );
         try
         {
-            this.global = (Global) classLoader.loadClass( globalClassName ).newInstance();
+            this.global = (Global) classLoader.loadClass( globalClassName ).newInstance(); // TODO Application Executor
         }
         catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
         {
