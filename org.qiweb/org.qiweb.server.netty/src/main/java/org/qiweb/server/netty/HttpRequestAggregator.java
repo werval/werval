@@ -135,6 +135,11 @@ public class HttpRequestAggregator
     private void handleHttpRequest( ChannelHandlerContext context, HttpRequest newRequestHeader, List<Object> out )
         throws IOException
     {
+        // Belt and braces
+        // Needed as the channel is reused when Keep-Alive play its role
+        cleanup();
+
+        // Let's go
         HttpRequest currentRequestHeader = aggregatedRequestHeader;
         assert currentRequestHeader == null;
         assert consumedContentlength == 0;
