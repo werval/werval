@@ -24,6 +24,9 @@ import org.qiweb.runtime.exceptions.QiWebRuntimeException;
  */
 public final class Versions
 {
+    /**
+     * Ensure that QiWeb API, SPI and Runtime versions are equals.
+     */
     public static void ensureQiWebComponentsVersions()
     {
         Stream<String> versions = Arrays.asList(

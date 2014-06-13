@@ -29,6 +29,7 @@ import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_XML;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
@@ -78,6 +79,18 @@ public class OutcomeBuilderInstance
     public OutcomeBuilder asTextual( String contentType, Charset charset )
     {
         return as( mimeTypes.withCharset( contentType, charset ) );
+    }
+
+    @Override
+    public OutcomeBuilder asTextPlain()
+    {
+        return as( mimeTypes.withCharsetOfTextual( TEXT_PLAIN ) );
+    }
+
+    @Override
+    public OutcomeBuilder asTextPlain( Charset charset )
+    {
+        return as( mimeTypes.withCharset( TEXT_PLAIN, charset ) );
     }
 
     @Override

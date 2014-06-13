@@ -152,6 +152,12 @@ public class FormUploadsInstance
         return unmodifiableMap( uploads );
     }
 
+    @Override
+    public String toString()
+    {
+        return uploads.toString();
+    }
+
     public static class UploadInstance
         implements Upload
     {
@@ -245,6 +251,14 @@ public class FormUploadsInstance
             {
                 throw new QiWebException( ex.getMessage(), ex );
             }
+        }
+
+        @Override
+        public String toString()
+        {
+            return "{contentType: " + contentType
+                   + ", charset: " + ( charset == null ? defaultCharset : charset )
+                   + ", filename: " + filename + " }";
         }
     }
 }

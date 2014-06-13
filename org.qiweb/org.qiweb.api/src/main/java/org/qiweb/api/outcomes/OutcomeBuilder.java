@@ -70,6 +70,18 @@ public interface OutcomeBuilder
     /**
      * @return This very OutcomeBuilder instance
      */
+    OutcomeBuilder asTextPlain();
+
+    /**
+     * @param charset Charset
+     *
+     * @return This very OutcomeBuilder instance
+     */
+    OutcomeBuilder asTextPlain( Charset charset );
+
+    /**
+     * @return This very OutcomeBuilder instance
+     */
     OutcomeBuilder asXml();
 
     /**
