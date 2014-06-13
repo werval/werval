@@ -1,8 +1,8 @@
 
 == Configuration
 
-NOTE: QiWeb configuration use the https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON format] ("Human
-Optimized Config Object Notation"). It is parsed using https://github.com/typesafehub/config[Typesafe Config].
+NOTE: QiWeb configuration use the link:hocon.html[HOCON format] ("Human Optimized Config Object Notation").
+It is parsed using https://github.com/typesafehub/config[Typesafe Config].
 
 The `application.conf` file must be present at the root of your classpath and must at least contain one single entry:
 `app.secret` which is the secret key your application will use to sign session cookies.

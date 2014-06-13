@@ -18,6 +18,53 @@ dependencies {
 
 
 //
+//  _____
+// |  |  |___ ___ ___ ___
+// |     | . |  _| . |   |
+// |__|__|___|___|___|_|_|
+// _____________________________________________________________________________________________________________________
+// Out-of-build task to fetch HOCON format documentation and convert it to Asciidoc, needs pandoc
+//
+
+task fetchHoconDoc(type: Exec) {
+    // Fetch original Markdown file
+    doFirst {
+        file( 'build/tmp/hocon' ).mkdirs()
+        ant.get( src:'https://raw.githubusercontent.com/typesafehub/config/master/HOCON.md', dest: 'build/tmp/hocon/HOCON.md' )
+    }
+    // Convert it to Asciidoc
+    commandLine 'pandoc', 'build/tmp/hocon/HOCON.md', '-f', 'markdown', '-t', 'asciidoc', '-s', '--atx-headers', '-o', 'build/tmp/hocon/hocon.adoc'
+    // Add proper headers, preamble and TOC
+    doLast {
+        def hoconAdoc = file('build/tmp/hocon/hocon.adoc')
+        def content = ""
+        def lineCount = 1;
+        hoconAdoc.eachLine { line ->
+            if( lineCount == 3 ) {
+                content += """:jbake-type: page
+:title: HOCON (Human-Optimized Config Object Notation)
+:description: HOCON format specification
+:keywords: qiweb, documentation, configuration, hocon
+:toc: right
+:toc-title: HOCON
+
+This file was generated from the original link:https://github.com/typesafehub/config/blob/master/HOCON.md[HOCON]
+specification published by TypeSafe under the Apache License 2.0.
+
+toc::[]
+
+"""
+            }
+            content += line + "\n"
+            lineCount++;
+        }
+        file( 'src/jbake/content/hocon.adoc' ).write( content )
+    }
+}
+
+
+
+//
 //     __               _
 //  __|  |___ _ _ ___ _| |___ ___
 // |  |  | .'| | | .'| . | . |  _|
@@ -85,8 +132,7 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
 // | __  |___| |_|_|___ ___
 // | __ -| .'| '_| |   | . |
 // |_____|__,|_,_|_|_|_|_  |
-//                     |___|
-// _____________________________________________________________________________________________________________________
+// ____________________|___|____________________________________________________________________________________________
 // Generate static documentation website using JBake
 //
 

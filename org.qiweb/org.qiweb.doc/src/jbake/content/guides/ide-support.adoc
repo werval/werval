@@ -22,6 +22,22 @@ The latest release can be downloaded from the
 http://plugins.netbeans.org/plugin/44510/gradle-support[Netbeans Plugins Portal] and is also available via the Update
 Center (Tools/Plugins: Look for "Gradle Support").
 
+[TIP]
+.Dependencies Sources and Javadocs
+====
+The easiest way to get dependencies sources and javadocs in your Netbeans IDE is to apply the IDEA plugin to your
+project:
+
+.build.gradle
+[source,groovy]
+----
+apply plugin:'idea'
+----
+
+and run `gradle idea`.
+
+This will download all project's dependencies source and javadoc and thus make them available in Netbeans.
+====
 
 === IDEA
 
