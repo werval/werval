@@ -82,7 +82,7 @@ public class Classpath
      */
     public Outcome resource( String basepath, String path )
     {
-        return resource( basepath + '/' + removeHeadingSlash( path ) );
+        return resource( removeTrailingSlash( basepath ) + '/' + removeHeadingSlash( path ) );
     }
 
     /**
