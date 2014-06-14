@@ -47,6 +47,7 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
     private final Mode mode;
     private final Config config;
     private String defaultExecutor;
+    private String defaultExecutorThreadNamePrefix;
     private Long shutdownTimeoutMillis;
     private Map<String, ExecutorService> executors = EMPTY_MAP;
 
@@ -59,6 +60,9 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
     /* package */ void activate()
     {
         this.defaultExecutor = config.string( APP_EXECUTORS_DEFAULT );
+        this.defaultExecutorThreadNamePrefix = config.string(
+            APP_EXECUTORS + "." + defaultExecutor + ".thread_name_prefix"
+        );
         this.shutdownTimeoutMillis = config.milliseconds( APP_EXECUTORS_SHUTDOWN_TIMEOUT );
         Config executorsConfig = config.object( APP_EXECUTORS );
         this.executors = new HashMap<>( executorsConfig.subKeys().size() - 1 );
@@ -183,5 +187,10 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
     /* package */ ExecutorService defaultExecutor()
     {
         return executors.get( defaultExecutor );
+    }
+
+    /* package */ boolean inDefaultExecutor()
+    {
+        return Thread.currentThread().getName().startsWith( defaultExecutorThreadNamePrefix );
     }
 }

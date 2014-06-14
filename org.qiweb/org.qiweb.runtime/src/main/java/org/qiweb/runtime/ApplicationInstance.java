@@ -120,8 +120,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
  * <p>
  * Others are based on Application Config and created by Application instances.
  */
-// TODO Instanciate Global in the Application Executor
-// TODO Handle error Global calls in the Application Executor
 @Reflectively.Loaded( by = "DevShell" )
 public final class ApplicationInstance
     implements Application, ApplicationSPI
@@ -276,6 +274,23 @@ public final class ApplicationInstance
             executors = new ApplicationExecutors( mode, config );
             executors.activate();
             ExecutorService defaultExecutor = executors.defaultExecutor();
+
+            // Global
+            String globalClassName = config.string( APP_GLOBAL );
+            this.global = supplyAsync(
+                () ->
+                {
+                    try
+                    {
+                        return (Global) classLoader.loadClass( globalClassName ).newInstance();
+                    }
+                    catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
+                    {
+                        throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
+                    }
+                },
+                defaultExecutor
+            ).join();
 
             // Application Routes
             List<Route> resolvedRoutes = new ArrayList<>();
@@ -690,10 +705,17 @@ public final class ApplicationInstance
     public Outcome handleError( RequestHeader request, Throwable cause )
     {
         // Clean-up stacktrace
-        Throwable rootCause;
+        Throwable rootCauseRef;
         try
         {
-            rootCause = global.getRootCause( cause ); // TODO Application Executor
+            if( executors.inDefaultExecutor() )
+            {
+                rootCauseRef = global.getRootCause( cause );
+            }
+            else
+            {
+                rootCauseRef = supplyAsync( () -> global.getRootCause( cause ), executors.defaultExecutor() ).join();
+            }
         }
         catch( Exception ex )
         {
@@ -703,8 +725,9 @@ public final class ApplicationInstance
                 ex.getMessage(), ex
             );
             cause.addSuppressed( ex );
-            rootCause = cause;
+            rootCauseRef = cause;
         }
+        final Throwable rootCause = rootCauseRef;
 
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
@@ -766,7 +789,17 @@ public final class ApplicationInstance
         try
         {
             // Delegates Outcome generation to Global object
-            outcome = global.onApplicationError( this, outcomes, rootCause ); // TODO Application Executor
+            if( executors.inDefaultExecutor() )
+            {
+                outcome = global.onApplicationError( this, outcomes, rootCause );
+            }
+            else
+            {
+                outcome = supplyAsync(
+                    () -> global.onApplicationError( this, outcomes, rootCause ),
+                    executors.defaultExecutor()
+                ).join();
+            }
         }
         catch( Exception ex )
         {
@@ -888,7 +921,6 @@ public final class ApplicationInstance
 
     private void configure()
     {
-        configureGlobal();
         configureDefaultCharset();
         configureCrypto();
         configureLangs();
@@ -896,19 +928,6 @@ public final class ApplicationInstance
         configureParameterBinders();
         configureMimeTypes();
         configureHttpBuilders();
-    }
-
-    private void configureGlobal()
-    {
-        String globalClassName = config.string( APP_GLOBAL );
-        try
-        {
-            this.global = (Global) classLoader.loadClass( globalClassName ).newInstance(); // TODO Application Executor
-        }
-        catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
-        {
-            throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
-        }
     }
 
     private void configureDefaultCharset()
