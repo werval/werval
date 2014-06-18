@@ -3,9 +3,38 @@
 
 === Startup explained
 
+Application startup is sequential and pretty straightfoward:
+
+- load configuration
+- create application thread pools
+- load the Global object
+- resolve application routes
+- activate registered plugins
+- resolve plugins routes
+- notify global of application activation
+- bind HTTP server
+
+After that, the application is ready to process requests.
+
+
 === Shutdown explained
 
 Shutting your application down gracefully is as critical as running it.
+
+While startup fail fast, shutdown fail safe.
+In other words, startup fail on first error while shutdown always succeed.
+
+If errors happen during shutdown they are collected and logged once shut down in a single stacktrace thanks to Java 7
+suppressed exceptions.
+
+Application shutdown is sequential and pretty straightfoward:
+
+- unbind HTTP server
+- notify global of application passivation
+- passivate registered plugins
+- stops application thread pools
+
+==== Graceful shutdown
 
 When shut down is requested (Ctrl-C, kill command etc...) the runtime is put in shutting down state for a maximum
 amount of time defined by the `qiweb.shutdown.timeout` configuration property that default to 5 seconds.
