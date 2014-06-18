@@ -11,7 +11,7 @@ Application startup is sequential and pretty straightfoward:
 - resolve application routes
 - activate registered plugins
 - resolve plugins routes
-- notify global of application activation
+- notify the Global object of application activation
 - bind HTTP server
 
 After that, the application is ready to process requests.
@@ -23,16 +23,15 @@ Shutting your application down gracefully is as critical as running it.
 
 While startup fail fast, shutdown fail safe.
 In other words, startup fail on first error while shutdown always succeed.
-
 If errors happen during shutdown they are collected and logged once shut down in a single stacktrace thanks to Java 7
 suppressed exceptions.
 
 Application shutdown is sequential and pretty straightfoward:
 
 - unbind HTTP server
-- notify global of application passivation
+- notify the Global object of application passivation
 - passivate registered plugins
-- stops application thread pools
+- stop application thread pools
 
 ==== Graceful shutdown
 
@@ -49,4 +48,5 @@ You can set the `qiweb.shutdown.retry-after` configuration property so that a `R
 responses.
 
 If your application is running on multiple nodes behind a balancer you can lower this value to 0, yes *zero*, allowing
-your clients to reconnect immediatly to another node. Pretty useful for zero-downtime upgrades.
+your clients to reconnect immediatly to another node.
+Pretty useful for zero-downtime upgrades.
