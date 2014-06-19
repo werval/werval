@@ -40,7 +40,6 @@ For minor changes, build system or test changes, see the full [source code histo
 - Fix Application reload after global error in DevShell, see #113
 - Fix POST requests parsing when Keep-Alive in Netty Server, see #152
 - Fix DevShell classpath in Gradle Plugin, see #153
-- Fix basepath trailing slash handling in Classpath controller, see #134
 
 #### New features
 
