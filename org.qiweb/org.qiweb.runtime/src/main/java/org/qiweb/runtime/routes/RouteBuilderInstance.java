@@ -578,18 +578,18 @@ public class RouteBuilderInstance
         {
             List<String> segments = new ArrayList<>();
             boolean insideQuotes = false;
-            char previous = controllerMethodParams.charAt( 0 );
-            StringBuilder sb = new StringBuilder().append( previous );
-            for( int idx = 1; idx < controllerMethodParams.length(); idx++ )
+            int previous = controllerMethodParams.codePointAt( 0 );
+            StringBuilder sb = new StringBuilder().append( Character.toChars( previous ) );
+            for( int idx = Character.charCount( previous ); idx < controllerMethodParams.length(); )
             {
-                char character = controllerMethodParams.charAt( idx );
+                int character = controllerMethodParams.codePointAt( idx );
                 if( character == '\'' && previous != '\\' )
                 {
                     insideQuotes = !insideQuotes;
                 }
                 if( insideQuotes || character != ',' )
                 {
-                    sb.append( character );
+                    sb.append( Character.toChars( character ) );
                 }
                 else
                 {
@@ -597,6 +597,7 @@ public class RouteBuilderInstance
                     sb = new StringBuilder();
                 }
                 previous = character;
+                idx += Character.charCount( character );
             }
             segments.add( sb.toString().trim() );
             return segments;
@@ -609,10 +610,10 @@ public class RouteBuilderInstance
                 return ParamValue.NONE;
             }
             boolean insideQuotes = false;
-            char previous = segment.charAt( 0 );
-            for( int idx = 1; idx < segment.length(); idx++ )
+            int previous = segment.codePointAt( 0 );
+            for( int idx = Character.charCount( previous ); idx < segment.length(); )
             {
-                char character = segment.charAt( idx );
+                int character = segment.codePointAt( idx );
                 if( character == '\'' && previous != '\\' )
                 {
                     insideQuotes = !insideQuotes;
@@ -626,6 +627,7 @@ public class RouteBuilderInstance
                     return ParamValue.FORCED;
                 }
                 previous = character;
+                idx += Character.charCount( character );
             }
             return ParamValue.NONE;
         }

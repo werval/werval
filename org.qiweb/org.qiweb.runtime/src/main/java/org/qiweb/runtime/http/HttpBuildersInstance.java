@@ -539,9 +539,9 @@ public class HttpBuildersInstance
         List<String> cookies = new java.util.ArrayList<>();
         int quoteCount = 0;
         int p, q;
-        for( p = 0, q = 0; p < header.length(); p++ )
+        for( p = 0, q = 0; p < header.length(); )
         {
-            char c = header.charAt( p );
+            int c = header.codePointAt( p );
             if( c == '"' )
             {
                 quoteCount++;
@@ -550,8 +550,9 @@ public class HttpBuildersInstance
             {
                 // it is ; and not surrounded by double-quotes
                 cookies.add( header.substring( q, p ) );
-                q = p + 1;
+                q = p + Character.charCount( c );
             }
+            p += Character.charCount( c );
         }
         cookies.add( header.substring( q ) );
         return cookies;
