@@ -63,7 +63,7 @@ public class QiWebHttpHandler
         Request request = request( requestIdentity, exchange );
 
         // Handle Request
-        Outcome outcome = app.handleRequest( request );
+        Outcome outcome = app.handleRequest( request ).join();
 
         // Write Outcome
         writeOutcome( outcome, exchange );

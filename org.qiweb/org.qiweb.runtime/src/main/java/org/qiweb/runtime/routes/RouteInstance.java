@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.qiweb.api.exceptions.IllegalRouteException;
@@ -36,6 +37,7 @@ import org.qiweb.api.routes.ControllerParams;
 import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.util.TypeResolver;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
@@ -135,20 +137,47 @@ import static org.qiweb.runtime.util.Iterables.toList;
             }
         }
 
-        // Ensure controller method exists and return an Outcome
+        // Ensure controller method exists and return an Outcome or a CompletableFuture<Outcome>
         Class<?>[] controllerParamsTypes = controllerParams.types();
         try
         {
             controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
-            if( !controllerMethod.getReturnType().isAssignableFrom( Outcome.class ) )
+            boolean correctReturnType = false;
+            Throwable incorrectReturnTypeCause = null;
+            if( Outcome.class.isAssignableFrom( controllerMethod.getReturnType() ) )
             {
-                throw new IllegalRouteException(
-                    toString(),
-                    "Controller Method '" + controllerType.getSimpleName()
-                    + "#" + controllerMethodName
-                    + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
-                    + "do not return an Outcome."
-                );
+                correctReturnType = true;
+            }
+            else if( CompletableFuture.class.isAssignableFrom( controllerMethod.getReturnType() ) )
+            {
+                try
+                {
+                    Class<?> futureOutcomeType = TypeResolver.resolveArgument(
+                        controllerMethod.getGenericReturnType(),
+                        CompletableFuture.class
+                    );
+                    if( futureOutcomeType.isAssignableFrom( Outcome.class ) )
+                    {
+                        correctReturnType = true;
+                    }
+                }
+                catch( IllegalArgumentException ex )
+                {
+                    incorrectReturnTypeCause = ex;
+                }
+            }
+            if( !correctReturnType )
+            {
+                String message = "Controller Method '" + controllerType.getSimpleName()
+                                 + "#" + controllerMethodName
+                                 + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
+                                 + "do not return an Outcome nor a CompletableFuture<Outcome>.";
+                IllegalRouteException ex = new IllegalRouteException( toString(), message );
+                if( incorrectReturnTypeCause != null )
+                {
+                    ex.initCause( incorrectReturnTypeCause );
+                }
+                throw ex;
             }
         }
         catch( NoSuchMethodException ex )
@@ -158,7 +187,8 @@ import static org.qiweb.runtime.util.Iterables.toList;
                 "Controller Method '" + controllerType.getSimpleName()
                 + "#" + controllerMethodName
                 + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
-                + "not found.", ex
+                + "not found.",
+                ex
             );
         }
     }

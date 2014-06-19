@@ -18,6 +18,7 @@ package org.qiweb.runtime;
 import com.jayway.restassured.response.Response;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.Application;
@@ -62,7 +63,7 @@ public class OnGlobalErrorTest
         implements Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> filterConfig )
         {
             return chain.next( context );
         }

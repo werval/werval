@@ -16,6 +16,7 @@
 package org.qiweb.modules.qi4j;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qi4j.api.mixin.Mixins;
@@ -100,7 +101,7 @@ public class Qi4jControllersAndFiltersTest
             implements Filter<Void>
         {
             @Override
-            public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
+            public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> filterConfig )
             {
                 filtered = true;
                 return chain.next( context );

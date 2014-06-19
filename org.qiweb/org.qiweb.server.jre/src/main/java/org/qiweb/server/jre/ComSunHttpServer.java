@@ -18,15 +18,12 @@ package org.qiweb.server.jre;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.spi.server.HttpServerAdapter;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_EXECUTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
 
@@ -65,31 +62,6 @@ public class ComSunHttpServer
         {
             throw new QiWebRuntimeException( "Unable to create HttpServer", ex );
         }
-
-        final Executor executor;
-        if( devSpi != null )
-        {
-            executor = null;
-        }
-        else if( app.config().has( QIWEB_HTTP_EXECUTORS ) )
-        {
-            int executors = app.config().intNumber( QIWEB_HTTP_EXECUTORS );
-            if( executors <= 0 )
-            {
-                // Config set to 0, no controller executors
-                executor = null;
-            }
-            else
-            {
-                // Configured controller executors count
-                executor = Executors.newFixedThreadPool( executors );
-            }
-        }
-        else
-        {
-            executor = null;
-        }
-        server.setExecutor( executor );
 
         server.createContext( "/", new QiWebHttpHandler( app, devSpi ) );
 

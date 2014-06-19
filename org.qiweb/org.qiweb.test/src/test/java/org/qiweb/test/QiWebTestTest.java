@@ -50,7 +50,7 @@ public class QiWebTestTest
             .method( "GET" )
             .uri( "/" )
             .build();
-        Outcome outcome = QIWEB.application().handleRequest( request );
+        Outcome outcome = QIWEB.application().handleRequest( request ).join();
         assertThat( outcome.responseHeader().status().code(), is( 200 ) );
     }
 }

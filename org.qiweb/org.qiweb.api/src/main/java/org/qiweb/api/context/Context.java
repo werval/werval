@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.context;
 
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.http.Request;
@@ -64,4 +65,15 @@ public interface Context
      * @return Current Context MetaData
      */
     MetaData metaData();
+
+    /**
+     * Current Executor.
+     *
+     * Convey the current {@literal Context} to parallel threads.
+     * <p>
+     * Use when composing {@literal CompletableFutures} or to submit paralled {@literal Stream} operations.
+     *
+     * @return Current Executor
+     */
+    ExecutorService executor();
 }

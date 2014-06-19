@@ -213,19 +213,26 @@ public class Global
      * Invoke Controller Method.
      *
      * Default to {@link Method#invoke(java.lang.Object, java.lang.Object[])}.
+     * <p>
+     * Acceptable return types are:
+     * <ul>
+     *     <li>{@literal Outcome},</li>
+     *     <li>{@literal CompletableFuture}&lt;{@literal Outcome}&gt;.</li>
+     * </ul>
+     * That is, the return types allowed on interaction methods.
      *
      * @param context    Request Context
      * @param controller Controller Instance
      *
-     * @return Invocation Outcome
+     * @return Invocation Outcome, plain or future
      */
-    public Outcome invokeControllerMethod( Context context, Object controller )
+    public Object invokeControllerMethod( Context context, Object controller )
     {
         try
         {
             Method method = context.route().controllerMethod();
             Object[] parameters = context.request().parameters().values().toArray();
-            return (Outcome) method.invoke( controller, parameters );
+            return method.invoke( controller, parameters );
         }
         catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex )
         {
@@ -294,6 +301,7 @@ public class Global
      *
      * @return Outcome to send back to the client
      */
+    // TODO Rename to onRequestError
     public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
     {
         // Log error

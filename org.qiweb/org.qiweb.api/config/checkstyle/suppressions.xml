@@ -29,6 +29,7 @@
     <!-- Java 8 Lambda Expressions not supported by Checkstyle -->
     <suppress checks=".*" files="Classes.java"/>
     <suppress checks=".*" files="Stacktraces.java"/>
+    <suppress checks=".*" files="Cached.java"/>
 
     <!-- Java 8 Defender Methods not supported by Checkstyle -->
     <suppress checks=".*" files="Plugin.java"/>

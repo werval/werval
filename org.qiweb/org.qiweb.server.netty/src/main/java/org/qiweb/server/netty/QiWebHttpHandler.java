@@ -32,6 +32,7 @@ import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import org.qiweb.api.exceptions.RuntimeIOException;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
@@ -63,10 +64,10 @@ import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
  * types, it's the application responsibility to do the parsing.
  */
 // TODO WebSocket UPGRADE
-public final class HttpRequestRouterHandler
+public final class QiWebHttpHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
 {
-    private static final Logger LOG = LoggerFactory.getLogger( HttpRequestRouterHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( QiWebHttpHandler.class );
 
     private final class HttpRequestCompleteChannelFutureListener
         implements ChannelFutureListener
@@ -96,7 +97,7 @@ public final class HttpRequestRouterHandler
     private String requestIdentity;
     private RequestHeader requestHeader;
 
-    public HttpRequestRouterHandler( ApplicationSPI app, DevShellSPI devSpi )
+    public QiWebHttpHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.app = app;
@@ -119,12 +120,12 @@ public final class HttpRequestRouterHandler
         // Return 503 to incoming requests while shutting down
         if( nettyContext.executor().isShuttingDown() )
         {
-            writeOutcome(
-                nettyContext,
-                app.shuttingDownOutcome(
-                    ProtocolVersion.valueOf( nettyRequest.getProtocolVersion().text() ),
-                    requestIdentity
-                )
+            app.shuttingDownOutcome(
+                ProtocolVersion.valueOf( nettyRequest.getProtocolVersion().text() ),
+                requestIdentity
+            ).thenAcceptAsync(
+                shuttingDownOutcome -> writeOutcome( nettyContext, shuttingDownOutcome ),
+                app.executor()
             );
             return;
         }
@@ -147,13 +148,16 @@ public final class HttpRequestRouterHandler
         requestHeader = request;
 
         // Handle Request
-        Outcome outcome = app.handleRequest( request );
-
-        // Write Outcome
-        ChannelFuture writeFuture = writeOutcome( nettyContext, outcome );
-
-        // Listen to request completion
-        writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
+        app.handleRequest( request ).thenAcceptAsync(
+            outcome ->
+            {
+                // Write Outcome
+                ChannelFuture writeFuture = writeOutcome( nettyContext, outcome );
+                // Listen to request completion
+                writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
+            },
+            app.executor()
+        );
     }
 
     @Override
@@ -170,8 +174,7 @@ public final class HttpRequestRouterHandler
         }
         else if( requestHeader != null )
         {
-            Outcome errorOutcome = app.handleError( requestHeader, cause );
-            writeOutcome( nettyContext, errorOutcome );
+            writeOutcome( nettyContext, app.handleError( requestHeader, cause ) );
         }
         else
         {
@@ -184,7 +187,6 @@ public final class HttpRequestRouterHandler
     }
 
     private ChannelFuture writeOutcome( ChannelHandlerContext nettyContext, Outcome outcome )
-        throws IOException
     {
         // == Build the Netty Response
         ResponseHeader responseHeader = outcome.responseHeader();
@@ -220,10 +222,17 @@ public final class HttpRequestRouterHandler
             applyResponseHeader( responseHeader, nettyResponse );
             nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
             // Body
-            ( (ByteBufHolder) nettyResponse ).content().writeBytes(
-                streamOutcome.bodyInputStream(),
-                new BigDecimal( streamOutcome.contentLength() ).intValueExact()
-            );
+            try
+            {
+                ( (ByteBufHolder) nettyResponse ).content().writeBytes(
+                    streamOutcome.bodyInputStream(),
+                    new BigDecimal( streamOutcome.contentLength() ).intValueExact()
+                );
+            }
+            catch( IOException ex )
+            {
+                throw new RuntimeIOException( ex );
+            }
             writeFuture = nettyContext.writeAndFlush( nettyResponse );
         }
         else if( outcome instanceof SimpleOutcome )

@@ -76,13 +76,13 @@ public abstract class CacheTest
 
         // Request
         assertThat(
-            application().handleRequest( request ).responseHeader().status().code(),
+            application().handleRequest( request ).join().responseHeader().status().code(),
             is( 200 )
         );
         assertThat( Controller.hits, is( 1 ) );
 
         // Assert Server-Side Cache
-        Outcome outcome = application().handleRequest( request );
+        Outcome outcome = application().handleRequest( request ).join();
         assertThat(
             outcome.responseHeader().status().code(),
             is( 200 )
@@ -94,7 +94,7 @@ public abstract class CacheTest
             singletonMap( IF_NONE_MATCH, singletonList( outcome.responseHeader().headers().singleValue( ETAG ) ) )
         ).build();
         assertThat(
-            application().handleRequest( request ).responseHeader().status().code(),
+            application().handleRequest( request ).join().responseHeader().status().code(),
             is( 304 )
         );
         assertThat( Controller.hits, is( 1 ) );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
 import java.util.Map;
+import java.util.concurrent.CompletionException;
 import org.junit.Test;
 import org.qiweb.api.Application;
 import org.qiweb.api.exceptions.IllegalRouteException;
@@ -118,11 +119,19 @@ public class ParamForcedValueParsingTest
 
     @Test( expected = IllegalRouteException.class )
     public void quoteInQuotedForcedValue()
+        throws Throwable
     {
         Application application = new ApplicationInstance( new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.another( String path = ''', Integer num = '42' )"
         ) );
-        application.activate();
+        try
+        {
+            application.activate();
+        }
+        catch( CompletionException ex )
+        {
+            throw ex.getCause();
+        }
     }
 
     @Test

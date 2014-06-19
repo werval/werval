@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.persistence.EntityManager;
@@ -54,7 +55,10 @@ public final class JPA
 {
     // WARN Not fully functionnal
     @FilterWith( TransactionalFilter.class )
-    @Target( { ElementType.METHOD, ElementType.TYPE } )
+    @Target(
+         {
+            ElementType.METHOD, ElementType.TYPE
+        } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     @Documented
@@ -70,10 +74,10 @@ public final class JPA
         implements Filter<Transactional>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context, Optional<Transactional> config )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Transactional> config )
         {
             JPA jpa = context.application().plugin( JPA.class );
-            Function<EntityManager, Outcome> action = (em) -> chain.next( context );
+            Function<EntityManager, CompletableFuture<Outcome>> action = (em) -> chain.next( context );
             if( config.isPresent() )
             {
                 String persistenceUnit = config.get().persistenceUnit();

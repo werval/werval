@@ -20,8 +20,6 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.EventExecutorGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +27,7 @@ import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.qiweb.runtime.util.NamedThreadFactory;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.server.HttpServerAdapter;
@@ -39,7 +38,6 @@ import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_EXECUTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
@@ -53,10 +51,9 @@ public class NettyServer
     extends HttpServerAdapter
 {
     private static final Logger LOG = LoggerFactory.getLogger( NettyServer.class );
-    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors();
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
-    private EventExecutorGroup httpExecutors;
 
     @Reflectively.Invoked( by = "DevShell" )
     public NettyServer()
@@ -92,39 +89,12 @@ public class NettyServer
                         ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group(
-            new NioEventLoopGroup( devSpi == null ? acceptors : 1, new ThreadFactories.Acceptors() ),
-            new NioEventLoopGroup( devSpi == null ? iothreads : 1, new ThreadFactories.IO() )
+            new NioEventLoopGroup( devSpi == null ? acceptors : 1, new NamedThreadFactory( "qiweb-acceptor" ) ),
+            new NioEventLoopGroup( devSpi == null ? iothreads : 1, new NamedThreadFactory( "qiweb-io" ) )
         );
-
-        // Eventual Controller Executors Pool
-        if( devSpi != null )
-        {
-            // Development mode, single controller executor thread
-            httpExecutors = new DefaultEventExecutorGroup( 1, new ThreadFactories.HttpExecutors() );
-        }
-        else if( app.config().has( QIWEB_HTTP_EXECUTORS ) )
-        {
-            int executors = app.config().intNumber( QIWEB_HTTP_EXECUTORS );
-            if( executors <= 0 )
-            {
-                // Config set to 0, no controller executors
-                httpExecutors = null;
-            }
-            else
-            {
-                // Configured controller executors count
-                httpExecutors = new DefaultEventExecutorGroup( executors, new ThreadFactories.HttpExecutors() );
-            }
-        }
-        else
-        {
-            // No configuration, no controller executors
-            httpExecutors = null;
-        }
-
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
-        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, httpExecutors, app, devSpi ) );
+        bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, app, devSpi ) );
 
         // See http://www.unixguide.net/network/socketfaq/2.16.shtml
         bootstrap.option( TCP_NODELAY, true );
@@ -190,25 +160,6 @@ public class NettyServer
                 passivationErrors.add(
                     new QiWebException( "Error while shutting down Accept Threads: " + ex.getMessage(), ex )
                 );
-            }
-
-            if( httpExecutors != null )
-            {
-                // Shutdown HTTP Executors
-                try
-                {
-                    httpExecutors.shutdownGracefully(
-                        shutdownQuietPeriod,
-                        shutdownTimeout,
-                        TimeUnit.MILLISECONDS
-                    ).syncUninterruptibly();
-                }
-                catch( Exception ex )
-                {
-                    passivationErrors.add(
-                        new QiWebException( "Error while shutting down HTTP Executors: " + ex.getMessage(), ex )
-                    );
-                }
             }
 
             // Force close all channels

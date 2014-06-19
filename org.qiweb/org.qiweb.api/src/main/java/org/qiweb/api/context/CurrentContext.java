@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.context;
 
+import java.util.Optional;
 import org.qiweb.api.Application;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.QiWebException;
@@ -48,6 +49,16 @@ public final class CurrentContext
             throw new QiWebException( "No Context in this Thread (" + Thread.currentThread().getName() + ")" );
         }
         return context;
+    }
+
+    /**
+     * @return Optional Current Request Context
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Optional<Context> optional()
+    {
+        return Optional.ofNullable( CONTEXT_THREAD_LOCAL.get() );
     }
 
     /**

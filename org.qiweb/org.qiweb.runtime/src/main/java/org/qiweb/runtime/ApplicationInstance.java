@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
@@ -76,6 +78,8 @@ import org.qiweb.spi.http.HttpBuildersSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
@@ -128,7 +132,7 @@ public final class ApplicationInstance
     }
 
     private volatile boolean activated = false;
-    private boolean activatingOrPassivating = false;
+    private volatile boolean activatingOrPassivating = false;
     private final Mode mode;
     private Config config;
     private PluginsInstance plugins;
@@ -144,6 +148,7 @@ public final class ApplicationInstance
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
     private HttpBuildersSPI httpBuilders;
+    private ApplicationExecutors executors;
     private final MetaData metaData;
     private final Errors errors;
     private final DevShellSPI devSpi;
@@ -265,26 +270,49 @@ public final class ApplicationInstance
 
         try
         {
+            // Executors
+            executors = new ApplicationExecutors( mode, config );
+            executors.activate();
+            ExecutorService defaultExecutor = executors.defaultExecutor();
+
+            // Global
+            String globalClassName = config.string( APP_GLOBAL );
+            this.global = supplyAsync(
+                () ->
+                {
+                    try
+                    {
+                        return (Global) classLoader.loadClass( globalClassName ).newInstance();
+                    }
+                    catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
+                    {
+                        throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
+                    }
+                },
+                defaultExecutor
+            ).join();
+
             // Application Routes
             List<Route> resolvedRoutes = new ArrayList<>();
-            resolvedRoutes.addAll( routesProvider.routes( this ) );
+            resolvedRoutes.addAll( supplyAsync( () -> routesProvider.routes( this ), defaultExecutor ).join() );
 
+            // Application Global
             // Activate Plugins
             plugins = new PluginsInstance(
                 config,
-                global.extraPlugins(),
+                supplyAsync( () -> global.extraPlugins(), defaultExecutor ).join(),
                 devSpi != null
             );
-            plugins.onActivate( this );
+            runAsync( () -> plugins.onActivate( this, global ), defaultExecutor ).join();
 
             // Plugin contributed Routes
-            resolvedRoutes.addAll( 0, plugins.firstRoutes( this ) );
-            resolvedRoutes.addAll( plugins.lastRoutes( this ) );
+            resolvedRoutes.addAll( 0, supplyAsync( () -> plugins.firstRoutes( this ), defaultExecutor ).join() );
+            resolvedRoutes.addAll( supplyAsync( () -> plugins.lastRoutes( this ), defaultExecutor ).join() );
             routes = new RoutesInstance( resolvedRoutes );
 
             // Activated
             activated = true;
-            global.onActivate( this );
+            runAsync( () -> global.onActivate( this ), defaultExecutor ).join();
         }
         finally
         {
@@ -325,7 +353,7 @@ public final class ApplicationInstance
             List<Exception> passivationErrors = new ArrayList<>();
             try
             {
-                global.onPassivate( this );
+                runAsync( () -> global.onPassivate( this ), executors.defaultExecutor() ).join();
             }
             catch( Exception ex )
             {
@@ -335,12 +363,22 @@ public final class ApplicationInstance
             }
             try
             {
-                plugins.onPassivate( this );
+                runAsync( () -> plugins.onPassivate( this ), executors.defaultExecutor() ).join();
             }
             catch( Exception ex )
             {
                 passivationErrors.add(
                     new PassivationException( "Exception(s) on Plugins::onPassivate(): " + ex.getMessage(), ex )
+                );
+            }
+            try
+            {
+                executors.passivate();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new PassivationException( "Exception(s) on Executors::onPassivate(): " + ex.getMessage(), ex )
                 );
             }
             if( !passivationErrors.isEmpty() )
@@ -486,6 +524,7 @@ public final class ApplicationInstance
     @Override
     public Global global()
     {
+        ensureActive();
         return global;
     }
 
@@ -510,77 +549,95 @@ public final class ApplicationInstance
         return httpBuilders;
     }
 
+    @Override
+    public ExecutorService executor()
+    {
+        ensureActive();
+        return executors.defaultExecutor();
+    }
+
     // SPI
     @Override
-    public Outcome handleRequest( Request request )
+    public CompletableFuture<Outcome> handleRequest( Request request )
     {
-        // Prepare Controller Context
-        ThreadContextHelper contextHelper = new ThreadContextHelper();
-        try
-        {
-            // Validates incoming request
-            validatesRequestHeader( request );
-            validatesRequestBody( request );
-
-            // Route the request
-            final Route route = routes().route( request );
-            LOG.debug( "{} Routing request to: {}", request.identity(), route );
-
-            // Bind parameters
-            request.bind( parameterBinders(), route );
-
-            // Parse Session Cookie
-            Session session = new SessionInstance(
-                config,
-                crypto(),
-                request.cookies().get( config.string( APP_SESSION_COOKIE_NAME ) )
-            );
-
-            // Prepare Response Header
-            ResponseHeaderInstance responseHeader = new ResponseHeaderInstance( request.version() );
-
-            // Set Controller Context
-            Context context = new ContextInstance( this, session, route, request, responseHeader );
-            contextHelper.setOnCurrentThread( context );
-
-            // Invoke Controller FilterChain, ended by Controller Method Invokation
-            LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
-            Outcome outcome = new FilterChainFactory().buildFilterChain( this, global(), context ).next( context );
-
-            // Apply Session to ResponseHeader
-            if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+        return supplyAsync(
+            () ->
             {
-                outcome.responseHeader().cookies().set( session.signedCookie() );
-            }
+                // Prepare Controller Context
+                ThreadContextHelper contextHelper = new ThreadContextHelper();
+                try
+                {
+                    // Validates incoming request
+                    validatesRequestHeader( request );
+                    validatesRequestBody( request );
 
-            // Add Set-Cookie headers
-            for( Cookie cookie : outcome.responseHeader().cookies() )
-            {
-                HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
-                jCookie.setVersion( cookie.version() );
-                jCookie.setPath( cookie.path() );
-                jCookie.setDomain( cookie.domain() );
-                jCookie.setMaxAge( cookie.maxAge() );
-                jCookie.setSecure( cookie.secure() );
-                jCookie.setHttpOnly( cookie.httpOnly() );
-                jCookie.setComment( cookie.comment() );
-                jCookie.setCommentURL( cookie.commentUrl() );
-                outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
-            }
+                    // Route the request
+                    final Route route = routes().route( request );
+                    LOG.debug( "{} Routing request to: {}", request.identity(), route );
 
-            // Finalize!
-            return finalizeOutcome( request, outcome );
-        }
-        catch( Throwable cause )
-        {
-            // Handle error
-            return handleError( request, cause );
-        }
-        finally
-        {
-            // Clean up Controller Context
-            contextHelper.clearCurrentThread();
-        }
+                    // Bind parameters
+                    request.bind( parameterBinders(), route );
+
+                    // Parse Session Cookie
+                    Session session = new SessionInstance(
+                        config,
+                        crypto(),
+                        request.cookies().get( config.string( APP_SESSION_COOKIE_NAME ) )
+                    );
+
+                    // Prepare Response Header
+                    ResponseHeaderInstance responseHeader = new ResponseHeaderInstance( request.version() );
+
+                    // Set Controller Context
+                    Context context = new ContextInstance(
+                        this,
+                        session, route, request,
+                        responseHeader,
+                        executors.defaultExecutor()
+                    );
+                    contextHelper.setOnCurrentThread( context );
+
+                    // Invoke Controller FilterChain, ended by Controller Method Invokation
+                    LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
+                    Outcome outcome = new FilterChainFactory().buildFilterChain( this, global, context ).next( context ).join();
+
+                    // Apply Session to ResponseHeader
+                    if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+                    {
+                        outcome.responseHeader().cookies().set( session.signedCookie() );
+                    }
+
+                    // Add Set-Cookie headers
+                    for( Cookie cookie : outcome.responseHeader().cookies() )
+                    {
+                        HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
+                        jCookie.setVersion( cookie.version() );
+                        jCookie.setPath( cookie.path() );
+                        jCookie.setDomain( cookie.domain() );
+                        jCookie.setMaxAge( cookie.maxAge() );
+                        jCookie.setSecure( cookie.secure() );
+                        jCookie.setHttpOnly( cookie.httpOnly() );
+                        jCookie.setComment( cookie.comment() );
+                        jCookie.setCommentURL( cookie.commentUrl() );
+                        outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
+                    }
+
+                    // Finalize!
+                    return finalizeOutcome( request, outcome );
+                }
+                catch( Throwable cause )
+                {
+                    // Handle error
+                    return handleError( request, cause );
+                }
+                finally
+                {
+                    // Clean up Controller Context
+                    contextHelper.clearCurrentThread();
+                }
+            },
+            executors.defaultExecutor()
+        );
     }
 
     private void validatesRequestHeader( RequestHeader requestHeader )
@@ -648,10 +705,17 @@ public final class ApplicationInstance
     public Outcome handleError( RequestHeader request, Throwable cause )
     {
         // Clean-up stacktrace
-        Throwable rootCause;
+        Throwable rootCauseRef;
         try
         {
-            rootCause = global.getRootCause( cause );
+            if( executors.inDefaultExecutor() )
+            {
+                rootCauseRef = global.getRootCause( cause );
+            }
+            else
+            {
+                rootCauseRef = supplyAsync( () -> global.getRootCause( cause ), executors.defaultExecutor() ).join();
+            }
         }
         catch( Exception ex )
         {
@@ -661,8 +725,9 @@ public final class ApplicationInstance
                 ex.getMessage(), ex
             );
             cause.addSuppressed( ex );
-            rootCause = cause;
+            rootCauseRef = cause;
         }
+        final Throwable rootCause = rootCauseRef;
 
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
@@ -692,7 +757,7 @@ public final class ApplicationInstance
                 request,
                 outcomes.notFound().
                 withBody( errorHtml( "404 Route Not Found", details ) ).
-                as( TEXT_HTML ).
+                asHtml().
                 build()
             );
         }
@@ -703,7 +768,7 @@ public final class ApplicationInstance
                 request,
                 outcomes.badRequest().
                 withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                as( TEXT_HTML ).
+                asHtml().
                 build()
             );
         }
@@ -714,7 +779,7 @@ public final class ApplicationInstance
                 request,
                 outcomes.badRequest().
                 withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                as( TEXT_HTML ).
+                asHtml().
                 build()
             );
         }
@@ -724,7 +789,17 @@ public final class ApplicationInstance
         try
         {
             // Delegates Outcome generation to Global object
-            outcome = global.onApplicationError( this, outcomes, rootCause );
+            if( executors.inDefaultExecutor() )
+            {
+                outcome = global.onApplicationError( this, outcomes, rootCause );
+            }
+            else
+            {
+                outcome = supplyAsync(
+                    () -> global.onApplicationError( this, outcomes, rootCause ),
+                    executors.defaultExecutor()
+                ).join();
+            }
         }
         catch( Exception ex )
         {
@@ -790,42 +865,50 @@ public final class ApplicationInstance
     @Override
     public void onHttpRequestComplete( RequestHeader requestHeader )
     {
-        try
-        {
-            global.onHttpRequestComplete( this, requestHeader );
-        }
-        catch( Exception ex )
-        {
-            LOG.error( "An error occured in Global::onHttpRequestComplete(): {}", ex.getMessage(), ex );
-        }
+        runAsync(
+            () -> global.onHttpRequestComplete( this, requestHeader ),
+            executors.defaultExecutor()
+        ).exceptionally(
+            ex ->
+            {
+                LOG.error( "An error occured in Global::onHttpRequestComplete(): {}", ex.getMessage(), ex );
+                return null;
+            }
+        );
     }
 
     // SPI
     @Override
-    public Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
+    public CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
     {
-        // Outcomes
-        Outcomes outcomes = new OutcomesInstance(
-            config,
-            mimeTypes,
-            new ResponseHeaderInstance( version )
+        return supplyAsync(
+            () ->
+            {
+                // Outcomes
+                Outcomes outcomes = new OutcomesInstance(
+                    config,
+                    mimeTypes,
+                    new ResponseHeaderInstance( version )
+                );
+
+                // Return 503 to incoming requests while shutting down
+                OutcomeBuilder builder = outcomes.serviceUnavailable().
+                withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
+                as( TEXT_HTML ).
+                withHeader( CONNECTION, CLOSE ).
+                withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
+
+                // By default, no Retry-After, only if defined in configuration
+                if( config.has( QIWEB_SHUTDOWN_RETRYAFTER ) )
+                {
+                    builder.withHeader( RETRY_AFTER, String.valueOf( config.seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
+                }
+
+                // Build!
+                return builder.build();
+            },
+            executors.defaultExecutor()
         );
-
-        // Return 503 to incoming requests while shutting down
-        OutcomeBuilder builder = outcomes.serviceUnavailable().
-            withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
-            as( TEXT_HTML ).
-            withHeader( CONNECTION, CLOSE ).
-            withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
-
-        // By default, no Retry-After, only if defined in configuration
-        if( config.has( QIWEB_SHUTDOWN_RETRYAFTER ) )
-        {
-            builder.withHeader( RETRY_AFTER, String.valueOf( config.seconds( QIWEB_SHUTDOWN_RETRYAFTER ) ) );
-        }
-
-        // Build!
-        return builder.build();
     }
 
     private void ensureActive()
@@ -838,7 +921,6 @@ public final class ApplicationInstance
 
     private void configure()
     {
-        configureGlobal();
         configureDefaultCharset();
         configureCrypto();
         configureLangs();
@@ -846,19 +928,6 @@ public final class ApplicationInstance
         configureParameterBinders();
         configureMimeTypes();
         configureHttpBuilders();
-    }
-
-    private void configureGlobal()
-    {
-        String globalClassName = config.string( APP_GLOBAL );
-        try
-        {
-            this.global = (Global) classLoader.loadClass( globalClassName ).newInstance();
-        }
-        catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
-        {
-            throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
-        }
     }
 
     private void configureDefaultCharset()
