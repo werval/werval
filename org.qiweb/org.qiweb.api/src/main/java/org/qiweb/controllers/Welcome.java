@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.controllers;
 
 import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
@@ -43,8 +43,8 @@ public class Welcome
     public Outcome welcome()
     {
         String path = application().mode() == Mode.DEV
-                      ? "org/qiweb/api/controllers/welcome_dev.html"
-                      : "org/qiweb/api/controllers/welcome.html";
+                      ? "org/qiweb/controllers/welcome_dev.html"
+                      : "org/qiweb/controllers/welcome.html";
         return outcomes()
             .ok()
             .as( mimeTypes().withCharsetOfTextual( TEXT_HTML ) )

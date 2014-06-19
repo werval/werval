@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.controllers;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -26,9 +26,9 @@ public class DefaultTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /notFound org.qiweb.api.controllers.Default.notFound\n"
-        + "GET /internalServerError org.qiweb.api.controllers.Default.internalServerError\n"
-        + "GET /notImplemented org.qiweb.api.controllers.Default.notImplemented" ) );
+        "GET /notFound org.qiweb.controllers.Default.notFound\n"
+        + "GET /internalServerError org.qiweb.controllers.Default.internalServerError\n"
+        + "GET /notImplemented org.qiweb.controllers.Default.notImplemented" ) );
 
     @Test
     public void givenNotFoundRouteWhenRequestingExpectNotFound()

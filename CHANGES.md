@@ -28,6 +28,7 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Breaking changes
 
 - Gradle Plugin development mode build logic revamped, see #125
+- Moved all standard controllers from `org.qiweb.api.controllers` to `org.qiweb.controllers`, see #160
 - Renamed `StaticFiles` to `Static`, see #124
 - Renamed `ClasspathResources` to `Classpath`, see #123
 - Renamed `Global::onApplicationError ` to `Global.onRequestError`, see #159

@@ -18,14 +18,14 @@ Open `./src/main/java/controllers/Application.java` and make changes that won't 
 ----
 package controllers;
 
-import org.qiweb.api.controllers.*;
+import org.qiweb.controllers.*;
 
 public class Application {
 
     public Outcome index()
     {
         THIS WON'T COMPILE
-        return new org.qiweb.api.controllers.Welcome().welcome();
+        return new org.qiweb.controllers.Welcome().welcome();
     }
 
 }
@@ -43,7 +43,7 @@ Now, let's remove the compilation error but throw an exception:
 ----
 package controllers;
 
-import org.qiweb.api.controllers.*;
+import org.qiweb.controllers.*;
 
 public class Application {
 
@@ -55,7 +55,7 @@ public class Application {
             Exception crash = new RuntimeException( "Wow, it crashed!" );
             throw new java.io.IOException( "And this would be an explicit error message.", crash );
         }
-        return new org.qiweb.api.controllers.Welcome().welcome();
+        return new org.qiweb.controllers.Welcome().welcome();
     }
 
 }

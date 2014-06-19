@@ -20,8 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
-import org.qiweb.api.controllers.Classpath;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.controllers.Classpath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

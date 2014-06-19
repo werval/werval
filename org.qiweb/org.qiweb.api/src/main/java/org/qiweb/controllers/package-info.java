@@ -16,4 +16,4 @@
 /**
  * QiWeb Standard Controllers.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.controllers;

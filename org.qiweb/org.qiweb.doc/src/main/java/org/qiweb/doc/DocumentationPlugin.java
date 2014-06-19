@@ -38,8 +38,8 @@ public class DocumentationPlugin
     public List<Route> firstRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return routeBuilder.parse().routes(
-            "GET /@config org.qiweb.api.controllers.Introspect.config",
-            "GET /@version org.qiweb.api.controllers.Introspect.version",
+            "GET /@config org.qiweb.controllers.Introspect.config",
+            "GET /@version org.qiweb.controllers.Introspect.version",
             "GET /@doc org.qiweb.doc.CoreDocumentations.index",
             "GET /@doc/modules/index.html org.qiweb.doc.DynamicDocumentations.index",
             "GET /@doc/modules/:id/*path org.qiweb.doc.DynamicDocumentations.resource( String id, String path )",

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.controllers;
 
 import com.jayway.restassured.response.Response;
 import java.io.File;
@@ -36,8 +36,8 @@ public class StaticTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /single org.qiweb.api.controllers.Static.file( String file = 'src/test/resources/logback.xml' )\n"
-        + "GET /tree/*path org.qiweb.api.controllers.Static.tree( String root = 'src/test/resources', String path )"
+        "GET /single org.qiweb.controllers.Static.file( String file = 'src/test/resources/logback.xml' )\n"
+        + "GET /tree/*path org.qiweb.controllers.Static.tree( String root = 'src/test/resources', String path )"
     ) );
 
     private static final File ROOT = new File( "src/test/resources" );

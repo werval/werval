@@ -15,9 +15,9 @@
  */
 package org.qiweb.doc;
 
-import org.qiweb.api.controllers.Classpath;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.routes.ReverseRoute;
+import org.qiweb.controllers.Classpath;
 
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;

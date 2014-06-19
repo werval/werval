@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.controllers;
 
 import com.jayway.restassured.response.Response;
 import java.io.File;
@@ -34,7 +34,7 @@ public class ClasspathTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /*path org.qiweb.api.controllers.Classpath.metainf( String path )" ) );
+        "GET /*path org.qiweb.controllers.Classpath.metainf( String path )" ) );
 
     @Test
     public void givenNonExistentResourceWhenRequestingExpectNotFound()

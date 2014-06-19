@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.controllers;
+package org.qiweb.controllers;
 
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -37,8 +37,8 @@ public class IntrospectTest
 {
     @ClassRule
     public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET /@config org.qiweb.api.controllers.Introspect.config\n"
-        + "GET /@version org.qiweb.api.controllers.Introspect.version\n"
+        "GET /@config org.qiweb.controllers.Introspect.config\n"
+        + "GET /@version org.qiweb.controllers.Introspect.version\n"
     ) );
 
     @Test
