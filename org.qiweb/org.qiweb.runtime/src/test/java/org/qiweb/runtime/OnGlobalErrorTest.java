@@ -538,21 +538,21 @@ public class OnGlobalErrorTest
         }
     }
 
-    public static class OnApplicationError
+    public static class OnRequestError
         extends Global
     {
         @Override
-        public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
+        public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
         {
-            throw new RuntimeException( "onApplicationError" );
+            throw new RuntimeException( "onRequestError" );
         }
     }
 
     @Test
-    public void onApplicationError()
+    public void onRequestError()
     {
         QiWebHttpTest qiweb = new QiWebHttpTest(
-            "global-errors-test_onApplicationError.conf",
+            "global-errors-test_onRequestError.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.error" )
         );
         try
@@ -566,7 +566,7 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
-                Stacktraces.containsMessage( "onApplicationError" ).test( qiweb.application().errors().last().cause() ),
+                Stacktraces.containsMessage( "onRequestError" ).test( qiweb.application().errors().last().cause() ),
                 is( true )
             );
         }

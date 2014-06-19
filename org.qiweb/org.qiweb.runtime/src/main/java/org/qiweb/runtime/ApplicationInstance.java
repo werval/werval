@@ -88,7 +88,6 @@ import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.api.util.Strings.NEWLINE;
 import static org.qiweb.api.util.Strings.indentTwoSpaces;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
@@ -560,6 +559,7 @@ public final class ApplicationInstance
     @Override
     public CompletableFuture<Outcome> handleRequest( Request request )
     {
+        ensureActive();
         return supplyAsync(
             () ->
             {
@@ -791,12 +791,12 @@ public final class ApplicationInstance
             // Delegates Outcome generation to Global object
             if( executors.inDefaultExecutor() )
             {
-                outcome = global.onApplicationError( this, outcomes, rootCause );
+                outcome = global.onRequestError( this, outcomes, rootCause );
             }
             else
             {
                 outcome = supplyAsync(
-                    () -> global.onApplicationError( this, outcomes, rootCause ),
+                    () -> global.onRequestError( this, outcomes, rootCause ),
                     executors.defaultExecutor()
                 ).join();
             }
@@ -805,7 +805,17 @@ public final class ApplicationInstance
         {
             // Add as suppressed and replay Global default behaviour. This serve as a fault barrier
             rootCause.addSuppressed( ex );
-            outcome = new Global().onApplicationError( this, outcomes, rootCause );
+            if( executors.inDefaultExecutor() )
+            {
+                outcome = new Global().onRequestError( this, outcomes, rootCause );
+            }
+            else
+            {
+                outcome = supplyAsync(
+                    () -> new Global().onRequestError( this, outcomes, rootCause ),
+                    executors.defaultExecutor()
+                ).join();
+            }
         }
 
         // Record error
@@ -894,7 +904,7 @@ public final class ApplicationInstance
                 // Return 503 to incoming requests while shutting down
                 OutcomeBuilder builder = outcomes.serviceUnavailable().
                 withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
-                as( TEXT_HTML ).
+                asHtml().
                 withHeader( CONNECTION, CLOSE ).
                 withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
 

@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_LIST;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 /**
  * Application Global Object.
@@ -216,8 +215,8 @@ public class Global
      * <p>
      * Acceptable return types are:
      * <ul>
-     *     <li>{@literal Outcome},</li>
-     *     <li>{@literal CompletableFuture}&lt;{@literal Outcome}&gt;.</li>
+     * <li>{@literal Outcome},</li>
+     * <li>{@literal CompletableFuture}&lt;{@literal Outcome}&gt;.</li>
      * </ul>
      * That is, the return types allowed on interaction methods.
      *
@@ -282,7 +281,7 @@ public class Global
     }
 
     /**
-     * Invoked when an exception pops out of the Application.
+     * Invoked when an exception pops out of the Application while processing a request.
      *
      * Happens right before {@link Error} recording.
      * <p>
@@ -301,8 +300,7 @@ public class Global
      *
      * @return Outcome to send back to the client
      */
-    // TODO Rename to onRequestError
-    public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
+    public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
     {
         // Log error
         LOG.error( cause.getMessage(), cause );
@@ -318,7 +316,7 @@ public class Global
         html.append( "</body>\n</html>\n" );
         return outcomes.internalServerError().
             withBody( html.toString() ).
-            as( TEXT_HTML ).
+            asHtml().
             build();
     }
 }
