@@ -143,21 +143,33 @@ apply plugin: 'checkstyle'
 checkstyle {
     configFile = rootProject.file( '../config/checkstyle/qiweb-checks.xml' )
     configProperties = [
+        // Global suppressions, applied to every modules
         suppressionsCommon: rootProject.file( '../config/checkstyle/qiweb-suppressions.xml' ).absolutePath,
+        // Project suppressions, applied to this module only
         suppressionsCustom: project.file( 'config/checkstyle/suppressions.xml' ).absolutePath
     ]
+    // Easy skip
     ignoreFailures = System.getProperty( "ignoreCheckstyle" ) != null
+    // Quiet
     showViolations = false
+    // Check main sourceset only
+    // Checkstyle generates a report per sourceset
     sourceSets = [ project.sourceSets.main ]
+    // Fix used checkstyle version
     toolVersion = 5.7
 }
+// Generate checkstyle HTML report
 task checkstyleMainHtmlReport {
+    // Custom XSLT file
     def xsl = rootProject.file( '../config/checkstyle/html-report.xsl' )
+    // Output directory
     def reportDir = project.file( "build/reports/checkstyle" )
+    // Declare input/outputs for nice incremental build
     inputs.file xsl
     inputs.dir reportDir
     outputs.dir reportDir
     doLast {
+        // Apply XSLT on every XML reports found
         reportDir.eachFile {
             if( it.name.endsWith( ".xml" ) ) {
                 def outfile = project.file( 'build/reports/checkstyle/' + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
@@ -166,6 +178,7 @@ task checkstyleMainHtmlReport {
         }
     }
 }
+// Generates default empty project suppressions if absent
 checkstyleMain.doFirst {
     def suppressions = project.file( 'config/checkstyle/suppressions.xml' )
     if( !suppressions.exists() )
@@ -191,7 +204,9 @@ checkstyleMain.doFirst {
         logger.quiet "Checkstyle suppressions skeleton created in $suppressions"
     }
 }
+// Hook the HTML report generation right after the checkstyleMain task
 checkstyleMain.finalizedBy( checkstyleMainHtmlReport )
+
 
 // Tests configuration
 test {
