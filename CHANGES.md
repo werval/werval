@@ -77,7 +77,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Modules
     - Upgrade Spring from `4.0.0` to `4.0.5`
 - Tooling
-    - Upgrade Gradle from `1.11` to `1.12`, see the [release notes](http://www.gradle.org/docs/1.12/release-notes)
+    - Upgrade Gradle from `1.11` to `2.0`, see the [1.12](http://www.gradle.org/docs/1.12/release-notes) and [2.0](http://www.gradle.org/docs/2.0/release-notes) release-notes
 
 
 
