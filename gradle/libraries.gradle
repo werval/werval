@@ -6,7 +6,7 @@ def v_typesafe_config = '1.2.1'
 def v_javassist = '3.18.1-GA'
 
 // HTTP Server libraries versions
-def v_netty = '4.0.20.Final'
+def v_netty = '4.0.21.Final'
 
 // Documentation libraries versions
 def v_sitemesh = '3.0-alpha-2'

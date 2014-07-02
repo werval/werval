@@ -72,7 +72,7 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Dependency changes
 
 - Core
-    - Upgrade Netty from `4.0.18` to `4.0.20`, see the [4.0.19](http://netty.io/news/2014/04/30/release-day.html) and [4.0.20](http://netty.io/news/2014/06/12/4.html) announcements.
+    - Upgrade Netty from `4.0.18` to `4.0.21`, see the [4.0.19](http://netty.io/news/2014/04/30/release-day.html), [4.0.20](http://netty.io/news/2014/06/12/4.html) and [4.0.21](http://netty.io/news/2014/07/01/4.html) announcements.
     - Upgrade Typesafe Config from `1.2.0` to `1.2.1`, see the [history](https://github.com/typesafehub/config)
 - Modules
     - Upgrade Spring from `4.0.0` to `4.0.5`
