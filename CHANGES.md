@@ -45,9 +45,9 @@ For minor changes, build system or test changes, see the full [source code histo
 #### New features
 
 - Application now has Executors (thread pools) and all application code is run in the default one, see #149
-- Liquibase Plugin for managed database migrations, see #122
+- [Liquibase](http://www.liquibase.org/) Plugin for managed database migrations, see #122
 - Proper JSON and [JSON-P](https://en.wikipedia.org/wiki/JSONP) support using [Jackson](http://wiki.fasterxml.com/JacksonHome), see #96
-- Add a Cache implementation backed by Redis, see #112
+- Add a Cache implementation backed by [Redis](http://redis.io/), see #112
 - Maven support on par with Gradle support, see #97
 - Add `start` task/goal to the Gradle and Maven build plugins that start the application in production mode, see #101
 
@@ -72,12 +72,26 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Dependency changes
 
 - Core
-    - Upgrade Netty from `4.0.18` to `4.0.21`, see the [4.0.19](http://netty.io/news/2014/04/30/release-day.html), [4.0.20](http://netty.io/news/2014/06/12/4.html) and [4.0.21](http://netty.io/news/2014/07/01/4.html) announcements.
+    - Upgrade Netty from `4.0.18` to `4.0.23`, see all the announcements:
+      [4.0.19](http://netty.io/news/2014/04/30/release-day.html),
+      [4.0.20](http://netty.io/news/2014/06/12/4.html),
+      [4.0.21](http://netty.io/news/2014/07/01/4.html),
+      [4.0.22](http://netty.io/news/2014/08/14/4-0-22-Final.html),
+      [4.0.23](http://netty.io/news/2014/08/15/4-0-23-Final-and-4-1-0-Beta3.html)
+    - Upgrade Javassist from `3.18.1-GA` to `3.18.2-GA`, see the [history](https://github.com/jboss-javassist/javassist/commits/3.18)
     - Upgrade Typesafe Config from `1.2.0` to `1.2.1`, see the [history](https://github.com/typesafehub/config)
 - Modules
-    - Upgrade Spring from `4.0.0` to `4.0.5`
+    - Upgrade EclipseLink from `2.5.1` to `2.5.2`, see the [release-notes](http://www.eclipse.org/eclipselink/releases/index.php)
+    - Upgrade EhCache from `2.8.2` to `2.8.4`, see the [changes-report](http://www.ehcache.org/changes-report)
+    - Upgrade Commons Email from `1.3.2` to `1.3.3`, see the [changes-report](http://commons.apache.org/proper/commons-email/changes-report.html)
+    - Upgrade spymemcached from `2.11.1` to `2.11.4`, see the [release-notes](https://github.com/couchbase/spymemcached/releases)
+    - Upgrade Rythm Engine from `1.0` to `1.0.1`, see the [history](https://github.com/greenlaw110/Rythm/commits/1.0)
+    - Upgrade Spring from `4.0.3` to `4.1.0`, see the [history](https://github.com/spring-projects/spring-framework)
 - Tooling
-    - Upgrade Gradle from `1.11` to `2.0`, see the [1.12](http://www.gradle.org/docs/1.12/release-notes) and [2.0](http://www.gradle.org/docs/2.0/release-notes) release-notes
+    - Upgrade Gradle from `1.11` to `2.1`, see all the release-notes:
+      [1.12](http://www.gradle.org/docs/1.12/release-notes),
+      [2.0](http://www.gradle.org/docs/2.0/release-notes),
+      [2.1](http://www.gradle.org/docs/2.1/release-notes)
 
 
 
