@@ -36,13 +36,11 @@ class QiWebStartTask extends DefaultTask
         StringBuffer msg = new StringBuffer( "Invoking : " );
         msg.append( mainClass );
         msg.append( ".main(" );
-        for( int i = 0; i < arguments.length; i++ )
-        {
-            if( i > 0 )
-            {
-                msg.append( ", " );
+        arguments.eachWithIndex { arg, idx ->
+            if( idx > 0 ) {
+                msg.append( ", " )
             }
-            msg.append( arguments[i] );
+            msg.append( arg )
         }
         msg.append( ")" );
         project.logger.debug msg.toString()

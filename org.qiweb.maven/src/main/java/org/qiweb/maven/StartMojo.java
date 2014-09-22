@@ -55,13 +55,13 @@ public class StartMojo
             StringBuffer msg = new StringBuffer( "Invoking : " );
             msg.append( mainClass );
             msg.append( ".main(" );
-            for( int i = 0; i < arguments.length; i++ )
+            for( int idx = 0; idx < arguments.length; idx++ )
             {
-                if( i > 0 )
+                if( idx > 0 )
                 {
                     msg.append( ", " );
                 }
-                msg.append( arguments[i] );
+                msg.append( arguments[idx] );
             }
             msg.append( ")" );
             getLog().debug( msg );
