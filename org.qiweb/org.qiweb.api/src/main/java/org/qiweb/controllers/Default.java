@@ -29,6 +29,14 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 public class Default
 {
     /**
+     * @return a 204 NO CONTENT Outcome
+     */
+    public Outcome noContent()
+    {
+        return outcomes().noContent().build();
+    }
+
+    /**
      * @return a 404 NOT FOUND Outcome
      */
     public Outcome notFound()
