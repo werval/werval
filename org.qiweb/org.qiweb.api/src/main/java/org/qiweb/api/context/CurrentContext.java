@@ -17,6 +17,7 @@ package org.qiweb.api.context;
 
 import java.util.Optional;
 import org.qiweb.api.Application;
+import org.qiweb.api.MetaData;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.HttpBuilders;
@@ -59,6 +60,16 @@ public final class CurrentContext
     public static Optional<Context> optional()
     {
         return Optional.ofNullable( CONTEXT_THREAD_LOCAL.get() );
+    }
+
+    /**
+     * @return Current Context MetaData
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static MetaData metaData()
+    {
+        return get().metaData();
     }
 
     /**
