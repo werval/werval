@@ -12,6 +12,7 @@ dependencies {
     
     testCompile project( ":org.qiweb.modules.jdbc" )
     testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
 
     testRuntime libs.h2
 

@@ -17,10 +17,14 @@ package org.qiweb.modules.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
+
+import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
 
 /**
  * JPA 2 Plugin.
@@ -70,5 +74,33 @@ public class JPAPlugin
     public JPA api()
     {
         return jpa;
+    }
+
+    @Override
+    public void beforeInteraction( Context context )
+    {
+        Optional.ofNullable(
+            context.metaData().get( JPAContext.class, METADATA_CONTEXT_KEY )
+        ).ifPresent(
+            jpaContext ->
+            {
+                jpaContext.closeFailFast();
+                context.metaData().remove( METADATA_CONTEXT_KEY );
+            }
+        );
+    }
+
+    @Override
+    public void afterInteraction( Context context )
+    {
+        Optional.ofNullable(
+            context.metaData().get( JPAContext.class, METADATA_CONTEXT_KEY )
+        ).ifPresent(
+            jpaContext ->
+            {
+                jpaContext.closeFailSafe();
+                context.metaData().remove( METADATA_CONTEXT_KEY );
+            }
+        );
     }
 }

@@ -34,6 +34,7 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceUtil;
 import org.qiweb.api.Mode;
 import org.qiweb.api.context.Context;
+import org.qiweb.api.context.CurrentContext;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.api.Mode.TEST;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
 
 /**
  * JPA 2 Plugin API.
@@ -56,7 +58,7 @@ public final class JPA
     // WARN Not fully functionnal
     @FilterWith( TransactionalFilter.class )
     @Target(
-         {
+                {
             ElementType.METHOD, ElementType.TYPE
         } )
     @Retention( RetentionPolicy.RUNTIME )
@@ -84,11 +86,11 @@ public final class JPA
                 boolean readOnly = config.get().readOnly();
                 if( Strings.isEmpty( persistenceUnit ) )
                 {
-                    return jpa.withTransaction( readOnly, action );
+                    return jpa.supplyWithTx( readOnly, action );
                 }
-                return jpa.withTransaction( persistenceUnit, readOnly, action );
+                return jpa.supplyWithTx( persistenceUnit, readOnly, action );
             }
-            return jpa.withTransaction( false, action );
+            return jpa.supplyWithTx( false, action );
         }
     }
 
@@ -112,6 +114,8 @@ public final class JPA
     private final Map<String, Map<String, Object>> unitsProperties;
     private final Map<String, EntityManagerFactory> emfs = new HashMap<>();
     private final String defaultPersistanceUnitName;
+    // Only used out of interaction context
+    private final ThreadLocal<JPAContext> threadLocalContext = ThreadLocal.withInitial( () -> new JPAContext() );
 
     /* package */ JPA(
         Mode mode,
@@ -137,95 +141,142 @@ public final class JPA
         return emf( defaultPersistanceUnitName );
     }
 
-    public EntityManager em()
-    {
-        // We should distinguish newEM() and curentEm(), JPAContext?
-        return emf().createEntityManager();
-    }
-
     public EntityManagerFactory emf( String persistenceUnitName )
     {
-        if( !emfs.containsKey( persistenceUnitName ) )
+        synchronized( emfs )
         {
-            Map<String, Object> props = new HashMap<>();
-            props.putAll( GLOBAL_UNITS_PROPERTIES );
-            if( mode == DEV || mode == TEST )
+            if( !emfs.containsKey( persistenceUnitName ) )
             {
-                props.put( "eclipselink.logging.parameters", "true" );
+                Map<String, Object> props = new HashMap<>();
+                props.putAll( GLOBAL_UNITS_PROPERTIES );
+                if( mode == DEV || mode == TEST )
+                {
+                    props.put( "eclipselink.logging.parameters", "true" );
+                }
+                if( unitsProperties.containsKey( persistenceUnitName ) )
+                {
+                    props.putAll( unitsProperties.get( persistenceUnitName ) );
+                }
+                props.put( "eclipselink.classloader", loader );
+                emfs.put(
+                    persistenceUnitName,
+                    Persistence.createEntityManagerFactory( persistenceUnitName, props )
+                );
             }
-            if( unitsProperties.containsKey( persistenceUnitName ) )
-            {
-                props.putAll( unitsProperties.get( persistenceUnitName ) );
-            }
-            props.put( "eclipselink.classloader", loader );
-            emfs.put(
-                persistenceUnitName,
-                Persistence.createEntityManagerFactory( persistenceUnitName, props )
-            );
+            return emfs.get( persistenceUnitName );
         }
-        return emfs.get( persistenceUnitName );
     }
 
+    /**
+     * @return A new EntityManager, remember to close it
+     */
+    public EntityManager newEntityManager()
+    {
+        return newEntityManager( defaultPersistanceUnitName );
+    }
+
+    /**
+     * @param persistenceUnitName Name of the PersistenceUnit to use
+     *
+     * @return A new EntityManager, remember to close it
+     */
+    public EntityManager newEntityManager( String persistenceUnitName )
+    {
+        EntityManager em = emf( persistenceUnitName ).createEntityManager();
+        LOG.debug( "Created new EntityManager for the '{}' persistence unit", persistenceUnitName );
+        return em;
+    }
+
+    /**
+     * @return Current Context EntityManager if any, creating one if needed, stored in current Context. Otherwise, if
+     *         no current Context, a new EntityManager stored in a ThreadLocal.
+     */
+    public EntityManager em()
+    {
+        return em( defaultPersistanceUnitName );
+    }
+
+    /**
+     * @param persistenceUnitName Name of the PersistenceUnit to use
+     *
+     * @return Current Context EntityManager if any, creating one if needed, stored in current Context. Otherwise, if
+     *         no current Context, a new EntityManager stored in a ThreadLocal.
+     */
     public EntityManager em( String persistenceUnitName )
     {
-        return emf( persistenceUnitName ).createEntityManager();
+        return CurrentContext.optional().map(
+            // In context, using JPAContext from Context's MetaData
+            (ctx) -> ( (JPAContext) ctx.metaData().computeIfAbsent( METADATA_CONTEXT_KEY, key -> new JPAContext() ) )
+            .entityManagers()
+            .computeIfAbsent(
+                persistenceUnitName,
+                puName -> newEntityManager( puName )
+            )
+        ).orElseGet(
+            // Out of context, using ThreadLocal JPAContext
+            () -> threadLocalContext.get().entityManagers().computeIfAbsent(
+                persistenceUnitName,
+                puName -> newEntityManager( puName )
+            )
+        );
     }
 
-    public void withReadOnlyTx( Consumer<EntityManager> block )
+    public void runWithReadOnlyTx( Consumer<EntityManager> block )
     {
-        withTransaction( defaultPersistanceUnitName, true, block );
+        runWithTx( defaultPersistanceUnitName, true, block );
     }
 
-    public <T> T withReadOnlyTx( Function<EntityManager, T> block )
+    public <T> T supplyWithReadOnlyTx( Function<EntityManager, T> block )
     {
-        return withTransaction( defaultPersistanceUnitName, true, block );
+        return supplyWithTx( defaultPersistanceUnitName, true, block );
     }
 
-    public void withReadOnlyTx( String persistenceUnitName, Consumer<EntityManager> block )
+    public void runWithReadOnlyTx( String persistenceUnitName, Consumer<EntityManager> block )
     {
-        withTransaction( persistenceUnitName, true, block );
+        runWithTx( persistenceUnitName, true, block );
     }
 
-    public <T> T withReadOnlyTx( String persistenceUnitName, Function<EntityManager, T> block )
+    public <T> T supplyWithReadOnlyTx( String persistenceUnitName, Function<EntityManager, T> block )
     {
-        return withTransaction( persistenceUnitName, true, block );
+        return supplyWithTx( persistenceUnitName, true, block );
     }
 
-    public void withReadWriteTx( Consumer<EntityManager> block )
+    public void runWithReadWriteTx( Consumer<EntityManager> block )
     {
-        withTransaction( defaultPersistanceUnitName, false, block );
+        runWithTx( defaultPersistanceUnitName, false, block );
     }
 
-    public <T> T withReadWriteTx( Function<EntityManager, T> block )
+    public <T> T supplyWithReadWriteTx( Function<EntityManager, T> block )
     {
-        return withTransaction( defaultPersistanceUnitName, false, block );
+        return supplyWithTx( defaultPersistanceUnitName, false, block );
     }
 
-    public void withReadWriteTx( String persistenceUnitName, Consumer<EntityManager> block )
+    public void runWithReadWriteTx( String persistenceUnitName, Consumer<EntityManager> block )
     {
-        withTransaction( persistenceUnitName, false, block );
+        runWithTx( persistenceUnitName, false, block );
     }
 
-    public <T> T withReadWriteTx( String persistenceUnitName, Function<EntityManager, T> block )
+    public <T> T supplyWithReadWriteTx( String persistenceUnitName, Function<EntityManager, T> block )
     {
-        return withTransaction( persistenceUnitName, false, block );
+        return supplyWithTx( persistenceUnitName, false, block );
     }
 
-    public void withTransaction( boolean readOnly, Consumer<EntityManager> block )
+    public void runWithTx( boolean readOnly, Consumer<EntityManager> block )
     {
-        withTransaction( defaultPersistanceUnitName, readOnly, block );
+        runWithTx( defaultPersistanceUnitName, readOnly, block );
     }
 
-    public <T> T withTransaction( boolean readOnly, Function<EntityManager, T> block )
+    public <T> T supplyWithTx( boolean readOnly, Function<EntityManager, T> block )
     {
-        return withTransaction( defaultPersistanceUnitName, readOnly, block );
+        return supplyWithTx( defaultPersistanceUnitName, readOnly, block );
     }
 
-    public void withTransaction( String persistenceUnitName, boolean readOnly, Consumer<EntityManager> block )
+    public void runWithTx( String persistenceUnitName, boolean readOnly, Consumer<EntityManager> block )
     {
-        withTransaction(
-            persistenceUnitName, readOnly,
-            (EntityManager em) ->
+        supplyWithTx(
+            persistenceUnitName,
+            readOnly,
+            (em) ->
             {
                 block.accept( em );
                 return null;
@@ -233,7 +284,7 @@ public final class JPA
         );
     }
 
-    public <T> T withTransaction( String persistenceUnitName, boolean readOnly, Function<EntityManager, T> block )
+    public <T> T supplyWithTx( String persistenceUnitName, boolean readOnly, Function<EntityManager, T> block )
     {
         EntityManager em = em( persistenceUnitName );
         EntityTransaction tx = null;
@@ -287,10 +338,6 @@ public final class JPA
                 }
             }
             throw ex;
-        }
-        finally
-        {
-            em.close();
         }
     }
 

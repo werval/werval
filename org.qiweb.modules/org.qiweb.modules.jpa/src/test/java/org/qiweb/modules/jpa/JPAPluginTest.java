@@ -20,27 +20,60 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.jdbc.JDBC;
-import org.qiweb.test.QiWebRule;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.test.QiWebHttpRule;
 
-import static org.hamcrest.core.Is.is;
+import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
 /**
  * JPA Plugin Test.
  */
-// TODO Unit test @Transactional
 public class JPAPluginTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+        "GET /directUsage org.qiweb.modules.jpa.Controller.directUsage\n"
+        + "GET /withTransaction org.qiweb.modules.jpa.Controller.withTransaction\n"
+        + "GET /transactional org.qiweb.modules.jpa.Controller.transactional\n"
+        + "GET /multithreadedDirectUsage org.qiweb.modules.jpa.Controller.multithreadedDirectUsage\n"
+        + "GET /multithreadedWithTransaction org.qiweb.modules.jpa.Controller.multithreadedWithTransaction\n"
+        + "GET /multithreadedTransactional org.qiweb.modules.jpa.Controller.multithreadedTransactional"
+    ) );
+
+    @BeforeClass
+    public static void setupDatabaseSchemas()
+        throws SQLException
+    {
+        // Create schema using plain JDBC, you'll want to use something like Liquibase or Flyway in a real application
+        JDBC jdbc = QIWEB.application().plugin( JDBC.class );
+
+        // Default PU
+        String createFooTable = "CREATE TABLE FOOENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
+        try( Connection connection = jdbc.connection();
+             PreparedStatement statement = connection.prepareStatement( createFooTable ) )
+        {
+            statement.execute();
+        }
+
+        // Another PU
+        String createBarTable = "CREATE TABLE BARENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
+        try( Connection connection = jdbc.connection( "another" );
+             PreparedStatement statement = connection.prepareStatement( createBarTable ) )
+        {
+            statement.execute();
+        }
+    }
 
     @Test
-    public void persistenceUnitsSetup()
+    public void multiplePersistenceUnits()
     {
         JPA jpa = QIWEB.application().plugin( JPA.class );
 
@@ -57,21 +90,11 @@ public class JPAPluginTest
     }
 
     @Test
-    public void actualUsage()
-        throws SQLException
+    public void outOfContextDirectUsage()
     {
-        // Create schema using plain JDBC, you'll want to use something like Liquibase or Flyway in a real application
-        JDBC jdbc = QIWEB.application().plugin( JDBC.class );
-        String createTable = "CREATE TABLE FOOENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
-        try( Connection connection = jdbc.connection();
-             PreparedStatement statement = connection.prepareStatement( createTable ) )
-        {
-            statement.execute();
-        }
-
         // Use JPA
         JPA jpa = QIWEB.application().plugin( JPA.class );
-        EntityManager em = jpa.em();
+        EntityManager em = jpa.newEntityManager();
         try
         {
             em.getTransaction().begin();
@@ -93,34 +116,93 @@ public class JPAPluginTest
     }
 
     @Test
-    public void withTransaction()
-        throws SQLException
+    public void outOfContextWithTransaction()
     {
-        // Create schema using plain JDBC, you'll want to use something like Liquibase or Flyway in a real application
-        JDBC jdbc = QIWEB.application().plugin( JDBC.class );
-        String createTable = "CREATE TABLE BARENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
-        try( Connection connection = jdbc.connection( "another" );
-             PreparedStatement statement = connection.prepareStatement( createTable ) )
-        {
-            statement.execute();
-        }
-
         // Use JPA.withTransaction
         JPA jpa = QIWEB.application().plugin( JPA.class );
-        jpa.withReadWriteTx(
-            "another",
-            (EntityManager em) ->
-            {
-                System.out.println( "WILL PERSIST" );
-                BarEntity bar = new BarEntity( "BAR" );
-                em.persist( bar );
-                System.out.println( "HAS PERSISTED: " + bar.getId() );
-            }
-        );
-        int count = jpa.withReadOnlyTx(
-            "another",
-            (EntityManager em) -> em.createQuery( "from BarEntity b" ).getResultList().size()
-        );
-        assertThat( count, is( 1 ) );
+        try
+        {
+            Long id = jpa.supplyWithReadWriteTx(
+                "another",
+                (em) ->
+                {
+                    System.out.println( "WILL PERSIST" );
+                    BarEntity bar = new BarEntity( "BAR" );
+                    em.persist( bar );
+                    em.flush();
+                    System.out.println( "HAS PERSISTED: " + bar.getId() );
+                    return bar.getId();
+                }
+            );
+            String name = jpa.supplyWithReadOnlyTx(
+                "another",
+                (em) -> em.find( BarEntity.class, id ).getName()
+            );
+            assertThat( name, equalTo( "BAR" ) );
+        }
+        finally
+        {
+            jpa.em( "another" ).close();
+        }
+    }
+
+    @Test
+    public void inContextDirectUsage()
+    {
+        expect()
+            .statusCode( 200 )
+            .body( containsString( "FOO" ) )
+            .when()
+            .get( "/directUsage" );
+    }
+
+    @Test
+    public void inContextWithTransaction()
+    {
+        expect()
+            .statusCode( 200 )
+            .body( containsString( "BAR" ) )
+            .when()
+            .get( "/withTransaction" );
+    }
+
+    @Test
+    public void inContextTransactional()
+    {
+        expect()
+            .statusCode( 200 )
+            .body( containsString( "FOO" ) )
+            .when()
+            .get( "/transactional" );
+    }
+
+    @Test
+    public void multithreadedContextDirectUsage()
+    {
+        expect()
+            .statusCode( 200 )
+            .body( containsString( "FOO" ) )
+            .when()
+            .get( "/multithreadedDirectUsage" );
+    }
+
+    @Test
+    public void multithreadedContextWithTransaction()
+    {
+        expect()
+            .statusCode( 200 )
+            .body( containsString( "BAR" ) )
+            .when()
+            .get( "/multithreadedWithTransaction" );
+    }
+
+    @Test
+    public void multithreadedContextTransactional()
+    {
+        expect()
+            .statusCode( 200 )
+            .body( containsString( "FOO" ) )
+            .when()
+            .get( "/multithreadedTransactional" );
     }
 }
