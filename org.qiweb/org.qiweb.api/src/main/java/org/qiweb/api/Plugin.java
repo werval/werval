@@ -16,6 +16,7 @@
 package org.qiweb.api;
 
 import java.util.List;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
@@ -126,6 +127,30 @@ public interface Plugin<API>
      * @param application Application
      */
     default void onPassivate( Application application )
+    {
+        // NOOP
+    }
+
+    /**
+     * Invoked before each HTTP Interaction.
+     *
+     * Defaults to no operation.
+     *
+     * @param context Interaction Context
+     */
+    default void beforeInteraction( Context context )
+    {
+        // NOOP
+    }
+
+    /**
+     * Invoked after each HTTP Interaction.
+     *
+     * Defaults to no operation.
+     *
+     * @param context Interaction Context
+     */
+    default void afterInteraction( Context context )
     {
         // NOOP
     }

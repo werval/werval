@@ -295,7 +295,6 @@ public final class ApplicationInstance
             List<Route> resolvedRoutes = new ArrayList<>();
             resolvedRoutes.addAll( supplyAsync( () -> routesProvider.routes( this ), defaultExecutor ).join() );
 
-            // Application Global
             // Activate Plugins
             plugins = new PluginsInstance(
                 config,
@@ -597,9 +596,15 @@ public final class ApplicationInstance
                     );
                     contextHelper.setOnCurrentThread( context );
 
+                    // Plugins beforeInteraction
+                    plugins.beforeInteraction( context );
+
                     // Invoke Controller FilterChain, ended by Controller Method Invokation
                     LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
                     Outcome outcome = new FilterChainFactory().buildFilterChain( this, global, context ).next( context ).join();
+
+                    // Plugins afterInteraction
+                    plugins.afterInteraction( context );
 
                     // Apply Session to ResponseHeader
                     if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )

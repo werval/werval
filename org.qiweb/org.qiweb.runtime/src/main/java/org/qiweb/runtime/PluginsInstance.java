@@ -26,8 +26,10 @@ import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Global;
 import org.qiweb.api.Plugin;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
@@ -183,6 +185,38 @@ import static java.util.Collections.EMPTY_LIST;
             lastRoutes.addAll( plugin.left().lastRoutes( app.mode(), new RouteBuilderInstance( app, routesPrefix ) ) );
         }
         return lastRoutes;
+    }
+
+    /* package */ void beforeInteraction( Context context )
+    {
+        // Fail fast
+        activePlugins.forEach( cp -> cp.left().beforeInteraction( context ) );
+    }
+
+    /* package */ void afterInteraction( Context context )
+    {
+        // Fail safe
+        List<Exception> errors = new ArrayList<>();
+        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        {
+            try
+            {
+                plugin.left().beforeInteraction( context );
+            }
+            catch( Exception ex )
+            {
+                errors.add( ex );
+            }
+        }
+        if( !errors.isEmpty() )
+        {
+            QiWebException ex = new QiWebException( "There were errors during Plugins hook after interaction" );
+            for( Exception err : errors )
+            {
+                ex.addSuppressed( err );
+            }
+            throw ex;
+        }
     }
 
     /* package */ <T> Iterable<T> plugins( Class<T> pluginApiType )
