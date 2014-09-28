@@ -16,7 +16,6 @@
 package org.qiweb.spi;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.http.ProtocolVersion;
@@ -57,17 +56,6 @@ public interface ApplicationSPI
      */
     @Override
     HttpBuildersSPI httpBuilders();
-
-    /**
-     * Application Executor.
-     *
-     * Convey the current {@literal Context} to parallel threads if any.
-     * <p>
-     * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
-     *
-     * @return Application Executor.
-     */
-    ExecutorService executor();
 
     /**
      * Handle a HTTP Request.

@@ -17,6 +17,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.http.HttpBuilders;
@@ -146,6 +147,17 @@ public interface Application
      * @return Application {@link ClassLoader}
      */
     ClassLoader classLoader();
+
+    /**
+     * Application Executor.
+     *
+     * Convey the current {@literal Context} to parallel threads if any.
+     * <p>
+     * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
+     *
+     * @return Application Executor.
+     */
+    ExecutorService executor();
 
     /**
      * HTTP API Objects Builders SPI.
