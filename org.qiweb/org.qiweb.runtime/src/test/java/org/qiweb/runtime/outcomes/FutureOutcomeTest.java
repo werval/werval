@@ -23,8 +23,8 @@ import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static org.qiweb.api.context.CurrentContext.get;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.executors;
 
 /**
  * Future&lt;Outcome&gt; Test.
@@ -40,10 +40,7 @@ public class FutureOutcomeTest
 
         public CompletableFuture<Outcome> future()
         {
-            return CompletableFuture.supplyAsync(
-                () -> outcomes().ok().build(),
-                get().executor()
-            );
+            return executors().supplyAsync( () -> outcomes().ok().build() );
         }
     }
 

@@ -303,7 +303,7 @@ public class Global
     public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
     {
         // Log error
-        LOG.error( cause.getMessage(), cause );
+        LOG.error( "Request error: {}: {}", cause.getClass(), cause.getMessage(), cause );
 
         // Generate Error Outcome
         StringBuilder html = new StringBuilder();
@@ -318,5 +318,17 @@ public class Global
             withBody( html.toString() ).
             asHtml().
             build();
+    }
+
+    /**
+     * Invoked when an uncaught exception pops out of the Application's threads.
+     *
+     * @param application Application
+     * @param cause       Cause
+     */
+    public void onApplicationError( Application application, Throwable cause )
+    {
+        // Log error
+        LOG.error( "Uncaught Exception: {}: {}", cause.getClass(), cause.getMessage(), cause );
     }
 }

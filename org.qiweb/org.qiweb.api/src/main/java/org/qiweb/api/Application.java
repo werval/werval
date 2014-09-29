@@ -149,15 +149,29 @@ public interface Application
     ClassLoader classLoader();
 
     /**
-     * Application Executor.
+     * Default Application ExecutorService.
      *
      * Convey the current {@literal Context} to parallel threads if any.
      * <p>
      * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
      *
-     * @return Application Executor.
+     * @return Default Application ExecutorService.
      */
-    ExecutorService executor();
+    default ExecutorService executor()
+    {
+        return executors().defaultExecutor();
+    }
+
+    /**
+     * Application Executors.
+     *
+     * Convey the current {@literal Context} to parallel threads if any.
+     * <p>
+     * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
+     *
+     * @return Application Executors
+     */
+    ApplicationExecutors executors();
 
     /**
      * HTTP API Objects Builders SPI.

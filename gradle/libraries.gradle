@@ -23,7 +23,7 @@ def v_eclipselink = '2.5.2'
 def v_ehcache = '2.8.4'
 def v_email = '1.3.3'
 def v_guice = '4.0-beta4' // FIXME Final!
-def v_jackson = '2.4.2' // FIXME Final!
+def v_jackson = '2.4.2'
 def v_jedis = '2.6.0'
 def v_jpa = '2.1.0'
 def v_liquibase = '3.2.2'
@@ -101,7 +101,10 @@ rootProject.ext {
 
         // Testing Tools libraries
         awaitility:         "com.jayway.awaitility:awaitility:$v_awaitility",
-        fluentlenium:       "org.fluentlenium:fluentlenium-festassert:$v_fluentlenium",
+        fluentlenium: [
+                            "org.fluentlenium:fluentlenium-festassert:$v_fluentlenium",
+                            "org.seleniumhq.selenium:selenium-java:2.43.1"
+        ],
         junit: [
                             "junit:junit:$v_junit",
                             "org.hamcrest:hamcrest-all:1.3",

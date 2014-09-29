@@ -24,8 +24,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.qiweb.api.Application;
+import org.qiweb.api.ApplicationExecutors;
 import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.Errors;
@@ -39,6 +40,7 @@ import org.qiweb.api.exceptions.ParameterBinderException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.exceptions.RouteNotFoundException;
+import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.ProtocolVersion;
@@ -78,8 +80,6 @@ import org.qiweb.spi.http.HttpBuildersSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.concurrent.CompletableFuture.runAsync;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
@@ -147,7 +147,7 @@ public final class ApplicationInstance
     private ParameterBinders parameterBinders;
     private MimeTypes mimeTypes;
     private HttpBuildersSPI httpBuilders;
-    private ApplicationExecutors executors;
+    private ApplicationExecutorsInstance executors;
     private final MetaData metaData;
     private final Errors errors;
     private final DevShellSPI devSpi;
@@ -270,13 +270,12 @@ public final class ApplicationInstance
         try
         {
             // Executors
-            executors = new ApplicationExecutors( mode, config );
+            executors = new ApplicationExecutorsInstance( this );
             executors.activate();
-            ExecutorService defaultExecutor = executors.defaultExecutor();
 
             // Global
             String globalClassName = config.string( APP_GLOBAL );
-            this.global = supplyAsync(
+            this.global = executors.supplyAsync(
                 () ->
                 {
                     try
@@ -287,30 +286,29 @@ public final class ApplicationInstance
                     {
                         throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
                     }
-                },
-                defaultExecutor
+                }
             ).join();
 
             // Application Routes
             List<Route> resolvedRoutes = new ArrayList<>();
-            resolvedRoutes.addAll( supplyAsync( () -> routesProvider.routes( this ), defaultExecutor ).join() );
+            resolvedRoutes.addAll( executors.supplyAsync( () -> routesProvider.routes( this ) ).join() );
 
             // Activate Plugins
             plugins = new PluginsInstance(
                 config,
-                supplyAsync( () -> global.extraPlugins(), defaultExecutor ).join(),
+                executors.supplyAsync( () -> global.extraPlugins() ).join(),
                 devSpi != null
             );
-            runAsync( () -> plugins.onActivate( this, global ), defaultExecutor ).join();
+            executors.runAsync( () -> plugins.onActivate( this, global ) ).join();
 
             // Plugin contributed Routes
-            resolvedRoutes.addAll( 0, supplyAsync( () -> plugins.firstRoutes( this ), defaultExecutor ).join() );
-            resolvedRoutes.addAll( supplyAsync( () -> plugins.lastRoutes( this ), defaultExecutor ).join() );
+            resolvedRoutes.addAll( 0, executors.supplyAsync( () -> plugins.firstRoutes( this ) ).join() );
+            resolvedRoutes.addAll( executors.supplyAsync( () -> plugins.lastRoutes( this ) ).join() );
             routes = new RoutesInstance( resolvedRoutes );
 
             // Activated
             activated = true;
-            runAsync( () -> global.onActivate( this ), defaultExecutor ).join();
+            executors.runAsync( () -> global.onActivate( this ) ).join();
         }
         finally
         {
@@ -318,7 +316,12 @@ public final class ApplicationInstance
             activatingOrPassivating = false;
         }
 
-        LOG.info( "QiWeb Application Activated" );
+        if( LOG.isInfoEnabled() )
+        {
+            StringBuilder runtimeSummary = new StringBuilder();
+            runtimeSummary.append( indentTwoSpaces( executors.summary(), 2 ) );
+            LOG.info( "QiWeb Application Activated ({} mode)\n\n{}\n", mode, runtimeSummary );
+        }
         if( ( mode == Mode.DEV && LOG.isInfoEnabled() ) || LOG.isDebugEnabled() )
         {
             String msg = "All routes defined by the application, in order:\n\n"
@@ -351,7 +354,7 @@ public final class ApplicationInstance
             List<Exception> passivationErrors = new ArrayList<>();
             try
             {
-                runAsync( () -> global.onPassivate( this ), executors.defaultExecutor() ).join();
+                executors.runAsync( () -> global.onPassivate( this ) ).join();
             }
             catch( Exception ex )
             {
@@ -361,7 +364,7 @@ public final class ApplicationInstance
             }
             try
             {
-                runAsync( () -> plugins.onPassivate( this ), executors.defaultExecutor() ).join();
+                executors.runAsync( () -> plugins.onPassivate( this ) ).join();
             }
             catch( Exception ex )
             {
@@ -548,10 +551,10 @@ public final class ApplicationInstance
     }
 
     @Override
-    public ExecutorService executor()
+    public ApplicationExecutors executors()
     {
         ensureActive();
-        return executors.defaultExecutor();
+        return executors;
     }
 
     // SPI
@@ -559,7 +562,7 @@ public final class ApplicationInstance
     public CompletableFuture<Outcome> handleRequest( Request request )
     {
         ensureActive();
-        return supplyAsync(
+        return executors.supplyAsync(
             () ->
             {
                 // Prepare Controller Context
@@ -600,8 +603,11 @@ public final class ApplicationInstance
                     plugins.beforeInteraction( context );
 
                     // Invoke Controller FilterChain, ended by Controller Method Invokation
+                    // TODO Handle Timeout when invoking Controller FilterChain!
                     LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
-                    Outcome outcome = new FilterChainFactory().buildFilterChain( this, global, context ).next( context ).join();
+                    FilterChain chain = new FilterChainFactory().buildFilterChain( this, global, context );
+                    CompletableFuture<Outcome> interaction = chain.next( context );
+                    Outcome outcome = interaction.get( 30, TimeUnit.SECONDS );
 
                     // Plugins afterInteraction
                     plugins.afterInteraction( context );
@@ -640,8 +646,7 @@ public final class ApplicationInstance
                     // Clean up Controller Context
                     contextHelper.clearCurrentThread();
                 }
-            },
-            executors.defaultExecutor()
+            }
         );
     }
 
@@ -710,29 +715,7 @@ public final class ApplicationInstance
     public Outcome handleError( RequestHeader request, Throwable cause )
     {
         // Clean-up stacktrace
-        Throwable rootCauseRef;
-        try
-        {
-            if( executors.inDefaultExecutor() )
-            {
-                rootCauseRef = global.getRootCause( cause );
-            }
-            else
-            {
-                rootCauseRef = supplyAsync( () -> global.getRootCause( cause ), executors.defaultExecutor() ).join();
-            }
-        }
-        catch( Exception ex )
-        {
-            LOG.warn(
-                "An error occured in Global::getRootCause() method "
-                + "and has been added as suppressed exception to the original error stacktrace. Message: {}",
-                ex.getMessage(), ex
-            );
-            cause.addSuppressed( ex );
-            rootCauseRef = cause;
-        }
-        final Throwable rootCause = rootCauseRef;
+        final Throwable rootCause = ErrorHandling.cleanUpStackTrace( this, LOG, cause );
 
         // Outcomes
         Outcomes outcomes = new OutcomesInstance(
@@ -800,9 +783,8 @@ public final class ApplicationInstance
             }
             else
             {
-                outcome = supplyAsync(
-                    () -> global.onRequestError( this, outcomes, rootCause ),
-                    executors.defaultExecutor()
+                outcome = executors.supplyAsync(
+                    () -> global.onRequestError( this, outcomes, rootCause )
                 ).join();
             }
         }
@@ -816,9 +798,8 @@ public final class ApplicationInstance
             }
             else
             {
-                outcome = supplyAsync(
-                    () -> new Global().onRequestError( this, outcomes, rootCause ),
-                    executors.defaultExecutor()
+                outcome = executors.supplyAsync(
+                    () -> new Global().onRequestError( this, outcomes, rootCause )
                 ).join();
             }
         }
@@ -880,9 +861,8 @@ public final class ApplicationInstance
     @Override
     public void onHttpRequestComplete( RequestHeader requestHeader )
     {
-        runAsync(
-            () -> global.onHttpRequestComplete( this, requestHeader ),
-            executors.defaultExecutor()
+        executors.runAsync(
+            () -> global.onHttpRequestComplete( this, requestHeader )
         ).exceptionally(
             ex ->
             {
@@ -896,7 +876,7 @@ public final class ApplicationInstance
     @Override
     public CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
     {
-        return supplyAsync(
+        return executors.supplyAsync(
             () ->
             {
                 // Outcomes
@@ -921,8 +901,7 @@ public final class ApplicationInstance
 
                 // Build!
                 return builder.build();
-            },
-            executors.defaultExecutor()
+            }
         );
     }
 

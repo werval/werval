@@ -16,7 +16,9 @@
 package org.qiweb.api.context;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
+import org.qiweb.api.ApplicationExecutors;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.QiWebException;
@@ -80,6 +82,26 @@ public final class CurrentContext
     public static Application application()
     {
         return get().application();
+    }
+
+    /**
+     * @return Current default Application ExecutorService
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static ExecutorService executor()
+    {
+        return get().application().executor();
+    }
+
+    /**
+     * @return Current Application Executors
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static ApplicationExecutors executors()
+    {
+        return get().application().executors();
     }
 
     /**

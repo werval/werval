@@ -63,7 +63,7 @@ import org.qiweb.api.util.Couple;
                 {
                     throw new QiWebException(
                         context.route().controllerMethod()
-                        + " returned a CompletableFuture of something else than Outcome. Check your Global object.",
+                        + " returned a CompletableFuture of something else than Outcome. Check your code.",
                         ex
                     );
                 }
@@ -76,7 +76,7 @@ import org.qiweb.api.util.Couple;
                 context.route().controllerMethod()
                 + " did not return an Outcome nor a CompletableFuture<Outcome> but a "
                 + result.getClass()
-                + ". Check your Global object."
+                + ". Check your code."
             );
         }
     }
