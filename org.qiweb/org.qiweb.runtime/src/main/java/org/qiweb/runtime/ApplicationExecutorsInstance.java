@@ -154,14 +154,16 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
 
     /* package */ void activate()
     {
-        Map<String, Couple<String, Integer>> summaryData = new HashMap<>();
         this.defaultExecutor = application.config().string( APP_EXECUTORS_DEFAULT );
         this.defaultExecutorThreadNamePrefix = application.config().string(
             APP_EXECUTORS + "." + defaultExecutor + ".thread_name_prefix"
         );
         this.shutdownTimeoutMillis = application.config().milliseconds( APP_EXECUTORS_SHUTDOWN_TIMEOUT );
         Config executorsConfig = application.config().object( APP_EXECUTORS );
-        this.executors = new HashMap<>( executorsConfig.subKeys().size() - 1 );
+        int executorsCount = executorsConfig.subKeys().size();
+        this.executors = new HashMap<>( executorsCount - 1 );
+        this.executorsThreadNamePrefixes = new HashMap<>( executorsCount );
+        Map<String, Couple<String, Integer>> summaryData = new HashMap<>( executorsCount );
         for( String executorName : executorsConfig.subKeys() )
         {
             // Skip the default executor and shutdown config entries
@@ -222,9 +224,9 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
         }
 
         // Generate summary
-        StringBuilder summaryBuilder = new StringBuilder( "Application Executors:\n" );
+        StringBuilder summaryBuilder = new StringBuilder();
         Couple<String, Integer> defaultData = summaryData.get( defaultExecutor );
-        summaryBuilder.append( "  " ).append( defaultExecutor ).append( " (default): " )
+        summaryBuilder.append( defaultExecutor ).append( " (default): " )
             .append( defaultData.left() ).append( "[" ).append( defaultData.right() ).append( "]\n" );
         for( Map.Entry<String, Couple<String, Integer>> entry : summaryData.entrySet() )
         {
@@ -232,7 +234,7 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
             if( !defaultExecutor.equals( name ) )
             {
                 Couple<String, Integer> data = entry.getValue();
-                summaryBuilder.append( "  " ).append( name ).append( ": " )
+                summaryBuilder.append( name ).append( ": " )
                     .append( data.left() ).append( "[" ).append( data.right() ).append( "]\n" );
             }
         }
@@ -330,7 +332,8 @@ import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
                && Thread.currentThread().getName().startsWith( executorThreadNamePrefix );
     }
 
-    /* package */ String summary()
+    @Override
+    public String toString()
     {
         return summary;
     }

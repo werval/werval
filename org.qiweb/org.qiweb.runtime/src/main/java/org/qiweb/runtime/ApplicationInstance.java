@@ -316,16 +316,20 @@ public final class ApplicationInstance
             activatingOrPassivating = false;
         }
 
-        if( LOG.isInfoEnabled() )
-        {
-            StringBuilder runtimeSummary = new StringBuilder();
-            runtimeSummary.append( indentTwoSpaces( executors.summary(), 2 ) );
-            LOG.info( "QiWeb Application Activated ({} mode)\n\n{}\n", mode, runtimeSummary );
-        }
+        LOG.info( "QiWeb Application Activated ({} mode)", mode );
         if( ( mode == Mode.DEV && LOG.isInfoEnabled() ) || LOG.isDebugEnabled() )
         {
-            String msg = "All routes defined by the application, in order:\n\n"
-                         + indentTwoSpaces( routes.toString(), 2 ) + NEWLINE;
+            StringBuilder runtimeSummary = new StringBuilder( "QiWeb Runtime Summary\n\n" );
+            runtimeSummary
+                .append( indentTwoSpaces( "All routes defined by the application, in order:", 1 ) )
+                .append( NEWLINE ).append( NEWLINE )
+                .append( indentTwoSpaces( routes.toString(), 2 ) )
+                .append( NEWLINE ).append( NEWLINE )
+                .append( indentTwoSpaces( "Application Executors:", 1 ) )
+                .append( NEWLINE ).append( NEWLINE )
+                .append( indentTwoSpaces( executors.toString(), 2 ) )
+                .append( NEWLINE );
+            String msg = runtimeSummary.toString();
             if( mode == Mode.DEV )
             {
                 LOG.info( msg );
