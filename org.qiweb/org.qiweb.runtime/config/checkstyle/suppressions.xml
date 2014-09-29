@@ -27,6 +27,8 @@
 
     <!-- Java 8 Lambda Expressions not supported by Checkstyle -->
     <suppress checks=".*" files="ApplicationInstance.java"/>
+    <suppress checks=".*" files="ApplicationExecutorsInstance.java"/>
+    <suppress checks=".*" files="ErrorHandling.java"/>
     <suppress checks=".*" files="ConfigInstance.java"/>
     <suppress checks=".*" files="ErrorsInstance.java"/>
     <suppress checks=".*" files="FormAttributesInstance.java"/>

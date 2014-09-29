@@ -32,6 +32,8 @@
     <suppress checks=".*" files="Cached.java"/>
 
     <!-- Java 8 Defender Methods not supported by Checkstyle -->
+    <suppress checks=".*" files="Application.java"/>
+    <suppress checks=".*" files="ApplicationExecutors.java"/>
     <suppress checks=".*" files="Plugin.java"/>
     <suppress checks=".*" files="Cache.java"/>
 
