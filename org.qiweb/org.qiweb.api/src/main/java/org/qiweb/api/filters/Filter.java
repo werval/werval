@@ -23,18 +23,18 @@ import org.qiweb.api.outcomes.Outcome;
 /**
  * Controller invocation Filter.
  *
- * @param <T> Configuration Type
+ * @param <T> Configuration Annotation Type
  */
 public interface Filter<T>
 {
     /**
      * Filter a request.
      *
-     * @param chain        Filter Chain
-     * @param context      Request Context
-     * @param filterConfig Optional filter configuration Annotation
+     * @param chain      Filter Chain
+     * @param context    Request Context
+     * @param annotation Optional filter configuration Annotation
      *
      * @return Filtered Future Outcome
      */
-    CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<T> filterConfig );
+    CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<T> annotation );
 }

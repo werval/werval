@@ -63,7 +63,7 @@ public class OnGlobalErrorTest
         implements Filter<Void>
     {
         @Override
-        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> filterConfig )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> annotation )
         {
             return chain.next( context );
         }

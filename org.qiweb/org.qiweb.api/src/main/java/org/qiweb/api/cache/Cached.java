@@ -79,9 +79,9 @@ public @interface Cached
         implements org.qiweb.api.filters.Filter<Cached>
     {
         @Override
-        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Cached> filterConfig )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Cached> annotation )
         {
-            String key = key( context, filterConfig.get().vary() );
+            String key = key( context, annotation.get().vary() );
             String etagKey = key + "-etag";
 
             String requestEtag = context.request().headers().singleValue( IF_NONE_MATCH );
@@ -102,7 +102,7 @@ public @interface Cached
             return futureOutcome.thenApplyAsync(
                 outcome ->
                 {
-                    int ttl = filterConfig.get().ttl();
+                    int ttl = annotation.get().ttl();
                     String expiration = Dates.HTTP.format(
                         System.currentTimeMillis() + ( ttl == 0 ? 1000 * 60 * 60 * 24 * 365 : ttl * 1000 )
                     );
