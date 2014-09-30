@@ -36,6 +36,8 @@ public class SecurityHeadersTest
         + "GET /xssProtection org.qiweb.filters.SecurityHeadersTest$Controller.xssProtection\n"
         + "GET /xssProtectionConfig org.qiweb.filters.SecurityHeadersTest$Controller.xssProtectionConfig\n"
         + "GET /contentTypeOptions org.qiweb.filters.SecurityHeadersTest$Controller.contentTypeOptions\n"
+        + "GET /hsts org.qiweb.filters.SecurityHeadersTest$Controller.hsts\n"
+        + "GET /hstsConfig org.qiweb.filters.SecurityHeadersTest$Controller.hstsConfig\n"
     ) );
 
     public static class Controller
@@ -66,6 +68,18 @@ public class SecurityHeadersTest
 
         @XContentTypeOptions
         public Outcome contentTypeOptions()
+        {
+            return outcomes().ok().build();
+        }
+
+        @HSTS
+        public Outcome hsts()
+        {
+            return outcomes().ok().build();
+        }
+
+        @HSTS( maxAge = 500, includeSubDomains = true )
+        public Outcome hstsConfig()
         {
             return outcomes().ok().build();
         }
@@ -119,5 +133,25 @@ public class SecurityHeadersTest
             .header( "X-Content-Type-Options", "nosniff" )
             .when()
             .get( "/contentTypeOptions" );
+    }
+
+    @Test
+    public void hsts()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "Strict-Transport-Security", "max-age=480" )
+            .when()
+            .get( "/hsts" );
+    }
+
+    @Test
+    public void hstsConfig()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "Strict-Transport-Security", "max-age=500; includeSubDomains" )
+            .when()
+            .get( "/hstsConfig" );
     }
 }
