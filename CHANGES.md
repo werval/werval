@@ -44,6 +44,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 #### New features
 
+- Application now has a startup banner, see #158
 - Application now has Executors (thread pools) and all application code is run in the default one, see #149
 - [Liquibase](http://www.liquibase.org/) Plugin for managed database migrations, see #122
 - Proper JSON and [JSON-P](https://en.wikipedia.org/wiki/JSONP) support using [Jackson](http://wiki.fasterxml.com/JacksonHome), see #96

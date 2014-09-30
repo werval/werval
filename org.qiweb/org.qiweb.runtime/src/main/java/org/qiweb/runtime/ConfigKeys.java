@@ -23,6 +23,7 @@ public interface ConfigKeys
     //
     // Application configuration keys
     //
+    String APP_BANNER = "app.banner";
     String APP_ERRORS_RECORD_MAX = "app.errors.record.max";
     String APP_EXECUTORS = "app.executors";
     String APP_EXECUTORS_DEFAULT = "app.executors.default";

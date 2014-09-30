@@ -16,6 +16,9 @@
 package org.qiweb.runtime;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -88,8 +91,11 @@ import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
+import static org.qiweb.api.util.InputStreams.BUF_SIZE_4K;
+import static org.qiweb.api.util.InputStreams.transferTo;
 import static org.qiweb.api.util.Strings.NEWLINE;
 import static org.qiweb.api.util.Strings.indentTwoSpaces;
+import static org.qiweb.runtime.ConfigKeys.APP_BANNER;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
 import static org.qiweb.runtime.ConfigKeys.APP_SECRET;
@@ -252,6 +258,7 @@ public final class ApplicationInstance
             LOG.debug( "Application classpath: {}", Arrays.toString( devSpi.applicationClassPath() ) );
         }
         configure();
+        showBanner();
     }
 
     @Override
@@ -1003,5 +1010,20 @@ public final class ApplicationInstance
     private void configureHttpBuilders()
     {
         httpBuilders = new HttpBuildersInstance( config, defaultCharset, langs );
+    }
+
+    private void showBanner()
+    {
+        try( InputStream input = classLoader.getResourceAsStream( config.string( APP_BANNER ) ) )
+        {
+            if( input != null )
+            {
+                transferTo( input, System.out, BUF_SIZE_4K );
+            }
+        }
+        catch( IOException ex )
+        {
+            throw new UncheckedIOException( ex );
+        }
     }
 }
