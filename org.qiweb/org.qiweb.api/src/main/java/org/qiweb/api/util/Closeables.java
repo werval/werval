@@ -17,7 +17,7 @@ package org.qiweb.api.util;
 
 import java.io.Closeable;
 import java.io.IOException;
-import org.qiweb.api.exceptions.RuntimeIOException;
+import java.io.UncheckedIOException;
 
 /**
  * Closeable utilities.
@@ -32,7 +32,7 @@ public final class Closeables
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 

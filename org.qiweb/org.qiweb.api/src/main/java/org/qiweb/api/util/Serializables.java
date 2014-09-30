@@ -20,8 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import org.qiweb.api.exceptions.RuntimeIOException;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
 
@@ -71,7 +71,7 @@ public final class Serializables
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
         return baos.toByteArray();
     }
@@ -120,7 +120,7 @@ public final class Serializables
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
         catch( ClassNotFoundException ex )
         {

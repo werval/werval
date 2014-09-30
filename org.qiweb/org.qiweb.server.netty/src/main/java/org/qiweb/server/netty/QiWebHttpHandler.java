@@ -30,9 +30,9 @@ import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import org.qiweb.api.exceptions.RuntimeIOException;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
@@ -231,7 +231,7 @@ public final class QiWebHttpHandler
             }
             catch( IOException ex )
             {
-                throw new RuntimeIOException( ex );
+                throw new UncheckedIOException( ex );
             }
             writeFuture = nettyContext.writeAndFlush( nettyResponse );
         }

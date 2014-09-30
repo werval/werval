@@ -19,10 +19,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import org.qiweb.api.exceptions.IllegalArguments;
-import org.qiweb.api.exceptions.RuntimeIOException;
 
 /**
  * Utilities to work with Strings.
@@ -76,6 +76,18 @@ public final class Strings
     public static boolean hasText( String value )
     {
         return value != null && value.length() > 0;
+    }
+
+    /**
+     * Null a String if it is empty.
+     *
+     * @param value String
+     *
+     * @return {@literal null} if the String is {@literal null} or empty, the original String otherwise
+     */
+    public static String hasTextOrNull( String value )
+    {
+        return value == null || value.length() == 0 ? null : value;
     }
 
     /**
@@ -286,7 +298,7 @@ public final class Strings
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 
@@ -306,7 +318,7 @@ public final class Strings
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 
@@ -327,7 +339,7 @@ public final class Strings
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 
@@ -349,7 +361,7 @@ public final class Strings
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 

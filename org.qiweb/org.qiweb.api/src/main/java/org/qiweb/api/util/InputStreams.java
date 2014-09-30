@@ -19,8 +19,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import org.qiweb.api.exceptions.RuntimeIOException;
 
 /**
  * InputStream utilities.
@@ -82,7 +82,7 @@ public final class InputStreams
      * @param output  OutputStream
      * @param bufsize Size of the read buffer
      *
-     * @throws RuntimeIOException if something goes wrong
+     * @throws UncheckedIOException if something goes wrong
      */
     public static void transferTo( InputStream input, OutputStream output, int bufsize )
     {
@@ -98,7 +98,7 @@ public final class InputStreams
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 

@@ -16,12 +16,12 @@
 package org.qiweb.test.util;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
-import org.qiweb.api.exceptions.RuntimeIOException;
 import org.qiweb.api.util.Couple;
 
 import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
@@ -108,7 +108,7 @@ public final class Processes
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 
@@ -155,7 +155,7 @@ public final class Processes
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 
