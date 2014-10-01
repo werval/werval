@@ -46,7 +46,8 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - Application now has a startup banner, see #158
 - Application now has Executors (thread pools) and all application code is run in the default one, see #149
-- Add security headers annotations using Filters for `X-Frame-Options`, `X-XSS-Protection`, `X-Content-Type-Options` and `Strict-Transport-Security`, see #167 and #9
+- Security annotations using Filters for `X-Frame-Options`, `X-XSS-Protection`, `X-Content-Type-Options`,
+  `Strict-Transport-Security` and `Content-Security-Policy` headers, see #167, #9, #10
 - [Liquibase](http://www.liquibase.org/) Plugin for managed database migrations, see #122
 - Proper JSON and [JSON-P](https://en.wikipedia.org/wiki/JSONP) support using [Jackson](http://wiki.fasterxml.com/JacksonHome), see #96
 - Add a Cache implementation backed by [Redis](http://redis.io/), see #112

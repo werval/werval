@@ -16,13 +16,18 @@
 package org.qiweb.filters;
 
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
+import org.qiweb.test.util.Slf4jRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static org.junit.Assert.assertTrue;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 
 /**
  * Security Headers Test.
@@ -38,6 +43,9 @@ public class SecurityHeadersTest
         + "GET /contentTypeOptions org.qiweb.filters.SecurityHeadersTest$Controller.contentTypeOptions\n"
         + "GET /hsts org.qiweb.filters.SecurityHeadersTest$Controller.hsts\n"
         + "GET /hstsConfig org.qiweb.filters.SecurityHeadersTest$Controller.hstsConfig\n"
+        + "GET /csp org.qiweb.filters.SecurityHeadersTest$Controller.csp\n"
+        + "GET /cspConfig org.qiweb.filters.SecurityHeadersTest$Controller.cspConfig\n"
+        + "POST /cspViolations org.qiweb.filters.ContentSecurityPolicy$ViolationLogger.logViolation\n"
     ) );
 
     public static class Controller
@@ -83,7 +91,28 @@ public class SecurityHeadersTest
         {
             return outcomes().ok().build();
         }
+
+        @ContentSecurityPolicy
+        public Outcome csp()
+        {
+            return outcomes().ok().build();
+        }
+
+        @ContentSecurityPolicy( policy = "default-src 'self'; report-uri /cspViolations", reportOnly = true )
+        public Outcome cspConfig()
+        {
+            return outcomes().ok().build();
+        }
     }
+
+    @Rule
+    public final Slf4jRule slf4j = new Slf4jRule()
+    {
+        {
+            record( Level.WARN );
+            recordForName( ContentSecurityPolicy.ViolationLogger.class.getName() );
+        }
+    };
 
     @Test
     public void frameOptions()
@@ -153,5 +182,51 @@ public class SecurityHeadersTest
             .header( "Strict-Transport-Security", "max-age=500; includeSubDomains" )
             .when()
             .get( "/hstsConfig" );
+    }
+
+    @Test
+    public void csp()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "Content-Security-Policy", "default-src 'self'" )
+            .header( "X-Content-Security-Policy", "default-src 'self'" )
+            .header( "X-WebKit-CSP", "default-src 'self'" )
+            .when()
+            .get( "/csp" );
+    }
+
+    @Test
+    public void cspConfig()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "Content-Security-Policy-Report-Only", "default-src 'self'; report-uri /cspViolations" )
+            .header( "X-Content-Security-Policy-Report-Only", "default-src 'self'; report-uri /cspViolations" )
+            .header( "X-WebKit-CSP-Report-Only", "default-src 'self'; report-uri /cspViolations" )
+            .when()
+            .get( "/cspConfig" );
+    }
+
+    @Test
+    public void cspViolations()
+    {
+        String violationReport = "{\n"
+                                 + "  \"csp-report\": {\n"
+                                 + "    \"document-uri\": \"http://example.org/page.html\",\n"
+                                 + "    \"referrer\": \"http://evil.example.com/haxor.html\",\n"
+                                 + "    \"blocked-uri\": \"http://evil.example.com/image.png\",\n"
+                                 + "    \"violated-directive\": \"default-src 'self'\",\n"
+                                 + "    \"original-policy\": \"default-src 'self'; report-uri /cspViolations\"\n"
+                                 + "  }\n"
+                                 + "}";
+        given()
+            .contentType( APPLICATION_JSON )
+            .body( violationReport )
+            .expect()
+            .statusCode( 204 )
+            .when()
+            .post( "/cspViolations" );
+        assertTrue( slf4j.contains( violationReport ) );
     }
 }
