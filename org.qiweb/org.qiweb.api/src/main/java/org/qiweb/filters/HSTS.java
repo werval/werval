@@ -51,7 +51,7 @@ import org.qiweb.api.outcomes.Outcome;
 public @interface HSTS
 {
     /**
-     * {@literal max-age} directive.
+     * {@literal max-age} directive, in seconds.
      *
      * <p>
      * Don't set this to a too high value in order to prevent privacy issues for your users. See
@@ -63,7 +63,7 @@ public @interface HSTS
      * Default to {@literal qiweb.filters.hsts.max_age} configuration property value.
      * </p>
      *
-     * @return The max-age directive value
+     * @return The max-age directive value, in seconds
      */
     long maxAge() default -1;
 
