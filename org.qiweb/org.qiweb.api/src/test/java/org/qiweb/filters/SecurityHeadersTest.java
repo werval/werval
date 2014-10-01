@@ -46,6 +46,8 @@ public class SecurityHeadersTest
         + "GET /csp org.qiweb.filters.SecurityHeadersTest$Controller.csp\n"
         + "GET /cspConfig org.qiweb.filters.SecurityHeadersTest$Controller.cspConfig\n"
         + "POST /cspViolations org.qiweb.filters.ContentSecurityPolicy$ViolationLogger.logViolation\n"
+        + "GET /dnt org.qiweb.filters.SecurityHeadersTest$Controller.dnt\n"
+        + "GET /dntConfig org.qiweb.filters.SecurityHeadersTest$Controller.dntConfig\n"
     ) );
 
     public static class Controller
@@ -100,6 +102,18 @@ public class SecurityHeadersTest
 
         @ContentSecurityPolicy( policy = "default-src 'self'; report-uri /cspViolations", reportOnly = true )
         public Outcome cspConfig()
+        {
+            return outcomes().ok().build();
+        }
+
+        @DoNotTrack
+        public Outcome dnt()
+        {
+            return outcomes().ok().build();
+        }
+
+        @DoNotTrack( optIn = true )
+        public Outcome dntConfig()
         {
             return outcomes().ok().build();
         }
@@ -228,5 +242,25 @@ public class SecurityHeadersTest
             .when()
             .post( "/cspViolations" );
         assertTrue( slf4j.contains( violationReport ) );
+    }
+
+    @Test
+    public void dnt()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "DNT", "1" )
+            .when()
+            .get( "/dnt" );
+    }
+
+    @Test
+    public void dntConfig()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "DNT", "0" )
+            .when()
+            .get( "/dntConfig" );
     }
 }
