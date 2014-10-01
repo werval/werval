@@ -17,9 +17,9 @@ package org.qiweb.test.cache;
 
 import org.junit.Test;
 import org.qiweb.api.cache.Cache;
-import org.qiweb.api.cache.Cached;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.filters.Cached;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;

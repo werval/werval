@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.api.cache;
+package org.qiweb.filters;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

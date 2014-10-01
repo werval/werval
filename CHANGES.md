@@ -29,6 +29,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - Gradle Plugin development mode build logic revamped, see #125
 - Moved all standard controllers from `org.qiweb.api.controllers` to `org.qiweb.controllers`, see #160
+- Moved `@Cached` from `org.qiweb.api.cache` to `org.qiweb.filters`, see #171
 - Renamed `StaticFiles` to `Static`, see #124
 - Renamed `ClasspathResources` to `Classpath`, see #123
 - Renamed `Global::onApplicationError ` to `Global.onRequestError`, see #159
@@ -48,6 +49,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Application now has Executors (thread pools) and all application code is run in the default one, see #149
 - Security annotations using Filters for `X-Frame-Options`, `X-XSS-Protection`, `X-Content-Type-Options`,
   `Strict-Transport-Security`, `Content-Security-Policy`and Do No Track (`DNT`) headers, see #167, #9, #10, #168
+- Add `@NeverCache` filter, see #170
 - [Liquibase](http://www.liquibase.org/) Plugin for managed database migrations, see #122
 - Proper JSON and [JSON-P](https://en.wikipedia.org/wiki/JSONP) support using [Jackson](http://wiki.fasterxml.com/JacksonHome), see #96
 - Add a Cache implementation backed by [Redis](http://redis.io/), see #112
