@@ -45,6 +45,7 @@ public class SecurityHeadersTest
         + "GET /hstsConfig org.qiweb.filters.SecurityHeadersTest$Controller.hstsConfig\n"
         + "GET /csp org.qiweb.filters.SecurityHeadersTest$Controller.csp\n"
         + "GET /cspConfig org.qiweb.filters.SecurityHeadersTest$Controller.cspConfig\n"
+        + "GET /cspRepeat org.qiweb.filters.SecurityHeadersTest$Controller.cspRepeat\n"
         + "POST /cspViolations org.qiweb.filters.ContentSecurityPolicy$ViolationLogger.logViolation\n"
         + "GET /dnt org.qiweb.filters.SecurityHeadersTest$Controller.dnt\n"
         + "GET /dntConfig org.qiweb.filters.SecurityHeadersTest$Controller.dntConfig\n"
@@ -102,6 +103,13 @@ public class SecurityHeadersTest
 
         @ContentSecurityPolicy( policy = "default-src 'self'; report-uri /cspViolations", reportOnly = true )
         public Outcome cspConfig()
+        {
+            return outcomes().ok().build();
+        }
+
+        @ContentSecurityPolicy
+        @ContentSecurityPolicy( policy = "default-src 'self'; report-uri /cspViolations", reportOnly = true )
+        public Outcome cspRepeat()
         {
             return outcomes().ok().build();
         }
@@ -220,6 +228,21 @@ public class SecurityHeadersTest
             .header( "X-WebKit-CSP-Report-Only", "default-src 'self'; report-uri /cspViolations" )
             .when()
             .get( "/cspConfig" );
+    }
+
+    @Test
+    public void cspRepeat()
+    {
+        expect()
+            .statusCode( 200 )
+            .header( "Content-Security-Policy", "default-src 'self'" )
+            .header( "X-Content-Security-Policy", "default-src 'self'" )
+            .header( "X-WebKit-CSP", "default-src 'self'" )
+            .header( "Content-Security-Policy-Report-Only", "default-src 'self'; report-uri /cspViolations" )
+            .header( "X-Content-Security-Policy-Report-Only", "default-src 'self'; report-uri /cspViolations" )
+            .header( "X-WebKit-CSP-Report-Only", "default-src 'self'; report-uri /cspViolations" )
+            .when()
+            .get( "/cspRepeat" );
     }
 
     @Test

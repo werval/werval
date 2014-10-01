@@ -65,6 +65,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Outome builder API now expose helpers for common Content-Types and Charsets, see #128
 - The Cache API now leverage Java 8 Lambdas, see #127
 - The `Classpath` and `Static` controllers gets uniform index files support, see #134 and #137
+- Filters annotation can now be `@Repeatable` thanks to Java 8, see #169
 - The JPA Plugin now has clear lifecycle and thread/context model plus a `@Transactional` annotation, see #114
 - The JPA Plugin now redirects all EclipseLink logging to SLF4J, see #115
 - Resources at `/@doc` in development mode are now all in a dedicated DocumentationPlugin, see #106 and #71
