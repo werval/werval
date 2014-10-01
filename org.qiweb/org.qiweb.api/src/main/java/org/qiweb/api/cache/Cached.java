@@ -15,7 +15,9 @@
  */
 package org.qiweb.api.cache;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -55,11 +57,10 @@ import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
  * variable headers declared using {@link #vary()}.
  */
 @FilterWith( Cached.Filter.class )
-@Target(
-     {
-        ElementType.TYPE, ElementType.METHOD
-    } )
+@Target( { ElementType.TYPE, ElementType.METHOD } )
 @Retention( RetentionPolicy.RUNTIME )
+@Inherited
+@Documented
 public @interface Cached
 {
     /**
