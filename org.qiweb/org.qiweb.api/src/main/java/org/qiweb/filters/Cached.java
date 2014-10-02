@@ -46,7 +46,7 @@ import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
  * <ul>
  * <li>set the {@literal Expires} and {@literal Etag} headers</li>
  * <li>handle the {@literal If-None-Match} header and return {@literal 304 Not Modified} ;</li>
- * <li>cache the {@link Outcome} in the Application {@link Cache}.</li>
+ * <li>cache the {@link Outcome} in the Application {@link org.qiweb.api.cache.Cache}.</li>
  * </ul>
  * Using {@link #ttl()} you can set how long the data will be cached.
  * <p>

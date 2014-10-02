@@ -50,7 +50,7 @@ public final class InputStreams
      *
      * @return All InputStream bytes
      *
-     * @throws RuntimeIOException if something goes wrong
+     * @throws UncheckedIOException if something goes wrong
      */
     public static byte[] readAllBytes( InputStream input, int bufsize )
     {
@@ -68,7 +68,7 @@ public final class InputStreams
      *
      * @return All InputStream as String
      *
-     * @throws RuntimeIOException if something goes wrong
+     * @throws UncheckedIOException if something goes wrong
      */
     public static String readAllAsString( InputStream input, int bufsize, Charset charset )
     {

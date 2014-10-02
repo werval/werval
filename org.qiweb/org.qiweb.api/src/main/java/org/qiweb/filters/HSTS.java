@@ -35,12 +35,6 @@ import org.qiweb.api.outcomes.Outcome;
  * <p>
  * <a href="https://tools.ietf.org/html/rfc6797">RFC6797</a>.
  * <p>
- * The RFC state that "<em>If an HTTP response is received over insecure transport, the UA MUST ignore any present STS
- * header field(s).</em>".
- * Therefore, if the request is not secure, then the header is not added to it and a log is emmited at the
- * {@literal WARNING} level.
- * This, except if {@link HSTS#forceOnInsecureResponses()} is set to {@literal TRUE}.
- * <p>
  * <a href="http://caniuse.com/stricttransportsecurity">Can I use?</a>
  */
 @FilterWith( HSTS.Filter.class )

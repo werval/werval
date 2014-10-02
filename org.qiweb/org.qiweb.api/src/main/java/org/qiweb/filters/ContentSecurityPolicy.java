@@ -58,11 +58,9 @@ import static org.qiweb.api.util.Strings.hasTextOrNull;
  * To support this, the {@link ViolationLogger} controller comes as a simple violation logging facility.
  * Add the following route to your Application to get all violations loggued, assuming your {@literal report-uri} CSP
  * directive is set to {@literal /csp-violations}.
- * <p>
  * <blockquote>
  * <pre>POST /csp-violations org.qiweb.filters.ContentSecurityPolicy$ViolationLogger.logViolation</pre>
  * </blockquote>
- * <p>
  * Logging level is {@literal WARN} by default, this can be changed by setting the
  * {@literal qiweb.filters.csp.report_log_level} configuration property to {@literal error}, {@literal warn},
  * {@literal info}, {@literal debug} or {@literal trace} value.

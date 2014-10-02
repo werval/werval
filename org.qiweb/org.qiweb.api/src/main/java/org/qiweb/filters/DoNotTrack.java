@@ -34,7 +34,6 @@ import org.qiweb.api.outcomes.Outcome;
  *
  * <p>
  * See the <a href="http://www.w3.org/TR/tracking-dnt/">Tracking Preference Expression (DNT)</a> working draft at IETF.
- * <p>
  */
 @FilterWith( DoNotTrack.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )
