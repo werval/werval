@@ -61,4 +61,22 @@ public class StringsTest
         assertThat( Strings.leftPad( 7, "FOOOOOO", 'c' ), equalTo( "FOOOOOO" ) );
         assertThat( Strings.leftPad( 7, "FOOOOOO---", 'c' ), equalTo( "FOOOOOO---" ) );
     }
+
+    @Test
+    public void trail()
+    {
+        assertThat( Strings.withTrail( "foo", "/" ), equalTo( "foo/" ) );
+        assertThat( Strings.withoutTrail( "foo/", "/" ), equalTo( "foo" ) );
+        assertThat( Strings.withTrail( "foo", "///" ), equalTo( "foo///" ) );
+        assertThat( Strings.withoutTrail( "foo///", "///" ), equalTo( "foo" ) );
+    }
+
+    @Test
+    public void head()
+    {
+        assertThat( Strings.withHead( "foo", "/" ), equalTo( "/foo" ) );
+        assertThat( Strings.withoutHead( "/foo", "/" ), equalTo( "foo" ) );
+        assertThat( Strings.withHead( "foo", "///" ), equalTo( "///foo" ) );
+        assertThat( Strings.withoutHead( "///foo", "///" ), equalTo( "foo" ) );
+    }
 }

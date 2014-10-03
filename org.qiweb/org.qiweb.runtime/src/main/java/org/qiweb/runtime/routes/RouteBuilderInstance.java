@@ -37,13 +37,15 @@ import org.qiweb.api.routes.ControllerParams.Param;
 import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_SET;
 import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.api.util.Strings.isEmpty;
+import static org.qiweb.api.util.Strings.withHead;
+import static org.qiweb.api.util.Strings.withoutTrail;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
 
 /**
@@ -96,20 +98,14 @@ public class RouteBuilderInstance
     public RouteBuilderInstance( Application app, String pathPrefix )
     {
         this.app = app;
-        if( Strings.isEmpty( pathPrefix ) )
+        if( isEmpty( pathPrefix ) )
         {
             this.pathPrefix = EMPTY;
         }
         else
         {
-            // Prepend / if necessary
-            String actualPrefix = pathPrefix.startsWith( "/" )
-                                  ? pathPrefix
-                                  : "/" + pathPrefix;
-            // Remove trailing / if necessary
-            this.pathPrefix = actualPrefix.endsWith( "/" )
-                              ? actualPrefix.substring( 0, actualPrefix.length() - 1 )
-                              : actualPrefix;
+            // Prepend / and remove trailing / if necessary
+            this.pathPrefix = withoutTrail( withHead( pathPrefix, "/" ), "/" );
         }
     }
 
@@ -367,7 +363,7 @@ public class RouteBuilderInstance
         @Override
         public Route route( String routeString )
         {
-            if( Strings.isEmpty( routeString ) )
+            if( isEmpty( routeString ) )
             {
                 throw new IllegalRouteException( "null", "Unable to parse null or empty String." );
             }

@@ -466,6 +466,26 @@ public final class Strings
         return output;
     }
 
+    public static String withTrail( String input, String trail )
+    {
+        return input.endsWith( trail ) ? input : input + trail;
+    }
+
+    public static String withHead( String input, String head )
+    {
+        return input.startsWith( head ) ? input : head + input;
+    }
+
+    public static String withoutTrail( String input, String trail )
+    {
+        return input.endsWith( trail ) ? input.substring( 0, input.length() - trail.length() ) : input;
+    }
+
+    public static String withoutHead( String input, String head )
+    {
+        return input.startsWith( head ) ? input.substring( head.length() ) : input;
+    }
+
     private Strings()
     {
     }
