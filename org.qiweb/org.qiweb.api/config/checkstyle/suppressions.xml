@@ -23,6 +23,9 @@
     <suppress checks="FileLength" files="MimeTypesNames.java"/>
     <suppress checks="LineLength" files="MimeTypesNames.java"/>
 
+    <!-- Erroneous FinalClass check -->
+    <suppress checks="FinalClass" files="MapBuilder.java"/>
+
     <!-- Java 7 Try-With-Resource not supported by Checkstyle -->
     <suppress checks=".*" files="Serializables.java"/>
 
@@ -30,6 +33,7 @@
     <suppress checks=".*" files="Classes.java"/>
     <suppress checks=".*" files="Stacktraces.java"/>
     <suppress checks=".*" files="Cached.java"/>
+    <suppress checks=".*" files="LinkedMultiValueMap.java"/>
     <suppress checks=".*" files="ContentSecurityPolicy.java"/>
     <suppress checks=".*" files="DoNotTrack.java"/>
     <suppress checks=".*" files="HSTS.java"/>
