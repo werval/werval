@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.api.Mode.TEST;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
 
 /**
