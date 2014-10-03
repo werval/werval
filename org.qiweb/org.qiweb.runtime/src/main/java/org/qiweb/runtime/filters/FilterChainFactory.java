@@ -37,7 +37,7 @@ import org.qiweb.runtime.filters.FilterChainInstance.FilterChainControllerTail;
 /**
  * FilterChain Factory.
  */
-public class FilterChainFactory
+public final class FilterChainFactory
 {
     public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
@@ -122,6 +122,7 @@ public class FilterChainFactory
                         }
                         catch( ClassCastException ex )
                         {
+                            // Ignored
                         }
                     }
                     filters.addAll(
