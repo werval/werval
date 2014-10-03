@@ -17,6 +17,7 @@ package org.qiweb.devshell;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -32,7 +33,6 @@ import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.exceptions.RuntimeIOException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
@@ -344,7 +344,7 @@ public final class DevShell
         }
         catch( IOException ex )
         {
-            throw new RuntimeIOException( ex );
+            throw new UncheckedIOException( ex );
         }
     }
 
@@ -358,7 +358,7 @@ public final class DevShell
             }
             catch( IOException ex )
             {
-                throw new RuntimeIOException( ex );
+                throw new UncheckedIOException( ex );
             }
         }
     }

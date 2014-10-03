@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.qiweb.api.exceptions.QiWebException;
 
 import static org.qiweb.api.util.Charsets.UTF_8;
 
@@ -99,7 +98,7 @@ public final class ClassLoaders
         }
         if( !location.getScheme().equals( "file" ) )
         {
-            throw new QiWebException(
+            throw new RuntimeException(
                 String.format(
                     "Cannot determine classpath for %s from codebase '%s'.",
                     targetClass.getName(),
@@ -159,7 +158,7 @@ public final class ClassLoaders
         {
             throw new RuntimeException( e.getMessage(), e );
         }
-        throw new QiWebException(
+        throw new RuntimeException(
             String.format( "Cannot determine classpath for resource '%s' from location '%s'.", name, location )
         );
     }
@@ -209,7 +208,7 @@ public final class ClassLoaders
         }
         catch( Exception ex )
         {
-            throw new QiWebException( "Unable to print URLs from ClassLoaders hierarchy: " + ex.getMessage(), ex );
+            throw new RuntimeException( "Unable to print URLs from ClassLoaders hierarchy: " + ex.getMessage(), ex );
         }
     }
 
@@ -249,7 +248,7 @@ public final class ClassLoaders
         }
         catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
         {
-            throw new QiWebException(
+            throw new RuntimeException(
                 "Unable to print loaded classes from ClassLoaders hierarchy: " + ex.getMessage(),
                 ex
             );

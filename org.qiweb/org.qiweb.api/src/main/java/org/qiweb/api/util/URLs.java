@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.util;
 
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -23,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * URL related utility methods.
@@ -46,7 +46,7 @@ public final class URLs
         }
         catch( UnsupportedEncodingException ex )
         {
-            throw new QiWebException( "Unable to URL encode " + string, ex );
+            throw new UncheckedIOException( "Unable to URL encode " + string, ex );
         }
     }
 
@@ -66,7 +66,7 @@ public final class URLs
         }
         catch( UnsupportedEncodingException ex )
         {
-            throw new QiWebException( "Unable to URL decode " + string, ex );
+            throw new UncheckedIOException( "Unable to URL decode " + string, ex );
         }
     }
 
