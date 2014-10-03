@@ -17,7 +17,8 @@ package org.qiweb.api.util;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.qiweb.api.exceptions.IllegalArguments;
+
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 
 /**
  * ByteSource backed by an InputStream.
@@ -36,7 +37,7 @@ public final class InputStreamByteSource
      */
     public InputStreamByteSource( InputStream input, int bufsize )
     {
-        IllegalArguments.ensureNotNull( "InputStream", input );
+        ensureNotNull( "InputStream", input );
         this.input = input;
         this.bufsize = bufsize;
     }

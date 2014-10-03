@@ -32,7 +32,7 @@ import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Method.CONNECT;
 import static org.qiweb.api.http.Method.DELETE;
 import static org.qiweb.api.http.Method.GET;

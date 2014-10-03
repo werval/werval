@@ -22,7 +22,8 @@ import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Iterator;
-import org.qiweb.api.exceptions.IllegalArguments;
+
+import static org.qiweb.api.util.IllegalArguments.ensureGreaterOrEqual;
 
 /**
  * Utilities to work with Strings.
@@ -190,7 +191,7 @@ public final class Strings
      */
     public static String rightPad( int length, String string, char pad )
     {
-        IllegalArguments.ensureGreaterOrEqual( "length", length, 0 );
+        ensureGreaterOrEqual( "length", length, 0 );
         if( isEmpty( string ) )
         {
             return repeat( pad, length );
@@ -234,7 +235,7 @@ public final class Strings
      */
     public static String leftPad( int length, String string, char pad )
     {
-        IllegalArguments.ensureGreaterOrEqual( "length", length, 0 );
+        ensureGreaterOrEqual( "length", length, 0 );
         if( isEmpty( string ) )
         {
             return repeat( pad, length );

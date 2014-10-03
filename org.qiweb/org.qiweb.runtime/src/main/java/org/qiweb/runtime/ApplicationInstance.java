@@ -83,7 +83,7 @@ import org.qiweb.spi.http.HttpBuildersSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;

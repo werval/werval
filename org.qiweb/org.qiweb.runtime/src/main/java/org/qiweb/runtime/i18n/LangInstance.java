@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 import org.qiweb.api.i18n.Lang;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.util.Strings.EMPTY;
 
 /**

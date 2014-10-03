@@ -19,7 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import org.qiweb.api.exceptions.IllegalArguments;
+
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 
 /**
  * ByteSource backed by a byte[].
@@ -36,7 +37,7 @@ public final class ByteArrayByteSource
      */
     public ByteArrayByteSource( byte[] bytes )
     {
-        IllegalArguments.ensureNotNull( "Array of bytes", bytes );
+        ensureNotNull( "Array of bytes", bytes );
         this.bytes = bytes;
     }
 

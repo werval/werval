@@ -26,8 +26,8 @@ import org.qiweb.api.http.MutableCookies;
 import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 
 /**
  * Cookies instance.

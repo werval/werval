@@ -39,8 +39,8 @@ import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.util.TypeResolver;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.util.Strings.SPACE;
 import static org.qiweb.api.util.Strings.rightPad;
 import static org.qiweb.runtime.util.Iterables.addAll;

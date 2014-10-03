@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_MAP;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS;
 import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_DEFAULT;
 import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;

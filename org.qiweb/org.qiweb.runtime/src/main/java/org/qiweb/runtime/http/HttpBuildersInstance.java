@@ -35,9 +35,9 @@ import org.qiweb.api.util.Strings;
 import org.qiweb.api.util.URLs;
 import org.qiweb.spi.http.HttpBuildersSPI;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureInRange;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureInRange;
+import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;

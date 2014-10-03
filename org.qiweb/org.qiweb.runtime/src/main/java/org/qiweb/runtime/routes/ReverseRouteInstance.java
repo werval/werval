@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.qiweb.api.context.CurrentContext;
-import org.qiweb.api.exceptions.IllegalArguments;
+import org.qiweb.api.util.IllegalArguments;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.routes.ReverseRoute;

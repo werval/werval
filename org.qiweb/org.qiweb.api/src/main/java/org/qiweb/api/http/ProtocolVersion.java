@@ -17,7 +17,7 @@ package org.qiweb.api.http;
 
 import java.io.Serializable;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * HTTP Protocol Version.

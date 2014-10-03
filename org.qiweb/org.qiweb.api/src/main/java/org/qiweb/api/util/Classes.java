@@ -17,7 +17,7 @@ package org.qiweb.api.util;
 
 import java.util.function.Predicate;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 
 /**
  * Classe utilities.
