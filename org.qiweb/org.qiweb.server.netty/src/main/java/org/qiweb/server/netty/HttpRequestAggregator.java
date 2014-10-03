@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
+import org.qiweb.api.util.IdentityGenerator;
+import org.qiweb.api.util.UUIDIdentityGenerator;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,14 +75,8 @@ public class HttpRequestAggregator
 {
     private static final Logger LOG = LoggerFactory.getLogger( HttpRequestAggregator.class );
     private static final ByteBuf HTTP_100_CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", US_ASCII );
-    private static final String TEMP_FILE_IDENTITY_PREFIX = "body_" + UUID.randomUUID().toString() + "-";
-    private static final AtomicLong TEMP_FILE_IDENTITY_COUNT = new AtomicLong();
+    private static final IdentityGenerator TEMP_FILE_ID_GEN = new UUIDIdentityGenerator( "body" );
 
-    private static String generateNewTempFileIdentity()
-    {
-        return new StringBuilder( TEMP_FILE_IDENTITY_PREFIX ).
-            append( TEMP_FILE_IDENTITY_COUNT.getAndIncrement() ).toString();
-    }
     private final int maxContentLength;
     private final int diskThreshold;
     private final File diskOverflowDirectory;
@@ -198,7 +192,7 @@ public class HttpRequestAggregator
                 if( bodyFile == null )
                 {
                     // Start
-                    bodyFile = new File( diskOverflowDirectory, generateNewTempFileIdentity() );
+                    bodyFile = new File( diskOverflowDirectory, TEMP_FILE_ID_GEN.newIdentity() );
                     try( OutputStream bodyOutputStream = new FileOutputStream( bodyFile ) )
                     {
                         if( bodyBuf != null )

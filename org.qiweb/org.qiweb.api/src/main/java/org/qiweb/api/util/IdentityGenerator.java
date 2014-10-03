@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.spi.server;
-
-import org.qiweb.api.util.IdentityGenerator;
-import org.qiweb.api.util.UUIDIdentityGenerator;
+package org.qiweb.api.util;
 
 /**
- * Helper object for HttpServer implementations.
+ * IdentityGenerator.
  */
-public class HttpServerHelper
+public interface IdentityGenerator
 {
-    private final IdentityGenerator idGen = new UUIDIdentityGenerator();
-
     /**
-     * Generates a new request identity.
+     * Generate a new identity.
      *
-     * <p>
-     * See {@link UUIDIdentityGenerator}.
-     *
-     * @return a new request identity.
+     * @return The new identity as String
      */
-    public String generateNewRequestIdentity()
-    {
-        return idGen.newIdentity();
-    }
+    String newIdentity();
 }
