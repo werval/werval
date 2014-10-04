@@ -28,7 +28,7 @@ import org.rythmengine.utils.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.util.Strings.withoutHead;
+import static org.qiweb.util.Strings.withoutHead;
 
 /**
  * Named Rythm Template Resource Loader.

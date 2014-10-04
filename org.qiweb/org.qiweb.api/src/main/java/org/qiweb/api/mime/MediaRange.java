@@ -16,7 +16,7 @@
 package org.qiweb.api.mime;
 
 import java.util.List;
-import org.qiweb.api.util.Couple;
+import org.qiweb.util.Couple;
 
 /**
  * Media Range as defined in RFC 2616, sections 3.7 and 14.1.

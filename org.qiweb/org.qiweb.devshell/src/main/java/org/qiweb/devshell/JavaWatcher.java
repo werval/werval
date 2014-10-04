@@ -45,8 +45,8 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.runtime.util.Iterables.first;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Java WatchService based SourceWatcher.

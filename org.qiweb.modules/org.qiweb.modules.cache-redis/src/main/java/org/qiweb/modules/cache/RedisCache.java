@@ -17,10 +17,10 @@ package org.qiweb.modules.cache;
 
 import java.util.UUID;
 import org.qiweb.api.cache.Cache;
-import org.qiweb.api.util.Serializables;
+import org.qiweb.util.Serializables;
 import redis.clients.jedis.Jedis;
 
-import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.util.Charsets.UTF_8;
 
 /**
  * Redis Cache.

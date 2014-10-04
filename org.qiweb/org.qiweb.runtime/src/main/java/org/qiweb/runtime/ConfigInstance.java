@@ -26,11 +26,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.qiweb.api.Config;
-import org.qiweb.api.util.Reflectively;
+import org.qiweb.util.Reflectively;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.qiweb.api.util.Charsets.UTF_8;
+import static org.qiweb.util.Charsets.UTF_8;
 
 /**
  * Config Instance backed by TypeSafe Config.

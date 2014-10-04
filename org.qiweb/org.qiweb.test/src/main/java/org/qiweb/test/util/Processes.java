@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
-import org.qiweb.api.util.Couple;
+import org.qiweb.util.Couple;
 
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Processes utilities.

@@ -24,7 +24,7 @@ import java.util.TreeMap;
 import org.qiweb.api.Config;
 import org.qiweb.api.Error;
 import org.qiweb.api.Errors;
-import org.qiweb.api.util.UUIDIdentityGenerator;
+import org.qiweb.util.UUIDIdentityGenerator;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;

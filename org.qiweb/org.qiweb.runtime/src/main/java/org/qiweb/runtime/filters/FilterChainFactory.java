@@ -30,9 +30,9 @@ import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.filters.FilterChainInstance.FilterChainControllerTail;
+import org.qiweb.util.Couple;
 
 /**
  * FilterChain Factory.

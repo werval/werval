@@ -30,14 +30,11 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.i18n.Langs;
-import org.qiweb.api.util.ByteSource;
-import org.qiweb.api.util.Strings;
-import org.qiweb.api.util.URLs;
 import org.qiweb.spi.http.HttpBuildersSPI;
+import org.qiweb.util.ByteSource;
+import org.qiweb.util.Strings;
+import org.qiweb.util.URLs;
 
-import static org.qiweb.api.util.IllegalArguments.ensureInRange;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
@@ -55,6 +52,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CH
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
 import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
+import static org.qiweb.util.IllegalArguments.ensureInRange;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * HTTP API Objects Builders Instance.

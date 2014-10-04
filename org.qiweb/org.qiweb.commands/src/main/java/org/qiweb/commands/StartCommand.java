@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Set;
 import org.qiweb.api.exceptions.QiWebException;
 
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Start Command.

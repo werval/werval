@@ -16,7 +16,7 @@
 package org.qiweb.api.http;
 
 import java.io.Serializable;
-import org.qiweb.api.util.Charsets;
+import org.qiweb.util.Charsets;
 
 /**
  * HTTP Status.

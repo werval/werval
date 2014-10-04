@@ -25,9 +25,9 @@ import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.util.Charsets.UTF_8;
-import static org.qiweb.api.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.api.util.InputStreams.readAllAsString;
+import static org.qiweb.util.Charsets.UTF_8;
+import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
+import static org.qiweb.util.InputStreams.readAllAsString;
 
 /**
  * Banner Test.

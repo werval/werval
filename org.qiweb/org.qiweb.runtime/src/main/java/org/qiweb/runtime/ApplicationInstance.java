@@ -61,8 +61,6 @@ import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.templates.Templates;
-import org.qiweb.api.util.Reflectively;
-import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
@@ -81,10 +79,11 @@ import org.qiweb.runtime.util.TypeResolver;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.http.HttpBuildersSPI;
+import org.qiweb.util.Reflectively;
+import org.qiweb.util.Stacktraces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
@@ -92,10 +91,6 @@ import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
-import static org.qiweb.api.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.api.util.InputStreams.transferTo;
-import static org.qiweb.api.util.Strings.NEWLINE;
-import static org.qiweb.api.util.Strings.indentTwoSpaces;
 import static org.qiweb.runtime.ConfigKeys.APP_BANNER;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
@@ -112,6 +107,11 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
+import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
+import static org.qiweb.util.InputStreams.transferTo;
+import static org.qiweb.util.Strings.NEWLINE;
+import static org.qiweb.util.Strings.indentTwoSpaces;
 
 /**
  * An Application Instance.

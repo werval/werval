@@ -31,8 +31,8 @@ import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
+import org.qiweb.util.Couple;
 
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;

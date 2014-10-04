@@ -39,20 +39,20 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.util.ByteSource;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
 import org.qiweb.spi.http.HttpBuildersSPI;
 import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
+import org.qiweb.util.ByteSource;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Factory methods used by the server.

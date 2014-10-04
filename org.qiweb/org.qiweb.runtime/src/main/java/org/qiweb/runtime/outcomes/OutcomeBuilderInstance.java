@@ -22,17 +22,17 @@ import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
-import org.qiweb.api.util.ByteArrayByteSource;
-import org.qiweb.api.util.ByteSource;
+import org.qiweb.util.ByteArrayByteSource;
+import org.qiweb.util.ByteSource;
 
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_XML;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
-import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
+import static org.qiweb.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Outcome Builder instance.

@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.util.Reflectively;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.util.NamedThreadFactory;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.server.HttpServerAdapter;
+import org.qiweb.util.Reflectively;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

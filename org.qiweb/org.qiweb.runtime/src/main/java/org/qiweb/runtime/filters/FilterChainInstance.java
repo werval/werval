@@ -25,7 +25,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.util.Couple;
+import org.qiweb.util.Couple;
 
 /**
  * Instance of FilterChain.

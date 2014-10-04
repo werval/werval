@@ -42,11 +42,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_SET;
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.isEmpty;
-import static org.qiweb.api.util.Strings.withHead;
-import static org.qiweb.api.util.Strings.withoutTrail;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.withHead;
+import static org.qiweb.util.Strings.withoutTrail;
 
 /**
  * RouteBuilder Instance.

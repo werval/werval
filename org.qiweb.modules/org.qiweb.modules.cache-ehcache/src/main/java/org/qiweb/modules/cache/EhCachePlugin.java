@@ -19,8 +19,8 @@ import java.net.URL;
 import net.sf.ehcache.CacheManager;
 import org.qiweb.api.Application;
 import org.qiweb.api.cache.Cache;
+import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
-import org.qiweb.spi.cache.CachePlugin;
 
 /**
  * EhCache Plugin.

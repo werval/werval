@@ -18,7 +18,7 @@ package org.qiweb.runtime.mime;
 import java.util.List;
 import org.junit.Test;
 import org.qiweb.api.mime.MediaRange;
-import org.qiweb.api.util.Couple;
+import org.qiweb.util.Couple;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;

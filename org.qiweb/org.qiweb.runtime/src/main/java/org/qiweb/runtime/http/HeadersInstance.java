@@ -23,15 +23,15 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
+import org.qiweb.util.Strings;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Instance of HTTP Headers.

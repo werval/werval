@@ -28,12 +28,13 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Breaking changes
 
 - Gradle Plugin development mode build logic revamped, see #125
+- Moved `org.qiweb.api.util` to `org.qiweb.util`, see #174
 - Moved all standard controllers from `org.qiweb.api.controllers` to `org.qiweb.controllers`, see #160
 - Moved `@Cached` from `org.qiweb.api.cache` to `org.qiweb.filters`, see #171
 - Renamed `StaticFiles` to `Static`, see #124
 - Renamed `ClasspathResources` to `Classpath`, see #123
-- Renamed `Global::onApplicationError ` to `Global.onRequestError`, see #159
-- Rythm Plugin now embrace the Templates API and must now be used through it, see #172
+- Renamed `Global::onApplicationError ` to `Global::onRequestError`, see #159
+- The Rythm Plugin now embrace the Templates API and must be used through it, see #172
 
 #### Bug fixes
 

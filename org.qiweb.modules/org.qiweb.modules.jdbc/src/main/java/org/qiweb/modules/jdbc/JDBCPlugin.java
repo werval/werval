@@ -35,8 +35,8 @@ import org.qiweb.api.exceptions.ActivationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.isEmpty;
 
 /**
  * JDBC Plugin that manage DataSources using BoneCP pool.

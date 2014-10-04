@@ -27,8 +27,8 @@ import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.api.templates.Templates;
-import org.qiweb.api.util.Reflectively;
-import org.qiweb.api.util.Stacktraces;
+import org.qiweb.util.Reflectively;
+import org.qiweb.util.Stacktraces;
 
 /**
  * Application.

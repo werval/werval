@@ -24,7 +24,7 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
 import org.qiweb.runtime.util.Iterables;
 
-import static org.qiweb.api.util.Strings.NEWLINE;
+import static org.qiweb.util.Strings.NEWLINE;
 
 /**
  * Instance of Routes.

@@ -24,8 +24,8 @@ import org.qiweb.api.http.Status;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.OutcomeBuilder;
 import org.qiweb.api.outcomes.Outcomes;
-import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
+import org.qiweb.util.URLs;
 
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.http.Status.ACCEPTED;

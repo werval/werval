@@ -17,8 +17,8 @@ package org.qiweb.modules.cache;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.cache.Cache;
+import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
-import org.qiweb.spi.cache.CachePlugin;
 import redis.clients.jedis.Jedis;
 
 /**

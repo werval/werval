@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
 import org.qiweb.api.cache.Cache;
-import org.qiweb.api.util.Couple;
-import org.qiweb.api.util.Numbers;
+import org.qiweb.util.Couple;
+import org.qiweb.util.Numbers;
 
 /**
  * In-Memory Cache backed by a {@link ConcurrentHashMap}.

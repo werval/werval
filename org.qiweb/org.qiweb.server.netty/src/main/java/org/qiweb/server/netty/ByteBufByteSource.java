@@ -19,8 +19,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.qiweb.api.util.ByteSource;
-import org.qiweb.api.util.InputStreams;
+import org.qiweb.util.ByteSource;
+import org.qiweb.util.InputStreams;
 
 /**
  * ByteSource backed by a Netty ByteBuf.

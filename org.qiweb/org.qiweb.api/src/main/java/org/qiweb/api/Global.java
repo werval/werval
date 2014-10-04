@@ -23,7 +23,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
-import org.qiweb.api.util.Stacktraces;
+import org.qiweb.util.Stacktraces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,15 +19,15 @@ import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.templates.Templates;
-import org.qiweb.spi.templates.TemplatesPlugin;
+import org.qiweb.api.templates.TemplatesPlugin;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import static java.util.Locale.US;
 import static org.qiweb.api.Mode.DEV;
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.withTrail;
-import static org.qiweb.api.util.Strings.withoutHead;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.withTrail;
+import static org.qiweb.util.Strings.withoutHead;
 
 /**
  * Thymeleaf Templates Plugin.

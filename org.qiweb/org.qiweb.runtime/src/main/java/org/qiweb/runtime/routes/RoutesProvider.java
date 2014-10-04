@@ -18,7 +18,7 @@ package org.qiweb.runtime.routes;
 import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.util.Reflectively;
+import org.qiweb.util.Reflectively;
 
 /**
  * Routes Provider.

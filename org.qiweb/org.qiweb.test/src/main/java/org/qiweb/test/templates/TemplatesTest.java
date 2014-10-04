@@ -25,7 +25,7 @@ import org.qiweb.test.QiWebTest;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.util.Maps.fromMap;
+import static org.qiweb.util.Maps.fromMap;
 
 /**
  * Templates Test.

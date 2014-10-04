@@ -43,10 +43,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.util.ClassLoaders;
-import org.qiweb.api.util.DeltreeFileVisitor;
-import org.qiweb.api.util.InputStreams;
-import org.qiweb.api.util.Strings;
 import org.qiweb.commands.DevShellCommand;
 import org.qiweb.commands.SecretCommand;
 import org.qiweb.commands.StartCommand;
@@ -54,16 +50,20 @@ import org.qiweb.devshell.JavaWatcher;
 import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
+import org.qiweb.util.ClassLoaders;
+import org.qiweb.util.DeltreeFileVisitor;
+import org.qiweb.util.InputStreams;
+import org.qiweb.util.Strings;
 
 import static java.io.File.separator;
-import static org.qiweb.api.util.Charsets.UTF_8;
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.NEWLINE;
-import static org.qiweb.api.util.Strings.hasText;
 import static org.qiweb.cli.BuildVersion.COMMIT;
 import static org.qiweb.cli.BuildVersion.DATE;
 import static org.qiweb.cli.BuildVersion.DIRTY;
 import static org.qiweb.cli.BuildVersion.VERSION;
+import static org.qiweb.util.Charsets.UTF_8;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.NEWLINE;
+import static org.qiweb.util.Strings.hasText;
 
 /**
  * Damn Small QiWeb DevShell.

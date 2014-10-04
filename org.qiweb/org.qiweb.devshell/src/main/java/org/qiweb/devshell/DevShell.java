@@ -36,14 +36,14 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
-import static org.qiweb.api.util.ClassLoaders.printLoadedClasses;
-import static org.qiweb.api.util.ClassLoaders.printURLs;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.util.AnsiColor.cyan;
 import static org.qiweb.runtime.util.AnsiColor.red;
 import static org.qiweb.runtime.util.AnsiColor.white;
 import static org.qiweb.runtime.util.AnsiColor.yellow;
+import static org.qiweb.util.ClassLoaders.printLoadedClasses;
+import static org.qiweb.util.ClassLoaders.printURLs;
 
 /**
  * QiWeb DevShell.

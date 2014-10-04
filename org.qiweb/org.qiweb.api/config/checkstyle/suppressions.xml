@@ -24,7 +24,7 @@
     <suppress checks="LineLength" files="MimeTypesNames.java"/>
 
     <!-- Erroneous FinalClass check -->
-    <suppress checks="FinalClass" files="MapBuilder.java"/>
+    <suppress checks="FinalClass" files="Maps.java"/>
 
     <!-- Java 7 Try-With-Resource not supported by Checkstyle -->
     <suppress checks=".*" files="Serializables.java"/>

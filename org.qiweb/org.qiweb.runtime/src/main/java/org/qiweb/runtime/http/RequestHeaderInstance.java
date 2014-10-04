@@ -34,10 +34,10 @@ import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.mime.MediaRange;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.util.Couple;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.mime.MediaRangeInstance;
+import org.qiweb.util.Couple;
+import org.qiweb.util.Strings;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableMap;
@@ -51,10 +51,10 @@ import static org.qiweb.api.http.Headers.Names.HOST;
 import static org.qiweb.api.http.Headers.Names.X_FORWARDED_FOR;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.isEmpty;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.isEmpty;
 
 /**
  * RequestHeader instance.

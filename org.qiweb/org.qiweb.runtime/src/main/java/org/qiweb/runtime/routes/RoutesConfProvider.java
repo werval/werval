@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Scanner;
 import org.qiweb.api.Application;
 import org.qiweb.api.routes.Route;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.qiweb.util.Strings;
 
 /**
  * Routes Provider using 'routes.conf' from the Application classpath root.

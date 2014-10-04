@@ -24,7 +24,7 @@ import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
-import org.qiweb.api.util.ByteSource;
+import org.qiweb.util.ByteSource;
 
 /**
  * HTTP API Objects Builders SPI.

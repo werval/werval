@@ -38,8 +38,8 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.http.Method.POST;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.hasTextOrNull;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
  * Content-Security-Policy.

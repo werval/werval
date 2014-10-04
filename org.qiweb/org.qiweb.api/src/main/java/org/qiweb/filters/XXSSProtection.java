@@ -28,8 +28,8 @@ import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.hasTextOrNull;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
  * X-XSS-Protection.

@@ -27,14 +27,14 @@ import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.response;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
-import static org.qiweb.api.util.Charsets.US_ASCII;
-import static org.qiweb.api.util.ClassLoaders.resourceExists;
-import static org.qiweb.api.util.Strings.EMPTY;
-import static org.qiweb.api.util.Strings.isEmpty;
+import static org.qiweb.util.Charsets.US_ASCII;
+import static org.qiweb.util.ClassLoaders.resourceExists;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.isEmpty;
 
 /**
  * Classpath Resources Controller.

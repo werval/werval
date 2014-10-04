@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
-import org.qiweb.api.util.IdentityGenerator;
-import org.qiweb.api.util.UUIDIdentityGenerator;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.qiweb.util.IdentityGenerator;
+import org.qiweb.util.UUIDIdentityGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ import static org.qiweb.api.http.Headers.Names.CONNECTION;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.api.util.Charsets.US_ASCII;
+import static org.qiweb.util.Charsets.US_ASCII;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.

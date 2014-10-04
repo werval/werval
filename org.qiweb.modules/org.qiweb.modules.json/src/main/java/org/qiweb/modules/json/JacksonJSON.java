@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import static org.qiweb.api.util.Charsets.UTF_8;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.Charsets.UTF_8;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Jackson JSON.

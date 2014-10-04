@@ -25,25 +25,25 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.qiweb.api.ApplicationExecutors;
 import org.qiweb.api.Config;
 import org.qiweb.api.Global;
 import org.qiweb.api.Mode;
-import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.context.ContextExecutor;
 import org.qiweb.runtime.util.ForkJoinPoolNamedThreadFactory;
 import org.qiweb.runtime.util.NamedThreadFactory;
-import org.qiweb.api.ApplicationExecutors;
-import org.qiweb.api.util.Strings;
 import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.util.Couple;
+import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_MAP;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS;
 import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_DEFAULT;
 import static org.qiweb.runtime.ConfigKeys.APP_EXECUTORS_SHUTDOWN_TIMEOUT;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Application Executors.

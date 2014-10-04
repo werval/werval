@@ -21,7 +21,7 @@ import org.qiweb.api.Application;
 import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.templates.Templates;
-import org.qiweb.spi.templates.TemplatesPlugin;
+import org.qiweb.api.templates.TemplatesPlugin;
 import org.rythmengine.Rythm;
 import org.rythmengine.RythmEngine;
 

@@ -30,8 +30,8 @@ import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.util.Dates;
-import org.qiweb.api.util.Strings;
+import org.qiweb.util.Dates;
+import org.qiweb.util.Strings;
 
 import static org.qiweb.api.http.Headers.Names.ETAG;
 import static org.qiweb.api.http.Headers.Names.EXPIRES;

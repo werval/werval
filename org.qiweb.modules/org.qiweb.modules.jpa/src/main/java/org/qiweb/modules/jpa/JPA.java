@@ -39,15 +39,15 @@ import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.util.Strings;
 import org.qiweb.modules.jpa.internal.Slf4jSessionLogger;
+import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.api.Mode.TEST;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * JPA 2 Plugin API.

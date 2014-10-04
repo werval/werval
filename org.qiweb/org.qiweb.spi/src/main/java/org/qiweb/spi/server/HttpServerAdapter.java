@@ -18,13 +18,13 @@ package org.qiweb.spi.server;
 import java.util.ArrayList;
 import java.util.List;
 import org.qiweb.api.exceptions.PassivationException;
-import org.qiweb.api.util.Reflectively;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
+import org.qiweb.util.Reflectively;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.util.IllegalArguments.ensureNotNull;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Base class to write HttpServer implementations.

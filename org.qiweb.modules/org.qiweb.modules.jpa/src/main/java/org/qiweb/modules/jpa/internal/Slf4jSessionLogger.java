@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.persistence.logging.AbstractSessionLog;
 import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.logging.SessionLogEntry;
-import org.qiweb.api.util.Strings;
+import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

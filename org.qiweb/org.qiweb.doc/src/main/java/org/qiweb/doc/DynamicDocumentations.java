@@ -30,9 +30,9 @@ import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
-import static org.qiweb.api.util.Charsets.UTF_8;
-import static org.qiweb.api.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.api.util.InputStreams.readAllAsString;
+import static org.qiweb.util.Charsets.UTF_8;
+import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
+import static org.qiweb.util.InputStreams.readAllAsString;
 
 /**
  * Dynamic Documentations Controller.

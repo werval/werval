@@ -30,7 +30,7 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.modules.jdbc.JDBC;
 
 import static org.qiweb.api.Mode.TEST;
-import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Liquibase Plugin.
