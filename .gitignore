@@ -5,6 +5,7 @@ build
 target
 .nb-gradle
 .nb-gradle-properties
+customs.json
 repository
 .classpath
 .project
