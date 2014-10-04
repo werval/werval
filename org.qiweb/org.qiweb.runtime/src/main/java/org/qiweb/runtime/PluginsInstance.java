@@ -35,6 +35,7 @@ import org.qiweb.api.util.Couple;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
 
 import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A Plugins Instance.
@@ -268,6 +269,9 @@ import static java.util.Collections.EMPTY_LIST;
             }
         }
         // No Plugin found
-        throw new IllegalArgumentException( "API for Plugin<" + pluginApiType.getName() + "> not found." );
+        throw new IllegalArgumentException(
+            "API for Plugin<" + pluginApiType.getName() + "> not found. "
+            + "Active plugins APIs: " + activePlugins.stream().map( c -> c.left().apiType() ).collect( toList() ) + "."
+        );
     }
 }
