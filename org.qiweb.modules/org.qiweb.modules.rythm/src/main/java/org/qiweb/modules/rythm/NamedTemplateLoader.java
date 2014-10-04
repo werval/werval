@@ -25,18 +25,23 @@ import org.rythmengine.resource.ResourceLoaderBase;
 import org.rythmengine.resource.TemplateResourceBase;
 import org.rythmengine.utils.IO;
 import org.rythmengine.utils.S;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.qiweb.api.util.Strings.withoutHead;
 
 /**
- * QiWeb Template Resource Loader.
+ * Named Rythm Template Resource Loader.
  */
-/* package */ class QiWebTemplateResourceLoader
+/* package */ class NamedTemplateLoader
     extends ResourceLoaderBase
     implements ITemplateResourceLoader
 {
+    private static final Logger LOG = LoggerFactory.getLogger( NamedTemplateLoader.class );
     private final Application application;
     private final String root;
 
-    /* package */ QiWebTemplateResourceLoader( Application application, String root )
+    /* package */ NamedTemplateLoader( Application application, String root )
     {
         super();
         this.application = application;
@@ -66,11 +71,8 @@ import org.rythmengine.utils.S;
         private QiWebTemplateResource( String path, ClassLoader classLoader, ITemplateResourceLoader templateLoader )
         {
             this.loader = templateLoader;
-            // strip leading slash so path will work with classes in a JAR file
-            while( path.startsWith( "/" ) )
-            {
-                path = path.substring( 1 );
-            }
+            // strip heading slash so path will work with classes in a JAR file
+            path = withoutHead( path, "/" );
             URL u = classLoader.getResource( path );
             if( u == null )
             {
@@ -109,6 +111,7 @@ import org.rythmengine.utils.S;
         {
             if( null == cache )
             {
+                LOG.debug( "Loading '{}' template from {}", key, url );
                 cache = IO.readContentAsString( url );
             }
             return cache;

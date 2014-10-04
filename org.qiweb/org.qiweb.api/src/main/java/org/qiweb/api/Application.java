@@ -26,6 +26,7 @@ import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.templates.Templates;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.api.util.Stacktraces;
 
@@ -242,6 +243,18 @@ public interface Application
      * @return Application {@link Cache}
      */
     Cache cache();
+
+    /**
+     * Application {@link Templates}.
+     *
+     * <p>
+     * Don't hold references to the Templates instance in order to make your code {@link Mode#DEV} friendly.
+     *
+     * @return Application {@link Templates}
+     *
+     * @throws IllegalArgumentException if no {@literal Plugin} is found for Templates
+     */
+    Templates templates();
 
     /**
      * Application {@link Errors}.

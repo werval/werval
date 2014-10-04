@@ -33,6 +33,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Renamed `StaticFiles` to `Static`, see #124
 - Renamed `ClasspathResources` to `Classpath`, see #123
 - Renamed `Global::onApplicationError ` to `Global.onRequestError`, see #159
+- Rythm Plugin now embrace the Templates API and must now be used through it, see #172
 
 #### Bug fixes
 
@@ -47,6 +48,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - Application now has a startup banner, see #158
 - Application now has Executors (thread pools) and all application code is run in the default one, see #149
+- Server-side templating API supported by plugins for [Rythm](http://rythmengine.org/) and [Thymeleaf](http://www.thymeleaf.org/) engines, see #172 and #173
 - Security annotations using Filters for `X-Frame-Options`, `X-XSS-Protection`, `X-Content-Type-Options`,
   `Strict-Transport-Security`, `Content-Security-Policy`and Do No Track (`DNT`) headers, see #167, #9, #10, #168
 - Add `@NeverCache` filter, see #170

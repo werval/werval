@@ -29,6 +29,7 @@ import org.qiweb.api.http.Session;
 import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ReverseRoutes;
+import org.qiweb.api.templates.Templates;
 
 /**
  * Current Context.
@@ -220,6 +221,16 @@ public final class CurrentContext
     public static Cache cache()
     {
         return get().application().cache();
+    }
+
+    /**
+     * @return Application Templates
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Templates templates()
+    {
+        return get().application().templates();
     }
 
     private CurrentContext()

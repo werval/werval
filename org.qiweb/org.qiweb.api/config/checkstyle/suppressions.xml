@@ -47,6 +47,7 @@
     <suppress checks=".*" files="ApplicationExecutors.java"/>
     <suppress checks=".*" files="Plugin.java"/>
     <suppress checks=".*" files="Cache.java"/>
+    <suppress checks=".*" files="Template.java"/>
 
     <!-- Java 8 Static Interface Methods not supported by Checkstyle -->
     <suppress checks="RedundantModifier" files="RouteBuilder.java"/>    

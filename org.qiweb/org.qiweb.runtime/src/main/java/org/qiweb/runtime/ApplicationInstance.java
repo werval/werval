@@ -60,6 +60,7 @@ import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.Routes;
+import org.qiweb.api.templates.Templates;
 import org.qiweb.api.util.Reflectively;
 import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.context.ContextInstance;
@@ -512,8 +513,13 @@ public final class ApplicationInstance
     @Override
     public Cache cache()
     {
-        ensureActive();
-        return plugins.plugin( Cache.class );
+        return plugin( Cache.class );
+    }
+
+    @Override
+    public Templates templates()
+    {
+        return plugin( Templates.class );
     }
 
     @Override
