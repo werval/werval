@@ -18,7 +18,6 @@ package org.qiweb.modules.rythm;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Map;
 import org.qiweb.api.exceptions.TemplateException;
 import org.qiweb.api.templates.Template;
@@ -76,14 +75,13 @@ import org.slf4j.LoggerFactory;
         public void render( Map<String, Object> context, Writer output )
             throws TemplateException
         {
-            Object[] args = context.values().toArray();
             if( LOG.isDebugEnabled() )
             {
-                LOG.debug( "{}.render( {} )", this, Arrays.toString( args ) );
+                LOG.debug( "{}.render( {} )", this, context );
             }
             try
             {
-                output.write( engine.render( templateName, args ) );
+                output.write( engine.render( templateName, context ) );
             }
             catch( IOException ex )
             {
@@ -114,14 +112,13 @@ import org.slf4j.LoggerFactory;
         public void render( Map<String, Object> context, Writer output )
             throws TemplateException
         {
-            Object[] args = context.values().toArray();
             if( LOG.isDebugEnabled() )
             {
-                LOG.debug( "{}.render( {} )", this, Arrays.toString( args ) );
+                LOG.debug( "{}.render( {} )", this, context );
             }
             try
             {
-                output.write( engine.renderString( templateContent, args ) );
+                output.write( engine.renderString( templateContent, context ) );
             }
             catch( IOException ex )
             {
