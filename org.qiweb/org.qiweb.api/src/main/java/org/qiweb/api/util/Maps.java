@@ -27,18 +27,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * Map Builder.
+ * Maps Utilities.
  */
-public final class MapBuilder
+public final class Maps
 {
     /**
      * Map Builder.
      *
-     * @param <M> Map type
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <M> Map parameterized type
+     * @param <K> Key parameterized type
+     * @param <V> Value parameterized type
      */
-    public interface Builder<M extends Map<K, V>, K, V>
+    public interface MapBuilder<M extends Map<K, V>, K, V>
     {
         /**
          * Associates the specified value with the specified key in this map.
@@ -50,7 +50,7 @@ public final class MapBuilder
          *
          * @return The builder for fluent usage
          */
-        Builder<M, K, V> put( K key, V value );
+        MapBuilder<M, K, V> put( K key, V value );
 
         /**
          * Build the Map.
@@ -63,12 +63,12 @@ public final class MapBuilder
     /**
      * MultiValueMap Builder.
      *
-     * @param <M> Map type
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <M> Map parameterized type
+     * @param <K> Key parameterized type
+     * @param <V> Value parameterized type
      */
-    public interface MultiValueBuilder<M extends Map<K, List<V>>, K, V>
-        extends Builder<M, K, List<V>>
+    public interface MultiValueMapBuilder<M extends Map<K, List<V>>, K, V>
+        extends MapBuilder<M, K, List<V>>
     {
         /**
          * Associates the specified values with the specified key in this map.
@@ -81,7 +81,7 @@ public final class MapBuilder
          * @return The builder for fluent usage
          */
         @Override
-        MultiValueBuilder<M, K, V> put( K key, List<V> values );
+        MultiValueMapBuilder<M, K, V> put( K key, List<V> values );
 
         /**
          * Add the specified values to the List associated with the specified key in this map.
@@ -92,18 +92,21 @@ public final class MapBuilder
          *
          * @return The builder for fluent usage
          */
-        MultiValueBuilder<M, K, V> add( K key, V value, V... moreValues );
+        MultiValueMapBuilder<M, K, V> add( K key, V value, V... moreValues );
     }
 
     /**
      * Create a Map Builder starting with an empty HashMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty HashMap.
      */
-    public static <K, V> Builder<HashMap<K, V>, K, V> newHashMap()
+    public static <K, V>
+        MapBuilder<HashMap<K, V>, K, V> newHashMap( Class<? super K> kClass, Class<? super V> vClass )
     {
         return fromMap( new HashMap<K, V>() );
     }
@@ -111,12 +114,15 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty LinkedHashMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty LinkedHashMap.
      */
-    public static <K, V> Builder<LinkedHashMap<K, V>, K, V> newLinkedHashMap()
+    public static <K, V>
+        MapBuilder<LinkedHashMap<K, V>, K, V> newLinkedHashMap( Class<? super K> kClass, Class<? super V> vClass )
     {
         return fromMap( new LinkedHashMap<K, V>() );
     }
@@ -124,12 +130,15 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty ConcurrentHashMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty ConcurrentHashMap.
      */
-    public static <K, V> Builder<ConcurrentHashMap<K, V>, K, V> newConcurrentHashMap()
+    public static <K, V>
+        MapBuilder<ConcurrentHashMap<K, V>, K, V> newConcurrentHashMap( Class<? super K> kClass, Class<? super V> vClass )
     {
         return fromMap( new ConcurrentHashMap<K, V>() );
     }
@@ -137,12 +146,18 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty ConcurrentSkipListMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty ConcurrentSkipListMap.
      */
-    public static <K, V> Builder<ConcurrentSkipListMap<K, V>, K, V> newConcurrentSkipListMap()
+    public static <K, V>
+        MapBuilder<ConcurrentSkipListMap<K, V>, K, V> newConcurrentSkipListMap(
+            Class<? super K> kClass,
+            Class<? super V> vClass
+        )
     {
         return fromMap( new ConcurrentSkipListMap<K, V>() );
     }
@@ -150,16 +165,21 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty ConcurrentSkipListMap.
      *
-     * @param <K>        Key type
-     * @param <V>        Value type
+     * @param <K>        Key parameterized type
+     * @param <V>        Value parameterized type
+     * @param kClass     Key Class
+     * @param vClass     Value Class
      * @param comparator The comparator that will be used to order this map.
      *                   If null, the natural ordering of the keys will be used.
      *
      * @return The Map Builder started with an empty ConcurrentSkipListMap.
      */
-    public static <K, V> Builder<ConcurrentSkipListMap<K, V>, K, V> newConcurrentSkipListMap(
-        Comparator<? super K> comparator
-    )
+    public static <K, V>
+        MapBuilder<ConcurrentSkipListMap<K, V>, K, V> newConcurrentSkipListMap(
+            Class<? super K> kClass,
+            Class<? super V> vClass,
+            Comparator<? super K> comparator
+        )
     {
         return fromMap( new ConcurrentSkipListMap<K, V>( comparator ) );
     }
@@ -167,12 +187,15 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty IdentityHashMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty IdentityHashMap.
      */
-    public static <K, V> Builder<IdentityHashMap<K, V>, K, V> newIdentityHashMap()
+    public static <K, V>
+        MapBuilder<IdentityHashMap<K, V>, K, V> newIdentityHashMap( Class<? super K> kClass, Class<? super V> vClass )
     {
         return fromMap( new IdentityHashMap<K, V>() );
     }
@@ -180,12 +203,15 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty WeakHashMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty WeakHashMap.
      */
-    public static <K, V> Builder<WeakHashMap<K, V>, K, V> newWeakHashMap()
+    public static <K, V>
+        MapBuilder<WeakHashMap<K, V>, K, V> newWeakHashMap( Class<? super K> kClass, Class<? super V> vClass )
     {
         return fromMap( new WeakHashMap<K, V>() );
     }
@@ -193,12 +219,15 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty TreeMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The Map Builder started with an empty TreeMap.
      */
-    public static <K, V> Builder<TreeMap<K, V>, K, V> newTreeMap()
+    public static <K, V>
+        MapBuilder<TreeMap<K, V>, K, V> newTreeMap( Class<? super K> kClass, Class<? super V> vClass )
     {
         return fromMap( new TreeMap<K, V>() );
     }
@@ -206,14 +235,21 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with an empty TreeMap.
      *
-     * @param <K>        Key type
-     * @param <V>        Value type
+     * @param <K>        Key parameterized type
+     * @param <V>        Value parameterized type
+     * @param kClass     Key Class
+     * @param vClass     Value Class
      * @param comparator The comparator that will be used to order this map.
      *                   If null, the natural ordering of the keys will be used.
      *
      * @return The Map Builder started with an empty TreeMap.
      */
-    public static <K, V> Builder<TreeMap<K, V>, K, V> newTreeMap( Comparator<? super K> comparator )
+    public static <K, V>
+        MapBuilder<TreeMap<K, V>, K, V> newTreeMap(
+            Class<? super K> kClass,
+            Class<? super V> vClass,
+            Comparator<? super K> comparator
+        )
     {
         return fromMap( new TreeMap<K, V>( comparator ) );
     }
@@ -221,12 +257,18 @@ public final class MapBuilder
     /**
      * Create a MultiValueMap Builder starting with an empty LinkedMultiValueMap.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
      *
      * @return The MultiValueMap Builder started with an empty LinkedMultiValueMap
      */
-    public static <K, V> MultiValueBuilder<LinkedMultiValueMap<K, V>, K, V> newLinkedMultiValueMap()
+    public static <K, V>
+        MultiValueMapBuilder<LinkedMultiValueMap<K, V>, K, V> newLinkedMultiValueMap(
+            Class<? super K> kClass,
+            Class<? super V> vClass
+        )
     {
         return fromMap( new LinkedMultiValueMap<K, V>() );
     }
@@ -234,46 +276,48 @@ public final class MapBuilder
     /**
      * Create a Map Builder starting with a given Map.
      *
-     * @param <M> Map type
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <M> Map parameterized type
+     * @param <K> Key parameterized type
+     * @param <V> Value parameterized type
      *
      * @param map The Map the Builder will use
      *
      * @return The Map Builder started with the given Map
      */
-    public static <M extends Map<K, V>, K, V> Builder<M, K, V> fromMap( M map )
+    public static <M extends Map<K, V>, K, V>
+        MapBuilder<M, K, V> fromMap( M map )
     {
-        return new SingleValueBuilderImpl<>( map );
+        return new MapBuilderImpl<>( map );
     }
 
     /**
      * Create a MultiValueMap Builder starting with a given MultiValueMap.
      *
-     * @param <M> MultiValueMap type
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param <M> Map parameterized type
+     * @param <K> Key parameterized type
+     * @param <V> Value parameterized type
      * @param map The MultiValueMap the Builder will use
      *
      * @return The MultiValueMap Builder started with the given MultiValueMap
      */
-    public static <M extends MultiValueMap<K, V>, K, V> MultiValueBuilder<M, K, V> fromMap( M map )
+    public static <M extends MultiValueMap<K, V>, K, V>
+        MultiValueMapBuilder<M, K, V> fromMap( M map )
     {
-        return new MultiValueBuilderImpl<>( map );
+        return new MultiValueMapBuilderImpl<>( map );
     }
 
-    private static class SingleValueBuilderImpl<M extends Map<K, V>, K, V>
-        implements Builder<M, K, V>
+    private static class MapBuilderImpl<M extends Map<K, V>, K, V>
+        implements MapBuilder<M, K, V>
     {
         protected final M map;
 
-        private SingleValueBuilderImpl( M map )
+        private MapBuilderImpl( M map )
         {
             this.map = map;
         }
 
         @Override
-        public Builder<M, K, V> put( K key, V value )
+        public MapBuilder<M, K, V> put( K key, V value )
         {
             map.put( key, value );
             return this;
@@ -286,24 +330,24 @@ public final class MapBuilder
         }
     }
 
-    private static final class MultiValueBuilderImpl<M extends MultiValueMap<K, V>, K, V>
-        extends SingleValueBuilderImpl<M, K, List<V>>
-        implements MultiValueBuilder<M, K, V>
+    private static final class MultiValueMapBuilderImpl<M extends MultiValueMap<K, V>, K, V>
+        extends MapBuilderImpl<M, K, List<V>>
+        implements MultiValueMapBuilder<M, K, V>
     {
-        private MultiValueBuilderImpl( M map )
+        private MultiValueMapBuilderImpl( M map )
         {
             super( map );
         }
 
         @Override
-        public MultiValueBuilder<M, K, V> add( K key, V value, V... moreValues )
+        public MultiValueMapBuilder<M, K, V> add( K key, V value, V... moreValues )
         {
             map.add( key, value, moreValues );
             return this;
         }
 
         @Override
-        public MultiValueBuilder<M, K, V> put( K key, List<V> values )
+        public MultiValueMapBuilder<M, K, V> put( K key, List<V> values )
         {
             map.put( key, values );
             return this;
@@ -316,7 +360,7 @@ public final class MapBuilder
         }
     }
 
-    private MapBuilder()
+    private Maps()
     {
     }
 }
