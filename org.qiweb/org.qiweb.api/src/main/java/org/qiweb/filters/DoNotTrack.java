@@ -33,6 +33,9 @@ import org.qiweb.api.outcomes.Outcome;
  * Do Not Track.
  *
  * <p>
+ * Set a Context MetaData boolean value indicating whether the client advertised a Do-Not-Track header using the
+ * {@literal DNT} key.
+ * <p>
  * See the <a href="http://www.w3.org/TR/tracking-dnt/">Tracking Preference Expression (DNT)</a> working draft at IETF.
  */
 @FilterWith( DoNotTrack.Filter.class )
@@ -48,6 +51,11 @@ public @interface DoNotTrack
     boolean optIn() default false;
 
     /**
+     * Context MetaData key for a boolean value indicating whether the client advertised a Do-Not-Track header.
+     */
+    public static final String DNT = "DNT";
+
+    /**
      * Do Not Track Filter.
      */
     public static class Filter
@@ -57,12 +65,16 @@ public @interface DoNotTrack
         public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<DoNotTrack> annotation )
         {
             Headers requestHeaders = context.request().headers();
-            if( requestHeaders.has( "DNT" ) )
+            if( requestHeaders.has( DNT ) )
             {
                 context.metaData().put(
-                    "DNT",
-                    "1".equals( requestHeaders.singleValue( "DNT" ) )
+                    DNT,
+                    "1".equals( requestHeaders.singleValue( DNT ) )
                 );
+            }
+            else
+            {
+                context.metaData().put( DNT, false );
             }
             return chain.next( context ).thenApply(
                 (outcome) ->
@@ -72,7 +84,7 @@ public @interface DoNotTrack
                     ).orElse(
                         context.application().config().bool( "qiweb.filters.dnt.opt_in" )
                     );
-                    outcome.responseHeader().headers().withSingle( "DNT", optIn ? "0" : "1" );
+                    outcome.responseHeader().headers().withSingle( DNT, optIn ? "0" : "1" );
                     return outcome;
                 }
             );
