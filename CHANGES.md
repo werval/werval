@@ -97,7 +97,7 @@ For minor changes, build system or test changes, see the full [source code histo
     - Upgrade Commons Email from `1.3.2` to `1.3.3`, see the [changes-report](http://commons.apache.org/proper/commons-email/changes-report.html)
     - Upgrade spymemcached from `2.11.1` to `2.11.4`, see the [release-notes](https://github.com/couchbase/spymemcached/releases)
     - Upgrade Rythm Engine from `1.0` to `1.0.1`, see the [history](https://github.com/greenlaw110/Rythm/commits/1.0)
-    - Upgrade Spring from `4.0.3` to `4.1.0`, see the [changes-report](http://docs.spring.io/spring-framework/docs/4.1.x/spring-framework-reference/htmlsingle/#new-in-4.1)
+    - Upgrade Spring from `4.0.3` to `4.1.1`, see the [changes-report](http://docs.spring.io/spring-framework/docs/4.1.x/spring-framework-reference/htmlsingle/#new-in-4.1)
 - Tooling
     - Upgrade Gradle from `1.11` to `2.1`, see all the release-notes:
       [1.12](http://www.gradle.org/docs/1.12/release-notes),
