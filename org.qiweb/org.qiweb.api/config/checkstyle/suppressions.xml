@@ -42,6 +42,7 @@
     <suppress checks=".*" files="XContentTypeOptions.java"/>
     <suppress checks=".*" files="XFrameOptions.java"/>
     <suppress checks=".*" files="XXSSProtection.java"/>
+    <suppress checks=".*" files="AcceptContentTypes.java"/>
 
     <!-- Java 8 Defender Methods not supported by Checkstyle -->
     <suppress checks=".*" files="Application.java"/>

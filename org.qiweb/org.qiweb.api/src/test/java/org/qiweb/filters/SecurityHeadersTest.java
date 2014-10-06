@@ -28,6 +28,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_XML;
 
 /**
  * Security Headers Test.
@@ -49,6 +50,7 @@ public class SecurityHeadersTest
         + "POST /cspViolations org.qiweb.filters.ContentSecurityPolicy$ViolationLogger.logViolation\n"
         + "GET /dnt org.qiweb.filters.SecurityHeadersTest$Controller.dnt\n"
         + "GET /dntConfig org.qiweb.filters.SecurityHeadersTest$Controller.dntConfig\n"
+        + "POST /acceptContentTypes org.qiweb.filters.SecurityHeadersTest$Controller.acceptContentTypes\n"
     ) );
 
     public static class Controller
@@ -122,6 +124,12 @@ public class SecurityHeadersTest
 
         @DoNotTrack( optIn = true )
         public Outcome dntConfig()
+        {
+            return outcomes().ok().build();
+        }
+
+        @AcceptContentTypes( APPLICATION_JSON )
+        public Outcome acceptContentTypes()
         {
             return outcomes().ok().build();
         }
@@ -285,5 +293,32 @@ public class SecurityHeadersTest
             .header( "DNT", "0" )
             .when()
             .get( "/dntConfig" );
+    }
+
+    @Test
+    public void acceptContentTypes()
+    {
+        given()
+            .contentType( APPLICATION_JSON )
+            .body( "{}" )
+            .expect()
+            .statusCode( 200 )
+            .when()
+            .post( "/acceptContentTypes" );
+
+        given()
+            .contentType( APPLICATION_XML )
+            .body( "<root/>" )
+            .expect()
+            .statusCode( 400 )
+            .when()
+            .post( "/acceptContentTypes" );
+
+        given()
+            .body( "" )
+            .expect()
+            .statusCode( 400 )
+            .when()
+            .post( "/acceptContentTypes" );
     }
 }
