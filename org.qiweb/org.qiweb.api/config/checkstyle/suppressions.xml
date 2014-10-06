@@ -33,11 +33,12 @@
     <suppress checks=".*" files="Classes.java"/>
     <suppress checks=".*" files="Stacktraces.java"/>
     <suppress checks=".*" files="Cached.java"/>
+    <suppress checks=".*" files="SetHeader.java"/>
+    <suppress checks=".*" files="RemoveHeaders.java"/>
     <suppress checks=".*" files="LinkedMultiValueMap.java"/>
     <suppress checks=".*" files="ContentSecurityPolicy.java"/>
     <suppress checks=".*" files="DoNotTrack.java"/>
     <suppress checks=".*" files="HSTS.java"/>
-    <suppress checks=".*" files="RemoveHeaders.java"/>
     <suppress checks=".*" files="XContentTypeOptions.java"/>
     <suppress checks=".*" files="XFrameOptions.java"/>
     <suppress checks=".*" files="XXSSProtection.java"/>
