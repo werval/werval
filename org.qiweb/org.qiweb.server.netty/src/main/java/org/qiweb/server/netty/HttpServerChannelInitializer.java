@@ -59,7 +59,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         {
             // Log Netty Bytes
             LogLevel level = LogLevel.valueOf( app.config().string( QIWEB_HTTP_LOG_LOWLEVEL_LEVEL ).toUpperCase( US ) );
-            pipeline.addLast( "byte-logging", new LoggingHandler( level ) );
+            pipeline.addLast( "byte-logging", new LoggingHandler( "org.qiweb.server.netty.LowLevelLogger", level ) );
         }
 
         // Read/Write Timeout
