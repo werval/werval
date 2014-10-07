@@ -5,7 +5,7 @@ apply from: file( '../gradle/repositories.gradle' )
 description = "QiWeb Distributions"
 
 // Modules included in the distribution
-def modules = [ 'guice', 'jndi', 'jdbc', 'rythm' ]
+def modules_array = new groovy.json.JsonSlurper().parseText(modules)
 
 
 //
@@ -31,7 +31,7 @@ buildscript {
 configurations { docDist { transitive = false } }
 dependencies {
     docDist "org.qiweb:org.qiweb.doc:$version:qiweb-doc@zip"
-    modules.each { module -> docDist "org.qiweb:org.qiweb.modules.$module:$version:qiweb-doc@zip" }
+    modules_array.each { module -> docDist "org.qiweb:org.qiweb.modules.$module:$version:qiweb-doc@zip" }
 }
 task extractCoreDoc(type: Copy) {
     inputs.file configurations.docDist
@@ -43,7 +43,7 @@ task extractModules {
     inputs.file configurations.docDist
     outputs.file file('build/tmp/dyn-doc')
     doLast {
-        modules.each { module ->
+        modules_array.each { module ->
             copy {
                 from zipTree( configurations.docDist.fileCollection{ it.name == "org.qiweb.modules.$module" }.singleFile )
                 into file("build/tmp/dyn-doc/$module")
@@ -62,7 +62,7 @@ task generateModulesIndex {
 :toc: right
 :toc-title: Modules
 
-Modules are bla bla ...
+Modules released with this version of QiWeb can be found below.
 
 toc::[]
 
@@ -134,7 +134,7 @@ task distributionArchive_src {
             include 'org.qiweb/**'
             include 'org.qiweb.modules/*'
             include 'org.qiweb.modules/gradle/**'
-            modules.each { m -> include "org.qiweb.modules/org.qiweb.modules.$m/**" }
+            modules_array.each { m -> include "org.qiweb.modules/org.qiweb.modules.$m/**" }
             include 'org.qiweb.gradle/**'
             include 'org.qiweb.maven/**'
             exclude '**/build/**'
@@ -154,7 +154,7 @@ configurations { binDist }
 dependencies {
     binDist "org.qiweb:org.qiweb.server.bootstrap:$version:javadoc"
     binDist "org.qiweb:org.qiweb.test:$version:javadoc"
-    modules.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
+    modules_array.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
     binDist "org.qiweb:org.qiweb.gradle:$version:javadoc"
     binDist "org.qiweb:org.qiweb.maven:$version:javadoc"
 }
@@ -163,7 +163,7 @@ task distributionArchive_artifacts {
     doLast {
         copy {
             from fileTree( '../repository' )
-            modules.each { m -> include "org/qiweb/org.qiweb.modules.$m/**" }
+            modules_array.each { m -> include "org/qiweb/org.qiweb.modules.$m/**" }
             exclude '**/*-qiweb-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
@@ -183,7 +183,7 @@ task distributionArchive_artifacts {
 task distributionArchive_dependencies {
     doLast {
         def modulesDeps = "\n"
-        modules.each { m ->
+        modules_array.each { m ->
             modulesDeps += "        <dependency><groupId>org.qiweb</groupId><artifactId>org.qiweb.modules.$m</artifactId><version>$project.version</version></dependency>\n"
         }
         def pom = file( 'src/dist/dependencies-pom.xml').text
