@@ -25,6 +25,19 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > This is the current development branch, unreleased!
 
+Nothing happened for now.
+
+
+
+### 0.3.0-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.0-beta)
+
+> Punk is not dead!
+
+That release has been a long one.
+Core has been stabilized, a lot of new features added, existing ones enhanced.
+Along the way, breaking changes were mades. That's what beta versions are for!
+
+
 #### Breaking changes
 
 - Moved `org.qiweb.api.util` to `org.qiweb.util`, see #174
