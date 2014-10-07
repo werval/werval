@@ -1,0 +1,5 @@
+= JSON Module
+JSON and JSONP support for your Application
+:jbake-type: module
+
+The JSON module provide a Plugin allowing easy production and consumption of JSON thanks to http://wiki.fasterxml.com/JacksonHome[Jackson].

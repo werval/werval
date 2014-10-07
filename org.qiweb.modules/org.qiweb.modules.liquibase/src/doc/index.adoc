@@ -1,0 +1,5 @@
+= Liquibase Module
+Database migration support for your Application
+:jbake-type: module
+
+The Liquibase module provide a Plugin allowing easy usage of http://www.liquibase.org/[Liquibase].

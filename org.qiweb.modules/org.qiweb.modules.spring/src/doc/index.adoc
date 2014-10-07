@@ -1,0 +1,5 @@
+= Spring Module
+Spring support for your Application
+:jbake-type: module
+
+The Spring module provide a Plugin allowing easy http://spring.io[Spring] application embedding and Filters and Controllers managed beans.

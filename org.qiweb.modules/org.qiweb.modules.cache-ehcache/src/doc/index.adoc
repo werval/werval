@@ -1,0 +1,8 @@
+= EhCache based Cache Extension
+EhCache Cache for your Application
+:jbake-type: module
+
+The EhCache-Cache module provide a `Cache` extension that brings an in-memory Cache thanks to
+http://www.ehcache.org/[EhCache].
+
+
