@@ -1,4 +1,6 @@
 
+description = "Qi4j Module"
+
 repositories {
     maven { url = "https://repository-qi4j.forge.cloudbees.com/release/" }
     maven { url = "https://repository-qi4j.forge.cloudbees.com/snapshot/" }
@@ -7,9 +9,9 @@ repositories {
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
-    compile "org.qi4j.core:org.qi4j.core.bootstrap:2.1-SNAPSHOT"
+    compile libs.qi4j_bootstrap
     
-    runtime "org.qi4j.core:org.qi4j.core.runtime:2.1-SNAPSHOT"
+    runtime libs.qi4j_runtime
     
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.rest_assured

@@ -23,11 +23,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.qiweb.api.http.Cookies;
 import org.qiweb.api.http.MutableCookies;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Comparators;
+import org.qiweb.util.Strings;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Cookies instance.

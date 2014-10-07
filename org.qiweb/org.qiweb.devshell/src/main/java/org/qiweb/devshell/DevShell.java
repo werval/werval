@@ -15,15 +15,24 @@
  */
 package org.qiweb.devshell;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
+import org.qiweb.api.exceptions.PassivationException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
@@ -33,8 +42,8 @@ import static org.qiweb.runtime.util.AnsiColor.cyan;
 import static org.qiweb.runtime.util.AnsiColor.red;
 import static org.qiweb.runtime.util.AnsiColor.white;
 import static org.qiweb.runtime.util.AnsiColor.yellow;
-import static org.qiweb.runtime.util.ClassLoaders.printLoadedClasses;
-import static org.qiweb.runtime.util.ClassLoaders.printURLs;
+import static org.qiweb.util.ClassLoaders.printLoadedClasses;
+import static org.qiweb.util.ClassLoaders.printURLs;
 
 /**
  * QiWeb DevShell.
@@ -42,12 +51,15 @@ import static org.qiweb.runtime.util.ClassLoaders.printURLs;
  * Bind a build plugin to a QiWeb runtime using a DevShellSPI.
  * <p>
  * Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.
+ * <p>
+ * See {@literal src/doc/classloader-hierary.png} in the source tree for an overview of how the ClassLoader hierarchy is
+ * set up.
  */
 public final class DevShell
 {
     /**
      * Decorate DevShellSPI to reload classes after a rebuild.
-     * <p>
+     *
      * This is the decorated instance of DevShellSPI that is passed to the HttpServer.
      */
     private final class DevShellSPIDecorator
@@ -99,16 +111,18 @@ public final class DevShell
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
     private static final String CONFIG_API_CLASS = "org.qiweb.api.Config";
     private static final String CONFIG_RUNTIME_CLASS = "org.qiweb.runtime.ConfigInstance";
-    private static final String ROUTES_PROVIDER_CLASS = "org.qiweb.runtime.routes.RoutesProvider";
-    private static final String DEVSHELL_ROUTES_PROVIDER_CLASS = "org.qiweb.runtime.dev.DevShellRoutesProvider";
     private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
     private static final String MODE_API_CLASS = "org.qiweb.api.Mode";
     private static final String APPLICATION_SPI_CLASS = "org.qiweb.spi.ApplicationSPI";
-
+    private static final File RUN_LOCK_FILE = new File( Paths.get( "" ).toAbsolutePath().toFile(), ".devshell.lock" );
+    private static final long RUN_LOCK_FILE_POLL_INTERVAL_MILLIS = 500;
     private static final AtomicLong APPLICATION_REALM_COUNT = new AtomicLong( 0L );
+
     private final DevShellSPI spi;
     private final URLClassLoader originalLoader;
     private ClassWorld classWorld;
+    private Object httpServer;
+    private volatile boolean running = false;
 
     public DevShell( DevShellSPI spi )
     {
@@ -129,6 +143,13 @@ public final class DevShell
     @SuppressWarnings( "unchecked" )
     public void start()
     {
+        if( lockFileExist() )
+        {
+            throw new IllegalStateException(
+                "Unable to start DevShell, lock file '" + RUN_LOCK_FILE + "' already exists. "
+                + "Is another instance already running?"
+            );
+        }
         System.out.println( white( ">> QiWeb DevShell starting..." ) );
         try
         {
@@ -154,10 +175,6 @@ public final class DevShell
                 }
             );
 
-            // RoutesProvider
-            Class<?> routesProviderClass = appRealm.loadClass( ROUTES_PROVIDER_CLASS );
-            Object routesProviderInstance = appRealm.loadClass( DEVSHELL_ROUTES_PROVIDER_CLASS ).newInstance();
-
             // Application
             Class<?> appClass = appRealm.loadClass( APPLICATION_RUNTIME_CLASS );
             Class<?> modeClass = appRealm.loadClass( MODE_API_CLASS );
@@ -167,7 +184,6 @@ public final class DevShell
                     modeClass,
                     configClass,
                     ClassLoader.class,
-                    routesProviderClass,
                     DevShellSPI.class
                 }
             ).newInstance(
@@ -177,13 +193,12 @@ public final class DevShell
                     modeClass.getEnumConstants()[0],
                     configInstance,
                     appRealm,
-                    routesProviderInstance,
                     spi
                 }
             );
 
             // Create HttpServer instance
-            Object httpServer = appRealm.loadClass( "org.qiweb.server.netty.NettyServer" ).newInstance();
+            httpServer = appRealm.loadClass( "org.qiweb.server.netty.NettyServer" ).newInstance();
 
             // Set ApplicationSPI on HttpServer
             httpServer.getClass().getMethod(
@@ -212,26 +227,26 @@ public final class DevShell
             // Get application URL
             String appUrl = applicationUrl( configInstance, configClass );
 
-            // Register shutdown hook and activate HttpServer
-            httpServer.getClass().getMethod( "registerPassivationShutdownHook" ).invoke( httpServer );
+            // Activate HttpServer
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
 
-            // ---------------------------------------------------------------------------------------------------------
-            // printRealms();
-            Runtime.getRuntime().addShutdownHook( new Thread(
-                new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        stop();
-                    }
-                },
-                "qiweb-devshell-shutdown"
-            ) );
-
             System.out.println( white( ">> Ready for requests on " + appUrl + " !" ) );
-            Thread.sleep( Long.MAX_VALUE );
+
+            // Interrupt Loop
+            running = true;
+            createLockFile();
+            for( ;; )
+            {
+                if( running && lockFileExist() )
+                {
+                    Thread.sleep( RUN_LOCK_FILE_POLL_INTERVAL_MILLIS );
+                }
+                else
+                {
+                    stop();
+                    break;
+                }
+            }
         }
         catch( DuplicateRealmException | NoSuchRealmException | ClassNotFoundException |
                NoSuchMethodException | SecurityException | InstantiationException |
@@ -249,43 +264,102 @@ public final class DevShell
         }
     }
 
-    private String applicationUrl( Object configInstance, Class<?> configClass )
-        throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
-    {
-        Class<?>[] argsTypes = new Class<?>[]
-        {
-            String.class
-        };
-        String httpHost = (String) configClass
-            .getMethod( "string", argsTypes )
-            .invoke( configInstance, QIWEB_HTTP_ADDRESS );
-        int httpPort = (int) configClass
-            .getMethod( "intNumber", argsTypes )
-            .invoke( configInstance, QIWEB_HTTP_PORT );
-        if( "127.0.0.1".equals( httpHost ) )
-        {
-            httpHost = "localhost";
-        }
-        return "http://" + httpHost + ":" + httpPort + "/";
-    }
-
     /**
      * Stop DevShell.
      */
-    // Can be called concurrently by client code and automatic JVM shutdown hook.
-    // This is why this method is synchronized and disposeRealm() check classWorld for null.
+    // Can be called concurrently by client code and by the lock file polling loop.
     public synchronized void stop()
+    {
+        if( running )
+        {
+            running = false;
+            System.out.println( white( ">> QiWeb DevShell stopping..." ) );
+
+            // Record all passivation errors here to report them at once at the end
+            List<Exception> passivationErrors = new ArrayList<>();
+
+            // Passivate HTTP Server
+            try
+            {
+                passivateHttpServer();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while passivating HTTP Server: " + ex.getMessage(), ex )
+                );
+            }
+
+            // Dispose Realms
+            try
+            {
+                disposeRealms();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while disposing Classworld Realms: " + ex.getMessage(), ex )
+                );
+            }
+
+            // Remove lock file
+            try
+            {
+                deleteLockFile();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add( ex );
+            }
+
+            // Report errors if any
+            if( !passivationErrors.isEmpty() )
+            {
+                PassivationException ex = new PassivationException( "Unable to stop QiWeb DevShell" );
+                System.err.println( red( ex.getMessage() ) );
+                for( Exception passivationError : passivationErrors )
+                {
+                    ex.addSuppressed( passivationError );
+                }
+                throw ex;
+            }
+        }
+    }
+
+    private boolean lockFileExist()
+    {
+        return RUN_LOCK_FILE.exists();
+    }
+
+    private void createLockFile()
     {
         try
         {
-            System.out.println( white( ">> QiWeb DevShell stopping..." ) );
-            disposeRealms();
+            Files.write(
+                RUN_LOCK_FILE.toPath(),
+                new byte[]
+                {
+                }
+            );
         }
-        catch( Exception ex )
+        catch( IOException ex )
         {
-            String msg = "Unable to stop QiWeb DevShell: " + ex.getMessage();
-            System.err.println( red( msg ) );
-            throw new QiWebDevShellException( msg, ex );
+            throw new UncheckedIOException( ex );
+        }
+    }
+
+    private void deleteLockFile()
+    {
+        if( RUN_LOCK_FILE.exists() )
+        {
+            try
+            {
+                Files.delete( RUN_LOCK_FILE.toPath() );
+            }
+            catch( IOException ex )
+            {
+                throw new UncheckedIOException( ex );
+            }
         }
     }
 
@@ -342,6 +416,37 @@ public final class DevShell
         }
     }
 
+    private void passivateHttpServer()
+        throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+        if( httpServer != null )
+        {
+            httpServer.getClass().getMethod( "passivate" ).invoke( httpServer );
+            httpServer = null;
+        }
+    }
+
+    private String applicationUrl( Object configInstance, Class<?> configClass )
+        throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+        Class<?>[] argsTypes = new Class<?>[]
+        {
+            String.class
+        };
+        String httpHost = (String) configClass
+            .getMethod( "string", argsTypes )
+            .invoke( configInstance, QIWEB_HTTP_ADDRESS );
+        int httpPort = (int) configClass
+            .getMethod( "intNumber", argsTypes )
+            .invoke( configInstance, QIWEB_HTTP_PORT );
+        if( "127.0.0.1".equals( httpHost ) )
+        {
+            httpHost = "localhost";
+        }
+        return "http://" + httpHost + ":" + httpPort + "/";
+    }
+
+    // This is dead code waiting for a necromancer
     private void printRealms()
         throws NoSuchRealmException
     {

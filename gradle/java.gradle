@@ -1,10 +1,14 @@
-apply from: "$rootProject.projectDir.absolutePath/../gradle/common.gradle"
 
-apply plugin: 'java'
-apply plugin: 'maven'
+// Apply common qiweb publication build logic
+apply from: rootProject.file( '../gradle/publication.gradle' )
+apply from: rootProject.file( '../gradle/repositories.gradle' )
+apply from: rootProject.file( '../gradle/libraries.gradle' )
 
-apply from: "$rootProject.projectDir.absolutePath/../gradle/repositories.gradle"
-apply from: "$rootProject.projectDir.absolutePath/../gradle/libraries.gradle"
+// Basic IDE Support
+// When using Netbeans, simply issue 'gradle idea', the sources will then be available in your IDE.
+apply plugin: 'idea'
+idea { module { downloadJavadoc = true; downloadSources = true } }
+apply plugin: 'eclipse'
 
 // Require JDK8 at build time, JRE8 at runtime
 sourceCompatibility = '1.8'
@@ -12,7 +16,7 @@ targetCompatibility = '1.8'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-// Adding dependencies here will add the dependencies to each subproject.
+// All projects gets basic test dependencies
 dependencies {
 
     testCompile libs.junit
@@ -137,33 +141,46 @@ public interface BuildVersion
 // Checkstyle setup
 apply plugin: 'checkstyle'
 checkstyle {
-    configFile = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-checks.xml" )
+    configFile = rootProject.file( '../config/checkstyle/qiweb-checks.xml' )
     configProperties = [
-        suppressionsCommon: "$rootProject.projectDir.absolutePath/../config/checkstyle/qiweb-suppressions.xml",
-        suppressionsCustom: "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml"
+        // Global suppressions, applied to every modules
+        suppressionsCommon: rootProject.file( '../config/checkstyle/qiweb-suppressions.xml' ).absolutePath,
+        // Project suppressions, applied to this module only
+        suppressionsCustom: project.file( 'config/checkstyle/suppressions.xml' ).absolutePath
     ]
+    // Easy skip
     ignoreFailures = System.getProperty( "ignoreCheckstyle" ) != null
+    // Quiet
     showViolations = false
+    // Check main sourceset only
+    // Checkstyle generates a report per sourceset
     sourceSets = [ project.sourceSets.main ]
+    // Fix used checkstyle version
     toolVersion = 5.7
 }
+// Generate checkstyle HTML report
 task checkstyleMainHtmlReport {
-    def xsl = file( "$rootProject.projectDir.absolutePath/../config/checkstyle/html-report.xsl" )
-    def reportDir = file( "$project.projectDir.absolutePath/build/reports/checkstyle" )
+    // Custom XSLT file
+    def xsl = rootProject.file( '../config/checkstyle/html-report.xsl' )
+    // Output directory
+    def reportDir = project.file( "build/reports/checkstyle" )
+    // Declare input/outputs for nice incremental build
     inputs.file xsl
     inputs.dir reportDir
     outputs.dir reportDir
     doLast {
+        // Apply XSLT on every XML reports found
         reportDir.eachFile {
             if( it.name.endsWith( ".xml" ) ) {
-                def outfile = file( "$project.projectDir.absolutePath/build/reports/checkstyle/" + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
+                def outfile = project.file( 'build/reports/checkstyle/' + it.name.substring( 0, it.name.length() - 4 ) + ".html" )
                 ant.xslt( in: it, style: xsl, out: outfile )
             }
         }
     }
 }
+// Generates default empty project suppressions if absent
 checkstyleMain.doFirst {
-    def suppressions = new File( "$project.projectDir.absolutePath/config/checkstyle/suppressions.xml" )
+    def suppressions = project.file( 'config/checkstyle/suppressions.xml' )
     if( !suppressions.exists() )
     {
         suppressions.getParentFile().mkdirs()
@@ -187,7 +204,9 @@ checkstyleMain.doFirst {
         logger.quiet "Checkstyle suppressions skeleton created in $suppressions"
     }
 }
+// Hook the HTML report generation right after the checkstyleMain task
 checkstyleMain.finalizedBy( checkstyleMainHtmlReport )
+
 
 // Tests configuration
 test {
@@ -234,96 +253,18 @@ task javadocJar(type: Jar, dependsOn:javadoc) {
     from javadoc.destinationDir
 }
 
-// Attach sources JAR
+// For remote publication
 artifacts {
     archives jar 
     archives sourcesJar
     archives javadocJar
 }
 
-// Sign archives
-apply plugin: 'signing'
-signing { sign configurations.archives }
-signArchives.onlyIf { version != "0" && !version.contains( "SNAPSHOT" ) }
-
-// Install in local internal repository
-// Generated POM is minimal here as this repository is only used for inter-build dependencies
-apply plugin: 'maven-publish'
+// For local publication
 publishing {
-    publications {
-        jars( MavenPublication ) { from components.java }
-    }
-    repositories {
-        maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
-    }
-}
-task finalizeInstall( dependsOn: "publishJarsPublicationToQiWebLocalRepository" )
-install.finalizedBy finalizeInstall
-
-// Setup remote artifact publication
-uploadArchives.doFirst {
-    if( version == "0" )
-    {
-        throw new GradleException( "'version' must be given as a system property to perform a release." )
+    publications.qiWebLocalRepoPub {
+        from components.java
+        artifact javadocJar
+        artifact sourcesJar
     }
 }
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            if( !version.contains( "SNAPSHOT" ) ) {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
-            }
-            repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
-                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
-            }
-            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/qiweb-snapshots" ) {
-                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
-            }
-        }
-    }
-}
-
-// POM Setup for install and deploy
-[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
-    groupId = project.group
-    artifactId = project.name
-    version = project.version
-    project {
-        description = project.description
-        url = "http://qiweb.org"
-        inceptionYear '2013'
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            }
-        }
-        scm {
-            url 'https://scm.codeartisans.org/paul/qiweb'
-            connection 'scm:git:https://scm.codeartisans.org/paul/qiweb.git'
-            developerConnection 'scm:git:git@scm.codeartisans.org:paul/qiweb.git'
-        }
-        developers {
-            developer {
-                id = "eskatos"
-                name = "Paul Merlin"
-                email = "paul@nosphere.org"
-                timezone = "CET"
-                roles {
-                    role 'Founder'
-                    role 'Developer'
-                }
-            }
-            developer {
-                id = "q"
-                name = "Quentin Gensburger"
-                email = "quentin.gensburger@free.fr"
-                timezone = "CET"
-                roles {
-                    role 'Contributor'
-                }
-            }
-        }
-    }   
-}
-

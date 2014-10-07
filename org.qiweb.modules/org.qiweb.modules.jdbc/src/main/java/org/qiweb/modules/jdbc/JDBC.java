@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import javax.sql.DataSource;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * JDBC.

@@ -20,15 +20,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 import org.qiweb.api.mime.MediaRange;
-import org.qiweb.api.util.Couple;
-import org.qiweb.api.util.Strings;
+import org.qiweb.util.Couple;
+import org.qiweb.util.Strings;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import static org.qiweb.api.mime.MimeTypes.WILDCARD_MIMETYPE;
-import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Media Range Instance.

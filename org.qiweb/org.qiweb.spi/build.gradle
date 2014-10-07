@@ -3,6 +3,8 @@
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
+description = "QiWeb SPI"
+
 dependencies {
 
     compile project( ":org.qiweb.api" )

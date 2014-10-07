@@ -1,0 +1,11 @@
+
+== Introduction
+
+QiWeb is a HTTP development kit.
+QiWeb is not a full stack framework.
+
+In other words, QiWeb don't compell you to use any persistence mechanism nor templating engine.
+You are free to choose whatever may suit your needs.
+
+image::images/overview.png[Overview,640]
+

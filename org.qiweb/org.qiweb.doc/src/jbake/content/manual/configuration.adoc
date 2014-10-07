@@ -1,0 +1,47 @@
+
+== Configuration
+
+NOTE: QiWeb configuration use the link:hocon.html[HOCON format] ("Human Optimized Config Object Notation").
+It is parsed using https://github.com/typesafehub/config[Typesafe Config].
+
+The `application.conf` file must be present at the root of your classpath and must at least contain one single entry:
+`app.secret` which is the secret key your application will use to sign session cookies.
+For all other configuration properties, the QiWeb Runtime provide a `reference.conf` file that the Config library
+automatically loads.
+You can of course override all theses configuration properties in your `application.conf` file.
+
+If you need to add configuration properties for your application you are encouraged to do so in your `application.conf`
+file.
+
+All configuration properties are available to your controllers and filters via the Context object.
+
+[source,java]
+----
+import static org.qiweb.api.context.CurrentContext.*;
+public MyController {
+  public Outcome aControllerMethod() {
+    String configValue = application().config().string("your.custom.config.key");
+    // Do what you have to do according to the configuration value
+    return outcomes().ok("whatever").build();
+  }
+}
+----
+
+All configuration properties can be overriden by defining System Properties.
+This means that you can easily provide all configuration on the command line.
+
+IMPORTANT: Every system property is also present in the configuration.
+For example, the `java.home` System Property is automatically present in the configuration at the `java.home` key.
+In other words, and if you need it, keep in mind that you can use configuration properties from the command line without
+defining a default value in any configuration file.
+
+Moreover, some special System Properties allow to use an alternate config file:
+
+- `config.resource` to load configuration from the classpath
+- `config.file` to load configuration from the filesystem
+- `config.url` to load configuration from an URL
+
+Note that this will replace the `application.conf` file, not add to it.
+You still can leverage the inclusion mechanism of HOCON to include your `application.conf` file from the one you
+specified using one of the System Properties described above.
+

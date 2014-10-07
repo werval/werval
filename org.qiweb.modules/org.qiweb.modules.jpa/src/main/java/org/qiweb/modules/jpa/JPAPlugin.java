@@ -17,10 +17,14 @@ package org.qiweb.modules.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
+
+import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
 
 /**
  * JPA 2 Plugin.
@@ -34,14 +38,19 @@ public class JPAPlugin
     public void onActivate( Application application )
         throws ActivationException
     {
+        boolean hasXml = application.classLoader().getResource( "META-INF/persistence.xml" ) != null;
+
         Config config = application.config();
-        Map<String, Map<String, ?>> properties = new HashMap<>();
+        Map<String, Map<String, Object>> properties = new HashMap<>();
         if( config.has( "jpa.units" ) )
         {
             Config units = config.object( "jpa.units" );
-            units.subKeys().stream().forEach( unit -> properties.put( unit, units.stringMap( unit ) ) );
+            units.subKeys().stream().forEach(
+                unit -> properties.put( unit, (Map<String, Object>) (Map) units.stringMap( unit ) )
+            );
         }
         jpa = new JPA(
+            application.mode(),
             application.classLoader(),
             properties,
             config.has( "jpa.default_pu" ) ? config.string( "jpa.default_pu" ) : null
@@ -65,5 +74,33 @@ public class JPAPlugin
     public JPA api()
     {
         return jpa;
+    }
+
+    @Override
+    public void beforeInteraction( Context context )
+    {
+        Optional.ofNullable(
+            context.metaData().get( JPAContext.class, METADATA_CONTEXT_KEY )
+        ).ifPresent(
+            jpaContext ->
+            {
+                jpaContext.closeFailFast();
+                context.metaData().remove( METADATA_CONTEXT_KEY );
+            }
+        );
+    }
+
+    @Override
+    public void afterInteraction( Context context )
+    {
+        Optional.ofNullable(
+            context.metaData().get( JPAContext.class, METADATA_CONTEXT_KEY )
+        ).ifPresent(
+            jpaContext ->
+            {
+                jpaContext.closeFailSafe();
+                context.metaData().remove( METADATA_CONTEXT_KEY );
+            }
+        );
     }
 }

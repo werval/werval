@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,43 +19,38 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
+import org.qiweb.commands.DevShellCommand
 import org.qiweb.devshell.JavaWatcher
-import org.qiweb.devshell.DevShell
 
 class QiWebDevShellTask extends DefaultTask
 {
+    Set<String> extraWatch = new HashSet<>()
+
     @TaskAction
     void runDevShell()
     {
         project.logger.lifecycle ">> QiWeb DevShell for " + project.getName() + " starting..."
 
         // == Gather build info
-
-        def sources = project.sourceSets*.allSource*.srcDirs[0]
         def applicationClasspath = [
             project.sourceSets.main.output.classesDir.toURI().toURL(),
             project.sourceSets.main.output.resourcesDir.toURI().toURL()
         ]
-        def runtimeClasspath = project.configurations.qiweb.files.collect { f ->
+        def runtimeClasspath = project.configurations.devshell.files.collect { f ->
             f.toURI().toURL()
         }
-        sources.each { f -> runtimeClasspath << f.toURI().toURL() }
-        sources += project.qiweb.extraWatch.collect { s -> project.file( s ) }
+        def sources = project.sourceSets*.allSource*.srcDirs[0]
+        sources += extraWatch.collect { s -> project.file( s ) }
 
         // == Start the DevShell
-
         def devShellSPI = new GradleDevShellSPI(
             applicationClasspath as URL[],
             runtimeClasspath as URL[],
             sources,
             new JavaWatcher(),
             project.getProjectDir(),
-            project.qiweb.rebuildTask
+            ["devshell_rebuild"]
         )
-
-        def devshell = new DevShell( devShellSPI )
-        addShutdownHook { devshell.stop() }
-        devshell.start()
+        new DevShellCommand( devShellSPI ).run();
     }
 }
-

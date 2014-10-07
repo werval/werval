@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,32 +17,39 @@ package org.qiweb.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.gradle.internal.classloader.ClasspathUtil;
 import org.gradle.testkit.functional.ExecutionResult;
 import org.gradle.testkit.functional.GradleRunner;
 import org.gradle.testkit.functional.GradleRunnerFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.qiweb.runtime.util.Holder;
+import org.qiweb.test.util.Processes;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.BuildVersion.VERSION;
 
 /**
- * Assert that the {@literal secret} and {@literal devshell} tasks execute successfuly.
- * <p>Generates a project, run it in dev mode using the plugin, change source code and assert code is reloaded.</p>
+ * Assert that the {@literal secret}, {@literal start} and {@literal devshell} tasks execute successfuly.
+ *
+ * Generates a project, run it in dev mode using the plugin, change source code and assert code is reloaded.
+ * <p>
+ * As this test spawn several Gradle Daemons it ends by killing them all to leave the running system in a proper state.
  */
 public class QiWebPluginIntegTest
 {
@@ -55,30 +62,33 @@ public class QiWebPluginIntegTest
 
     static
     {
-        List<URL> classpathUrls = ClasspathUtil.getClasspath( QiWebPluginIntegTest.class.getClassLoader() );
-        StringBuilder builder = new StringBuilder( "files(" );
-        Iterator<URL> it = classpathUrls.iterator();
-        while( it.hasNext() )
-        {
-            builder.append( " '" ).append( it.next() ).append( "'" );
-            if( it.hasNext() )
-            {
-                builder.append( "," );
-            }
-        }
-        builder.append( " )" );
-        String classpath = builder.toString();
         BUILD
         = "\n"
           + "buildscript {\n"
-          + "  dependencies {\n"
-          + "    classpath " + classpath + "\n"
+          + "  repositories {\n"
+          + "    maven { url qiwebLocalRepository }\n"
+          + "    maven {\n"
+          + "      url 'https://repo.codeartisans.org/qiweb'\n"
+          + "      credentials { username = 'qiweb'; password = 'qiweb' }"
+          + "    }\n"
+          + "    mavenCentral()\n"
           + "  }\n"
+          + "  dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
+          + "}\n"
+          + "repositories {\n"
+          + "  maven { url qiwebLocalRepository }\n"
+          + "  maven {\n"
+          + "    url 'https://repo.codeartisans.org/qiweb'\n"
+          + "    credentials { username = 'qiweb'; password = 'qiweb' }"
+          + "  }\n"
+          + "  mavenCentral()\n"
           + "}\n"
           + "apply plugin: \"java\"\n"
           + "apply plugin: \"qiweb\"\n"
           + "dependencies {\n"
-          + "  compile " + classpath + "\n"
+          + "  compile 'org.qiweb:org.qiweb.api:" + VERSION + "'\n"
+          + "  runtime 'org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "'\n"
+          + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
           + "}\n"
           + "\n";
         CONFIG
@@ -113,13 +123,22 @@ public class QiWebPluginIntegTest
           + "        return outcomes().ok( \"I ran changed!\" ).build();\n"
           + "    }\n"
           + "}\n";
+        new File( "build/tmp/it" ).mkdirs();
     }
 
+    private final File lock = new File( ".devshell.lock" );
+
     @Rule
-    public TemporaryFolder tmp = new TemporaryFolder();
+    public TemporaryFolder tmp = new TemporaryFolder( new File( "build/tmp/it" ) )
+    {
+        @Override
+        public void delete()
+        {
+        }
+    };
 
     @Before
-    public void before()
+    public void setupProjectLayout()
         throws IOException
     {
         Files.write(
@@ -144,8 +163,36 @@ public class QiWebPluginIntegTest
         );
     }
 
+    @After
+    public void killZombies()
+        throws Exception
+    {
+        try
+        {
+            final String self = Processes.currentPID( "NO_PID" );
+            Processes.killJvms(
+                new Predicate<String>()
+                {
+                    @Override
+                    public boolean test( String line )
+                    {
+                        return line.contains( "org.gradle.launcher.daemon.bootstrap.GradleDaemon" )
+                               && !line.startsWith( self );
+                    }
+                }
+            );
+        }
+        finally
+        {
+            if( lock.exists() )
+            {
+                Files.delete( lock.toPath() );
+            }
+        }
+    }
+
     @Test
-    public void secretTask()
+    public void secretTaskIntegrationTest()
         throws IOException
     {
         GradleRunner runner = GradleRunnerFactory.create();
@@ -157,34 +204,56 @@ public class QiWebPluginIntegTest
     }
 
     @Test
-    public void devshellTask()
+    public void devshellTaskIntegrationTest()
         throws InterruptedException, IOException
     {
-        Runnable devshellRunnable = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                GradleRunner runner = GradleRunnerFactory.create();
-                runner.setDirectory( tmp.getRoot() );
-                runner.setArguments( singletonList( "devshell" ) );
-                runner.run();
-            }
-        };
-        Thread devshellThread = new Thread( devshellRunnable, "devshell-thread" );
+        final Holder<Exception> errorHolder = new Holder<>();
+        Thread devshellThread = new Thread( newRunnable( errorHolder, "devshell" ), "gradle-qiweb-devshell-thread" );
         try
         {
             devshellThread.start();
 
-            // TODO Find a way to run ASAP, devshell run lock file?
-            Thread.sleep( 30 * 1000 );
+            await().atMost( 60, SECONDS ).until(
+                new Callable<Boolean>()
+                {
+                    @Override
+                    public Boolean call()
+                    throws Exception
+                    {
+                        return lock.exists();
+                    }
+                }
+            );
 
-            HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet( "http://localhost:23023/" );
-            ResponseHandler<String> handler = new BasicResponseHandler();
+            if( errorHolder.isSet() )
+            {
+                throw new RuntimeException(
+                    "Error during qiweb:devshell invocation: " + errorHolder.get().getMessage(),
+                    errorHolder.get()
+                );
+            }
 
-            assertThat(
-                client.execute( get, handler ),
+            final HttpClient client = new DefaultHttpClient();
+            final HttpGet get = new HttpGet( "http://localhost:23023/" );
+            final ResponseHandler<String> handler = new BasicResponseHandler();
+
+            await().atMost( 60, SECONDS ).pollInterval( 5, SECONDS ).until(
+                new Callable<String>()
+                {
+                    @Override
+                    public String call()
+                    throws Exception
+                    {
+                        try
+                        {
+                            return client.execute( get, handler );
+                        }
+                        catch( Exception ex )
+                        {
+                            return null;
+                        }
+                    }
+                },
                 containsString( "I ran!" )
             );
 
@@ -200,10 +269,89 @@ public class QiWebPluginIntegTest
                 client.execute( get, handler ),
                 containsString( "I ran changed!" )
             );
+
+            assertThat(
+                client.execute( new HttpGet( "http://localhost:23023/@doc" ), handler ),
+                containsString( "QiWeb Documentation" )
+            );
+
+            client.getConnectionManager().shutdown();
         }
         finally
         {
             devshellThread.interrupt();
         }
+    }
+
+    @Test
+    public void startTaskIntegrationTest()
+        throws InterruptedException, IOException
+    {
+        final Holder<Exception> errorHolder = new Holder<>();
+        Thread runThread = new Thread( newRunnable( errorHolder, "start" ), "gradle-qiweb-start-thread" );
+        try
+        {
+            runThread.start();
+
+            final HttpClient client = new DefaultHttpClient();
+            final HttpGet get = new HttpGet( "http://localhost:23023/" );
+            final ResponseHandler<String> handler = new BasicResponseHandler();
+
+            await().atMost( 60, SECONDS ).pollInterval( 5, SECONDS ).until(
+                new Callable<String>()
+                {
+                    @Override
+                    public String call()
+                    throws Exception
+                    {
+                        try
+                        {
+                            return client.execute( get, handler );
+                        }
+                        catch( Exception ex )
+                        {
+                            return null;
+                        }
+                    }
+                },
+                containsString( "I ran!" )
+            );
+
+            client.getConnectionManager().shutdown();
+
+            if( errorHolder.isSet() )
+            {
+                throw new RuntimeException(
+                    "Error during qiweb:start invocation: " + errorHolder.get().getMessage(),
+                    errorHolder.get()
+                );
+            }
+        }
+        finally
+        {
+            runThread.interrupt();
+        }
+    }
+
+    private Runnable newRunnable( final Holder<Exception> errorHolder, final String task )
+    {
+        return new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    GradleRunner runner = GradleRunnerFactory.create();
+                    runner.setDirectory( tmp.getRoot() );
+                    runner.setArguments( singletonList( task ) );
+                    runner.run();
+                }
+                catch( Exception ex )
+                {
+                    errorHolder.set( ex );
+                }
+            }
+        };
     }
 }

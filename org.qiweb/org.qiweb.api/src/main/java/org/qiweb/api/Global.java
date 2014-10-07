@@ -23,12 +23,11 @@ import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
-import org.qiweb.api.util.Stacktraces;
+import org.qiweb.util.Stacktraces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_LIST;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 /**
  * Application Global Object.
@@ -213,19 +212,26 @@ public class Global
      * Invoke Controller Method.
      *
      * Default to {@link Method#invoke(java.lang.Object, java.lang.Object[])}.
+     * <p>
+     * Acceptable return types are:
+     * <ul>
+     * <li>{@literal Outcome},</li>
+     * <li>{@literal CompletableFuture}&lt;{@literal Outcome}&gt;.</li>
+     * </ul>
+     * That is, the return types allowed on interaction methods.
      *
      * @param context    Request Context
      * @param controller Controller Instance
      *
-     * @return Invocation Outcome
+     * @return Invocation Outcome, plain or future
      */
-    public Outcome invokeControllerMethod( Context context, Object controller )
+    public Object invokeControllerMethod( Context context, Object controller )
     {
         try
         {
             Method method = context.route().controllerMethod();
             Object[] parameters = context.request().parameters().values().toArray();
-            return (Outcome) method.invoke( controller, parameters );
+            return method.invoke( controller, parameters );
         }
         catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex )
         {
@@ -275,7 +281,7 @@ public class Global
     }
 
     /**
-     * Invoked when an exception pops out of the Application.
+     * Invoked when an exception pops out of the Application while processing a request.
      *
      * Happens right before {@link Error} recording.
      * <p>
@@ -294,10 +300,10 @@ public class Global
      *
      * @return Outcome to send back to the client
      */
-    public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
+    public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
     {
         // Log error
-        LOG.error( cause.getMessage(), cause );
+        LOG.error( "Request error: {}: {}", cause.getClass(), cause.getMessage(), cause );
 
         // Generate Error Outcome
         StringBuilder html = new StringBuilder();
@@ -310,7 +316,19 @@ public class Global
         html.append( "</body>\n</html>\n" );
         return outcomes.internalServerError().
             withBody( html.toString() ).
-            as( TEXT_HTML ).
+            asHtml().
             build();
+    }
+
+    /**
+     * Invoked when an uncaught exception pops out of the Application's threads.
+     *
+     * @param application Application
+     * @param cause       Cause
+     */
+    public void onApplicationError( Application application, Throwable cause )
+    {
+        // Log error
+        LOG.error( "Uncaught Exception: {}: {}", cause.getClass(), cause.getMessage(), cause );
     }
 }

@@ -1,0 +1,72 @@
+= Getting Started
+Get started using QiWeb
+:jbake-type: page
+:title: Get started using QiWeb
+:description: Get started using QiWeb
+:keywords: qiweb, documentation, start, tutorial
+:toc: right
+:toc-title: Getting Started
+
+toc::[]
+
+== Gradle, Maven, huh!?
+
+link:http://gradle.org/[Gradle] and link:http://maven.apache.org/[Maven] are both tools you use to build your code.
+In their family you'll perhaps recognize one of make, cmake, slang, scons, rake, sbt, grunt, and the list goes on ....
+
+QiWeb support both of Gradle and Maven hence the Getting Started guide being available for each one of them.
+
+[TIP]
+.New to Java?
+====
+See theses two presentations about Java build tools:
+
+- http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-1.pdf[An Introductory Crash Course to Getting Started with Maven Gradle and Ant + Ivy].
+- http://pages.zeroturnaround.com/rs/zeroturnaround/images/java-build-tools-part-2.pdf[A Decision Maker’s Comparison of Maven Gradle and Ant + Ivy].
+====
+
+
+== Choose your side of the force
+
+- link:get-started-gradle.html[Get started using Gradle]
+- link:get-started-maven.html[Get started using Maven]
+
+
+== Our advice
+
+_TL;DR_ If you are not forced to use Maven, don't use it.
+
+Everything QiWeb is automated using Gradle, from the SDK build to the baking and publication of a website embedding
+versioned documentation for past, current and development releases.
+The only exception is the Maven support that is built using, well, Maven.
+
+We love Gradle.
+Mainly for its DSL expressiveness and extensibility.
+
+But, Maven is very commonly used and changing the build tool used in an organisation can be challenging.
+
+We implement new features in Gradle support and port them to Maven support afterwards, if even possible.
+
+In other words, work on the QiWeb Maven support is motivated by ease of adoption only.
+
+So, do we need to say more?
+Gradle is where our build love goes.
+
+Choose your side of the force.
+
+
+== {put.your.build.system.here}
+
+If you prefer another build tool or even want to write shell scripts on your own, its still possible to use QiWeb.
+
+A QiWeb application is a plain old java program (main class) so it's a no brainer to run it production mode.
+
+Tests of QiWeb applications are simple JUnit tests, again, no brainer to run.
+
+Obvisouly, the classpath should be set up properly with regard to your application dependencies.
+
+Finally, to make QiWeb development mode work in another build tool you'll probably need to write some code.
+Have a look at the Gradle and Maven support source code for insights in this matter.
+
+If you get to something reusable, please contribute it.
+We are very interested in such a contribution.

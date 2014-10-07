@@ -15,14 +15,21 @@
  */
 package org.qiweb.api.context;
 
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
+import org.qiweb.api.ApplicationExecutors;
+import org.qiweb.api.MetaData;
+import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.ResponseHeader;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.api.routes.ReverseRoutes;
+import org.qiweb.api.templates.Templates;
 
 /**
  * Current Context.
@@ -49,6 +56,26 @@ public final class CurrentContext
     }
 
     /**
+     * @return Optional Current Request Context
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Optional<Context> optional()
+    {
+        return Optional.ofNullable( CONTEXT_THREAD_LOCAL.get() );
+    }
+
+    /**
+     * @return Current Context MetaData
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static MetaData metaData()
+    {
+        return get().metaData();
+    }
+
+    /**
      * @return Current Application
      *
      * @throws QiWebException if no Context in current Thread
@@ -56,6 +83,64 @@ public final class CurrentContext
     public static Application application()
     {
         return get().application();
+    }
+
+    /**
+     * @return Current default Application ExecutorService
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static ExecutorService executor()
+    {
+        return get().application().executor();
+    }
+
+    /**
+     * @return Current Application Executors
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static ApplicationExecutors executors()
+    {
+        return get().application().executors();
+    }
+
+    /**
+     * Lookup a Plugin's API.
+     *
+     * Don't hold references to the Plugins API instances in order to make your code {@link org.qiweb.api.Mode#DEV}
+     * friendly.
+     *
+     * @param <T>           Parameterized Plugin API type
+     * @param pluginApiType Plugin type
+     *
+     * @return The first Plugin API found that match given type (Type equals first, then assignable).
+     *
+     * @throws IllegalArgumentException if no {@literal Plugin} is found for the given API type
+     * @throws IllegalStateException    if the {@literal Application} is not active
+     */
+    public static <T> T plugin( Class<T> pluginApiType )
+    {
+        return application().plugin( pluginApiType );
+    }
+
+    /**
+     * Lookup possibly several Plugin's API.
+     *
+     * Don't hold references to the Plugins API instances in order to make your code {@link org.qiweb.api.Mode#DEV}
+     * friendly.
+     *
+     * @param <T>           Parameterized Plugin API type
+     * @param pluginApiType Plugin type
+     *
+     * @return All Plugin APIs found that match the he given type (Type equals first, then assignables), or none if no
+     *         Plugin is found for the given API type.
+     *
+     * @throws IllegalStateException if the {@literal Application} is not active
+     */
+    public static <T> Iterable<T> plugins( Class<T> pluginApiType )
+    {
+        return application().plugins( pluginApiType );
     }
 
     /**
@@ -116,6 +201,36 @@ public final class CurrentContext
     public static HttpBuilders builders()
     {
         return get().application().httpBuilders();
+    }
+
+    /**
+     * @return Application MimeTypes
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static MimeTypes mimeTypes()
+    {
+        return get().application().mimeTypes();
+    }
+
+    /**
+     * @return Application Cache
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Cache cache()
+    {
+        return get().application().cache();
+    }
+
+    /**
+     * @return Application Templates
+     *
+     * @throws QiWebException if no Context in current Thread
+     */
+    public static Templates templates()
+    {
+        return get().application().templates();
     }
 
     private CurrentContext()

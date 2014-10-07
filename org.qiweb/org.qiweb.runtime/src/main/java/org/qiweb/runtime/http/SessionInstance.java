@@ -25,10 +25,10 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.http.Cookies.Cookie;
 import org.qiweb.api.http.Session;
-import org.qiweb.api.util.Strings;
-import org.qiweb.api.util.URLs;
 import org.qiweb.runtime.http.CookiesInstance.CookieInstance;
 import org.qiweb.runtime.util.Comparators;
+import org.qiweb.util.Strings;
+import org.qiweb.util.URLs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

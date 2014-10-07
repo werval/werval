@@ -104,9 +104,11 @@ public class CookiesTest
     {
         given()
             .cookie( "bazar", "cathedral" )
+            .cookie( "binz", "bridge" )
             .expect()
             .statusCode( 200 )
             .cookie( "bazar", "cathedral" )
+            .cookie( "binz", "bridge" )
             .when()
             .get( "/mirror" );
     }

@@ -30,14 +30,11 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.QueryString;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.i18n.Langs;
-import org.qiweb.api.util.ByteSource;
-import org.qiweb.api.util.Strings;
-import org.qiweb.api.util.URLs;
 import org.qiweb.spi.http.HttpBuildersSPI;
+import org.qiweb.util.ByteSource;
+import org.qiweb.util.Strings;
+import org.qiweb.util.URLs;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureInRange;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
 import static org.qiweb.api.http.Headers.Names.COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
@@ -55,6 +52,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CH
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
 import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
+import static org.qiweb.util.IllegalArguments.ensureInRange;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * HTTP API Objects Builders Instance.
@@ -318,9 +318,19 @@ public class HttpBuildersInstance
             QueryString queryString = new QueryStringInstance( decoder.parameters() );
 
             // Request charset
-            Charset requestCharset = headers.has( CONTENT_TYPE )
-                                     ? Charset.forName( extractCharset( headers.singleValue( CONTENT_TYPE ) ) )
-                                     : defaultCharset;
+            Charset requestCharset = null;
+            if( headers.has( CONTENT_TYPE ) )
+            {
+                String extractedCharset = extractCharset( headers.singleValue( CONTENT_TYPE ) );
+                if( Strings.hasText( extractedCharset ) )
+                {
+                    requestCharset = Charset.forName( extractedCharset );
+                }
+            }
+            if( requestCharset == null )
+            {
+                requestCharset = defaultCharset;
+            }
 
             // Parse Cookies from Headers
             Map<String, Cookie> allCookies = new HashMap<>();
@@ -329,23 +339,26 @@ public class HttpBuildersInstance
                 List<String> cookieHeaders = headers.values( COOKIE );
                 for( String cookieHeader : cookieHeaders )
                 {
-                    for( HttpCookie jCookie : HttpCookie.parse( cookieHeader ) )
+                    for( String splitCookieHeader : splitMultiCookies( cookieHeader ) )
                     {
-                        allCookies.put(
-                            jCookie.getName(),
-                            new CookiesInstance.CookieInstance(
-                                jCookie.getVersion(),
+                        for( HttpCookie jCookie : HttpCookie.parse( splitCookieHeader ) )
+                        {
+                            allCookies.put(
                                 jCookie.getName(),
-                                jCookie.getValue(),
-                                jCookie.getPath(),
-                                jCookie.getDomain(),
-                                jCookie.getMaxAge(),
-                                jCookie.getSecure(),
-                                jCookie.isHttpOnly(),
-                                jCookie.getComment(),
-                                jCookie.getCommentURL()
-                            )
-                        );
+                                new CookiesInstance.CookieInstance(
+                                    jCookie.getVersion(),
+                                    jCookie.getName(),
+                                    jCookie.getValue(),
+                                    jCookie.getPath(),
+                                    jCookie.getDomain(),
+                                    jCookie.getMaxAge(),
+                                    jCookie.getSecure(),
+                                    jCookie.isHttpOnly(),
+                                    jCookie.getComment(),
+                                    jCookie.getCommentURL()
+                                )
+                            );
+                        }
                     }
                 }
             }
@@ -519,5 +532,29 @@ public class HttpBuildersInstance
                 version, name, value, path, domain, maxAge, secure, httpOnly, comment, commentUrl
             );
         }
+    }
+
+    private static List<String> splitMultiCookies( String header )
+    {
+        List<String> cookies = new java.util.ArrayList<>();
+        int quoteCount = 0;
+        int p, q;
+        for( p = 0, q = 0; p < header.length(); )
+        {
+            int c = header.codePointAt( p );
+            if( c == '"' )
+            {
+                quoteCount++;
+            }
+            if( c == ';' && ( quoteCount % 2 == 0 ) )
+            {
+                // it is ; and not surrounded by double-quotes
+                cookies.add( header.substring( q, p ) );
+                q = p + Character.charCount( c );
+            }
+            p += Character.charCount( c );
+        }
+        cookies.add( header.substring( q ) );
+        return cookies;
     }
 }

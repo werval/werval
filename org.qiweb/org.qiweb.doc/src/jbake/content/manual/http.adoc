@@ -1,0 +1,91 @@
+
+== HTTP
+
+=== Session
+
+As QiWeb is stateless oriented, it provides no way to keep session state server side.
+Instead a simple session Cookie is used to keep state accross user requests.
+
+TIP: If you need to keep server side state think about your database or cache system of choice.
+
+The Session Cookie contains a `Map<String,String>` and is signed using the mandatory Application Secret.
+Signature use the HmacSHA1 algorithm.
+
+
+=== Cookies
+
+
+=== Forms & Uploads
+
+
+=== Query String
+
+// TODO put intro, ??? wikipedia ???? build plugin to fetch wikipedia and update ???
+
+[source,java]
+----
+import static org.qiweb.api.context.CurrentContext.*;
+public MyController {
+  public Outcome aControllerMethod() {
+    String singleFoo = request().queryString().singleValueOf("foo");
+    // Do what you have to do according to the foo value
+    return outcomes().ok("whatever").build();
+  }
+}
+----
+
+
+==== Multiple values
+
+Query strings can contain multiple values for the same parameter.
+How this is handled is not stated in the HTTP 1.0 nor 1.1 RFCs and, by so, open to interpretation.
+You, and others, are free to do it the way you, or they, want.
+This while being conform to the HTTP protocol.
+See https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf[HTTP Parameter Pollution, 2009] at OWASP.
+
+Frameworks usually handle this in their own each way.
+When using one framework you get used to its way of doing things ovelooking the fact that you can get powned in pretty
+silly ways.
+See the OWASP paper cited above for numerous examples.
+
+QiWeb, like other frameworks, has a default behaviour.
+It's a bit simple, but this is for good.
+No multi-value parameters is allowed.
+A request coming with multiple values (eg. `foo=bar&foo=baz`) is, by default, rejected with a `400 Bad Request` status
+and a warning is logged.
+
+// TODO In dev-mode, put meta-data in exceptions with pointers to documentation!!!
+
+On the other hand, and if you really need it, you can easily enable multiple values support by setting the
+`qiweb.http.query-string.multi-valued` to yes.
+
+TIP: Did you take a look at the OWASP link mentioned earlier? No? Now is a good time.
+
+When enabled, `foo=bar&foo=baz` is accepted and your application code can access the values easily:
+
+[source,java]
+----
+import static org.qiweb.api.context.CurrentContext.*;
+public MyController {
+  public Outcome aControllerMethod() {
+    String singleFoo        = request().queryString().singleValueOf("foo"); <1>
+    List<String> allFoos    = request().queryString().valuesOf("foo");      <2>
+    String firstFoo         = request().queryString().firstValueOf("foo");  <3>
+    String lastFoo          = request().queryString().lastValueOf("foo");   <4>
+    // Do what you have to do according to the foo values
+    return outcomes().ok("whatever").build();
+  }
+}
+----
+1. Get a single value, throws if there are multiple values
+2. Get all values
+3. Get first value
+4. Get last value
+
+The `QueryString` API leave you in control regarding which value you want to use.
+
+NOTE: Enabling `qiweb.http.query-string.multi-valued` do not enable any *syntax*. A request with multiple `foo[]`
+values will pass but the values will be in the `"foo[]"` parameter, not `"foo"`. Be careful, there's no magic.
+Speaking of which, something along the line of Ruby on Rails
+http://guides.rubyonrails.org/action_controller_overview.html#hash-and-array-parameters[Hash and Array Parameters]
+could be implemented as a library, pull-requests are welcome!

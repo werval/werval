@@ -1,0 +1,13 @@
+
+description = "JSON Module"
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:$version"
+    compile libs.jackson
+    
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
+
+}
+

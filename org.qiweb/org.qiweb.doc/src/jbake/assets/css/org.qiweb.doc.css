@@ -1,0 +1,46 @@
+@media (min-width: 767px) {
+    #wrap > .container {
+        width: 90%;
+    }
+    #toc.toc2 {
+        padding-top: 5em;
+    }
+}
+
+#toctitle:before {
+    padding-right: 5px;
+    font-size: 0.8em;
+    font-family: 'Glyphicons Halflings';
+    content: "\e012";
+}
+
+#toc.toc2 li.active a:after {
+    padding-left: 5px;
+    font-size: 0.8em;
+    font-family: 'Glyphicons Halflings';
+    content:"\e128";
+    color: darkslateblue;
+}
+
+#toc.toc2 ul.sectlevel1 > li > a {
+    font-weight: bold;
+}
+.breadcrumb {
+    margin: 15px 0 0 0;
+    padding: 4px 8px;
+    font-size: 11px;
+    background-color: transparent;
+}
+
+.imageblock {
+    padding: 1em 0;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    text-align: center;
+}
+
+#footer {
+    font-size: 12px;
+    padding-top: 16px;
+    padding-left: 16px;
+}

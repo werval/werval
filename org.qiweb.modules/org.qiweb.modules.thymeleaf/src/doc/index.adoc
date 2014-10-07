@@ -1,0 +1,6 @@
+= Thymeleaf Templating Module
+Server-side templating for your Application
+:jbake-type: module
+
+The Thymeleaf module provide a `ThymeleafPlugin` that brings first class server-side templating thanks to
+http://www.thymeleaf.org/[Thymeleaf].

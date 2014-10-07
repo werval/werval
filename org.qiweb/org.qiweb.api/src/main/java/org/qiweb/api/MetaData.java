@@ -15,13 +15,13 @@
  */
 package org.qiweb.api;
 
-import java.util.LinkedHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Meta-Data.
  */
 public final class MetaData
-    extends LinkedHashMap<String, Object>
+    extends ConcurrentHashMap<String, Object>
 {
     private static final long serialVersionUID = 1L;
 

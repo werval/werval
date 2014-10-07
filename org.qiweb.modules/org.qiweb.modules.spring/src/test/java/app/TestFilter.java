@@ -16,6 +16,7 @@
 package app;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
@@ -32,7 +33,7 @@ public class TestFilter
     public static int invocations = 0;
 
     @Override
-    public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
+    public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> filterConfig )
     {
         invocations++;
         return chain.next( context );

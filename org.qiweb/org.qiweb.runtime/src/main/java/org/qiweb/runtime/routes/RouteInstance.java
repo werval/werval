@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.qiweb.api.exceptions.IllegalRouteException;
@@ -36,11 +37,14 @@ import org.qiweb.api.routes.ControllerParams;
 import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.util.TypeResolver;
 
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotNull;
 import static org.qiweb.runtime.util.Iterables.addAll;
 import static org.qiweb.runtime.util.Iterables.toList;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
+import static org.qiweb.util.Strings.SPACE;
+import static org.qiweb.util.Strings.rightPad;
 
 /**
  * Instance of a Route.
@@ -133,20 +137,47 @@ import static org.qiweb.runtime.util.Iterables.toList;
             }
         }
 
-        // Ensure controller method exists and return an Outcome
+        // Ensure controller method exists and return an Outcome or a CompletableFuture<Outcome>
         Class<?>[] controllerParamsTypes = controllerParams.types();
         try
         {
             controllerMethod = controllerType.getMethod( controllerMethodName, controllerParamsTypes );
-            if( !controllerMethod.getReturnType().isAssignableFrom( Outcome.class ) )
+            boolean correctReturnType = false;
+            Throwable incorrectReturnTypeCause = null;
+            if( Outcome.class.isAssignableFrom( controllerMethod.getReturnType() ) )
             {
-                throw new IllegalRouteException(
-                    toString(),
-                    "Controller Method '" + controllerType.getSimpleName()
-                    + "#" + controllerMethodName
-                    + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
-                    + "do not return an Outcome."
-                );
+                correctReturnType = true;
+            }
+            else if( CompletableFuture.class.isAssignableFrom( controllerMethod.getReturnType() ) )
+            {
+                try
+                {
+                    Class<?> futureOutcomeType = TypeResolver.resolveArgument(
+                        controllerMethod.getGenericReturnType(),
+                        CompletableFuture.class
+                    );
+                    if( futureOutcomeType.isAssignableFrom( Outcome.class ) )
+                    {
+                        correctReturnType = true;
+                    }
+                }
+                catch( IllegalArgumentException ex )
+                {
+                    incorrectReturnTypeCause = ex;
+                }
+            }
+            if( !correctReturnType )
+            {
+                String message = "Controller Method '" + controllerType.getSimpleName()
+                                 + "#" + controllerMethodName
+                                 + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
+                                 + "do not return an Outcome nor a CompletableFuture<Outcome>.";
+                IllegalRouteException ex = new IllegalRouteException( toString(), message );
+                if( incorrectReturnTypeCause != null )
+                {
+                    ex.initCause( incorrectReturnTypeCause );
+                }
+                throw ex;
             }
         }
         catch( NoSuchMethodException ex )
@@ -156,7 +187,8 @@ import static org.qiweb.runtime.util.Iterables.toList;
                 "Controller Method '" + controllerType.getSimpleName()
                 + "#" + controllerMethodName
                 + "( " + Arrays.toString( controllerParamsTypes ) + " )' "
-                + "not found.", ex
+                + "not found.",
+                ex
             );
         }
     }
@@ -404,52 +436,68 @@ import static org.qiweb.runtime.util.Iterables.toList;
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append( httpMethod ).append( " " )
-            .append( path ).append( " " )
-            .append( controllerType.getName() ).append( "." )
-            .append( controllerMethodName )
-            .append( "(" );
+        return toString( null, null, null );
+    }
+
+    public String toString( Integer methodPadLen, Integer pathPadLen, Integer actionPadLen )
+    {
+        StringBuilder builder = new StringBuilder();
+
+        // HTTP Method
+        builder.append( methodPadLen == null ? httpMethod : rightPad( methodPadLen, httpMethod.name() ) );
+        builder.append( SPACE );
+
+        // Path
+        builder.append( pathPadLen == null ? path : rightPad( pathPadLen, path ) );
+        builder.append( SPACE );
+
+        // Action
+        StringBuilder actionBuilder = new StringBuilder();
+        actionBuilder.append( controllerType.getName() ).append( '.' ).append( controllerMethodName ).append( '(' );
         Iterator<ControllerParams.Param> it = controllerParams.iterator();
         if( it.hasNext() )
         {
-            sb.append( " " );
+            actionBuilder.append( SPACE );
             while( it.hasNext() )
             {
                 ControllerParams.Param param = it.next();
-                sb.append( param.type().getSimpleName() ).append( " " ).append( param.name() );
+                actionBuilder.append( param.type().getSimpleName() ).append( SPACE ).append( param.name() );
                 switch( param.valueKind() )
                 {
                     case FORCED:
-                        sb.append( " = '" ).append( param.forcedValue() ).append( "'" );
+                        actionBuilder.append( " = '" ).append( param.forcedValue() ).append( "'" );
                         break;
                     case DEFAULTED:
-                        sb.append( " ?= '" ).append( param.defaultedValue() ).append( "'" );
+                        actionBuilder.append( " ?= '" ).append( param.defaultedValue() ).append( "'" );
                         break;
                     default:
                 }
                 if( it.hasNext() )
                 {
-                    sb.append( ", " );
+                    actionBuilder.append( ", " );
                 }
             }
-            sb.append( " " );
+            actionBuilder.append( SPACE );
         }
-        sb.append( ")" );
+        actionBuilder.append( ')' );
+        String action = actionBuilder.toString();
+        builder.append( actionPadLen == null ? action : rightPad( actionPadLen, action ) );
+
+        // Modifiers
         Iterator<String> modifiersIt = modifiers.iterator();
         if( modifiersIt.hasNext() )
         {
-            sb.append( " " );
+            builder.append( SPACE );
             while( modifiersIt.hasNext() )
             {
-                sb.append( modifiersIt.next() );
+                builder.append( modifiersIt.next() );
                 if( modifiersIt.hasNext() )
                 {
-                    sb.append( " " );
+                    builder.append( SPACE );
                 }
             }
         }
-        return sb.toString();
+        return builder.toString();
     }
 
     @Override

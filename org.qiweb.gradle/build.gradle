@@ -1,5 +1,5 @@
 
-apply from: "$rootProject.projectDir.absolutePath/../gradle/java.gradle"
+apply from: rootProject.file( '../gradle/java.gradle' )
 apply plugin: 'groovy'
 apply plugin: 'sonar-runner'
 
@@ -11,12 +11,17 @@ repositories {
     maven { url "http://repo.gradle.org/gradle/libs-releases-local" }
 }
 
+description = "QiWeb Gradle Plugin"
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.devshell:$version"
+    compile "org.qiweb:org.qiweb.commands:$version"
     compile localGroovy()
     compile gradleApi()
     compile libs.gradle_tooling
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.awaitility
     
 }
 

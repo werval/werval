@@ -61,10 +61,16 @@ public class CryptoInstance
 
     public static String genRandom256bitsHexSecret()
     {
-        byte[] bytes = new byte[ 32 ];
-        new SecureRandom().nextBytes( bytes );
-        new SecureRandom( bytes ).nextBytes( bytes );
-        return Hex.encode( bytes );
+        try
+        {
+            byte[] bytes = new byte[ 32 ];
+            SecureRandom.getInstanceStrong().nextBytes( bytes );
+            return Hex.encode( bytes );
+        }
+        catch( NoSuchAlgorithmException ex )
+        {
+            throw new InternalError( ex.getMessage() );
+        }
     }
 
     @Override

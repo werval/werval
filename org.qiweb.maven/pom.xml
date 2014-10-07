@@ -2,6 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+    ________  .__ __      __      ___.        _____                              __________.__               .__
+    \_____  \ |__/  \    /  \ ____\_ |__     /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
+     /  / \  \|  \   \/\/   // __ \| __ \   /  \ /  \\__  \\  \/ // __ \ /    \   |     ___/  | |  |  \/ ___\|  |/    \
+    /   \_/.  \  |\        /\  ___/| \_\ \ /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  >  |   |  \
+    \_____\ \_/__| \__/\__/  \_____)_____/ \____|____(______/\_/  \_____)___|__/  |____|   |____/____/\___  /|__|___|__/
+           \__)                                                                                      /_____/
+    -->
+
     <parent>
         <groupId>org.codeartisans</groupId>
         <artifactId>codeartisans-parent</artifactId>
@@ -14,7 +23,14 @@
 
     <packaging>maven-plugin</packaging>
     <name>${project.artifactId}</name>
+    <description>QiWeb Maven Plugin</description>
   
+    <scm>
+        <url>https://scm.codeartisans.org/qiweb/qiweb</url>
+        <connection>scm:git:https://scm.codeartisans.org/qiweb/qiweb.git</connection>
+        <developerConnection>scm:git:git@scm.codeartisans.org:qiweb/qiweb.git</developerConnection>
+    </scm>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -23,51 +39,388 @@
             <comments>Copyrights retained by each developer.</comments>
         </license>
     </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
     
     <repositories>
         <repository>
-            <id>mojo-executor-repository</id>
-            <url>http://twdata-m2-repository.googlecode.com/svn/</url>
+            <id>qiwebRepo</id>
+            <url>https://repo.codeartisans.org/qiweb</url>
         </repository>
     </repositories>
 
     <dependencies>
+
+        <!--
+        _________                       .__.__
+        \_   ___ \  ____   _____ ______ |__|  |   ____
+        /    \  \/ /  _ \ /     \\____ \|  |  | _/ __ \
+        \     \___(  (_) )  Y Y  \  |_) )  |  |_\  ___/
+         \________/\____/|__|_|__/   __/|__|____/\_____)
+                                 |__|
+        -->
+
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.devshell</artifactId>
+            <artifactId>org.qiweb.commands</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.twdata.maven</groupId>
-            <artifactId>mojo-executor</artifactId>
-            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
-            <version>1.1</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-            <version>2.2.1</version>
+            <artifactId>maven-core</artifactId>
+            <version>3.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>2.2.1</version>
+            <version>3.0.5</version>
         </dependency>
+
+        <!--
+        __________                    .__    .___         .___
+        \______   \_______  _______  _|__| __| _/____   __| _/
+         |     ___/\_  __ \/  _ \  \/ /  |/ __ |/ __ \ / __ |
+         |    |     |  | \(  (_) )   /|  / /_/ \  ___// /_/ |
+         |____|     |__|   \____/ \_/ |__\_____|\_____)_____|
+        -->
+        
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--
+        ___________              __
+        \__    ___/___   _______/  |_
+          |    |_/ __ \ /  ___/\   __\
+          |    |\  ___/ \___ \  |  |
+          |____| \_____)______) |__|
+        -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.qiweb</groupId>
+            <artifactId>org.qiweb.test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>3.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>2.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>1.6.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     
     <build>
         <plugins>
+
             <plugin>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.2</version>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.2,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>1.8</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
-                    <goalPrefix>qiweb</goalPrefix>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <id>qiweb-install</id>
+                        <!-- Install org.qiweb.maven artifact into the QiWeb local dev repository -->
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                            <pomFile>${project.basedir}/pom.xml</pomFile>
+                            <createChecksum>true</createChecksum>
+                            <localRepositoryPath>${project.basedir}/../repository</localRepositoryPath>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                _____                              __________.__               .__
+               /     \ _____ ___  __ ____   ____   \______   \  |  __ __  ____ |__| ____
+              /  \ /  \\__  \\  \/ // __ \ /    \   |     ___/  | |  |  \/ ___\|  |/    \
+             /    Y    \/ __ \\   /\  ___/|   |  \  |    |   |  |_|  |  / /_/  )  |   |  \
+             \____|____(______/\_/  \_____)___|__/  |____|   |____/____/\___  /|__|___|__/
+                                                                       /_____/
+            -->
+
+            <plugin>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <goalPrefix>qiweb</goalPrefix>
+                    <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    <helpPackageName>org.qiweb.maven</helpPackageName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>help-goal</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>mojos-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+            ____ ___      .__  __    ___________              __
+           |    |   \____ |__|/  |_  \__    ___/___   _______/  |_  ______
+           |    |   /    \|  \   __\   |    |_/ __ \ /  ___/\   __\/  ___/
+           |    |  /   |  \  ||  |     |    |\  ___/ \___ \  |  |  \___ \
+           |______/|___|__/__||__|     |____| \_____)______) |__| /______)
+            -->
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <forkCount>0</forkCount>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <systemProperties>
+                        <project.basedir>${basedir}</project.basedir>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.12.1</version>
+                <executions>
+                    <execution>
+                        <id>checkstyle-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <propertyExpansion>
+                                suppressionsCommon=${project.basedir}/../config/checkstyle/qiweb-suppressions.xml
+                                suppressionsCustom=${project.basedir}/config/checkstyle/suppressions.xml
+                            </propertyExpansion>
+                            <configLocation>${project.basedir}/../config/checkstyle/qiweb-checks.xml</configLocation>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                            <linkXRef>false</linkXRef>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+            .___        __                              __  .__                ___________              __
+            |   | _____/  |_  ____   ________________ _/  |_|__| ____   ____   \__    ___/___   _______/  |_  ______
+            |   |/    \   __\/ __ \ / ___\_  __ \__  \\   __\  |/  _ \ /    \    |    |_/ __ \ /  ___/\   __\/  ___/
+            |   |   |  \  | \  ___// /_/  >  | \// __ \|  | |  (  (_) )   |  \   |    |\  ___/ \___ \  |  |  \___ \
+            |___|___|__/__|  \_____>___  /|__|  (______/__| |__|\____/|___|__/   |____| \_____)______) |__| /______)
+                                  /_____/
+            -->
+
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>1.8</version>
+                <configuration>
+                    <skipInstallation>${skipTests}</skipInstallation>
+                    <localRepositoryPath>${project.build.directory}/it-local-repository</localRepositoryPath>
+                    <extraArtifacts>
+                        <extraArtifact>org.codehaus.plexus:plexus-utils:2.1</extraArtifact>
+                        <extraArtifact>org.codehaus.plexus:plexus-utils:1.5.5</extraArtifact>
+                        <extraArtifact>org.codehaus.plexus:plexus-classworlds:2.4</extraArtifact>
+                        <extraArtifact>org.slf4j:slf4j-simple:1.7.7</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-resources-plugin:2.6</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-compiler-plugin:3.1</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12.4</extraArtifact>
+                        <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.4</extraArtifact>
+                        <extraArtifact>org.sitemesh:sitemesh:3.0-alpha-2</extraArtifact>
+                        <extraArtifact>org.qiweb:org.qiweb.doc:${project.version}</extraArtifact>
+                    </extraArtifacts>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.17</version>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>0</forkCount>
+                            <useSystemClassloader>false</useSystemClassloader>
+                            <systemPropertyVariables>
+                                <project.basedir>${basedir}</project.basedir>
+                                <maven.home>${maven.home}</maven.home>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verify-integration-tests</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+            __________       .__                               
+            \______   \ ____ |  |   ____ _____    ______ ____  
+             |       _// __ \|  | _/ __ \\__  \  /  ___// __ \ 
+             |    |   \  ___/|  |_\  ___/ / __ \_\___ \\  ___/ 
+             |____|___/\_____)____/\_____)______/______)\_____)
+            -->
+
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <updateReleaseInfo>true</updateReleaseInfo>
+                    <altReleaseDeploymentRepository>codeartisansNexus::default::https://repo.codeartisans.org/content/repositories/qiweb-releases</altReleaseDeploymentRepository>
+                    <altSnapshotDeploymentRepository>codeartisansNexus::default::https://repo.codeartisans.org/content/repositories/qiweb-snapshots</altSnapshotDeploymentRepository>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

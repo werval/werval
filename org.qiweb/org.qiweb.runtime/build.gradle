@@ -1,4 +1,6 @@
 
+description = "QiWeb Runtime"
+
 dependencies {
 
     compile project( ":org.qiweb.api" )
@@ -9,6 +11,7 @@ dependencies {
     testCompile project( ":org.qiweb.test" )
     testCompile libs.jackson
     testCompile libs.rest_assured
+    testCompile libs.awaitility
 
 }
 

@@ -15,9 +15,9 @@
  */
 package org.qiweb.spi.server;
 
-import org.qiweb.api.util.Reflectively;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
+import org.qiweb.util.Reflectively;
 
 /**
  * QiWeb Http Server.

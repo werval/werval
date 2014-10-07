@@ -19,15 +19,20 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import org.qiweb.api.Config;
 import org.qiweb.api.http.ResponseHeader;
+import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
-import org.qiweb.api.util.ByteArrayByteSource;
-import org.qiweb.api.util.ByteSource;
+import org.qiweb.util.ByteArrayByteSource;
+import org.qiweb.util.ByteSource;
 
 import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_XML;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
+import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
+import static org.qiweb.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Outcome Builder instance.
@@ -35,17 +40,19 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
 public class OutcomeBuilderInstance
     implements OutcomeBuilder
 {
+    private final Charset defaultCharset;
+    private final MimeTypes mimeTypes;
     private final ResponseHeader response;
     private Object body = EMPTY_BYTES;
     private long length = 0;
     private int chunkSize;
-    private final Charset defaultCharset;
 
-    /* package */ OutcomeBuilderInstance( Config config, ResponseHeader response )
+    /* package */ OutcomeBuilderInstance( Config config, MimeTypes mimeTypes, ResponseHeader response )
     {
+        this.defaultCharset = config.charset( QIWEB_CHARACTER_ENCODING );
+        this.mimeTypes = mimeTypes;
         this.response = response;
         this.chunkSize = config.intNumber( QIWEB_HTTP_CHUNKSIZE );
-        this.defaultCharset = config.charset( QIWEB_CHARACTER_ENCODING );
     }
 
     @Override
@@ -60,6 +67,66 @@ public class OutcomeBuilderInstance
     {
         response.headers().withSingle( CONTENT_TYPE, contentType );
         return this;
+    }
+
+    @Override
+    public OutcomeBuilder asTextual( String contentType )
+    {
+        return as( mimeTypes.withCharsetOfTextual( contentType ) );
+    }
+
+    @Override
+    public OutcomeBuilder asTextual( String contentType, Charset charset )
+    {
+        return as( mimeTypes.withCharset( contentType, charset ) );
+    }
+
+    @Override
+    public OutcomeBuilder asTextPlain()
+    {
+        return as( mimeTypes.withCharsetOfTextual( TEXT_PLAIN ) );
+    }
+
+    @Override
+    public OutcomeBuilder asTextPlain( Charset charset )
+    {
+        return as( mimeTypes.withCharset( TEXT_PLAIN, charset ) );
+    }
+
+    @Override
+    public OutcomeBuilder asJson()
+    {
+        return as( mimeTypes.withCharsetOfTextual( APPLICATION_JSON ) );
+    }
+
+    @Override
+    public OutcomeBuilder asJson( Charset charset )
+    {
+        return as( mimeTypes.withCharset( APPLICATION_JSON, charset ) );
+    }
+
+    @Override
+    public OutcomeBuilder asXml()
+    {
+        return as( mimeTypes.withCharsetOfTextual( APPLICATION_XML ) );
+    }
+
+    @Override
+    public OutcomeBuilder asXml( Charset charset )
+    {
+        return as( mimeTypes.withCharset( APPLICATION_XML, charset ) );
+    }
+
+    @Override
+    public OutcomeBuilder asHtml()
+    {
+        return as( mimeTypes.withCharsetOfTextual( TEXT_HTML ) );
+    }
+
+    @Override
+    public OutcomeBuilder asHtml( Charset charset )
+    {
+        return as( mimeTypes.withCharset( TEXT_HTML, charset ) );
     }
 
     @Override

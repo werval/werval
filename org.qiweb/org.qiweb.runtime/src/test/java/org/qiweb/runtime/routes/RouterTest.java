@@ -39,23 +39,23 @@ public class RouterTest
     {
         RequestBuilder builder = QIWEB.newRequestBuilder();
         assertThat(
-            QIWEB.application().handleRequest( builder.get( "/" ).build() ).responseHeader().status(),
+            QIWEB.application().handleRequest( builder.get( "/" ).build() ).join().responseHeader().status(),
             equalTo( Status.OK )
         );
         assertThat(
-            QIWEB.application().handleRequest( builder.post( "/" ).build() ).responseHeader().status(),
+            QIWEB.application().handleRequest( builder.post( "/" ).build() ).join().responseHeader().status(),
             equalTo( Status.NOT_FOUND )
         );
         assertThat(
-            QIWEB.application().handleRequest( builder.get( "/foo" ).build() ).responseHeader().status(),
+            QIWEB.application().handleRequest( builder.get( "/foo" ).build() ).join().responseHeader().status(),
             equalTo( Status.OK )
         );
         assertThat(
-            QIWEB.application().handleRequest( builder.get( "/bazar" ).build() ).responseHeader().status(),
+            QIWEB.application().handleRequest( builder.get( "/bazar" ).build() ).join().responseHeader().status(),
             equalTo( Status.NOT_FOUND )
         );
         assertThat(
-            QIWEB.application().handleRequest( builder.get( "/azertyuiop/1234" ).build() ).responseHeader().status(),
+            QIWEB.application().handleRequest( builder.get( "/azertyuiop/1234" ).build() ).join().responseHeader().status(),
             equalTo( Status.OK )
         );
     }

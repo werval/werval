@@ -37,14 +37,16 @@ import org.qiweb.api.routes.ControllerParams.Param;
 import org.qiweb.api.routes.ControllerParams.ParamValue;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.internal.RouteBuilderContext;
-import org.qiweb.api.util.Strings;
 import org.qiweb.runtime.util.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_SET;
-import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.withHead;
+import static org.qiweb.util.Strings.withoutTrail;
 
 /**
  * RouteBuilder Instance.
@@ -96,20 +98,14 @@ public class RouteBuilderInstance
     public RouteBuilderInstance( Application app, String pathPrefix )
     {
         this.app = app;
-        if( Strings.isEmpty( pathPrefix ) )
+        if( isEmpty( pathPrefix ) )
         {
             this.pathPrefix = EMPTY;
         }
         else
         {
-            // Prepend / if necessary
-            String actualPrefix = pathPrefix.startsWith( "/" )
-                                  ? pathPrefix
-                                  : "/" + pathPrefix;
-            // Remove trailing / if necessary
-            this.pathPrefix = actualPrefix.endsWith( "/" )
-                              ? actualPrefix.substring( 0, actualPrefix.length() - 1 )
-                              : actualPrefix;
+            // Prepend / and remove trailing / if necessary
+            this.pathPrefix = withoutTrail( withHead( pathPrefix, "/" ), "/" );
         }
     }
 
@@ -200,53 +196,9 @@ public class RouteBuilderInstance
         public <T> RouteDeclaration to( Class<T> controllerType, ControllerCallRecorder<T> callRecorder )
         {
             final Holder<String> methodNameHolder = new Holder<>();
-            T controllerProxy;
-            if( controllerType.isInterface() )
-            {
-                controllerProxy = (T) Proxy.newProxyInstance(
-                    Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[]
-                    {
-                        controllerType
-                    },
-                    new InvocationHandler()
-                    {
-                        @Override
-                        public Object invoke( Object proxy, java.lang.reflect.Method method, Object[] args )
-                        {
-                            methodNameHolder.set( method.getName() );
-                            return null;
-                        }
-                    }
-                );
-            }
-            else
-            {
-                try
-                {
-                    ProxyFactory proxyFactory = new ProxyFactory();
-                    proxyFactory.setSuperclass( controllerType );
-                    controllerProxy = (T) proxyFactory.createClass().newInstance();
-                    ( (javassist.util.proxy.Proxy) controllerProxy ).setHandler(
-                        new MethodHandler()
-                        {
-                            @Override
-                            public Object invoke( Object self, java.lang.reflect.Method controllerMethod,
-                                                  java.lang.reflect.Method proceed, Object[] args
-                            )
-                            {
-                                methodNameHolder.set( controllerMethod.getName() );
-                                return null;
-                            }
-                        }
-                    );
-                }
-                catch( InstantiationException | IllegalAccessException ex )
-                {
-                    throw new QiWebException( "Unable to record controller method in RouteBuilder", ex );
-                }
-            }
-
+            T controllerProxy = controllerType.isInterface()
+                                ? newJavaProxy( controllerType, methodNameHolder )
+                                : newJavassistProxy( controllerType, methodNameHolder );
             try
             {
                 // Belt & Braces
@@ -302,6 +254,67 @@ public class RouteBuilderInstance
                 modifiers
             );
         }
+
+        private <T> T newJavaProxy( final Class<T> controllerType, final Holder<String> methodNameHolder )
+        {
+            return (T) Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]
+                {
+                    controllerType
+                },
+                new InvocationHandler()
+                {
+                    @Override
+                    public Object invoke( Object proxy, java.lang.reflect.Method method, Object[] args )
+                    {
+                        methodNameHolder.set( method.getName() );
+                        return null;
+                    }
+                }
+            );
+        }
+
+        private <T> T newJavassistProxy( final Class<T> controllerType, final Holder<String> methodNameHolder )
+        {
+            ProxyFactory.ClassLoaderProvider previousJavassistLoader = ProxyFactory.classLoaderProvider;
+            try
+            {
+                ProxyFactory.classLoaderProvider = new ProxyFactory.ClassLoaderProvider()
+                {
+                    @Override
+                    public ClassLoader get( ProxyFactory proxyFactory )
+                    {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
+                };
+                ProxyFactory proxyFactory = new ProxyFactory();
+                proxyFactory.setSuperclass( controllerType );
+                T controllerProxy = (T) proxyFactory.createClass().newInstance();
+                ( (javassist.util.proxy.Proxy) controllerProxy ).setHandler(
+                    new MethodHandler()
+                    {
+                        @Override
+                        public Object invoke( Object self, java.lang.reflect.Method controllerMethod,
+                                              java.lang.reflect.Method proceed, Object[] args
+                        )
+                        {
+                            methodNameHolder.set( controllerMethod.getName() );
+                            return null;
+                        }
+                    }
+                );
+                return controllerProxy;
+            }
+            catch( InstantiationException | IllegalAccessException ex )
+            {
+                throw new QiWebException( "Unable to record controller method in RouteBuilder", ex );
+            }
+            finally
+            {
+                ProxyFactory.classLoaderProvider = previousJavassistLoader;
+            }
+        }
     }
 
     private static final class RouteParserInstance
@@ -334,9 +347,23 @@ public class RouteBuilderInstance
         }
 
         @Override
+        public List<Route> routes( String... routeStrings )
+        {
+            List<Route> routes = new ArrayList<>();
+            if( routeStrings != null )
+            {
+                for( String routeString : routeStrings )
+                {
+                    routes.add( route( routeString ) );
+                }
+            }
+            return routes;
+        }
+
+        @Override
         public Route route( String routeString )
         {
-            if( Strings.isEmpty( routeString ) )
+            if( isEmpty( routeString ) )
             {
                 throw new IllegalRouteException( "null", "Unable to parse null or empty String." );
             }
@@ -547,18 +574,18 @@ public class RouteBuilderInstance
         {
             List<String> segments = new ArrayList<>();
             boolean insideQuotes = false;
-            char previous = controllerMethodParams.charAt( 0 );
-            StringBuilder sb = new StringBuilder().append( previous );
-            for( int idx = 1; idx < controllerMethodParams.length(); idx++ )
+            int previous = controllerMethodParams.codePointAt( 0 );
+            StringBuilder sb = new StringBuilder().append( Character.toChars( previous ) );
+            for( int idx = Character.charCount( previous ); idx < controllerMethodParams.length(); )
             {
-                char character = controllerMethodParams.charAt( idx );
+                int character = controllerMethodParams.codePointAt( idx );
                 if( character == '\'' && previous != '\\' )
                 {
                     insideQuotes = !insideQuotes;
                 }
                 if( insideQuotes || character != ',' )
                 {
-                    sb.append( character );
+                    sb.append( Character.toChars( character ) );
                 }
                 else
                 {
@@ -566,6 +593,7 @@ public class RouteBuilderInstance
                     sb = new StringBuilder();
                 }
                 previous = character;
+                idx += Character.charCount( character );
             }
             segments.add( sb.toString().trim() );
             return segments;
@@ -578,10 +606,10 @@ public class RouteBuilderInstance
                 return ParamValue.NONE;
             }
             boolean insideQuotes = false;
-            char previous = segment.charAt( 0 );
-            for( int idx = 1; idx < segment.length(); idx++ )
+            int previous = segment.codePointAt( 0 );
+            for( int idx = Character.charCount( previous ); idx < segment.length(); )
             {
-                char character = segment.charAt( idx );
+                int character = segment.codePointAt( idx );
                 if( character == '\'' && previous != '\\' )
                 {
                     insideQuotes = !insideQuotes;
@@ -595,6 +623,7 @@ public class RouteBuilderInstance
                     return ParamValue.FORCED;
                 }
                 previous = character;
+                idx += Character.charCount( character );
             }
             return ParamValue.NONE;
         }

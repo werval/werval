@@ -15,32 +15,26 @@
  */
 package org.qiweb.spi.server;
 
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
+import org.qiweb.util.IdentityGenerator;
+import org.qiweb.util.UUIDIdentityGenerator;
 
 /**
  * Helper object for HttpServer implementations.
  */
 public class HttpServerHelper
 {
-    private final String requestIdentityPrefix = UUID.randomUUID().toString() + "-";
-    private final AtomicLong requestIdentityCount = new AtomicLong();
+    private final IdentityGenerator idGen = new UUIDIdentityGenerator();
 
     /**
      * Generates a new request identity.
      *
-     * Request identity has the following form: {@literal UUID-COUNT}.
      * <p>
-     * One instance of {@link HttpServerHelper} holds a final {@link UUID} and an {@link AtomicLong} based counter.
-     * <p>
-     * Each call to this method concatenates the UUID and the counter, the later is incremented along the way.
+     * See {@link UUIDIdentityGenerator}.
      *
      * @return a new request identity.
      */
     public String generateNewRequestIdentity()
     {
-        return new StringBuilder( requestIdentityPrefix )
-            .append( requestIdentityCount.getAndIncrement() )
-            .toString();
+        return idGen.newIdentity();
     }
 }

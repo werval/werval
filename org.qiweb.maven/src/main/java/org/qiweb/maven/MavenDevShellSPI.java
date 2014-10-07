@@ -26,13 +26,19 @@ import org.qiweb.spi.dev.DevShellSPIAdapter;
 public class MavenDevShellSPI
     extends DevShellSPIAdapter
 {
-
     private final DefaultExecutor executor;
     private final CommandLine cmdLine;
 
-    public MavenDevShellSPI( URL[] applicationClassPath, URL[] runtimeClassPath, Set<File> sources, SourceWatcher watcher, File rootDir, String rebuildPhase )
+    public MavenDevShellSPI(
+        URL[] applicationClassPath,
+        URL[] runtimeClassPath,
+        Set<File> sources,
+        SourceWatcher watcher,
+        File rootDir,
+        String rebuildPhase
+    )
     {
-        super( applicationClassPath, runtimeClassPath, sources, watcher );
+        super( applicationClassPath, runtimeClassPath, sources, watcher, false );
         executor = new DefaultExecutor();
         cmdLine = new CommandLine( "mvn" );
         cmdLine.addArgument( "-f" );

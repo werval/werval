@@ -1,0 +1,8 @@
+= Memcached based Cache Extension
+Memcached Cache for your Application
+:jbake-type: module
+
+The Memcached-Cache module provide a `Cache` extension that brings a Cache implementation thanks to
+http://www.memcached.org/[Memcached].
+
+

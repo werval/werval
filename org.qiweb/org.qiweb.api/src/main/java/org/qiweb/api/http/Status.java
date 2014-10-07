@@ -16,7 +16,7 @@
 package org.qiweb.api.http;
 
 import java.io.Serializable;
-import org.qiweb.api.util.Charsets;
+import org.qiweb.util.Charsets;
 
 /**
  * HTTP Status.
@@ -938,9 +938,9 @@ public final class Status
         {
             throw new NullPointerException( "reasonPhrase" );
         }
-        for( int i = 0; i < reasonPhrase.length(); i++ )
+        for( int idx = 0; idx < reasonPhrase.length(); )
         {
-            char c = reasonPhrase.charAt( i );
+            int c = reasonPhrase.codePointAt( idx );
             // Check prohibited characters.
             if( c == '\n' || c == '\r' )
             {
@@ -948,6 +948,7 @@ public final class Status
                     "reasonPhrase contains one of the following prohibited characters: \\r\\n: " + reasonPhrase
                 );
             }
+            idx += Character.charCount( c );
         }
         this.code = code;
         this.statusClass = StatusClass.valueOf( code );

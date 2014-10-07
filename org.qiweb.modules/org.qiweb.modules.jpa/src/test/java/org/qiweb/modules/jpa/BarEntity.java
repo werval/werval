@@ -21,7 +21,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- * BarEntity.
+ * Bar Entity.
  */
 @Entity
 public class BarEntity
@@ -53,5 +53,11 @@ public class BarEntity
     public void setName( String name )
     {
         this.name = name;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "BarEntity{" + "id=" + id + ", name=" + name + '}';
     }
 }

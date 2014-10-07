@@ -157,6 +157,17 @@ public interface RouteBuilder
         List<Route> routes( String routesString );
 
         /**
+         * Parse several textual route definitions.
+         *
+         * @param routeStrings textual route definitions
+         *
+         * @return Parsed Routes
+         *
+         * @throws org.qiweb.api.exceptions.IllegalRouteException when the textual route definition is invalid
+         */
+        List<Route> routes( String... routeStrings );
+
+        /**
          * Parse a single textual route definition to a Route instance.
          *
          * @param routeString a textual route definition
@@ -202,9 +213,9 @@ public interface RouteBuilder
     /**
      * Record a new method parameter with defaulted value.
      *
-     * @param <T>          the parameterized parameter type
-     * @param name         the parameter name
-     * @param type         the parmeter type
+     * @param <T>            the parameterized parameter type
+     * @param name           the parameter name
+     * @param type           the parmeter type
      * @param defaultedValue the default value
      *
      * @return the defaulted value

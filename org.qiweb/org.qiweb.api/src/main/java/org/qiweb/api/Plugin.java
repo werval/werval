@@ -16,12 +16,13 @@
 package org.qiweb.api;
 
 import java.util.List;
+import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
 
 import static java.util.Collections.EMPTY_LIST;
-import static org.qiweb.api.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Application Plugin.
@@ -91,11 +92,12 @@ public interface Plugin<API>
      * <p>
      * Called by {@literal Application} once activated.
      *
+     * @param mode         Application Mode
      * @param routeBuilder Builder for Routes
      *
      * @return Routes this plugin prepend to the {@literal Application} routes
      */
-    default List<Route> firstRoutes( RouteBuilder routeBuilder )
+    default List<Route> firstRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return EMPTY_LIST;
     }
@@ -107,11 +109,12 @@ public interface Plugin<API>
      * <p>
      * Called by {@literal Application} once activated.
      *
+     * @param mode         Application Mode
      * @param routeBuilder Builder for Routes
      *
      * @return Routes this plugin append to the {@literal Application} routes
      */
-    default List<Route> lastRoutes( RouteBuilder routeBuilder )
+    default List<Route> lastRoutes( Mode mode, RouteBuilder routeBuilder )
     {
         return EMPTY_LIST;
     }
@@ -124,6 +127,30 @@ public interface Plugin<API>
      * @param application Application
      */
     default void onPassivate( Application application )
+    {
+        // NOOP
+    }
+
+    /**
+     * Invoked before each HTTP Interaction.
+     *
+     * Defaults to no operation.
+     *
+     * @param context Interaction Context
+     */
+    default void beforeInteraction( Context context )
+    {
+        // NOOP
+    }
+
+    /**
+     * Invoked after each HTTP Interaction.
+     *
+     * Defaults to no operation.
+     *
+     * @param context Interaction Context
+     */
+    default void afterInteraction( Context context )
     {
         // NOOP
     }

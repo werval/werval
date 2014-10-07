@@ -1,4 +1,6 @@
 
+description = "QiWeb Test Support"
+
 dependencies {
 
     compile project( ':org.qiweb.server.bootstrap' )

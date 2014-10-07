@@ -17,6 +17,7 @@ package org.qiweb.api;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.http.HttpBuilders;
@@ -25,8 +26,9 @@ import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.api.routes.ParameterBinders;
 import org.qiweb.api.routes.ReverseRoutes;
 import org.qiweb.api.routes.Routes;
-import org.qiweb.api.util.Reflectively;
-import org.qiweb.api.util.Stacktraces;
+import org.qiweb.api.templates.Templates;
+import org.qiweb.util.Reflectively;
+import org.qiweb.util.Stacktraces;
 
 /**
  * Application.
@@ -148,6 +150,31 @@ public interface Application
     ClassLoader classLoader();
 
     /**
+     * Default Application ExecutorService.
+     *
+     * Convey the current {@literal Context} to parallel threads if any.
+     * <p>
+     * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
+     *
+     * @return Default Application ExecutorService.
+     */
+    default ExecutorService executor()
+    {
+        return executors().defaultExecutor();
+    }
+
+    /**
+     * Application Executors.
+     *
+     * Convey the current {@literal Context} to parallel threads if any.
+     * <p>
+     * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
+     *
+     * @return Application Executors
+     */
+    ApplicationExecutors executors();
+
+    /**
      * HTTP API Objects Builders SPI.
      *
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
@@ -216,6 +243,18 @@ public interface Application
      * @return Application {@link Cache}
      */
     Cache cache();
+
+    /**
+     * Application {@link Templates}.
+     *
+     * <p>
+     * Don't hold references to the Templates instance in order to make your code {@link Mode#DEV} friendly.
+     *
+     * @return Application {@link Templates}
+     *
+     * @throws IllegalArgumentException if no {@literal Plugin} is found for Templates
+     */
+    Templates templates();
 
     /**
      * Application {@link Errors}.

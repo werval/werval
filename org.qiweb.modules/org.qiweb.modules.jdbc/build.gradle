@@ -1,8 +1,10 @@
 
+description = "JDBC Module"
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
-    compile 'com.jolbox:bonecp:0.8.0.RELEASE'
+    compile libs.bonecp
 
     testCompile "org.qiweb:org.qiweb.test:$version"
 

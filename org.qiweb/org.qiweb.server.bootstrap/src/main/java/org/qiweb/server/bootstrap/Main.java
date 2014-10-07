@@ -34,6 +34,7 @@ public final class Main
     private static final Logger LOG = LoggerFactory.getLogger( Main.class );
 
     public static void main( String[] args )
+        throws Exception
     {
         long start = System.currentTimeMillis();
         LOG.debug( "Starting QiWeb!" );
@@ -56,7 +57,7 @@ public final class Main
         catch( Exception ex )
         {
             LOG.error( "Unable to start application.", ex );
-            System.exit( 2 );
+            throw ex;
         }
     }
 

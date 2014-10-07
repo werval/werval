@@ -21,11 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
 import org.qiweb.api.Config;
 import org.qiweb.api.Error;
 import org.qiweb.api.Errors;
+import org.qiweb.util.UUIDIdentityGenerator;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
@@ -118,28 +117,15 @@ public final class ErrorsInstance
 
     private final Config config;
     private final Map<String, Error> errors;
-    private String errorIdentityPrefix;
-    private AtomicLong errorIdentityCount;
+    private final UUIDIdentityGenerator errorIdentityGenerator;
 
     public ErrorsInstance( Config config )
     {
         this.config = config;
         this.errors = new TreeMap<>( (o1, o2) -> o2.compareTo( o1 ) );
-        resetErrorIdentity();
-    }
-
-    private void resetErrorIdentity()
-    {
-        errorIdentityPrefix = UUID.randomUUID().toString() + "-";
-        errorIdentityCount = new AtomicLong();
-    }
-
-    private String generateNewErrorIdentity()
-    {
         // Left pad incremented error count with zeroes
         // Pad size is max recorded error length + 1
-        String padFormat = "%0" + ( config.string( APP_ERRORS_RECORD_MAX ).length() + 1 ) + "d";
-        return errorIdentityPrefix + String.format( padFormat, errorIdentityCount.getAndIncrement() );
+        this.errorIdentityGenerator = new UUIDIdentityGenerator( config.string( APP_ERRORS_RECORD_MAX ).length() + 1 );
     }
 
     @Override
@@ -157,7 +143,7 @@ public final class ErrorsInstance
     @Override
     public Error record( String requestId, String message, Throwable cause )
     {
-        String errorId = generateNewErrorIdentity();
+        String errorId = errorIdentityGenerator.newIdentity();
         Error error = new ErrorInstance( System.currentTimeMillis(), errorId, requestId, message, cause );
         errors.put( errorId, error );
         while( errors.size() > config.intNumber( APP_ERRORS_RECORD_MAX ) )
@@ -178,7 +164,7 @@ public final class ErrorsInstance
     public synchronized void clear()
     {
         errors.clear();
-        resetErrorIdentity();
+        errorIdentityGenerator.reset();
     }
 
     @Override

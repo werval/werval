@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.context;
 
+import java.util.concurrent.ExecutorService;
 import org.qiweb.api.Application;
 import org.qiweb.api.MetaData;
 import org.qiweb.api.context.Context;
@@ -39,17 +40,21 @@ public final class ContextInstance
     private final ResponseHeader response;
     private final Outcomes outcomes;
     private final MetaData metaData;
+    private final ExecutorService executor;
 
-    public ContextInstance( Application application, Session session, Route route, Request request,
-                            ResponseHeaderInstance responseHeader )
+    public ContextInstance(
+        Application application, Session session, Route route, Request request,
+        ResponseHeaderInstance responseHeader, ExecutorService executor
+    )
     {
         this.application = application;
         this.session = session;
         this.route = route;
         this.request = request;
         this.response = responseHeader;
-        this.outcomes = new OutcomesInstance( application.config(), responseHeader );
+        this.outcomes = new OutcomesInstance( application.config(), application().mimeTypes(), responseHeader );
         this.metaData = new MetaData();
+        this.executor = executor;
     }
 
     @Override
@@ -93,5 +98,11 @@ public final class ContextInstance
     public MetaData metaData()
     {
         return metaData;
+    }
+
+    @Override
+    public ExecutorService executor()
+    {
+        return executor;
     }
 }

@@ -17,6 +17,7 @@ package org.qiweb.spi.cache;
 
 import org.qiweb.api.Application;
 import org.qiweb.api.cache.Cache;
+import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
 
 /**

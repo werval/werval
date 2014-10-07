@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors.
+ * Copyright (c) 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,38 @@
 package org.qiweb.maven;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
-import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.qiweb.devshell.DevShell;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.qiweb.commands.DevShellCommand;
 import org.qiweb.devshell.JavaWatcher;
+import org.qiweb.spi.dev.DevShellSPI;
+
+import static java.util.Collections.EMPTY_SET;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
 /**
- * @goal devshell
- * @requiresDependencyResolution runtime
+ * Development Shell Mojo.
  */
+@Mojo( name = "devshell", requiresDependencyResolution = RUNTIME, threadSafe = true )
+@Execute( phase = COMPILE )
 public class DevShellMojo
-    extends AbstractMojo
+    extends AbstractQiWebMojo
 {
-
-    /**
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-    /**
-     * @parameter default-value="compile"
-     */
+    @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
+
+    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
+    private List<Artifact> pluginArtifacts;
 
     @Override
     public void execute()
@@ -53,46 +57,68 @@ public class DevShellMojo
 
         try
         {
-            File rootDir = project.getBasedir();
+            // Runtime Classpath
+            URL[] runtimeClassPath = runtimeClassPath();
 
-            // Classpath
-            Set<URL> classPathSet = new LinkedHashSet<URL>();
-            for( String runtimeClassPathElement : project.getRuntimeClasspathElements() )
-            {
-                classPathSet.add( new URL( "file://" + runtimeClassPathElement ) );
-            }
-            URL[] runtimeClassPath = classPathSet.toArray( new URL[ classPathSet.size() ] );
+            // Application Classpath
+            Set<URL> appCP = qiwebDocArtifacts();
+            appCP.add( new File( project.getBasedir(), "target/classes" ).toURI().toURL() );
+            URL[] applicationClasspath = appCP.toArray( new URL[ appCP.size() ] );
 
             // Sources
-            Set<File> sources = new LinkedHashSet<File>();
+            Set<File> sources = new LinkedHashSet<>();
             for( String sourceRoot : project.getCompileSourceRoots() )
             {
                 sources.add( new File( sourceRoot ) );
             }
 
-            // Run DevShell
-            URL[] applicationClasspath = new URL[]
-            {
-                new File( rootDir, "target/classes" ).toURI().toURL()
-            };
-            final DevShell devShell = new DevShell( new MavenDevShellSPI( applicationClasspath, runtimeClassPath,
-                                                                          sources, new JavaWatcher(),
-                                                                          rootDir, rebuildPhase ) );
-
-            Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    devShell.stop();
-                }
-            }, "qiweb-devshell-shutdown" ) );
-
-            devShell.start();
+            // Start DevShell
+            DevShellSPI devShellSPI = new MavenDevShellSPI(
+                applicationClasspath, runtimeClassPath,
+                sources,
+                new JavaWatcher(),
+                project.getBasedir(),
+                rebuildPhase
+            );
+            new DevShellCommand( devShellSPI ).run();
         }
         catch( Exception ex )
         {
             throw new MojoExecutionException( ex.getMessage(), ex );
         }
+    }
+
+    protected Set<URL> qiwebDocArtifacts()
+        throws MalformedURLException
+    {
+        Artifact qiwebDocArtifact = null;
+        Artifact sitemeshArtifact = null;
+        for( Artifact pluginArtifact : pluginArtifacts )
+        {
+            if( "org.qiweb".equals( pluginArtifact.getGroupId() )
+                && "org.qiweb.doc".equals( pluginArtifact.getArtifactId() ) )
+            {
+                qiwebDocArtifact = pluginArtifact;
+            }
+            else if( "org.sitemesh".equals( pluginArtifact.getGroupId() )
+                     && "sitemesh".equals( pluginArtifact.getArtifactId() ) )
+            {
+                sitemeshArtifact = pluginArtifact;
+            }
+        }
+
+        if( qiwebDocArtifact == null || sitemeshArtifact == null )
+        {
+            getLog().warn(
+                "QiWeb Documentation not in the Maven Plugin Classpath, please report the issue: "
+                + "https://scm.codeartisans.org/qiweb/qiweb/issues/new"
+            );
+            return EMPTY_SET;
+        }
+
+        Set<URL> result = new LinkedHashSet<>();
+        result.add( qiwebDocArtifact.getFile().toURI().toURL() );
+        result.add( sitemeshArtifact.getFile().toURI().toURL() );
+        return result;
     }
 }

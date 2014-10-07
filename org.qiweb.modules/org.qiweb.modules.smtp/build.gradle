@@ -1,12 +1,13 @@
 
+description = "SMTP Module"
 
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
-    compile 'org.apache.commons:commons-email:1.3.2'
+    compile libs.email
     
     testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile "dumbster:dumbster:1.6"
+    testCompile libs.subethasmtp
 
 }
 

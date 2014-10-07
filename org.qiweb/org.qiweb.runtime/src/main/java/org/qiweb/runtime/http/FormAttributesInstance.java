@@ -27,9 +27,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.api.util.Strings.EMPTY;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.Strings.EMPTY;
 
 public class FormAttributesInstance
     implements FormAttributes

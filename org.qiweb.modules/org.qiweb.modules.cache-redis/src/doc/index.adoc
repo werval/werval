@@ -1,0 +1,8 @@
+= Redis based Cache Extension
+Redis Cache for your Application
+:jbake-type: module
+
+The Redis-Cache module provide a `Cache` extension that brings a Cache implementation thanks to
+http://redis.io/[Redis].
+
+

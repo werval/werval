@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,17 @@ package org.qiweb.maven;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.qiweb.commands.SecretCommand;
 
-/**
- * @goal secret
- */
+@Mojo( name = "secret", requiresProject = false, threadSafe = true )
 public class SecretMojo
     extends AbstractMojo
 {
-
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "New Application Secret: " + org.qiweb.runtime.CryptoInstance.genRandom256bitsHexSecret() );
+        new SecretCommand().run();
     }
 }

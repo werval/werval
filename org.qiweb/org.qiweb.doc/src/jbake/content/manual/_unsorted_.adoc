@@ -1,0 +1,41 @@
+
+== UNSORTED
+
+=== Logging
+
+QiWeb use the http://www.slf4j.org[SLF4J] API (Simple Logging Facade for Java) but you have to choose what SLF4J
+implementation to use.
+We strongly recommend http://logback.qos.ch/[Logback].
+You have full control on logging configuration.
+
+All QiWeb loggers are present in the `org.qiweb` namespace according to code packages.
+Here are the most useful:
+
+- `org.qiweb.runtime.server` QiWeb Http Server
+- `org.qiweb.runtime.routes` QiWeb Http Router
+- `org.qiweb.runtime.controllers` QiWeb Controller
+- `org.qiweb.runtime.filters` QiWeb Controller Filters
+- etc...
+
+TIP: QiWeb Runtime leverage SLF4J http://www.slf4j.org/manual.html#mdc[Mapped Diagnosic Context], aka. MDC, by putting
+the current request ID at the `X-QiWeb-Request-ID` key.
+Moreover, you can enable the `qiweb.http.log.context.client_ip` configuration property to add the current request client
+IP address at the `X-QiWeb-Client-IP` key.
+You can use theses keys in your loggers output patterns.
+
+
+=== Character encoding
+
+By default all character encoding is done in UTF-8.
+Character encoding can be changed by setting the `qiweb.character-encoding` configuration property.
+
+QiWeb ignore the runtime platform default encoding and complies to its configuration only.
+This is the only way to get a consistent behaviour accross different environments and prevent
+https://en.wikipedia.org/wiki/Mojibake[mojibakes].
+
+CAUTION: Even tough QiWeb does its best to ensure uniform character encoding for your application, you may use libraries
+that don't.
+In such a case you should http://stackoverflow.com/questions/361975/setting-the-default-java-character-encoding[set the
+default Java character encoding] using the `file.encoding` system property.
+
+All QiWeb APIs allows you to override character encoding when relevant.

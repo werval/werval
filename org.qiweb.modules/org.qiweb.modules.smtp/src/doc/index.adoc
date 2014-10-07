@@ -1,0 +1,5 @@
+= SMTP Module
+Email sending support for your Application
+:jbake-type: module
+
+The SMTP module provide a Plugin allowing easy email building and sending thanks to http://commons.apache.org/proper/commons-email/[Apache Commons Email].

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,6 +51,8 @@ public class QiWebPluginTest
     public void taskRegistration()
     {
         assertThat( project.getTasks().getByName( "secret" ), instanceOf( QiWebSecretTask.class ) );
+        assertThat( project.getTasks().getByName( "start" ), instanceOf( QiWebStartTask.class ) );
         assertThat( project.getTasks().getByName( "devshell" ), instanceOf( QiWebDevShellTask.class ) );
+        assertThat( project.getTasks().getByName( "devshell_rebuild" ), instanceOf( QiWebRebuildTask.class ) );
     }
 }

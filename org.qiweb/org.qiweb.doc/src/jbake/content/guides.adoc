@@ -1,0 +1,26 @@
+= Guides
+Guides to some things QiWeb
+:jbake-type: page
+:title: Practical QiWeb guides
+:description: Practical QiWeb guides
+:keywords: qiweb, documentation, guide, tutorial
+:toc: right
+:toc-title: Guides
+
+In this section you'll find guides for frequent and practical development use cases from IDE support to deployment.
+
+toc::[]
+
+include::guides/build-gradle.adoc[]
+include::guides/build-maven.adoc[]
+include::guides/ide-support.adoc[]
+
+include::guides/write-modules.adoc[]
+
+include::guides/deploy-unix.adoc[]
+include::guides/deploy-heroku.adoc[]
+
+include::guides/build-qiweb.adoc[]
+include::guides/write-doc.adoc[]
+
+include::guides/offline-usage.adoc[]

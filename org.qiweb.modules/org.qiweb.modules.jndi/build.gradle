@@ -1,8 +1,10 @@
 
+description = "JNDI Module"
+
 dependencies {
 
     compile "org.qiweb:org.qiweb.api:$version"
-    compile 'tyrex:tyrex:1.0.1'
+    compile libs.tyrex
 
     testCompile "org.qiweb:org.qiweb.test:$version"
 

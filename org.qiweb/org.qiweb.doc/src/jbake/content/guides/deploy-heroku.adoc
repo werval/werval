@@ -1,0 +1,77 @@
+== Deploy on Heroku
+
+Déployer une Application QiWeb sur Heroku est plutôt simple: il suffit de lancer la classe principale avec le bon
+classpath.
+
+Construire le classpath d'une application est un bon boulot pour un système de build gérant les dépendances comme Gradle
+ou Maven.
+
+Déployer sur Heroku revient donc à construire une version executable de l'application et à écrire un fichier `Procfile`
+transmettant l'environnement Heroku à notre application.
+Si vous n'êtes pas familiers avec Heroku, veuillez consulter la documentation sur les applications
+https://devcenter.heroku.com/articles/java[Java] et sur les https://devcenter.heroku.com/articles/procfile[fichiers
+Procfile].
+
+La configuration des applications QiWeb est faisable directement depuis la ligne de commande de lancement, vous pouvez
+utiliser ce mécanisme dans votre fichier `Procfile`.
+Cependant, si vous en ressentez le besoin, rien ne vous empêche de récupérer les propriétés système directement depuis
+le code de votre application.
+
+Maintenant que les bases sont posées, nous allons dérouler deux cas pratiques, le premier avec Gradle, le second avec
+Maven.
+Si vous n'utilisez aucun de ces deux systèmes de build voir aucun système de build, continuez votre lecture.
+Ce qui est présenté ici devrait s'appliquer à toute situation moyennant quelques adaptations.
+
+Le paramètre Heroku à passer à l'application pour ces deux exemples est le port d'écoute de votre service HTTP.
+Heroku définit le port à utiliser dans la variable d'environnement `PORT`.
+
+=== Using Gradle
+
+.`build.gradle`
+["source","groovy",subs="attributes"]
+----
+apply plugin: 'java'
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:{qiweb_version}"
+    // Add application compile dependencies
+
+    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb_version}"
+    // Add application runtime dependencies
+
+    test "org.qiweb:org.qiweb.test:{qiweb_version}"
+    // Add application test dependencies
+
+}
+
+apply plugin: 'application'
+
+mainClassName = 'org.qiweb.server.bootstrap.Main'
+applicationName = 'app'
+
+task stage( dependsOn: [ 'clean', 'installApp' ] )
+----
+
+To test locally:
+
+[source,bash]
+----
+user@host $ gradle stage
+# [Removed output]
+
+BUILD SUCCESSFUL
+
+user@host $ ./build/install/app/bin/app
+----
+
+Procfile
+
+[source,bash]
+----
+web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
+----
+
+=== Using Maven
+
+NOTE: TODO Write Heroku Maven based deployment walkthrough

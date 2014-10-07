@@ -15,11 +15,11 @@
  */
 package org.qiweb.cli;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -42,25 +42,28 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.io.FileUtils;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.util.Strings;
-import org.qiweb.devshell.DevShell;
+import org.qiweb.commands.DevShellCommand;
+import org.qiweb.commands.SecretCommand;
+import org.qiweb.commands.StartCommand;
 import org.qiweb.devshell.JavaWatcher;
-import org.qiweb.devshell.QiWebDevShellException;
 import org.qiweb.runtime.CryptoInstance;
-import org.qiweb.runtime.util.ClassLoaders;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
+import org.qiweb.util.ClassLoaders;
+import org.qiweb.util.DeltreeFileVisitor;
+import org.qiweb.util.InputStreams;
+import org.qiweb.util.Strings;
 
 import static java.io.File.separator;
-import static org.qiweb.api.util.Charsets.UTF_8;
 import static org.qiweb.cli.BuildVersion.COMMIT;
 import static org.qiweb.cli.BuildVersion.DATE;
 import static org.qiweb.cli.BuildVersion.DIRTY;
 import static org.qiweb.cli.BuildVersion.VERSION;
+import static org.qiweb.util.Charsets.UTF_8;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.NEWLINE;
+import static org.qiweb.util.Strings.hasText;
 
 /**
  * Damn Small QiWeb DevShell.
@@ -82,7 +85,7 @@ public final class DamnSmallDevShell
             SourceWatcher watcher,
             File classesDir )
         {
-            super( applicationClasspath, runtimeClasspath, sources, watcher );
+            super( applicationClasspath, runtimeClasspath, sources, watcher, false );
             this.applicationClasspath = applicationClasspath;
             this.runtimeClasspath = runtimeClasspath;
             this.sources = sources;
@@ -106,22 +109,22 @@ public final class DamnSmallDevShell
     private static final class ShutdownHook
         implements Runnable
     {
-        private final DevShell devShell;
         private final File tmpDir;
 
-        private ShutdownHook( DevShell devShell, File tmpDir )
+        private ShutdownHook( File tmpDir )
         {
-            this.devShell = devShell;
             this.tmpDir = tmpDir;
         }
 
         @Override
         public void run()
         {
-            devShell.stop();
             try
             {
-                FileUtils.deleteDirectory( tmpDir );
+                if( tmpDir.exists() )
+                {
+                    Files.walkFileTree( tmpDir.toPath(), new DeltreeFileVisitor() );
+                }
             }
             catch( IOException ex )
             {
@@ -192,7 +195,7 @@ public final class DamnSmallDevShell
             List<String> commands = cmd.getArgList();
             if( commands.isEmpty() )
             {
-                commands = Collections.singletonList( "run" );
+                commands = Collections.singletonList( "start" );
             }
             if( debug )
             {
@@ -211,9 +214,13 @@ public final class DamnSmallDevShell
                     case "clean":
                         cleanCommand( debug, tmpDir );
                         break;
-                    case "run":
+                    case "devshell":
                         System.out.println( LOGO );
-                        runCommand( debug, tmpDir, cmd );
+                        devshellCommand( debug, tmpDir, cmd );
+                        break;
+                    case "start":
+                        System.out.println( LOGO );
+                        startCommand( debug, tmpDir, cmd );
                         break;
                     case "secret":
                         secretCommand();
@@ -267,7 +274,7 @@ public final class DamnSmallDevShell
                             + "import org.qiweb.api.outcomes.Outcome;\n\n"
                             + "public class Application {\n\n"
                             + "    public Outcome index() {\n"
-                            + "        return new org.qiweb.api.controllers.Welcome().welcome();\n"
+                            + "        return new org.qiweb.controllers.Welcome().welcome();\n"
                             + "    }\n\n"
                             + "}\n";
         Files.write( new File( ctrlDir, "Application.java" ).toPath(), controller.getBytes( UTF_8 ) );
@@ -280,16 +287,16 @@ public final class DamnSmallDevShell
         String gradle = "buildscript {	\n"
                         + "	repositories {\n"
                         + "    	maven {\n"
-                        + "    		url \"https://repo.codeartisans.org/qiweb\"\n"
-                        + "    		credentials { username = \"qiweb\"; password = \"qiweb\" }\n"
+                        + "    		url 'https://repo.codeartisans.org/qiweb'\n"
+                        + "    		credentials { username = 'qiweb'; password = 'qiweb' }\n"
                         + "		}\n"
                         + "	}\n"
                         + "	dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
                         + "}\n"
                         + "repositories {\n"
                         + "    maven {\n"
-                        + "    	url \"https://repo.codeartisans.org/qiweb\"\n"
-                        + "    	credentials { username = \"qiweb\"; password = \"qiweb\" }\n"
+                        + "    	url 'https://repo.codeartisans.org/qiweb'\n"
+                        + "    	credentials { username = 'qiweb'; password = 'qiweb' }\n"
                         + "	}\n"
                         + "}\n"
                         + "\n"
@@ -297,23 +304,140 @@ public final class DamnSmallDevShell
                         + "apply plugin: 'qiweb'\n"
                         + "apply plugin: 'application'\n"
                         + "\n"
+                        + "sourceCompatibility = '1.8'\n"
+                        + "targetCompatibility = '1.8'\n"
+                        + "\n"
+                        + "[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'\n"
+                        + "\n"
                         + "mainClassName = 'org.qiweb.server.bootstrap.Main'\n"
                         + "applicationName = '" + name + "'\n"
                         + "\n"
                         + "dependencies {\n"
                         + "\n"
-                        + "    compile \"org.qiweb:org.qiweb.api:" + VERSION + "\"\n"
+                        + "    compile 'org.qiweb:org.qiweb.api:" + VERSION + "'\n"
                         + "    // Add application compile dependencies here\n"
                         + "\n"
-                        + "    runtime \"org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "\"\n"
+                        + "    runtime 'org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "'\n"
+                        + "    runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
                         + "    // Add application runtime dependencies here\n"
                         + "\n"
-                        + "    testCompile \"org.qiweb:org.qiweb.test:" + VERSION + "\"\n"
+                        + "    testCompile 'org.qiweb:org.qiweb.test:" + VERSION + "'\n"
                         + "    // Add application test dependencies here\n"
                         + "\n"
                         + "}\n"
                         + "";
         Files.write( new File( baseDir, "build.gradle.example" ).toPath(), gradle.getBytes( UTF_8 ) );
+
+        // Generate Maven POM file
+        String pom = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                     + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
+                     + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                     + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n"
+                     + "    <modelVersion>4.0.0</modelVersion>\n"
+                     + "\n"
+                     + "    <groupId>" + name + "</groupId>\n"
+                     + "    <artifactId>" + name + "</artifactId>\n"
+                     + "    <version>" + VERSION + "</version>\n"
+                     + "\n"
+                     + "    <properties>\n"
+                     + "        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
+                     + "        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>\n"
+                     + "    </properties>\n"
+                     + "\n"
+                     + "    <repositories>\n"
+                     + "        <repository>\n"
+                     + "            <id>qiwebRepo</id>\n"
+                     + "            <url>https://repo.codeartisans.org/qiweb</url>\n"
+                     + "        </repository>\n"
+                     + "    </repositories>\n"
+                     + "\n"
+                     + "    <dependencies>\n"
+                     + "\n"
+                     + "        <dependency>\n"
+                     + "            <groupId>org.qiweb</groupId>\n"
+                     + "            <artifactId>org.qiweb.api</artifactId>\n"
+                     + "            <version>" + VERSION + "</version>\n"
+                     + "        </dependency>\n"
+                     + "        <!-- Add application compile dependencies here -->\n"
+                     + "\n"
+                     + "        <dependency>\n"
+                     + "            <groupId>org.qiweb</groupId>\n"
+                     + "            <artifactId>org.qiweb.server.bootstrap</artifactId>\n"
+                     + "            <version>" + VERSION + "</version>\n"
+                     + "            <scope>runtime</scope>\n"
+                     + "        </dependency>\n"
+                     + "        <dependency>\n"
+                     + "            <groupId>ch.qos.logback</groupId>\n"
+                     + "            <artifactId>logback-classic</artifactId>\n"
+                     + "            <version>1.1.2</version>\n"
+                     + "            <scope>runtime</scope>\n"
+                     + "        </dependency>\n"
+                     + "        <!-- Add application runtime dependencies here -->\n"
+                     + "\n"
+                     + "        <dependency>\n"
+                     + "            <groupId>org.qiweb</groupId>\n"
+                     + "            <artifactId>org.qiweb.test</artifactId>\n"
+                     + "            <version>" + VERSION + "</version>\n"
+                     + "            <scope>test</scope>\n"
+                     + "        </dependency>\n"
+                     + "        <!-- Add application test dependencies here -->\n"
+                     + "\n"
+                     + "    </dependencies>\n"
+                     + "\n"
+                     + "    <pluginRepositories>\n"
+                     + "        <pluginRepository>\n"
+                     + "            <id>qiwebRepo</id>\n"
+                     + "            <url>https://repo.codeartisans.org/qiweb</url>\n"
+                     + "        </pluginRepository>\n"
+                     + "    </pluginRepositories>\n"
+                     + "\n"
+                     + "    <build>\n"
+                     + "        <plugins>\n"
+                     + "            <plugin>\n"
+                     + "                <artifactId>maven-compiler-plugin</artifactId>\n"
+                     + "                <version>3.1</version>\n"
+                     + "                <configuration>\n"
+                     + "                    <source>1.8</source>\n"
+                     + "                    <target>1.8</target>\n"
+                     + "                </configuration>\n"
+                     + "            </plugin>\n"
+                     + "            <plugin>\n"
+                     + "                <groupId>org.qiweb</groupId>\n"
+                     + "                <artifactId>org.qiweb.maven</artifactId>\n"
+                     + "                <version>" + VERSION + "</version>\n"
+                     + "            </plugin>\n"
+                     + "            <plugin>\n"
+                     + "                <groupId>org.codehaus.mojo</groupId>\n"
+                     + "                <artifactId>appassembler-maven-plugin</artifactId>\n"
+                     + "                <version>1.8</version>\n"
+                     + "                <executions>\n"
+                     + "                    <execution>\n"
+                     + "                        <id>app-assembly</id>\n"
+                     + "                        <!-- Sample Packaging -->\n"
+                     + "                        <phase>package</phase>\n"
+                     + "                        <goals><goal>assemble</goal></goals>\n"
+                     + "                        <configuration>\n"
+                     + "                            <repositoryName>lib</repositoryName>\n"
+                     + "                            <repositoryLayout>flat</repositoryLayout>\n"
+                     + "                            <programs>\n"
+                     + "                                <program>\n"
+                     + "                                    <id>qiweb-sample-maven</id>\n"
+                     + "                                    <mainClass>org.qiweb.server.bootstrap.Main</mainClass>\n"
+                     + "                                </program>\n"
+                     + "                            </programs>\n"
+                     + "                        </configuration>\n"
+                     + "                    </execution>\n"
+                     + "                </executions>\n"
+                     + "            </plugin>\n"
+                     + "        </plugins>\n"
+                     + "    </build>\n"
+                     + "\n"
+                     + "</project>\n";
+        Files.write( new File( baseDir, "pom.xml.example" ).toPath(), pom.getBytes( UTF_8 ) );
+
+        // Generate .gitignore
+        String gitignore = "target\nbuild\n.devshell.lock\nbuild.gradle.example\npom.xml.example\n.gradle\n";
+        Files.write( new File( baseDir, ".gitignore" ).toPath(), gitignore.getBytes( UTF_8 ) );
 
         // Inform user
         System.out.println( "New QiWeb Application generated in '" + baseDir.getAbsolutePath() + "'." );
@@ -324,7 +448,10 @@ public final class DamnSmallDevShell
         try
         {
             // Clean
-            FileUtils.deleteDirectory( tmpDir );
+            if( tmpDir.exists() )
+            {
+                Files.walkFileTree( tmpDir.toPath(), new DeltreeFileVisitor() );
+            }
             // Inform user
             System.out.println(
                 "Temporary files " + ( debug ? "in '" + tmpDir.getAbsolutePath() + "' " : "" ) + "deleted."
@@ -336,18 +463,69 @@ public final class DamnSmallDevShell
         }
     }
 
-    private static void runCommand( boolean debug, File tmpDir, CommandLine cmd )
+    private static void devshellCommand( boolean debug, File tmpDir, CommandLine cmd )
         throws IOException
     {
-        // Classes directory
+        final File classesDir = createClassesDirectory( debug, tmpDir );
+        Set<File> sources = prepareSourcesDirectories( debug, cmd );
+        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sources, cmd );
+        URL[] applicationClasspath = prepareApplicationClasspath( debug, classesDir );
+        applySystemProperties( debug, cmd );
+        System.out.println( "Loading..." );
+
+        // Watch Sources
+        SourceWatcher watcher = new JavaWatcher();
+
+        // First build
+        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+
+        // Run DevShell
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
+        new DevShellCommand(
+            new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir )
+        ).run();
+    }
+
+    private static void startCommand( boolean debug, File tmpDir, CommandLine cmd )
+        throws IOException, MalformedURLException
+    {
+        final File classesDir = createClassesDirectory( debug, tmpDir );
+        Set<File> sources = prepareSourcesDirectories( debug, cmd );
+        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sources, cmd );
+        URL[] applicationClasspath = prepareApplicationClasspath( debug, classesDir );
+        applySystemProperties( debug, cmd );
+        System.out.println( "Loading..." );
+
+        // Build
+        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+
+        // Start
+        System.out.println( "Starting!" );
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
+        List<URL> globalClasspath = new ArrayList<>( Arrays.asList( runtimeClasspath ) );
+        globalClasspath.addAll( Arrays.asList( applicationClasspath ) );
+        new StartCommand(
+            StartCommand.ExecutionModel.FORK,
+            org.qiweb.server.bootstrap.Main.class.getName(),
+            new String[ 0 ],
+            globalClasspath.toArray( new URL[ globalClasspath.size() ] )
+        ).run();
+    }
+
+    private static File createClassesDirectory( boolean debug, File tmpDir )
+        throws IOException
+    {
         final File classesDir = new File( tmpDir, "classes" );
         Files.createDirectories( classesDir.toPath() );
         if( debug )
         {
             System.out.println( "Classes directory is: " + classesDir.getAbsolutePath() );
         }
+        return classesDir;
+    }
 
-        // Sources
+    private static Set<File> prepareSourcesDirectories( boolean debug, CommandLine cmd )
+    {
         String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
         {
             "src" + separator + "main" + separator + "java",
@@ -362,8 +540,12 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Sources directories are: " + sources );
         }
+        return sources;
+    }
 
-        // Classpath
+    private static URL[] prepareRuntimeClasspath( boolean debug, Set<File> sources, CommandLine cmd )
+        throws MalformedURLException
+    {
         List<URL> classpathList = new ArrayList<>();
         // First, current classpath
         classpathList.addAll( ClassLoaders.urlsOf( DamnSmallDevShell.class.getClassLoader() ) );
@@ -385,7 +567,12 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Runtime Classpath is: " + classpathList );
         }
-        // Then Application classpath
+        return runtimeClasspath;
+    }
+
+    private static URL[] prepareApplicationClasspath( boolean debug, File classesDir )
+        throws MalformedURLException
+    {
         URL[] applicationClasspath = new URL[]
         {
             classesDir.toURI().toURL()
@@ -394,8 +581,11 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Application Classpath is: " + Arrays.toString( applicationClasspath ) );
         }
+        return applicationClasspath;
+    }
 
-        // Apply System Properties
+    private static void applySystemProperties( boolean debug, CommandLine cmd )
+    {
         Properties systemProperties = cmd.getOptionProperties( "D" );
         for( Iterator<Map.Entry<Object, Object>> it = systemProperties.entrySet().iterator(); it.hasNext(); )
         {
@@ -406,60 +596,42 @@ public final class DamnSmallDevShell
         {
             System.out.println( "Applied System Properties are: " + systemProperties );
         }
-
-        System.out.println( "Loading..." );
-
-        // Watch Sources
-        SourceWatcher watcher = new JavaWatcher();
-
-        // First build
-        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
-
-        // Run DevShell
-        final DevShell devShell = new DevShell(
-            new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir )
-        );
-        Runtime.getRuntime().addShutdownHook(
-            new Thread( new ShutdownHook( devShell, tmpDir ), "qiweb-devshell-shutdown" )
-        );
-        devShell.start();
     }
 
     private static void secretCommand()
     {
-        System.out.println( CryptoInstance.genRandom256bitsHexSecret() );
+        new SecretCommand().run();
     }
-    private static final DefaultExecutor EXECUTOR = new DefaultExecutor();
 
     /* package */ static void rebuild(
         URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, File classesDir
     )
     {
         System.out.println( "Compiling Application..." );
-        ByteArrayOutputStream javacOutput = new ByteArrayOutputStream();
+        String javacOutput = EMPTY;
         try
         {
             // Collect java files
-            ByteArrayOutputStream findJavaOutput = new ByteArrayOutputStream();
+            String javaFiles = EMPTY;
             for( File source : sources )
             {
                 if( source.exists() )
                 {
-                    org.apache.commons.exec.CommandLine findJava = new org.apache.commons.exec.CommandLine( "find" );
-                    findJava.addArgument( source.getAbsolutePath() );
-                    findJava.addArgument( "-type" );
-                    findJava.addArgument( "f" );
-                    findJava.addArgument( "-iname" );
-                    findJava.addArgument( "*.java" );
-
-                    EXECUTOR.setStreamHandler( new PumpStreamHandler( findJavaOutput ) );
-                    EXECUTOR.execute( findJava );
+                    ProcessBuilder findBuilder = new ProcessBuilder(
+                        "find", source.getAbsolutePath(), "-type", "f", "-iname", "*.java"
+                    );
+                    Process find = findBuilder.start();
+                    int returnCode = find.waitFor();
+                    if( returnCode != 0 )
+                    {
+                        throw new IOException( "Unable to find java source files in " + source );
+                    }
+                    javaFiles += NEWLINE + new String( InputStreams.readAllBytes( find.getInputStream(), 4096 ), UTF_8 );
                 }
             }
-            // Write list in a temporary file
-            String javaFiles = findJavaOutput.toString( "UTF-8" );
-            if( !Strings.isEmpty( javaFiles ) )
+            if( hasText( javaFiles ) )
             {
+                // Write list in a temporary file
                 File javaListFile = new File( classesDir, ".devshell-java-list" );
                 try( FileWriter writer = new FileWriter( javaListFile ) )
                 {
@@ -467,31 +639,32 @@ public final class DamnSmallDevShell
                     writer.close();
                 }
                 // Compile
-                org.apache.commons.exec.CommandLine javac = new org.apache.commons.exec.CommandLine( "javac" );
-                javac.addArgument( "-encoding" );
-                javac.addArgument( "UTF-8" );
-                javac.addArgument( "-source" );
-                javac.addArgument( "1.7" );
-                javac.addArgument( "-d" );
-                javac.addArgument( classesDir.getAbsolutePath() );
-                javac.addArgument( "-classpath" );
                 String[] classpathStrings = new String[ runtimeClasspath.length ];
                 for( int idx = 0; idx < runtimeClasspath.length; idx++ )
                 {
                     classpathStrings[idx] = runtimeClasspath[idx].toURI().toASCIIString();
                 }
-                javac.addArgument( Strings.join( classpathStrings, ":" ) );
-                javac.addArgument( "@" + javaListFile.getAbsolutePath() );
-
-                EXECUTOR.setStreamHandler( new PumpStreamHandler( javacOutput ) );
-                EXECUTOR.execute( javac );
+                ProcessBuilder javacBuilder = new ProcessBuilder(
+                    "javac",
+                    "-encoding", "UTF-8",
+                    "-source", "1.8",
+                    "-d", classesDir.getAbsolutePath(),
+                    "-classpath", Strings.join( classpathStrings, ":" ),
+                    "@" + javaListFile.getAbsolutePath()
+                );
+                Process javac = javacBuilder.start();
+                int returnCode = javac.waitFor();
+                if( returnCode != 0 )
+                {
+                    throw new IOException( "Unable to build java source files." );
+                }
+                javacOutput = new String( InputStreams.readAllBytes( javac.getInputStream(), 4096 ), UTF_8 );
             }
         }
-        catch( IOException | URISyntaxException ex )
+        catch( InterruptedException | IOException | URISyntaxException ex )
         {
-            String output = javacOutput.toString(); // utf-8
-            throw new QiWebDevShellException(
-                "Unable to rebuild" + ( Strings.isEmpty( output ) ? "" : "\n" + output ),
+            throw new QiWebException(
+                "Unable to rebuild" + ( Strings.isEmpty( javacOutput ) ? "" : "\n" + javacOutput ),
                 ex
             );
         }
@@ -617,9 +790,10 @@ public final class DamnSmallDevShell
             + "  new <appdir>  Create a new skeleton application in the 'appdir' directory.\n"
             + "  secret        Generate a new application secret.\n"
             + "  clean         Delete devshell temporary directory, see 'tmpdir' option.\n"
-            + "  run           Run the QiWeb Development Shell.\n"
+            + "  devshell      Run the Application in development mode.\n"
+            + "  start         Run the Application in production mode.\n"
             + "\n"
-            + "  If no command is specified, 'run' is assumed."
+            + "  If no command is specified, 'start' is assumed."
         );
         out.println(
             "\n"

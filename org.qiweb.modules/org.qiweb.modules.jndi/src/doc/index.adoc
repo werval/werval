@@ -1,0 +1,64 @@
+= JNDI Module
+JNDI service for your Application
+:jbake-type: module
+
+The JNDI module provide a lightweight `JNDI` context thanks to http://tyrex.sourceforge.net/naming.html[Tyrex Naming].
+
+[quote,Wikipedia,https://en.wikipedia.org/wiki/Java_Naming_and_Directory_Interface]
+____
+The Java Naming and Directory Interface (JNDI) is a Java API for a directory service that allows Java software clients
+to discover and look up data and objects via a name.
+____
+
+[TIP]
+.JNDI Documentation
+====
+This documentation do not cover `JNDI`, the Java API to work with databases, as it is already well covered on the
+interwebs.
+If you need guidance in that matter, we recommend you to head over at the official JNDI
+http://docs.oracle.com/javase/jndi/tutorial/[tutorial].
+====
+
+
+
+== Declaration
+
+In order to use the `JNDIPlugin` you must add a dependency to `org.qiweb.modules.jndi` and register the plugin in your
+configuration.
+
+When using Gradle:
+
+.build.gradle
+[source,groovy,subs="attributes,specialcharacters"]
+----
+compile 'org.qiweb:org.qiweb.modules.jndi:{qiweb-version}'
+----
+
+When using Maven:
+
+.pom.xml
+[source,xml,subs="attributes,specialcharacters"]
+----
+<dependency>
+    <groupId>org.qiweb</groupId>
+    <artifactId>org.qiweb.modules.jndi</artifactId>
+    <version>{qiweb-version}</version>
+</dependency>
+----
+
+And finally your application configuration:
+
+.application.conf
+[source,json]
+----
+app.plugins = [
+    { plugin = "org.qiweb.modules.jndi.JNDIPlugin" }
+]
+----
+
+
+== Configuration
+
+
+== Usage
+

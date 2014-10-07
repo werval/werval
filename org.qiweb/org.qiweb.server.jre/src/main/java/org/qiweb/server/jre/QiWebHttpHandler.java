@@ -23,14 +23,14 @@ import java.io.InputStream;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.util.InputStreamByteSource;
-import org.qiweb.api.util.InputStreams;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.spi.server.HttpServerHelper;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
+import org.qiweb.util.InputStreamByteSource;
+import org.qiweb.util.InputStreams;
 
 public class QiWebHttpHandler
     implements HttpHandler
@@ -63,7 +63,7 @@ public class QiWebHttpHandler
         Request request = request( requestIdentity, exchange );
 
         // Handle Request
-        Outcome outcome = app.handleRequest( request );
+        Outcome outcome = app.handleRequest( request ).join();
 
         // Write Outcome
         writeOutcome( outcome, exchange );

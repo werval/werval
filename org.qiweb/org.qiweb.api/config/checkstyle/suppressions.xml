@@ -23,13 +23,33 @@
     <suppress checks="FileLength" files="MimeTypesNames.java"/>
     <suppress checks="LineLength" files="MimeTypesNames.java"/>
 
+    <!-- Erroneous FinalClass check -->
+    <suppress checks="FinalClass" files="Maps.java"/>
+
+    <!-- Java 7 Try-With-Resource not supported by Checkstyle -->
+    <suppress checks=".*" files="Serializables.java"/>
+
     <!-- Java 8 Lambda Expressions not supported by Checkstyle -->
     <suppress checks=".*" files="Classes.java"/>
     <suppress checks=".*" files="Stacktraces.java"/>
+    <suppress checks=".*" files="Cached.java"/>
+    <suppress checks=".*" files="SetHeader.java"/>
+    <suppress checks=".*" files="RemoveHeaders.java"/>
+    <suppress checks=".*" files="LinkedMultiValueMap.java"/>
+    <suppress checks=".*" files="ContentSecurityPolicy.java"/>
+    <suppress checks=".*" files="DoNotTrack.java"/>
+    <suppress checks=".*" files="HSTS.java"/>
+    <suppress checks=".*" files="XContentTypeOptions.java"/>
+    <suppress checks=".*" files="XFrameOptions.java"/>
+    <suppress checks=".*" files="XXSSProtection.java"/>
+    <suppress checks=".*" files="AcceptContentTypes.java"/>
 
     <!-- Java 8 Defender Methods not supported by Checkstyle -->
+    <suppress checks=".*" files="Application.java"/>
+    <suppress checks=".*" files="ApplicationExecutors.java"/>
     <suppress checks=".*" files="Plugin.java"/>
     <suppress checks=".*" files="Cache.java"/>
+    <suppress checks=".*" files="Template.java"/>
 
     <!-- Java 8 Static Interface Methods not supported by Checkstyle -->
     <suppress checks="RedundantModifier" files="RouteBuilder.java"/>    

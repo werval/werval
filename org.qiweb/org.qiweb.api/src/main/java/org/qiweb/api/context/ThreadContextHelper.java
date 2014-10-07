@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,16 +102,19 @@ public final class ThreadContextHelper
     public void setOnCurrentThread( Context context )
     {
         previousLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( context.application().classLoader() );
-        logRequestId = context.application().config().bool( "qiweb.http.log.context.request_id" );
-        if( logRequestId )
+        if( context != null )
         {
-            MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
-        }
-        logClientIp = context.application().config().bool( "qiweb.http.log.context.client_ip" );
-        if( logClientIp )
-        {
-            MDC.put( X_QIWEB_CLIENT_IP, context.request().remoteAddress() );
+            Thread.currentThread().setContextClassLoader( context.application().classLoader() );
+            logRequestId = context.application().config().bool( "qiweb.http.log.context.request_id" );
+            if( logRequestId )
+            {
+                MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
+            }
+            logClientIp = context.application().config().bool( "qiweb.http.log.context.client_ip" );
+            if( logClientIp )
+            {
+                MDC.put( X_QIWEB_CLIENT_IP, context.request().remoteAddress() );
+            }
         }
         CurrentContext.CONTEXT_THREAD_LOCAL.set( context );
     }

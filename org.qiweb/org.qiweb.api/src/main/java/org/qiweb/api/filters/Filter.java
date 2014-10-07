@@ -16,24 +16,25 @@
 package org.qiweb.api.filters;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Controller invocation Filter.
  *
- * @param <T> Configuration Type
+ * @param <T> Configuration Annotation Type
  */
 public interface Filter<T>
 {
     /**
      * Filter a request.
      *
-     * @param chain        Filter Chain
-     * @param context      Request Context
-     * @param filterConfig Optional filter configuration Annotation
+     * @param chain      Filter Chain
+     * @param context    Request Context
+     * @param annotation Optional filter configuration Annotation
      *
-     * @return Filtered Outcome
+     * @return Filtered Future Outcome
      */
-    Outcome filter( FilterChain chain, Context context, Optional<T> filterConfig );
+    CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<T> annotation );
 }

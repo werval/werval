@@ -24,9 +24,26 @@ public class RuntimeSQLException
     extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
+    private SQLException sqlEx;
 
     public RuntimeSQLException( SQLException ex )
     {
         super( ex.getMessage(), ex );
+        sqlEx = ex;
+    }
+
+    public SQLException getSQLException()
+    {
+        return sqlEx;
+    }
+
+    public SQLException getNextException()
+    {
+        return sqlEx.getNextException();
+    }
+
+    public String getSQLState()
+    {
+        return sqlEx.getSQLState();
     }
 }

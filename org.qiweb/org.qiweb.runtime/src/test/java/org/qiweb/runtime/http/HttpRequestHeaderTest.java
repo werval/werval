@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.qiweb.api.http.Headers;
 import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.util.Strings;
+import org.qiweb.util.Strings;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;

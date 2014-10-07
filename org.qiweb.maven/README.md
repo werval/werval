@@ -1,5 +1,8 @@
 # QiWeb Maven Plugin
 
+
+## Status
+
 Maven do not support Java 8 for writing plugins yet.
 That's because the maven-plugin-plugin use ASM to read discover mojos and generate the plugin descriptor.
 
@@ -15,3 +18,15 @@ To generate a HelpMojo that builds well, the very same maven-plugin-plugin creat
 Java 8 enforce strict javadoc.
 See http://jira.codehaus.org/browse/MPLUGIN-244
 
+
+## Testing
+
+See the
+[Review of Plugin Testing Strategies](http://docs.codehaus.org/display/MAVENUSER/Review+of+Plugin+Testing+Strategies)
+CodeHaus wiki for reference.
+Also see the [Maven Unit and Integration Test Guide](http://khmarbaise.github.io/maui/) that contains many examples of
+using the `maven-invoker-plugin`.
+
+Actual unit testing is done using `maven-plugin-testing-harness`.
+Integration testing leverage the `install` goal of `maven-invoker-plugin` to create a temporary local repository and
+is implemented using `maven-failsafe-plugin` and a JUnit test that uses `maven-invoker` directly.

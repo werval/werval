@@ -1,9 +1,10 @@
 
+description = "Rythm Templating Module"
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
-    compile 'org.rythmengine:rythm-engine:1.0'
-    compile 'org.eclipse.jdt.core.compiler:ecj:4.3.1'
+    compile "org.qiweb:org.qiweb.spi:$version"
+    compile libs.rythm
     
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.rest_assured

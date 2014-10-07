@@ -16,9 +16,9 @@
 package org.qiweb.runtime.outcomes;
 
 import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.api.util.ByteSource;
+import org.qiweb.util.ByteSource;
 
-import static org.qiweb.api.util.ByteSource.EMPTY_BYTES;
+import static org.qiweb.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Simple {@link ByteSource} based Outcome.

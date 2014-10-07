@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.qiweb.api.util.Reflectively;
+import org.qiweb.util.Reflectively;
 
 /**
  * Application Config.

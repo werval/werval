@@ -35,8 +35,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 public class FormUploadsInstance
     implements FormUploads
@@ -152,6 +152,12 @@ public class FormUploadsInstance
         return unmodifiableMap( uploads );
     }
 
+    @Override
+    public String toString()
+    {
+        return uploads.toString();
+    }
+
     public static class UploadInstance
         implements Upload
     {
@@ -245,6 +251,14 @@ public class FormUploadsInstance
             {
                 throw new QiWebException( ex.getMessage(), ex );
             }
+        }
+
+        @Override
+        public String toString()
+        {
+            return "{contentType: " + contentType
+                   + ", charset: " + ( charset == null ? defaultCharset : charset )
+                   + ", filename: " + filename + " }";
         }
     }
 }

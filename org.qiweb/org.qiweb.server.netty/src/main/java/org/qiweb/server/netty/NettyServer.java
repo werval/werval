@@ -20,13 +20,17 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.qiweb.api.util.Reflectively;
+import org.qiweb.api.exceptions.PassivationException;
+import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.qiweb.runtime.util.NamedThreadFactory;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.server.HttpServerAdapter;
+import org.qiweb.util.Reflectively;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +51,7 @@ public class NettyServer
     extends HttpServerAdapter
 {
     private static final Logger LOG = LoggerFactory.getLogger( NettyServer.class );
-    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors();
     private final ChannelGroup allChannels;
     private ServerBootstrap bootstrap;
 
@@ -85,10 +89,9 @@ public class NettyServer
                         ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group(
-            new NioEventLoopGroup( devSpi == null ? acceptors : 1, new ThreadFactories.Acceptors() ),
-            new NioEventLoopGroup( devSpi == null ? iothreads : 1, new ThreadFactories.IO() )
+            new NioEventLoopGroup( devSpi == null ? acceptors : 1, new NamedThreadFactory( "qiweb-acceptor" ) ),
+            new NioEventLoopGroup( devSpi == null ? iothreads : 1, new NamedThreadFactory( "qiweb-io" ) )
         );
-
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
         bootstrap.childHandler( new HttpServerChannelInitializer( allChannels, app, devSpi ) );
@@ -124,18 +127,70 @@ public class NettyServer
             long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
             long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
 
-            Future<?> shutdownFuture = bootstrap.group().shutdownGracefully(
-                shutdownQuietPeriod,
-                shutdownTimeout,
-                TimeUnit.MILLISECONDS
-            );
-            shutdownFuture.addListener(
-                future ->
+            // Record all passivation errors here to report them at once at the end
+            List<Exception> passivationErrors = new ArrayList<>();
+
+            // Shutdown IO Threads
+            try
+            {
+                bootstrap.childGroup().shutdownGracefully(
+                    shutdownQuietPeriod,
+                    shutdownTimeout,
+                    TimeUnit.MILLISECONDS
+                ).syncUninterruptibly();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while shutting down IO Threads: " + ex.getMessage(), ex )
+                );
+            }
+
+            // Shutdown Accept Threads
+            try
+            {
+                bootstrap.group().shutdownGracefully(
+                    shutdownQuietPeriod,
+                    shutdownTimeout,
+                    TimeUnit.MILLISECONDS
+                ).syncUninterruptibly();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while shutting down Accept Threads: " + ex.getMessage(), ex )
+                );
+            }
+
+            // Force close all channels
+            try
+            {
+                if( !allChannels.isEmpty() )
                 {
-                    allChannels.clear();
+                    allChannels.close();
                 }
-            );
-            shutdownFuture.awaitUninterruptibly();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while force-closing remaining open channels: " + ex.getMessage(), ex )
+                );
+            }
+            finally
+            {
+                allChannels.clear();
+            }
+
+            // Report errors if any
+            if( !passivationErrors.isEmpty() )
+            {
+                PassivationException ex = new PassivationException( "Errors during NettyServer passivation" );
+                for( Exception passivationError : passivationErrors )
+                {
+                    ex.addSuppressed( passivationError );
+                }
+                throw ex;
+            }
         }
     }
 }

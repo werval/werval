@@ -18,6 +18,7 @@ package org.qiweb.runtime;
 import com.jayway.restassured.response.Response;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.Application;
@@ -30,11 +31,12 @@ import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
-import org.qiweb.api.util.Stacktraces;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpTest;
 import org.qiweb.test.util.Slf4jRule;
+import org.qiweb.util.Stacktraces;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -61,7 +63,7 @@ public class OnGlobalErrorTest
         implements Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> annotation )
         {
             return chain.next( context );
         }
@@ -479,8 +481,8 @@ public class OnGlobalErrorTest
                 .header( CONNECTION, KEEP_ALIVE )
                 .when()
                 .get( "/" );
+            await().until( () -> SLF4J.contains( "onHttpRequestComplete" ) );
             assertThat( qiweb.application().errors().count(), is( 0 ) );
-            assertThat( SLF4J.contains( "onHttpRequestComplete" ), is( true ) );
         }
         finally
         {
@@ -536,21 +538,21 @@ public class OnGlobalErrorTest
         }
     }
 
-    public static class OnApplicationError
+    public static class OnRequestError
         extends Global
     {
         @Override
-        public Outcome onApplicationError( Application application, Outcomes outcomes, Throwable cause )
+        public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
         {
-            throw new RuntimeException( "onApplicationError" );
+            throw new RuntimeException( "onRequestError" );
         }
     }
 
     @Test
-    public void onApplicationError()
+    public void onRequestError()
     {
         QiWebHttpTest qiweb = new QiWebHttpTest(
-            "global-errors-test_onApplicationError.conf",
+            "global-errors-test_onRequestError.conf",
             new RoutesParserProvider( "GET / org.qiweb.runtime.OnGlobalErrorTest$TestController.error" )
         );
         try
@@ -564,7 +566,7 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( qiweb.application().errors().count(), is( 1 ) );
             assertThat(
-                Stacktraces.containsMessage( "onApplicationError" ).test( qiweb.application().errors().last().cause() ),
+                Stacktraces.containsMessage( "onRequestError" ).test( qiweb.application().errors().last().cause() ),
                 is( true )
             );
         }

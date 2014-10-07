@@ -15,14 +15,15 @@
  */
 package org.qiweb.spi;
 
+import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.Application;
 import org.qiweb.api.Global;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.util.Reflectively;
 import org.qiweb.spi.http.HttpBuildersSPI;
+import org.qiweb.util.Reflectively;
 
 /**
  * Application SPI.
@@ -61,9 +62,9 @@ public interface ApplicationSPI
      *
      * @param request HTTP Request
      *
-     * @return Outcome
+     * @return Future of Outcome
      */
-    Outcome handleRequest( Request request );
+    CompletableFuture<Outcome> handleRequest( Request request );
 
     /**
      * Handle an exception throwed in a HTTP Request context.
@@ -93,9 +94,9 @@ public interface ApplicationSPI
      * @param version         Protocol version of the HTTP request
      * @param requestIdentity Identity of the HTTP request
      *
-     * @return Shutting down Outcome
+     * @return Future of shutting down Outcome
      */
-    Outcome shuttingDownOutcome( ProtocolVersion version, String requestIdentity );
+    CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity );
 
     /**
      * Reload Application with a new ClassLoader.

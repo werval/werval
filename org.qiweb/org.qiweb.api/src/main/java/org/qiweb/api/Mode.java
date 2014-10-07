@@ -15,7 +15,7 @@
  */
 package org.qiweb.api;
 
-import org.qiweb.api.util.Reflectively;
+import org.qiweb.util.Reflectively;
 
 /**
  * {@link Application} Mode.

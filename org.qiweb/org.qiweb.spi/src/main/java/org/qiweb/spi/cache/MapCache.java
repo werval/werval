@@ -15,14 +15,15 @@
  */
 package org.qiweb.spi.cache;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
 import org.qiweb.api.cache.Cache;
-import org.qiweb.api.util.Couple;
-import org.qiweb.api.util.Numbers;
+import org.qiweb.util.Couple;
+import org.qiweb.util.Numbers;
 
 /**
- * In-Memory Cache backed by a HashMap.
+ * In-Memory Cache backed by a {@link ConcurrentHashMap}.
  *
  * This is the default Cache Extension used if your Application do not declare any Cache Plugin.
  * <p>
@@ -34,30 +35,57 @@ import org.qiweb.api.util.Numbers;
 /* package */ class MapCache
     implements Cache
 {
-    /* package */ final Map<String, Couple<Long, Object>> map = new HashMap<>();
+    /* package */ final ConcurrentMap<String, Couple<Long, Object>> map = new ConcurrentHashMap<>();
 
     @Override
     public <T> T get( String key )
     {
-        return (T) getOrExpires( key );
+        Couple<Long, Object> result = map.computeIfPresent(
+            key,
+            new BiFunction<String, Couple<Long, Object>, Couple<Long, Object>>()
+            {
+                @Override
+                public Couple<Long, Object> apply( String k, Couple<Long, Object> entry )
+                {
+                    if( System.currentTimeMillis() > entry.left() )
+                    {
+                        return null;
+                    }
+                    return entry;
+                }
+            }
+        );
+        if( result != null )
+        {
+            return (T) result.right();
+        }
+        return null;
     }
 
     @Override
-    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
+    public <T> T getOrSetDefault( String key, final int ttlSeconds, final T defaultValue )
     {
-        long now = System.currentTimeMillis();
-        if( !map.containsKey( key ) )
+        Couple<Long, Object> result = map.compute(
+            key,
+            new BiFunction<String, Couple<Long, Object>, Couple<Long, Object>>()
+            {
+                @Override
+                public Couple<Long, Object> apply( String k, Couple<Long, Object> entry )
+                {
+                    long now = System.currentTimeMillis();
+                    if( entry == null || now > entry.left() )
+                    {
+                        return Couple.of( expiration( now, ttlSeconds ), (Object) defaultValue );
+                    }
+                    return entry;
+                }
+            }
+        );
+        if( result != null )
         {
-            map.put( key, Couple.of( expiration( now, ttlSeconds ), (Object) defaultValue ) );
-            return defaultValue;
+            return (T) result.right();
         }
-        Couple<Long, Object> entry = map.get( key );
-        if( now > entry.left() )
-        {
-            map.put( key, Couple.of( expiration( now, ttlSeconds ), (Object) defaultValue ) );
-            return defaultValue;
-        }
-        return (T) entry.right();
+        return null;
     }
 
     @Override
@@ -79,20 +107,5 @@ import org.qiweb.api.util.Numbers;
             return Long.MAX_VALUE;
         }
         return Numbers.safeLongValueOfSum( now, Numbers.safeLongValueOfMultiply( ttlSeconds, 1000 ) );
-    }
-
-    private Object getOrExpires( String key )
-    {
-        if( !map.containsKey( key ) )
-        {
-            return null;
-        }
-        Couple<Long, Object> entry = map.get( key );
-        if( System.currentTimeMillis() > entry.left() )
-        {
-            map.remove( key );
-            return null;
-        }
-        return entry.right();
     }
 }

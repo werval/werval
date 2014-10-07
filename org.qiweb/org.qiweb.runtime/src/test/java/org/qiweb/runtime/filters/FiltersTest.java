@@ -16,6 +16,7 @@
 package org.qiweb.runtime.filters;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.context.Context;
@@ -34,7 +35,7 @@ public class FiltersTest
         implements org.qiweb.api.filters.Filter<Void>
     {
         @Override
-        public Outcome filter( FilterChain chain, Context context, Optional<Void> filterConfig )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> annotation )
         {
             context.response().headers().with( "X-QiWeb-Filtered", "true" );
             return chain.next( context );

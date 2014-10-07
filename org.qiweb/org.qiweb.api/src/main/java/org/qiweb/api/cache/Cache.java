@@ -16,6 +16,7 @@
 package org.qiweb.api.cache;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Cache.
@@ -76,6 +77,24 @@ public interface Cache
     }
 
     /**
+     * Fetch cached object for a given key or set a non-expiring default value.
+     *
+     * If the cache has a non-expired object for the given key, it is returned.
+     * <p>
+     * Otherwise, the given default value is set in the cache and returned.
+     *
+     * @param <T>                  Object Type
+     * @param key                  Cache Key
+     * @param defaultValueSupplier Default Value Supplier
+     *
+     * @return The existing cached object for the given key, or the given default value, never return {@literal null}
+     */
+    default <T> T getOrSetDefault( String key, Supplier<T> defaultValueSupplier )
+    {
+        return getOrSetDefault( key, 0, defaultValueSupplier.get() );
+    }
+
+    /**
      * Fetch cached object for a given key or set an expiring default value.
      *
      * If the cache has a non-expired object for the given key, it is returned.
@@ -91,6 +110,26 @@ public interface Cache
      * @return The existing cached object for the given key, or the given default value, never return {@literal null}
      */
     <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue );
+
+    /**
+     * Fetch cached object for a given key or set an expiring default value.
+     *
+     * If the cache has a non-expired object for the given key, it is returned.
+     * <p>
+     * Otherwise, the given default value is set in the cache and returned.
+     *
+     * @param <T>                  Object Type
+     * @param key                  Cache Key
+     * @param ttlSeconds           Default Value Time To Live in seconds.
+     *                             If {@literal 0} ({@literal ZERO}), then the entry will never expire
+     * @param defaultValueSupplier Default Value Supplier
+     *
+     * @return The existing cached object for the given key, or the given default value, never return {@literal null}
+     */
+    default <T> T getOrSetDefault( String key, int ttlSeconds, Supplier<T> defaultValueSupplier )
+    {
+        return getOrSetDefault( key, ttlSeconds, defaultValueSupplier.get() );
+    }
 
     /**
      * Set a non-expiring object for a given key in the Cache.

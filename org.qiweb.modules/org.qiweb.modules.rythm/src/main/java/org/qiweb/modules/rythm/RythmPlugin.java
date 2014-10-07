@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.Application;
 import org.qiweb.api.Mode;
-import org.qiweb.api.Plugin;
+import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.api.templates.Templates;
+import org.qiweb.api.templates.TemplatesPlugin;
 import org.rythmengine.Rythm;
 import org.rythmengine.RythmEngine;
 
@@ -31,29 +33,24 @@ import static org.rythmengine.conf.RythmConfigurationKey.RESOURCE_DEF_LOADER_ENA
 import static org.rythmengine.conf.RythmConfigurationKey.RESOURCE_LOADER_IMPLS;
 
 /**
- * Rythm Template Engine Plugin.
+ * Rythm Templates Plugin.
  *
  * See the Rythm documentation at <a href="http://rythmengine.org/">rythmengine.org</a>.
  */
 public class RythmPlugin
-    implements Plugin<RythmEngine>
+    extends TemplatesPlugin
 {
-    private RythmEngine rythm;
+    private RythmTemplates templates;
 
     @Override
-    public Class<RythmEngine> apiType()
+    public Templates api()
     {
-        return RythmEngine.class;
-    }
-
-    @Override
-    public RythmEngine api()
-    {
-        return rythm;
+        return templates;
     }
 
     @Override
     public void onActivate( Application application )
+        throws ActivationException
     {
         Map<String, Object> conf = new HashMap<>();
 
@@ -76,7 +73,7 @@ public class RythmPlugin
         );
         conf.put(
             RESOURCE_LOADER_IMPLS.getKey(),
-            new QiWebTemplateResourceLoader( application, application.config().string( "rythm.base_path" ) )
+            new NamedTemplateLoader( application, application.config().string( "rythm.base_path" ) )
         );
         conf.put(
             LOG_FACTORY_IMPL.getKey(),
@@ -87,13 +84,16 @@ public class RythmPlugin
         conf.putAll( application.config().stringMap( "rythm.config" ) );
 
         // Activate Rythm Engine
-        rythm = new RythmEngine( conf );
+        RythmEngine ryhtm = new RythmEngine( conf );
+
+        // Done!
+        templates = new RythmTemplates( ryhtm );
     }
 
     @Override
     public void onPassivate( Application application )
     {
-        rythm.shutdown();
-        rythm = null;
+        templates.shutdown();
+        templates = null;
     }
 }

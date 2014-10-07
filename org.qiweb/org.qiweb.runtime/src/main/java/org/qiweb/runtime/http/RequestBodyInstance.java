@@ -24,8 +24,8 @@ import org.qiweb.api.http.FormAttributes;
 import org.qiweb.api.http.FormUploads;
 import org.qiweb.api.http.FormUploads.Upload;
 import org.qiweb.api.http.RequestBody;
-import org.qiweb.api.util.ByteSource;
-import org.qiweb.api.util.Strings;
+import org.qiweb.util.ByteSource;
+import org.qiweb.util.Strings;
 
 import static java.util.Collections.emptyMap;
 

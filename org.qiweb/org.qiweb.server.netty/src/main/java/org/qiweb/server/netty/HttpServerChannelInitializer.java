@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,11 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import io.netty.util.concurrent.EventExecutorGroup;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 
 import static java.util.Locale.US;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_EXECUTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_LOG_LOWLEVEL_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_LOG_LOWLEVEL_LEVEL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_READ;
@@ -45,37 +42,12 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
     private final ChannelGroup allChannels;
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
-    private final EventExecutorGroup httpExecutors;
 
     /* package */ HttpServerChannelInitializer( ChannelGroup allChannels, ApplicationSPI httpApp, DevShellSPI devSpi )
     {
         this.allChannels = allChannels;
         this.app = httpApp;
         this.devSpi = devSpi;
-        if( devSpi != null )
-        {
-            // Development mode, single controller executor thread
-            this.httpExecutors = new DefaultEventExecutorGroup( 1, new ThreadFactories.HttpExecutors() );
-        }
-        else if( app.config().has( QIWEB_HTTP_EXECUTORS ) )
-        {
-            int executors = app.config().intNumber( QIWEB_HTTP_EXECUTORS );
-            if( executors <= 0 )
-            {
-                // Config set to 0, no controller executors
-                this.httpExecutors = null;
-            }
-            else
-            {
-                // Configured controller executors count
-                this.httpExecutors = new DefaultEventExecutorGroup( executors, new ThreadFactories.HttpExecutors() );
-            }
-        }
-        else
-        {
-            // No configuration, no controller executors
-            this.httpExecutors = null;
-        }
     }
 
     @Override
@@ -87,7 +59,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         {
             // Log Netty Bytes
             LogLevel level = LogLevel.valueOf( app.config().string( QIWEB_HTTP_LOG_LOWLEVEL_LEVEL ).toUpperCase( US ) );
-            pipeline.addLast( "byte-logging", new LoggingHandler( level ) );
+            pipeline.addLast( "byte-logging", new LoggingHandler( "org.qiweb.server.netty.LowLevelLogger", level ) );
         }
 
         // Read/Write Timeout
@@ -113,6 +85,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         pipeline.addLast( "chunked-write-handler", new ChunkedWriteHandler() );
 
         // Protocol Switching Handler
-        pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, httpExecutors, app, devSpi ) );
+        pipeline.addLast( "subprotocol-switcher", new SubProtocolSwitchHandler( allChannels, app, devSpi ) );
     }
 }

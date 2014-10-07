@@ -17,6 +17,7 @@ package org.qiweb.gradle;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
@@ -38,19 +39,19 @@ public final class GradleDevShellSPI
     private final GradleConnector connector = GradleConnector.newConnector();
 
     /**
-     * Name of the Gradle task to run to rebuild the sources.
+     * Names of the Gradle tasks to run to rebuild the sources.
      */
-    private final String rebuildTask;
+    private final List<String> rebuildTasks;
 
     public GradleDevShellSPI(
         URL[] applicationClassPath, URL[] runtimeClassPath,
         Set<File> toWatch, SourceWatcher watcher,
-        File rootDir, String rebuildTask
+        File rootDir, List<String> rebuildTasks
     )
     {
-        super( applicationClassPath, runtimeClassPath, toWatch, watcher );
+        super( applicationClassPath, runtimeClassPath, toWatch, watcher, false );
         this.connector.forProjectDirectory( rootDir );
-        this.rebuildTask = rebuildTask;
+        this.rebuildTasks = rebuildTasks;
     }
 
     @Override
@@ -60,7 +61,7 @@ public final class GradleDevShellSPI
         try
         {
             connection.newBuild().
-                forTasks( rebuildTask ).
+                forTasks( rebuildTasks.toArray( new String[ rebuildTasks.size() ] ) ).
                 run();
         }
         catch( Exception ex )
