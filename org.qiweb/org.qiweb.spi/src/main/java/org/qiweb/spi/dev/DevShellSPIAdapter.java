@@ -40,16 +40,19 @@ import org.qiweb.api.exceptions.QiWebException;
 public class DevShellSPIAdapter
     implements DevShellSPI
 {
+    private final URL[] applicationSources;
     private final URL[] applicationClassPath;
     private final URL[] runtimeClassPath;
     private boolean sourceChanged;
 
-    public DevShellSPIAdapter(
+    protected DevShellSPIAdapter(
+        URL[] applicationSources,
         URL[] applicationClassPath, URL[] runtimeClassPath,
         Set<File> toWatch, SourceWatcher watcher,
         boolean initialSourceChanged
     )
     {
+        this.applicationSources = Arrays.copyOf( applicationSources, applicationSources.length );
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
         // QUID Unwatch sources on DevShell passivation?
@@ -85,7 +88,7 @@ public class DevShellSPIAdapter
     @Override
     public String sourceURL( final String fileName, int lineNumber )
     {
-        for( URL path : runtimeClassPath )
+        for( URL path : applicationSources )
         {
             try
             {

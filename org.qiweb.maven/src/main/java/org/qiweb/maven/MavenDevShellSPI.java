@@ -34,6 +34,7 @@ public class MavenDevShellSPI
     private final CommandLine cmdLine;
 
     public MavenDevShellSPI(
+        URL[] applicationSources,
         URL[] applicationClassPath,
         URL[] runtimeClassPath,
         Set<File> sources,
@@ -42,7 +43,7 @@ public class MavenDevShellSPI
         String rebuildPhase
     )
     {
-        super( applicationClassPath, runtimeClassPath, sources, watcher, false );
+        super( applicationSources, applicationClassPath, runtimeClassPath, sources, watcher, false );
         pom = new File( rootDir, "pom.xml" );
         cmdLine = new CommandLine( "mvn" );
         cmdLine.addArgument( "-f" );

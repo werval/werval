@@ -53,8 +53,6 @@ import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 import org.qiweb.util.ClassLoaders;
 import org.qiweb.util.DeltreeFileVisitor;
-import org.qiweb.util.InputStreams;
-import org.qiweb.util.Strings;
 
 import static java.io.File.separator;
 import static org.qiweb.cli.BuildVersion.COMMIT;
@@ -62,9 +60,12 @@ import static org.qiweb.cli.BuildVersion.DATE;
 import static org.qiweb.cli.BuildVersion.DIRTY;
 import static org.qiweb.cli.BuildVersion.VERSION;
 import static org.qiweb.util.Charsets.UTF_8;
+import static org.qiweb.util.InputStreams.readAllAsString;
 import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.NEWLINE;
 import static org.qiweb.util.Strings.hasText;
+import static org.qiweb.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.join;
 
 /**
  * Damn Small QiWeb DevShell.
@@ -76,20 +77,21 @@ public final class DamnSmallDevShell
     {
         private final URL[] applicationClasspath;
         private final URL[] runtimeClasspath;
-        private final Set<File> sources;
+        private final Set<File> sourcesRoots;
         private final File classesDir;
 
         private SPI(
+            URL[] applicationSources,
             URL[] applicationClasspath,
             URL[] runtimeClasspath,
-            Set<File> sources,
+            Set<File> sourcesRoots,
             SourceWatcher watcher,
             File classesDir )
         {
-            super( applicationClasspath, runtimeClasspath, sources, watcher, false );
+            super( applicationSources, applicationClasspath, runtimeClasspath, sourcesRoots, watcher, false );
             this.applicationClasspath = applicationClasspath;
             this.runtimeClasspath = runtimeClasspath;
-            this.sources = sources;
+            this.sourcesRoots = sourcesRoots;
             this.classesDir = classesDir;
         }
 
@@ -98,7 +100,7 @@ public final class DamnSmallDevShell
         {
             try
             {
-                DamnSmallDevShell.rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+                DamnSmallDevShell.rebuild( applicationClasspath, runtimeClasspath, sourcesRoots, classesDir );
             }
             catch( Exception ex )
             {
@@ -468,9 +470,15 @@ public final class DamnSmallDevShell
         throws IOException
     {
         final File classesDir = createClassesDirectory( debug, tmpDir );
-        Set<File> sources = prepareSourcesDirectories( debug, cmd );
-        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sources, cmd );
+        Set<File> sourceRoots = prepareSourcesRoots( debug, cmd );
+        Set<URL> applicationSourcesSet = new LinkedHashSet<>( sourceRoots.size() );
+        for( File sourceRoot : sourceRoots )
+        {
+            applicationSourcesSet.add( sourceRoot.toURI().toURL() );
+        }
+        URL[] applicationSources = applicationSourcesSet.toArray( new URL[ applicationSourcesSet.size() ] );
         URL[] applicationClasspath = prepareApplicationClasspath( debug, classesDir );
+        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sourceRoots, cmd );
         applySystemProperties( debug, cmd );
         System.out.println( "Loading..." );
 
@@ -478,12 +486,12 @@ public final class DamnSmallDevShell
         SourceWatcher watcher = new JavaWatcher();
 
         // First build
-        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+        rebuild( applicationClasspath, runtimeClasspath, sourceRoots, classesDir );
 
         // Run DevShell
         Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
         new DevShellCommand(
-            new SPI( applicationClasspath, runtimeClasspath, sources, watcher, classesDir )
+            new SPI( applicationSources, applicationClasspath, runtimeClasspath, sourceRoots, watcher, classesDir )
         ).run();
     }
 
@@ -491,14 +499,14 @@ public final class DamnSmallDevShell
         throws IOException, MalformedURLException
     {
         final File classesDir = createClassesDirectory( debug, tmpDir );
-        Set<File> sources = prepareSourcesDirectories( debug, cmd );
-        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sources, cmd );
+        Set<File> sourcesRoots = prepareSourcesRoots( debug, cmd );
+        URL[] runtimeClasspath = prepareRuntimeClasspath( debug, sourcesRoots, cmd );
         URL[] applicationClasspath = prepareApplicationClasspath( debug, classesDir );
         applySystemProperties( debug, cmd );
         System.out.println( "Loading..." );
 
         // Build
-        rebuild( applicationClasspath, runtimeClasspath, sources, classesDir );
+        rebuild( applicationClasspath, runtimeClasspath, sourcesRoots, classesDir );
 
         // Start
         System.out.println( "Starting!" );
@@ -525,26 +533,26 @@ public final class DamnSmallDevShell
         return classesDir;
     }
 
-    private static Set<File> prepareSourcesDirectories( boolean debug, CommandLine cmd )
+    private static Set<File> prepareSourcesRoots( boolean debug, CommandLine cmd )
     {
         String[] sourcesPaths = cmd.hasOption( 's' ) ? cmd.getOptionValues( 's' ) : new String[]
         {
             "src" + separator + "main" + separator + "java",
             "src" + separator + "main" + separator + "resources"
         };
-        Set<File> sources = new LinkedHashSet<>();
-        for( String sourcePath : sourcesPaths )
+        Set<File> sourcesRoots = new LinkedHashSet<>();
+        for( String sourceRoot : sourcesPaths )
         {
-            sources.add( new File( sourcePath ) );
+            sourcesRoots.add( new File( sourceRoot ) );
         }
         if( debug )
         {
-            System.out.println( "Sources directories are: " + sources );
+            System.out.println( "Sources roots are: " + sourcesRoots );
         }
-        return sources;
+        return sourcesRoots;
     }
 
-    private static URL[] prepareRuntimeClasspath( boolean debug, Set<File> sources, CommandLine cmd )
+    private static URL[] prepareRuntimeClasspath( boolean debug, Set<File> sourcesRoots, CommandLine cmd )
         throws MalformedURLException
     {
         List<URL> classpathList = new ArrayList<>();
@@ -559,9 +567,9 @@ public final class DamnSmallDevShell
             }
         }
         // Append Application sources
-        for( File source : sources )
+        for( File sourceRoot : sourcesRoots )
         {
-            classpathList.add( source.toURI().toURL() );
+            classpathList.add( sourceRoot.toURI().toURL() );
         }
         URL[] runtimeClasspath = classpathList.toArray( new URL[ classpathList.size() ] );
         if( debug )
@@ -605,7 +613,7 @@ public final class DamnSmallDevShell
     }
 
     /* package */ static void rebuild(
-        URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sources, File classesDir
+        URL[] applicationClasspath, URL[] runtimeClasspath, Set<File> sourcesRoots, File classesDir
     )
     {
         System.out.println( "Compiling Application..." );
@@ -614,20 +622,20 @@ public final class DamnSmallDevShell
         {
             // Collect java files
             String javaFiles = EMPTY;
-            for( File source : sources )
+            for( File sourceRoot : sourcesRoots )
             {
-                if( source.exists() )
+                if( sourceRoot.exists() )
                 {
                     ProcessBuilder findBuilder = new ProcessBuilder(
-                        "find", source.getAbsolutePath(), "-type", "f", "-iname", "*.java"
+                        "find", sourceRoot.getAbsolutePath(), "-type", "f", "-iname", "*.java"
                     );
                     Process find = findBuilder.start();
                     int returnCode = find.waitFor();
                     if( returnCode != 0 )
                     {
-                        throw new IOException( "Unable to find java source files in " + source );
+                        throw new IOException( "Unable to find java source files in " + sourceRoot );
                     }
-                    javaFiles += NEWLINE + new String( InputStreams.readAllBytes( find.getInputStream(), 4096 ), UTF_8 );
+                    javaFiles += NEWLINE + readAllAsString( find.getInputStream(), 4096, UTF_8 );
                 }
             }
             if( hasText( javaFiles ) )
@@ -650,7 +658,7 @@ public final class DamnSmallDevShell
                     "-encoding", "UTF-8",
                     "-source", "1.8",
                     "-d", classesDir.getAbsolutePath(),
-                    "-classpath", Strings.join( classpathStrings, ":" ),
+                    "-classpath", join( classpathStrings, ":" ),
                     "@" + javaListFile.getAbsolutePath()
                 );
                 Process javac = javacBuilder.start();
@@ -659,13 +667,13 @@ public final class DamnSmallDevShell
                 {
                     throw new IOException( "Unable to build java source files." );
                 }
-                javacOutput = new String( InputStreams.readAllBytes( javac.getInputStream(), 4096 ), UTF_8 );
+                javacOutput = readAllAsString( javac.getInputStream(), 4096, UTF_8 );
             }
         }
         catch( InterruptedException | IOException | URISyntaxException ex )
         {
             throw new QiWebException(
-                "Unable to rebuild" + ( Strings.isEmpty( javacOutput ) ? "" : "\n" + javacOutput ),
+                "Unable to rebuild" + ( isEmpty( javacOutput ) ? "" : "\n" + javacOutput ),
                 ex
             );
         }
