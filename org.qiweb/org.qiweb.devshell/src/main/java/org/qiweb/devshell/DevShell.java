@@ -33,6 +33,7 @@ import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
+import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
@@ -83,6 +84,7 @@ public final class DevShell
         }
 
         @Override
+        @SuppressWarnings( "UseSpecificCatch" )
         public synchronized void rebuild()
         {
             if( isSourceChanged() )
@@ -90,17 +92,26 @@ public final class DevShell
                 try
                 {
                     super.rebuild();
+                }
+                catch( DevShellRebuildException ex )
+                {
+                    throw ex;
+                }
+                catch( Exception ex )
+                {
+                    throw new DevShellRebuildException( ex );
+                }
+                try
+                {
                     reSetupApplicationRealms();
                     reloadMethod.invoke(
                         appInstance,
                         classWorld.getRealm( currentApplicationRealmID() )
                     );
                 }
-                catch( DuplicateRealmException | NoSuchRealmException |
-                       SecurityException | IllegalAccessException | IllegalArgumentException |
-                       InvocationTargetException ex )
+                catch( Exception ex )
                 {
-                    throw new QiWebDevShellException( "Unable to reload Application: " + ex.getMessage(), ex );
+                    throw new DevShellRebuildException( "Unable to reload Application", ex );
                 }
             }
         }
@@ -260,7 +271,7 @@ public final class DevShell
             }
             String msg = "Unable to start QiWeb DevShell: " + cause.getClass().getSimpleName() + " " + cause.getMessage();
             System.err.println( red( msg ) );
-            throw new QiWebDevShellException( msg, cause );
+            throw new DevShellStartException( msg, cause );
         }
     }
 

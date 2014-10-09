@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors.
+ * Copyright (c) 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,22 @@
  */
 package org.qiweb.maven;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.maven.MavenExecutionException;
+import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
 public class MavenDevShellSPI
     extends DevShellSPIAdapter
 {
-    private final DefaultExecutor executor;
+    private final File pom;
     private final CommandLine cmdLine;
 
     public MavenDevShellSPI(
@@ -39,27 +43,33 @@ public class MavenDevShellSPI
     )
     {
         super( applicationClassPath, runtimeClassPath, sources, watcher, false );
-        executor = new DefaultExecutor();
+        pom = new File( rootDir, "pom.xml" );
         cmdLine = new CommandLine( "mvn" );
         cmdLine.addArgument( "-f" );
-        cmdLine.addArgument( new File( rootDir, "pom.xml" ).getAbsolutePath() );
+        cmdLine.addArgument( pom.getAbsolutePath() );
         cmdLine.addArgument( rebuildPhase );
     }
 
     @Override
     protected void doRebuild()
+        throws DevShellRebuildException
     {
+        DefaultExecutor executor = new DefaultExecutor();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        executor.setStreamHandler( new PumpStreamHandler( output ) );
         try
         {
             int exitValue = executor.execute( cmdLine );
             if( exitValue != 0 )
             {
-                System.out.println( "Maven Rebuild exited with a non-zero status: " + exitValue );
+                throw new DevShellRebuildException(
+                    new MavenExecutionException( "Maven exited with a non-zero status: " + exitValue, pom )
+                );
             }
         }
         catch( Exception ex )
         {
-            throw new RuntimeException( ex.getMessage(), ex );
+            throw new DevShellRebuildException( ex, output.toString() );
         }
     }
 }

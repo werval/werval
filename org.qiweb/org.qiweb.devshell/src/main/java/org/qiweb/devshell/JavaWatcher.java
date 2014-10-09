@@ -279,7 +279,7 @@ public class JavaWatcher
         }
         catch( IOException ex )
         {
-            throw new QiWebDevShellException( "Unable to watch sources for changes: " + ex.getMessage(), ex );
+            throw new DevShellStartException( "Unable to watch sources for changes", ex );
         }
     }
 

@@ -116,6 +116,13 @@ public final class Stacktraces
         }
     }
 
+    public static String toString( Throwable throwable )
+    {
+        StringWriter traceWriter = new StringWriter();
+        throwable.printStackTrace( new PrintWriter( traceWriter ) );
+        return traceWriter.toString();
+    }
+
     public static CharSequence toHtml( Throwable throwable, FileURLGenerator urlGen )
     {
         // Parameters
@@ -124,13 +131,11 @@ public final class Stacktraces
         String containerClassName = "qiweb-stacktrace";
 
         // Get trace
-        StringWriter traceWriter = new StringWriter();
-        throwable.printStackTrace( new PrintWriter( traceWriter ) );
-        String trace = traceWriter.toString();
+        String originalTrace = toString( throwable );
 
         // Add links
-        traceWriter = new StringWriter();
-        Scanner scanner = new Scanner( trace );
+        StringWriter traceWriter = new StringWriter();
+        Scanner scanner = new Scanner( originalTrace );
         while( scanner.hasNextLine() )
         {
             String line = scanner.nextLine();

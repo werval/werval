@@ -48,6 +48,7 @@ import org.qiweb.commands.SecretCommand;
 import org.qiweb.commands.StartCommand;
 import org.qiweb.devshell.JavaWatcher;
 import org.qiweb.runtime.CryptoInstance;
+import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 import org.qiweb.util.ClassLoaders;
@@ -101,7 +102,7 @@ public final class DamnSmallDevShell
             }
             catch( Exception ex )
             {
-                throw new QiWebException( ex.getMessage(), ex );
+                throw new DevShellRebuildException( ex );
             }
         }
     }

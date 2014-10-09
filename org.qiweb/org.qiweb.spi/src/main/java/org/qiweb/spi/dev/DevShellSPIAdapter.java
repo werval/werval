@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class DevShellSPIAdapter
 {
     private final URL[] applicationClassPath;
     private final URL[] runtimeClassPath;
-    private boolean sourceChanged = true;
+    private boolean sourceChanged;
 
     public DevShellSPIAdapter(
         URL[] applicationClassPath, URL[] runtimeClassPath,
@@ -53,6 +53,7 @@ public class DevShellSPIAdapter
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
         // QUID Unwatch sources on DevShell passivation?
+        this.sourceChanged = initialSourceChanged;
         watcher.watch(
             toWatch,
             new SourceChangeListener()
@@ -65,7 +66,6 @@ public class DevShellSPIAdapter
                 }
             }
         );
-        sourceChanged = initialSourceChanged;
     }
 
     @Override
@@ -133,6 +133,7 @@ public class DevShellSPIAdapter
 
     @Override
     public final synchronized void rebuild()
+        throws DevShellRebuildException
     {
         if( sourceChanged )
         {
@@ -143,8 +144,11 @@ public class DevShellSPIAdapter
 
     /**
      * No operation.
+     *
+     * @throws DevShellRebuildException See {@link DevShellSPI#rebuild()}.
      */
     protected void doRebuild()
+        throws DevShellRebuildException
     {
         // NOOP
     }

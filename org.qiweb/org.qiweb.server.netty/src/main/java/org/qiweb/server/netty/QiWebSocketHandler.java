@@ -19,6 +19,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,14 @@ public class QiWebSocketHandler
     {
         if( devSpi != null && devSpi.isSourceChanged() )
         {
-            devSpi.rebuild();
+            try
+            {
+                devSpi.rebuild();
+            }
+            catch( Exception ex )
+            {
+                throw new DevShellRebuildException( ex );
+            }
         }
     }
 }
