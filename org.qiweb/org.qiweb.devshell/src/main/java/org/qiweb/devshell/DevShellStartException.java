@@ -23,6 +23,11 @@ import org.qiweb.api.exceptions.QiWebException;
 public class DevShellStartException
     extends QiWebException
 {
+    public DevShellStartException( String message )
+    {
+        super( message );
+    }
+
     public DevShellStartException( String message, Throwable cause )
     {
         super( message, cause );

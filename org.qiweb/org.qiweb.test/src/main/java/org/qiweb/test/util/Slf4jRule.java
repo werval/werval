@@ -97,9 +97,9 @@ public class Slf4jRule
         addAppenderToName( name );
     }
 
-    public boolean contains( String loggingStatement )
+    public boolean contains( String text )
     {
-        return appender.list.stream().anyMatch( event -> event.getFormattedMessage().contains( loggingStatement ) );
+        return appender.list.stream().anyMatch( event -> event.getFormattedMessage().contains( text ) );
     }
 
     public boolean containsExMessage( String exceptionMessage )
@@ -137,6 +137,11 @@ public class Slf4jRule
     public int size()
     {
         return appender.list.size();
+    }
+
+    public void clear()
+    {
+        appender.list.clear();
     }
 
     private <T> void addAppenderToName( String name )

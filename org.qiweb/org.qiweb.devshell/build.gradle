@@ -10,6 +10,9 @@ dependencies {
     compile project( ":org.qiweb.server.bootstrap" )
     compile project( ":org.qiweb.doc" ) // QUID?
     compile libs.classworlds
+
+    testCompile project( ":org.qiweb.test" )
+    testCompile libs.awaitility
     
 }
 
