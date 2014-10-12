@@ -28,6 +28,8 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * SLF4J JUnit Rule for use with Logback.
  */
@@ -97,9 +99,19 @@ public class Slf4jRule
         addAppenderToName( name );
     }
 
+    public List<String> allStatements()
+    {
+        return appender.list.stream().map( s -> s.getFormattedMessage() ).collect( toList() );
+    }
+
     public boolean contains( String text )
     {
         return appender.list.stream().anyMatch( event -> event.getFormattedMessage().contains( text ) );
+    }
+
+    public boolean containsMatching( String regex )
+    {
+        return appender.list.stream().anyMatch( event -> event.getFormattedMessage().matches( regex ) );
     }
 
     public boolean containsExMessage( String exceptionMessage )
