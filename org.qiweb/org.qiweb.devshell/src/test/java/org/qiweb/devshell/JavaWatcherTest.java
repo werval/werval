@@ -39,6 +39,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.qiweb.util.Strings.indentTwoSpaces;
 
 /**
  * JavaWatcher Test.
@@ -96,6 +97,11 @@ public class JavaWatcherTest
         @Override
         public void close()
         {
+            System.out.println( "Logs of CheckBlock for " + path );
+            for( String log : slf4j.allStatements() )
+            {
+                System.out.println( indentTwoSpaces( log, 2 ) );
+            }
             assertThat( slf4j.contains( path.toAbsolutePath().toString() ), is( true ) );
             changed = false;
         }
@@ -197,6 +203,150 @@ public class JavaWatcherTest
             createFile( otherFile );
             Thread.sleep( 1000 );
             assertFalse( changed );
+        }
+        finally
+        {
+            watch.unwatch();
+        }
+    }
+
+    @Test
+    public void watchAbsentDirectory()
+        throws Exception
+    {
+        Path root = tmp.getRoot().toPath().resolve( "root" );
+        createDirectories( root );
+        Path dir = root.resolve( "dir" );
+        Path file = dir.resolve( "file" );
+        SourceWatch watch = new JavaWatcher().watch( singleton( dir.toFile() ), changed_l );
+        Thread.sleep( 1000 );
+        try
+        {
+            assertThat( changed, is( false ) );
+
+            try( Check block = new Check( dir ) )
+            {
+                createDirectories( dir );
+                await().until( changed_c, is( true ) );
+            }
+
+            try( Check block = new Check( dir ) )
+            {
+                createFile( file );
+                await().until( changed_c, is( true ) );
+            }
+        }
+        finally
+        {
+            watch.unwatch();
+        }
+    }
+
+    @Test
+    public void watchAbsentSingleFile()
+        throws Exception
+    {
+        Path root = tmp.getRoot().toPath().resolve( "root" );
+        createDirectories( root );
+        Path singleFile = root.resolve( "single-file" );
+        SourceWatch watch = new JavaWatcher().watch( singleton( singleFile.toFile() ), changed_l );
+        Thread.sleep( 1000 );
+        try
+        {
+            assertThat( changed, is( false ) );
+
+            try( Check block = new Check( singleFile ) )
+            {
+                createFile( singleFile );
+                await().until( changed_c, is( true ) );
+            }
+
+            try( Check block = new Check( singleFile ) )
+            {
+                write( singleFile, "CHANGED".getBytes() );
+                await().until( changed_c, is( true ) );
+            }
+
+            try( Check block = new Check( singleFile ) )
+            {
+                delete( singleFile );
+                await().until( changed_c, is( true ) );
+            }
+
+            try( Check block = new Check( singleFile ) )
+            {
+                createFile( singleFile );
+                await().until( changed_c, is( true ) );
+            }
+        }
+        finally
+        {
+            watch.unwatch();
+        }
+    }
+
+    @Test
+    public void watchAbsentDeepPath()
+        throws Exception
+    {
+        Path root = tmp.getRoot().toPath().resolve( "root" );
+        createDirectories( root );
+        Path dir = root.resolve( "dir" );
+        Path subdir = root.resolve( "subdir" );
+        SourceWatch watch = new JavaWatcher().watch( singleton( subdir.toFile() ), changed_l );
+        Thread.sleep( 1000 );
+        try
+        {
+            assertThat( changed, is( false ) );
+
+            createDirectories( dir );
+            Thread.sleep( 1000 );
+            assertFalse( changed );
+
+            try( Check block = new Check( subdir ) )
+            {
+                createDirectories( subdir );
+                await().until( changed_c, is( true ) );
+            }
+        }
+        finally
+        {
+            watch.unwatch();
+        }
+    }
+
+    @Test
+    public void watchPresentAbsentPresentSingleFile()
+        throws Exception
+    {
+        Path root = tmp.getRoot().toPath().resolve( "root" );
+        createDirectories( root );
+        SourceWatch watch = new JavaWatcher().watch( singleton( root.toFile() ), changed_l );
+        try
+        {
+            assertThat( changed, is( false ) );
+
+            Path file = root.resolve( "file" );
+
+            try( Check block = new Check( root ) )
+            {
+                createFile( file );
+                await().until( changed_c, is( true ) );
+            }
+
+            try( Check block = new Check( root ) )
+            {
+                walkFileTree( root, new DeltreeFileVisitor() );
+                await().until( changed_c, is( true ) );
+                assertTrue( slf4j.contains( "delete" ) );
+            }
+
+            try( Check block = new Check( root ) )
+            {
+                createDirectories( root );
+                createFile( file );
+                await().until( changed_c, is( true ) );
+            }
         }
         finally
         {
