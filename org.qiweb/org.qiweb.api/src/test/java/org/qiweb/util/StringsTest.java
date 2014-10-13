@@ -15,9 +15,9 @@
  */
 package org.qiweb.util;
 
-import org.qiweb.util.Strings;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -79,5 +79,26 @@ public class StringsTest
         assertThat( Strings.withoutHead( "/foo", "/" ), equalTo( "foo" ) );
         assertThat( Strings.withHead( "foo", "///" ), equalTo( "///foo" ) );
         assertThat( Strings.withoutHead( "///foo", "///" ), equalTo( "foo" ) );
+    }
+
+    @Test
+    public void indexOfNth()
+    {
+        String tested = "	at org.qiweb.runtime.filters.FilterChainInstance$FilterChainControllerTail.next";
+        int index = Strings.indexOfNth( tested, 2, "." );
+        assertThat( index, is( 13 ) );
+        assertThat(
+            tested.substring( index ),
+            equalTo( ".runtime.filters.FilterChainInstance$FilterChainControllerTail.next" )
+        );
+    }
+
+    @Test
+    public void lastIndexOfNth()
+    {
+        String tested = "	at org.qiweb.runtime.filters.FilterChainInstance$FilterChainControllerTail.next";
+        int index = Strings.lastIndexOfNth( tested, 2, "." );
+        assertThat( index, is( 29 ) );
+        assertThat( tested.substring( 0, index ), equalTo( "	at org.qiweb.runtime.filters" ) );
     }
 }

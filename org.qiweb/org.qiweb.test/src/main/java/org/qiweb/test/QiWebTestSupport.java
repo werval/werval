@@ -20,7 +20,7 @@ import org.qiweb.spi.http.HttpBuildersSPI;
 
 /**
  * QiWeb Test Support contract.
- *
+ * <p>
  * Provide access to the {@link ApplicationSPI} and {@link HttpBuildersSPI}.
  */
 public interface QiWebTestSupport

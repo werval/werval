@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -36,13 +37,16 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.qiweb.runtime.util.Holder;
 import org.qiweb.test.util.Processes;
+import org.qiweb.util.InputStreams;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.api.BuildVersion.VERSION;
+import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
 
 /**
  * Assert that the {@literal secret}, {@literal start} and {@literal devshell} tasks execute successfuly.
@@ -59,6 +63,8 @@ public class QiWebPluginIntegTest
     private static final String CONFIG;
     private static final String CONTROLLER;
     private static final String CONTROLLER_CHANGED;
+    private static final String CONTROLLER_EXCEPTIONAL;
+    private static final String CONTROLLER_BUILD_ERROR;
 
     static
     {
@@ -121,6 +127,30 @@ public class QiWebPluginIntegTest
           + "    public Outcome index()\n"
           + "    {\n"
           + "        return outcomes().ok( \"I ran changed!\" ).build();\n"
+          + "    }\n"
+          + "}\n";
+        CONTROLLER_EXCEPTIONAL
+        = "\n"
+          + "package controllers;\n"
+          + "import org.qiweb.api.outcomes.Outcome;\n"
+          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "public class Application\n"
+          + "{\n"
+          + "    public Outcome index()\n"
+          + "    {\n"
+          + "        throw new RuntimeException( \"I throwed!\" );\n"
+          + "    }\n"
+          + "}\n";
+        CONTROLLER_BUILD_ERROR
+        = "\n"
+          + "package controllers;\n"
+          + "import org.qiweb.api.outcomes.Outcome;\n"
+          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "public class Application\n"
+          + "{\n"
+          + "    public Outcome index()\n"
+          + "    {\n"
+          + "        I FAILED TO COMPILE!\n"
           + "    }\n"
           + "}\n";
         new File( "build/tmp/it" ).mkdirs();
@@ -235,7 +265,7 @@ public class QiWebPluginIntegTest
 
             final HttpClient client = new DefaultHttpClient();
             final HttpGet get = new HttpGet( "http://localhost:23023/" );
-            final ResponseHandler<String> handler = new BasicResponseHandler();
+            final ResponseHandler<String> successHandler = new BasicResponseHandler();
 
             await().atMost( 60, SECONDS ).pollInterval( 5, SECONDS ).until(
                 new Callable<String>()
@@ -246,7 +276,7 @@ public class QiWebPluginIntegTest
                     {
                         try
                         {
-                            return client.execute( get, handler );
+                            return client.execute( get, successHandler );
                         }
                         catch( Exception ex )
                         {
@@ -257,21 +287,55 @@ public class QiWebPluginIntegTest
                 containsString( "I ran!" )
             );
 
+            // Source code change
             Files.write(
                 new File( tmp.getRoot(), "src/main/java/controllers/Application.java" ).toPath(),
                 CONTROLLER_CHANGED.getBytes( UTF_8 )
             );
-
-            // Wait for source code change to be detected
-            Thread.sleep( 2000 );
-
+            Thread.sleep( 2000 ); // Wait for source code change to be detected
             assertThat(
-                client.execute( get, handler ),
+                client.execute( get, successHandler ),
                 containsString( "I ran changed!" )
             );
 
+            // Exception
+            Files.write(
+                new File( tmp.getRoot(), "src/main/java/controllers/Application.java" ).toPath(),
+                CONTROLLER_EXCEPTIONAL.getBytes( UTF_8 )
+            );
+            Thread.sleep( 2000 ); // Wait for source code change to be detected
+            HttpResponse response = client.execute( get );
+            int code = response.getStatusLine().getStatusCode();
+            String body = InputStreams.readAllAsString( response.getEntity().getContent(), BUF_SIZE_4K, UTF_8 );
+            assertThat( code, is( 500 ) );
+            assertThat( body, containsString( "I throwed!" ) );
+
+            // Build error
+            Files.write(
+                new File( tmp.getRoot(), "src/main/java/controllers/Application.java" ).toPath(),
+                CONTROLLER_BUILD_ERROR.getBytes( UTF_8 )
+            );
+            Thread.sleep( 2000 ); // Wait for source code change to be detected
+            response = client.execute( get );
+            code = response.getStatusLine().getStatusCode();
+            body = InputStreams.readAllAsString( response.getEntity().getContent(), BUF_SIZE_4K, UTF_8 );
+            assertThat( code, is( 500 ) );
+            assertThat( body, containsString( "I FAILED TO COMPILE!" ) );
+
+            // Back to normal
+            Files.write(
+                new File( tmp.getRoot(), "src/main/java/controllers/Application.java" ).toPath(),
+                CONTROLLER.getBytes( UTF_8 )
+            );
+            Thread.sleep( 2000 ); // Wait for source code change to be detected
             assertThat(
-                client.execute( new HttpGet( "http://localhost:23023/@doc" ), handler ),
+                client.execute( get, successHandler ),
+                containsString( "I ran!" )
+            );
+
+            // QiWeb Documentation
+            assertThat(
+                client.execute( new HttpGet( "http://localhost:23023/@doc" ), successHandler ),
                 containsString( "QiWeb Documentation" )
             );
 

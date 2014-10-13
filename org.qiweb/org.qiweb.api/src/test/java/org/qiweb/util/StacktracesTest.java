@@ -15,7 +15,6 @@
  */
 package org.qiweb.util;
 
-import org.qiweb.util.Stacktraces;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import org.junit.Test;

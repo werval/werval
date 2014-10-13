@@ -16,30 +16,32 @@
 package org.qiweb.devshell;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.qiweb.spi.dev.DevShellSPI.SourceChangeListener;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatch;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
+import org.qiweb.util.LinkedMultiValueMap;
+import org.qiweb.util.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.isSymbolicLink;
+import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -50,44 +52,97 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Java WatchService based SourceWatcher.
- *
+ * <p>
  * Based on the <a href="http://docs.oracle.com/javase/tutorial/essential/io/notification.html">Watching a Directory
  * for Changes</a> Java Tutorial.
  * <p>
- * Adapted for QiWeb needs and extended to support watching individual files.
- * <p>
- * Note that thanks to the akward WatchService API, this code is pretty fragile.
+ * Adapted for QiWeb needs and extended to support watching individual files and deletion of watched directories.
  */
+// Note that thanks to the akward Java WatchService API, this code is pretty fragile.
+// This implementation is greedy and may leak. Not critical tough as it is used in dev mode only.
+// =====================================================================================================================
+// TODO JavaWatcher> Handle OVERFLOW> reprocess watched directory
+//      Could lead to missed events if it prevents new watches registration.
+//      Not critical as this would be after stating that the source changed.
+// TODO JavaWatcher> Refactor to move WatchedDirectory deletion handling into the main logic
 public class JavaWatcher
     implements SourceWatcher
 {
-    private static final class WatchedFileOrDir
+    private static abstract class Watched
     {
-        private final Path fileOrDir;
-        private final FilenameFilter filePredicate;
+        protected final Path path;
 
-        private WatchedFileOrDir( Path fileOrDir, FilenameFilter filePredicate )
+        Watched( Path path )
         {
-            ensureNotNull( "Watched File or Directory", fileOrDir );
-            this.fileOrDir = fileOrDir;
-            if( Files.isRegularFile( fileOrDir ) )
-            {
-                ensureNotNull( "Watched File Predicate", filePredicate );
-            }
-            this.filePredicate = filePredicate;
+            this.path = path;
         }
 
-        private boolean satisfiedBy( List<WatchEvent<?>> events )
+        final Path path()
         {
-            if( filePredicate == null )
+            return path;
+        }
+
+        boolean satisfiedBy( WatchEvent<?> event )
+        {
+            return true;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int hash = 5;
+            hash = 41 * hash + Objects.hashCode( this.path );
+            return hash;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( obj == null )
             {
-                return true;
+                return false;
             }
-            for( WatchEvent<?> event : events )
+            if( getClass() != obj.getClass() )
             {
-                if( event.context() != null
-                    && event.context() instanceof Path
-                    && fileOrDir.getFileName().equals( ( (Path) event.context() ).getFileName() ) )
+                return false;
+            }
+            final Watched other = (Watched) obj;
+            return Objects.equals( this.path, other.path );
+        }
+
+        @Override
+        public String toString()
+        {
+            return getClass().getSimpleName() + "{" + "path=" + path + '}';
+        }
+    }
+
+    private static final class WatchedDirectory
+        extends Watched
+    {
+        WatchedDirectory( Path path )
+        {
+            super( path );
+            ensureNotNull( "Watched Directory Path", path );
+        }
+    }
+
+    private static final class WatchedSingleFile
+        extends Watched
+    {
+        WatchedSingleFile( Path path )
+        {
+            super( path );
+            ensureNotNull( "Watched Single File Path", path );
+        }
+
+        @Override
+        boolean satisfiedBy( WatchEvent<?> event )
+        {
+            if( event.context() != null && event.context() instanceof Path )
+            {
+                Path eventPath = (Path) event.context();
+                if( path.getFileName().equals( eventPath ) )
                 {
                     return true;
                 }
@@ -96,17 +151,102 @@ public class JavaWatcher
         }
     }
 
+    private static final class WatchedAbsent
+        extends Watched
+    {
+        private final Path upstream;
+
+        WatchedAbsent( Path path, Path upstream )
+        {
+            super( path );
+            ensureNotNull( "Watched Absent Path", path );
+            ensureNotNull( "Watched Absent Upstream Path", upstream );
+            this.upstream = upstream;
+        }
+
+        public Path upstream()
+        {
+            return upstream;
+        }
+
+        @Override
+        boolean satisfiedBy( WatchEvent<?> event )
+        {
+            if( event.context() != null && event.context() instanceof Path )
+            {
+                Path eventPath = (Path) event.context();
+                if( path.startsWith( upstream.resolve( eventPath ) ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int hash = super.hashCode();
+            hash = 17 * hash + Objects.hashCode( this.upstream );
+            return hash;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( obj == null )
+            {
+                return false;
+            }
+            if( getClass() != obj.getClass() )
+            {
+                return false;
+            }
+            final WatchedAbsent other = (WatchedAbsent) obj;
+            return !( !Objects.equals( this.upstream, other.upstream ) || !Objects.equals( path(), other.path() ) );
+        }
+    }
+
+    private static final class ArtificialWatchedDirectoryDeletedEvent
+        implements WatchEvent<Path>
+    {
+        private final Path context;
+
+        private ArtificialWatchedDirectoryDeletedEvent( Path context )
+        {
+            this.context = context;
+        }
+
+        @Override
+        public Kind<Path> kind()
+        {
+            return ENTRY_DELETE;
+        }
+
+        @Override
+        public int count()
+        {
+            return 1;
+        }
+
+        @Override
+        public Path context()
+        {
+            return context;
+        }
+    }
+
     private static final class SourceChangeWatcher
         implements Runnable
     {
         private final WatchService watchService;
-        private final Map<WatchKey, List<WatchedFileOrDir>> keys;
+        private final MultiValueMap<WatchKey, Watched> keys;
         private final SourceChangeListener listener;
         private boolean run = true;
 
         private SourceChangeWatcher(
             WatchService watchService,
-            Map<WatchKey, List<WatchedFileOrDir>> keys,
+            MultiValueMap<WatchKey, Watched> keys,
             SourceChangeListener listener
         )
             throws IOException
@@ -123,96 +263,285 @@ public class JavaWatcher
             {
                 if( !run )
                 {
+                    LOG.trace( "Source Change Watcher Thread stopped" );
                     return;
                 }
 
-                // wait for key to be signalled
+                // Wait for a key to be signalled
                 WatchKey key;
                 try
                 {
                     key = watchService.take();
                 }
-                catch( InterruptedException x )
+                catch( InterruptedException ex )
                 {
+                    Thread.interrupted();
+                    LOG.trace( "Source Change Watcher Thread interrupted" );
                     return;
                 }
 
-                List<WatchedFileOrDir> watchedFileOrDirs = keys.get( key );
-                if( keys.get( key ) == null )
+                List<Watched> watcheds = keys.get( key );
+                if( watcheds == null || watcheds.isEmpty() )
                 {
                     LOG.warn( "WatchKey not recognized!!" );
                     continue;
                 }
 
-                boolean sourceChanged = false;
-                List<Path> changedDirectories = new ArrayList<>();
-
+                // Retrieve events for the signalled key
                 List<WatchEvent<?>> watchEvents = key.pollEvents();
-                for( WatchedFileOrDir watchedFileOrDir : watchedFileOrDirs )
+
+                LOG.trace( ">> {} total events for {}", watchEvents.size(), watcheds );
+
+                // Has source changed?
+                boolean sourceChanged = false;
+                MultiValueMap<Watched, WatchEvent<Path>> matchedEvents = new LinkedMultiValueMap<>();
+
+                // Collect WatchEvents for each matching Watched
+                for( Watched watched : watcheds )
                 {
-                    if( watchedFileOrDir.satisfiedBy( watchEvents ) )
+                    for( WatchEvent<?> watchEvent : watchEvents )
                     {
-                        sourceChanged = true;
-                        if( Files.isDirectory( watchedFileOrDir.fileOrDir ) )
+                        if( watched.satisfiedBy( watchEvent ) )
                         {
-                            changedDirectories.add( watchedFileOrDir.fileOrDir );
+                            matchedEvents.add( watched, (WatchEvent<Path>) watchEvent );
                         }
                     }
                 }
 
-                if( sourceChanged )
+                // WatchedDirectory special handling
+                for( final Watched watched : watcheds )
                 {
-                    // Notify source change
-                    listener.onChange();
+                    if( watched instanceof WatchedDirectory
+                        && !matchedEvents.containsKey( watched )
+                        && watchEvents.isEmpty()
+                        && !exists( watched.path() ) )
+                    {
+                        LOG.trace( "{} deleted! Inserting an artificial event.", watched );
+                        matchedEvents.add( watched, new ArtificialWatchedDirectoryDeletedEvent( watched.path() ) );
+                    }
                 }
 
-                for( Path changedDir : changedDirectories )
+                // Handle watch matches
+                for( Watched watched : matchedEvents.keySet() )
                 {
-                    // Process events to maintain watched directories recursively
-                    for( WatchEvent<?> event : key.pollEvents() )
+                    LOG.trace( ">>>> {} matching events for {}", matchedEvents.get( watched ).size(), watched );
+                    if( watched instanceof WatchedDirectory )
                     {
-                        WatchEvent.Kind<?> kind = event.kind();
-
-                        // TBD - provide example of how OVERFLOW event is handled
-                        if( kind == OVERFLOW )
+                        LOG.trace( "Directory changed {}", watched.path().toAbsolutePath() );
+                        sourceChanged = true;
+                        if( exists( watched.path() ) )
                         {
-                            continue;
+                            // Recursively watch newly created sub-directories
+                            for( WatchEvent<Path> event : matchedEvents.get( watched ) )
+                            {
+                                WatchEvent.Kind<?> kind = event.kind();
+
+                                if( kind == OVERFLOW )
+                                {
+                                    LOG.trace( "{} events may have been lost or discarded.", event.count() );
+                                    continue;
+                                }
+
+                                // Context for directory entry event is the file name of entry
+                                WatchEvent<Path> ev = cast( event );
+                                Path name = ev.context();
+                                Path child = watched.path().resolve( name );
+
+                                LOG.debug( "{}: {}", event.kind().name(), child );
+
+                                // if directory is created then register it and its sub-directories
+                                if( kind == ENTRY_CREATE && isDirectory( child, NOFOLLOW_LINKS ) )
+                                {
+                                    try
+                                    {
+                                        registerDirectory( child, watchService, keys );
+                                        LOG.trace( "Watching newly created directory {}", child.toAbsolutePath() );
+                                    }
+                                    catch( IOException ex )
+                                    {
+                                        LOG.warn( "Unable to watch newly created directory: {}", ex.getMessage(), ex );
+                                    }
+                                }
+                            }
                         }
-
-                        // Context for directory entry event is the file name of entry
-                        WatchEvent<Path> ev = cast( event );
-                        Path name = ev.context();
-                        Path child = changedDir.resolve( name );
-
-                        LOG.debug( "{}: {}", event.kind().name(), child );
-
-                        // if directory is created, and watching recursively, then
-                        // register it and its sub-directories
-                        if( kind == ENTRY_CREATE && Files.isDirectory( child, NOFOLLOW_LINKS ) )
+                        else
                         {
                             try
                             {
-                                registerAll( child, watchService, keys );
+                                registerAbsent( watched.path(), watchService, keys );
                             }
                             catch( IOException ex )
                             {
-                                LOG.warn( "Unable to watch newly created directory: {}", ex.getMessage(), ex );
+                                LOG.warn(
+                                    "Unable to watch absent '{}' on watched directory deletion: {}",
+                                    watched.path(), ex.getMessage(), ex
+                                );
+                            }
+                            finally
+                            {
+                                // key.cancel();
                             }
                         }
                     }
+                    else if( watched instanceof WatchedSingleFile )
+                    {
+                        LOG.trace( "Single File changed {}", watched.path().toAbsolutePath() );
+                        sourceChanged = true;
+                        if( !exists( watched.path().getParent() ) )
+                        {
+                            try
+                            {
+                                registerAbsent( watched.path(), watchService, keys );
+                            }
+                            catch( IOException ex )
+                            {
+                                LOG.warn(
+                                    "Unable to watch absent '{}' on single-file watch parent deletion: {}",
+                                    watched.path(), ex.getMessage(), ex
+                                );
+                            }
+                            finally
+                            {
+                                // key.cancel();
+                            }
+                        }
+                    }
+                    else if( watched instanceof WatchedAbsent )
+                    {
+                        LOG.trace( "Absent File upstream changed {}", watched.path().toAbsolutePath() );
+                        if( exists( watched.path() ) )
+                        {
+                            // Created
+                            sourceChanged = true;
+                            if( isRegularFile( watched.path(), NOFOLLOW_LINKS ) )
+                            {
+                                try
+                                {
+                                    registerSingleFile( watched.path(), watchService, keys );
+                                    LOG.trace( "Watching newly created (was absent) single file {}", watched.path() );
+                                    // key.cancel();
+                                }
+                                catch( IOException ex )
+                                {
+                                    LOG.warn(
+                                        "Unable to watch newly created (was absent) single file: {}",
+                                        ex.getMessage(), ex
+                                    );
+                                }
+                            }
+                            else if( isDirectory( watched.path(), NOFOLLOW_LINKS ) )
+                            {
+                                try
+                                {
+                                    registerDirectory( watched.path(), watchService, keys );
+                                    LOG.trace( "Watching newly created (was absent) directory {}", watched.path() );
+                                    // key.cancel();
+                                }
+                                catch( IOException ex )
+                                {
+                                    LOG.warn(
+                                        "Unable to watch newly created (was absent) directory: {}",
+                                        ex.getMessage(), ex
+                                    );
+                                }
+                            }
+                            else
+                            {
+                                LOG.warn(
+                                    "Absent File '" + watched.path()
+                                    + "' created but it is neither a directory nor a regular file, ignoring."
+                                );
+                            }
+                        }
+                        else
+                        {
+                            for( WatchEvent<Path> event : matchedEvents.get( watched ) )
+                            {
+                                WatchEvent.Kind<?> kind = event.kind();
+
+                                if( kind == OVERFLOW )
+                                {
+                                    LOG.trace( "{} events may have been lost or discarded.", event.count() );
+                                    continue;
+                                }
+
+                                // Context for directory entry event is the file name of entry
+                                WatchEvent<Path> ev = cast( event );
+                                Path name = ev.context();
+                                Path child = ( (WatchedAbsent) watched ).upstream().resolve( name );
+
+                                if( !watched.path().startsWith( child ) )
+                                {
+                                    // Ignore non relevant event, not in the target path
+                                    continue;
+                                }
+
+                                if( kind == ENTRY_CREATE && isDirectory( child, NOFOLLOW_LINKS ) )
+                                {
+                                    try
+                                    {
+                                        registerAbsent( watched.path(), watchService, keys );
+                                        LOG.trace(
+                                            "Watching newly created upstream path of absent {}", watched.path()
+                                        );
+                                        // key.cancel();
+                                    }
+                                    catch( IOException ex )
+                                    {
+                                        LOG.warn(
+                                            "Unable to update absent watch after path component creation: {}",
+                                            ex.getMessage(), ex
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new InternalError(
+                            "Something is wrong with " + JavaWatcher.class.getName() + " codebase, please report!"
+                        );
+                    }
                 }
 
-                // reset key and remove from set if directory no longer accessible
+                // Notify source change
+                if( sourceChanged )
+                {
+                    listener.onChange();
+                }
+
+                // reset key and remove from set if invalid
                 boolean valid = key.reset();
                 if( !valid )
                 {
                     keys.remove( key );
+//                    for( Watched watched : watcheds )
+//                    {
+//                        if( !exists( watched.path() ) )
+//                        {
+//                            try
+//                            {
+//                                registerAbsent( watched.path(), watchService, keys );
+//                                LOG.trace( "Deleted {}, now watching as absent", watched.path() );
+//                            }
+//                            catch( IOException ex )
+//                            {
+//                                LOG.warn(
+//                                    "Unable to watch '{}' as absent, just got deleted: {}",
+//                                    watched.path(), ex.getMessage(), ex
+//                                );
+//                            }
+//                            sourceChanged = true;
+//                        }
+//                    }
+                }
 
-                    // all directories are inaccessible
-                    if( keys.isEmpty() )
-                    {
-                        break;
-                    }
+                // all watched are gone
+                if( keys.isEmpty() )
+                {
+                    LOG.warn( "Nothing left to watch, stopping source watcher thread!" );
+                    break;
                 }
             }
         }
@@ -230,10 +559,32 @@ public class JavaWatcher
 
     private static final Logger LOG = LoggerFactory.getLogger( JavaWatcher.class );
     private static final AtomicInteger THREAD_NUMBER = new AtomicInteger();
-    private static final WatchEvent.Kind<?>[] WATCHED_EVENT_KINDS = new WatchEvent.Kind<?>[]
+    private static final WatchEvent.Kind<?>[] WATCHED_EVENT_KINDS;
+    private static final WatchEvent.Modifier[] WATCHED_MODIFIERS;
+
+    static
     {
-        ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY
-    };
+        WATCHED_EVENT_KINDS = new WatchEvent.Kind<?>[]
+        {
+            ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY
+        };
+        WatchEvent.Modifier[] modifiers;
+        try
+        {
+            // com.sun based tuning, **really** faster on OSX
+            Class<?> sensitivityEnumClass = Class.forName( "com.sun.nio.file.SensitivityWatchEventModifier" );
+            modifiers = new WatchEvent.Modifier[]
+            {
+                (WatchEvent.Modifier) sensitivityEnumClass.getEnumConstants()[0]
+            };
+        }
+        catch( ClassNotFoundException ex )
+        {
+            // Sensitivity modifier not available, falling back to no modifiers
+            modifiers = new WatchEvent.Modifier[ 0 ];
+        }
+        WATCHED_MODIFIERS = modifiers;
+    }
 
     @Override
     public synchronized SourceWatch watch( Set<File> filesAndDirectories, SourceChangeListener listener )
@@ -241,19 +592,44 @@ public class JavaWatcher
         try
         {
             final WatchService watchService = FileSystems.getDefault().newWatchService();
-            final Map<WatchKey, List<WatchedFileOrDir>> keys = new HashMap<>();
+            final MultiValueMap<WatchKey, Watched> keys = new LinkedMultiValueMap<>();
             for( File fileOrDirectory : filesAndDirectories )
             {
-                try
+                Path start = fileOrDirectory.toPath();
+                if( isSymbolicLink( start ) )
                 {
-                    registerAll( fileOrDirectory.toPath(), watchService, keys );
-                }
-                catch( NoSuchFileException ex )
-                {
-                    LOG.warn(
-                        "{} absent, not watched, you'll need to restart the DevShell if you create it",
-                        fileOrDirectory
+                    throw new DevShellStartException(
+                        "Cannot watch '" + start + "', it is a symbolic link. If you need this feature, please report!"
                     );
+                }
+                else if( isRegularFile( start, NOFOLLOW_LINKS ) )
+                {
+                    registerSingleFile( start, watchService, keys );
+                }
+                else if( isDirectory( start, NOFOLLOW_LINKS ) )
+                {
+                    // register directory and sub-directories
+                    walkFileTree(
+                        start,
+                        new SimpleFileVisitor<Path>()
+                        {
+                            @Override
+                            public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
+                            throws IOException
+                            {
+                                registerDirectory( dir, watchService, keys );
+                                return FileVisitResult.CONTINUE;
+                            }
+                        }
+                    );
+                }
+                else if( exists( start ) )
+                {
+                    throw new DevShellStartException( "Cannot watch '" + start + "', it is neither a file nor a directory." );
+                }
+                else
+                {
+                    registerAbsent( start, watchService, keys );
                 }
             }
             String watchThreadName = "qiweb-devshell-watcher-" + THREAD_NUMBER.getAndIncrement();
@@ -271,103 +647,71 @@ public class JavaWatcher
                         WatchKey key = first( keySet );
                         key.cancel();
                         keys.remove( key );
-                        sourceChangeWatcher.stop();
-                        watchThread.interrupt();
                     }
+                    sourceChangeWatcher.stop();
+                    watchThread.interrupt();
                 }
             };
         }
         catch( IOException ex )
         {
-            throw new QiWebDevShellException( "Unable to watch sources for changes: " + ex.getMessage(), ex );
+            throw new DevShellStartException( "Unable to watch sources for changes", ex );
         }
     }
 
-    private static void registerAll(
-        final Path start,
-        final WatchService watchService,
-        final Map<WatchKey, List<WatchedFileOrDir>> keys
-    )
-        throws IOException
-    {
-        if( Files.isRegularFile( start ) )
-        {
-            registerFile( start, watchService, keys );
-        }
-        else
-        {
-            // register directory and sub-directories
-            Files.walkFileTree(
-                start,
-                new SimpleFileVisitor<Path>()
-                {
-                    @Override
-                    public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes attrs )
-                    throws IOException
-                    {
-                        registerDir( dir, watchService, keys );
-                        return FileVisitResult.CONTINUE;
-                    }
-                }
-            );
-        }
-    }
-
-    private static void registerFile(
+    private static void registerSingleFile(
         final Path file,
         WatchService watchService,
-        Map<WatchKey, List<WatchedFileOrDir>> keys
+        MultiValueMap<WatchKey, Watched> keys
     )
         throws IOException
     {
-        WatchKey key = file.getParent().register( watchService, WATCHED_EVENT_KINDS, modifiers() );
-        FilenameFilter filter = new FilenameFilter()
-        {
-            @Override
-            public boolean accept( File dir, String name )
-            {
-                return name.equals( file.getFileName().toString() );
-            }
-        };
-        if( !keys.containsKey( key ) )
-        {
-            keys.put( key, new ArrayList<WatchedFileOrDir>() );
-        }
-        keys.get( key ).add( new WatchedFileOrDir( file, filter ) );
+        WatchKey key = file.getParent().register( watchService, WATCHED_EVENT_KINDS, WATCHED_MODIFIERS );
+        keys.add( key, new WatchedSingleFile( file ) );
+        LOG.trace( "Registered watch on single file {}", file );
     }
 
-    private static void registerDir(
+    private static void registerDirectory(
         Path directory,
         WatchService watchService,
-        Map<WatchKey, List<WatchedFileOrDir>> keys
+        MultiValueMap<WatchKey, Watched> keys
     )
         throws IOException
     {
-        WatchKey key = directory.register( watchService, WATCHED_EVENT_KINDS, modifiers() );
-        if( !keys.containsKey( key ) )
-        {
-            keys.put( key, new ArrayList<WatchedFileOrDir>() );
-        }
-        keys.get( key ).add( new WatchedFileOrDir( directory, null ) );
+        WatchKey key = directory.register( watchService, WATCHED_EVENT_KINDS, WATCHED_MODIFIERS );
+        keys.add( key, new WatchedDirectory( directory ) );
+        LOG.trace( "Registered watch on directory {}", directory );
     }
 
-    private static WatchEvent.Modifier[] modifiers()
+    private static void registerAbsent(
+        Path absent,
+        WatchService watchService,
+        MultiValueMap<WatchKey, Watched> keys
+    )
+        throws IOException
     {
-        WatchEvent.Modifier[] modifiers;
-        try
+        Path upstream = findUpstream( absent );
+        WatchKey key = upstream.register( watchService, WATCHED_EVENT_KINDS, WATCHED_MODIFIERS );
+        keys.add( key, new WatchedAbsent( absent, upstream ) );
+        LOG.trace( "Registered a watch on absent {} starting at upstream {}", absent, upstream );
+    }
+
+    private static Path findUpstream( Path path )
+    {
+        Path upstream = path;
+        while( ( upstream = upstream.getParent() ) != null )
         {
-            // com.sun based tuning, **really** faster on OSX
-            Class<?> sensitivityEnumClass = Class.forName( "com.sun.nio.file.SensitivityWatchEventModifier" );
-            modifiers = new WatchEvent.Modifier[]
+            if( exists( upstream ) )
             {
-                (WatchEvent.Modifier) sensitivityEnumClass.getEnumConstants()[0]
-            };
+                if( isDirectory( upstream, NOFOLLOW_LINKS ) )
+                {
+                    return upstream;
+                }
+                throw new DevShellStartException(
+                    "Cannot watch absent '" + path + "' for changes, it has an existing non-directory parent!"
+                );
+            }
         }
-        catch( ClassNotFoundException ex )
-        {
-            // Sensitivity modifier not available, falling back to no modifiers
-            modifiers = new WatchEvent.Modifier[ 0 ];
-        }
-        return modifiers;
+        throw new InternalError( "Cannot watch '" + path + "' for changes, is has no root!" );
     }
 }

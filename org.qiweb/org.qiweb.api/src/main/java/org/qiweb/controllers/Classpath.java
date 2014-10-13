@@ -33,12 +33,12 @@ import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
 import static org.qiweb.util.Charsets.US_ASCII;
 import static org.qiweb.util.ClassLoaders.resourceExists;
 import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.withoutHead;
+import static org.qiweb.util.Strings.withoutTrail;
 
 /**
  * Classpath Resources Controller.
- *
+ * <p>
  * Always use chunked transfer encoding.
  * <p>
  * MimeType detection done using Application MimeTypes, fallback to <code>application/octet-stream</code>.
@@ -56,7 +56,7 @@ public class Classpath
 
     /**
      * Serve static files from META-INF/resources in classpath.
-     *
+     * <p>
      * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
@@ -66,12 +66,12 @@ public class Classpath
      */
     public Outcome metainf( String path )
     {
-        return resource( META_INF_RESOURCES + '/' + removeHeadingSlash( path ) );
+        return resource( META_INF_RESOURCES + '/' + withoutHead( path, "/" ) );
     }
 
     /**
      * Serve static resources from classpath.
-     *
+     * <p>
      * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
@@ -82,12 +82,12 @@ public class Classpath
      */
     public Outcome resource( String basepath, String path )
     {
-        return resource( removeTrailingSlash( basepath ) + '/' + removeHeadingSlash( path ) );
+        return resource( withoutTrail( path, "/" ) + '/' + withoutHead( path, "/" ) );
     }
 
     /**
      * Serve static resources from classpath.
-     *
+     * <p>
      * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
@@ -98,7 +98,7 @@ public class Classpath
     public Outcome resource( String path )
     {
         ensureNotEmpty( "Path", path );
-        path = removeHeadingSlash( path );
+        path = withoutHead( path, "/" );
         if( path.contains( ".." ) )
         {
             LOG.warn( "Directory traversal attempt: '{}'", path );
@@ -172,41 +172,5 @@ public class Classpath
 
         LOG.trace( "Will serve '{}' with mimetype '{}'", path, mimetype );
         return outcomes().ok().withBody( application().classLoader().getResourceAsStream( path ) ).build();
-    }
-
-    /* package */ static String removeHeadingSlash( String str )
-    {
-        if( isEmpty( str ) )
-        {
-            return EMPTY;
-        }
-        String result = str;
-        while( result.startsWith( "/" ) )
-        {
-            if( result.length() < 2 )
-            {
-                return EMPTY;
-            }
-            result = result.substring( 1 );
-        }
-        return result;
-    }
-
-    /* package */ static String removeTrailingSlash( String str )
-    {
-        if( isEmpty( str ) )
-        {
-            return EMPTY;
-        }
-        String result = str;
-        while( result.endsWith( "/" ) )
-        {
-            if( result.length() < 2 )
-            {
-                return EMPTY;
-            }
-            result = result.substring( 0, result.length() - 1 );
-        }
-        return result;
     }
 }

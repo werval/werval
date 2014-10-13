@@ -32,6 +32,9 @@ class QiWebDevShellTask extends DefaultTask
         project.logger.lifecycle ">> QiWeb DevShell for " + project.getName() + " starting..."
 
         // == Gather build info
+        def applicationSources = project.sourceSets.main.allSource.srcDirs.collect { f -> 
+            f.toURI().toURL()
+        }
         def applicationClasspath = [
             project.sourceSets.main.output.classesDir.toURI().toURL(),
             project.sourceSets.main.output.resourcesDir.toURI().toURL()
@@ -39,14 +42,15 @@ class QiWebDevShellTask extends DefaultTask
         def runtimeClasspath = project.configurations.devshell.files.collect { f ->
             f.toURI().toURL()
         }
-        def sources = project.sourceSets*.allSource*.srcDirs[0]
-        sources += extraWatch.collect { s -> project.file( s ) }
+        def toWatch = project.sourceSets*.allSource*.srcDirs[0]
+        toWatch += extraWatch.collect { s -> project.file( s ) }
 
         // == Start the DevShell
         def devShellSPI = new GradleDevShellSPI(
+            applicationSources as URL[],
             applicationClasspath as URL[],
             runtimeClasspath as URL[],
-            sources,
+            toWatch,
             new JavaWatcher(),
             project.getProjectDir(),
             ["devshell_rebuild"]

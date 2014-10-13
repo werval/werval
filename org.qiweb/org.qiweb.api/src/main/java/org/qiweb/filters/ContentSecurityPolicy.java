@@ -43,7 +43,6 @@ import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
  * Content-Security-Policy.
- *
  * <p>
  * Adds Content Security Policy (CSP) header to HTTP response.
  * <p>

@@ -26,62 +26,69 @@ import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
+import org.qiweb.api.http.Request;
 import org.qiweb.api.outcomes.Outcome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
- * X-XSS-Protection.
+ * LogIfSlow.
  * <p>
- * Try to prevent <a href="en.wikipedia.org/wiki/Cross-site_scripting">Cross-Site-Scripting</a> attacks.
- * <p>
- * It was originally
- * <a href="http://blogs.msdn.com/b/ieinternals/archive/2011/01/31/controlling-the-internet-explorer-xss-filter-with-the-x-xss-protection-http-header.aspx">by Microsoft</a>
- * but Chrome has since adopted it as well.
- * <p>
- * This isn't anywhere near as thorough as CSP. It's only properly supported on IE9+ and Chrome; no other major
- * browsers support it at this time. Old versions of IE support it in a buggy way.
- * <p>
- * By default, values from configuration are used.
- * Values set with the annotation parameters override thoses from the configuration, except if set to an empty string.
+ * Logs method and URI of requests which take longer than a given duration.
  */
-@FilterWith( XXSSProtection.Filter.class )
+@FilterWith( LogIfSlow.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )
 @Retention( RetentionPolicy.RUNTIME )
 @Inherited
 @Documented
-public @interface XXSSProtection
+public @interface LogIfSlow
 {
     /**
-     * @return {@literal X-XSS-Protection} header value, empty to use value from configuration
+     * Slow request duration threshold in milliseconds.
+     * <p>
+     * Default to 1 second.
+     *
+     * @return Slow request duration threshold in milliseconds
      */
-    String value() default EMPTY;
+    long threshold() default 1_000L;
 
     /**
-     * X-XSS-Protection Filter.
+     * LogIfSlow Filter.
      */
     public static class Filter
-        implements org.qiweb.api.filters.Filter<XXSSProtection>
+        implements org.qiweb.api.filters.Filter<LogIfSlow>
     {
+        private final static Logger LOG = LoggerFactory.getLogger( LogIfSlow.class );
+
         @Override
-        public CompletableFuture<Outcome> filter(
-            FilterChain chain,
-            Context context,
-            Optional<XXSSProtection> annotation
-        )
+        public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<LogIfSlow> annotation )
         {
+            final long startTime = System.nanoTime();
             return chain.next( context ).thenApply(
                 (outcome) ->
                 {
-                    outcome.responseHeader().headers().withSingle(
-                        "X-XSS-Protection",
+                    long threshold = MILLISECONDS.toNanos(
                         annotation.map(
-                            annot -> hasTextOrNull( annot.value() )
+                            annot -> annot.threshold()
                         ).orElse(
-                            context.application().config().string( "qiweb.filters.x_xss_protection.value" )
+                            context.application().config().milliseconds( "qiweb.filters.log_if_slow.threshold" )
                         )
                     );
+                    long nanos = System.nanoTime() - startTime;
+                    if( nanos - threshold >= 0 )
+                    {
+                        Request request = context.request();
+                        LOG.warn(
+                            "Slow interaction: {} {} [{}ms]",
+                            request.method(),
+                            request.uri() + ( request.queryString().isEmpty() ? EMPTY : "?" + request.queryString() ),
+                            NANOSECONDS.toMillis( nanos )
+                        );
+                    }
                     return outcome;
                 }
             );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,10 @@ import static org.qiweb.api.BuildVersion.DIRTY;
 import static org.qiweb.api.BuildVersion.VERSION;
 import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 
 /**
  * Controller with methods to introspect QiWeb Runtime.
- *
+ * <p>
  * Used by the QiWeb DevShell.
  * <p>
  * When using in application code, know that theses methods disclose internal data.
@@ -42,12 +41,12 @@ public class Introspect
      */
     public Outcome config()
     {
-        return outcomes().ok( application().config().toString() ).as( APPLICATION_JSON ).build();
+        return outcomes().ok( application().config().toString() ).asJson().build();
     }
 
     /**
      * Render QiWeb Version information as JSON.
-     *
+     * <p>
      * Here is a sample:
      * <pre>
      * {
@@ -55,6 +54,7 @@ public class Introspect
      *   "commit": "b5f8727",
      *   "dirty": true,
      *   "date": "Tue, 03 Sep 2013 16:01:24 GMT",
+     *   "detail": "org.qiweb:org.qiweb.api:0 b5f8727 (dirty) Tue, 03 Sep 2013 16:01:24 GMT"
      * }
      * </pre>
      *
@@ -70,6 +70,6 @@ public class Introspect
             + "  \"date\": \"" + DATE + "\",\n"
             + "  \"detail\": \"" + DETAILED_VERSION + "\"\n"
             + "}\n"
-        ).as( APPLICATION_JSON ).build();
+        ).asJson().build();
     }
 }

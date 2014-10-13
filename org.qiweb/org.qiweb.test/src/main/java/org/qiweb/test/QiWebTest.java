@@ -27,7 +27,7 @@ import org.qiweb.spi.ApplicationSPI;
 
 /**
  * Base QiWeb JUnit Test.
- *
+ * <p>
  * Activate/Passivate QiWeb Application in test mode around each JUnit test method.
  * <p>
  * By default, configuration is loaded from the <code>application.conf</code> file.

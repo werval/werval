@@ -31,7 +31,6 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
@@ -42,11 +41,14 @@ import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.server.HttpServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Names.TRAILER;
 import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
@@ -54,6 +56,7 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static org.qiweb.api.http.Headers.Values.CHUNKED;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
 import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
+import static org.qiweb.util.Charsets.UTF_8;
 
 /**
  * Handle HTTP Requests.
@@ -106,9 +109,7 @@ public final class QiWebHttpHandler
 
     @Override
     protected void channelRead0( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest )
-        throws ClassNotFoundException, InstantiationException,
-               IllegalAccessException, InvocationTargetException,
-               IOException
+        throws Exception
     {
         // Generate a unique identifier per request
         requestIdentity = helper.generateNewRequestIdentity();
@@ -166,11 +167,19 @@ public final class QiWebHttpHandler
     {
         if( cause instanceof ReadTimeoutException )
         {
-            LOG.debug( "{} Read timeout, connection has been closed.", requestIdentity );
+            LOG.trace( "{} Read timeout, connection has been closed.", requestIdentity );
         }
         else if( cause instanceof WriteTimeoutException )
         {
-            LOG.debug( "{} Write timeout, connection has been closed.", requestIdentity );
+            LOG.trace( "{} Write timeout, connection has been closed.", requestIdentity );
+        }
+        else if( cause instanceof DevShellRebuildException )
+        {
+            byte[] htmlErrorPage = ( (DevShellRebuildException) cause ).htmlErrorPage().getBytes( UTF_8 );
+            DefaultFullHttpResponse nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, INTERNAL_SERVER_ERROR );
+            nettyResponse.headers().set( CONTENT_LENGTH, htmlErrorPage.length );
+            ( (ByteBufHolder) nettyResponse ).content().writeBytes( htmlErrorPage );
+            nettyContext.writeAndFlush( nettyResponse ).addListener( ChannelFutureListener.CLOSE );
         }
         else if( requestHeader != null )
         {

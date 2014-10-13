@@ -35,7 +35,7 @@ public class QiWebException
 
     /**
      * Create a new QiWebException.
-     *
+     * <p>
      * Use given cause message as own message.
      *
      * @param cause Cause

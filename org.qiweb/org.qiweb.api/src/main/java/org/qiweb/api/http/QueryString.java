@@ -126,7 +126,7 @@ public interface QueryString
 
     /**
      * Creates an URL-encoded URI from a path string and key-value parameter pairs.
-     *
+     * <p>
      * This encoder is for one time use only. Create a new instance for each URI.
      * <pre>
      * QueryStringCodec.Encoder encoder = new QueryStringCodec.Encoder("/hello");
@@ -144,7 +144,7 @@ public interface QueryString
 
         /**
          * Creates a new encoder that encodes a URI that starts with the specified path string.
-         *
+         * <p>
          * The encoder will encode the URI in UTF-8.
          *
          * @param uri URI
@@ -269,7 +269,7 @@ public interface QueryString
 
     /**
      * Splits an HTTP query string into a path string and key-value parameter pairs.
-     *
+     * <p>
      * This decoder is for one time use only. Create a new instance for each URI:
      * <pre>
      * QueryStringCodec.Decoder decoder = new QueryStringCodec.Decoder("/hello?recipient=world&amp;x=1;y=2");
@@ -309,7 +309,7 @@ public interface QueryString
 
         /**
          * Creates a new decoder that decodes the specified URI.
-         *
+         * <p>
          * The decoder will assume that the query string is encoded in UTF-8.
          *
          * @param uri URI
@@ -385,7 +385,7 @@ public interface QueryString
 
         /**
          * Creates a new decoder that decodes the specified URI.
-         *
+         * <p>
          * The decoder will assume that the query string is encoded in UTF-8.
          *
          * @param uri URI
@@ -586,7 +586,7 @@ public interface QueryString
 
         /**
          * Decodes a bit of an URL encoded by a browser.
-         *
+         * <p>
          * This is equivalent to calling {@link #decodeComponent(String, Charset)}
          * with the UTF-8 charset (recommended to comply with RFC 3986, Section 2).
          *
@@ -605,7 +605,7 @@ public interface QueryString
 
         /**
          * Decodes a bit of an URL encoded by a browser.
-         *
+         * <p>
          * The string is expected to be encoded as per RFC 3986, Section 2.
          * This is the encoding used by JavaScript functions {@code encodeURI}
          * and {@code encodeURIComponent}, but not {@code escape}. For example

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,14 @@ import java.util.Set;
 
 /**
  * Development Shell Service Provider Interface.
- *
+ * <p>
  * Methods of this class are used as extension points by the QiWeb Runtime in Development Mode.
  */
 public interface DevShellSPI
 {
     /**
      * File watching abstraction.
-     *
+     * <p>
      * Allow DevShell implementations to choose their file watching implementation.
      */
     interface SourceWatcher
@@ -62,7 +62,7 @@ public interface DevShellSPI
 
     /**
      * Application Classpath.
-     *
+     * <p>
      * Typically build output directories.
      *
      * @return Application Classpath elements
@@ -71,7 +71,7 @@ public interface DevShellSPI
 
     /**
      * Runtime Classpath.
-     *
+     * <p>
      * Typically application dependencies, including QiWeb.
      *
      * @return Runtime Classpath elements
@@ -81,12 +81,13 @@ public interface DevShellSPI
     /**
      * Build Application source file URL if it exists.
      *
-     * @param fileName   File name
-     * @param lineNumber Line number
+     * @param packageName Package name
+     * @param fileName    File name
+     * @param lineNumber  Line number
      *
      * @return URL to the Application source file or null if not present.
      */
-    String sourceURL( String fileName, int lineNumber );
+    String sourceURL( String packageName, String fileName, int lineNumber );
 
     /**
      * @return Return true if source has changed since last call to {@link #rebuild()}, false otherwise
@@ -95,6 +96,11 @@ public interface DevShellSPI
 
     /**
      * Rebuild the Application sources.
+     *
+     * @throws DevShellRebuildException if something goes wrong, HttpServer implementation should use its
+     *                                  {@link DevShellRebuildException#htmlErrorPage()} methods to get the payload to
+     *                                  present to the user browser.
      */
-    void rebuild();
+    void rebuild()
+        throws DevShellRebuildException;
 }

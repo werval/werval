@@ -22,7 +22,7 @@ import org.qiweb.api.routes.internal.RouteBuilderContext;
 
 /**
  * Fluent builder to create new Route instances.
- *
+ * <p>
  * Routes can be parsed from a {@literal String} or created using this very builder.
  * The toString() method of {@literal Route} instances created using this builder output a {@literal String} that is
  * parseable by this builder.

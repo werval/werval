@@ -60,7 +60,7 @@ public interface HttpServer
 
     /**
      * Register a JVM shutdown hook to passivate the HttpServer.
-     *
+     * <p>
      * This method can be called ony once.
      *
      * @throws IllegalStateException when the passivation shutdown hook has already been registered

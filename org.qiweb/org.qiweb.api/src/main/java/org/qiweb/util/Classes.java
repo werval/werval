@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
- * Classe utilities.
+ * Class utilities.
  */
 public final class Classes
 {

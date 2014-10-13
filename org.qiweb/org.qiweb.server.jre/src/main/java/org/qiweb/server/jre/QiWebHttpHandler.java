@@ -28,6 +28,7 @@ import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.spi.server.HttpServerHelper;
 import org.qiweb.spi.ApplicationSPI;
+import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.util.InputStreamByteSource;
 import org.qiweb.util.InputStreams;
@@ -56,7 +57,14 @@ public class QiWebHttpHandler
         // In development mode, rebuild application source if needed
         if( devSpi != null && devSpi.isSourceChanged() )
         {
-            devSpi.rebuild();
+            try
+            {
+                devSpi.rebuild();
+            }
+            catch( Exception ex )
+            {
+                throw new DevShellRebuildException( ex );
+            }
         }
 
         // Parse request

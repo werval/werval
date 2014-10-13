@@ -35,7 +35,7 @@ public class ActivationException
 
     /**
      * Create a new ActivationException.
-     *
+     * <p>
      * Use the given cause message as own message.
      *
      * @param cause Cause

@@ -19,7 +19,7 @@ import org.qiweb.util.Reflectively;
 
 /**
  * {@link Application} Mode.
- *
+ * <p>
  * Default is {@link #TEST} Mode.
  */
 @Reflectively.Loaded( by = "DevShell" )
@@ -27,20 +27,20 @@ public enum Mode
 {
     /**
      * Development Mode.
-     *
+     * <p>
      * Source is watched, Application is restarted on-demand, stacktraces are disclosed in responses.
      */
     @Reflectively.Get( by = "DevShell" )
     DEV( "Development" ),
     /**
      * Test Mode.
-     *
+     * <p>
      * Intended to be used in unit tests, almost equivalent to {@link #PROD} Mode.
      */
     TEST( "Test" ),
     /**
      * Production Mode.
-     *
+     * <p>
      * Run from binaries only, nothing gets reloaded.
      */
     PROD( "Production" );

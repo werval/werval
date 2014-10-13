@@ -39,7 +39,7 @@ import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
 
 /**
  * Annotation to easily cache controllers outcomes.
- *
+ * <p>
  * The annotation can be used on controllers and on their methods.
  * <p>
  * Leverage both server-side and client-side caching mechanisms:

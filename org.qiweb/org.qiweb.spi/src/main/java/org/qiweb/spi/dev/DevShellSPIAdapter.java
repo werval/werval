@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
- *
+ * <p>
  * Extend and override {@link #doRebuild()} method to your will.
  * <p>
  * Note that this is the QiWeb HttpServer responsibility to trigger rebuilds.
@@ -40,19 +40,23 @@ import org.qiweb.api.exceptions.QiWebException;
 public class DevShellSPIAdapter
     implements DevShellSPI
 {
+    private final URL[] applicationSources;
     private final URL[] applicationClassPath;
     private final URL[] runtimeClassPath;
-    private boolean sourceChanged = true;
+    private boolean sourceChanged;
 
-    public DevShellSPIAdapter(
+    protected DevShellSPIAdapter(
+        URL[] applicationSources,
         URL[] applicationClassPath, URL[] runtimeClassPath,
         Set<File> toWatch, SourceWatcher watcher,
         boolean initialSourceChanged
     )
     {
+        this.applicationSources = Arrays.copyOf( applicationSources, applicationSources.length );
         this.applicationClassPath = Arrays.copyOf( applicationClassPath, applicationClassPath.length );
         this.runtimeClassPath = Arrays.copyOf( runtimeClassPath, runtimeClassPath.length );
         // QUID Unwatch sources on DevShell passivation?
+        this.sourceChanged = initialSourceChanged;
         watcher.watch(
             toWatch,
             new SourceChangeListener()
@@ -65,7 +69,6 @@ public class DevShellSPIAdapter
                 }
             }
         );
-        sourceChanged = initialSourceChanged;
     }
 
     @Override
@@ -83,9 +86,10 @@ public class DevShellSPIAdapter
     }
 
     @Override
-    public String sourceURL( final String fileName, int lineNumber )
+    public String sourceURL( String packageName, final String fileName, int lineNumber )
     {
-        for( URL path : runtimeClassPath )
+        final String packagePath = packageName.replaceAll( "\\.", "\\/" );
+        for( URL path : applicationSources )
         {
             try
             {
@@ -102,7 +106,7 @@ public class DevShellSPIAdapter
                             throws IOException
                             {
                                 File file = path.toFile();
-                                if( fileName.equals( file.getName() ) )
+                                if( fileName.equals( file.getName() ) && path.getParent().endsWith( packagePath ) )
                                 {
                                     found.add( file );
                                     return FileVisitResult.TERMINATE;
@@ -133,6 +137,7 @@ public class DevShellSPIAdapter
 
     @Override
     public final synchronized void rebuild()
+        throws DevShellRebuildException
     {
         if( sourceChanged )
         {
@@ -143,8 +148,11 @@ public class DevShellSPIAdapter
 
     /**
      * No operation.
+     *
+     * @throws DevShellRebuildException See {@link DevShellSPI#rebuild()}.
      */
     protected void doRebuild()
+        throws DevShellRebuildException
     {
         // NOOP
     }

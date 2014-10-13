@@ -28,7 +28,7 @@ public final class ThreadContextHelper
 {
     /**
      * Run a {@literal Runnable} with a Context.
-     *
+     * <p>
      * Use a {@link ThreadContextHelper} instance, see its methods documentation.
      *
      * @param context  Context
@@ -50,7 +50,7 @@ public final class ThreadContextHelper
 
     /**
      * Run a {@literal Callable} with a Context.
-     *
+     * <p>
      * Use a {@link ThreadContextHelper} instance, see its methods documentation.
      *
      * @param <T>      Parameterized type of the Callable result
@@ -82,7 +82,7 @@ public final class ThreadContextHelper
 
     /**
      * Set {@literal Context} on current {@literal Thread}.
-     *
+     * <p>
      * In order:
      * <ul>
      * <li>Keep previous thread context {@link ClassLoader}.</li>
@@ -121,7 +121,7 @@ public final class ThreadContextHelper
 
     /**
      * Remove {@literal Context} from current {@literal Thread}.
-     *
+     * <p>
      * In order:
      * <ul>
      * <li>Remove current Request ID from SLF4J MDC.</li>

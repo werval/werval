@@ -57,25 +57,29 @@ public class DevShellMojo
 
         try
         {
-            // Runtime Classpath
-            URL[] runtimeClassPath = runtimeClassPath();
+            // Application Sources
+            URL[] applicationSources = applicationSources();
 
             // Application Classpath
             Set<URL> appCP = qiwebDocArtifacts();
             appCP.add( new File( project.getBasedir(), "target/classes" ).toURI().toURL() );
             URL[] applicationClasspath = appCP.toArray( new URL[ appCP.size() ] );
 
-            // Sources
-            Set<File> sources = new LinkedHashSet<>();
-            for( String sourceRoot : project.getCompileSourceRoots() )
+            // Runtime Classpath
+            URL[] runtimeClassPath = runtimeClassPath();
+
+            // To watch for changes
+            Set<File> toWatch = new LinkedHashSet<>();
+            for( String eachToWatch : project.getCompileSourceRoots() )
             {
-                sources.add( new File( sourceRoot ) );
+                toWatch.add( new File( eachToWatch ) );
             }
 
             // Start DevShell
             DevShellSPI devShellSPI = new MavenDevShellSPI(
+                applicationSources,
                 applicationClasspath, runtimeClassPath,
-                sources,
+                toWatch,
                 new JavaWatcher(),
                 project.getBasedir(),
                 rebuildPhase
@@ -86,6 +90,18 @@ public class DevShellMojo
         {
             throw new MojoExecutionException( ex.getMessage(), ex );
         }
+    }
+
+    protected URL[] applicationSources()
+        throws MalformedURLException
+    {
+        Set<URL> sourcesSet = new LinkedHashSet<>();
+        for( String applicationSourcesElement : project.getCompileSourceRoots() )
+        {
+            sourcesSet.add( new File( applicationSourcesElement ).toURI().toURL() );
+        }
+        project.getCompileSourceRoots();
+        return sourcesSet.toArray( new URL[ sourcesSet.size() ] );
     }
 
     protected Set<URL> qiwebDocArtifacts()

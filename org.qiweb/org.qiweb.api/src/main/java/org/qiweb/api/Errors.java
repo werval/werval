@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Application errors.
- *
+ * <p>
  * Records errors happening in the application.
  * <p>
  * To prevent OOME when errors are frequent, it is possible to limit the amount of recorded errors with the

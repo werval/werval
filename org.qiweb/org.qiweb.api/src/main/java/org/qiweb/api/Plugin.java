@@ -26,7 +26,7 @@ import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Application Plugin.
- *
+ * <p>
  * A {@literal Plugin} is activated/passivated alongside the {@literal Application}
  * and can contribute {@literal Routes} to it.
  *
@@ -54,7 +54,7 @@ public interface Plugin<API>
 
     /**
      * Invoked on Application activation.
-     *
+     * <p>
      * Defaults to no operation.
      *
      * @param application Application
@@ -69,7 +69,7 @@ public interface Plugin<API>
 
     /**
      * Prefix for Routes contributed by this Plugin.
-     *
+     * <p>
      * Defaults to an empty string unless the Plugin declaration contains a {@literal routesPrefix} value.
      *
      * @param pluginConfig Plugin Config Object, null for extra plugins declared in Global
@@ -87,7 +87,7 @@ public interface Plugin<API>
 
     /**
      * Routes to prepend to the Application routes.
-     *
+     * <p>
      * Defaults to no Route.
      * <p>
      * Called by {@literal Application} once activated.
@@ -104,7 +104,7 @@ public interface Plugin<API>
 
     /**
      * Routes to append to the Application routes.
-     *
+     * <p>
      * Defaults to no Route.
      * <p>
      * Called by {@literal Application} once activated.
@@ -121,7 +121,7 @@ public interface Plugin<API>
 
     /**
      * Invoked on Application passivation.
-     *
+     * <p>
      * Defaults to no operation.
      *
      * @param application Application
@@ -133,7 +133,7 @@ public interface Plugin<API>
 
     /**
      * Invoked before each HTTP Interaction.
-     *
+     * <p>
      * Defaults to no operation.
      *
      * @param context Interaction Context
@@ -145,7 +145,7 @@ public interface Plugin<API>
 
     /**
      * Invoked after each HTTP Interaction.
-     *
+     * <p>
      * Defaults to no operation.
      *
      * @param context Interaction Context
@@ -157,7 +157,7 @@ public interface Plugin<API>
 
     /**
      * Void Plugin exposing no type to the Application.
-     *
+     * <p>
      * Use this as a base class for your under cover plugins.
      */
     abstract class Void

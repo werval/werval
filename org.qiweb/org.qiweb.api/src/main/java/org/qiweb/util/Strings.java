@@ -23,6 +23,7 @@ import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import static java.util.Objects.requireNonNull;
 import static org.qiweb.util.IllegalArguments.ensureGreaterOrEqual;
 
 /**
@@ -484,6 +485,45 @@ public final class Strings
     public static String withoutHead( String input, String head )
     {
         return input.startsWith( head ) ? input.substring( head.length() ) : input;
+    }
+
+    public static int indexOfNth( String string, int count, String substring )
+    {
+        requireNonNull( string, "String" );
+        ensureGreaterOrEqual( "N", count, 1 );
+        requireNonNull( substring, "Sub String" );
+        int index = -1;
+        int nextFromIndex = 0;
+        for( int loop = 0; loop < count; loop++ )
+        {
+            int loopIndex = string.indexOf( substring, nextFromIndex );
+            if( loopIndex < 0 )
+            {
+                return -1;
+            }
+            index = loopIndex;
+            nextFromIndex = loopIndex + substring.length();
+        }
+        return index;
+    }
+
+    public static int lastIndexOfNth( String string, int count, String substring )
+    {
+        requireNonNull( string, "String" );
+        ensureGreaterOrEqual( "N", count, 1 );
+        requireNonNull( substring, "Sub String" );
+        String inner = string;
+        int index = -1;
+        for( int loop = 0; loop < count; loop++ )
+        {
+            index = inner.lastIndexOf( substring );
+            if( index < 0 )
+            {
+                break;
+            }
+            inner = inner.substring( 0, index );
+        }
+        return index;
     }
 
     private Strings()

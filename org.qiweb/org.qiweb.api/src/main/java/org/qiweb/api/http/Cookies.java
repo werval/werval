@@ -20,7 +20,7 @@ import org.qiweb.api.http.Cookies.Cookie;
 
 /**
  * HTTP Cookies.
- *
+ * <p>
  * Cookies are loaded from the {@literal Cookie} header of a {@link RequestHeader}.
  * <p>
  * See:
@@ -106,7 +106,7 @@ public interface Cookies
 
         /**
          * Maximum age of the cookie in seconds.
-         *
+         * <p>
          * A positive value indicates that the cookie will expire after that many seconds have passed.
          * Note that the value is the maximum age when the cookie will expire, not the cookie's current age.
          * <p>

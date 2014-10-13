@@ -62,6 +62,7 @@ public final class Stacktraces
     }
 
     private static final Pattern LINKS_PATTERN = Pattern.compile( "(?<left>.+\\()(?<file>.+\\..+):(?<line>[0-9]+)\\)" );
+    private static final Pattern LINKS_PACKAGE_PATTERN = Pattern.compile( ".*at (?<packageName>.+)\\(" );
 
     public static Predicate<Throwable> containsEqual( Class<? extends Throwable> throwableClass )
     {
@@ -95,12 +96,13 @@ public final class Stacktraces
         /**
          * Generate URL for the given filename and line number.
          *
-         * @param filename File name
-         * @param line     Line number
+         * @param packageName Package name
+         * @param filename    File name
+         * @param line        Line number
          *
          * @return URL for the given filename and line number, or null if not found
          */
-        String urlFor( String filename, int line );
+        String urlFor( String packageName, String filename, int line );
     }
 
     /**
@@ -110,10 +112,17 @@ public final class Stacktraces
         implements FileURLGenerator
     {
         @Override
-        public String urlFor( String filename, int line )
+        public String urlFor( String packageName, String filename, int line )
         {
             return null;
         }
+    }
+
+    public static String toString( Throwable throwable )
+    {
+        StringWriter traceWriter = new StringWriter();
+        throwable.printStackTrace( new PrintWriter( traceWriter ) );
+        return traceWriter.toString();
     }
 
     public static CharSequence toHtml( Throwable throwable, FileURLGenerator urlGen )
@@ -121,25 +130,26 @@ public final class Stacktraces
         // Parameters
         ensureNotNull( "Throwable", throwable );
         ensureNotNull( "FileURLGenerator", urlGen );
-        String containerClassName = "qiweb-stacktrace";
 
         // Get trace
-        StringWriter traceWriter = new StringWriter();
-        throwable.printStackTrace( new PrintWriter( traceWriter ) );
-        String trace = traceWriter.toString();
+        String originalTrace = toString( throwable );
 
         // Add links
-        traceWriter = new StringWriter();
-        Scanner scanner = new Scanner( trace );
+        StringWriter traceWriter = new StringWriter();
+        Scanner scanner = new Scanner( originalTrace );
         while( scanner.hasNextLine() )
         {
             String line = scanner.nextLine();
             Matcher matcher = LINKS_PATTERN.matcher( line );
             if( matcher.matches() )
             {
+                Matcher packageNameMatcher = LINKS_PACKAGE_PATTERN.matcher( matcher.group( "left" ) );
+                packageNameMatcher.matches();
+                String packageName = packageNameMatcher.group( "packageName" );
+                packageName = packageName.substring( 0, Strings.lastIndexOfNth( packageName, 2, "." ) );
                 String filename = matcher.group( "file" );
                 String lineNumber = matcher.group( "line" );
-                String url = urlGen.urlFor( filename, Integer.valueOf( lineNumber ) );
+                String url = urlGen.urlFor( packageName, filename, Integer.valueOf( lineNumber ) );
                 if( Strings.isEmpty( url ) )
                 {
                     traceWriter.append( line ).append( "\n" );
@@ -158,12 +168,10 @@ public final class Stacktraces
         }
 
         // Put in HTML container
-        StringBuilder html = new StringBuilder();
-        html.append( "<div class=\"" ).append( containerClassName ).append( "\" style=\"white-space: pre;\">\n" );
-        html.append( traceWriter.toString() );
-        html.append( "</div>\n" );
-
-        return html;
+        return new StringBuilder()
+            .append( "<div class=\"qiweb-stacktrace\" style=\"white-space: pre; font-family: monospace\">\n" )
+            .append( traceWriter.toString() )
+            .append( "</div>\n" );
     }
 
     private Stacktraces()

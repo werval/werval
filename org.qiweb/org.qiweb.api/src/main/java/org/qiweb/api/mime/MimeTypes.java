@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 
 /**
  * MimeTypes registry.
- *
+ * <p>
  * Mime Type lookups always succeed and thus never return null.
  * <p>
  * If unable to detect, {@link #APPLICATION_OCTET_STREAM} is returned.

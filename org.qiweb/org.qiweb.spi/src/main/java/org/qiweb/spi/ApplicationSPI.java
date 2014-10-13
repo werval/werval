@@ -27,7 +27,7 @@ import org.qiweb.util.Reflectively;
 
 /**
  * Application SPI.
- *
+ * <p>
  * Intended for use by HttpServer implementations, the DevShell and Application unit tests.
  * <p>
  * Don't use in your Application code.
@@ -38,7 +38,7 @@ public interface ApplicationSPI
 {
     /**
      * Application Global object.
-     *
+     * <p>
      * The Application Global object should not be accessed by Application code,
      * that's why this accessor is in ApplicationSPI only.
      *
@@ -48,7 +48,7 @@ public interface ApplicationSPI
 
     /**
      * HTTP API Objects Builders SPI.
-     *
+     * <p>
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
      * All builders are immutable and reusable.
      *
@@ -78,7 +78,7 @@ public interface ApplicationSPI
 
     /**
      * Callback for completed HTTP requests.
-     *
+     * <p>
      * Called once the whole response has been sent to the client.
      *
      * @param requestHeader Original request header
@@ -87,7 +87,7 @@ public interface ApplicationSPI
 
     /**
      * Build the Outcome of any request happening while shutting down.
-     *
+     * <p>
      * This should return a {@literal 503 Service Unavailable} status
      * and a wisely choosen {@literal Retry-After} header.
      *

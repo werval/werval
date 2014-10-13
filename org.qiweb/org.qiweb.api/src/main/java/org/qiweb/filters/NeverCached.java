@@ -35,7 +35,6 @@ import static org.qiweb.api.http.Headers.Names.PRAGMA;
 
 /**
  * Never Cached.
- *
  * <blockquote><pre>
  * Cache-Control: no-cache, no-store, max-age=0, must-revalidate
  * Pragma: no-cache

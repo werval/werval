@@ -28,7 +28,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Base class to write HttpServer implementations.
- *
+ * <p>
  * Primary responsibility is error handling across lifecycle.
  * <p>
  * See {@link HttpServerHelper} for composable helper methods to use in implementations.

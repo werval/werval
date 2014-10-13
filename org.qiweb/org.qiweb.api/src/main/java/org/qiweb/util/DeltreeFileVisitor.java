@@ -24,7 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * Deltree FileVisitor.
- *
+ * <p>
  * <code>Files.walkFileTree( dir.toPath(), new DeltreeFileVisitor() );</code>
  */
 public class DeltreeFileVisitor
