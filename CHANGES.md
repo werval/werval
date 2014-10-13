@@ -21,9 +21,9 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-### develop - [history](https://scm.codeartisans.org/qiweb/qiweb/network/develop)
+### 0.3.0-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.1-beta)
 
-> This is the current development branch, unreleased!
+> Punk is not dead and has been bugfixed!
 
 #### Bug fixes
 
