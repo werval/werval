@@ -57,14 +57,14 @@ public class DevShellRebuildException
         if( buildLog != null )
         {
             html.append( "<h3>Build log</h3>\n" );
-            html.append( "<div class=\"" ).append( "qiweb-buildlog" ).append( "\" style=\"white-space: pre;\">\n" );
+            html.append( "<div class=\"qiweb-buildlog\" style=\"white-space: pre; font-family: monospace\">\n" );
             html.append( buildLog );
             html.append( "</div>\n" );
         }
         else
         {
             html.append( "<h3>StackTrace</h3>\n" );
-            html.append( "<div class=\"" ).append( "qiweb-stacktrace" ).append( "\" style=\"white-space: pre;\">\n" );
+            html.append( "<div class=\"qiweb-stacktrace\" style=\"white-space: pre; font-family: monospace\">\n" );
             html.append( Stacktraces.toString( getCause() ) );
             html.append( "</div>\n" );
         }

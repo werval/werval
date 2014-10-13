@@ -86,8 +86,9 @@ public class DevShellSPIAdapter
     }
 
     @Override
-    public String sourceURL( final String fileName, int lineNumber )
+    public String sourceURL( String packageName, final String fileName, int lineNumber )
     {
+        final String packagePath = packageName.replaceAll( "\\.", "\\/" );
         for( URL path : applicationSources )
         {
             try
@@ -105,7 +106,7 @@ public class DevShellSPIAdapter
                             throws IOException
                             {
                                 File file = path.toFile();
-                                if( fileName.equals( file.getName() ) )
+                                if( fileName.equals( file.getName() ) && path.getParent().endsWith( packagePath ) )
                                 {
                                     found.add( file );
                                     return FileVisitResult.TERMINATE;

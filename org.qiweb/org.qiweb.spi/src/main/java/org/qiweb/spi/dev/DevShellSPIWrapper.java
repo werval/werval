@@ -49,9 +49,9 @@ public class DevShellSPIWrapper
     }
 
     @Override
-    public String sourceURL( String fileName, int lineNumber )
+    public String sourceURL( String packageName, String fileName, int lineNumber )
     {
-        return wrapped.sourceURL( fileName, lineNumber );
+        return wrapped.sourceURL( packageName, fileName, lineNumber );
     }
 
     @Override

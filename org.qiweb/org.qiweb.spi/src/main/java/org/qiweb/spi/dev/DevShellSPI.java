@@ -81,12 +81,13 @@ public interface DevShellSPI
     /**
      * Build Application source file URL if it exists.
      *
-     * @param fileName   File name
-     * @param lineNumber Line number
+     * @param packageName Package name
+     * @param fileName    File name
+     * @param lineNumber  Line number
      *
      * @return URL to the Application source file or null if not present.
      */
-    String sourceURL( String fileName, int lineNumber );
+    String sourceURL( String packageName, String fileName, int lineNumber );
 
     /**
      * @return Return true if source has changed since last call to {@link #rebuild()}, false otherwise
