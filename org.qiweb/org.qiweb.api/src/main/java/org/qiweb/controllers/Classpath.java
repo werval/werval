@@ -82,7 +82,7 @@ public class Classpath
      */
     public Outcome resource( String basepath, String path )
     {
-        return resource( withoutTrail( path, "/" ) + '/' + withoutHead( path, "/" ) );
+        return resource( withoutTrail( basepath, "/" ) + '/' + withoutHead( path, "/" ) );
     }
 
     /**
