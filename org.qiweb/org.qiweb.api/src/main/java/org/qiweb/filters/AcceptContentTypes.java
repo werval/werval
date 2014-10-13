@@ -34,10 +34,7 @@ import org.qiweb.api.outcomes.Outcome;
  * A request with a content-type not listed will be rejected with a {@literal 400 Bad Request}.
  */
 @FilterWith( AcceptContentTypes.Filter.class )
-@Target(
-        {
-        ElementType.METHOD, ElementType.TYPE
-    } )
+@Target( { ElementType.METHOD, ElementType.TYPE } )
 @Retention( RetentionPolicy.RUNTIME )
 @Inherited
 @Documented

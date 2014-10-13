@@ -32,6 +32,11 @@ For minor changes, build system or test changes, see the full [source code histo
 - DevShell: fix application source URL corner-case bug when several files have the same name, see #177
 - DevShell: when a build error occurs, the build log is now showed in the browser, see #176
 
+#### New features
+
+- Add `@LogIfSlow` filter annotation that logs slow interactions, see #180
+
+
 
 ### 0.3.0-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.0-beta)
 
