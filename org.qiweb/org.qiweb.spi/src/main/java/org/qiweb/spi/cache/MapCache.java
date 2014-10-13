@@ -24,7 +24,7 @@ import org.qiweb.util.Numbers;
 
 /**
  * In-Memory Cache backed by a {@link ConcurrentHashMap}.
- *
+ * <p>
  * This is the default Cache Extension used if your Application do not declare any Cache Plugin.
  * <p>
  * Expiration is applied on access only.

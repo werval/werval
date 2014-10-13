@@ -27,7 +27,6 @@ public class HttpServerHelper
 
     /**
      * Generates a new request identity.
-     *
      * <p>
      * See {@link UUIDIdentityGenerator}.
      *

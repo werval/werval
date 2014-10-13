@@ -48,7 +48,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Controller to serve static files or directory tree.
- *
+ * <p>
  * Cache behaviour can be tweeked with <code>qiweb.controllers.static</code> config properties.
  * <p>
  * Always use streamed identity transfer encoding.
@@ -67,7 +67,7 @@ public class Static
 
     /**
      * Serve a filesystem directory as read-only resources.
-     *
+     * <p>
      * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
@@ -84,7 +84,7 @@ public class Static
 
     /**
      * Serve a filesystem directory as read-only resources.
-     *
+     * <p>
      * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
@@ -101,7 +101,7 @@ public class Static
 
     /**
      * Serve a filesystem directory as read-only resources.
-     *
+     * <p>
      * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *

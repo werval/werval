@@ -33,7 +33,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 /**
  * Base QiWeb HTTP JUnit Test.
- *
+ * <p>
  * Activate/Passivate QiWeb Application and HTTP Server in test mode around each JUnit test method.
  * <p>
  * By default, configuration is loaded from the <code>application.conf</code> file.

@@ -21,14 +21,14 @@ import java.util.Set;
 
 /**
  * Development Shell Service Provider Interface.
- *
+ * <p>
  * Methods of this class are used as extension points by the QiWeb Runtime in Development Mode.
  */
 public interface DevShellSPI
 {
     /**
      * File watching abstraction.
-     *
+     * <p>
      * Allow DevShell implementations to choose their file watching implementation.
      */
     interface SourceWatcher
@@ -62,7 +62,7 @@ public interface DevShellSPI
 
     /**
      * Application Classpath.
-     *
+     * <p>
      * Typically build output directories.
      *
      * @return Application Classpath elements
@@ -71,7 +71,7 @@ public interface DevShellSPI
 
     /**
      * Runtime Classpath.
-     *
+     * <p>
      * Typically application dependencies, including QiWeb.
      *
      * @return Runtime Classpath elements

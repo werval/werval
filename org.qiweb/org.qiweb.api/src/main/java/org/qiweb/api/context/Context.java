@@ -26,7 +26,7 @@ import org.qiweb.api.routes.Route;
 
 /**
  * HTTP Interaction Context.
- *
+ * <p>
  * Accessible using {@link CurrentContext#get()} and other static helpers in {@link CurrentContext}.
  */
 public interface Context
@@ -68,7 +68,7 @@ public interface Context
 
     /**
      * Current Executor.
-     *
+     * <p>
      * Convey the current {@literal Context} to parallel threads.
      * <p>
      * Use when composing {@literal CompletableFutures} or to submit paralled {@literal Stream} operations.

@@ -19,13 +19,11 @@ import org.qiweb.api.Mode;
 import org.qiweb.api.outcomes.Outcome;
 
 import static org.qiweb.api.context.CurrentContext.application;
-import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 /**
  * Welcome Controller.
- *
+ * <p>
  * Set to default route of new Applications created by the QiWeb CLI 'new' command.
  * <p>
  * The served QiWeb Welcome Page depends on the Application's {@link Mode}.
@@ -47,7 +45,7 @@ public class Welcome
                       : "org/qiweb/controllers/welcome.html";
         return outcomes()
             .ok()
-            .as( mimeTypes().withCharsetOfTextual( TEXT_HTML ) )
+            .asHtml()
             .withBody( application().classLoader().getResourceAsStream( path ) )
             .build();
     }

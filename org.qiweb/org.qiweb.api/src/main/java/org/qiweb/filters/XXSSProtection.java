@@ -33,7 +33,6 @@ import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
  * X-XSS-Protection.
- *
  * <p>
  * Try to prevent <a href="en.wikipedia.org/wiki/Cross-site_scripting">Cross-Site-Scripting</a> attacks.
  * <p>

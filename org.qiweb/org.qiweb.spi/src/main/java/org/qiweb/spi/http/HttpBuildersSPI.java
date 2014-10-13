@@ -28,7 +28,7 @@ import org.qiweb.util.ByteSource;
 
 /**
  * HTTP API Objects Builders SPI.
- *
+ * <p>
  * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
  * <p>
  * Typically used in unit tests running an Application.
@@ -40,7 +40,7 @@ public interface HttpBuildersSPI
 {
     /**
      * Create a new Request Builder.
-     *
+     * <p>
      * HTTP Method and URI are mandatory.
      *
      * @return A new Request Builder
@@ -49,14 +49,14 @@ public interface HttpBuildersSPI
 
     /**
      * Request Builder.
-     *
+     * <p>
      * HTTP Method and URI are mandatory.
      */
     interface RequestBuilder
     {
         /**
          * Request identity.
-         *
+         * <p>
          * Default to {@literal NO_REQUEST_ID}.
          *
          * @param identity Request identity
@@ -67,7 +67,7 @@ public interface HttpBuildersSPI
 
         /**
          * Remote socket address.
-         *
+         * <p>
          * Optional.
          *
          * @param remoteSocketAddress Remote socket address
@@ -78,7 +78,7 @@ public interface HttpBuildersSPI
 
         /**
          * Protocol version.
-         *
+         * <p>
          * Default to {@link ProtocolVersion#HTTP_1_1}.
          *
          * @param version Protocol version
@@ -89,7 +89,7 @@ public interface HttpBuildersSPI
 
         /**
          * HTTP method.
-         *
+         * <p>
          * Mandatory.
          *
          * @param method HTTP method
@@ -100,7 +100,7 @@ public interface HttpBuildersSPI
 
         /**
          * HTTP method.
-         *
+         * <p>
          * Mandatory.
          *
          * @param method HTTP method
@@ -111,7 +111,7 @@ public interface HttpBuildersSPI
 
         /**
          * URI.
-         *
+         * <p>
          * Mandatory.
          *
          * @param uri URI
@@ -239,7 +239,6 @@ public interface HttpBuildersSPI
 
         /**
          * Body form and uploads.
-         *
          *
          * @param attributes Form attributes
          * @param uploads    Multipart uploads

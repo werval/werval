@@ -32,7 +32,7 @@ import org.qiweb.util.Stacktraces;
 
 /**
  * Application.
- *
+ * <p>
  * An Application instance can run in different {@link Mode}s, default Mode is {@link Mode#TEST}. For your code to
  * be {@link Mode#DEV} friendly, don't hold references to instances returned by an Application instance.
  */
@@ -71,7 +71,7 @@ public interface Application
 
     /**
      * Application {@link Config}.
-     *
+     * <p>
      * Don't hold references to the Config instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link Config}
@@ -80,7 +80,7 @@ public interface Application
 
     /**
      * Lookup a Plugin's API.
-     *
+     * <p>
      * Don't hold references to the Plugins API instances in order to make your code {@link Mode#DEV} friendly.
      *
      * @param <T>           Parameterized Plugin API type
@@ -95,7 +95,7 @@ public interface Application
 
     /**
      * Lookup possibly several Plugin's API.
-     *
+     * <p>
      * Don't hold references to the Plugins API instances in order to make your code {@link Mode#DEV} friendly.
      *
      * @param <T>           Parameterized Plugin API type
@@ -110,7 +110,7 @@ public interface Application
 
     /**
      * Application {@link Crypto}.
-     *
+     * <p>
      * Don't hold references to the Crypto instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link Crypto}
@@ -119,7 +119,7 @@ public interface Application
 
     /**
      * Application {@link Langs}.
-     *
+     * <p>
      * Don't hold references to the Langs instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link Langs}
@@ -142,7 +142,7 @@ public interface Application
 
     /**
      * Application {@link ClassLoader}.
-     *
+     * <p>
      * Don't hold references to the ClassLoader instance to prevent memory leaks in {@link Mode#DEV}.
      *
      * @return Application {@link ClassLoader}
@@ -151,7 +151,7 @@ public interface Application
 
     /**
      * Default Application ExecutorService.
-     *
+     * <p>
      * Convey the current {@literal Context} to parallel threads if any.
      * <p>
      * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
@@ -165,7 +165,7 @@ public interface Application
 
     /**
      * Application Executors.
-     *
+     * <p>
      * Convey the current {@literal Context} to parallel threads if any.
      * <p>
      * Use when composing {@literal CompletableFutures} or to submit parallel {@literal Stream} operations.
@@ -176,7 +176,7 @@ public interface Application
 
     /**
      * HTTP API Objects Builders SPI.
-     *
+     * <p>
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
      * All builders are immutable and reusable.
      *
@@ -186,7 +186,7 @@ public interface Application
 
     /**
      * Application {@link Routes}.
-     *
+     * <p>
      * Don't hold references to the Routes instance in order to make your code {@link Mode#DEV} friendly.
      * <p>
      * The <em>Application Routes</em> include Routes contributed by registered Plugins.
@@ -199,7 +199,7 @@ public interface Application
 
     /**
      * Application {@link ReverseRoutes}.
-     *
+     * <p>
      * Don't hold references to the ReverseRoutes instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link ReverseRoutes}
@@ -210,7 +210,7 @@ public interface Application
 
     /**
      * Application {@link ParameterBinders}.
-     *
+     * <p>
      * Don't hold references to the ParameterBinders instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link ParameterBinders}
@@ -219,7 +219,7 @@ public interface Application
 
     /**
      * Application {@link MimeTypes}.
-     *
+     * <p>
      * Don't hold references to the MimeTypes instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link MimeTypes}
@@ -228,7 +228,7 @@ public interface Application
 
     /**
      * Application {@link MetaData}.
-     *
+     * <p>
      * Don't hold references to the MetaData instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link MetaData}
@@ -237,7 +237,7 @@ public interface Application
 
     /**
      * Application {@link Cache}.
-     *
+     * <p>
      * Don't hold references to the Cache instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link Cache}
@@ -246,7 +246,6 @@ public interface Application
 
     /**
      * Application {@link Templates}.
-     *
      * <p>
      * Don't hold references to the Templates instance in order to make your code {@link Mode#DEV} friendly.
      *
@@ -258,7 +257,7 @@ public interface Application
 
     /**
      * Application {@link Errors}.
-     *
+     * <p>
      * Don't hold references to the Errors instance in order to make your code {@link Mode#DEV} friendly.
      *
      * @return Application {@link Errors}
@@ -267,7 +266,7 @@ public interface Application
 
     /**
      * FileURLGenerator for Application Sources.
-     *
+     * <p>
      * Works only in {@link Mode#DEV} mode.
      *
      * @return FileURLGenerator for Application Sources

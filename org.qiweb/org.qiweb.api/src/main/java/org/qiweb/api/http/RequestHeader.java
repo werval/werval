@@ -24,7 +24,7 @@ import org.qiweb.api.routes.Route;
 
 /**
  * Request header.
- *
+ * <p>
  * Method, Path, QueryString, Headers and Cookies.
  * <p>
  * No Entity.
@@ -78,7 +78,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Client Address.
-     *
+     * <p>
      * Default value is the underlying socket client address.
      * <p>
      * If the {@literal qiweb.http.headers.x_forwarded_for.enabled} configuration property is {@literal yes}, then
@@ -97,7 +97,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Host with or without the port, or an empty String.
-     *
+     * <p>
      * HTTP Host header, mandatory since HTTP 1.1.
      *
      * @return The HTTP Host with or without the port, or an empty String
@@ -106,7 +106,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Port.
-     *
+     * <p>
      * Computed from the request URI or HTTP Host header and standard defaults 80/443.
      *
      * @return The HTTP Port
@@ -115,7 +115,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Domain.
-     *
+     * <p>
      * Computed from the request URI.
      *
      * @return The HTTP Domain
@@ -124,7 +124,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Request content type, or and empty String.
-     *
+     * <p>
      * Computed from the Content-Type header, charset removed.
      *
      * @return The HTTP Request content type, or and empty String
@@ -133,7 +133,7 @@ public interface RequestHeader
 
     /**
      * The HTTP Request Charset or an empty String.
-     *
+     * <p>
      * Computed from the Content-Type header.
      *
      * @return The HTTP Request Charset or an empty String
@@ -142,7 +142,7 @@ public interface RequestHeader
 
     /**
      * Return {@literal true} if and only if the connection can remain open.
-     *
+     * <p>
      * Honnor {@link Headers.Names#CONNECTION} header and then protocol version defaults.
      *
      * @return {@literal true} if the connection should be kept-alive, {@literal false} otherwise
@@ -151,7 +151,7 @@ public interface RequestHeader
 
     /**
      * Bind Route parameters.
-     *
+     * <p>
      * Successive calls to {@link #parameters()} will return bound parameters.
      *
      * @param parameterBinders Parameter binders
@@ -177,7 +177,7 @@ public interface RequestHeader
 
     /**
      * Preferred Language.
-     *
+     * <p>
      * Guess the preferred language according to the {@literal Accept-Language} request header or Application's
      * preferred language, or the language of the default {@literal Locale}.
      *
@@ -203,7 +203,7 @@ public interface RequestHeader
 
     /**
      * Preferred Mime Type.
-     *
+     * <p>
      * Guess the preferred mime types among given mime types according to the {@literal Accept} request header.
      * <p>
      * If the request accepts any mime type and no candidate were given, return {@literal *\/*}, otherwise return the

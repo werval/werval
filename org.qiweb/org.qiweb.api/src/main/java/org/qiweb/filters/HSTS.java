@@ -31,7 +31,6 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * HTTP Strict-Transport-Security.
- *
  * <p>
  * <a href="https://tools.ietf.org/html/rfc6797">RFC6797</a>.
  * <p>

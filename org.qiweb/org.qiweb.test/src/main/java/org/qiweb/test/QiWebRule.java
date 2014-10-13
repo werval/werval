@@ -23,7 +23,7 @@ import org.qiweb.spi.ApplicationSPI;
 
 /**
  * QiWeb JUnit Rule.
- *
+ * <p>
  * Activate/Passivate QiWeb Application in test mode around JUnit tests.
  * <p>
  * Can be used to activate/passivate around each method test as a {@literal @}{@link org.junit.Rule}

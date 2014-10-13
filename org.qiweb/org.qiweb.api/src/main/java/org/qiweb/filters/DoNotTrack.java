@@ -31,7 +31,6 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Do Not Track.
- *
  * <p>
  * Set a Context MetaData boolean value indicating whether the client advertised a Do-Not-Track header using the
  * {@literal DNT} key.

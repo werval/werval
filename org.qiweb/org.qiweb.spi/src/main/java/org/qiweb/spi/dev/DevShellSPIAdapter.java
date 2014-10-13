@@ -32,7 +32,7 @@ import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
- *
+ * <p>
  * Extend and override {@link #doRebuild()} method to your will.
  * <p>
  * Note that this is the QiWeb HttpServer responsibility to trigger rebuilds.

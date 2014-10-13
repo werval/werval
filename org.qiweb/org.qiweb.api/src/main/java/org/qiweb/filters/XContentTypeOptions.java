@@ -30,7 +30,6 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * X-Content-Type-Options.
- *
  * <p>
  * The only defined value, "nosniff", prevents browsers from infering the MIME type.
  * <p>

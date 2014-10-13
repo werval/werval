@@ -33,7 +33,7 @@ import org.qiweb.api.templates.Templates;
 
 /**
  * Current Context.
- *
+ * <p>
  * Static utility methods to get a hand on the thread local Context.
  */
 public final class CurrentContext
@@ -107,7 +107,7 @@ public final class CurrentContext
 
     /**
      * Lookup a Plugin's API.
-     *
+     * <p>
      * Don't hold references to the Plugins API instances in order to make your code {@link org.qiweb.api.Mode#DEV}
      * friendly.
      *
@@ -126,7 +126,7 @@ public final class CurrentContext
 
     /**
      * Lookup possibly several Plugin's API.
-     *
+     * <p>
      * Don't hold references to the Plugins API instances in order to make your code {@link org.qiweb.api.Mode#DEV}
      * friendly.
      *

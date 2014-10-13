@@ -31,7 +31,7 @@ import static java.util.Collections.EMPTY_LIST;
 
 /**
  * Application Global Object.
- *
+ * <p>
  * Provide lifecycle, instanciation, invocation and error handling hooks.
  * <p>
  * You are encouraged to subclass it in your Application code by setting the <code>app.global</code> configuration
@@ -45,7 +45,7 @@ public class Global
 
     /**
      * Chance to provide extra Plugins instances programmatically.
-     *
+     * <p>
      * Invoked before Application activation.
      * <p>
      * Default to no extra Plugins.
@@ -59,7 +59,7 @@ public class Global
 
     /**
      * Application activation.
-     *
+     * <p>
      * Invoked after all Plugins activation.
      * <p>
      * Default to NOOP.
@@ -72,7 +72,7 @@ public class Global
 
     /**
      * Application passivation.
-     *
+     * <p>
      * Invoked before all Plugins passivation.
      * <p>
      * Default to NOOP.
@@ -85,7 +85,7 @@ public class Global
 
     /**
      * Invoked before binding Http Server.
-     *
+     * <p>
      * Invoked after {@link #onActivate(org.qiweb.api.Application)}.
      * <p>
      * Default to NOOP.
@@ -100,7 +100,7 @@ public class Global
 
     /**
      * Invoked after binding Http Server.
-     *
+     * <p>
      * Default to NOOP.
      * <p>
      * Reloads occuring in development mode do not trigger this call.
@@ -113,7 +113,7 @@ public class Global
 
     /**
      * Invoked before unbinding Http Server.
-     *
+     * <p>
      * Default to NOOP.
      * <p>
      * Reloads occuring in development mode do not trigger this call.
@@ -126,7 +126,7 @@ public class Global
 
     /**
      * Invoked after unbinding Http Server.
-     *
+     * <p>
      * Invoked before {@link #onPassivate(org.qiweb.api.Application)}.
      * <p>
      * Default to NOOP.
@@ -141,7 +141,7 @@ public class Global
 
     /**
      * Get Plugin instance.
-     *
+     * <p>
      * Default to {@link Class#newInstance()}.
      *
      * @param <T>         Plugin Parameterized Type
@@ -164,7 +164,7 @@ public class Global
 
     /**
      * Get Filter instance.
-     *
+     * <p>
      * Default to {@link Class#newInstance()}.
      *
      * @param <T>         Filter Parameterized Type
@@ -187,7 +187,7 @@ public class Global
 
     /**
      * Get Controller instance.
-     *
+     * <p>
      * Default to {@link Class#newInstance()}.
      *
      * @param <T>            Controller Parameterized Type
@@ -210,7 +210,7 @@ public class Global
 
     /**
      * Invoke Controller Method.
-     *
+     * <p>
      * Default to {@link Method#invoke(java.lang.Object, java.lang.Object[])}.
      * <p>
      * Acceptable return types are:
@@ -241,7 +241,7 @@ public class Global
 
     /**
      * Invoked when a request completed successfully and all bytes are sent to the client.
-     *
+     * <p>
      * Default to NOOP.
      * <p>
      * If this method throws an exception, it will be logged it but it won't be rethrown
@@ -256,7 +256,7 @@ public class Global
 
     /**
      * Give a chance to clean-up stacktraces of Throwables poping out of the Application.
-     *
+     * <p>
      * Default to {@link QiWebException}{@literal >}{@link InvocationTargetException} cleanup in development mode.
      * <p>
      * Do nothing in test and production modes.
@@ -282,7 +282,7 @@ public class Global
 
     /**
      * Invoked when an exception pops out of the Application while processing a request.
-     *
+     * <p>
      * Happens right before {@link Error} recording.
      * <p>
      * Default to logging the error and producing a minimal HTML page advertising a 500 status code and the

@@ -65,7 +65,7 @@ public interface ApplicationExecutors
 
     /**
      * Executes the given command at some time in the future in the default Application Executor.
-     *
+     * <p>
      * See {@link ExecutorService#execute(java.lang.Runnable)}.
      *
      * @param task The runnable task
@@ -77,7 +77,7 @@ public interface ApplicationExecutors
 
     /**
      * Executes the given command at some time in the future in a configured Application Executor.
-     *
+     * <p>
      * See {@link ExecutorService#execute(java.lang.Runnable)}.
      *
      * @param executorName The name of a configured Application Executor
@@ -91,7 +91,7 @@ public interface ApplicationExecutors
     /**
      * Submits a value-returning task to the default Application Executor and returns a Future representing the pending
      * results of the task.
-     *
+     * <p>
      * See {@link ExecutorService#submit(java.util.concurrent.Callable)}.
      *
      * @param <T>  the type of the task's result
@@ -107,7 +107,7 @@ public interface ApplicationExecutors
     /**
      * Submits a value-returning task to a configured Application Executor and returns a Future representing the pending
      * results of the task.
-     *
+     * <p>
      * See {@link ExecutorService#submit(java.util.concurrent.Callable)}.
      *
      * @param <T>          The type of the task's result
@@ -123,7 +123,7 @@ public interface ApplicationExecutors
 
     /**
      * Submits a Runnable task to the default Application Executor and returns a Future representing that task.
-     *
+     * <p>
      * The Future's get method will return null upon successful completion
      * See {@link ExecutorService#submit(java.lang.Runnable)}.
      *
@@ -138,7 +138,7 @@ public interface ApplicationExecutors
 
     /**
      * Submits a Runnable task to a configured Application Executor and returns a Future representing that task.
-     *
+     * <p>
      * The Future's get method will return null upon successful completion
      * See {@link ExecutorService#submit(java.lang.Runnable)}.
      *
@@ -154,7 +154,7 @@ public interface ApplicationExecutors
 
     /**
      * Submits a Runnable task to the default Application Executor and returns a Future representing that task.
-     *
+     * <p>
      * The Future's get method will return the given result upon successful completion.
      * See {@link ExecutorService#submit(java.lang.Runnable)}.
      *
@@ -171,7 +171,7 @@ public interface ApplicationExecutors
 
     /**
      * Submits a Runnable task to a configured Application Executor and returns a Future representing that task.
-     *
+     * <p>
      * The Future's get method will return the given result upon successful completion.
      * See {@link ExecutorService#submit(java.lang.Runnable)}.
      *
@@ -190,7 +190,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks on the default Application Executor, returning the result of one that has completed
      * successfully (i.e., without throwing an exception), if any do.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAny(java.util.Collection)}.
      *
      * @param <T>   The type of the values returned from the tasks
@@ -210,7 +210,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks on the default Application Executor, returning the result of one that has completed
      * successfully (i.e., without throwing an exception), if any do.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAny(java.util.Collection)}.
      *
      * @param <T>          The type of the values returned from the tasks
@@ -231,7 +231,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks on the default Application Executor, returning the result of one that has completed
      * successfully (i.e., without throwing an exception), if any do before the given timeout elapses.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAny(java.util.Collection, long, java.util.concurrent.TimeUnit)}.
      *
      * @param <T>     The type of the values returned from the tasks
@@ -254,7 +254,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks on a configured Application Executor, returning the result of one that has completed
      * successfully (i.e., without throwing an exception), if any do before the given timeout elapses.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAny(java.util.Collection, long, java.util.concurrent.TimeUnit)}.
      *
      * @param <T>          The type of the values returned from the tasks
@@ -278,7 +278,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks in the default Application Executor, returning the result of one that has completed
      * successfully (i.e., without throwing an exception), if any do.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAll(java.util.Collection)}.
      *
      * @param <T>   The type of the values returned from the tasks
@@ -298,7 +298,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks in a configured Application Executor, returning the result of one that has completed
      * successfully (i.e., without throwing an exception), if any do.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAll(java.util.Collection)}.
      *
      * @param <T>          The type of the values returned from the tasks
@@ -319,7 +319,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks in the default Application Executor, returning a list of Futures holding their status
      * and results when all complete or the timeout expires, whichever happens first.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAll(java.util.Collection, long, java.util.concurrent.TimeUnit)}.
      *
      * @param <T>     The type of the values returned from the tasks
@@ -342,7 +342,7 @@ public interface ApplicationExecutors
     /**
      * Executes the given tasks in a configured Application Executor, returning a list of Futures holding their status
      * and results when all complete or the timeout expires, whichever happens first.
-     *
+     * <p>
      * See {@link ExecutorService#invokeAll(java.util.Collection, long, java.util.concurrent.TimeUnit)}.
      *
      * @param <T>          The type of the values returned from the tasks

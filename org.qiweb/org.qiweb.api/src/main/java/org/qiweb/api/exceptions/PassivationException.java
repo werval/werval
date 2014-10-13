@@ -35,7 +35,7 @@ public class PassivationException
 
     /**
      * Create a new PassivationException.
-     *
+     * <p>
      * Use given cause message as own message.
      *
      * @param cause Cause

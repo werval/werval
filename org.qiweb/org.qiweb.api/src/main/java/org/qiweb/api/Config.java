@@ -25,7 +25,7 @@ import org.qiweb.util.Reflectively;
 
 /**
  * Application Config.
- *
+ * <p>
  * All getters never return null.
  * They will throw a non checked exception depending on the error.
  */

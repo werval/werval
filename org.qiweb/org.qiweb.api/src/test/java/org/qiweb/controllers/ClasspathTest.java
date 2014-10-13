@@ -146,30 +146,4 @@ public class ClasspathTest
             when().
             get( path );
     }
-
-    @Test
-    public void removeHeadingSlash()
-    {
-        assertThat( Classpath.removeHeadingSlash( null ), equalTo( "" ) );
-        assertThat( Classpath.removeHeadingSlash( "" ), equalTo( "" ) );
-        assertThat( Classpath.removeHeadingSlash( "/" ), equalTo( "" ) );
-        assertThat( Classpath.removeHeadingSlash( "///////" ), equalTo( "" ) );
-
-        assertThat( Classpath.removeHeadingSlash( "/foo" ), equalTo( "foo" ) );
-        assertThat( Classpath.removeHeadingSlash( "///////foo" ), equalTo( "foo" ) );
-        assertThat( Classpath.removeHeadingSlash( "bar/" ), equalTo( "bar/" ) );
-    }
-
-    @Test
-    public void removeTrailingSlash()
-    {
-        assertThat( Classpath.removeTrailingSlash( null ), equalTo( "" ) );
-        assertThat( Classpath.removeTrailingSlash( "" ), equalTo( "" ) );
-        assertThat( Classpath.removeTrailingSlash( "/" ), equalTo( "" ) );
-        assertThat( Classpath.removeTrailingSlash( "///////" ), equalTo( "" ) );
-
-        assertThat( Classpath.removeTrailingSlash( "/foo" ), equalTo( "/foo" ) );
-        assertThat( Classpath.removeTrailingSlash( "bar/" ), equalTo( "bar" ) );
-        assertThat( Classpath.removeTrailingSlash( "bar///////" ), equalTo( "bar" ) );
-    }
 }

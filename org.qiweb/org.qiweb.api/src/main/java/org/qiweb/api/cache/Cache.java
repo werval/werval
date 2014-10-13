@@ -60,7 +60,7 @@ public interface Cache
 
     /**
      * Fetch cached object for a given key or set a non-expiring default value.
-     *
+     * <p>
      * If the cache has a non-expired object for the given key, it is returned.
      * <p>
      * Otherwise, the given default value is set in the cache and returned.
@@ -78,7 +78,7 @@ public interface Cache
 
     /**
      * Fetch cached object for a given key or set a non-expiring default value.
-     *
+     * <p>
      * If the cache has a non-expired object for the given key, it is returned.
      * <p>
      * Otherwise, the given default value is set in the cache and returned.
@@ -96,7 +96,7 @@ public interface Cache
 
     /**
      * Fetch cached object for a given key or set an expiring default value.
-     *
+     * <p>
      * If the cache has a non-expired object for the given key, it is returned.
      * <p>
      * Otherwise, the given default value is set in the cache and returned.
@@ -113,7 +113,7 @@ public interface Cache
 
     /**
      * Fetch cached object for a given key or set an expiring default value.
-     *
+     * <p>
      * If the cache has a non-expired object for the given key, it is returned.
      * <p>
      * Otherwise, the given default value is set in the cache and returned.

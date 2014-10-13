@@ -19,7 +19,7 @@ import org.qiweb.api.http.Cookies.Cookie;
 
 /**
  * HTTP API Objects Builders.
- *
+ * <p>
  * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
  * <p>
  * Typically used in controllers and filters.
@@ -30,7 +30,7 @@ public interface HttpBuilders
 {
     /**
      * Create a new Cookie Builder.
-     *
+     * <p>
      * Name is mandatory.
      *
      * @return A new Cookie Builder
@@ -39,7 +39,7 @@ public interface HttpBuilders
 
     /**
      * Cookie Builder.
-     *
+     * <p>
      * Name is mandatory.
      */
     interface CookieBuilder
@@ -47,7 +47,7 @@ public interface HttpBuilders
 
         /**
          * Cookie version.
-         *
+         * <p>
          * Can be {@literal 0} or {@literal 1}, default to {@literal 0}.
          *
          * @param version cookie version
@@ -67,7 +67,7 @@ public interface HttpBuilders
 
         /**
          * Cookie value.
-         *
+         * <p>
          * Default to an empty string.
          *
          * @param value cookie value
@@ -78,7 +78,7 @@ public interface HttpBuilders
 
         /**
          * Cookie path.
-         *
+         * <p>
          * Default to {@literal /}.
          *
          * @param path cookie path
@@ -98,7 +98,7 @@ public interface HttpBuilders
 
         /**
          * Cookie maximum age.
-         *
+         * <p>
          * Default to {@link Long#MIN_VALUE}, see {@link Cookie#maxAge()}.
          *
          * @param maxAge cookie maximum age
@@ -109,7 +109,7 @@ public interface HttpBuilders
 
         /**
          * Cookie secure flag.
-         *
+         * <p>
          * Default to {@literal false}.
          *
          * @param secure cookie secure flag
@@ -120,7 +120,7 @@ public interface HttpBuilders
 
         /**
          * Cookie httpOnly flag.
-         *
+         * <p>
          * Default to {@literal true}.
          *
          * @param httpOnly cookie httpOnly flag
