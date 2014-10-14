@@ -124,13 +124,27 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                                     {
                                         uploads.put( fileUpload.getName(), new ArrayList<>() );
                                     }
-                                    Upload upload = new UploadInstance(
-                                        fileUpload.getContentType(),
-                                        fileUpload.getCharset(),
-                                        fileUpload.getFilename(),
-                                        fileUpload.getFile(),
-                                        defaultCharset
-                                    );
+                                    Upload upload;
+                                    if( fileUpload.isInMemory() )
+                                    {
+                                        upload = new UploadInstance(
+                                            fileUpload.getContentType(),
+                                            fileUpload.getCharset(),
+                                            fileUpload.getFilename(),
+                                            new ByteBufByteSource( fileUpload.getByteBuf() ).asBytes(),
+                                            defaultCharset
+                                        );
+                                    }
+                                    else
+                                    {
+                                        upload = new UploadInstance(
+                                            fileUpload.getContentType(),
+                                            fileUpload.getCharset(),
+                                            fileUpload.getFilename(),
+                                            fileUpload.getFile(),
+                                            defaultCharset
+                                        );
+                                    }
                                     uploads.get( fileUpload.getName() ).add( upload );
                                     break;
                                 default:
