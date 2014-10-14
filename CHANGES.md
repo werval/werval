@@ -21,7 +21,17 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-### 0.3.0-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.1-beta)
+### 0.3.2-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.2-beta)
+
+> Punk is not dead and has been bugfixed, twice!
+
+#### Bug fixes
+
+- Fix multipart form uploads failing when < 8k, see #182
+
+
+
+### 0.3.1-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.1-beta)
 
 > Punk is not dead and has been bugfixed!
 
