@@ -292,7 +292,8 @@ public class FormUploadsInstance
         {
             return "{contentType: " + contentType
                    + ", charset: " + ( charset == null ? defaultCharset : charset )
-                   + ", filename: " + filename + " }";
+                   + ", filename: " + filename
+                   + ", length: " + length() + " }";
         }
     }
 }
