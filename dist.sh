@@ -19,17 +19,17 @@ fi
 
 # core
 $FIGLET org.qiweb
-./org.qiweb/gradlew -b org.qiweb/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
+./gradlew -b org.qiweb/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 # modules
 $FIGLET org.qiweb.modules
-./org.qiweb.modules/gradlew -b org.qiweb.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
+./gradlew -b org.qiweb.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 # gradle plugin
 $FIGLET org.qiweb.gradle
-./org.qiweb.gradle/gradlew -b org.qiweb.gradle/build.gradle install check idea -x checkstyleMain -x test
+./gradlew -b org.qiweb.gradle/build.gradle install check idea -x checkstyleMain -x test
 echo "Built."
 
 # maven plugin
@@ -39,7 +39,7 @@ echo "Built."
 
 # dist
 $FIGLET org.qiweb.dist
-./org.qiweb.dist/gradlew -b org.qiweb.dist/build.gradle install
+./gradlew -b org.qiweb.dist/build.gradle install
 echo "Built."
 
 echo ""
