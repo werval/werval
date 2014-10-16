@@ -3,14 +3,15 @@
 
 ## Versioning Scheme
 
-    X.Y.Z-Qualifier
+QiWeb follows [Semantic Versioning 2](http://semver.org/).
 
-- X Major version number
-- Y Minor version number
-- Z Release number
-- Qualifer can be `alpha`, `beta` or `rc`
+`MAJOR.MINOR.PATCH`
 
-Absence of qualifier means it's a final release.
+- MAJOR make incompatible API changes
+- MINOR add functionality in a backwards-compatible manner
+- PATCH make backwards-compatible bug fixes
+
+Additional labels for pre-release (`alpha`, `beta` or `rc`) and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 
 
