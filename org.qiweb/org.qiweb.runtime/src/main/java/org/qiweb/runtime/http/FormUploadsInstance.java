@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -164,6 +165,7 @@ public class FormUploadsInstance
         private final String contentType;
         private final Charset charset;
         private final String filename;
+        private final byte[] inMemoryBytes;
         private final File temporaryFile;
         private final Charset defaultCharset;
 
@@ -174,7 +176,20 @@ public class FormUploadsInstance
             this.contentType = contentType;
             this.charset = charset;
             this.filename = filename;
+            this.inMemoryBytes = null;
             this.temporaryFile = temporaryFile;
+            this.defaultCharset = defaultCharset;
+        }
+
+        public UploadInstance( String contentType, Charset charset,
+                               String filename, byte[] inMemoryBytes,
+                               Charset defaultCharset )
+        {
+            this.contentType = contentType;
+            this.charset = charset;
+            this.filename = filename;
+            this.inMemoryBytes = inMemoryBytes;
+            this.temporaryFile = null;
             this.defaultCharset = defaultCharset;
         }
 
@@ -199,12 +214,20 @@ public class FormUploadsInstance
         @Override
         public long length()
         {
+            if( inMemoryBytes != null )
+            {
+                return inMemoryBytes.length;
+            }
             return temporaryFile.length();
         }
 
         @Override
         public InputStream asStream()
         {
+            if( inMemoryBytes != null )
+            {
+                return new ByteArrayInputStream( inMemoryBytes );
+            }
             try
             {
                 return new FileInputStream( temporaryFile );
@@ -218,6 +241,10 @@ public class FormUploadsInstance
         @Override
         public byte[] asBytes()
         {
+            if( inMemoryBytes != null )
+            {
+                return inMemoryBytes;
+            }
             try
             {
                 return Files.readAllBytes( temporaryFile.toPath() );
@@ -245,7 +272,14 @@ public class FormUploadsInstance
         {
             try
             {
-                Files.move( temporaryFile.toPath(), destination.toPath() );
+                if( inMemoryBytes != null )
+                {
+                    Files.write( destination.toPath(), inMemoryBytes );
+                }
+                else
+                {
+                    Files.move( temporaryFile.toPath(), destination.toPath() );
+                }
             }
             catch( IOException ex )
             {
@@ -258,7 +292,8 @@ public class FormUploadsInstance
         {
             return "{contentType: " + contentType
                    + ", charset: " + ( charset == null ? defaultCharset : charset )
-                   + ", filename: " + filename + " }";
+                   + ", filename: " + filename
+                   + ", length: " + length() + " }";
         }
     }
 }
