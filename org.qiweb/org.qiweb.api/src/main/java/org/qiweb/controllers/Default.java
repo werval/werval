@@ -29,6 +29,32 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 public class Default
 {
     /**
+     * @return a 200 OK Outcome, no-cache, with "pong" as text/plain body
+     */
+    public Outcome ping()
+    {
+        return outcomes().ok( "pong" ).asTextPlain().build();
+    }
+
+    /**
+     * @return a 200 OK Outcome
+     */
+    public Outcome ok()
+    {
+        return outcomes().ok().build();
+    }
+
+    /**
+     * @param text Response body text
+     *
+     * @return a 200 OK text/plain Outcome
+     */
+    public Outcome ok( String text )
+    {
+        return outcomes().ok( text ).asTextPlain().build();
+    }
+
+    /**
      * @return a 204 NO CONTENT Outcome
      */
     public Outcome noContent()
