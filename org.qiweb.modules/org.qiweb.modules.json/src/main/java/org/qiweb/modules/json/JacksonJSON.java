@@ -20,11 +20,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
 import static org.qiweb.util.Charsets.UTF_8;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Jackson JSON.
@@ -244,7 +244,14 @@ public class JacksonJSON
     @Override
     public String toJSONPString( String callbackFunctionName, Object object )
     {
-        return wrapJsonP( callbackFunctionName, toJSONString( object ) );
+        try
+        {
+            return mapper.writeValueAsString( new JSONPObject( callbackFunctionName, object ) );
+        }
+        catch( JsonProcessingException ex )
+        {
+            throw new JsonPluginException( ex );
+        }
     }
 
     @Override
@@ -256,12 +263,13 @@ public class JacksonJSON
     @Override
     public String toJSONPString( String callbackFunctionName, Object object, Class<?> jsonView )
     {
-        return wrapJsonP( callbackFunctionName, toJSONString( object, jsonView ) );
-    }
-
-    private static String wrapJsonP( String callbackFunctionName, String json )
-    {
-        ensureNotEmpty( "Callback function name", callbackFunctionName );
-        return callbackFunctionName + "(" + json + ");";
+        try
+        {
+            return mapper.writeValueAsString( new JSONPObject( callbackFunctionName, toNode( object, jsonView ) ) );
+        }
+        catch( JsonProcessingException ex )
+        {
+            throw new JsonPluginException( ex );
+        }
     }
 }
