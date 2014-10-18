@@ -5,6 +5,16 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## 0.3.3 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.3)
+
+> Punk is not dead and has been bugfixed, more than a few times!
+
+#### Bug fixes
+
+- Fix Plugin.afterInterfaction hook that was never called, see #191
+
+
+
 ## 0.3.2 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.2)
 
 > Punk is not dead and has been bugfixed, twice!
