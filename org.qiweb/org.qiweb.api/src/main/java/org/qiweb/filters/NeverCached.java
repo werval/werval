@@ -21,12 +21,14 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.http.MutableHeaders;
+import org.qiweb.api.http.StatusClass;
 import org.qiweb.api.outcomes.Outcome;
 
 import static org.qiweb.api.http.Headers.Names.CACHE_CONTROL;
@@ -48,6 +50,20 @@ import static org.qiweb.api.http.Headers.Names.PRAGMA;
 @Documented
 public @interface NeverCached
 {
+    /**
+     * HTTP Status classes for which this filter should be applied.
+     * <p>
+     * See {@link StatusClass}.
+     * <p>
+     * Default to all status classes.
+     *
+     * @return HTTP Status classes for which this filter should be applied
+     */
+    StatusClass[] value() default {};
+
+    /**
+     * Never Cached Filter.
+     */
     public static class Filter
         implements org.qiweb.api.filters.Filter<NeverCached>
     {
@@ -57,10 +73,18 @@ public @interface NeverCached
             return chain.next( context ).thenApply(
                 (outcome) ->
                 {
-                    MutableHeaders headers = outcome.responseHeader().headers();
-                    headers.withSingle( CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate" );
-                    headers.withSingle( PRAGMA, "no-cache" );
-                    headers.withSingle( EXPIRES, "0" );
+                    StatusClass[] classes = annotation.map(
+                        annot -> annot.value().length == 0 ? StatusClass.values() : annot.value()
+                    ).orElse(
+                        StatusClass.values()
+                    );
+                    if( Arrays.asList( classes ).contains( outcome.responseHeader().status().statusClass() ) )
+                    {
+                        MutableHeaders headers = outcome.responseHeader().headers();
+                        headers.withSingle( CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate" );
+                        headers.withSingle( PRAGMA, "no-cache" );
+                        headers.withSingle( EXPIRES, "0" );
+                    }
                     return outcome;
                 }
             );
