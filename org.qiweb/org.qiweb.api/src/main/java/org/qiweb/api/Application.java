@@ -175,12 +175,12 @@ public interface Application
     ApplicationExecutors executors();
 
     /**
-     * HTTP API Objects Builders SPI.
+     * HTTP API Objects Builders.
      * <p>
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
      * All builders are immutable and reusable.
      *
-     * @return HTTP API Objects Builders SPI
+     * @return HTTP API Objects Builders
      */
     HttpBuilders httpBuilders();
 

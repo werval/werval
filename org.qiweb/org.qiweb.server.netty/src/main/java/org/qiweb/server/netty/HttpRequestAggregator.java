@@ -182,7 +182,7 @@ public class HttpRequestAggregator
             return;
         }
 
-        // Append chunk data to aggregated File
+        // Append chunk data to aggregated buffer or file
         if( chunk.content().isReadable() )
         {
             // Test disk threshold

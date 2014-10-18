@@ -277,6 +277,9 @@ public final class ApplicationInstance
 
         try
         {
+            // Clear Errors
+            errors.clear();
+
             // Executors
             executors = new ApplicationExecutorsInstance( this );
             executors.activate();
@@ -562,16 +565,17 @@ public final class ApplicationInstance
     }
 
     @Override
-    public HttpBuildersSPI httpBuilders()
-    {
-        return httpBuilders;
-    }
-
-    @Override
     public ApplicationExecutors executors()
     {
         ensureActive();
         return executors;
+    }
+
+    // API/SPI
+    @Override
+    public HttpBuildersSPI httpBuilders()
+    {
+        return httpBuilders;
     }
 
     // SPI
@@ -728,6 +732,7 @@ public final class ApplicationInstance
         }
     }
 
+    // SPI
     @Override
     public Outcome handleError( RequestHeader request, Throwable cause )
     {
