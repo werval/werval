@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
 import org.qiweb.api.cache.Cache;
+import org.qiweb.api.events.Events;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.i18n.Langs;
@@ -173,6 +174,13 @@ public interface Application
      * @return Application Executors
      */
     ApplicationExecutors executors();
+
+    /**
+     * Application Events.
+     *
+     * @return Application Events
+     */
+    Events events();
 
     /**
      * HTTP API Objects Builders.

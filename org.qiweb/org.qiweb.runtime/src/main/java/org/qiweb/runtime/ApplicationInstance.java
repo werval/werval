@@ -65,6 +65,7 @@ import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
 import org.qiweb.runtime.http.HttpBuildersInstance;
+import org.qiweb.runtime.events.EventsInstance;
 import org.qiweb.runtime.http.ResponseHeaderInstance;
 import org.qiweb.runtime.http.SessionInstance;
 import org.qiweb.runtime.i18n.LangsInstance;
@@ -79,6 +80,7 @@ import org.qiweb.runtime.util.TypeResolver;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.http.HttpBuildersSPI;
+import org.qiweb.spi.events.EventsSPI;
 import org.qiweb.util.Reflectively;
 import org.qiweb.util.Stacktraces;
 import org.slf4j.Logger;
@@ -156,6 +158,7 @@ public final class ApplicationInstance
     private HttpBuildersSPI httpBuilders;
     private ApplicationExecutorsInstance executors;
     private final MetaData metaData;
+    private final EventsInstance events;
     private final Errors errors;
     private final DevShellSPI devSpi;
 
@@ -251,6 +254,7 @@ public final class ApplicationInstance
         this.reverseRoutes = new ReverseRoutesInstance( this );
         this.classLoader = classLoader;
         this.metaData = new MetaData();
+        this.events = new EventsInstance( this );
         this.errors = new ErrorsInstance( config );
         this.devSpi = devSpi;
         if( devSpi != null && LOG.isDebugEnabled() )
@@ -277,8 +281,9 @@ public final class ApplicationInstance
 
         try
         {
-            // Clear Errors
+            // Clear Errors and Events
             errors.clear();
+            events.unregisterAll();
 
             // Executors
             executors = new ApplicationExecutorsInstance( this );
@@ -569,6 +574,13 @@ public final class ApplicationInstance
     {
         ensureActive();
         return executors;
+    }
+
+    // API/SPI
+    @Override
+    public EventsSPI events()
+    {
+        return events;
     }
 
     // API/SPI

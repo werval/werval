@@ -22,6 +22,7 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.spi.events.EventsSPI;
 import org.qiweb.spi.http.HttpBuildersSPI;
 import org.qiweb.util.Reflectively;
 
@@ -45,6 +46,14 @@ public interface ApplicationSPI
      * @return Application Global object
      */
     Global global();
+
+    /**
+     * Application Events SPI.
+     *
+     * @return Application Events SPI
+     */
+    @Override
+    EventsSPI events();
 
     /**
      * HTTP API Objects Builders SPI.
