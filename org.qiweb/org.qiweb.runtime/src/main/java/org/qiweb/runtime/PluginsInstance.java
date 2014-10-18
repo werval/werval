@@ -202,7 +202,7 @@ import static java.util.stream.Collectors.toList;
         {
             try
             {
-                plugin.left().beforeInteraction( context );
+                plugin.left().afterInteraction( context );
             }
             catch( Exception ex )
             {
