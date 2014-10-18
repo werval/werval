@@ -211,7 +211,7 @@ import static java.util.stream.Collectors.toList;
         }
         if( !errors.isEmpty() )
         {
-            QiWebException ex = new QiWebException( "There were errors during Plugins hook after interaction" );
+            QiWebException ex = new QiWebException( "There were errors during Plugins after interaction hooks" );
             for( Exception err : errors )
             {
                 ex.addSuppressed( err );

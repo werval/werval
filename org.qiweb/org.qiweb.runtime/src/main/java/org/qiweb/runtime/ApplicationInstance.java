@@ -635,39 +635,45 @@ public final class ApplicationInstance
                     // Plugins beforeInteraction
                     plugins.beforeInteraction( context );
 
-                    // Invoke Controller FilterChain, ended by Controller Method Invokation
-                    // TODO Handle Timeout when invoking Controller FilterChain!
-                    LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
-                    FilterChain chain = new FilterChainFactory().buildFilterChain( this, global, context );
-                    CompletableFuture<Outcome> interaction = chain.next( context );
-                    Outcome outcome = interaction.get( 30, TimeUnit.SECONDS );
-
-                    // Plugins afterInteraction
-                    plugins.afterInteraction( context );
-
-                    // Apply Session to ResponseHeader
-                    if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+                    Outcome outcome;
+                    try
                     {
-                        outcome.responseHeader().cookies().set( session.signedCookie() );
-                    }
+                        // Invoke Controller FilterChain, ended by Controller Method Invokation
+                        // TODO Handle Timeout when invoking Controller FilterChain!
+                        LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
+                        FilterChain chain = new FilterChainFactory().buildFilterChain( this, global, context );
+                        CompletableFuture<Outcome> interaction = chain.next( context );
+                        outcome = interaction.get( 30, TimeUnit.SECONDS );
 
-                    // Add Set-Cookie headers
-                    for( Cookie cookie : outcome.responseHeader().cookies() )
+                        // Apply Session to ResponseHeader
+                        if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
+                        {
+                            outcome.responseHeader().cookies().set( session.signedCookie() );
+                        }
+
+                        // Add Set-Cookie headers
+                        for( Cookie cookie : outcome.responseHeader().cookies() )
+                        {
+                            HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
+                            jCookie.setVersion( cookie.version() );
+                            jCookie.setPath( cookie.path() );
+                            jCookie.setDomain( cookie.domain() );
+                            jCookie.setMaxAge( cookie.maxAge() );
+                            jCookie.setSecure( cookie.secure() );
+                            jCookie.setHttpOnly( cookie.httpOnly() );
+                            jCookie.setComment( cookie.comment() );
+                            jCookie.setCommentURL( cookie.commentUrl() );
+                            outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
+                        }
+
+                        // Finalize!
+                        return finalizeOutcome( request, outcome );
+                    }
+                    finally
                     {
-                        HttpCookie jCookie = new HttpCookie( cookie.name(), cookie.value() );
-                        jCookie.setVersion( cookie.version() );
-                        jCookie.setPath( cookie.path() );
-                        jCookie.setDomain( cookie.domain() );
-                        jCookie.setMaxAge( cookie.maxAge() );
-                        jCookie.setSecure( cookie.secure() );
-                        jCookie.setHttpOnly( cookie.httpOnly() );
-                        jCookie.setComment( cookie.comment() );
-                        jCookie.setCommentURL( cookie.commentUrl() );
-                        outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
+                        // Plugins afterInteraction
+                        plugins.afterInteraction( context );
                     }
-
-                    // Finalize!
-                    return finalizeOutcome( request, outcome );
                 }
                 catch( Throwable cause )
                 {
