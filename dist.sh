@@ -22,11 +22,6 @@ $FIGLET org.qiweb
 ./gradlew -b org.qiweb/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
-# modules
-$FIGLET org.qiweb.modules
-./gradlew -b org.qiweb.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
-echo "Built."
-
 # gradle plugin
 $FIGLET org.qiweb.gradle
 ./gradlew -b org.qiweb.gradle/build.gradle install check idea -x checkstyleMain -x test
@@ -35,6 +30,11 @@ echo "Built."
 # maven plugin
 $FIGLET org.qiweb.maven
 $MAVEN -f org.qiweb.maven/pom.xml install dependency:sources -DskipTests -Dgpg.skip
+echo "Built."
+
+# modules
+$FIGLET org.qiweb.modules
+./gradlew -b org.qiweb.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 # dist

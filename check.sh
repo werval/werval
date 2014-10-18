@@ -25,11 +25,6 @@ $FIGLET org.qiweb
 ./gradlew -b org.qiweb/build.gradle check install idea
 echo "Checked."
 
-# modules
-$FIGLET org.qiweb.modules
-./gradlew -b org.qiweb.modules/build.gradle check install idea
-echo "Checked."
-
 # gradle plugin
 $FIGLET org.qiweb.gradle
 ./gradlew -b org.qiweb.gradle/build.gradle install check idea
@@ -38,6 +33,11 @@ echo "Checked."
 # maven plugin
 $FIGLET org.qiweb.maven
 $MAVEN -f org.qiweb.maven/pom.xml clean verify dependency:sources -Dgpg.skip
+echo "Checked."
+
+# modules
+$FIGLET org.qiweb.modules
+./gradlew -b org.qiweb.modules/build.gradle check install idea
 echo "Checked."
 
 echo ""
