@@ -29,6 +29,7 @@ def v_jpa = '2.1.0'
 def v_liquibase = '3.2.2'
 def v_liquibase_slf4j = '1.2.1'
 def v_memcache = '2.11.4'
+def v_metrics = '3.1.0'
 def v_qi4j = '2.1-SNAPSHOT' // FIXME Final!
 def v_rythm = '1.0.1'
 def v_spring = '4.1.1.RELEASE'
@@ -87,6 +88,12 @@ rootProject.ext {
         liquibase:          "org.liquibase:liquibase-core:$v_liquibase",
         liquibase_slf4j:    "com.mattbertolini:liquibase-slf4j:$v_liquibase_slf4j",
         memcache:           "net.spy:spymemcached:$v_memcache",
+        metrics: [
+                            "io.dropwizard.metrics:metrics-core:$v_metrics",
+                            "io.dropwizard.metrics:metrics-healthchecks:$v_metrics",
+                            "io.dropwizard.metrics:metrics-jvm:$v_metrics",
+                            "io.dropwizard.metrics:metrics-json:$v_metrics",
+        ],
         qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
         qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
         rythm: [

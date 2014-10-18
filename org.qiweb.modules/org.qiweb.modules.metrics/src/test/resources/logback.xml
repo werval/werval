@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level %logger{42} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="stdout" />
+    </root>
+
+    <logger name="org.qiweb.modules.jpa"                            level="trace"/>
+    <logger name="org.eclipse.persistence.logging"                  level="debug"/>
+    <logger name="org.eclipse.persistence.logging.default"          level="debug"/>
+    <logger name="org.eclipse.persistence.logging.metadata"         level="info"/>
+    <logger name="org.eclipse.persistence.logging.sql"              level="trace"/>
+    <logger name="org.eclipse.persistence.logging.transaction"      level="debug"/>
+    <logger name="org.eclipse.persistence.logging.event"            level="debug"/>
+    <logger name="org.eclipse.persistence.logging.connection"       level="debug"/>
+    <logger name="org.eclipse.persistence.logging.query"            level="debug"/>
+    <logger name="org.eclipse.persistence.logging.cache"            level="debug"/>
+    <logger name="org.eclipse.persistence.logging.propagation"      level="debug"/>
+    <logger name="org.eclipse.persistence.logging.sequencing"       level="debug"/>
+    <logger name="org.eclipse.persistence.logging.ejb"              level="debug"/>
+    <logger name="org.eclipse.persistence.logging.ejb_or_metadata"  level="debug"/>
+    <logger name="org.eclipse.persistence.logging.weaver"           level="debug"/>
+    <logger name="org.eclipse.persistence.logging.properties"       level="debug"/>
+    <logger name="org.eclipse.persistence.logging.server"           level="debug"/>
+
+</configuration>

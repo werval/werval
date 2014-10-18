@@ -1,0 +1,17 @@
+= Metrics Module
+Metrics for your Application
+:jbake-type: module
+
+The Metrics module provide a `Metrics` that brings first class metrics and health-checks thanks to
+the CodaHale https://github.com/dropwizard/metrics[Metrics] library, now maintained by DropWizard folks.
+
+
+[TIP]
+.Metrics Documentation
+====
+This documentation do not cover Metrics itself as it is already well covered on the official
+https://dropwizard.github.io/[Metrics documentation].
+
+We highly recommend you to watch the https://www.youtube.com/watch?v=czes-oa0yik[Metrics, Metrics, Everywhere]
+presentation by the library original author.
+====
