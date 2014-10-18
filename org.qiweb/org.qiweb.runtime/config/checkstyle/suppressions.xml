@@ -15,7 +15,7 @@
     <!--suppress checks=".*" files=".*"/-->
 
     <!-- Javadoc -->
-    <suppress checks="JavadocPackage" files=".*"/>
+    <suppress checks="Javadoc.*" files=".*"/>
 
     <!-- Builders & Big Constructors -->
     <suppress checks="ParameterNumber" files="HttpBuildersInstance.java"/>
