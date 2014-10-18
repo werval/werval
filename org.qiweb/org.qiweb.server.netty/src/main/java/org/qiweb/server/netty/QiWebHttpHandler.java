@@ -36,6 +36,7 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.ResponseHeader;
+import org.qiweb.api.http.Status;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
@@ -43,7 +44,8 @@ import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.spi.server.HttpServerHelper;
+import org.qiweb.api.events.HttpEvent;
+import org.qiweb.spi.events.EventsSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +98,6 @@ public final class QiWebHttpHandler
 
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
-    private final HttpServerHelper helper = new HttpServerHelper();
     private String requestIdentity;
     private RequestHeader requestHeader;
 
@@ -111,8 +112,9 @@ public final class QiWebHttpHandler
     protected void channelRead0( ChannelHandlerContext nettyContext, FullHttpRequest nettyRequest )
         throws Exception
     {
-        // Generate a unique identifier per request
-        requestIdentity = helper.generateNewRequestIdentity();
+        // Get the request unique identifier
+        requestIdentity = nettyContext.channel().attr( Attrs.REQUEST_IDENTITY ).get();
+        assert requestIdentity != null;
         if( LOG.isDebugEnabled() )
         {
             LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
@@ -125,7 +127,16 @@ public final class QiWebHttpHandler
                 ProtocolVersion.valueOf( nettyRequest.getProtocolVersion().text() ),
                 requestIdentity
             ).thenAcceptAsync(
-                shuttingDownOutcome -> writeOutcome( nettyContext, shuttingDownOutcome ),
+                shuttingDownOutcome ->
+                {
+                    writeOutcome( nettyContext, shuttingDownOutcome )
+                    .addListeners(
+                        new HttpRequestCompleteChannelFutureListener( requestHeader ),
+                        f -> app.events().emit(
+                            new HttpEvent.ResponseSent( requestIdentity, shuttingDownOutcome.responseHeader().status() )
+                        )
+                    );
+                },
                 app.executor()
             );
             return;
@@ -155,7 +166,12 @@ public final class QiWebHttpHandler
                 // Write Outcome
                 ChannelFuture writeFuture = writeOutcome( nettyContext, outcome );
                 // Listen to request completion
-                writeFuture.addListener( new HttpRequestCompleteChannelFutureListener( requestHeader ) );
+                writeFuture.addListeners(
+                    f -> app.events().emit(
+                        new HttpEvent.ResponseSent( requestIdentity, outcome.responseHeader().status() )
+                    ),
+                    new HttpRequestCompleteChannelFutureListener( requestHeader )
+                );
             },
             app.executor()
         );
@@ -179,11 +195,27 @@ public final class QiWebHttpHandler
             DefaultFullHttpResponse nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, INTERNAL_SERVER_ERROR );
             nettyResponse.headers().set( CONTENT_LENGTH, htmlErrorPage.length );
             ( (ByteBufHolder) nettyResponse ).content().writeBytes( htmlErrorPage );
-            nettyContext.writeAndFlush( nettyResponse ).addListener( ChannelFutureListener.CLOSE );
+            nettyContext.writeAndFlush( nettyResponse )
+                .addListeners(
+                    f -> app.events().emit(
+                        new HttpEvent.ResponseSent( requestIdentity, Status.INTERNAL_SERVER_ERROR )
+                    ),
+                    new HttpRequestCompleteChannelFutureListener( requestHeader ),
+                    ChannelFutureListener.CLOSE
+                );
         }
         else if( requestHeader != null )
         {
-            writeOutcome( nettyContext, app.handleError( requestHeader, cause ) );
+            // Write Outcome
+            Outcome errorOutcome = app.handleError( requestHeader, cause );
+            ChannelFuture writeFuture = writeOutcome( nettyContext, errorOutcome );
+            // Listen to request completion
+            writeFuture.addListeners(
+                f -> app.events().emit(
+                    new HttpEvent.ResponseSent( requestIdentity, errorOutcome.responseHeader().status() )
+                ),
+                new HttpRequestCompleteChannelFutureListener( requestHeader )
+            );
         }
         else
         {
