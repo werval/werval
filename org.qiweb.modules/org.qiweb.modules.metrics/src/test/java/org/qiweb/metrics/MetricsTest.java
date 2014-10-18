@@ -16,6 +16,9 @@
 package org.qiweb.metrics;
 
 import com.codahale.metrics.MetricRegistry;
+import java.lang.management.ManagementFactory;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.outcomes.Outcome;
@@ -120,5 +123,15 @@ public class MetricsTest
         assertThat( metrics.meter( "qiweb.http.unknown" ).getCount(), is( 1L ) );
 
         assertThat( metrics.counter( "MetricsTest" ).getCount(), is( 1L ) );
+
+        // JMX
+        MBeanServer jmx = ManagementFactory.getPlatformMBeanServer();
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.requests" ), "Count" ), is( 10L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.success" ), "Count" ), is( 6L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.redirections" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.client-errors" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.server-errors" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.unknown" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=MetricsTest" ), "Count" ), is( 1L ) );
     }
 }
