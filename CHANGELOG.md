@@ -12,6 +12,7 @@ For minor changes, build system or test changes, see the full [source code histo
 #### New features
 
 - Application Events, see #190
+- Metrics & HealthChecks Plugin, see #186
 
 
 
