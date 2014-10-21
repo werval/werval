@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Internationalization API.
+ * Internationalization.
  */
 package org.qiweb.api.i18n;

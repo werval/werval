@@ -29,7 +29,7 @@ import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
- * AcceptContentTypes.
+ * Accept Content Types Annotation.
  * <p>
  * A request with a content-type not listed will be rejected with a {@literal 400 Bad Request}.
  */
@@ -46,7 +46,7 @@ public @interface AcceptContentTypes
     String[] value();
 
     /**
-     * AcceptContentTypes Filter.
+     * Accept Content Types Filter.
      */
     public static class Filter
         implements org.qiweb.api.filters.Filter<AcceptContentTypes>

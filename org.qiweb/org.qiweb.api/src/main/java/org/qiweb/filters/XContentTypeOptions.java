@@ -29,7 +29,7 @@ import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
- * X-Content-Type-Options.
+ * X-Content-Type-Options Annotation.
  * <p>
  * The only defined value, "nosniff", prevents browsers from infering the MIME type.
  * <p>

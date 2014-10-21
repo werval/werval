@@ -30,7 +30,7 @@ import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
- * HTTP Strict-Transport-Security.
+ * HTTP Strict-Transport-Security Annotation.
  * <p>
  * <a href="https://tools.ietf.org/html/rfc6797">RFC6797</a>.
  * <p>

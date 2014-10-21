@@ -32,7 +32,7 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
- * X-Frame-Options.
+ * X-Frame-Options Annotation.
  * <p>
  * <a href="http://tools.ietf.org/html/rfc7034">RFC7034</a> - HTTP Header Field X-Frame-Options
  * <p>

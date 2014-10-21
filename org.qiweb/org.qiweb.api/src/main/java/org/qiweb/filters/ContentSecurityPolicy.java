@@ -42,7 +42,7 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
- * Content-Security-Policy.
+ * Content-Security-Policy Annotation.
  * <p>
  * Adds Content Security Policy (CSP) header to HTTP response.
  * <p>
@@ -76,6 +76,9 @@ public @interface ContentSecurityPolicy
 
     boolean reportOnly() default false;
 
+    /**
+     * Content-Security-Policy Filter.
+     */
     public static class Filter
         implements org.qiweb.api.filters.Filter<ContentSecurityPolicy>
     {

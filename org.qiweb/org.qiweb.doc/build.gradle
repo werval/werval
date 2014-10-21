@@ -106,9 +106,12 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
         "http://junit.org/javadoc/latest/"
     )
     options.group( [
-            "QiWeb API":               [ "org.qiweb.api",       "org.qiweb.api.*"       ],
-            "QiWeb Test Support":      [ "org.qiweb.test",      "org.qiweb.test.*"      ],
-            "QiWeb SPI":               [ "org.qiweb.spi",       "org.qiweb.spi.*"       ]
+            "API":               [ "org.qiweb.api",           "org.qiweb.api.*"           ],
+            "Controllers":       [ "org.qiweb.controllers",   "org.qiweb.controllers.*"   ],
+            "Filters":           [ "org.qiweb.filters",       "org.qiweb.filters.*"       ],
+            "Utilities":         [ "org.qiweb.util",          "org.qiweb.util.*"          ],
+            "Test Support":      [ "org.qiweb.test",          "org.qiweb.test.*"          ],
+            "SPI":               [ "org.qiweb.spi",           "org.qiweb.spi.*"           ]
         ] )
     options.docletpath = configurations.umlgraphDoclet.files as List
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"

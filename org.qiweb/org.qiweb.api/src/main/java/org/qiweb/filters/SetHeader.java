@@ -35,7 +35,7 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.isEmpty;
 
 /**
- * Set Header.
+ * Set Header Annotation.
  */
 @FilterWith( SetHeader.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

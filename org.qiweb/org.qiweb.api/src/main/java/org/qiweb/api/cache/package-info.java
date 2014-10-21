@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Cache API.
+ * Cache.
  */
 package org.qiweb.api.cache;

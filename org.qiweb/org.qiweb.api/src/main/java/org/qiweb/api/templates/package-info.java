@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Templates API.
+ * Templates.
  */
 package org.qiweb.api.templates;

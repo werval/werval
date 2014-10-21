@@ -38,7 +38,7 @@ import static org.qiweb.api.http.Headers.Names.EXPIRES;
 import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
 
 /**
- * Annotation to easily cache controllers outcomes.
+ * Cached Annotation.
  * <p>
  * The annotation can be used on controllers and on their methods.
  * <p>
@@ -74,7 +74,7 @@ public @interface Cached
     String[] vary() default "";
 
     /**
-     * Cached Filter Implementation.
+     * Cached Filter.
      */
     public static class Filter
         implements org.qiweb.api.filters.Filter<Cached>

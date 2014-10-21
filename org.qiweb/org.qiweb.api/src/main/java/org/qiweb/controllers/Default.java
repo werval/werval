@@ -22,7 +22,7 @@ import org.qiweb.api.outcomes.Outcome;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
- * Controller providing default outcomes.
+ * Default outcomes.
  * <p>
  * Intended to be used in routes directly.
  */

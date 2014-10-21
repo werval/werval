@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Events API.
+ * Events.
  */
 package org.qiweb.api.events;

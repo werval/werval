@@ -32,7 +32,7 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
- * X-XSS-Protection.
+ * X-XSS-Protection Annotation.
  * <p>
  * Try to prevent <a href="en.wikipedia.org/wiki/Cross-site_scripting">Cross-Site-Scripting</a> attacks.
  * <p>
