@@ -3,25 +3,20 @@
 
 The `org.qiweb.test` module provide http://junit.org[JUnit] based construct to ease tests implementation.
 
-First construct is `QiWebTest` that should be subclassed by your test classes.
-Second one is `QiWebRule`, a JUnit Rule to be declared in your test classes.
+First construct is `QiWeb[Http]Test` that should be subclassed by your test classes.
+Second one is `QiWeb[Http]Rule`, a JUnit Rule to be declared in your test classes.
 Both have the same extension points, choose the one that suits your needs and habits.
 
-Using the JUnit Rule is the prefered way of writing QiWeb tests as it don't force you to extend from any base class.
+Using the JUnit Rules is the prefered way of writing QiWeb tests as they don't force you to extend from any base class.
 
-TIP: QiWeb JUnit Support has transparent integration with https://code.google.com/p/rest-assured/[rest-assured] if it is
-detected on the tests classpath.
-rest-assured base URL is automatically set accordingly to the QiWeb configuration so can use relative paths when using
-it.
-
-=== QiWebTest usage
+=== QiWeb[Http]Test usage
 
 [source,java]
 ----
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWeb[Http]Test;
 
-public class MyTest extends QiWebTest {
+public class MyTest extends QiWeb[Http]Test {
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -38,10 +33,10 @@ Your Application will be activated/passivated around each test method.
 ----
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWeb[Http]Test;
 
 public class MyTest {
-  @Rule public QiWebRule qiweb = new QiWebRule();
+  @Rule public QiWeb[Http]Rule qiweb = new QiWeb[Http]Rule();
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -58,10 +53,10 @@ annotation.
 ----
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebTest;
+import org.qiweb.test.QiWeb[Http]Test;
 
 public class MyTest {
-  @ClassRule public static final QiWebRule QIWEB = new QiWebRule();
+  @ClassRule public static final QiWeb[Http]Rule QIWEB = new QiWeb[Http]Rule();
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -73,21 +68,34 @@ public class MyTest {
 === In practice
 
 - HTTP or not HTTP
-- Automatic free port usage, allowing tests to be run in parallel
-- Per Method / Per Class
-- Logging
-- Configuration
-- Routes
+// - Automatic free port usage, allowing tests to be run in parallel ; even while a development shell is running
+- Lifecycle around test methods, classes or suites
+- Logging (Slf4jRule, Logback)
+- Configuration (choose config file)
+- Routes (inline or choose config file)
 
 
 === Testing HTTP
 
+[TIP]
+====
 The QiWeb Team recommend https://code.google.com/p/rest-assured/[rest-assured].
+
+QiWeb JUnit Support has transparent integration with https://code.google.com/p/rest-assured/[rest-assured] if it is
+detected on the tests classpath.
+rest-assured base URL is then set accordingly to the QiWeb configuration so you can use relative paths when using
+it.
+
 All HTTP assertions in the SDK are done using `rest-assured`, see the tests source code for numerous examples.
+====
 
 
 === Testing browser based UIs
 
-The QiWeb Team recommand http://fluentlenium.org/[FluentLenium].
+[TIP]
+====
+The QiWeb Team recommend http://fluentlenium.org/[FluentLenium].
+
 All browser based UI assertions in the samples are done using `FluentLenium`, see the tests source code for numerous
 examples.
+====
