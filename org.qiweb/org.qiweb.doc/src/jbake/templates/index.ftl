@@ -29,20 +29,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <h4>API</h4>
                 <p>Read the reference documentation of the QiWeb Core API, SPI and Test Support.</p>
                 <p><a href="api/index.html" target="_blank">QiWeb API</a></p>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <h4>Modules</h4>
                 <p>Leverage high quality modules allowing you to build awesome HTTP applications.</p>
                 <p><a href="modules/index.html">Modules</a></p>
-            </div>
-            <div class="col-md-4">
-                <h4>Release notes</h4>
-                <p>See what's new and noteworthy in this release.</p>
-                <p><a href="release-notes.html">Release notes</a></p>
             </div>
         </div>
     </div>
