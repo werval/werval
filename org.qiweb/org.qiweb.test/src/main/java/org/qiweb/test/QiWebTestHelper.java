@@ -17,7 +17,12 @@ package org.qiweb.test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
+import org.qiweb.api.Config;
 import org.qiweb.api.Errors;
+
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
+import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 
 /**
  * Internal QiWeb Test Helper.
@@ -49,6 +54,23 @@ import org.qiweb.api.Errors;
             }
             pw.flush();
             System.err.println( writer.toString() );
+        }
+    }
+
+    /* package */ static void setupRestAssuredDefaults( Config config )
+    {
+        // Setup RestAssured defaults if present
+        try
+        {
+            Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
+            restAssuredPortField.set( null, config.intNumber( QIWEB_HTTP_PORT ) );
+            Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
+            restAssuredBaseURLField.set( null, "http://" + config.string( QIWEB_HTTP_ADDRESS ) );
+        }
+        catch( ClassNotFoundException | NoSuchFieldException |
+               IllegalArgumentException | IllegalAccessException noRestAssured )
+        {
+            // RestAssured is not present, we simply don't configure it.
         }
     }
 }

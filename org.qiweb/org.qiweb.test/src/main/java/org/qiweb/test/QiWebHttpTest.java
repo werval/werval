@@ -15,7 +15,6 @@
  */
 package org.qiweb.test;
 
-import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.api.Config;
@@ -30,6 +29,7 @@ import org.qiweb.spi.server.HttpServer;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+import static org.qiweb.test.QiWebTestHelper.setupRestAssuredDefaults;
 
 /**
  * Base QiWeb HTTP JUnit Test.
@@ -88,20 +88,7 @@ public class QiWebHttpTest
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
         httpServer = new NettyServer( app );
         httpServer.activate();
-
-        // Setup RestAssured defaults if present
-        try
-        {
-            Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
-            restAssuredPortField.set( null, app.config().intNumber( QIWEB_HTTP_PORT ) );
-            Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
-            restAssuredBaseURLField.set( null, "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) );
-        }
-        catch( ClassNotFoundException | NoSuchFieldException |
-               IllegalArgumentException | IllegalAccessException noRestAssured )
-        {
-            // RestAssured is not present, we simply don't configure it.
-        }
+        setupRestAssuredDefaults( config );
     }
 
     /**
