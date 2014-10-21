@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
+import static org.qiweb.api.Mode.PROD;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
@@ -89,8 +90,8 @@ public class NettyServer
                         ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group(
-            new NioEventLoopGroup( devSpi == null ? acceptors : 1, new NamedThreadFactory( "qiweb-acceptor" ) ),
-            new NioEventLoopGroup( devSpi == null ? iothreads : 1, new NamedThreadFactory( "qiweb-io" ) )
+            new NioEventLoopGroup( app.mode() == PROD ? acceptors : 1, new NamedThreadFactory( "qiweb-acceptor" ) ),
+            new NioEventLoopGroup( app.mode() == PROD ? iothreads : 1, new NamedThreadFactory( "qiweb-io" ) )
         );
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );
