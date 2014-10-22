@@ -70,6 +70,7 @@ public interface Config
      *
      * @return Config entry value as Integer
      */
+    @Reflectively.Invoked( by = "DevShell" )
     Integer intNumber( String key );
 
     /**
@@ -84,6 +85,7 @@ public interface Config
      *
      * @return Config entry value as String
      */
+    @Reflectively.Invoked( by = "DevShell" )
     String string( String key );
 
     /**
