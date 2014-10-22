@@ -36,19 +36,19 @@ public abstract class AbstractQiWebMojo
      * <p>
      * Loaded from the application classpath.
      */
-    @Parameter( property = "qiwebdev.configResource" )
+    @Parameter( property = "qiweb.configResource" )
     protected String configResource;
 
     /**
      * Configuration file.
      */
-    @Parameter( property = "qiwebdev.configFile" )
+    @Parameter( property = "qiweb.configFile" )
     protected File configFile;
 
     /**
      * Configuration URL.
      */
-    @Parameter( property = "qiwebdev.configUrl" )
+    @Parameter( property = "qiweb.configUrl" )
     protected URL configUrl;
 
     @Parameter( property = "project", required = true, readonly = true )
