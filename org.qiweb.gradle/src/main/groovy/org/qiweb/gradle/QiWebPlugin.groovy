@@ -56,10 +56,9 @@ class QiWebPlugin implements Plugin<Project>
         project.configurations.devshell {
             description = "QiWeb DevShell Configuration"
             visible = false
-            extendsFrom project.configurations.runtime
         }
         project.dependencies {
-            devshell "org.qiweb:org.qiweb.doc:" + BuildVersion.VERSION
+            devshell group: "org.qiweb", name: "org.qiweb.doc", version: BuildVersion.VERSION, transitive: false
         }
 
         project.task(

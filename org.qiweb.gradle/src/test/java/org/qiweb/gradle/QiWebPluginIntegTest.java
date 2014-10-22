@@ -96,10 +96,16 @@ public class QiWebPluginIntegTest
           + "  runtime 'org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "'\n"
           + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
           + "}\n"
+          + "sourceSets {\n"
+          + "  custom\n"
+          + "}\n"
+          + "classes.dependsOn customClasses\n"
           + "devshell {\n"
+          + "  sourceSets += project.sourceSets.custom\n"
           + "  configResource = 'application-custom.conf'\n"
           + "}\n"
           + "start {\n"
+          + "  sourceSets += project.sourceSets.custom\n"
           + "  configResource = 'application-custom.conf'\n"
           + "}\n"
           + "\n";
@@ -181,12 +187,14 @@ public class QiWebPluginIntegTest
             new File( tmp.getRoot(), "build.gradle" ).toPath(),
             BUILD.getBytes( UTF_8 )
         );
-        File resources = new File( tmp.getRoot(), "src/main/resources" );
-        Files.createDirectories( resources.toPath() );
+        File custom = new File( tmp.getRoot(), "src/custom/resources" );
+        Files.createDirectories( custom.toPath() );
         Files.write(
-            new File( resources, "application-custom.conf" ).toPath(),
+            new File( custom, "application-custom.conf" ).toPath(),
             CONFIG.getBytes( UTF_8 )
         );
+        File resources = new File( tmp.getRoot(), "src/main/resources" );
+        Files.createDirectories( resources.toPath() );
         Files.write(
             new File( resources, "routes.conf" ).toPath(),
             ROUTES.getBytes( UTF_8 )

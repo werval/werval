@@ -18,6 +18,7 @@ package org.qiweb.gradle
 import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 
 import org.qiweb.commands.DevShellCommand
@@ -25,6 +26,11 @@ import org.qiweb.devshell.JavaWatcher
 
 class QiWebDevShellTask extends DefaultTask
 {
+    /**
+     * Application source sets, default to {@literal main} only.
+     */
+    Set<SourceSet> sourceSets = new LinkedHashSet<>( [ project.sourceSets.main ] )
+
     /**
      * Configuration resource name.
      * <p>
@@ -45,27 +51,52 @@ class QiWebDevShellTask extends DefaultTask
     /**
      * Paths of extra files or directories to watch for changes.
      */
-    Set<String> extraWatch = new HashSet<>()
+    Set<String> extraWatch = new LinkedHashSet<>()
 
     @TaskAction
     void runDevShell()
     {
         project.logger.lifecycle ">> QiWeb DevShell for " + project.getName() + " starting..."
 
-        // == Gather build info
-        def applicationSources = project.sourceSets.main.allSource.srcDirs.collect { f -> 
-            f.toURI().toURL()
+        // Default behaviour
+        if( extraWatch == null )
+        {
+            extraWatch = new LinkedHashSet<>()
         }
-        def applicationClasspath = [
-            project.sourceSets.main.output.classesDir.toURI().toURL(),
-            project.sourceSets.main.output.resourcesDir.toURI().toURL()
-        ]
+        if( sourceSets == null )
+        {
+            sourceSets = new LinkedHashSet<>( [ project.sourceSets.main ] )
+        }
+
+        // == Gather build info
+        def applicationSources = sourceSets.collect { sourceSet ->
+            sourceSet.allSource.srcDirs.collect { f -> f.toURI().toURL() }
+        }.flatten()
+        def applicationClasspath = sourceSets.collect { sourceSet ->
+            [ sourceSet.output.classesDir.toURI().toURL(), sourceSet.output.resourcesDir.toURI().toURL() ]
+        }.flatten()
         def runtimeClasspath = project.configurations.devshell.files.collect { f ->
             f.toURI().toURL()
         }
-        def toWatch = project.sourceSets*.allSource*.srcDirs[0]
+        runtimeClasspath += sourceSets.collect { sourceSet ->
+            project.configurations[sourceSet.runtimeConfigurationName].files.collect { f -> f.toURI().toURL() }
+        }
+        runtimeClasspath = runtimeClasspath.flatten()
+        
+        def toWatch = sourceSets*.allSource*.srcDirs[0]
         toWatch += extraWatch.collect { s -> project.file( s ) }
         if( configFile != null ) toWatch += configFile
+
+        project.logger.debug "====================================================================================="
+        project.logger.debug "APPLICATION SOURCES"
+        project.logger.debug applicationSources.toString()
+        project.logger.debug "APPLICATION CLASSPATH"
+        project.logger.debug applicationClasspath.toString()
+        project.logger.debug "RUNTIME CLASSPATH"
+        project.logger.debug runtimeClasspath.toString()
+        project.logger.debug "TO WATCH"
+        project.logger.debug toWatch.toString()
+        project.logger.debug "====================================================================================="
 
         // == Start the DevShell
         def devShellSPI = new GradleDevShellSPI(
