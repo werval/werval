@@ -18,6 +18,7 @@ package org.qiweb.maven;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,9 @@ public class DevShellMojo
     @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
 
+    @Parameter( property = "qiwebdev.extraWatch" )
+    private File[] extraWatch;
+
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
@@ -73,6 +77,10 @@ public class DevShellMojo
             for( String eachToWatch : project.getCompileSourceRoots() )
             {
                 toWatch.add( new File( eachToWatch ) );
+            }
+            if( extraWatch != null )
+            {
+                toWatch.addAll( Arrays.asList( extraWatch ) );
             }
 
             // Start DevShell
