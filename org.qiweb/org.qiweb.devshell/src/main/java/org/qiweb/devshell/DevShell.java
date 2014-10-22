@@ -130,6 +130,9 @@ public final class DevShell
     private static final AtomicLong APPLICATION_REALM_COUNT = new AtomicLong( 0L );
 
     private final DevShellSPI spi;
+    private final String configResource;
+    private final File configFile;
+    private final URL configUrl;
     private final URLClassLoader originalLoader;
     private ClassWorld classWorld;
     private Object httpServer;
@@ -137,7 +140,30 @@ public final class DevShell
 
     public DevShell( DevShellSPI spi )
     {
+        this( spi, null, null, null );
+    }
+
+    public DevShell( DevShellSPI spi, String configResource )
+    {
+        this( spi, configResource, null, null );
+    }
+
+    public DevShell( DevShellSPI spi, File configFile )
+    {
+        this( spi, null, configFile, null );
+    }
+
+    public DevShell( DevShellSPI spi, URL configUrl )
+    {
+        this( spi, null, null, configUrl );
+    }
+
+    public DevShell( DevShellSPI spi, String configResource, File configFile, URL configUrl )
+    {
         this.spi = spi;
+        this.configResource = configResource;
+        this.configFile = configFile;
+        this.configUrl = configUrl;
         this.originalLoader = ( (URLClassLoader) Thread.currentThread().getContextClassLoader() );
     }
 
@@ -174,15 +200,16 @@ public final class DevShell
 
             // Config
             Class<?> configClass = appRealm.loadClass( CONFIG_API_CLASS );
-            Object configInstance = appRealm.loadClass( CONFIG_RUNTIME_CLASS ).getConstructor(
+            Class<?> configRuntimeClass = appRealm.loadClass( CONFIG_RUNTIME_CLASS );
+            Object configInstance = configRuntimeClass.getConstructor(
                 new Class<?>[]
                 {
-                    ClassLoader.class
+                    ClassLoader.class, String.class, File.class, URL.class
                 }
             ).newInstance(
                 new Object[]
                 {
-                    appRealm
+                    appRealm, configResource, configFile, configUrl
                 }
             );
 
@@ -193,7 +220,7 @@ public final class DevShell
                 new Class<?>[]
                 {
                     modeClass,
-                    configClass,
+                    configRuntimeClass,
                     ClassLoader.class,
                     DevShellSPI.class
                 }
@@ -346,12 +373,7 @@ public final class DevShell
     {
         try
         {
-            Files.write(
-                RUN_LOCK_FILE.toPath(),
-                new byte[]
-                {
-                }
-            );
+            Files.write( RUN_LOCK_FILE.toPath(), new byte[ 0 ] );
         }
         catch( IOException ex )
         {

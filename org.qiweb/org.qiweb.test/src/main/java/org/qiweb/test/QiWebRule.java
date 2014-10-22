@@ -46,7 +46,6 @@ public class QiWebRule
 
     public QiWebRule( String configurationResourceName )
     {
-
         this( configurationResourceName, null );
     }
 

@@ -142,7 +142,7 @@ public final class ApplicationInstance
     private volatile boolean activated = false;
     private volatile boolean activatingOrPassivating = false;
     private final Mode mode;
-    private Config config;
+    private ConfigInstance config;
     private PluginsInstance plugins;
     private Global global;
     private Crypto crypto;
@@ -207,7 +207,7 @@ public final class ApplicationInstance
      * @param classLoader    Application ClassLoader, must be not null
      * @param routesProvider Routes provider, must be not null
      */
-    public ApplicationInstance( Mode mode, Config config, ClassLoader classLoader, RoutesProvider routesProvider )
+    public ApplicationInstance( Mode mode, ConfigInstance config, ClassLoader classLoader, RoutesProvider routesProvider )
     {
         this( mode, config, classLoader, routesProvider, null );
     }
@@ -223,7 +223,7 @@ public final class ApplicationInstance
     @Reflectively.Invoked( by = "DevShell" )
     public ApplicationInstance(
         Mode mode,
-        Config config,
+        ConfigInstance config,
         ClassLoader classLoader,
         DevShellSPI devSpi
     )
@@ -233,7 +233,7 @@ public final class ApplicationInstance
 
     private ApplicationInstance(
         Mode mode,
-        Config config,
+        ConfigInstance config,
         ClassLoader classLoader,
         RoutesProvider routesProvider,
         DevShellSPI devSpi
@@ -564,7 +564,7 @@ public final class ApplicationInstance
             passivate();
         }
         this.classLoader = newClassLoader;
-        this.config = new ConfigInstance( newClassLoader );
+        this.config = new ConfigInstance( newClassLoader, config.location() );
         configure();
         activate();
     }

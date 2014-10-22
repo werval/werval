@@ -39,40 +39,234 @@ import static org.qiweb.util.Charsets.UTF_8;
 public class ConfigInstance
     implements Config
 {
+    /**
+     * Helper to preserve config location between reloads.
+     * <p>
+     * See {@link ConfigInstance#location()}.
+     */
+    public static final class ConfigLocation
+    {
+        private final String configResource;
+        private final File configFile;
+        private final URL configUrl;
+
+        private ConfigLocation()
+        {
+            this( null, null, null );
+        }
+
+        private ConfigLocation( String configResource )
+        {
+            this( configResource, null, null );
+        }
+
+        private ConfigLocation( File configFile )
+        {
+            this( null, configFile, null );
+        }
+
+        private ConfigLocation( URL configUrl )
+        {
+            this( null, null, configUrl );
+        }
+
+        private ConfigLocation( String configResource, File configFile, URL configUrl )
+        {
+            this.configResource = configResource;
+            this.configFile = configFile;
+            this.configUrl = configUrl;
+        }
+
+        public String toStringShort()
+        {
+            StringBuilder sb = new StringBuilder();
+            boolean previous = false;
+            if( configResource != null )
+            {
+                sb.append( "resource:" ).append( configResource );
+                previous = true;
+            }
+            if( configFile != null )
+            {
+                if( previous )
+                {
+                    sb.append( ", " );
+                }
+                sb.append( "file:" ).append( configFile.getAbsolutePath() );
+                previous = true;
+            }
+            if( configUrl != null )
+            {
+                if( previous )
+                {
+                    sb.append( ", " );
+                }
+                sb.append( "url:" ).append( configUrl.toString() );
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "ConfigLocation{" + toStringShort() + '}';
+        }
+    }
+
+    private final ConfigLocation location;
     private com.typesafe.config.Config config;
 
-    public ConfigInstance()
-    {
-        this( ConfigInstance.class.getClassLoader() );
-    }
-
-    @Reflectively.Invoked( by = "DevShell" )
+    /**
+     * Create a new Config instance.
+     *
+     * @param loader ClassLoader
+     */
     public ConfigInstance( ClassLoader loader )
     {
-        config = com.typesafe.config.ConfigFactory.load( loader );
+        this( loader, new ConfigLocation() );
     }
 
-    public ConfigInstance( ClassLoader loader, String configurationResourceName )
+    /**
+     * Create a new Config instance.
+     *
+     * @param loader         ClassLoader
+     * @param configResource Configuration resource name
+     */
+    public ConfigInstance( ClassLoader loader, String configResource )
     {
-        config = com.typesafe.config.ConfigFactory.load( loader, configurationResourceName );
+        this( loader, new ConfigLocation( configResource ) );
     }
 
-    private ConfigInstance( com.typesafe.config.Config config )
+    /**
+     * Create a new Config instance.
+     *
+     * @param loader     ClassLoader
+     * @param configFile Configuration file
+     */
+    public ConfigInstance( ClassLoader loader, File configFile )
     {
+        this( loader, new ConfigLocation( configFile ) );
+    }
+
+    /**
+     * Create a new Config instance.
+     *
+     * @param loader    ClassLoader
+     * @param configUrl Configuration URL
+     */
+    public ConfigInstance( ClassLoader loader, URL configUrl )
+    {
+        this( loader, new ConfigLocation( configUrl ) );
+    }
+
+    /**
+     * Create a new Config instance.
+     * <p>
+     * Only one of {@literal configResource}, {@literal configFile} or {@literal configUrl} should be non-null.
+     *
+     * @param loader         ClassLoader
+     * @param configResource Configuration resource name
+     * @param configFile     Configuration file
+     * @param configUrl      Configuration URL
+     */
+    @Reflectively.Invoked( by = "DevShell" )
+    public ConfigInstance( ClassLoader loader, String configResource, File configFile, URL configUrl )
+    {
+        this( loader, new ConfigLocation( configResource, configFile, configUrl ) );
+    }
+
+    public ConfigInstance( ClassLoader loader, ConfigLocation location )
+    {
+        // Gather eventually set previous system properties for config location
+        String previousConfigResource = System.getProperty( "config.resource" );
+        String previousConfigFile = System.getProperty( "config.file" );
+        String previousConfigURL = System.getProperty( "config.url" );
+        try
+        {
+            // Eventually set config.resource
+            if( location.configResource != null )
+            {
+                System.setProperty( "config.resource", location.configResource );
+            }
+            // Eventually set config.file
+            if( location.configFile != null )
+            {
+                System.setProperty( "config.file", location.configFile.getAbsolutePath() );
+            }
+            // Eventually set config.url
+            if( location.configUrl != null )
+            {
+                System.setProperty( "config.url", location.configUrl.toExternalForm() );
+            }
+            // Hold a reference to the location, for reload purpose
+            this.location = location;
+            // Invalidate TypeSafe Config caches (system properties)
+            com.typesafe.config.ConfigFactory.invalidateCaches();
+            // Effectively load configuration
+            this.config = com.typesafe.config.ConfigFactory.load( loader );
+        }
+        finally
+        {
+            // Restore config.resource
+            if( previousConfigResource == null )
+            {
+                System.clearProperty( "config.resource" );
+            }
+            else
+            {
+                System.setProperty( "config.resource", previousConfigResource );
+            }
+            // Restore config.file
+            if( previousConfigFile == null )
+            {
+                System.clearProperty( "config.file" );
+            }
+            else
+            {
+                System.setProperty( "config.file", previousConfigFile );
+            }
+            // Restore config.url
+            if( previousConfigURL == null )
+            {
+                System.clearProperty( "config.url" );
+            }
+            else
+            {
+                System.setProperty( "config.url", previousConfigURL );
+            }
+        }
+    }
+
+    /**
+     * Internal CTOR.
+     * <p>
+     * See {@link #object(java.lang.String)} and {@link #array(java.lang.String)}.
+     *
+     * @param config       TypeSafe Config
+     * @param resourceName Configuration resource name
+     */
+    private ConfigInstance( com.typesafe.config.Config config, ConfigLocation location )
+    {
+        this.location = location;
         this.config = config;
+    }
+
+    public ConfigLocation location()
+    {
+        return location;
     }
 
     @Override
     public Config object( String key )
     {
-        return new ConfigInstance( config.getConfig( key ) );
+        return new ConfigInstance( config.getConfig( key ), location );
     }
 
     @Override
     public List<Config> array( String key )
     {
         List<Config> configs = new ArrayList<>();
-        config.getConfigList( key ).forEach( conf -> configs.add( new ConfigInstance( conf ) ) );
+        config.getConfigList( key ).forEach( conf -> configs.add( new ConfigInstance( conf, location ) ) );
         return configs;
     }
 

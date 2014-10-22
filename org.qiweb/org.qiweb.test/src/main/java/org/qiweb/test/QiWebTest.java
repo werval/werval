@@ -17,7 +17,6 @@ package org.qiweb.test;
 
 import org.junit.After;
 import org.junit.Before;
-import org.qiweb.api.Config;
 import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
@@ -60,11 +59,11 @@ public class QiWebTest
     @Before
     public final void beforeEachQiWebTestMethod()
     {
-        ClassLoader classLoader = getClass().getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String conf = configurationResourceNameOverride == null
                       ? configurationResourceName()
                       : configurationResourceNameOverride;
-        Config config = new ConfigInstance( classLoader, conf );
+        ConfigInstance config = new ConfigInstance( classLoader, conf );
         RoutesProvider routesProvider = routesProviderOverride == null
                                         ? routesProvider()
                                         : routesProviderOverride;
