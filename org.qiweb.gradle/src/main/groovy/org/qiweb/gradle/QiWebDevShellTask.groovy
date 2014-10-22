@@ -15,6 +15,7 @@
  */
 package org.qiweb.gradle
 
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -24,6 +25,26 @@ import org.qiweb.devshell.JavaWatcher
 
 class QiWebDevShellTask extends DefaultTask
 {
+    /**
+     * Configuration resource name.
+     * <p>
+     * Loaded from the application classpath.
+     */
+    String configResource
+
+    /**
+     * Configuration file.
+     */
+    File configFile
+
+    /**
+     * Configuration URL.
+     */
+    URL configUrl
+
+    /**
+     * Paths of extra files or directories to watch for changes.
+     */
     Set<String> extraWatch = new HashSet<>()
 
     @TaskAction
@@ -44,6 +65,7 @@ class QiWebDevShellTask extends DefaultTask
         }
         def toWatch = project.sourceSets*.allSource*.srcDirs[0]
         toWatch += extraWatch.collect { s -> project.file( s ) }
+        if( configFile != null ) toWatch += configFile
 
         // == Start the DevShell
         def devShellSPI = new GradleDevShellSPI(
@@ -55,6 +77,6 @@ class QiWebDevShellTask extends DefaultTask
             project.getProjectDir(),
             ["devshell_rebuild"]
         )
-        new DevShellCommand( devShellSPI ).run();
+        new DevShellCommand( devShellSPI, configResource, configFile, configUrl ).run();
     }
 }

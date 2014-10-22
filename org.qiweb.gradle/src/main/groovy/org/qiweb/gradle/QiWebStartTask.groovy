@@ -25,8 +25,32 @@ import org.qiweb.commands.StartCommand
  */
 class QiWebStartTask extends DefaultTask
 {
-    private String mainClass = "org.qiweb.server.bootstrap.Main"
-    private String[] arguments = new String[ 0 ]
+    /**
+     * Main class, default to org.qiweb.server.bootstrap.Main.
+     */
+    String mainClass = "org.qiweb.server.bootstrap.Main"
+
+    /**
+     * Main class arguments.
+     */
+    String[] arguments = new String[ 0 ]
+
+    /**
+     * Configuration resource name.
+     * <p>
+     * Loaded from the application classpath.
+     */
+    String configResource
+
+    /**
+     * Configuration file.
+     */
+    File configFile
+
+    /**
+     * Configuration URL.
+     */
+    URL configUrl
 
     @TaskAction
     void startProductionMode()
@@ -55,7 +79,8 @@ class QiWebStartTask extends DefaultTask
             StartCommand.ExecutionModel.ISOLATED_THREADS,
             mainClass,
             arguments,
-            ( applicationClasspath + runtimeClasspath ) as URL[]
+            ( applicationClasspath + runtimeClasspath ) as URL[],
+            configResource, configFile, configUrl
         ).run();
     }
 }

@@ -96,6 +96,12 @@ public class QiWebPluginIntegTest
           + "  runtime 'org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "'\n"
           + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
           + "}\n"
+          + "devshell {\n"
+          + "  configResource = 'application-custom.conf'\n"
+          + "}\n"
+          + "start {\n"
+          + "  configResource = 'application-custom.conf'\n"
+          + "}\n"
           + "\n";
         CONFIG
         = "\n"
@@ -178,7 +184,7 @@ public class QiWebPluginIntegTest
         File resources = new File( tmp.getRoot(), "src/main/resources" );
         Files.createDirectories( resources.toPath() );
         Files.write(
-            new File( resources, "application.conf" ).toPath(),
+            new File( resources, "application-custom.conf" ).toPath(),
             CONFIG.getBytes( UTF_8 )
         );
         Files.write(
