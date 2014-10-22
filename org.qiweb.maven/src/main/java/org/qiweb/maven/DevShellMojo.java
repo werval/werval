@@ -18,7 +18,6 @@ package org.qiweb.maven;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,10 +50,10 @@ public class DevShellMojo
     private String rebuildPhase;
 
     /**
-     * Extra files or directories to watch for changes.
+     * Extra files or directories paths to watch for changes, relative to the project base directory.
      */
     @Parameter( property = "qiwebdev.extraWatch" )
-    private File[] extraWatch;
+    private String[] extraWatch;
 
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
@@ -86,7 +85,10 @@ public class DevShellMojo
             }
             if( extraWatch != null )
             {
-                toWatch.addAll( Arrays.asList( extraWatch ) );
+                for( String extraW : extraWatch )
+                {
+                    toWatch.add( new File( project.getBasedir(), extraW ) );
+                }
             }
 
             // Start DevShell
