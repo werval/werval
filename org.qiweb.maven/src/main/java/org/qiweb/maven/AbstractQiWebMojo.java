@@ -51,6 +51,12 @@ public abstract class AbstractQiWebMojo
     @Parameter( property = "qiweb.configUrl" )
     protected URL configUrl;
 
+    /**
+     * Extra classpath files or directories paths, relative to the project base directory.
+     */
+    @Parameter( property = "qiweb.extraClassPath" )
+    protected String[] extraClassPath;
+
     @Parameter( property = "project", required = true, readonly = true )
     protected MavenProject project;
 

@@ -72,6 +72,13 @@ public class DevShellMojo
             // Application Classpath
             Set<URL> appCP = qiwebDocArtifacts();
             appCP.add( new File( project.getBasedir(), "target/classes" ).toURI().toURL() );
+            if( extraClassPath != null )
+            {
+                for( String extraCP : extraClassPath )
+                {
+                    appCP.add( new File( project.getBasedir(), extraCP ).toURI().toURL() );
+                }
+            }
             URL[] applicationClasspath = appCP.toArray( new URL[ appCP.size() ] );
 
             // Runtime Classpath
@@ -116,7 +123,6 @@ public class DevShellMojo
         {
             sourcesSet.add( new File( applicationSourcesElement ).toURI().toURL() );
         }
-        project.getCompileSourceRoots();
         return sourcesSet.toArray( new URL[ sourcesSet.size() ] );
     }
 

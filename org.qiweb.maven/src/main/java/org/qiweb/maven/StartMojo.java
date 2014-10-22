@@ -15,6 +15,11 @@
  */
 package org.qiweb.maven;
 
+import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -55,31 +60,43 @@ public class StartMojo
         {
             arguments = new String[ 0 ];
         }
-
-        if( getLog().isDebugEnabled() )
+        if( null == extraClassPath )
         {
-            StringBuffer msg = new StringBuffer( "Invoking : " );
-            msg.append( mainClass );
-            msg.append( ".main(" );
-            for( int idx = 0; idx < arguments.length; idx++ )
-            {
-                if( idx > 0 )
-                {
-                    msg.append( ", " );
-                }
-                msg.append( arguments[idx] );
-            }
-            msg.append( ")" );
-            getLog().debug( msg );
+            extraClassPath = new String[ 0 ];
         }
 
         try
         {
+            Set<URL> runtimeCP = new LinkedHashSet<>();
+            runtimeCP.addAll( Arrays.asList( runtimeClassPath() ) );
+            for( String extraCP : extraClassPath )
+            {
+                runtimeCP.add( new File( project.getBasedir(), extraCP ).toURI().toURL() );
+            }
+            URL[] runtimeClassPath = runtimeCP.toArray( new URL[ runtimeCP.size() ] );
+
+            if( getLog().isDebugEnabled() )
+            {
+                StringBuffer msg = new StringBuffer( "Invoking : " );
+                msg.append( mainClass );
+                msg.append( ".main(" );
+                for( int idx = 0; idx < arguments.length; idx++ )
+                {
+                    if( idx > 0 )
+                    {
+                        msg.append( ", " );
+                    }
+                    msg.append( arguments[idx] );
+                }
+                msg.append( ")" );
+                getLog().debug( msg );
+            }
+
             new StartCommand(
                 StartCommand.ExecutionModel.ISOLATED_THREADS,
                 mainClass,
                 arguments,
-                runtimeClassPath(),
+                runtimeClassPath,
                 configResource,
                 configFile,
                 configUrl
