@@ -113,6 +113,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
 import static org.qiweb.util.InputStreams.transferTo;
 import static org.qiweb.util.Strings.NEWLINE;
+import static org.qiweb.util.Strings.hasText;
 import static org.qiweb.util.Strings.indentTwoSpaces;
 
 /**
@@ -332,17 +333,33 @@ public final class ApplicationInstance
             activatingOrPassivating = false;
         }
 
-        LOG.info( "QiWeb Application Activated ({} mode)", mode );
+        LOG.info( "Application Activated ({} mode)", mode );
         if( ( mode == Mode.DEV && LOG.isInfoEnabled() ) || LOG.isDebugEnabled() )
         {
-            StringBuilder runtimeSummary = new StringBuilder( "QiWeb Runtime Summary\n\n" );
+            StringBuilder runtimeSummary = new StringBuilder( "Runtime Summary\n\n" );
+            String configLocation = config.location().toStringShort();
+            if( hasText( configLocation ) )
+            {
+                runtimeSummary
+                    .append( indentTwoSpaces( "Configuration Location:", 1 ) )
+                    .append( NEWLINE )
+                    .append( indentTwoSpaces( configLocation, 2 ) )
+                    .append( NEWLINE )
+                    .append( NEWLINE );
+            }
+            String allRoutes = routes.toString();
+            if( hasText( allRoutes ) )
+            {
+                runtimeSummary
+                    .append( indentTwoSpaces( "All routes defined by the application, in order:", 1 ) )
+                    .append( NEWLINE )
+                    .append( indentTwoSpaces( routes.toString(), 2 ) )
+                    .append( NEWLINE )
+                    .append( NEWLINE );
+            }
             runtimeSummary
-                .append( indentTwoSpaces( "All routes defined by the application, in order:", 1 ) )
-                .append( NEWLINE ).append( NEWLINE )
-                .append( indentTwoSpaces( routes.toString(), 2 ) )
-                .append( NEWLINE ).append( NEWLINE )
                 .append( indentTwoSpaces( "Application Executors:", 1 ) )
-                .append( NEWLINE ).append( NEWLINE )
+                .append( NEWLINE )
                 .append( indentTwoSpaces( executors.toString(), 2 ) )
                 .append( NEWLINE );
             String msg = runtimeSummary.toString();
@@ -421,7 +438,7 @@ public final class ApplicationInstance
             activatingOrPassivating = false;
         }
 
-        LOG.info( "QiWeb Application Passivated" );
+        LOG.info( "Application Passivated" );
     }
 
     @Override
