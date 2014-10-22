@@ -44,9 +44,15 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 public class DevShellMojo
     extends AbstractQiWebMojo
 {
+    /**
+     * Rebuild phase.
+     */
     @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
 
+    /**
+     * Extra files or directories to watch for changes.
+     */
     @Parameter( property = "qiwebdev.extraWatch" )
     private File[] extraWatch;
 

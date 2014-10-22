@@ -33,9 +33,15 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 public class StartMojo
     extends AbstractQiWebMojo
 {
+    /**
+     * Main class.
+     */
     @Parameter( property = "qiwebstart.mainClass", defaultValue = "org.qiweb.server.bootstrap.Main" )
     private String mainClass;
 
+    /**
+     * Main class arguments.
+     */
     @Parameter( property = "qiwebstart.arguments" )
     private String[] arguments;
 
