@@ -75,6 +75,9 @@ public abstract class AbstractQiWebMojoIT
           + "                <groupId>org.qiweb</groupId>\n"
           + "                <artifactId>org.qiweb.maven</artifactId>\n"
           + "                <version>" + VERSION + "</version>\n"
+          + "                <configuration>\n"
+          + "                   <configResource>application-custom.conf</configResource>\n"
+          + "                </configuration>\n"
           + "            </plugin>\n"
           + "            <plugin>\n"
           + "                <artifactId>maven-resources-plugin</artifactId>\n"
@@ -169,7 +172,7 @@ public abstract class AbstractQiWebMojoIT
         File resources = new File( tmp.getRoot(), "src/main/resources" );
         Files.createDirectories( resources.toPath() );
         Files.write(
-            new File( resources, "application.conf" ).toPath(),
+            new File( resources, "application-custom.conf" ).toPath(),
             CONFIG.getBytes( UTF_8 )
         );
         Files.write(
