@@ -15,8 +15,6 @@
  */
 package org.qiweb.maven;
 
-import java.io.File;
-import java.net.URL;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -46,26 +44,6 @@ public class StartMojo
      */
     @Parameter( property = "qiwebstart.arguments" )
     private String[] arguments;
-
-    /**
-     * Configuration resource name.
-     * <p>
-     * Loaded from the application classpath.
-     */
-    @Parameter( property = "qiwebstart.configResource" )
-    private String configResource;
-
-    /**
-     * Configuration file.
-     */
-    @Parameter( property = "qiwebstart.configFile" )
-    private File configFile;
-
-    /**
-     * Configuration URL.
-     */
-    @Parameter( property = "qiwebstart.configUrl" )
-    private URL configUrl;
 
     @Override
     public void execute()

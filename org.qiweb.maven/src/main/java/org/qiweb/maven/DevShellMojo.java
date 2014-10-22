@@ -51,26 +51,6 @@ public class DevShellMojo
     private String rebuildPhase;
 
     /**
-     * Configuration resource name.
-     * <p>
-     * Loaded from the application classpath.
-     */
-    @Parameter( property = "qiwebdev.configResource" )
-    private String configResource;
-
-    /**
-     * Configuration file.
-     */
-    @Parameter( property = "qiwebdev.configFile" )
-    private File configFile;
-
-    /**
-     * Configuration URL.
-     */
-    @Parameter( property = "qiwebdev.configUrl" )
-    private URL configUrl;
-
-    /**
      * Extra files or directories to watch for changes.
      */
     @Parameter( property = "qiwebdev.extraWatch" )

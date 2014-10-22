@@ -31,6 +31,26 @@ import org.apache.maven.project.MavenProject;
 public abstract class AbstractQiWebMojo
     extends AbstractMojo
 {
+    /**
+     * Configuration resource name.
+     * <p>
+     * Loaded from the application classpath.
+     */
+    @Parameter( property = "qiwebdev.configResource" )
+    protected String configResource;
+
+    /**
+     * Configuration file.
+     */
+    @Parameter( property = "qiwebdev.configFile" )
+    protected File configFile;
+
+    /**
+     * Configuration URL.
+     */
+    @Parameter( property = "qiwebdev.configUrl" )
+    protected URL configUrl;
+
     @Parameter( property = "project", required = true, readonly = true )
     protected MavenProject project;
 
