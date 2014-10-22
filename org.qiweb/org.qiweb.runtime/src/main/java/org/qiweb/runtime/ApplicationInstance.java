@@ -854,7 +854,7 @@ public final class ApplicationInstance
     private CharSequence errorHtml( CharSequence title, CharSequence content )
     {
         return new StringBuilder().
-            append( "<html>\n<head><title>" ).append( title ).append( "</title></head>\n" ).
+            append( "<!DOCTYPE html>\n<html>\n<head><title>" ).append( title ).append( "</title></head>\n" ).
             append( "<body>\n" ).
             append( "<h1>" ).append( title ).append( "</h1>\n" ).
             append( content ).append( "\n" ).

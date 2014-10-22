@@ -307,7 +307,7 @@ public class Global
 
         // Generate Error Outcome
         StringBuilder html = new StringBuilder();
-        html.append( "<html>\n<head><title>500 Internal Server Error</title></head>\n" );
+        html.append( "<!DOCTYPE html>\n<html>\n<head><title>500 Internal Server Error</title></head>\n" );
         html.append( "<body>\n<h1>500 Internal Server Error</h1>\n" );
         if( application.mode() == Mode.DEV )
         {
