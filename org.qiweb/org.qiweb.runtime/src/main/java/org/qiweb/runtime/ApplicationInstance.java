@@ -648,7 +648,7 @@ public final class ApplicationInstance
                     {
                         // Invoke Controller FilterChain, ended by Controller Method Invokation
                         // TODO Handle Timeout when invoking Controller FilterChain!
-                        LOG.trace( "Invoking interaction method: {}", route.controllerMethod() );
+                        LOG.debug( "Invoking interaction method: {}", route.controllerMethod() );
                         FilterChain chain = new FilterChainFactory().buildFilterChain( this, global, context );
                         CompletableFuture<Outcome> interaction = chain.next( context );
                         Outcome outcome = interaction.get( 30, TimeUnit.SECONDS );
@@ -678,7 +678,7 @@ public final class ApplicationInstance
                         finalizeOutcome( request, outcome );
 
                         // Done!
-                        LOG.trace( "Interaction outcome: {}", outcome );
+                        LOG.debug( "Interaction outcome: {}", outcome );
                         return outcome;
                     }
                     finally
