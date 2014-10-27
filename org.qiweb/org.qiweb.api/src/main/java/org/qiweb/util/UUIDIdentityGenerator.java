@@ -95,7 +95,7 @@ public final class UUIDIdentityGenerator
     /**
      * Reset the identity UUID &amp; counter.
      */
-    public void reset()
+    public synchronized void reset()
     {
         StringBuilder sb = new StringBuilder();
         if( Strings.hasText( prefix ) )
