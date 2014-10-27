@@ -168,7 +168,13 @@ public class HttpRequestAggregator
 
         // Http Request Received Event
         context.channel().attr( Attrs.REQUEST_IDENTITY ).set( requestIdentity );
-        eventsSpi.emit( new HttpEvent.RequestReceived( requestIdentity ) );
+        eventsSpi.emit(
+            new HttpEvent.RequestReceived(
+                requestIdentity,
+                newRequestHeader.getMethod().name(),
+                newRequestHeader.getUri()
+            )
+        );
 
         currentRequestHeader = new DefaultHttpRequest( newRequestHeader.getProtocolVersion(),
                                                        newRequestHeader.getMethod(),

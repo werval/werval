@@ -91,7 +91,6 @@ public final class SessionInstance
         {
             session.put( matcher.group( 1 ), matcher.group( 2 ) );
         }
-        LOG.trace( "Parsed Signed Session Data: {}", session );
     }
 
     @Override

@@ -20,32 +20,54 @@ package org.qiweb.api.events;
  * <p>
  * Marker interface for all connection events.
  */
-public interface ConnectionEvent
-    extends Event
+public abstract class ConnectionEvent
+    implements Event
 {
+    protected final String remoteHostString;
+
+    protected ConnectionEvent( String remoteHostString )
+    {
+        this.remoteHostString = remoteHostString;
+    }
+
+    public final String remoteHostString()
+    {
+        return remoteHostString;
+    }
+
     /**
      * Connection Opened Event.
      */
-    final class Opened
-        implements ConnectionEvent
+    public static final class Opened
+        extends ConnectionEvent
     {
+        public Opened( String remoteHostString )
+        {
+            super( remoteHostString );
+        }
+
         @Override
         public String toString()
         {
-            return "ConnectionOpened";
+            return "Connection Opened (" + remoteHostString + ')';
         }
     }
 
     /**
      * Connection Closed Event.
      */
-    final class Closed
-        implements ConnectionEvent
+    public static final class Closed
+        extends ConnectionEvent
     {
+        public Closed( String remoteHostString )
+        {
+            super( remoteHostString );
+        }
+
         @Override
         public String toString()
         {
-            return "ConnectionClosed";
+            return "Connection Closed (" + remoteHostString + ')';
         }
     }
 }

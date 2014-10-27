@@ -15,6 +15,7 @@
  */
 package org.qiweb.api.events;
 
+import org.qiweb.api.http.Method;
 import org.qiweb.api.http.Status;
 
 /**
@@ -32,10 +33,14 @@ public interface HttpEvent
         implements HttpEvent
     {
         private final String identity;
+        private final String method;
+        private final String uri;
 
-        public RequestReceived( String identity )
+        public RequestReceived( String identity, String method, String uri )
         {
             this.identity = identity;
+            this.method = method;
+            this.uri = uri;
         }
 
         /**
@@ -48,10 +53,20 @@ public interface HttpEvent
             return identity;
         }
 
+        public String method()
+        {
+            return method;
+        }
+
+        public String uri()
+        {
+            return uri;
+        }
+
         @Override
         public String toString()
         {
-            return "HttpRequestReceived{" + "identity=" + identity + '}';
+            return "Http Request received (" + method + " " + uri + ')';
         }
     }
 
@@ -93,7 +108,7 @@ public interface HttpEvent
         @Override
         public String toString()
         {
-            return "HttpResponseSent{" + "identity=" + identity + ", status=" + status + '}';
+            return "Http Response sent (" + status + ')';
         }
     }
 }

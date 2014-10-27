@@ -258,7 +258,7 @@ public final class ApplicationInstance
         this.events = new EventsInstance( this );
         this.errors = new ErrorsInstance( config );
         this.devSpi = devSpi;
-        if( devSpi != null && LOG.isDebugEnabled() )
+        if( mode == Mode.DEV && LOG.isDebugEnabled() )
         {
             LOG.debug( "Runtime classpath: {}", Arrays.toString( devSpi.runtimeClassPath() ) );
             LOG.debug( "Application classpath: {}", Arrays.toString( devSpi.applicationClassPath() ) );
@@ -333,8 +333,7 @@ public final class ApplicationInstance
             activatingOrPassivating = false;
         }
 
-        LOG.info( "Application Activated ({} mode)", mode );
-        if( ( mode == Mode.DEV && LOG.isInfoEnabled() ) || LOG.isDebugEnabled() )
+        if( LOG.isInfoEnabled() )
         {
             StringBuilder runtimeSummary = new StringBuilder( "Runtime Summary\n\n" );
             String configLocation = config.location().toStringShort();
@@ -362,16 +361,9 @@ public final class ApplicationInstance
                 .append( NEWLINE )
                 .append( indentTwoSpaces( executors.toString(), 2 ) )
                 .append( NEWLINE );
-            String msg = runtimeSummary.toString();
-            if( mode == Mode.DEV )
-            {
-                LOG.info( msg );
-            }
-            else
-            {
-                LOG.debug( msg );
-            }
+            LOG.info( runtimeSummary.toString() );
         }
+        LOG.debug( "Application Activated ({} mode)", mode );
     }
 
     @Override
@@ -438,7 +430,7 @@ public final class ApplicationInstance
             activatingOrPassivating = false;
         }
 
-        LOG.info( "Application Passivated" );
+        LOG.debug( "Application Passivated" );
     }
 
     @Override
@@ -808,7 +800,14 @@ public final class ApplicationInstance
         }
         else if( rootCause instanceof ParameterBinderException )
         {
-            LOG.warn( "ParameterBinderException, will return 400.", rootCause );
+            if( mode == Mode.DEV )
+            {
+                LOG.warn( "ParameterBinderException, will return 400.", rootCause );
+            }
+            else
+            {
+                LOG.trace( "ParameterBinderException, will return 400.", rootCause );
+            }
             return finalizeOutcome(
                 request,
                 outcomes.badRequest().
@@ -819,7 +818,14 @@ public final class ApplicationInstance
         }
         else if( rootCause instanceof BadRequestException )
         {
-            LOG.warn( "BadRequestException, will return 400.", rootCause );
+            if( mode == Mode.DEV )
+            {
+                LOG.warn( "BadRequestException, will return 400.", rootCause );
+            }
+            else
+            {
+                LOG.trace( "BadRequestException, will return 400.", rootCause );
+            }
             return finalizeOutcome(
                 request,
                 outcomes.badRequest().

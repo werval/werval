@@ -49,7 +49,7 @@ public class QiWebSocketHandler
     protected void channelRead0( ChannelHandlerContext context, WebSocketFrame frame )
     {
         rebuildIfNeeded();
-        LOG.debug( "Received a WebSocketFrame: {}", frame );
+        LOG.warn( "Received a WebSocketFrame, unsupported, closing connection: {}", frame );
         context.channel().close();
     }
 

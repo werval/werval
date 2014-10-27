@@ -26,6 +26,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import java.net.InetSocketAddress;
 import org.qiweb.api.events.ConnectionEvent;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
@@ -57,8 +58,11 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
         ChannelPipeline pipeline = channel.pipeline();
 
         // Connection Events
-        app.events().emit( new ConnectionEvent.Opened() );
-        channel.closeFuture().addListener( future -> app.events().emit( new ConnectionEvent.Closed() ) );
+        String remoteHostString = ( (InetSocketAddress) channel.remoteAddress() ).getHostString();
+        app.events().emit( new ConnectionEvent.Opened( remoteHostString ) );
+        channel.closeFuture().addListener(
+            future -> app.events().emit( new ConnectionEvent.Closed( remoteHostString ) )
+        );
 
         if( app.config().bool( QIWEB_HTTP_LOG_LOWLEVEL_ENABLED ) )
         {

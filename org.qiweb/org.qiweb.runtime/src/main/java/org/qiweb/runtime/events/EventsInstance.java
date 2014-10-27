@@ -39,6 +39,7 @@ public final class EventsInstance
     {
         this.application = application;
         this.listeners = new CopyOnWriteArrayList<>();
+        this.listeners.add( new EventsLogger() );
     }
 
     @Override
@@ -87,5 +88,6 @@ public final class EventsInstance
     public void unregisterAll()
     {
         listeners.clear();
+        listeners.add( new EventsLogger() );
     }
 }

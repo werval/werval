@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,38 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.runtime.util;
+package org.qiweb.runtime.events;
+
+import java.util.function.Consumer;
+import org.qiweb.api.events.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Dumb struct allowing cross-context reference holding.
- *
- * @param <T> Type of the object to hold
+ * Events Logger.
  */
-public final class Holder<T>
+public class EventsLogger
+    implements Consumer<Event>
 {
-    private T holded;
+    private static final Logger LOG = LoggerFactory.getLogger( EventsLogger.class );
 
-    public Holder()
+    @Override
+    public void accept( Event event )
     {
-    }
-
-    public Holder( T holded )
-    {
-        this.holded = holded;
-    }
-
-    public T get()
-    {
-        return holded;
-    }
-
-    public void set( T holded )
-    {
-        this.holded = holded;
-    }
-
-    public boolean isSet()
-    {
-        return holded != null;
+        if( LOG.isDebugEnabled() )
+        {
+            LOG.debug( event.toString() );
+        }
     }
 }

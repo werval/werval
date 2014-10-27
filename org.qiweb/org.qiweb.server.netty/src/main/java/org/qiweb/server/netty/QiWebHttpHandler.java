@@ -45,7 +45,6 @@ import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.api.events.HttpEvent;
-import org.qiweb.spi.events.EventsSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +89,7 @@ public final class QiWebHttpHandler
         {
             if( future.isSuccess() )
             {
-                LOG.debug( "{} Request completed successfully", requestIdentity );
+                LOG.trace( "{} Request completed successfully", requestIdentity );
                 app.onHttpRequestComplete( requestHeader );
             }
         }
@@ -115,9 +114,9 @@ public final class QiWebHttpHandler
         // Get the request unique identifier
         requestIdentity = nettyContext.channel().attr( Attrs.REQUEST_IDENTITY ).get();
         assert requestIdentity != null;
-        if( LOG.isDebugEnabled() )
+        if( LOG.isTraceEnabled() )
         {
-            LOG.debug( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
+            LOG.trace( "{} Received a FullHttpRequest:\n{}", requestIdentity, nettyRequest.toString() );
         }
 
         // Return 503 to incoming requests while shutting down
