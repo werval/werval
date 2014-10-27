@@ -617,7 +617,7 @@ public final class ApplicationInstance
 
                     // Route the request
                     final Route route = routes().route( request );
-                    LOG.debug( "{} Routing request to: {}", request.identity(), route );
+                    LOG.debug( "Routing to: {}", route );
 
                     // Bind parameters
                     request.bind( parameterBinders(), route );
@@ -644,15 +644,14 @@ public final class ApplicationInstance
                     // Plugins beforeInteraction
                     plugins.beforeInteraction( context );
 
-                    Outcome outcome;
                     try
                     {
                         // Invoke Controller FilterChain, ended by Controller Method Invokation
                         // TODO Handle Timeout when invoking Controller FilterChain!
-                        LOG.trace( "Invoking controller method: {}", route.controllerMethod() );
+                        LOG.trace( "Invoking interaction method: {}", route.controllerMethod() );
                         FilterChain chain = new FilterChainFactory().buildFilterChain( this, global, context );
                         CompletableFuture<Outcome> interaction = chain.next( context );
-                        outcome = interaction.get( 30, TimeUnit.SECONDS );
+                        Outcome outcome = interaction.get( 30, TimeUnit.SECONDS );
 
                         // Apply Session to ResponseHeader
                         if( !config.bool( APP_SESSION_COOKIE_ONLYIFCHANGED ) || session.hasChanged() )
@@ -676,7 +675,11 @@ public final class ApplicationInstance
                         }
 
                         // Finalize!
-                        return finalizeOutcome( request, outcome );
+                        finalizeOutcome( request, outcome );
+
+                        // Done!
+                        LOG.trace( "Interaction outcome: {}", outcome );
+                        return outcome;
                     }
                     finally
                     {
