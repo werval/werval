@@ -28,13 +28,14 @@ import static org.qiweb.util.Strings.isEmpty;
 /**
  * Generate short unique string secret identities from positive numbers.
  * <p>
+ * See <a href="http://hashids.org/">hashids.org</a>.
+ * This is a Java port of the <a href="https://github.com/ivanakimov/hashids.js">javascript version</a>.
+ * <p>
  * The Hashids's {@literal salt} is used as a secret to generate unique strings using a given {@literal alphabet}.
  * Generated strings can have a {@literal minimumLength}.
  * <p>
- * Do not expose your {@literal salt} to a client, client-side is not safe.
- * <p>
- * See <a href="http://hashids.org/">hashids.org</a>.
- * This is a Java port of the <a href="https://github.com/ivanakimov/hashids.js">javascript version</a>.
+ * If you use this to obfuscates identities, do not expose your {@literal salt}, {@literal alphabet} nor
+ * {@literal separators} to a client, client-side is not safe.
  */
 public final class Hashids
 {

@@ -269,7 +269,7 @@ public final class DamnSmallDevShell
         Files.createDirectories( rsrcDir.toPath() );
 
         // Generate secret
-        String conf = "\napp.secret = " + CryptoInstance.genRandom256bitsHexSecret() + "\n";
+        String conf = "\napp.secret = " + CryptoInstance.newRandomSecret256BitsHex() + "\n";
         Files.write( new File( rsrcDir, "application.conf" ).toPath(), conf.getBytes( UTF_8 ) );
 
         // Generate controller

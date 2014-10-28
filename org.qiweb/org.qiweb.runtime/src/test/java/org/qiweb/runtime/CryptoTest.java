@@ -30,15 +30,15 @@ public class CryptoTest
     @Test
     public void testGenerateNewSecret()
     {
-        String secret = QIWEB.application().crypto().genNew256bitsHexSecret();
+        String secret = QIWEB.application().crypto().newSecretHex();
         assertThat( secret.length(), equalTo( 64 ) );
     }
 
     @Test
     public void testSignature()
     {
-        String left = QIWEB.application().crypto().hexHmacSha256( "Text to be signed." );
-        String right = QIWEB.application().crypto().hexHmacSha256( "Text to be signed." );
+        String left = QIWEB.application().crypto().hmacSha256Hex( "Text to be signed." );
+        String right = QIWEB.application().crypto().hmacSha256Hex( "Text to be signed." );
         assertThat( left, equalTo( right ) );
     }
 }

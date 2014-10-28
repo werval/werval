@@ -145,7 +145,7 @@ public @interface Cached
                     }
                 }
             }
-            return context.application().crypto().base64Sha256( sb.toString() );
+            return context.application().crypto().sha256Base64( sb.toString() );
         }
     }
 }

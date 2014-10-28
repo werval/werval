@@ -15,6 +15,7 @@
  */
 package org.qiweb.util;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
@@ -107,6 +108,23 @@ public final class IllegalArguments
      * @throws IllegalArgumentException if value is null or empty
      */
     public static void ensureNotEmpty( String name, Object[] value )
+    {
+        ensureNotNull( name, value );
+        if( value.length == 0 )
+        {
+            throw new IllegalArgumentException( name + WAS_EMPTY );
+        }
+    }
+
+    /**
+     * Ensure not empty.
+     *
+     * @param name  Name
+     * @param value Value
+     *
+     * @throws IllegalArgumentException if value is null or empty
+     */
+    public static void ensureNotEmpty( String name, byte[] value )
     {
         ensureNotNull( name, value );
         if( value.length == 0 )
@@ -241,6 +259,15 @@ public final class IllegalArguments
     {
         ensureNotNull( name, value );
         if( value <= lower )
+        {
+            throw new IllegalArgumentException( name + " was lesser than or equal to " + lower );
+        }
+    }
+
+    public static void ensureGreater( String name, BigInteger value, BigInteger lower )
+    {
+        ensureNotNull( name, value );
+        if( lower.compareTo( value ) > 0 )
         {
             throw new IllegalArgumentException( name + " was lesser than or equal to " + lower );
         }

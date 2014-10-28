@@ -21,20 +21,53 @@ package org.qiweb.api;
 public interface Crypto
 {
     /**
+     * Generate a 256 bits long secret.
+     *
+     * @return The generated secret bytes
+     */
+    byte[] newSecret();
+
+    /**
      * Generate a 256 bits long secret encoded in hexadecimal.
      *
      * @return The generated secret encoded in hexadecimal as String
      */
-    String genNew256bitsHexSecret();
+    String newSecretHex();
 
     /**
-     * Sign given message with the {@link Application}'s secret using HMAC SHA-256.
+     * Generate a 256 bits long secret encoded in Base64.
+     *
+     * @return The generated secret encoded in Base64, {@literal Basic} profile, as String
+     */
+    String newSecretBase64();
+
+    /**
+     * Sign given message with the Application's secret using HMAC SHA-256.
+     *
+     * @param message Message to sign
+     *
+     * @return Message signature bytes
+     */
+    byte[] hmacSha256( byte[] message );
+
+    /**
+     * Sign given message with the given secret using HMAC SHA-256.
+     *
+     * @param message Message to sign
+     * @param secret  Secret to use
+     *
+     * @return Message signature bytes
+     */
+    byte[] hmacSha256( byte[] message, byte[] secret );
+
+    /**
+     * Sign given message with the Application's secret using HMAC SHA-256.
      *
      * @param message Message to sign
      *
      * @return Message signature encoded in hexadecimal as String
      */
-    String hexHmacSha256( String message );
+    String hmacSha256Hex( CharSequence message );
 
     /**
      * Sign given message with the given secret using HMAC SHA-256.
@@ -44,7 +77,7 @@ public interface Crypto
      *
      * @return Message signature encoded in hexadecimal as String
      */
-    String hexHmacSha256( String message, String secret );
+    String hmacSha256Hex( CharSequence message, String secret );
 
     /**
      * Generate a hash of the given message using SHA-256.
@@ -71,7 +104,7 @@ public interface Crypto
      *
      * @return Message hash encoded in hexadecimal as String
      */
-    String hexSha256( CharSequence message );
+    String sha256Hex( CharSequence message );
 
     /**
      * Generate a hash of the given message using SHA-256.
@@ -80,5 +113,5 @@ public interface Crypto
      *
      * @return Message hash encoded in Base64, {@literal Basic} profile, as String
      */
-    String base64Sha256( CharSequence message );
+    String sha256Base64( CharSequence message );
 }
