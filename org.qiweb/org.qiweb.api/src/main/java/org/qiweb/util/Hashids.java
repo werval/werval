@@ -172,7 +172,9 @@ public final class Hashids
 
         if( alphabet.length() < MIN_ALPHABET_LENGTH )
         {
-            throw new IllegalArgumentException( "Alphabet must contain at least " + MIN_ALPHABET_LENGTH + " unique characters" );
+            throw new IllegalArgumentException(
+                "Alphabet must contain at least " + MIN_ALPHABET_LENGTH + " unique characters"
+            );
         }
 
         if( alphabet.contains( SPACE ) )
@@ -422,8 +424,8 @@ public final class Hashids
             final int excess = result.length() - minimumLength;
             if( excess > 0 )
             {
-                int start_pos = excess / 2;
-                result = result.substring( start_pos, start_pos + minimumLength );
+                int startPos = excess / 2;
+                result = result.substring( startPos, startPos + minimumLength );
             }
         }
 
@@ -469,14 +471,14 @@ public final class Hashids
             return alphabet;
         }
         final char[] saltChars = salt.toCharArray();
-        int asc_val, j;
+        int ascVal, j;
         char tmp;
         for( int idx = alphabet.length() - 1, v = 0, p = 0; idx > 0; idx--, v++ )
         {
             v %= salt.length();
-            asc_val = (int) saltChars[v];
-            p += asc_val;
-            j = ( asc_val + v + p ) % idx;
+            ascVal = (int) saltChars[v];
+            p += ascVal;
+            j = ( ascVal + v + p ) % idx;
 
             tmp = alphabet.charAt( j );
             alphabet = alphabet.substring( 0, j ) + alphabet.charAt( idx ) + alphabet.substring( j + 1 );

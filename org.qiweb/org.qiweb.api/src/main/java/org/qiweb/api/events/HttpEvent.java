@@ -15,7 +15,6 @@
  */
 package org.qiweb.api.events;
 
-import org.qiweb.api.http.Method;
 import org.qiweb.api.http.Status;
 
 /**
