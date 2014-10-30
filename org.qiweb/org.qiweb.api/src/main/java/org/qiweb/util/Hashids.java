@@ -36,6 +36,20 @@ import static org.qiweb.util.Strings.isEmpty;
  * <p>
  * If you use this to obfuscates identities, do not expose your {@literal salt}, {@literal alphabet} nor
  * {@literal separators} to a client, client-side is not safe.
+ * <p>
+ * Only positive numbers are supported.
+ * All methods in this class with throw an {@link IllegalArgumentException} if a negative number is given.
+ * If you want to use negative numbers you'll have to handle prepending {@literal -} to the hash string yourself and
+ * would be limited to single number hashes.
+ * <p>
+ * Here is sample code to handle negative numbers prepending {@literal -} to them:
+ * <pre>
+ * Hashids hashids = new Hashids( "this is your salt" );
+ * long number = -1234567890;
+ * String enc = ( Math.abs( number ) != number ? "-" : "" ) + hashids.encode( Math.abs( number ) );
+ * long dec = enc.startsWith( "-" ) ? -hashids.decode( enc.substring( 1 ) )[0] : hashids.decode( enc )[0];
+ * </pre>
+ * Note that this isn't true Hashids anymore and that this is limited to single number hashes.
  */
 public final class Hashids
 {
