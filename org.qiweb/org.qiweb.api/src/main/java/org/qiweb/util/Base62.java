@@ -25,6 +25,19 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Base62 numbers/strings encoding/decoding utility methods.
+ * <p>
+ * Only positive numbers are supported.
+ * All methods in this class with throw an {@link IllegalArgumentException} if a negative number is given.
+ * If you want to use negative numbers you'll have to handle prepending {@literal -} to the Base62 string, that becomes
+ * a sort of Base62+1 string.
+ * <p>
+ * Here is sample code to handle negative numbers prepending {@literal -} to them:
+ * <pre>
+ * long number = -1234567890;
+ * String enc = ( Math.abs( number ) != number ? "-" : "" ) + Base62.encode( Math.abs( number ) );
+ * long dec = enc.startsWith( "-" ) ? -Base62.decodeLong( enc.substring( 1 ) ) : Base62.decodeLong( enc );
+ * </pre>
+ * Note that this isn't true Base62 anymore.
  */
 public final class Base62
 {
