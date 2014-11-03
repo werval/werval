@@ -30,6 +30,11 @@ For minor changes, build system or test changes, see the full [source code histo
 - Allow setting application config file in Gradle plugin configuration for `devshell` and `start` tasks, see #187
 - Allow to add `SourceSets` in Gradle plugin configuration for `devshell` and `start` tasks, see #104
 
+### Dependency changes
+
+- Modules
+    - Upgrade EhCache from `2.8.4` to `2.9.0`, see the [changes-report](http://www.ehcache.org/changes-report)
+
 
 
 ## 0.3.3 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.3)
