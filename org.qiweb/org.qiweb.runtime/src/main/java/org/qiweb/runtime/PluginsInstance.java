@@ -79,11 +79,8 @@ import static java.util.stream.Collectors.toList;
                 {
                     Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
                     Plugin<?> plugin = (Plugin<?>) global.getPluginInstance( application, pluginClass );
-                    if( plugin.enabled() )
-                    {
-                        plugin.onActivate( application );
-                        activePlugins.add( Couple.of( plugin, pluginConfig ) );
-                    }
+                    plugin.onActivate( application );
+                    activePlugins.add( Couple.of( plugin, pluginConfig ) );
                     extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
                 }
                 catch( ClassNotFoundException ex )
@@ -91,26 +88,23 @@ import static java.util.stream.Collectors.toList;
                     throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
                 }
             }
+
             // Global Extra Plugins
             for( Plugin<?> extraPlugin : extraPlugins )
             {
-                if( extraPlugin.enabled() )
-                {
-                    extraPlugin.onActivate( application );
-                    activePlugins.add( Couple.leftOnly( extraPlugin ) );
-                }
+                extraPlugin.onActivate( application );
+                activePlugins.add( Couple.leftOnly( extraPlugin ) );
                 extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
             }
+
             // Core Extensions Plugins
             for( ExtensionPlugin extension : extensions )
             {
                 Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
-                if( extensionPlugin.enabled() )
-                {
-                    extensionPlugin.onActivate( application );
-                    activePlugins.add( Couple.leftOnly( extensionPlugin ) );
-                }
+                extensionPlugin.onActivate( application );
+                activePlugins.add( Couple.leftOnly( extensionPlugin ) );
             }
+
             // Plugins Activated
             activated = true;
         }

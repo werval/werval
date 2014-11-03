@@ -35,16 +35,6 @@ import static org.qiweb.util.Strings.EMPTY;
 public interface Plugin<API>
 {
     /**
-     * Is this Plugin enabled?.
-     *
-     * @return {@literal true} if the Plugin is enabled, otherwise return {@literal false}
-     */
-    default boolean enabled()
-    {
-        return true;
-    }
-
-    /**
      * Plugin API type.
      *
      * @return Plugin API type
