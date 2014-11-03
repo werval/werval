@@ -55,7 +55,7 @@ public class Tools
     @XXSSProtection
     public Outcome devShellIndex()
     {
-        return new Classpath().resource( "org/qiweb/metrics/devshell-index.html" );
+        return new Classpath().resource( "org/qiweb/modules/metrics/devshell-index.html" );
     }
 
     public Outcome metrics()
