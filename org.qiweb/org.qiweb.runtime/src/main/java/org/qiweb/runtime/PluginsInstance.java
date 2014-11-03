@@ -231,7 +231,7 @@ import static java.util.stream.Collectors.toList;
         }
         for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            if( plugin.left().apiType().isAssignableFrom( pluginApiType ) && plugin.left().api() != null )
+            if( pluginApiType.isAssignableFrom( plugin.left().apiType() ) && plugin.left().api() != null )
             {
                 // Type is assignable
                 result.add( pluginApiType.cast( plugin.left().api() ) );
@@ -256,7 +256,7 @@ import static java.util.stream.Collectors.toList;
         }
         for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
-            if( plugin.left().apiType().isAssignableFrom( pluginApiType ) && plugin.left().api() != null )
+            if( pluginApiType.isAssignableFrom( plugin.left().apiType() ) && plugin.left().api() != null )
             {
                 // Type is assignable
                 return pluginApiType.cast( plugin.left().api() );
