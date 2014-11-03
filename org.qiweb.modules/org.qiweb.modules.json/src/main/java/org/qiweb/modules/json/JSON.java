@@ -243,7 +243,7 @@ public interface JSON
      *
      * @param callbackFunctionName Name of the JSON-P callback function
      * @param object               Object to map to JSON-P
-     * @param jsonView
+     * @param jsonView             JSON View to use
      *
      * @return JSON-P bytes
      */
@@ -293,7 +293,7 @@ public interface JSON
      *
      * @param callbackFunctionName Name of the JSON-P callback function
      * @param object               Object to map to JSON-P
-     * @param jsonView
+     * @param jsonView             JSON View to use
      *
      * @return JSON-P as String
      */
