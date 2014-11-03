@@ -15,12 +15,14 @@
  */
 package org.qiweb.runtime;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
@@ -105,6 +107,9 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                 plugins.add( Couple.leftOnly( extensionPlugin ) );
             }
 
+            // Resolve dependencies
+            plugins = resolveDeps( application.config(), plugins );
+
             // Activate all plugins, in order
             activePlugins = new ArrayList<>( plugins.size() );
             for( Couple<Plugin<?>, Config> plugin : plugins )
@@ -125,6 +130,40 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         {
             activatingOrPassivating = false;
         }
+    }
+
+    private List<Couple<Plugin<?>, Config>> resolveDeps( Config appConfig, List<Couple<Plugin<?>, Config>> input )
+    {
+        List<Couple<Plugin<?>, Config>> output = new ArrayList<>( input.size() );
+        Queue<Couple<Plugin<?>, Config>> queue = new ArrayDeque<>( input );
+        while( !queue.isEmpty() )
+        {
+            Couple<Plugin<?>, Config> plugin = queue.poll();
+            for( Class<?> dependency : plugin.left().dependencies( appConfig ) )
+            {
+                if( !output.stream().anyMatch(
+                    p -> p.left().apiType().equals( dependency ) || dependency.isAssignableFrom( p.left().apiType() )
+                ) )
+                {
+                    Couple<Plugin<?>, Config> match = input.stream()
+                        .filter( p -> p.left().apiType().equals( dependency ) )
+                        .findFirst()
+                        .orElse(
+                            input.stream()
+                            .filter( p -> dependency.isAssignableFrom( p.left().apiType() ) )
+                            .findFirst()
+                            .orElseThrow( () -> new QiWebException( "Plugin dependency not resolved: " + dependency ) )
+                        );
+                    queue.remove( match );
+                    output.add( match );
+                }
+            }
+            if( !output.contains( plugin ) )
+            {
+                output.add( plugin );
+            }
+        }
+        return output;
     }
 
     /* package */ void onPassivate( Application application )

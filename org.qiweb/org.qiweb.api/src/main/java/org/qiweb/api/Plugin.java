@@ -51,6 +51,25 @@ public interface Plugin<API>
     API api();
 
     /**
+     * Plugin dependencies.
+     * <p>
+     * The runtime will use this information to order the plugins activation order according to the dependency graph.
+     * <p>
+     * Defaults to an empty list.
+     * <p>
+     * Application configuration is provided to the plugin so it can decide on what to depend according to its own
+     * configuration.
+     *
+     * @param config Application configuration
+     *
+     * @return This plugin's dependencies
+     */
+    default List<Class<?>> dependencies( Config config )
+    {
+        return EMPTY_LIST;
+    }
+
+    /**
      * Invoked on Application activation.
      * <p>
      * Defaults to no operation.
