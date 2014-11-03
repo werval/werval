@@ -71,7 +71,9 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         try
         {
             EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
-            activePlugins = new ArrayList<>( configuredPlugins.size() + extraPlugins.size() + extensions.size() );
+            List<Couple<Plugin<?>, Config>> plugins = new ArrayList<>(
+                configuredPlugins.size() + extraPlugins.size() + extensions.size()
+            );
 
             // Application Configured Plugins
             for( Config pluginConfig : configuredPlugins )
@@ -80,8 +82,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                 {
                     Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
                     Plugin<?> plugin = (Plugin<?>) global.getPluginInstance( application, pluginClass );
-                    plugin.onActivate( application );
-                    activePlugins.add( Couple.of( plugin, pluginConfig ) );
+                    plugins.add( Couple.of( plugin, pluginConfig ) );
                     extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
                 }
                 catch( ClassNotFoundException ex )
@@ -93,8 +94,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
             // Global Extra Plugins
             for( Plugin<?> extraPlugin : extraPlugins )
             {
-                extraPlugin.onActivate( application );
-                activePlugins.add( Couple.leftOnly( extraPlugin ) );
+                plugins.add( Couple.leftOnly( extraPlugin ) );
                 extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
             }
 
@@ -102,17 +102,18 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
             for( ExtensionPlugin extension : extensions )
             {
                 Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
-                extensionPlugin.onActivate( application );
-                activePlugins.add( Couple.leftOnly( extensionPlugin ) );
+                plugins.add( Couple.leftOnly( extensionPlugin ) );
+            }
+
+            // Activate all plugins, in order
+            for( Couple<Plugin<?>, Config> plugin : plugins )
+            {
+                plugin.left().onActivate( application );
             }
 
             // Plugins Activated
+            activePlugins = plugins;
             activated = true;
-        }
-        catch( Exception ex )
-        {
-            activePlugins = EMPTY_LIST;
-            throw ex;
         }
         finally
         {
