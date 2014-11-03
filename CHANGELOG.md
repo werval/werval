@@ -9,9 +9,9 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased!
 
-#### Breaking changes
+#### Bug fixes
 
-- The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
+- Fix Plugin's lookup mechanism to correctly honor polymorphism, see #203
 
 #### New features
 
@@ -23,6 +23,7 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Enhancements
 
 - Refined runtime logging, see #72
+- The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
 - Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
 - Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189
 - Allow to add `extraClassPath` entries in Maven plugin configuration for `devshell` and `start` goals, see #188
