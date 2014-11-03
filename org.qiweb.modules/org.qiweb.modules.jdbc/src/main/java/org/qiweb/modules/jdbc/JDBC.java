@@ -15,7 +15,7 @@
  */
 package org.qiweb.modules.jdbc;
 
-import com.jolbox.bonecp.BoneCPDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -28,10 +28,10 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
  */
 public class JDBC
 {
-    private final Map<String, BoneCPDataSource> dataSources;
+    private final Map<String, HikariDataSource> dataSources;
     private final String defaultDsName;
 
-    /* package */ JDBC( Map<String, BoneCPDataSource> dataSources, String defaultDsName )
+    /* package */ JDBC( Map<String, HikariDataSource> dataSources, String defaultDsName )
     {
         this.dataSources = dataSources;
         this.defaultDsName = defaultDsName;

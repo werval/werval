@@ -3,7 +3,7 @@ Database connectivity for your Application
 :jbake-type: module
 
 The JDBC module provide a `JDBCPlugin` that brings easy database connectivity and solid connection pooling thanks to
-http://jolbox.com/[BoneCP].
+http://brettwooldridge.github.io/HikariCP/[HikariCP].
 
 [quote,Wikipedia,https://en.wikipedia.org/wiki/Connection_pool]
 ____
