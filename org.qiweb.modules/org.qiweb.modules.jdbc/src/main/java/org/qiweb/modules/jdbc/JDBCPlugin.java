@@ -223,7 +223,8 @@ public class JDBCPlugin
                 hikariConfig.setIsolateInternalQueries( dsConfig.bool( "isolateInternalQueries" ) );
             }
             // TODO JDBC HikariCP Metrics
-            // hikariConfig.setMetricsTrackerClassName( "MetricsTracked class name");
+            // See https://github.com/brettwooldridge/HikariCP/issues/112
+            // hikariConfig.setMetricsTrackerClassName( "IMetricsTracker class name");
 
             HikariDataSource hds = new HikariDataSource( hikariConfig );
 
