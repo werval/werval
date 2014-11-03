@@ -40,13 +40,13 @@ def v_tyrex = '1.0.1'
 def v_gradle_tooling = '2.1'
 
 // Testing Tools libraries versions
-def v_awaitility = '1.6.1'
+def v_awaitility = '1.6.2'
 def v_fluentlenium = '0.10.2'
 def v_junit = '4.11'
 def v_rest_assured = '2.3.4'
 
 // Test libraries versions
-def v_h2 = '1.4.181'
+def v_h2 = '1.4.182'
 def v_logback = '1.1.2'
 def v_postgres = '9.3-1102-jdbc41'
 def v_subethasmtp = '3.1.7'
