@@ -9,10 +9,25 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased!
 
+#### Breaking changes
+
+- The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
+
 #### New features
 
 - Application Events, see #190
 - Metrics & HealthChecks Plugin, see #186
+- [Hashids](http://hashids.org/) support, see #199
+- Base62 codec, see #200
+
+#### Enhancements
+
+- Refined runtime logging, see #72
+- Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
+- Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189
+- Allow to add `extraClassPath` entries in Maven plugin configuration for `devshell` and `start` goals, see #188
+- Allow setting application config file in Gradle plugin configuration for `devshell` and `start` tasks, see #187
+- Allow to add `SourceSets` in Gradle plugin configuration for `devshell` and `start` tasks, see #104
 
 
 
