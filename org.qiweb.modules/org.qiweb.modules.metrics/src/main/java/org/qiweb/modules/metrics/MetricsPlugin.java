@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.metrics;
+package org.qiweb.modules.metrics;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.CsvReporter;
@@ -53,7 +53,6 @@ import org.qiweb.api.events.Registration;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 
@@ -70,8 +69,6 @@ import static org.qiweb.api.http.Method.GET;
 public class MetricsPlugin
     implements Plugin<Metrics>
 {
-    private static final Logger LOG = LoggerFactory.getLogger( MetricsPlugin.class.getPackage().getName() );
-
     /**
      * Event Listener used for Connection and Http metrics.
      */

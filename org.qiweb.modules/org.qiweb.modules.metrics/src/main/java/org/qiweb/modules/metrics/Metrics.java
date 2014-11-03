@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.metrics;
+package org.qiweb.modules.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -21,7 +21,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 /**
  * Metrics.
  */
-public class Metrics
+public final class Metrics
 {
     private final MetricRegistry metrics;
     private final HealthCheckRegistry healthChecks;
@@ -32,7 +32,7 @@ public class Metrics
         this.healthChecks = healthChecks;
     }
 
-    public final MetricRegistry metrics()
+    public MetricRegistry metrics()
     {
         return metrics;
     }
@@ -41,5 +41,4 @@ public class Metrics
     {
         return healthChecks;
     }
-
 }
