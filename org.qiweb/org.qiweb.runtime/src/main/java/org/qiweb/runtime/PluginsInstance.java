@@ -106,14 +106,20 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
             }
 
             // Activate all plugins, in order
+            activePlugins = new ArrayList<>( plugins.size() );
             for( Couple<Plugin<?>, Config> plugin : plugins )
             {
                 plugin.left().onActivate( application );
+                activePlugins.add( plugin );
             }
 
             // Plugins Activated
-            activePlugins = plugins;
             activated = true;
+        }
+        catch( Exception ex )
+        {
+            activePlugins = EMPTY_LIST;
+            throw ex;
         }
         finally
         {
