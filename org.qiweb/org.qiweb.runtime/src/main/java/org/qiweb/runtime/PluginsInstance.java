@@ -36,6 +36,7 @@ import org.qiweb.util.Couple;
 
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
+import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * A Plugins Instance.
@@ -220,6 +221,7 @@ import static java.util.stream.Collectors.toList;
         {
             throw new IllegalStateException( "Plugins are passivated." );
         }
+        ensureNotNull( "Plugin API Type", pluginApiType );
         Set<T> result = new LinkedHashSet<>();
         for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
@@ -246,6 +248,7 @@ import static java.util.stream.Collectors.toList;
         {
             throw new IllegalStateException( "Plugins are passivated." );
         }
+        ensureNotNull( "Plugin API Type", pluginApiType );
         for( Couple<Plugin<?>, Config> plugin : activePlugins )
         {
             if( plugin.left().apiType().equals( pluginApiType ) && plugin.left().api() != null )
