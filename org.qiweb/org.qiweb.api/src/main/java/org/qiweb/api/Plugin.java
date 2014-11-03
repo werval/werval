@@ -27,8 +27,10 @@ import static org.qiweb.util.Strings.EMPTY;
 /**
  * Application Plugin.
  * <p>
- * A {@literal Plugin} is activated/passivated alongside the {@literal Application}
- * and can contribute {@literal Routes} to it.
+ * A {@literal Plugin} is activated/passivated alongside the {@literal Application},
+ * can contribute {@literal Routes} to it,
+ * is given a change to hook around interactions
+ * and can depend on other plugins.
  *
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
  */
