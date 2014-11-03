@@ -45,11 +45,11 @@ public class MetricsTest
         "GET / org.qiweb.controllers.Default.ok\n"
         + "GET /redir org.qiweb.controllers.Default.seeOther( String url = / )\n"
         + "GET /error org.qiweb.controllers.Default.internalServerError\n"
-        + "GET /unknown org.qiweb.metrics.MetricsTest$Controller.unknown\n"
-        + "GET /@metrics org.qiweb.metrics.Tools.devShellIndex\n"
-        + "GET /@metrics/metrics org.qiweb.metrics.Tools.metrics\n"
-        + "GET /@metrics/health-checks org.qiweb.metrics.Tools.healthchecks\n"
-        + "GET /@metrics/thread-dump org.qiweb.metrics.Tools.threadDump\n"
+        + "GET /unknown org.qiweb.modules.metrics.MetricsTest$Controller.unknown\n"
+        + "GET /@metrics org.qiweb.modules.metrics.Tools.devShellIndex\n"
+        + "GET /@metrics/metrics org.qiweb.modules.metrics.Tools.metrics\n"
+        + "GET /@metrics/health-checks org.qiweb.modules.metrics.Tools.healthchecks\n"
+        + "GET /@metrics/thread-dump org.qiweb.modules.metrics.Tools.threadDump\n"
     ) );
 
     public static class Controller
@@ -99,7 +99,7 @@ public class MetricsTest
         expect()
             .statusCode( 200 )
             .contentType( TEXT_PLAIN )
-            .body( containsString( "org.qiweb.metrics.Tools.threadDump" ) )
+            .body( containsString( "org.qiweb.modules.metrics.Tools.threadDump" ) )
             .when()
             .get( "/@metrics/thread-dump" );
 
