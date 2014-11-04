@@ -156,13 +156,17 @@ task prepareJBakeInput(type: Copy) {
     from file('src/jbake')
     into file('build/tmp/jbake')
 }
+task copyDevShellDocImages(type: Copy) {
+    from file('../org.qiweb.devshell/src/doc/classloader-hierarchy.png')
+    into file('build/tmp/jbake/assets/images/')
+}
 task prepareJBakeJavadoc(type: Copy) {
     dependsOn generateEmbeddedJavadoc
     from javadocGenResourcesPath
     into file('build/tmp/jbake/assets/api')
 }
 jbake {
-    dependsOn prepareJBakeInput, prepareJBakeJavadoc
+    dependsOn prepareJBakeInput, copyDevShellDocImages, prepareJBakeJavadoc
     input file( 'build/tmp/jbake' )
     configuration = [
         'qiweb_version': version

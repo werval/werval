@@ -28,4 +28,6 @@ include::manual/core-lib.adoc[]
 
 include::manual/testing.adoc[]
 
+include::manual/devshell.adoc[]
+
 include::manual/_unsorted_.adoc[]
