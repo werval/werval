@@ -7,18 +7,11 @@ To create a new QiWeb application based on Gradle, use the following command:
 
 [source,bash]
 ----
-git archive --format=tar --prefix=YOUR_APP_NAME/ --remote=git@scm.codeartisans.org:qiweb/qiweb-skel-gradle.git GIT_REF | tar -xf -
+git archive --format=tar --prefix=YOUR_APP_NAME/ --remote=git@scm.codeartisans.org:qiweb/qiweb-skel-gradle.git master | tar -xf -
 ----
 
 Where `YOUR_APP_NAME` is, well, your application name.
 A directory with this name will be created with the new application in it.
-
-And where `GIT_REF` is the version of the application skeleton you want to use.
-You'll use:
-
-- `master` to get the latest stable version ;
-- `develop` to get the latest development version ;
-- or a version identifier to get a specific version.
 
 [IMPORTANT]
 .What is this horrible command?
