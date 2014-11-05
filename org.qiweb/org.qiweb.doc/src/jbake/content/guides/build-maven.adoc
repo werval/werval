@@ -43,6 +43,31 @@ dev mode:
 ----
 
 
+=== Override config location
+
+// TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
+.`./pom.xml`
+[source,xml]
+----
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.qiweb</groupId>
+          <artifactId>org.qiweb.maven</artifactId>
+          <version>{qiweb_version}</version>
+          <configuration>
+            <!-- Only one of theses three can be set -->
+            <configResource>application-dev.conf</configResource>
+            <configFile>path/to/file.conf</configFile>
+            <configUrl>http://url.to/file.conf</configUrl>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+----
+
+Using Maven plugin `<executions/>` you can override config location for both the `devshell` and `start` goals.
+
 === Packaging
 
 TIP: If you need RPM or DEB packaging, use the http://mojo.codehaus.org/rpm-maven-plugin[rpm-maven-plugin]
