@@ -103,7 +103,7 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
     options.links(
         "http://docs.oracle.com/javase/8/docs/api/",
         "http://www.slf4j.org/apidocs/",
-        "http://junit.org/javadoc/latest/"
+        "http://junit.org/apidocs/"
     )
     options.group( [
             "API":               [ "org.qiweb.api",           "org.qiweb.api.*"           ],
