@@ -50,6 +50,6 @@ public class SecretMojoTest
         System.setOut( oldOut );
         out.flush();
         String output = new String( baos.toByteArray() );
-        assertThat( output, containsString( "New Application Secret" ) );
+        assertThat( output, containsString( "app.secret = " ) );
     }
 }
