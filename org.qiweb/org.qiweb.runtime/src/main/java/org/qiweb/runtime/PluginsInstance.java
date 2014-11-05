@@ -141,10 +141,12 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
             Couple<Plugin<?>, Config> plugin = queue.poll();
             for( Class<?> dependency : plugin.left().dependencies( appConfig ) )
             {
+                // Already resolved?
                 if( !output.stream().anyMatch(
                     p -> p.left().apiType().equals( dependency ) || dependency.isAssignableFrom( p.left().apiType() )
                 ) )
                 {
+                    // Same type, then assignable or throw
                     Couple<Plugin<?>, Config> match = input.stream()
                         .filter( p -> p.left().apiType().equals( dependency ) )
                         .findFirst()
