@@ -68,6 +68,32 @@ dev mode:
 
 Using Maven plugin `<executions/>` you can override config location for both the `devshell` and `start` goals.
 
+=== Enrich the application classpath
+
+// TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
+.`./pom.xml`
+[source,xml]
+----
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.qiweb</groupId>
+          <artifactId>org.qiweb.maven</artifactId>
+          <version>{qiweb_version}</version>
+          <configuration>
+            <extraClassPath>
+              <param>custom/dir</param>
+              <param>custom-file.jar</param>
+            </extraClassPath>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+----
+
+Using Maven plugin `<executions/>` you can enrich the application classpath for both the `devshell` and `start` goals.
+
+
 === Packaging
 
 TIP: If you need RPM or DEB packaging, use the http://mojo.codehaus.org/rpm-maven-plugin[rpm-maven-plugin]
