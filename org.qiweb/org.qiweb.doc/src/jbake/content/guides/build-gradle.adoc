@@ -3,7 +3,10 @@
 
 === Overview
 
-=== Development mode build logic
+=== Development mode
+
+[discrete]
+==== Build logic
 
 The QiWeb Gradle plugin:
 
@@ -30,7 +33,10 @@ thanks to the `gradle-gulp-plugin`.
 Configuring theses tasks in your build allow you to fine tune the work needed to get your app in dev mode and what
 should be done when the source has changed.
 
-Moreover, the `devshell` task has an `extraWatch` property that allow one to add directories to watch for changes in
+[discrete]
+==== Watch extra files or directories
+
+The `devshell` task has an `extraWatch` property that allow one to add files or directories to watch for changes in
 dev mode:
 
 [source]
