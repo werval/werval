@@ -22,7 +22,9 @@ import java.net.URISyntaxException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -30,7 +32,9 @@ import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.jndi.JNDI;
 
+import static java.util.Collections.EMPTY_LIST;
 import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.isEmpty;
 
@@ -43,6 +47,36 @@ public class JDBCPlugin
     /* package */ static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
     private static final String DATASOURCES = "jdbc.datasources";
     private JDBC jdbc;
+
+    @Override
+    public Class<JDBC> apiType()
+    {
+        return JDBC.class;
+    }
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.has( DATASOURCES ) )
+        {
+            Config allDsConfig = config.object( DATASOURCES );
+            for( String dsName : allDsConfig.subKeys() )
+            {
+                if( allDsConfig.object( dsName ).has( "jndiName" ) )
+                {
+                    // At least one DataSource has to be registered in JNDI, depend on the JNDI plugin
+                    return Arrays.asList( JNDI.class );
+                }
+            }
+        }
+        return EMPTY_LIST;
+    }
+
+    @Override
+    public JDBC api()
+    {
+        return jdbc;
+    }
 
     @Override
     public void onActivate( Application application )
@@ -71,18 +105,6 @@ public class JDBCPlugin
             jdbc.passivate();
             jdbc = null;
         }
-    }
-
-    @Override
-    public Class<JDBC> apiType()
-    {
-        return JDBC.class;
-    }
-
-    @Override
-    public JDBC api()
-    {
-        return jdbc;
     }
 
     private HikariDataSource createDataSource( String dsName, Config dsConfig, ClassLoader loader )

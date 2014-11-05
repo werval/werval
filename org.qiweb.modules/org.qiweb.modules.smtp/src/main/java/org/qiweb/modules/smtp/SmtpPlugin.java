@@ -30,6 +30,18 @@ public class SmtpPlugin
     private Smtp smtp;
 
     @Override
+    public Class<Smtp> apiType()
+    {
+        return Smtp.class;
+    }
+
+    @Override
+    public Smtp api()
+    {
+        return smtp;
+    }
+
+    @Override
     public void onActivate( Application application )
         throws ActivationException
     {
@@ -76,17 +88,5 @@ public class SmtpPlugin
     public void onPassivate( Application application )
     {
         smtp = null;
-    }
-
-    @Override
-    public Class<Smtp> apiType()
-    {
-        return Smtp.class;
-    }
-
-    @Override
-    public Smtp api()
-    {
-        return smtp;
     }
 }

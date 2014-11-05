@@ -27,6 +27,8 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.SharedHealthCheckRegistries;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
+import com.codahale.metrics.json.HealthCheckModule;
+import com.codahale.metrics.json.MetricsModule;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
 import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
@@ -34,6 +36,7 @@ import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import java.io.File;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +56,7 @@ import org.qiweb.api.events.Registration;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
+import org.qiweb.modules.json.JSON;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 
@@ -60,6 +64,8 @@ import static java.lang.management.ManagementFactory.getPlatformMBeanServer;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Locale.US;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.api.http.Method.GET;
 
@@ -183,6 +189,12 @@ public class MetricsPlugin
     }
 
     @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        return Arrays.asList( JSON.class );
+    }
+
+    @Override
     public Metrics api()
     {
         return api;
@@ -207,6 +219,9 @@ public class MetricsPlugin
     public void onActivate( Application application )
         throws ActivationException
     {
+        application.plugin( JSON.class ).mapper()
+            .registerModule( new MetricsModule( SECONDS, MILLISECONDS, true ) )
+            .registerModule( new HealthCheckModule() );
         MetricRegistry metrics = new MetricRegistry();
         HealthCheckRegistry healthChecks = new HealthCheckRegistry();
 

@@ -15,15 +15,20 @@
  */
 package org.qiweb.runtime;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Queue;
+import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Global;
@@ -33,7 +38,9 @@ import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.routes.Route;
+import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
+import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.util.Couple;
 
 import static java.util.Collections.EMPTY_LIST;
@@ -107,8 +114,14 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                 plugins.add( Couple.leftOnly( extensionPlugin ) );
             }
 
+            // Load available dynamics plugins
+            List<Couple<Plugin<?>, Config>> dynamicPlugins = loadDynamicPlugins(
+                application,
+                plugins.stream().map( Couple::left ).collect( Collectors.toList() )
+            );
+
             // Resolve dependencies
-            plugins = resolveDeps( application.config(), plugins );
+            plugins = resolveDeps( application.config(), plugins, dynamicPlugins );
 
             // Activate all plugins, in order
             activePlugins = new ArrayList<>( plugins.size() );
@@ -132,10 +145,47 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         }
     }
 
-    private List<Couple<Plugin<?>, Config>> resolveDeps( Config appConfig, List<Couple<Plugin<?>, Config>> input )
+    private List<Couple<Plugin<?>, Config>> loadDynamicPlugins( ApplicationSPI application, List<Plugin<?>> alreadyLoaded )
+    {
+        try
+        {
+            List<Couple<Plugin<?>, Config>> dynamicPlugins = new ArrayList<>();
+            Enumeration<URL> descriptors = application.classLoader().getResources( "META-INF/qiweb-plugins.properties" );
+            while( descriptors.hasMoreElements() )
+            {
+                try( InputStream stream = descriptors.nextElement().openStream() )
+                {
+                    Properties descriptor = new Properties();
+                    descriptor.load( stream );
+                    for( String name : descriptor.stringPropertyNames() )
+                    {
+                        String fqcn = descriptor.getProperty( name );
+                        Class<?> clazz = application.classLoader().loadClass( fqcn );
+                        if( !alreadyLoaded.stream().anyMatch( p -> p.getClass().equals( clazz ) ) )
+                        {
+                            Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, clazz );
+                            dynamicPlugins.add( Couple.leftOnly( plugin ) );
+                        }
+                    }
+                }
+            }
+            return dynamicPlugins;
+        }
+        catch( IOException | ClassNotFoundException ex )
+        {
+            throw new QiWebRuntimeException( "Unable to load dynamic plugins", ex );
+        }
+    }
+
+    private List<Couple<Plugin<?>, Config>> resolveDeps(
+        Config appConfig,
+        List<Couple<Plugin<?>, Config>> input,
+        List<Couple<Plugin<?>, Config>> dynamics
+    )
     {
         List<Couple<Plugin<?>, Config>> output = new ArrayList<>( input.size() );
-        Queue<Couple<Plugin<?>, Config>> queue = new ArrayDeque<>( input );
+        ArrayDeque<Couple<Plugin<?>, Config>> queue = new ArrayDeque<>( input );
+        boolean replay = false;
         while( !queue.isEmpty() )
         {
             Couple<Plugin<?>, Config> plugin = queue.poll();
@@ -146,7 +196,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                     p -> p.left().apiType().equals( dependency ) || dependency.isAssignableFrom( p.left().apiType() )
                 ) )
                 {
-                    // Same type, then assignable or throw
+                    // Same type, then assignable or null
                     Couple<Plugin<?>, Config> match = input.stream()
                         .filter( p -> p.left().apiType().equals( dependency ) )
                         .findFirst()
@@ -154,16 +204,45 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                             input.stream()
                             .filter( p -> dependency.isAssignableFrom( p.left().apiType() ) )
                             .findFirst()
-                            .orElseThrow( () -> new QiWebException( "Plugin dependency not resolved: " + dependency ) )
+                            .orElse( null )
                         );
-                    queue.remove( match );
-                    output.add( match );
+                    if( match == null )
+                    {
+                        // Dynamic plugins, same type, then assignable or null
+                        match = dynamics.stream()
+                            .filter( p -> p.left().apiType().equals( dependency ) )
+                            .findFirst()
+                            .orElse(
+                                input.stream()
+                                .filter( p -> dependency.isAssignableFrom( p.left().apiType() ) )
+                                .findFirst()
+                                .orElse( null )
+                            );
+                        // If no match, throw
+                        if( match == null )
+                        {
+                            throw new QiWebException( "Plugin dependency not resolved: " + dependency );
+                        }
+                        // Replay will be needed to properly order plugins according to dependencies
+                        replay = true;
+                        queue.addFirst( match );
+                        output.add( match );
+                    }
+                    else
+                    {
+                        queue.remove( match );
+                        output.add( match );
+                    }
                 }
             }
             if( !output.contains( plugin ) )
             {
                 output.add( plugin );
             }
+        }
+        if( replay )
+        {
+            return resolveDeps( appConfig, output, EMPTY_LIST );
         }
         return output;
     }

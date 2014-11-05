@@ -22,12 +22,24 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * SpringPlugin.
+ * Spring Plugin.
  */
 public class SpringPlugin
     implements Plugin<ApplicationContext>
 {
     private ApplicationContext springContext;
+
+    @Override
+    public Class<ApplicationContext> apiType()
+    {
+        return ApplicationContext.class;
+    }
+
+    @Override
+    public ApplicationContext api()
+    {
+        return springContext;
+    }
 
     @Override
     public void onActivate( Application application )
@@ -40,17 +52,5 @@ public class SpringPlugin
     public void onPassivate( Application application )
     {
         springContext = null;
-    }
-
-    @Override
-    public Class<ApplicationContext> apiType()
-    {
-        return ApplicationContext.class;
-    }
-
-    @Override
-    public ApplicationContext api()
-    {
-        return springContext;
     }
 }

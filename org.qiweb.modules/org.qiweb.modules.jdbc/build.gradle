@@ -3,12 +3,11 @@ description = "JDBC Module"
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
+    compile project( ":org.qiweb.modules.jndi" )
     compile libs.hikaricp
 
     testCompile "org.qiweb:org.qiweb.test:$version"
 
-    testRuntime project( ":org.qiweb.modules.jndi" )
     testRuntime libs.h2
     testRuntime libs.postgres
 

@@ -3,7 +3,7 @@ description = "Metrics Module"
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
+    compile project( ":org.qiweb.modules.json" )
     compile libs.metrics
 
     testCompile "org.qiweb:org.qiweb.test:$version"

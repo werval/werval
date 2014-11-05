@@ -15,7 +15,9 @@
  */
 package org.qiweb.modules.jpa;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.qiweb.api.Application;
@@ -23,6 +25,7 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.jdbc.JDBC;
 
 import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
 
@@ -33,6 +36,24 @@ public class JPAPlugin
     implements Plugin<JPA>
 {
     private JPA jpa;
+
+    @Override
+    public Class<JPA> apiType()
+    {
+        return JPA.class;
+    }
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        return Arrays.asList( JDBC.class );
+    }
+
+    @Override
+    public JPA api()
+    {
+        return jpa;
+    }
 
     @Override
     public void onActivate( Application application )
@@ -62,18 +83,6 @@ public class JPAPlugin
     {
         jpa.passivate();
         jpa = null;
-    }
-
-    @Override
-    public Class<JPA> apiType()
-    {
-        return JPA.class;
-    }
-
-    @Override
-    public JPA api()
-    {
-        return jpa;
     }
 
     @Override

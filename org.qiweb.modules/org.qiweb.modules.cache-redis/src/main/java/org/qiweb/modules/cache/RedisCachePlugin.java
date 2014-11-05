@@ -31,6 +31,12 @@ public class RedisCachePlugin
     private Jedis jedis;
 
     @Override
+    public Cache api()
+    {
+        return redisCache;
+    }
+
+    @Override
     public void onActivate( Application application )
         throws ActivationException
     {
@@ -50,11 +56,5 @@ public class RedisCachePlugin
             jedis = null;
         }
         redisCache = null;
-    }
-
-    @Override
-    public Cache api()
-    {
-        return redisCache;
     }
 }

@@ -17,6 +17,8 @@ package org.qiweb.modules.liquibase;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
@@ -24,6 +26,7 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import org.qiweb.api.Application;
+import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.QiWebException;
@@ -36,8 +39,26 @@ import static org.qiweb.util.Strings.EMPTY;
  * Liquibase Plugin.
  */
 public class LiquibasePlugin
-    extends Plugin.Void
+    implements Plugin<Liquibase>
 {
+    @Override
+    public Class<Liquibase> apiType()
+    {
+        return Liquibase.class;
+    }
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        return Arrays.asList( JDBC.class );
+    }
+
+    @Override
+    public Liquibase api()
+    {
+        throw new UnsupportedOperationException( "Not supported." );
+    }
+
     @Override
     public void onActivate( Application application )
         throws ActivationException

@@ -32,7 +32,7 @@ import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.util.Strings;
 
 /**
- * MemcachePlugin.
+ * Memcache Plugin.
  */
 public class MemcachePlugin
     extends CachePlugin
@@ -46,6 +46,12 @@ public class MemcachePlugin
         Properties systemProperties = System.getProperties();
         systemProperties.put( "net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger" );
         System.setProperties( systemProperties );
+    }
+
+    @Override
+    public Cache api()
+    {
+        return backingCache;
     }
 
     @Override
@@ -97,11 +103,5 @@ public class MemcachePlugin
             client = null;
         }
         backingCache = null;
-    }
-
-    @Override
-    public Cache api()
-    {
-        return backingCache;
     }
 }

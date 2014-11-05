@@ -16,11 +16,8 @@
 package org.qiweb.modules.metrics;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.codahale.metrics.json.HealthCheckModule;
-import com.codahale.metrics.json.MetricsModule;
 import com.codahale.metrics.jvm.ThreadDump;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.ByteArrayOutputStream;
 import java.lang.management.ManagementFactory;
@@ -32,9 +29,8 @@ import org.qiweb.filters.NeverCached;
 import org.qiweb.filters.XContentTypeOptions;
 import org.qiweb.filters.XFrameOptions;
 import org.qiweb.filters.XXSSProtection;
+import org.qiweb.modules.json.JSON;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.request;
@@ -46,10 +42,6 @@ import static org.qiweb.api.context.CurrentContext.request;
 @XContentTypeOptions
 public class Tools
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .registerModule( new MetricsModule( SECONDS, MILLISECONDS, true ) )
-        .registerModule( new HealthCheckModule() );
-
     @ContentSecurityPolicy
     @XFrameOptions
     @XXSSProtection
@@ -88,8 +80,8 @@ public class Tools
         final boolean prettyPrint = Boolean.parseBoolean( request().queryString().firstValue( "pretty" ) );
         if( prettyPrint )
         {
-            return MAPPER.writerWithDefaultPrettyPrinter();
+            return plugin( JSON.class ).mapper().writerWithDefaultPrettyPrinter();
         }
-        return MAPPER.writer();
+        return plugin( JSON.class ).mapper().writer();
     }
 }

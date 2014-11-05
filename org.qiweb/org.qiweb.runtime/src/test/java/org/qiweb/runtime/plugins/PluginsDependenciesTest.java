@@ -31,6 +31,14 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Plugins Dependencies Test.
+ * <p>
+ * This test assert that plugins are ordered according to their dependency graph and that undeclared plugins present
+ * in the classpath are automatically resolved if they are registered in a {@literal META-INF/qiweb-plugins.properties}
+ * descriptor.
+ * <p>
+ * Configuration file `plugin-dependencies-test.conf` declares plugin in the wrong order.
+ * <p>
+ * Descriptor file `META-INF/qiweb-plugin.properties` declare all plugins even if it is not needed.
  */
 public class PluginsDependenciesTest
 {
@@ -61,6 +69,34 @@ public class PluginsDependenciesTest
         }
     }
 
+    public static class InTheMiddle
+    {
+    }
+
+    public static class InTheMiddlePlugin
+        implements Plugin<InTheMiddle>
+    {
+        private final InTheMiddle api = new InTheMiddle();
+
+        @Override
+        public Class<InTheMiddle> apiType()
+        {
+            return InTheMiddle.class;
+        }
+
+        @Override
+        public InTheMiddle api()
+        {
+            return api;
+        }
+
+        @Override
+        public List<Class<?>> dependencies( Config config )
+        {
+            return Arrays.asList( Upstream.class );
+        }
+    }
+
     public static class Downstream
     {
     }
@@ -85,13 +121,14 @@ public class PluginsDependenciesTest
         @Override
         public List<Class<?>> dependencies( Config config )
         {
-            return Arrays.asList( Upstream.class, Cache.class );
+            return Arrays.asList( InTheMiddle.class, Cache.class );
         }
 
         @Override
         public void onActivate( Application application )
             throws ActivationException
         {
+            application.plugin( InTheMiddle.class );
             application.plugin( Upstream.class );
         }
     }
@@ -99,9 +136,8 @@ public class PluginsDependenciesTest
     @Test
     public void ensurePluginsActivated()
     {
-        Upstream upstream = QIWEB.application().plugin( Upstream.class );
-        Downstream downstream = QIWEB.application().plugin( Downstream.class );
-        assertThat( upstream, notNullValue() );
-        assertThat( downstream, notNullValue() );
+        assertThat( QIWEB.application().plugin( Upstream.class ), notNullValue() );
+        assertThat( QIWEB.application().plugin( InTheMiddle.class ), notNullValue() );
+        assertThat( QIWEB.application().plugin( Downstream.class ), notNullValue() );
     }
 }

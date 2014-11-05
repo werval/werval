@@ -31,6 +31,8 @@ import static org.qiweb.util.Strings.EMPTY;
  * can contribute {@literal Routes} to it,
  * is given a change to hook around interactions
  * and can depend on other plugins.
+ * <p>
+ * Plugins should not create static state and their instanciation should be as close to {@literal NOOP} as possible.
  *
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
  */
