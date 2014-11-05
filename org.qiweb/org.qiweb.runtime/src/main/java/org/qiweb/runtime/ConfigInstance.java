@@ -240,7 +240,7 @@ public class ConfigInstance
     /**
      * Internal CTOR.
      * <p>
-     * See {@link #object(java.lang.String)} and {@link #array(java.lang.String)}.
+     * See {@link #location()}, {@link #object(java.lang.String)} and {@link #array(java.lang.String)}.
      *
      * @param config       TypeSafe Config
      * @param resourceName Configuration resource name
@@ -251,7 +251,15 @@ public class ConfigInstance
         this.config = config;
     }
 
-    public ConfigLocation location()
+    /**
+     * Config Location Helper.
+     * <p>
+     * Used internally by {@link ApplicationInstance} to preserve config location between reloads.
+     * See {@link #ConfigInstance(com.typesafe.config.Config, org.qiweb.runtime.ConfigInstance.ConfigLocation)}.
+     *
+     * @return Config Location Helper
+     */
+    /* package */ ConfigLocation location()
     {
         return location;
     }
