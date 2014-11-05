@@ -38,6 +38,7 @@ For minor changes, build system or test changes, see the full [source code histo
       [4.0.24](http://netty.io/news/2014/10/29/4-0-24-Final.html)
 - Modules
     - Upgrade EhCache from `2.8.4` to `2.9.0`, see the [changes-report](http://www.ehcache.org/changes-report)
+    - Upgrade Liquibase from `3.2.2` to `3.3.0`, see the [announcement](http://blog.liquibase.org/2014/11/liquibase-3-3-0-released.html)
 
 
 
