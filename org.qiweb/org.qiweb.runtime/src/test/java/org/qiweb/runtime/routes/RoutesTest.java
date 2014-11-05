@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.http.Method;
 import org.qiweb.api.http.QueryString;
@@ -261,7 +262,7 @@ public class RoutesTest
     public void givenUnderTestRoutesWhenParsingExpectCorrectResult()
         throws Exception
     {
-        Application app = new ApplicationInstance( new RoutesParserProvider() );
+        Application app = new ApplicationInstance( Mode.TEST, new RoutesParserProvider() );
         RouteBuilder builder = new RouteBuilderInstance( app );
         for( RoutesToTest refRoute : RoutesToTest.values() )
         {
@@ -286,6 +287,7 @@ public class RoutesTest
     public void givenMultipleRoutesStringWhenParsingExpectCorrectRoutes()
     {
         Application app = new ApplicationInstance(
+            Mode.TEST,
             new RoutesParserProvider(
                 "\n" + RoutesToTest.SIMPLE_1.routeString + "\n\n \n# ignore me\n  # me too  \n" + RoutesToTest.SIMPLE_2.routeString + "\n"
             )
@@ -310,7 +312,7 @@ public class RoutesTest
     @Test
     public void givenRoutesWhenMatchingExpectCorrectRoutes()
     {
-        Application app = new ApplicationInstance( new RoutesParserProvider() );
+        Application app = new ApplicationInstance( Mode.TEST, new RoutesParserProvider() );
         RouteBuilder builder = new RouteBuilderInstance( app );
         Route index = builder.parse().route( "GET / " + FakeController.class.getName() + ".index()" );
         Route foo = builder.parse().route( "GET /foo " + FakeController.class.getName() + ".foo()" );

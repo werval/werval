@@ -19,6 +19,7 @@ import com.acme.app.FakeController;
 import java.util.Map;
 import org.junit.Test;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
@@ -44,7 +45,7 @@ public class WildcardRoutesTest
     @Test
     public void wildAPI()
     {
-        Application application = new ApplicationInstance( app -> singletonList(
+        Application application = new ApplicationInstance( Mode.TEST, app -> singletonList(
             new RouteBuilderInstance( app )
             .route( "GET" )
             .on( "/test/*path/as/file" )
@@ -67,7 +68,7 @@ public class WildcardRoutesTest
     @Test
     public void wildParsed()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET /test/*path/as/file com.acme.app.FakeController.wild( String path )"
         ) );
         application.activate();
@@ -153,7 +154,7 @@ public class WildcardRoutesTest
     @Test
     public void forcedWild()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET /tree/*path com.acme.app.FakeController.forcedWild( String root = 'src/test/resources', String path )"
         ) );
         application.activate();

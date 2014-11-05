@@ -19,6 +19,7 @@ import com.acme.app.FakeController;
 import java.util.Map;
 import org.junit.Test;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
@@ -35,7 +36,7 @@ public class ParamDefaultValueParsingTest
     @Test
     public void apiRouteWithParamWithDefaultValue()
     {
-        Application application = new ApplicationInstance( app
+        Application application = new ApplicationInstance( Mode.TEST, app
             -> singletonList(
                 new RouteBuilderInstance( app )
                 .route( "GET" )
@@ -77,7 +78,7 @@ public class ParamDefaultValueParsingTest
     @Test
     public void parsedRouteWithParamWithDefaultValue()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET /foo/:id/bar com.acme.app.FakeControllerInstance.another( String id, Integer slug ?= '42' )"
         ) );
         application.activate();

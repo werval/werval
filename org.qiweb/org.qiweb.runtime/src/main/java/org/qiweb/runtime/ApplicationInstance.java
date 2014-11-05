@@ -164,18 +164,6 @@ public final class ApplicationInstance
     private final DevShellSPI devSpi;
 
     /**
-     * Create a new Application instance in {@link Mode#TEST}.
-     *
-     * Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.
-     *
-     * @param routesProvider Routes provider, must be not null
-     */
-    public ApplicationInstance( RoutesProvider routesProvider )
-    {
-        this( Mode.TEST, routesProvider );
-    }
-
-    /**
      * Create a new Application instance in given {@link Mode}.
      *
      * Routes are loaded from the {@literal routes.conf} file.
@@ -189,7 +177,15 @@ public final class ApplicationInstance
         this( mode, new RoutesConfProvider() );
     }
 
-    private ApplicationInstance( Mode mode, RoutesProvider routesProvider )
+    /**
+     * Create a new Application instance in given {@link Mode}.
+     *
+     * Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.
+     *
+     * @param mode           Application Mode, must be not null
+     * @param routesProvider Routes provider, must be not null
+     */
+    public ApplicationInstance( Mode mode, RoutesProvider routesProvider )
     {
         this(
             mode,
@@ -208,7 +204,12 @@ public final class ApplicationInstance
      * @param classLoader    Application ClassLoader, must be not null
      * @param routesProvider Routes provider, must be not null
      */
-    public ApplicationInstance( Mode mode, ConfigInstance config, ClassLoader classLoader, RoutesProvider routesProvider )
+    public ApplicationInstance(
+        Mode mode,
+        ConfigInstance config,
+        ClassLoader classLoader,
+        RoutesProvider routesProvider
+    )
     {
         this( mode, config, classLoader, routesProvider, null );
     }
@@ -299,7 +300,8 @@ public final class ApplicationInstance
                     {
                         return (Global) classLoader.loadClass( globalClassName ).newInstance();
                     }
-                    catch( ClassNotFoundException | ClassCastException | InstantiationException | IllegalAccessException ex )
+                    catch( ClassNotFoundException | ClassCastException |
+                           InstantiationException | IllegalAccessException ex )
                     {
                         throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
                     }

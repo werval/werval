@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.CompletionException;
 import org.junit.Test;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.IllegalRouteException;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
@@ -36,7 +37,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void givenRouteBuiltFromCodeWithParamForcedValueWhenBindingExpectCorrectParams()
     {
-        Application application = new ApplicationInstance( app
+        Application application = new ApplicationInstance( Mode.TEST, app
             -> singletonList(
                 new RouteBuilderInstance( app )
                 .route( "GET" )
@@ -71,7 +72,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void givenRouteWithParamForcedValueWhenBindingExpectCorrectParams()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.wild( String path = '/default/value' )"
         ) );
         application.activate();
@@ -95,7 +96,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void givenAnotherRouteWithParamForcedValueWhenBindingExpectCorrectParams()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET /*path com.acme.app.FakeControllerInstance.another( String path, Integer num = '42' )"
         ) );
         application.activate();
@@ -121,7 +122,7 @@ public class ParamForcedValueParsingTest
     public void quoteInQuotedForcedValue()
         throws Throwable
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.another( String path = ''', Integer num = '42' )"
         ) );
         try
@@ -137,7 +138,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void escapedQuoteInQuotedForcedValue()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.another( String path = '\\'', Integer num = '42' )"
         ) );
         application.activate();
@@ -162,7 +163,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void commaInQuotedForcedValue()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.another( String path = ',', Integer num = '42' )"
         ) );
         application.activate();
@@ -187,7 +188,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void equalsInQuotedForcedValue()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.another( String path = '1=2', Integer num = '42' )"
         ) );
         application.activate();
@@ -212,7 +213,7 @@ public class ParamForcedValueParsingTest
     @Test
     public void questionEqualsInQuotedForcedValue()
     {
-        Application application = new ApplicationInstance( new RoutesParserProvider(
+        Application application = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET / com.acme.app.FakeControllerInstance.another( String path = '1?=2', Integer num = '42' )"
         ) );
         application.activate();
