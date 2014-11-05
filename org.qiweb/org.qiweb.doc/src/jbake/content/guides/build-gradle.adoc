@@ -74,6 +74,28 @@ task customStart( type: org.qiweb.gradle.StartTask )
 }
 ----
 
+=== Leverage Gradle SourceSets
+
+["source","groovy"]
+----
+sourceSets {
+  dev
+  prod
+}
+
+devshell {
+    dependsOn devClasses
+    sourceSets += project.sourceSets.dev
+}
+
+start {
+    dependsOn prodClasses
+    sourceSets += project.sourceSets.prod
+}
+----
+
+See the Java Plugin http://www.gradle.org/docs/current/userguide/java_plugin.html[documentation].
+
 === Packaging
 
 TIP: If you need RPM or DEB packaging, use the
