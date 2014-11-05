@@ -48,6 +48,32 @@ devshell.extraWatch += [ "path/to/elsewhere", "and/anywhere" ]
 Thanks to Gradle's incredible incremental build behaviour, handling complex build scenarios is both confy and
 productive.
 
+
+=== Override config location
+
+["source","groovy"]
+----
+devshell {
+  // Only one of theses three can be set
+  configResource = "application-dev.conf"
+  configFile = file( "path/to/file.conf" )
+  configUrl = new URL( "http://url.to/file.conf" )
+}
+
+start {
+  // Only one of theses three can be set
+  configResource = "application-dev.conf"
+  configFile = file( "path/to/file.conf" )
+  configUrl = new URL( "http://url.to/file.conf" )
+}
+
+// Sample custom start task
+task customStart( type: org.qiweb.gradle.StartTask )
+{
+  configResource = "application-custom.conf"
+}
+----
+
 === Packaging
 
 TIP: If you need RPM or DEB packaging, use the
