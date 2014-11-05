@@ -20,9 +20,13 @@ import org.junit.Before;
 import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
+import org.qiweb.runtime.ConfigKeys;
+import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
+
+import static java.util.Collections.singletonMap;
 
 /**
  * Base QiWeb JUnit Test.
@@ -64,6 +68,16 @@ public class QiWebTest
                       ? configurationResourceName()
                       : configurationResourceNameOverride;
         ConfigInstance config = new ConfigInstance( classLoader, conf );
+        try
+        {
+            config.string( ConfigKeys.APP_SECRET );
+        }
+        catch( com.typesafe.config.ConfigException.Missing noAppSecret )
+        {
+            System.out.println( "Application has no 'app.secret', generating a random one for test mode!" );
+            String secret = CryptoInstance.newRandomSecret256BitsHex();
+            config = new ConfigInstance( classLoader, conf, null, null, singletonMap( "app.secret", secret ) );
+        }
         RoutesProvider routesProvider = routesProviderOverride == null
                                         ? routesProvider()
                                         : routesProviderOverride;
@@ -107,7 +121,7 @@ public class QiWebTest
      */
     protected String configurationResourceName()
     {
-        return "application.conf";
+        return null;
     }
 
     /**

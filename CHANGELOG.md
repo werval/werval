@@ -23,6 +23,7 @@ For minor changes, build system or test changes, see the full [source code histo
 #### Enhancements
 
 - Refined runtime logging, see #72
+- One can now start an application in development or test mode without an `app.secret` defined (even without an `application.conf` file) ; in such a case, a random secret is generated, see #205
 - The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
 - Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
 - Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189

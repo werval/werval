@@ -18,6 +18,7 @@ package org.qiweb.devshell;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -26,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -37,6 +39,7 @@ import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
+import static java.util.Collections.singletonMap;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 import static org.qiweb.runtime.util.AnsiColor.cyan;
@@ -122,9 +125,11 @@ public final class DevShell
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
     private static final String CONFIG_API_CLASS = "org.qiweb.api.Config";
     private static final String CONFIG_RUNTIME_CLASS = "org.qiweb.runtime.ConfigInstance";
+    private static final String CRYPTO_RUNTIME_CLASS = "org.qiweb.runtime.CryptoInstance";
     private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
     private static final String MODE_API_CLASS = "org.qiweb.api.Mode";
     private static final String APPLICATION_SPI_CLASS = "org.qiweb.spi.ApplicationSPI";
+    private static final String NETTY_SERVER_CLASS = "org.qiweb.server.netty.NettyServer";
     private static final File RUN_LOCK_FILE = new File( Paths.get( "" ).toAbsolutePath().toFile(), ".devshell.lock" );
     private static final long RUN_LOCK_FILE_POLL_INTERVAL_MILLIS = 500;
     private static final AtomicLong APPLICATION_REALM_COUNT = new AtomicLong( 0L );
@@ -201,17 +206,51 @@ public final class DevShell
             // Config
             Class<?> configClass = appRealm.loadClass( CONFIG_API_CLASS );
             Class<?> configRuntimeClass = appRealm.loadClass( CONFIG_RUNTIME_CLASS );
-            Object configInstance = configRuntimeClass.getConstructor(
+            Constructor<?> configRuntimeCtor = configRuntimeClass.getConstructor(
                 new Class<?>[]
                 {
-                    ClassLoader.class, String.class, File.class, URL.class
-                }
-            ).newInstance(
-                new Object[]
-                {
-                    appRealm, configResource, configFile, configUrl
+                    ClassLoader.class, String.class, File.class, URL.class, Map.class
                 }
             );
+            Object configInstance = configRuntimeCtor.newInstance(
+                new Object[]
+                {
+                    appRealm, configResource, configFile, configUrl, null
+                }
+            );
+            try
+            {
+                // Check if the application has an `app.secret` configuration property
+                configClass.getMethod(
+                    "string",
+                    new Class<?>[]
+                    {
+                        String.class
+                    }
+                ).invoke(
+                    configInstance, "app.secret"
+                );
+            }
+            catch( Exception noAppSecret )
+            {
+                // The application has no `app.secret` configuration property, generating a random one
+                System.out.println(
+                    red( "Application has no 'app.secret', generating a random one for development mode!" )
+                );
+                Object secret = appRealm.loadClass( CRYPTO_RUNTIME_CLASS )
+                    .getMethod( "newRandomSecret256BitsHex" )
+                    .invoke( null );
+                configInstance = configRuntimeCtor.newInstance(
+                    new Object[]
+                    {
+                        appRealm, configResource, configFile, configUrl, singletonMap( "app.secret", secret )
+                    }
+                );
+                System.out.println( red(
+                    "  The 'app.secret' will last as long as the development mode is running and survive reloads.\n"
+                    + "  If you set it in configuration you'll have to restart the development mode!"
+                ) );
+            }
 
             // Application
             Class<?> appClass = appRealm.loadClass( APPLICATION_RUNTIME_CLASS );
@@ -236,7 +275,7 @@ public final class DevShell
             );
 
             // Create HttpServer instance
-            httpServer = appRealm.loadClass( "org.qiweb.server.netty.NettyServer" ).newInstance();
+            httpServer = appRealm.loadClass( NETTY_SERVER_CLASS ).newInstance();
 
             // Set ApplicationSPI on HttpServer
             httpServer.getClass().getMethod(
@@ -479,7 +518,7 @@ public final class DevShell
         return "http://" + httpHost + ":" + httpPort + "/";
     }
 
-    // This is dead code waiting for a necromancer
+    // This is dead debug code waiting for a necromancer
     private void printRealms()
         throws NoSuchRealmException
     {

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import org.qiweb.api.Config;
 import org.qiweb.util.Reflectively;
@@ -40,7 +41,7 @@ public class ConfigInstance
     implements Config
 {
     /**
-     * Helper to preserve config location between reloads.
+     * Helper to preserve config location and overrides between reloads.
      * <p>
      * See {@link ConfigInstance#location()}.
      */
@@ -49,32 +50,34 @@ public class ConfigInstance
         private final String configResource;
         private final File configFile;
         private final URL configUrl;
+        private final Map<String, Object> overrides;
 
         private ConfigLocation()
         {
-            this( null, null, null );
+            this( null, null, null, null );
         }
 
         private ConfigLocation( String configResource )
         {
-            this( configResource, null, null );
+            this( configResource, null, null, null );
         }
 
         private ConfigLocation( File configFile )
         {
-            this( null, configFile, null );
+            this( null, configFile, null, null );
         }
 
         private ConfigLocation( URL configUrl )
         {
-            this( null, null, configUrl );
+            this( null, null, configUrl, null );
         }
 
-        private ConfigLocation( String configResource, File configFile, URL configUrl )
+        private ConfigLocation( String configResource, File configFile, URL configUrl, Map<String, Object> overrides )
         {
             this.configResource = configResource;
             this.configFile = configFile;
             this.configUrl = configUrl;
+            this.overrides = overrides;
         }
 
         public String toStringShort()
@@ -102,6 +105,15 @@ public class ConfigInstance
                     sb.append( ", " );
                 }
                 sb.append( "url:" ).append( configUrl.toString() );
+                previous = true;
+            }
+            if( overrides != null )
+            {
+                if( previous )
+                {
+                    sb.append( ", " );
+                }
+                sb.append( "overrides:" ).append( overrides.keySet().toString() );
             }
             return sb.toString();
         }
@@ -168,11 +180,18 @@ public class ConfigInstance
      * @param configResource Configuration resource name
      * @param configFile     Configuration file
      * @param configUrl      Configuration URL
+     * @param overrides      Configuration properties overrides, may be null
      */
     @Reflectively.Invoked( by = "DevShell" )
-    public ConfigInstance( ClassLoader loader, String configResource, File configFile, URL configUrl )
+    public ConfigInstance(
+        ClassLoader loader,
+        String configResource,
+        File configFile,
+        URL configUrl,
+        Map<String, Object> overrides
+    )
     {
-        this( loader, new ConfigLocation( configResource, configFile, configUrl ) );
+        this( loader, new ConfigLocation( configResource, configFile, configUrl, overrides ) );
     }
 
     public ConfigInstance( ClassLoader loader, ConfigLocation location )
@@ -181,6 +200,7 @@ public class ConfigInstance
         String previousConfigResource = System.getProperty( "config.resource" );
         String previousConfigFile = System.getProperty( "config.file" );
         String previousConfigURL = System.getProperty( "config.url" );
+        Map<String, String> overridesPrevious = new HashMap<>();
         try
         {
             // Eventually set config.resource
@@ -197,6 +217,17 @@ public class ConfigInstance
             if( location.configUrl != null )
             {
                 System.setProperty( "config.url", location.configUrl.toExternalForm() );
+            }
+            // Eventually set configuration properties overrides
+            if( location.overrides != null )
+            {
+                location.overrides.forEach(
+                    (key, val) ->
+                    {
+                        overridesPrevious.put( key, System.getProperty( key ) );
+                        System.setProperty( key, Objects.toString( val ) );
+                    }
+                );
             }
             // Hold a reference to the location, for reload purpose
             this.location = location;
@@ -234,6 +265,20 @@ public class ConfigInstance
             {
                 System.setProperty( "config.url", previousConfigURL );
             }
+            // Restore overrides
+            overridesPrevious.forEach(
+                (key, val) ->
+                {
+                    if( val == null )
+                    {
+                        System.clearProperty( key );
+                    }
+                    else
+                    {
+                        System.setProperty( key, val );
+                    }
+                }
+            );
         }
     }
 
@@ -242,8 +287,8 @@ public class ConfigInstance
      * <p>
      * See {@link #location()}, {@link #object(java.lang.String)} and {@link #array(java.lang.String)}.
      *
-     * @param config       TypeSafe Config
-     * @param resourceName Configuration resource name
+     * @param config   TypeSafe Config
+     * @param location Config location and overrides
      */
     private ConfigInstance( com.typesafe.config.Config config, ConfigLocation location )
     {
@@ -254,7 +299,7 @@ public class ConfigInstance
     /**
      * Config Location Helper.
      * <p>
-     * Used internally by {@link ApplicationInstance} to preserve config location between reloads.
+     * Used internally by {@link ApplicationInstance} to preserve config location and overrides between reloads.
      * See {@link #ConfigInstance(com.typesafe.config.Config, org.qiweb.runtime.ConfigInstance.ConfigLocation)}.
      *
      * @return Config Location Helper

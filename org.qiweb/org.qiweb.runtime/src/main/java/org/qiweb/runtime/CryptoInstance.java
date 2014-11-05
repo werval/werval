@@ -26,6 +26,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.util.Hex;
+import org.qiweb.util.Reflectively;
 
 /**
  * Cryptography service instance.
@@ -71,6 +72,7 @@ public class CryptoInstance
         return Base64.getEncoder().encodeToString( newRandomSecret256Bits() );
     }
 
+    @Reflectively.Invoked( by = "DevShell" )
     public static String newRandomSecret256BitsHex()
     {
         return Hex.encode( newRandomSecret256Bits() );
