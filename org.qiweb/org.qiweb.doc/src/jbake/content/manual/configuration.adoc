@@ -4,10 +4,8 @@
 NOTE: QiWeb configuration use the link:hocon.html[HOCON format] ("Human Optimized Config Object Notation").
 It is parsed using https://github.com/typesafehub/config[Typesafe Config].
 
-The `application.conf` file must be present at the root of your classpath and must at least contain one single entry:
-`app.secret` which is the secret key your application will use to sign session cookies.
-For all other configuration properties, the QiWeb Runtime provide a `reference.conf` file that the Config library
-automatically loads.
+By default, configuration is loaded from an `application.conf` file present at the root of your classpath.
+QiWeb runtime configuration properties default values are automatically loaded from `reference.conf` files from each of QiWeb modules.
 You can of course override all theses configuration properties in your `application.conf` file.
 
 If you need to add configuration properties for your application you are encouraged to do so in your `application.conf`

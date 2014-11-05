@@ -20,12 +20,12 @@ You add dependent tasks to the `devshell` and `devshell_rebuild` that way;
 
 [source]
 ----
-devshell.dependsOn grunt_bower, grunt_dev
-devshell_rebuild.dependsOn grunt_dev
+devshell.dependsOn gulp_bower, gulp_dev
+devshell_rebuild.dependsOn gulp_dev
 ----
 
-This example is from an application that use `bower` and `grunt` for client javascript build,
-thanks to the `gradle-grunt-plugin`.
+This example is from an application that use `bower` and `gulp` for client javascript build,
+thanks to the `gradle-gulp-plugin`.
 
 Configuring theses tasks in your build allow you to fine tune the work needed to get your app in dev mode and what
 should be done when the source has changed.

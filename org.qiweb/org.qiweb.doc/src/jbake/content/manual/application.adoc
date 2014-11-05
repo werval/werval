@@ -3,7 +3,9 @@
 
 A QiWeb Application is nothing but a plain old Java program.
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
-The minimal requirement is a configuration file named `application.conf` containing a `app.secret` entry.
+
+In development and test modes, no configuration file is required.
+To run in production mode, the minimal requirement is a configuration file named `application.conf` containing an `app.secret` entry.
 
 
 === Structure
