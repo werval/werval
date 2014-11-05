@@ -26,6 +26,8 @@ public class SecretCommand
     @Override
     public void run()
     {
-        System.out.println( "New Application Secret: " + CryptoInstance.newRandomSecret256BitsHex() );
+        System.out.println();
+        System.out.println( "app.secret = " + CryptoInstance.newRandomSecret256BitsHex() );
+        System.out.println();
     }
 }
