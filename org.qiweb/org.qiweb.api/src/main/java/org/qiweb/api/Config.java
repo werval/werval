@@ -33,11 +33,25 @@ import org.qiweb.util.Reflectively;
 public interface Config
 {
     /**
+     * @param key config entry key
+     *
+     * @return {@literal true} if the config property under the given key is an object
+     */
+    boolean isObject( String key );
+
+    /**
      * @param key Config entry key
      *
      * @return new Config object for the config properties under the given key
      */
     Config object( String key );
+
+    /**
+     * @param key config entry key
+     *
+     * @return {@literal true} if the config property under the given key is an array
+     */
+    boolean isArray( String key );
 
     /**
      * @param key Config entry key
@@ -87,6 +101,34 @@ public interface Config
      */
     @Reflectively.Invoked( by = "DevShell" )
     String string( String key );
+
+    /**
+     * @param key config entry key
+     *
+     * @return {@literal true} if the config property under the given key is a list
+     */
+    boolean isList( String key );
+
+    /**
+     * @param key Config entry key
+     *
+     * @return Config entry values as List of Booleans
+     */
+    List<Boolean> boolList( String key );
+
+    /**
+     * @param key Config entry key
+     *
+     * @return Config entry values as List of Integers
+     */
+    List<Integer> intList( String key );
+
+    /**
+     * @param key Config entry key
+     *
+     * @return Config entry values as List of Doubles
+     */
+    List<Double> doubleList( String key );
 
     /**
      * @param key Config entry key

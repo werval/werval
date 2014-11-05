@@ -310,9 +310,37 @@ public class ConfigInstance
     }
 
     @Override
+    public boolean isObject( String key )
+    {
+        try
+        {
+            config.getConfig( key );
+            return true;
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing noObject )
+        {
+            return false;
+        }
+    }
+
+    @Override
     public Config object( String key )
     {
         return new ConfigInstance( config.getConfig( key ), location );
+    }
+
+    @Override
+    public boolean isArray( String key )
+    {
+        try
+        {
+            config.getConfigList( key );
+            return true;
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing noArray )
+        {
+            return false;
+        }
     }
 
     @Override
@@ -357,6 +385,38 @@ public class ConfigInstance
     public String string( String key )
     {
         return config.getString( key );
+    }
+
+    @Override
+    public boolean isList( String key )
+    {
+        try
+        {
+            config.getList( key );
+            return true;
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing noList )
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public List<Boolean> boolList( String key )
+    {
+        return config.getBooleanList( key );
+    }
+
+    @Override
+    public List<Integer> intList( String key )
+    {
+        return config.getIntList( key );
+    }
+
+    @Override
+    public List<Double> doubleList( String key )
+    {
+        return config.getDoubleList( key );
     }
 
     @Override
