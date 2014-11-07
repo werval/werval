@@ -313,12 +313,8 @@ public final class ApplicationInstance
             resolvedRoutes.addAll( executors.supplyAsync( () -> routesProvider.routes( this ) ).join() );
 
             // Activate Plugins
-            plugins = new PluginsInstance(
-                config,
-                executors.supplyAsync( () -> global.extraPlugins() ).join(),
-                devSpi != null
-            );
-            executors.runAsync( () -> plugins.onActivate( this, global ) ).join();
+            plugins = new PluginsInstance();
+            executors.runAsync( () -> plugins.onActivate( this ) ).join();
 
             // Plugin contributed Routes
             resolvedRoutes.addAll( 0, executors.supplyAsync( () -> plugins.firstRoutes( this ) ).join() );

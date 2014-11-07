@@ -31,7 +31,7 @@ import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Plugin Routes Test.
- *
+ * <p>
  * Assert correct registration of prefixed Routes contributed by Plugins.
  * <p>
  * See the {@literal plugin-routes-test.conf} configuration file.

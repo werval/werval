@@ -48,11 +48,7 @@ And finally your application configuration:
 .application.conf
 [source,json]
 ----
-app.plugins = [
-    { plugin = org.qiweb.modules.jndi.JNDIPlugin },
-    { plugin = org.qiweb.modules.jdbc.JDBCPlugin },
-    { plugin = "org.qiweb.modules.jpa.JPAPlugin" }
-]
+app.plugins.enabled += jpa
 ----
 
 [CAUTION]

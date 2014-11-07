@@ -9,18 +9,22 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased!
 
-#### Bug fixes
+### Breaking changes
+
+- Plugins can now be registered by names in configuration. Registration by FQCN is still possible but the syntax has changed, see #195
+
+### Bug fixes
 
 - Fix Plugin's lookup mechanism to correctly honor polymorphism, see #203
 
-#### New features
+### New features
 
 - Application Events, see #190
 - Metrics & HealthChecks Plugin, see #186
 - [Hashids](http://hashids.org/) support, see #199
 - Base62 codec, see #200
 
-#### Enhancements
+### Enhancements
 
 - Refined runtime logging, see #72
 - One can now start an application in development or test mode without an `app.secret` defined (even without an `application.conf` file) ; in such a case, a random secret is generated, see #205

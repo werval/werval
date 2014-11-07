@@ -87,24 +87,6 @@ public interface Plugin<API>
     }
 
     /**
-     * Prefix for Routes contributed by this Plugin.
-     * <p>
-     * Defaults to an empty string unless the Plugin declaration contains a {@literal routesPrefix} value.
-     *
-     * @param pluginConfig Plugin Config Object, null for extra plugins declared in Global
-     *
-     * @return Prefix for Routes contributed by this Plugin or an empty String
-     */
-    default String routesPrefix( Config pluginConfig )
-    {
-        if( pluginConfig == null || !pluginConfig.has( "routesPrefix" ) )
-        {
-            return EMPTY;
-        }
-        return pluginConfig.string( "routesPrefix" );
-    }
-
-    /**
      * Routes to prepend to the Application routes.
      * <p>
      * Defaults to no Route.

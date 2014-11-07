@@ -17,6 +17,7 @@ package org.qiweb.runtime;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -24,111 +25,119 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Global;
+import org.qiweb.api.Mode;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.context.Context;
-import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.exceptions.PassivationException;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.routes.Route;
-import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.util.Couple;
 
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
 import static org.qiweb.util.IllegalArguments.ensureNotNull;
+import static org.qiweb.util.Strings.EMPTY;
+import static org.qiweb.util.Strings.NEWLINE;
+import static org.qiweb.util.Strings.SPACE;
+import static org.qiweb.util.Strings.rightPad;
 
 /**
- * A Plugins Instance.
- *
+ * Plugins Instance.
+ * <p>
  * Manage Plugins lifecycle and provide lookup for {@link ApplicationInstance}.
  */
 /* package */ class PluginsInstance
 {
-    private volatile boolean activated = false;
-    private boolean activatingOrPassivating = false;
-    private final List<Config> configuredPlugins;
-    private final List<Plugin<?>> extraPlugins;
-
     /**
-     * Couple left is the actual plugin instance, right is its Config node.
+     * Plugin Information.
+     * <p>
+     * For internal use only.
+     * Ties a Plugin to its runtime configuration properties.
      */
-    private List<Couple<Plugin<?>, Config>> activePlugins = EMPTY_LIST;
-
-    /* package */ PluginsInstance( Config config, List<Plugin<?>> extraPlugins, boolean devMode )
+    private static final class PluginInfo
     {
-        this.configuredPlugins = config.array( "app.plugins" );
-        if( devMode )
+        private final Plugin<?> plugin;
+        private final String routesPrefix;
+
+        private PluginInfo( Plugin<?> plugin, String routesPrefix )
         {
-            this.configuredPlugins.addAll( 0, config.array( "qiweb.devshell.plugins" ) );
+            this.plugin = plugin;
+            this.routesPrefix = routesPrefix == null ? EMPTY : routesPrefix;
         }
-        this.extraPlugins = extraPlugins;
+
+        @Override
+        public int hashCode()
+        {
+            int hash = 5;
+            hash = 17 * hash + Objects.hashCode( this.plugin );
+            hash = 17 * hash + Objects.hashCode( this.routesPrefix );
+            return hash;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( obj == null )
+            {
+                return false;
+            }
+            if( getClass() != obj.getClass() )
+            {
+                return false;
+            }
+            final PluginInfo other = (PluginInfo) obj;
+            if( !Objects.equals( this.plugin, other.plugin ) )
+            {
+                return false;
+            }
+            return Objects.equals( this.routesPrefix, other.routesPrefix );
+        }
+
+        @Override
+        public String toString()
+        {
+            return plugin.getClass().getName();
+        }
     }
 
-    /* package */ void onActivate( ApplicationInstance application, Global global )
+    private volatile boolean activated = false;
+    private boolean activatingOrPassivating = false;
+    private List<PluginInfo> activePlugins = EMPTY_LIST;
+
+    /**
+     * Activate Plugins.
+     *
+     * @param application Application
+     */
+    /* package */ void onActivate( ApplicationInstance application )
     {
         activatingOrPassivating = true;
         try
         {
-            EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
-            List<Couple<Plugin<?>, Config>> plugins = new ArrayList<>(
-                configuredPlugins.size() + extraPlugins.size() + extensions.size()
-            );
+            LinkedHashMap<String, String> pluginsDescriptors = loadPluginsDescriptors( application );
+            List<PluginInfo> appPlugins = loadApplicationPlugins( application, pluginsDescriptors );
+            List<PluginInfo> dynamicPlugins = loadDynamicPlugins( application, pluginsDescriptors, appPlugins );
+            List<PluginInfo> plugins = resolveDependencies( application, appPlugins, dynamicPlugins );
 
-            // Application Configured Plugins
-            for( Config pluginConfig : configuredPlugins )
-            {
-                try
-                {
-                    Class<?> pluginClass = application.classLoader().loadClass( pluginConfig.string( "plugin" ) );
-                    Plugin<?> plugin = (Plugin<?>) global.getPluginInstance( application, pluginClass );
-                    plugins.add( Couple.of( plugin, pluginConfig ) );
-                    extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
-                }
-                catch( ClassNotFoundException ex )
-                {
-                    throw new ActivationException( "Unable to activate a plugin: " + ex.getMessage(), ex );
-                }
-            }
-
-            // Global Extra Plugins
-            for( Plugin<?> extraPlugin : extraPlugins )
-            {
-                plugins.add( Couple.leftOnly( extraPlugin ) );
-                extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
-            }
-
-            // Core Extensions Plugins
-            for( ExtensionPlugin extension : extensions )
-            {
-                Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
-                plugins.add( Couple.leftOnly( extensionPlugin ) );
-            }
-
-            // Load available dynamics plugins
-            List<Couple<Plugin<?>, Config>> dynamicPlugins = loadDynamicPlugins(
-                application,
-                plugins.stream().map( Couple::left ).collect( Collectors.toList() )
-            );
-
-            // Resolve dependencies
-            plugins = resolveDeps( application.config(), plugins, dynamicPlugins );
+            System.out.println( "PLUGINS DESCRIPTORS: " + pluginsDescriptors );
+            System.out.println( "APPLICATION PLUGINS: " + appPlugins );
+            System.out.println( "DYNAMIC PLUGINS: " + dynamicPlugins );
+            System.out.println( "RESOLVED PLUGINS: " + plugins );
 
             // Activate all plugins, in order
             activePlugins = new ArrayList<>( plugins.size() );
-            for( Couple<Plugin<?>, Config> plugin : plugins )
+            for( PluginInfo pluginInfo : plugins )
             {
-                plugin.left().onActivate( application );
-                activePlugins.add( plugin );
+                pluginInfo.plugin.onActivate( application );
+                activePlugins.add( pluginInfo );
             }
 
             // Plugins Activated
@@ -145,121 +154,24 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         }
     }
 
-    private List<Couple<Plugin<?>, Config>> loadDynamicPlugins( ApplicationSPI application, List<Plugin<?>> alreadyLoaded )
-    {
-        try
-        {
-            List<Couple<Plugin<?>, Config>> dynamicPlugins = new ArrayList<>();
-            Enumeration<URL> descriptors = application.classLoader().getResources( "META-INF/qiweb-plugins.properties" );
-            while( descriptors.hasMoreElements() )
-            {
-                try( InputStream stream = descriptors.nextElement().openStream() )
-                {
-                    Properties descriptor = new Properties();
-                    descriptor.load( stream );
-                    for( String name : descriptor.stringPropertyNames() )
-                    {
-                        String fqcn = descriptor.getProperty( name );
-                        Class<?> clazz = application.classLoader().loadClass( fqcn );
-                        if( !alreadyLoaded.stream().anyMatch( p -> p.getClass().equals( clazz ) ) )
-                        {
-                            Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, clazz );
-                            dynamicPlugins.add( Couple.leftOnly( plugin ) );
-                        }
-                    }
-                }
-            }
-            return dynamicPlugins;
-        }
-        catch( IOException | ClassNotFoundException ex )
-        {
-            throw new QiWebRuntimeException( "Unable to load dynamic plugins", ex );
-        }
-    }
-
-    private List<Couple<Plugin<?>, Config>> resolveDeps(
-        Config appConfig,
-        List<Couple<Plugin<?>, Config>> input,
-        List<Couple<Plugin<?>, Config>> dynamics
-    )
-    {
-        List<Couple<Plugin<?>, Config>> output = new ArrayList<>( input.size() );
-        ArrayDeque<Couple<Plugin<?>, Config>> queue = new ArrayDeque<>( input );
-        boolean replay = false;
-        while( !queue.isEmpty() )
-        {
-            Couple<Plugin<?>, Config> plugin = queue.poll();
-            for( Class<?> dependency : plugin.left().dependencies( appConfig ) )
-            {
-                // Already resolved?
-                if( !output.stream().anyMatch(
-                    p -> p.left().apiType().equals( dependency ) || dependency.isAssignableFrom( p.left().apiType() )
-                ) )
-                {
-                    // Same type, then assignable or null
-                    Couple<Plugin<?>, Config> match = input.stream()
-                        .filter( p -> p.left().apiType().equals( dependency ) )
-                        .findFirst()
-                        .orElse(
-                            input.stream()
-                            .filter( p -> dependency.isAssignableFrom( p.left().apiType() ) )
-                            .findFirst()
-                            .orElse( null )
-                        );
-                    if( match == null )
-                    {
-                        // Dynamic plugins, same type, then assignable or null
-                        match = dynamics.stream()
-                            .filter( p -> p.left().apiType().equals( dependency ) )
-                            .findFirst()
-                            .orElse(
-                                input.stream()
-                                .filter( p -> dependency.isAssignableFrom( p.left().apiType() ) )
-                                .findFirst()
-                                .orElse( null )
-                            );
-                        // If no match, throw
-                        if( match == null )
-                        {
-                            throw new QiWebException( "Plugin dependency not resolved: " + dependency );
-                        }
-                        // Replay will be needed to properly order plugins according to dependencies
-                        replay = true;
-                        queue.addFirst( match );
-                        output.add( match );
-                    }
-                    else
-                    {
-                        queue.remove( match );
-                        output.add( match );
-                    }
-                }
-            }
-            if( !output.contains( plugin ) )
-            {
-                output.add( plugin );
-            }
-        }
-        if( replay )
-        {
-            return resolveDeps( appConfig, output, EMPTY_LIST );
-        }
-        return output;
-    }
-
-    /* package */ void onPassivate( Application application )
+    /**
+     * Passivate Plugins.
+     *
+     * @param application Application
+     */
+    /* package */ void onPassivate( ApplicationInstance application )
     {
         activatingOrPassivating = true;
         try
         {
             Collections.reverse( activePlugins );
-            Iterator<Couple<Plugin<?>, Config>> it = activePlugins.iterator();
+            Iterator<PluginInfo> it = activePlugins.iterator();
             List<Exception> errors = new ArrayList<>();
             while( it.hasNext() )
             {
                 try
                 {
-                    it.next().left().onPassivate( application );
+                    it.next().plugin.onPassivate( application );
                 }
                 catch( Exception ex )
                 {
@@ -288,43 +200,69 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         }
     }
 
+    /**
+     * Collect first routes contributed by active Plugins.
+     *
+     * @param app Application
+     *
+     * @return First routes contributed by active Plugins
+     */
     /* package */ List<Route> firstRoutes( Application app )
     {
         List<Route> firstRoutes = new ArrayList<>();
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
-            String routesPrefix = plugin.left().routesPrefix( plugin.right() );
-            firstRoutes.addAll( plugin.left().firstRoutes( app.mode(), new RouteBuilderInstance( app, routesPrefix ) ) );
+            firstRoutes.addAll(
+                pluginInfo.plugin.firstRoutes( app.mode(), new RouteBuilderInstance( app, pluginInfo.routesPrefix ) )
+            );
         }
         return firstRoutes;
     }
 
+    /**
+     * Collect last routes contributed by active Plugins.
+     *
+     * @param app Application
+     *
+     * @return Last routes contributed by active Plugins
+     */
     /* package */ List<Route> lastRoutes( Application app )
     {
         List<Route> lastRoutes = new ArrayList<>();
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
-            String routesPrefix = plugin.left().routesPrefix( plugin.right() );
-            lastRoutes.addAll( plugin.left().lastRoutes( app.mode(), new RouteBuilderInstance( app, routesPrefix ) ) );
+            lastRoutes.addAll(
+                pluginInfo.plugin.lastRoutes( app.mode(), new RouteBuilderInstance( app, pluginInfo.routesPrefix ) )
+            );
         }
         return lastRoutes;
     }
 
+    /**
+     * Before each interaction hook.
+     *
+     * @param context Context
+     */
     /* package */ void beforeInteraction( Context context )
     {
         // Fail fast
-        activePlugins.forEach( cp -> cp.left().beforeInteraction( context ) );
+        activePlugins.forEach( cp -> cp.plugin.beforeInteraction( context ) );
     }
 
+    /**
+     * After each interaction hook.
+     *
+     * @param context Context
+     */
     /* package */ void afterInteraction( Context context )
     {
         // Fail safe
         List<Exception> errors = new ArrayList<>();
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
             try
             {
-                plugin.left().afterInteraction( context );
+                pluginInfo.plugin.afterInteraction( context );
             }
             catch( Exception ex )
             {
@@ -342,6 +280,13 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         }
     }
 
+    /**
+     * Lookup plugins by API type.
+     *
+     * @param pluginApiType Plugin API type
+     *
+     * @return Plugins matching the given API type, maybe none
+     */
     /* package */ <T> Iterable<T> plugins( Class<T> pluginApiType )
     {
         if( !activated && !activatingOrPassivating )
@@ -350,25 +295,34 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
         }
         ensureNotNull( "Plugin API Type", pluginApiType );
         Set<T> result = new LinkedHashSet<>();
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
-            if( plugin.left().apiType().equals( pluginApiType ) && plugin.left().api() != null )
+            if( pluginInfo.plugin.apiType().equals( pluginApiType ) && pluginInfo.plugin.api() != null )
             {
                 // Type equals
-                result.add( pluginApiType.cast( plugin.left().api() ) );
+                result.add( pluginApiType.cast( pluginInfo.plugin.api() ) );
             }
         }
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
-            if( pluginApiType.isAssignableFrom( plugin.left().apiType() ) && plugin.left().api() != null )
+            if( pluginApiType.isAssignableFrom( pluginInfo.plugin.apiType() ) && pluginInfo.plugin.api() != null )
             {
                 // Type is assignable
-                result.add( pluginApiType.cast( plugin.left().api() ) );
+                result.add( pluginApiType.cast( pluginInfo.plugin.api() ) );
             }
         }
         return result;
     }
 
+    /**
+     * Lookup plugin by API type.
+     *
+     * @param pluginApiType Plugin API Type
+     *
+     * @return First Plugin matching the given API type, never null
+     *
+     * @throws IllegalArgumentException if no matching plugin can be found
+     */
     /* package */ <T> T plugin( Class<T> pluginApiType )
     {
         if( !activated && !activatingOrPassivating )
@@ -376,26 +330,259 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
             throw new IllegalStateException( "Plugins are passivated." );
         }
         ensureNotNull( "Plugin API Type", pluginApiType );
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
-            if( plugin.left().apiType().equals( pluginApiType ) && plugin.left().api() != null )
+            if( pluginInfo.plugin.apiType().equals( pluginApiType ) && pluginInfo.plugin.api() != null )
             {
                 // Type equals
-                return pluginApiType.cast( plugin.left().api() );
+                return pluginApiType.cast( pluginInfo.plugin.api() );
             }
         }
-        for( Couple<Plugin<?>, Config> plugin : activePlugins )
+        for( PluginInfo pluginInfo : activePlugins )
         {
-            if( pluginApiType.isAssignableFrom( plugin.left().apiType() ) && plugin.left().api() != null )
+            if( pluginApiType.isAssignableFrom( pluginInfo.plugin.apiType() ) && pluginInfo.plugin.api() != null )
             {
                 // Type is assignable
-                return pluginApiType.cast( plugin.left().api() );
+                return pluginApiType.cast( pluginInfo.plugin.api() );
             }
         }
         // No Plugin found
         throw new IllegalArgumentException(
             "API for Plugin<" + pluginApiType.getName() + "> not found. "
-            + "Active plugins APIs: " + activePlugins.stream().map( c -> c.left().apiType() ).collect( toList() ) + "."
+            + "Active plugins APIs: " + activePlugins.stream().map( p -> p.plugin.apiType() ).collect( toList() ) + "."
         );
+    }
+
+    /**
+     * Load plugins descriptors from the application classpath.
+     *
+     * @param application Application
+     *
+     * @return Plugins descriptors as a Map, keys are names, values are FQCNs
+     */
+    private LinkedHashMap<String, String> loadPluginsDescriptors( ApplicationInstance application )
+    {
+        try
+        {
+            LinkedHashMap<String, String> pluginsDescriptors = new LinkedHashMap<>();
+            Enumeration<URL> descriptors = application.classLoader().getResources( "META-INF/qiweb-plugins.properties" );
+            while( descriptors.hasMoreElements() )
+            {
+                try( InputStream stream = descriptors.nextElement().openStream() )
+                {
+                    Properties descriptor = new Properties();
+                    descriptor.load( stream );
+                    for( String name : descriptor.stringPropertyNames() )
+                    {
+                        String fqcn = descriptor.getProperty( name );
+                        pluginsDescriptors.put( name, fqcn );
+                    }
+                }
+            }
+            return pluginsDescriptors;
+        }
+        catch( IOException ex )
+        {
+            throw new UncheckedIOException( "Unable to load plugins descriptors", ex );
+        }
+    }
+
+    /**
+     * Load Application Plugins.
+     *
+     * @param application        Application
+     * @param pluginsDescriptors Plugins descriptors
+     *
+     * @return Application Plugins
+     */
+    private List<PluginInfo> loadApplicationPlugins(
+        ApplicationInstance application,
+        LinkedHashMap<String, String> pluginsDescriptors
+    )
+    {
+        EnumSet<ExtensionPlugin> extensions = EnumSet.allOf( ExtensionPlugin.class );
+        List<String> enabled = application.config().stringList( "app.plugins.enabled" );
+        Map<String, String> routesPrefixes = application.config().stringMap( "app.plugins.routes_prefixes" );
+        if( application.mode() == Mode.DEV )
+        {
+            enabled.addAll( application.config().stringList( "qiweb.devshell.plugins.enabled" ) );
+            routesPrefixes.putAll( application.config().stringMap( "qiweb.devshell.plugins.routes_prefixes" ) );
+        }
+        try
+        {
+            List<PluginInfo> applicationPlugins = new ArrayList<>();
+
+            // Application Configured Plugins
+            for( String pluginNameOrFqcn : enabled )
+            {
+                String pluginFqcn = pluginsDescriptors.containsKey( pluginNameOrFqcn )
+                                    ? pluginsDescriptors.get( pluginNameOrFqcn )
+                                    : pluginNameOrFqcn;
+                Class<?> pluginClass = application.classLoader().loadClass( pluginFqcn );
+                Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, pluginClass );
+                applicationPlugins.add( new PluginInfo( plugin, routesPrefixes.get( pluginNameOrFqcn ) ) );
+                extensions.removeIf( extension -> extension.satisfiedBy( plugin ) );
+            }
+
+            // Global Extra Plugins
+            for( Plugin<?> extraPlugin : application.global().extraPlugins() )
+            {
+                applicationPlugins.add( new PluginInfo( extraPlugin, null ) );
+                extensions.removeIf( extension -> extension.satisfiedBy( extraPlugin ) );
+            }
+
+            // Core Extensions Plugins
+            for( ExtensionPlugin extension : extensions )
+            {
+                Plugin<?> extensionPlugin = extension.newDefaultPluginInstance();
+                applicationPlugins.add( new PluginInfo( extensionPlugin, null ) );
+            }
+
+            return applicationPlugins;
+        }
+        catch( ClassNotFoundException ex )
+        {
+            throw new QiWebException( "Unable to load application plugins", ex );
+        }
+    }
+
+    /**
+     * Load dynamic plugins.
+     * 
+     * @param application        Application
+     * @param pluginsDescriptors Plugins descriptors
+     * @param appPlugins         Already loaded application plugins
+     *
+     * @return Dynamic plugins except thoses already loaded by the application
+     */
+    private List<PluginInfo> loadDynamicPlugins(
+        ApplicationInstance application,
+        LinkedHashMap<String, String> pluginsDescriptors,
+        List<PluginInfo> appPlugins
+    )
+    {
+        try
+        {
+            List<PluginInfo> dynamicPlugins = new ArrayList<>();
+            for( String fqcn : pluginsDescriptors.values() )
+            {
+                Class<?> pluginClass = application.classLoader().loadClass( fqcn );
+                if( !appPlugins.stream().anyMatch( p -> p.plugin.getClass().equals( pluginClass ) ) )
+                {
+                    Plugin<?> plugin = (Plugin<?>) application.global().getPluginInstance( application, pluginClass );
+                    dynamicPlugins.add( new PluginInfo( plugin, null ) );
+                }
+            }
+            return dynamicPlugins;
+        }
+        catch( ClassNotFoundException ex )
+        {
+            throw new QiWebException( "Unable to load dynamic plugins", ex );
+        }
+    }
+
+    /**
+     * Resolve and flatten plugins dependency graph.
+     *
+     * @return flattenned list of plugins, dependency resolved
+     */
+    private List<PluginInfo> resolveDependencies(
+        ApplicationInstance application,
+        List<PluginInfo> appPlugins,
+        List<PluginInfo> dynamicPlugins
+    )
+    {
+        List<PluginInfo> output = new ArrayList<>( appPlugins.size() );
+        ArrayDeque<PluginInfo> queue = new ArrayDeque<>( appPlugins );
+        boolean replay = false;
+        while( !queue.isEmpty() )
+        {
+            PluginInfo pluginInfo = queue.poll();
+            for( Class<?> dependency : pluginInfo.plugin.dependencies( application.config() ) )
+            {
+                // Already resolved?
+                if( !output.stream().anyMatch(
+                    p -> p.plugin.apiType().equals( dependency ) || dependency.isAssignableFrom( p.plugin.apiType() )
+                ) )
+                {
+                    // Same type, then assignable or null
+                    PluginInfo match = appPlugins.stream()
+                        .filter( p -> p.plugin.apiType().equals( dependency ) )
+                        .findFirst()
+                        .orElse(
+                            appPlugins.stream()
+                            .filter( p -> dependency.isAssignableFrom( p.plugin.apiType() ) )
+                            .findFirst()
+                            .orElse( null )
+                        );
+                    if( match == null )
+                    {
+                        // Dynamic plugins, same type, then assignable or null
+                        match = dynamicPlugins.stream()
+                            .filter( p -> p.plugin.apiType().equals( dependency ) )
+                            .findFirst()
+                            .orElse(
+                                appPlugins.stream()
+                                .filter( p -> dependency.isAssignableFrom( p.plugin.apiType() ) )
+                                .findFirst()
+                                .orElse( null )
+                            );
+                        // If no match, throw
+                        if( match == null )
+                        {
+                            throw new QiWebException( "Plugin dependency not resolved: " + dependency );
+                        }
+                        // Replay will be needed to properly order plugins according to dependencies
+                        replay = true;
+                        // Add to queue so dependencies of dependency gets resolved
+                        queue.addFirst( match );
+                        // Register matched dependency
+                        output.add( match );
+                    }
+                    else
+                    {
+                        // Dependency resolved directly from application plugins
+                        queue.remove( match );
+                        output.add( match );
+                    }
+                }
+            }
+            if( !output.contains( pluginInfo ) )
+            {
+                output.add( pluginInfo );
+            }
+        }
+        if( replay )
+        {
+            return resolveDependencies( application, output, EMPTY_LIST );
+        }
+        return output;
+    }
+
+    @Override
+    public String toString()
+    {
+        int apiTypePadLen = 0;
+        for( PluginInfo pluginInfo : activePlugins )
+        {
+            String apiName = pluginInfo.plugin.apiType().getSimpleName();
+            if( apiName.length() > apiTypePadLen )
+            {
+                apiTypePadLen = apiName.length();
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for( Iterator<PluginInfo> it = activePlugins.iterator(); it.hasNext(); )
+        {
+            PluginInfo pluginInfo = it.next();
+            sb.append( rightPad( apiTypePadLen, pluginInfo.plugin.apiType().getSimpleName() ) );
+            sb.append( " provided by " );
+            sb.append( pluginInfo.plugin.getClass().getName() );
+            if( it.hasNext() )
+            {
+                sb.append( NEWLINE );
+            }            
+        }
+        return sb.toString();
     }
 }
