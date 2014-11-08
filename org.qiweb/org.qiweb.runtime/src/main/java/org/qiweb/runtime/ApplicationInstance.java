@@ -350,7 +350,7 @@ public final class ApplicationInstance
                 runtimeSummary
                     .append( indentTwoSpaces( "All routes defined by the application, in order:", 1 ) )
                     .append( NEWLINE )
-                    .append( indentTwoSpaces( routes.toString(), 2 ) )
+                    .append( indentTwoSpaces( allRoutes, 2 ) )
                     .append( NEWLINE )
                     .append( NEWLINE );
             }
@@ -359,6 +359,16 @@ public final class ApplicationInstance
                 .append( NEWLINE )
                 .append( indentTwoSpaces( executors.toString(), 2 ) )
                 .append( NEWLINE );
+            String allPlugins = plugins.toString();
+            if( hasText( allPlugins ) )
+            {
+                runtimeSummary
+                    .append( NEWLINE )
+                    .append( indentTwoSpaces( "Application Plugins:", 1 ) )
+                    .append( NEWLINE )
+                    .append( indentTwoSpaces( allPlugins, 2 ) )
+                    .append( NEWLINE );                
+            }
             LOG.info( runtimeSummary.toString() );
         }
         LOG.debug( "Application Activated ({} mode)", mode );
