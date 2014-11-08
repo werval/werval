@@ -114,19 +114,19 @@ public class MetricsPlugin
             if( connections && e instanceof ConnectionEvent.Opened )
             {
                 // Increment open-connections Counter
-                metrics.counter( "qiweb.http.open-connections" ).inc();
+                metrics.counter( "org.qiweb.http.open-connections" ).inc();
             }
             else if( connections && e instanceof ConnectionEvent.Closed )
             {
                 // Decrement open-connections Counter
-                metrics.counter( "qiweb.http.open-connections" ).dec();
+                metrics.counter( "org.qiweb.http.open-connections" ).dec();
             }
             else if( requests && e instanceof HttpEvent.RequestReceived )
             {
                 // Start requests Timer
                 requestTimers.put(
                     ( (HttpEvent.RequestReceived) e ).identity(),
-                    metrics.timer( "qiweb.http.requests" ).time()
+                    metrics.timer( "org.qiweb.http.requests" ).time()
                 );
             }
             else if( e instanceof HttpEvent.ResponseSent )
@@ -144,25 +144,25 @@ public class MetricsPlugin
                     case SUCCESS:
                         if( success )
                         {
-                            metrics.meter( "qiweb.http.success" ).mark();
+                            metrics.meter( "org.qiweb.http.success" ).mark();
                         }
                         break;
                     case REDIRECTION:
                         if( redirections )
                         {
-                            metrics.meter( "qiweb.http.redirections" ).mark();
+                            metrics.meter( "org.qiweb.http.redirections" ).mark();
                         }
                         break;
                     case CLIENT_ERROR:
                         if( clientErrors )
                         {
-                            metrics.meter( "qiweb.http.client-errors" ).mark();
+                            metrics.meter( "org.qiweb.http.client-errors" ).mark();
                         }
                         break;
                     case SERVER_ERROR:
                         if( serverErrors )
                         {
-                            metrics.meter( "qiweb.http.server-errors" ).mark();
+                            metrics.meter( "org.qiweb.http.server-errors" ).mark();
                         }
                         break;
                     case INFORMATIONAL:
@@ -170,7 +170,7 @@ public class MetricsPlugin
                     default:
                         if( unknown )
                         {
-                            metrics.meter( "qiweb.http.unknown" ).mark();
+                            metrics.meter( "org.qiweb.http.unknown" ).mark();
                         }
                 }
             }

@@ -84,8 +84,8 @@ public class MetricsTest
         expect()
             .statusCode( 200 )
             .contentType( APPLICATION_JSON )
-            .body( "timers.'qiweb.http.requests'.count", is( 2 ) )
-            .body( "meters.'qiweb.http.success'.count", is( 2 ) )
+            .body( "timers.'org.qiweb.http.requests'.count", is( 2 ) )
+            .body( "meters.'org.qiweb.http.success'.count", is( 2 ) )
             .when()
             .get( "/@metrics/metrics" );
 
@@ -103,35 +103,35 @@ public class MetricsTest
             .when()
             .get( "/@metrics/thread-dump" );
 
-        assertThat( metrics.timer( "qiweb.http.requests" ).getCount(), is( 5L ) );
-        assertThat( metrics.meter( "qiweb.http.success" ).getCount(), is( 5L ) );
-        assertThat( metrics.meter( "qiweb.http.redirections" ).getCount(), is( 0L ) );
-        assertThat( metrics.meter( "qiweb.http.client-errors" ).getCount(), is( 0L ) );
-        assertThat( metrics.meter( "qiweb.http.server-errors" ).getCount(), is( 0L ) );
-        assertThat( metrics.meter( "qiweb.http.unknown" ).getCount(), is( 0L ) );
+        assertThat( metrics.timer( "org.qiweb.http.requests" ).getCount(), is( 5L ) );
+        assertThat( metrics.meter( "org.qiweb.http.success" ).getCount(), is( 5L ) );
+        assertThat( metrics.meter( "org.qiweb.http.redirections" ).getCount(), is( 0L ) );
+        assertThat( metrics.meter( "org.qiweb.http.client-errors" ).getCount(), is( 0L ) );
+        assertThat( metrics.meter( "org.qiweb.http.server-errors" ).getCount(), is( 0L ) );
+        assertThat( metrics.meter( "org.qiweb.http.unknown" ).getCount(), is( 0L ) );
 
         expect().statusCode( 200 ).when().get( "/redir" ); // Follows the redirection to / that returns 200
         expect().statusCode( 404 ).when().get( "/not-found" );
         expect().statusCode( 500 ).when().get( "/error" );
         expect().statusCode( 666 ).when().get( "/unknown" );
 
-        assertThat( metrics.timer( "qiweb.http.requests" ).getCount(), is( 10L ) );
-        assertThat( metrics.meter( "qiweb.http.success" ).getCount(), is( 6L ) );
-        assertThat( metrics.meter( "qiweb.http.redirections" ).getCount(), is( 1L ) );
-        assertThat( metrics.meter( "qiweb.http.client-errors" ).getCount(), is( 1L ) );
-        assertThat( metrics.meter( "qiweb.http.server-errors" ).getCount(), is( 1L ) );
-        assertThat( metrics.meter( "qiweb.http.unknown" ).getCount(), is( 1L ) );
+        assertThat( metrics.timer( "org.qiweb.http.requests" ).getCount(), is( 10L ) );
+        assertThat( metrics.meter( "org.qiweb.http.success" ).getCount(), is( 6L ) );
+        assertThat( metrics.meter( "org.qiweb.http.redirections" ).getCount(), is( 1L ) );
+        assertThat( metrics.meter( "org.qiweb.http.client-errors" ).getCount(), is( 1L ) );
+        assertThat( metrics.meter( "org.qiweb.http.server-errors" ).getCount(), is( 1L ) );
+        assertThat( metrics.meter( "org.qiweb.http.unknown" ).getCount(), is( 1L ) );
 
         assertThat( metrics.counter( "MetricsTest" ).getCount(), is( 1L ) );
 
         // JMX
         MBeanServer jmx = ManagementFactory.getPlatformMBeanServer();
-        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.requests" ), "Count" ), is( 10L ) );
-        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.success" ), "Count" ), is( 6L ) );
-        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.redirections" ), "Count" ), is( 1L ) );
-        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.client-errors" ), "Count" ), is( 1L ) );
-        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.server-errors" ), "Count" ), is( 1L ) );
-        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=qiweb.http.unknown" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.requests" ), "Count" ), is( 10L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.success" ), "Count" ), is( 6L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.redirections" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.client-errors" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.server-errors" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.unknown" ), "Count" ), is( 1L ) );
         assertThat( jmx.getAttribute( new ObjectName( "metrics:name=MetricsTest" ), "Count" ), is( 1L ) );
     }
 }
