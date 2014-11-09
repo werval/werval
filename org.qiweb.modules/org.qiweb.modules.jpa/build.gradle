@@ -5,10 +5,8 @@ dependencies {
 
     compile project( ":org.qiweb.modules.jdbc" )
     compile libs.jpa
-    compile libs.eclipselink // TODO Move me to runtime, see Slf4jSessionLogger
+    compile libs.eclipselink
 
-    runtime project( ":org.qiweb.modules.jndi" )
-    
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.rest_assured
 

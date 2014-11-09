@@ -55,12 +55,8 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 // JPA Properties -> http://eclipse.org/eclipselink/documentation/2.4/jpa/extensions/persistenceproperties_ref.htm
 public final class JPA
 {
-    // WARN Not fully functionnal
     @FilterWith( TransactionalFilter.class )
-    @Target(
-                {
-            ElementType.METHOD, ElementType.TYPE
-        } )
+    @Target( { ElementType.METHOD, ElementType.TYPE } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     @Documented
@@ -71,7 +67,6 @@ public final class JPA
         boolean readOnly() default false;
     }
 
-    // WARN Not fully functionnal
     public static class TransactionalFilter
         implements Filter<Transactional>
     {
@@ -151,6 +146,7 @@ public final class JPA
                 props.putAll( GLOBAL_UNITS_PROPERTIES );
                 if( mode == DEV || mode == TEST )
                 {
+                    // Log query parameters in dev mode
                     props.put( "eclipselink.logging.parameters", "true" );
                 }
                 if( unitsProperties.containsKey( persistenceUnitName ) )
@@ -158,10 +154,8 @@ public final class JPA
                     props.putAll( unitsProperties.get( persistenceUnitName ) );
                 }
                 props.put( "eclipselink.classloader", loader );
-                emfs.put(
-                    persistenceUnitName,
-                    Persistence.createEntityManagerFactory( persistenceUnitName, props )
-                );
+                EntityManagerFactory emf = Persistence.createEntityManagerFactory( persistenceUnitName, props );
+                emfs.put( persistenceUnitName, emf );
             }
             return emfs.get( persistenceUnitName );
         }
