@@ -15,8 +15,14 @@
  */
 package org.qiweb.modules.rythm;
 
+import com.codahale.metrics.MetricRegistry;
+import org.junit.Test;
+import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.test.templates.TemplatesTest;
 
+import static com.codahale.metrics.MetricRegistry.name;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.qiweb.util.Charsets.UTF_8;
 import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
 import static org.qiweb.util.InputStreams.readAllAsString;
@@ -37,5 +43,26 @@ public class RythmTemplatesTest
     protected String templateContent()
     {
         return readAllAsString( getClass().getResourceAsStream( "/views/hello.html" ), BUF_SIZE_4K, UTF_8 );
+    }
+
+    @Test
+    @Override
+    public void namedTemplate()
+    {
+        super.namedTemplate();
+        MetricRegistry metrics = application().plugin( Metrics.class ).metrics();
+        assertThat( metrics.timer( "org.qiweb.modules.templates.rythm.named" ).getCount(), is( 1L ) );
+        assertThat( metrics.timer( name( "org.qiweb.modules.templates.rythm.named", templateName() ) ).getCount(), is( 1L ) );
+        assertThat( metrics.timer( "org.qiweb.modules.templates.rythm.inline" ).getCount(), is( 0L ) );
+    }
+
+    @Test
+    @Override
+    public void stringTemplate()
+    {
+        super.stringTemplate();
+        MetricRegistry metrics = application().plugin( Metrics.class ).metrics();
+        assertThat( metrics.timer( "org.qiweb.modules.templates.rythm.named" ).getCount(), is( 0L ) );
+        assertThat( metrics.timer( "org.qiweb.modules.templates.rythm.inline" ).getCount(), is( 1L ) );
     }
 }

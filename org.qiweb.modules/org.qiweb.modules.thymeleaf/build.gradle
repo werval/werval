@@ -3,7 +3,7 @@ description = "Thymeleaf Templating Module"
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.thymeleaf
     
     testCompile "org.qiweb:org.qiweb.test:$version"

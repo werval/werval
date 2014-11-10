@@ -20,6 +20,7 @@ import java.util.Map;
 import org.qiweb.api.exceptions.TemplateException;
 import org.qiweb.api.templates.Template;
 import org.qiweb.api.templates.Templates;
+import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -31,23 +32,29 @@ import org.thymeleaf.context.Context;
 {
     private final TemplateEngine engine;
     private final StringResourceResolver stringTemplateResolver;
+    private final TemplatesMetricsHandler metricsHandler;
 
-    /* package */ ThymeleafTemplates( TemplateEngine engine, StringResourceResolver stringTemplateResolver )
+    /* package */ ThymeleafTemplates(
+        TemplateEngine engine,
+        StringResourceResolver stringTemplateResolver,
+        TemplatesMetricsHandler metricsHandler
+    )
     {
         this.engine = engine;
         this.stringTemplateResolver = stringTemplateResolver;
+        this.metricsHandler = metricsHandler;
     }
 
     @Override
     public Template named( String templateName )
     {
-        return new NamedTemplate( templateName, engine );
+        return new NamedTemplate( templateName, engine, metricsHandler );
     }
 
     @Override
     public Template of( String templateContent )
     {
-        return new StringTemplate( engine, stringTemplateResolver, templateContent );
+        return new StringTemplate( engine, stringTemplateResolver, templateContent, metricsHandler );
     }
 
     /* package */ void shutdown()
@@ -60,20 +67,25 @@ import org.thymeleaf.context.Context;
     {
         private final TemplateEngine engine;
         private final String templateName;
+        private final TemplatesMetricsHandler metricsHandler;
 
-        private NamedTemplate( String templateName, TemplateEngine engine )
+        private NamedTemplate( String templateName, TemplateEngine engine, TemplatesMetricsHandler metricsHandler )
         {
             this.templateName = templateName;
             this.engine = engine;
+            this.metricsHandler = metricsHandler;
         }
 
         @Override
         public void render( Map<String, Object> context, Writer output )
             throws TemplateException
         {
-            Context thymeleafCtx = new Context();
-            thymeleafCtx.getVariables().putAll( context );
-            engine.process( templateName, thymeleafCtx, output );
+            try( TemplatesMetricsHandler.Closeable namedTimer = metricsHandler.namedRenderTimer( templateName ) )
+            {
+                Context thymeleafCtx = new Context();
+                thymeleafCtx.getVariables().putAll( context );
+                engine.process( templateName, thymeleafCtx, output );
+            }
         }
     }
 
@@ -83,32 +95,38 @@ import org.thymeleaf.context.Context;
         private final TemplateEngine engine;
         private final StringResourceResolver stringTemplateResolver;
         private final String templateContent;
+        private final TemplatesMetricsHandler metricsHandler;
 
         private StringTemplate(
             TemplateEngine engine,
             StringResourceResolver stringTemplateResolver,
-            String templateContent
+            String templateContent,
+            TemplatesMetricsHandler metricsHandler
         )
         {
             this.engine = engine;
             this.stringTemplateResolver = stringTemplateResolver;
             this.templateContent = templateContent;
+            this.metricsHandler = metricsHandler;
         }
 
         @Override
         public void render( Map<String, Object> context, Writer output )
             throws TemplateException
         {
-            Context thymeleafCtx = new Context();
-            thymeleafCtx.getVariables().putAll( context );
-            String identity = stringTemplateResolver.registerStringTemplate( templateContent );
-            try
+            try( TemplatesMetricsHandler.Closeable inlineTimer = metricsHandler.inlineRenderTimer() )
             {
-                engine.process( identity, thymeleafCtx, output );
-            }
-            finally
-            {
-                stringTemplateResolver.unregister( identity );
+                Context thymeleafCtx = new Context();
+                thymeleafCtx.getVariables().putAll( context );
+                String identity = stringTemplateResolver.registerStringTemplate( templateContent );
+                try
+                {
+                    engine.process( identity, thymeleafCtx, output );
+                }
+                finally
+                {
+                    stringTemplateResolver.unregister( identity );
+                }
             }
         }
     }

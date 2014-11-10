@@ -15,16 +15,22 @@
  */
 package org.qiweb.modules.rythm;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.qiweb.api.Application;
+import org.qiweb.api.Config;
 import org.qiweb.api.Mode;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.templates.Templates;
 import org.qiweb.api.templates.TemplatesPlugin;
+import org.qiweb.modules.metrics.Metrics;
+import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.rythmengine.Rythm;
 import org.rythmengine.RythmEngine;
 
+import static java.util.Collections.EMPTY_LIST;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_CLASS_LOADER_PARENT_IMPL;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_MODE;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_PLUGIN_VERSION;
@@ -41,6 +47,16 @@ public class RythmPlugin
     extends TemplatesPlugin
 {
     private RythmTemplates templates;
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.bool( "rythm.metrics" ) )
+        {
+            return Arrays.asList( Metrics.class );
+        }
+        return EMPTY_LIST;
+    }
 
     @Override
     public Templates api()
@@ -87,7 +103,12 @@ public class RythmPlugin
         RythmEngine ryhtm = new RythmEngine( conf );
 
         // Done!
-        templates = new RythmTemplates( ryhtm );
+        templates = new RythmTemplates(
+            ryhtm,
+            application.config().bool( "rythm.metrics" )
+            ? new TemplatesMetricsHandler.Impl( application.plugin( Metrics.class ).metrics(), "rythm" )
+            : TemplatesMetricsHandler.NOOP
+        );
     }
 
     @Override

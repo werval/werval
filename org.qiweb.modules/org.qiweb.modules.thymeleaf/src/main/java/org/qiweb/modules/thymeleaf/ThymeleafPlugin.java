@@ -15,14 +15,19 @@
  */
 package org.qiweb.modules.thymeleaf;
 
+import java.util.Arrays;
+import java.util.List;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.templates.Templates;
 import org.qiweb.api.templates.TemplatesPlugin;
+import org.qiweb.modules.metrics.Metrics;
+import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
+import static java.util.Collections.EMPTY_LIST;
 import static java.util.Locale.US;
 import static org.qiweb.api.Mode.DEV;
 import static org.qiweb.util.Strings.EMPTY;
@@ -36,6 +41,16 @@ public class ThymeleafPlugin
     extends TemplatesPlugin
 {
     private ThymeleafTemplates templates;
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.bool( "thymeleaf.metrics" ) )
+        {
+            return Arrays.asList( Metrics.class );
+        }
+        return EMPTY_LIST;
+    }
 
     @Override
     public Templates api()
@@ -88,7 +103,13 @@ public class ThymeleafPlugin
         thymeleaf.addTemplateResolver( stringResolver );
 
         // Done!
-        templates = new ThymeleafTemplates( thymeleaf, stringResourceResolver );
+        templates = new ThymeleafTemplates(
+            thymeleaf,
+            stringResourceResolver,
+            application.config().bool( "thymeleaf.metrics" )
+            ? new TemplatesMetricsHandler.Impl( application.plugin( Metrics.class ).metrics(), "thymeleaf" )
+            : TemplatesMetricsHandler.NOOP
+        );
     }
 
     @Override

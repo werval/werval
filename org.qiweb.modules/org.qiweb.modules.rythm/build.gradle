@@ -3,7 +3,7 @@ description = "Rythm Templating Module"
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.rythm
     
     testCompile "org.qiweb:org.qiweb.test:$version"
