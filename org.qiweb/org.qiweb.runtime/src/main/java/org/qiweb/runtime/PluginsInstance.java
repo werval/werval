@@ -46,7 +46,6 @@ import static java.util.stream.Collectors.toList;
 import static org.qiweb.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.NEWLINE;
-import static org.qiweb.util.Strings.SPACE;
 import static org.qiweb.util.Strings.rightPad;
 
 /**
@@ -126,11 +125,6 @@ import static org.qiweb.util.Strings.rightPad;
             List<PluginInfo> appPlugins = loadApplicationPlugins( application, pluginsDescriptors );
             List<PluginInfo> dynamicPlugins = loadDynamicPlugins( application, pluginsDescriptors, appPlugins );
             List<PluginInfo> plugins = resolveDependencies( application, appPlugins, dynamicPlugins );
-
-            System.out.println( "PLUGINS DESCRIPTORS: " + pluginsDescriptors );
-            System.out.println( "APPLICATION PLUGINS: " + appPlugins );
-            System.out.println( "DYNAMIC PLUGINS: " + dynamicPlugins );
-            System.out.println( "RESOLVED PLUGINS: " + plugins );
 
             // Activate all plugins, in order
             activePlugins = new ArrayList<>( plugins.size() );
