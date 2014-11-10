@@ -16,7 +16,9 @@
 package org.qiweb.modules.cache;
 
 import java.util.UUID;
-import org.qiweb.api.cache.Cache;
+import org.qiweb.modules.metrics.Metrics;
+import org.qiweb.modules.metrics.internal.CacheMetricsListener;
+import org.qiweb.spi.cache.CacheAdapter;
 import org.qiweb.util.Serializables;
 import redis.clients.jedis.Jedis;
 
@@ -26,7 +28,7 @@ import static org.qiweb.util.Charsets.UTF_8;
  * Redis Cache.
  */
 /* package */ class RedisCache
-    implements Cache
+    extends CacheAdapter
 {
     private final Jedis backingCache;
     // WARN Use a prefix per instance to start from a fresh cache on each Application activation
@@ -34,17 +36,18 @@ import static org.qiweb.util.Charsets.UTF_8;
 
     /* package */ RedisCache( Jedis backingCache )
     {
+        super();
+        this.backingCache = backingCache;
+    }
+
+    /* package */ RedisCache( Metrics metrics, Jedis backingCache )
+    {
+        super( new CacheMetricsListener( metrics.metrics(), "redis", "qiweb-cache" ) );
         this.backingCache = backingCache;
     }
 
     @Override
-    public boolean has( String key )
-    {
-        return backingCache.exists( ( prefix + key ).getBytes( UTF_8 ) );
-    }
-
-    @Override
-    public <T> T get( String key )
+    protected <T> T doGet( String key )
     {
         byte[] element = backingCache.get( ( prefix + key ).getBytes( UTF_8 ) );
         if( element == null )
@@ -55,26 +58,13 @@ import static org.qiweb.util.Charsets.UTF_8;
     }
 
     @Override
-    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
-    {
-        byte[] keyBytes = ( prefix + key ).getBytes( UTF_8 );
-        byte[] element = backingCache.get( keyBytes );
-        if( element == null )
-        {
-            backingCache.setex( keyBytes, ttl( ttlSeconds ), Serializables.toBytes( defaultValue ) );
-            return defaultValue;
-        }
-        return Serializables.fromBytes( element );
-    }
-
-    @Override
-    public <T> void set( int ttlSeconds, String key, T value )
+    protected <T> void doSet( int ttlSeconds, String key, T value )
     {
         backingCache.setex( ( prefix + key ).getBytes( UTF_8 ), ttl( ttlSeconds ), Serializables.toBytes( value ) );
     }
 
     @Override
-    public void remove( String key )
+    protected void doRemove( String key )
     {
         backingCache.del( ( prefix + key ).getBytes( UTF_8 ) );
     }

@@ -15,11 +15,17 @@
  */
 package org.qiweb.modules.cache;
 
+import java.util.Arrays;
+import java.util.List;
 import org.qiweb.api.Application;
+import org.qiweb.api.Config;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.metrics.Metrics;
 import redis.clients.jedis.Jedis;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * EhCache Plugin.
@@ -29,6 +35,16 @@ public class RedisCachePlugin
 {
     private RedisCache redisCache;
     private Jedis jedis;
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.bool( "redis.metrics" ) )
+        {
+            return Arrays.asList( Metrics.class );
+        }
+        return EMPTY_LIST;
+    }
 
     @Override
     public Cache api()
@@ -44,7 +60,9 @@ public class RedisCachePlugin
             application.config().string( "redis.host" ),
             application.config().intNumber( "redis.port" )
         );
-        redisCache = new RedisCache( jedis );
+        redisCache = application.config().bool( "redis.metrics" )
+                     ? new RedisCache( application.plugin( Metrics.class ), jedis )
+                     : new RedisCache( jedis );
     }
 
     @Override

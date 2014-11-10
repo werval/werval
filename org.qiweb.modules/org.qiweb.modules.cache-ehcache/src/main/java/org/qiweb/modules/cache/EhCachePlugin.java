@@ -24,6 +24,7 @@ import org.qiweb.api.Config;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.metrics.Metrics;
 
 import static java.util.Collections.EMPTY_LIST;
 
@@ -60,9 +61,11 @@ public class EhCachePlugin
         String configResourceName = config.string( "configResource" );
         URL configResourceURL = application.classLoader().getResource( configResourceName );
         CacheManager cacheManager = CacheManager.create( configResourceURL );
-        net.sf.ehcache.Cache backingCache = cacheManager.getCache( "qiweb-cache" );
+        net.sf.ehcache.Ehcache backingCache = cacheManager.getCache( "qiweb-cache" );
         this.manager = cacheManager;
-        this.ehcache = new EhCache( backingCache );
+        this.ehcache = config.bool( "metrics" )
+                       ? new EhCache( application.plugin( Metrics.class ), backingCache )
+                       : new EhCache( backingCache );
     }
 
     @Override

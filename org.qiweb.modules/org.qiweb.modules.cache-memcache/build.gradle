@@ -4,9 +4,11 @@ description = "Memcache Cache Module"
 dependencies {
 
     compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.memcache
 
     testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
 
 }
 

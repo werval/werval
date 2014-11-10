@@ -16,23 +16,32 @@
 package org.qiweb.modules.cache;
 
 import net.sf.ehcache.Element;
-import org.qiweb.api.cache.Cache;
+import org.qiweb.modules.metrics.Metrics;
+import org.qiweb.modules.metrics.internal.CacheMetricsListener;
+import org.qiweb.spi.cache.CacheAdapter;
 
 /**
  * EhCache.
  */
 /* package */ class EhCache
-    implements Cache
+    extends CacheAdapter
 {
-    private final net.sf.ehcache.Cache backingCache;
+    private final net.sf.ehcache.Ehcache backingCache;
 
-    /* package */ EhCache( net.sf.ehcache.Cache backingCache )
+    /* package */ EhCache( net.sf.ehcache.Ehcache backingCache )
     {
+        super();
+        this.backingCache = backingCache;
+    }
+
+    /* package */ EhCache( Metrics metrics, net.sf.ehcache.Ehcache backingCache )
+    {
+        super( new CacheMetricsListener( metrics.metrics(), "ehcache", backingCache.getName() ) );
         this.backingCache = backingCache;
     }
 
     @Override
-    public <T> T get( String key )
+    protected <T> T doGet( String key )
     {
         Element element = backingCache.get( key );
         if( element == null )
@@ -43,25 +52,13 @@ import org.qiweb.api.cache.Cache;
     }
 
     @Override
-    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
-    {
-        Element element = backingCache.get( key );
-        if( element == null )
-        {
-            backingCache.put( element( ttlSeconds, key, defaultValue ) );
-            return defaultValue;
-        }
-        return (T) element.getObjectValue();
-    }
-
-    @Override
-    public <T> void set( int ttlSeconds, String key, T value )
+    protected <T> void doSet( int ttlSeconds, String key, T value )
     {
         backingCache.put( element( ttlSeconds, key, value ) );
     }
 
     @Override
-    public void remove( String key )
+    protected void doRemove( String key )
     {
         backingCache.remove( key );
     }

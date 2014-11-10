@@ -18,13 +18,15 @@ package org.qiweb.modules.cache;
 import java.util.UUID;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.SerializingTranscoder;
-import org.qiweb.api.cache.Cache;
+import org.qiweb.modules.metrics.Metrics;
+import org.qiweb.modules.metrics.internal.CacheMetricsListener;
+import org.qiweb.spi.cache.CacheAdapter;
 
 /**
  * Memcache Cache.
  */
 /* package */ class MemcacheCache
-    implements Cache
+    extends CacheAdapter
 {
     private final MemcachedClient client;
     // WARN Use a prefix per instance to start from a fresh cache on each Application activation
@@ -32,35 +34,30 @@ import org.qiweb.api.cache.Cache;
 
     /* package */ MemcacheCache( MemcachedClient client )
     {
+        super();
+        this.client = client;
+    }
+
+    /* package */ MemcacheCache( Metrics metrics, MemcachedClient client )
+    {
+        super( new CacheMetricsListener( metrics.metrics(), "memcache", "qiweb-cache" ) );
         this.client = client;
     }
 
     @Override
-    public <T> T get( String key )
+    protected <T> T doGet( String key )
     {
         return (T) client.get( prefix + key, new SerializingTranscoder() );
     }
 
     @Override
-    public <T> T getOrSetDefault( String key, int ttlSeconds, T defaultValue )
-    {
-        Object value = client.get( prefix + key, new SerializingTranscoder() );
-        if( value == null )
-        {
-            client.set( prefix + key, ttl( ttlSeconds ), defaultValue, new SerializingTranscoder() );
-            return defaultValue;
-        }
-        return (T) value;
-    }
-
-    @Override
-    public <T> void set( int ttlSeconds, String key, T value )
+    protected <T> void doSet( int ttlSeconds, String key, T value )
     {
         client.set( prefix + key, ttl( ttlSeconds ), value, new SerializingTranscoder() );
     }
 
     @Override
-    public void remove( String key )
+    protected void doRemove( String key )
     {
         client.delete( prefix + key );
     }

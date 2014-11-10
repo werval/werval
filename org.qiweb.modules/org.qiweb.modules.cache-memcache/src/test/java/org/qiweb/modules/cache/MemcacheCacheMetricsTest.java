@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.qiweb.modules.cache;
+
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.qiweb.api.cache.Cache;
+import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.modules.metrics.Tools;
+import org.qiweb.runtime.routes.RoutesParserProvider;
+import org.qiweb.test.QiWebHttpRule;
+
+import static com.jayway.restassured.RestAssured.expect;
+import static org.hamcrest.CoreMatchers.is;
+import static org.qiweb.api.context.CurrentContext.plugin;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+
+/**
+ * Memcache Plugin Metrics Test.
+ */
+public class MemcacheCacheMetricsTest
+{
+    @ClassRule
+    public static QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+        "GET / " + Controller.class.getName() + ".interaction"
+    ) );
+
+    public static class Controller
+    {
+        public Outcome interaction()
+            throws Exception
+        {
+            Cache cache = plugin( Cache.class );
+
+            // get & miss
+            cache.has( "foo" );
+            cache.get( "foo" );
+
+            // get & miss & put
+            cache.getOrSetDefault( "foo", "bar" );
+
+            // put
+            cache.set( "foo", "bazar" );
+
+            // get & hit
+            cache.get( "foo" );
+
+            // get & hit
+            cache.getOrSetDefault( "foo", "bar" );
+
+            // remove
+            cache.remove( "foo" );
+
+            // get & miss
+            cache.get( "foo" );
+
+            return new Tools().metrics();
+        }
+    }
+
+    @Test
+    public void ehCacheMetrics()
+        throws Exception
+    {
+        expect()
+            .statusCode( 200 )
+            .contentType( APPLICATION_JSON )
+            .body( "meters.'org.qiweb.modules.cache.memcache.qiweb-cache.hits'.count", is( 2 ) )
+            .body( "meters.'org.qiweb.modules.cache.memcache.qiweb-cache.misses'.count", is( 4 ) )
+            .body( "timers.'org.qiweb.modules.cache.memcache.qiweb-cache.gets'.count", is( 6 ) )
+            .body( "timers.'org.qiweb.modules.cache.memcache.qiweb-cache.sets'.count", is( 2 ) )
+            .body( "timers.'org.qiweb.modules.cache.memcache.qiweb-cache.removes'.count", is( 1 ) )
+            .when()
+            .get( "/" );
+    }
+}

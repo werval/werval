@@ -16,6 +16,8 @@
 package org.qiweb.modules.cache;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import net.spy.memcached.AddrUtil;
@@ -29,7 +31,10 @@ import org.qiweb.api.Config;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.util.Strings;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * Memcache Plugin.
@@ -46,6 +51,16 @@ public class MemcachePlugin
         Properties systemProperties = System.getProperties();
         systemProperties.put( "net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SLF4JLogger" );
         System.setProperties( systemProperties );
+    }
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.bool( "memcache.metrics" ) )
+        {
+            return Arrays.asList( Metrics.class );
+        }
+        return EMPTY_LIST;
     }
 
     @Override
@@ -91,7 +106,9 @@ public class MemcachePlugin
         }
 
         // Create Cache Instance
-        backingCache = new MemcacheCache( client );
+        backingCache = config.bool( "memcache.metrics" )
+                       ? new MemcacheCache( application.plugin( Metrics.class ), client )
+                       : new MemcacheCache( client );
     }
 
     @Override
