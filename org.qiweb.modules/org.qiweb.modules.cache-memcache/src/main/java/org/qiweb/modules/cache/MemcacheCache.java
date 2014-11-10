@@ -19,7 +19,7 @@ import java.util.UUID;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.modules.metrics.internal.CacheMetricsListener;
+import org.qiweb.modules.metrics.internal.CacheMetricsHandler;
 import org.qiweb.spi.cache.CacheAdapter;
 
 /**
@@ -40,7 +40,7 @@ import org.qiweb.spi.cache.CacheAdapter;
 
     /* package */ MemcacheCache( Metrics metrics, MemcachedClient client )
     {
-        super( new CacheMetricsListener( metrics.metrics(), "memcache", "qiweb-cache" ) );
+        super(new CacheMetricsHandler( metrics.metrics(), "memcache", "qiweb-cache" ) );
         this.client = client;
     }
 

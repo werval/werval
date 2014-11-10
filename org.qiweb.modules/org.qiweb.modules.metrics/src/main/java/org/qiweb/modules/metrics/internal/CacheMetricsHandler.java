@@ -18,14 +18,18 @@ package org.qiweb.modules.metrics.internal;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import java.util.function.Function;
+import org.qiweb.api.cache.Cache;
+import org.qiweb.spi.cache.CacheAdapter;
 import org.qiweb.spi.cache.CacheAdapter.CacheEvent;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
 /**
- * Cache Metrics Listener.
+ * Cache Metrics Handler.
+ * <p>
+ * Suited to give to {@link CacheAdapter} appropriate constructor in {@link Cache} implementations.
  */
-public class CacheMetricsListener
+public class CacheMetricsHandler
     implements Function<CacheEvent, CacheEvent.Closeable>
 {
     private static final String METRICS_PREFIX = "org.qiweb.modules.cache";
@@ -36,7 +40,7 @@ public class CacheMetricsListener
     private final String setsName;
     private final String removesName;
 
-    public CacheMetricsListener( MetricRegistry metrics, String implName, String cacheName )
+    public CacheMetricsHandler( MetricRegistry metrics, String implName, String cacheName )
     {
         this.metrics = metrics;
         this.hitsName = name( METRICS_PREFIX, implName, cacheName, "hits" );

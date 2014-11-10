@@ -59,9 +59,9 @@ public abstract class CacheAdapter
         };
 
         /**
-         * No-operation listener.
+         * No-operation metrics handler.
          */
-        public static final Function<CacheEvent, Closeable> NOOP_LISTENER = new Function<CacheEvent, Closeable>()
+        public static final Function<CacheEvent, Closeable> NOOP_HANDLER = new Function<CacheEvent, Closeable>()
         {
             @Override
             public Closeable apply( CacheEvent event )
@@ -71,7 +71,7 @@ public abstract class CacheAdapter
         };
     }
 
-    private final Function<CacheEvent, CacheEvent.Closeable> listener;
+    private final Function<CacheEvent, CacheEvent.Closeable> handler;
 
     /**
      * Create a Cache without metrics handling.
@@ -84,11 +84,11 @@ public abstract class CacheAdapter
     /**
      * Create a Cache with metrics handling.
      *
-     * @param listener Metrics listener
+     * @param handler Metrics handler
      */
-    protected CacheAdapter( Function<CacheEvent, CacheEvent.Closeable> listener )
+    protected CacheAdapter( Function<CacheEvent, CacheEvent.Closeable> handler )
     {
-        this.listener = listener == null ? CacheEvent.NOOP_LISTENER : listener;
+        this.handler = handler == null ? CacheEvent.NOOP_HANDLER : handler;
     }
 
     @Override
@@ -100,10 +100,10 @@ public abstract class CacheAdapter
     @Override
     public final <T> T get( String key )
     {
-        try( CacheEvent.Closeable getTimer = listener.apply( CacheEvent.GET ) )
+        try( CacheEvent.Closeable getTimer = handler.apply( CacheEvent.GET ) )
         {
             T value = doGet( key );
-            listener.apply( value == null ? CacheEvent.MISS : CacheEvent.HIT ).close();
+            handler.apply( value == null ? CacheEvent.MISS : CacheEvent.HIT ).close();
             return value;
         }
     }
@@ -153,7 +153,7 @@ public abstract class CacheAdapter
     @Override
     public final <T> void set( int ttlSeconds, String key, T value )
     {
-        try( CacheEvent.Closeable setTimer = listener.apply( CacheEvent.SET ) )
+        try( CacheEvent.Closeable setTimer = handler.apply( CacheEvent.SET ) )
         {
             doSet( ttlSeconds, key, value );
         }
@@ -162,7 +162,7 @@ public abstract class CacheAdapter
     @Override
     public final void remove( String key )
     {
-        try( CacheEvent.Closeable removeTimer = listener.apply( CacheEvent.REMOVE ) )
+        try( CacheEvent.Closeable removeTimer = handler.apply( CacheEvent.REMOVE ) )
         {
             doRemove( key );
         }

@@ -17,7 +17,7 @@ package org.qiweb.modules.cache;
 
 import java.util.UUID;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.modules.metrics.internal.CacheMetricsListener;
+import org.qiweb.modules.metrics.internal.CacheMetricsHandler;
 import org.qiweb.spi.cache.CacheAdapter;
 import org.qiweb.util.Serializables;
 import redis.clients.jedis.Jedis;
@@ -42,7 +42,7 @@ import static org.qiweb.util.Charsets.UTF_8;
 
     /* package */ RedisCache( Metrics metrics, Jedis backingCache )
     {
-        super( new CacheMetricsListener( metrics.metrics(), "redis", "qiweb-cache" ) );
+        super(new CacheMetricsHandler( metrics.metrics(), "redis", "qiweb-cache" ) );
         this.backingCache = backingCache;
     }
 

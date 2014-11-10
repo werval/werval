@@ -17,7 +17,7 @@ package org.qiweb.modules.cache;
 
 import net.sf.ehcache.Element;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.modules.metrics.internal.CacheMetricsListener;
+import org.qiweb.modules.metrics.internal.CacheMetricsHandler;
 import org.qiweb.spi.cache.CacheAdapter;
 
 /**
@@ -36,7 +36,7 @@ import org.qiweb.spi.cache.CacheAdapter;
 
     /* package */ EhCache( Metrics metrics, net.sf.ehcache.Ehcache backingCache )
     {
-        super( new CacheMetricsListener( metrics.metrics(), "ehcache", backingCache.getName() ) );
+        super(new CacheMetricsHandler( metrics.metrics(), "ehcache", backingCache.getName() ) );
         this.backingCache = backingCache;
     }
 
