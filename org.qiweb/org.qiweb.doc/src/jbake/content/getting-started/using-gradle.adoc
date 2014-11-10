@@ -118,14 +118,10 @@ Here is what you'll find inside:
 ["source","groovy",subs="attributes,callouts"]
 ----
 buildscript {
-	repositories {
-        maven { url 'https://repo.codeartisans.org/qiweb';credentials { username='qiweb';password='qiweb' } } // <1>
-	}
-	dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb_version}' }      // <2>
+	repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }    // <1>
+	dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb_version}' } // <2>
 }
-repositories {
-    maven { url 'https://repo.codeartisans.org/qiweb';credentials { username='qiweb';password='qiweb' } }     // <3>
-}
+repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }        // <3>
 
 apply plugin: 'java'        // <4>
 apply plugin: 'qiweb'       // <5>
