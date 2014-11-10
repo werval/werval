@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +33,8 @@ import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.modules.jndi.JNDI;
+import org.qiweb.modules.metrics.Metrics;
 
-import static java.util.Collections.EMPTY_LIST;
 import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.isEmpty;
 
@@ -46,6 +46,7 @@ public class JDBCPlugin
 {
     /* package */ static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
     private static final String DATASOURCES = "jdbc.datasources";
+    private static final String METRICS = "jdbc.metrics";
     private JDBC jdbc;
 
     @Override
@@ -57,6 +58,7 @@ public class JDBCPlugin
     @Override
     public List<Class<?>> dependencies( Config config )
     {
+        List<Class<?>> deps = new ArrayList<>();
         if( config.has( DATASOURCES ) )
         {
             Config allDsConfig = config.object( DATASOURCES );
@@ -65,11 +67,16 @@ public class JDBCPlugin
                 if( allDsConfig.object( dsName ).has( "jndiName" ) )
                 {
                     // At least one DataSource has to be registered in JNDI, depend on the JNDI plugin
-                    return Arrays.asList( JNDI.class );
+                    deps.add( JNDI.class );
+                    break;
                 }
             }
         }
-        return EMPTY_LIST;
+        if( config.bool( METRICS ) )
+        {
+            deps.add( Metrics.class );
+        }
+        return deps;
     }
 
     @Override
@@ -90,7 +97,7 @@ public class JDBCPlugin
             for( String dsName : allDsConfig.subKeys() )
             {
                 Config dsConfig = allDsConfig.object( dsName );
-                HikariDataSource ds = createDataSource( dsName, dsConfig, application.classLoader() );
+                HikariDataSource ds = createDataSource( dsName, dsConfig, application, config.has( METRICS ) );
                 dataSources.put( dsName, ds );
             }
         }
@@ -107,7 +114,7 @@ public class JDBCPlugin
         }
     }
 
-    private HikariDataSource createDataSource( String dsName, Config dsConfig, ClassLoader loader )
+    private HikariDataSource createDataSource( String dsName, Config dsConfig, Application app, boolean metrics )
     {
         // JDBC configuration
         String driver = dsConfig.string( "driver" );
@@ -171,7 +178,9 @@ public class JDBCPlugin
         // Setup DataSource
         try
         {
-            DriverManager.registerDriver( (Driver) Class.forName( driver, true, loader ).newInstance() );
+            DriverManager.registerDriver(
+                (Driver) Class.forName( driver, true, app.classLoader() ).newInstance()
+            );
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setPoolName( dsName );
             hikariConfig.setDriverClassName( driver );
@@ -228,10 +237,6 @@ public class JDBCPlugin
             {
                 hikariConfig.setConnectionInitSql( dsConfig.string( "connectionInitSql" ) );
             }
-            if( dsConfig.has( "jdbc4ConnectionTest" ) )
-            {
-                hikariConfig.setJdbc4ConnectionTest( dsConfig.bool( "jdbc4ConnectionTest" ) );
-            }
             if( dsConfig.has( "connectionTestQuery" ) )
             {
                 hikariConfig.setConnectionTestQuery( dsConfig.string( "connectionTestQuery" ) );
@@ -244,9 +249,12 @@ public class JDBCPlugin
             {
                 hikariConfig.setIsolateInternalQueries( dsConfig.bool( "isolateInternalQueries" ) );
             }
-            // TODO JDBC HikariCP Metrics
-            // See https://github.com/brettwooldridge/HikariCP/issues/112
-            // hikariConfig.setMetricsTrackerClassName( "IMetricsTracker class name");
+
+            // Metrics
+            if( metrics )
+            {
+                hikariConfig.setMetricRegistry( app.plugin( Metrics.class ).metrics() );
+            }
 
             HikariDataSource hds = new HikariDataSource( hikariConfig );
 

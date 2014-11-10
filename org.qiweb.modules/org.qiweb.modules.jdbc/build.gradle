@@ -4,6 +4,7 @@ description = "JDBC Module"
 dependencies {
 
     compile project( ":org.qiweb.modules.jndi" )
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.hikaricp
 
     testCompile "org.qiweb:org.qiweb.test:$version"
