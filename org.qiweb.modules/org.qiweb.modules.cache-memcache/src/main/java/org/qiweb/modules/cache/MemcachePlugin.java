@@ -106,7 +106,7 @@ public class MemcachePlugin
         }
 
         // Create Cache Instance
-        backingCache = config.bool( "memcache.metrics" )
+        backingCache = config.bool( "metrics" )
                        ? new MemcacheCache( application.plugin( Metrics.class ), client )
                        : new MemcacheCache( client );
     }
