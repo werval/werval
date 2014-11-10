@@ -97,7 +97,7 @@ public class JDBCPlugin
             for( String dsName : allDsConfig.subKeys() )
             {
                 Config dsConfig = allDsConfig.object( dsName );
-                HikariDataSource ds = createDataSource( dsName, dsConfig, application, config.has( METRICS ) );
+                HikariDataSource ds = createDataSource( dsName, dsConfig, application, config.bool( METRICS ) );
                 dataSources.put( dsName, ds );
             }
         }

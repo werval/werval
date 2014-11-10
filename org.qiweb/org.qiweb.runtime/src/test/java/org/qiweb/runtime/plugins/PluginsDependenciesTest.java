@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
  * in the classpath are automatically resolved if they are registered in a {@literal META-INF/qiweb-plugins.properties}
  * descriptor.
  * <p>
- * Configuration file `plugin-dependencies-test.conf` declares plugin in the wrong order.
+ * Configuration file `plugin-dependencies-test.conf` declares plugins in the wrong order.
  * <p>
  * Descriptor file `META-INF/qiweb-plugin.properties` declare all plugins even if it is not needed.
  */
@@ -46,6 +46,28 @@ public class PluginsDependenciesTest
     // This test ensure that the dependency resolution algorithm does its job
     @ClassRule
     public static final QiWebRule QIWEB = new QiWebRule( "plugin-dependencies-test.conf" );
+
+    public static class UnderTheSea
+    {
+    }
+
+    public static class UnderTheSeaPlugin
+        implements Plugin<UnderTheSea>
+    {
+        private final UnderTheSea api = new UnderTheSea();
+
+        @Override
+        public Class<UnderTheSea> apiType()
+        {
+            return UnderTheSea.class;
+        }
+
+        @Override
+        public UnderTheSea api()
+        {
+            return api;
+        }
+    }
 
     public static class Upstream
     {
@@ -63,9 +85,22 @@ public class PluginsDependenciesTest
         }
 
         @Override
+        public List<Class<?>> dependencies( Config config )
+        {
+            return Arrays.asList( UnderTheSea.class );
+        }
+
+        @Override
         public Upstream api()
         {
             return api;
+        }
+
+        @Override
+        public void onActivate( Application application )
+            throws ActivationException
+        {
+            application.plugin( UnderTheSea.class );
         }
     }
 
@@ -93,7 +128,14 @@ public class PluginsDependenciesTest
         @Override
         public List<Class<?>> dependencies( Config config )
         {
-            return Arrays.asList( Upstream.class );
+            return Arrays.asList( UnderTheSea.class );
+        }
+
+        @Override
+        public void onActivate( Application application )
+            throws ActivationException
+        {
+            application.plugin( UnderTheSea.class );
         }
     }
 
@@ -129,7 +171,7 @@ public class PluginsDependenciesTest
             throws ActivationException
         {
             application.plugin( InTheMiddle.class );
-            application.plugin( Upstream.class );
+            application.plugin( UnderTheSea.class );
         }
     }
 

@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import org.qiweb.api.Application;
 import org.qiweb.api.Mode;
 import org.qiweb.api.Plugin;
@@ -442,7 +444,7 @@ import static org.qiweb.util.Strings.rightPad;
 
     /**
      * Load dynamic plugins.
-     * 
+     *
      * @param application        Application
      * @param pluginsDescriptors Plugins descriptors
      * @param appPlugins         Already loaded application plugins
@@ -499,6 +501,8 @@ import static org.qiweb.util.Strings.rightPad;
                     p -> p.plugin.apiType().equals( dependency ) || dependency.isAssignableFrom( p.plugin.apiType() )
                 ) )
                 {
+                    // Replay will be needed to discover transitive dependencies
+                    replay = true;
                     // Same type, then assignable or null
                     PluginInfo match = appPlugins.stream()
                         .filter( p -> p.plugin.apiType().equals( dependency ) )
@@ -526,18 +530,22 @@ import static org.qiweb.util.Strings.rightPad;
                         {
                             throw new QiWebException( "Plugin dependency not resolved: " + dependency );
                         }
-                        // Replay will be needed to properly order plugins according to dependencies
-                        replay = true;
                         // Add to queue so dependencies of dependency gets resolved
                         queue.addFirst( match );
                         // Register matched dependency
-                        output.add( match );
+                        if( !output.contains( match ) )
+                        {
+                            output.add( 0, match );
+                        }
                     }
                     else
                     {
                         // Dependency resolved directly from application plugins
                         queue.remove( match );
-                        output.add( match );
+                        if( !output.contains( match ) )
+                        {
+                            output.add( 0, match );
+                        }
                     }
                 }
             }
@@ -548,8 +556,84 @@ import static org.qiweb.util.Strings.rightPad;
         }
         if( replay )
         {
-            return resolveDependencies( application, output, EMPTY_LIST );
+            return resolveDependencies( application, output, dynamicPlugins );
         }
+        Collections.sort(
+            output,
+            new Comparator<PluginInfo>()
+            {
+                @Override
+                public int compare( PluginInfo pi1, PluginInfo pi2 )
+                {
+                    List<Class<?>> pi1Deps = pi1.plugin.dependencies( application.config() );
+                    List<Class<?>> pi2Deps = pi2.plugin.dependencies( application.config() );
+
+                    if( pi1Deps.isEmpty() && pi2Deps.isEmpty() )
+                    {
+                        // Both have zero dependency
+                        return 0;
+                    }
+                    if( ( pi1Deps.isEmpty() || pi2Deps.isEmpty() ) && pi1Deps.size() != pi2Deps.size() )
+                    {
+                        // One has zero dependency, the other has some
+                        return Integer.compare( pi1Deps.size(), pi2Deps.size() );
+                    }
+
+                    // Plugin 1 Dependencies
+                    List<PluginInfo> pi1DepsPluginInfos = new ArrayList<>();
+                    Stack<Class<?>> pi1Stack = new Stack<>();
+                    pi1Stack.addAll( pi1Deps );
+                    while( !pi1Stack.empty() )
+                    {
+                        Class<?> pi1Dep = pi1Stack.pop();
+                        PluginInfo match = output.stream()
+                        .filter( pi -> pi.plugin.apiType().equals( pi1Dep ) ).findFirst()
+                        .orElse(
+                            output.stream().filter( pi -> pi1Dep.isAssignableFrom( pi.plugin.apiType() ) )
+                            .findFirst().orElse( null )
+                        );
+                        if( match != null )
+                        {
+                            pi1DepsPluginInfos.add( match );
+                            pi1Stack.addAll( match.plugin.dependencies( application.config() ) );
+                        }
+                    }
+                    if( pi1DepsPluginInfos.contains( pi2 ) )
+                    {
+                        // Plugin 1, or one of its dependencies, depends on Plugin 2
+                        return +1;
+                    }
+
+                    // Plugin 2 Dependencies
+                    List<PluginInfo> pi2DepsPluginInfos = new ArrayList<>();
+                    Stack<Class<?>> pi2Stack = new Stack<>();
+                    pi2Stack.addAll( pi2Deps );
+                    while( !pi2Stack.empty() )
+                    {
+                        Class<?> pi2Dep = pi2Stack.pop();
+                        PluginInfo match = output.stream()
+                        .filter( pi -> pi.plugin.apiType().equals( pi2Dep ) ).findFirst()
+                        .orElse(
+                            output.stream().filter( pi -> pi2Dep.isAssignableFrom( pi.plugin.apiType() ) )
+                            .findFirst().orElse( null )
+                        );
+                        if( match != null )
+                        {
+                            pi2DepsPluginInfos.add( match );
+                            pi2Stack.addAll( match.plugin.dependencies( application.config() ) );
+                        }
+                    }
+                    if( pi2DepsPluginInfos.contains( pi1 ) )
+                    {
+                        // Plugin 2, or one of its dependencies, depends on Plugin 1
+                        return -1;
+                    }
+
+                    // No decision to make
+                    return 0;
+                }
+            }
+        );
         return output;
     }
 
@@ -575,7 +659,7 @@ import static org.qiweb.util.Strings.rightPad;
             if( it.hasNext() )
             {
                 sb.append( NEWLINE );
-            }            
+            }
         }
         return sb.toString();
     }

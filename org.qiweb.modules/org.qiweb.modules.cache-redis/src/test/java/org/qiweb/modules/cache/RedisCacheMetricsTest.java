@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.cache;
 
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.api.cache.Cache;
@@ -27,12 +28,19 @@ import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.CoreMatchers.is;
 import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
+import static org.qiweb.test.util.Assume.assumeConnectivity;
 
 /**
  * Redis Plugin Metrics Test.
  */
 public class RedisCacheMetricsTest
 {
+    @BeforeClass
+    public static void beforeMemcacheTests()
+    {
+        assumeConnectivity( "localhost", 6379 );
+    }
+
     @ClassRule
     public static QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
         "GET / " + Controller.class.getName() + ".interaction"
