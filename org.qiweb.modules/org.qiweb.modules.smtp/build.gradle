@@ -3,7 +3,7 @@ description = "SMTP Module"
 
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.email
     
     testCompile "org.qiweb:org.qiweb.test:$version"

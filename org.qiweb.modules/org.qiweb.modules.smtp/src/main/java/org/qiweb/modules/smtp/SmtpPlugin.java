@@ -15,11 +15,16 @@
  */
 package org.qiweb.modules.smtp;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.metrics.Metrics;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * SMTP Plugin.
@@ -39,6 +44,16 @@ public class SmtpPlugin
     public Smtp api()
     {
         return smtp;
+    }
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.bool( "smtp.metrics" ) )
+        {
+            return Arrays.asList( Metrics.class );
+        }
+        return EMPTY_LIST;
     }
 
     @Override
@@ -80,7 +95,8 @@ public class SmtpPlugin
             config.has( "smtp.username" ) ? config.string( "smtp.username" ) : null,
             config.has( "smtp.password" ) ? config.string( "smtp.password" ) : null,
             config.has( "smtp.bounce" ) ? config.string( "smtp.bounce" ) : null,
-            application.defaultCharset()
+            application.defaultCharset(),
+            config.bool( "smtp.metrics" ) ? application.plugin( Metrics.class ) : null
         );
     }
 

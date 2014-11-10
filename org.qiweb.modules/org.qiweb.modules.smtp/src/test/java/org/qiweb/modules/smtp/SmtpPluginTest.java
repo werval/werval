@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.smtp;
 
+import com.codahale.metrics.MetricRegistry;
 import java.util.List;
 import javax.mail.MessagingException;
 import org.apache.commons.mail.EmailException;
@@ -23,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.test.QiWebRule;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
@@ -77,5 +79,9 @@ public class SmtpPluginTest
         assertThat( message.getMimeMessage().getHeader( "From" )[0], equalTo( "from@qiweb.org" ) );
         assertThat( message.getMimeMessage().getHeader( "To" )[0], equalTo( "to@qiweb.org" ) );
         assertThat( message.getMimeMessage().getHeader( "Subject" )[0], equalTo( "Simple Email" ) );
+
+        MetricRegistry metrics = QIWEB.application().plugin( Metrics.class ).metrics();
+        assertThat( metrics.meter( "org.qiweb.modules.smtp.sent" ).getCount(), is( 1L ) );
+        assertThat( metrics.meter( "org.qiweb.modules.smtp.errors" ).getCount(), is( 0L ) );
     }
 }
