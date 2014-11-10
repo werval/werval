@@ -52,8 +52,11 @@ public class MetricsTest
         + "GET /@metrics/thread-dump org.qiweb.modules.metrics.Tools.threadDump\n"
     ) );
 
+    @Counter( name = "unknown-counter" )
+    @Meter( name = "unknown-meter" )
     public static class Controller
     {
+        @Timer( name = "unknown-timer" )
         public Outcome unknown()
         {
             plugin( Metrics.class ).metrics().counter( "MetricsTest" ).inc();
@@ -122,6 +125,9 @@ public class MetricsTest
         assertThat( metrics.meter( "org.qiweb.http.server-errors" ).getCount(), is( 1L ) );
         assertThat( metrics.meter( "org.qiweb.http.unknown" ).getCount(), is( 1L ) );
 
+        assertThat( metrics.counter( "unknown-counter" ).getCount(), is( 1L ) );
+        assertThat( metrics.meter( "unknown-meter" ).getCount(), is( 1L ) );
+        assertThat( metrics.timer( "unknown-timer" ).getCount(), is( 1L ) );
         assertThat( metrics.counter( "MetricsTest" ).getCount(), is( 1L ) );
 
         // JMX
@@ -132,6 +138,9 @@ public class MetricsTest
         assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.client-errors" ), "Count" ), is( 1L ) );
         assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.server-errors" ), "Count" ), is( 1L ) );
         assertThat( jmx.getAttribute( new ObjectName( "metrics:name=org.qiweb.http.unknown" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=unknown-counter" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=unknown-meter" ), "Count" ), is( 1L ) );
+        assertThat( jmx.getAttribute( new ObjectName( "metrics:name=unknown-timer" ), "Count" ), is( 1L ) );
         assertThat( jmx.getAttribute( new ObjectName( "metrics:name=MetricsTest" ), "Count" ), is( 1L ) );
     }
 }
