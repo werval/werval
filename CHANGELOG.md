@@ -19,8 +19,8 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### New features
 
-- Application Events, see #190
-- Metrics & HealthChecks Plugin, see #186
+- Application Events, mainly used for metrics, see #190 and below
+- Metrics & HealthChecks Plugin with core and filter annotations metrics plus metrics in other modules, see #186 and #202
 - [Hashids](http://hashids.org/) support, see #199
 - Base62 codec, see #200
 
@@ -28,6 +28,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - Refined runtime logging, see #72
 - One can now start an application in development or test mode without an `app.secret` defined (even without an `application.conf` file) ; in such a case, a random secret is generated, see #205
+- Plugins can now declare dependencies to others, resolved at application activation, see #42 and #209
 - The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
 - Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
 - Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189
