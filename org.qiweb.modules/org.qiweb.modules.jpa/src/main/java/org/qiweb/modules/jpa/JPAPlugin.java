@@ -49,7 +49,7 @@ public class JPAPlugin
     {
         if( config.bool( "jpa.metrics" ) )
         {
-            return Arrays.asList( JDBC.class, Metrics.class );
+            return Arrays.asList( Metrics.class, JDBC.class );
         }
         return Arrays.asList( JDBC.class );
     }
