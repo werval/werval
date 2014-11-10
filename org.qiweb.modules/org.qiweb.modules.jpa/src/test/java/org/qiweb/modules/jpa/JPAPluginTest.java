@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -28,10 +29,12 @@ import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
+import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 
 /**
  * JPA Plugin Test.
@@ -45,7 +48,8 @@ public class JPAPluginTest
         + "GET /transactional org.qiweb.modules.jpa.Controller.transactional\n"
         + "GET /multithreadedDirectUsage org.qiweb.modules.jpa.Controller.multithreadedDirectUsage\n"
         + "GET /multithreadedWithTransaction org.qiweb.modules.jpa.Controller.multithreadedWithTransaction\n"
-        + "GET /multithreadedTransactional org.qiweb.modules.jpa.Controller.multithreadedTransactional"
+        + "GET /multithreadedTransactional org.qiweb.modules.jpa.Controller.multithreadedTransactional\n"
+        + "GET /metrics org.qiweb.modules.metrics.Tools.metrics\n"
     ) );
 
     @BeforeClass
@@ -70,6 +74,36 @@ public class JPAPluginTest
         {
             statement.execute();
         }
+    }
+
+    @AfterClass
+    public static void assertMetrics()
+    {
+        expect()
+            .statusCode( 200 )
+            .contentType( APPLICATION_JSON )
+            .body( "histograms.'com.eclipse.persistence.histograms.CacheSizeBarEntity'.count", is( 3 ) )
+            .body( "histograms.'com.eclipse.persistence.histograms.CacheSizeFooEntity'.count", is( 4 ) )
+            .body( "timers.'com.eclipse.persistence.timers.InsertObjectQuery'.count", is( 7 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ClientSessionCreates'.count", is( 8 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ClientSessionReleases'.count", is( 8 ) )
+            .body( "meters.'com.eclipse.persistence.meters.CacheHits'.count", is( 6 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ConnectCalls'.count", is( 4 ) )
+            .body( "meters.'com.eclipse.persistence.meters.InsertObjectQuery'.count", is( 7 ) )
+            .body( "meters.'com.eclipse.persistence.meters.InsertObjectQuery:org.qiweb.modules.jpa.BarEntity'.count", is( 3 ) )
+            .body( "meters.'com.eclipse.persistence.meters.InsertObjectQuery:org.qiweb.modules.jpa.FooEntity'.count", is( 4 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ReadObjectQuery'.count", is( 6 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ReadObjectQuery:org.qiweb.modules.jpa.BarEntity:readBarEntity'.count", is( 3 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ReadObjectQuery:org.qiweb.modules.jpa.BarEntity:readBarEntity:CacheHits'.count", is( 3 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ReadObjectQuery:org.qiweb.modules.jpa.FooEntity:readFooEntity'.count", is( 3 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ReadObjectQuery:org.qiweb.modules.jpa.FooEntity:readFooEntity:CacheHits'.count", is( 3 ) )
+            .body( "meters.'com.eclipse.persistence.meters.UnitOfWorkCreates'.count", is( 8 ) )
+            .body( "meters.'com.eclipse.persistence.meters.UnitOfWorkReleases'.count", is( 8 ) )
+            .body( "meters.'com.eclipse.persistence.meters.UnitOfWorkCommits'.count", is( 10 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ValueReadQuery'.count", is( 7 ) )
+            .body( "meters.'com.eclipse.persistence.meters.ValueReadQuery:SEQ_GEN_IDENTITY'.count", is( 7 ) )
+            .when()
+            .get( "/metrics" );
     }
 
     @Test

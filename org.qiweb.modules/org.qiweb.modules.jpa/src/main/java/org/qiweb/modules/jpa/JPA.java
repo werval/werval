@@ -39,7 +39,9 @@ import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.modules.jpa.internal.MetricsSessionCustomizer;
 import org.qiweb.modules.jpa.internal.Slf4jSessionLogger;
+import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +111,7 @@ public final class JPA
     private final Map<String, Map<String, Object>> unitsProperties;
     private final Map<String, EntityManagerFactory> emfs = new HashMap<>();
     private final String defaultPersistanceUnitName;
+    private final Metrics metrics;
     // Only used out of interaction context
     private final ThreadLocal<JPAContext> threadLocalContext = ThreadLocal.withInitial( () -> new JPAContext() );
 
@@ -116,13 +119,15 @@ public final class JPA
         Mode mode,
         ClassLoader loader,
         Map<String, Map<String, Object>> properties,
-        String defaultPersistanceUnitName
+        String defaultPersistanceUnitName,
+        Metrics metrics
     )
     {
         this.mode = mode;
         this.loader = loader;
         this.unitsProperties = properties;
         this.defaultPersistanceUnitName = defaultPersistanceUnitName;
+        this.metrics = metrics;
     }
 
     public PersistenceUtil util()
@@ -154,8 +159,17 @@ public final class JPA
                     props.putAll( unitsProperties.get( persistenceUnitName ) );
                 }
                 props.put( "eclipselink.classloader", loader );
+                if( metrics != null )
+                {
+                    MetricsSessionCustomizer.metricsHack = metrics;
+                    props.put( "eclipselink.session.customizer", MetricsSessionCustomizer.class.getName() );
+                }
                 EntityManagerFactory emf = Persistence.createEntityManagerFactory( persistenceUnitName, props );
                 emfs.put( persistenceUnitName, emf );
+                if( metrics != null )
+                {
+                    MetricsSessionCustomizer.metricsHack = null;
+                }
             }
             return emfs.get( persistenceUnitName );
         }

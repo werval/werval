@@ -26,6 +26,7 @@ import org.qiweb.api.Plugin;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.modules.jdbc.JDBC;
+import org.qiweb.modules.metrics.Metrics;
 
 import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
 
@@ -46,6 +47,10 @@ public class JPAPlugin
     @Override
     public List<Class<?>> dependencies( Config config )
     {
+        if( config.bool( "jpa.metrics" ) )
+        {
+            return Arrays.asList( JDBC.class, Metrics.class );
+        }
         return Arrays.asList( JDBC.class );
     }
 
@@ -74,7 +79,8 @@ public class JPAPlugin
             application.mode(),
             application.classLoader(),
             properties,
-            config.has( "jpa.default_pu" ) ? config.string( "jpa.default_pu" ) : null
+            config.has( "jpa.default_pu" ) ? config.string( "jpa.default_pu" ) : null,
+            config.bool( "jpa.metrics" ) ? application.plugin( Metrics.class ) : null
         );
     }
 

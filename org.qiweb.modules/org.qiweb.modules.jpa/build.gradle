@@ -4,6 +4,7 @@ description = "JPA Module"
 dependencies {
 
     compile project( ":org.qiweb.modules.jdbc" )
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.jpa
     compile libs.eclipselink
 
