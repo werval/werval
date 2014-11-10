@@ -27,6 +27,8 @@ import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.server.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonMap;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
@@ -47,6 +49,7 @@ import static org.qiweb.test.QiWebTestHelper.setupRestAssuredDefaults;
 public class QiWebHttpTest
     implements QiWebHttpTestSupport
 {
+    private static final Logger LOG = LoggerFactory.getLogger( QiWebHttpTest.class );
     private final String configurationResourceNameOverride;
     private final RoutesProvider routesProviderOverride;
     private HttpServer httpServer;
@@ -90,8 +93,8 @@ public class QiWebHttpTest
         }
         catch( com.typesafe.config.ConfigException.Missing noAppSecret )
         {
-            System.out.println( "Application has no 'app.secret', generating a random one for test mode!" );
             String secret = CryptoInstance.newRandomSecret256BitsHex();
+            LOG.info( "Application has no 'app.secret', using a random one for test mode: {}", secret );
             config = new ConfigInstance( classLoader, conf, null, null, singletonMap( "app.secret", secret ) );
         }
         RoutesProvider routesProvider = routesProviderOverride == null
