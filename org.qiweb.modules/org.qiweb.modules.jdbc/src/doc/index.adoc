@@ -110,6 +110,125 @@ jdbc {
 }
 ----
 
+
+=== Connection Pooling
+
+The Hikari connection pool can be tuned for each configured DataSource directly from your application configuration.
+
+Here is the list of supported configuration properties and their type:
+
+.application.conf
+[source,json]
+----
+jdbc {
+    datasources.first_ds {
+        # ...
+        autocommit = yes/no
+        isolation = string (one of TRANSACTION_NONE, TRANSACTION_READ_COMMITTED, TRANSACTION_READ_UNCOMMITTED, TRANSACTION_REPEATABLE_READ or TRANSACTION_SERIALIZABLE)
+        readOnly = yes/no
+        catalog = string
+        minimumIdle = integer
+        maximumPoolSize = integer
+        connectionTimeout = duration (eg '2 minutes')
+        idleTimeout = duration
+        maxLifetime = duration
+        initializationFailFast = yes/no
+        leakDetectionThreshold = duration
+        connectionInitSql = string
+        connectionTestQuery = string
+        registerMbeans = yes/no
+        isolateInternalQueries = yes/no
+    }
+}
+----
+
+See the HikariCP http://brettwooldridge.github.io/HikariCP/[documentation] for the details of each one of theses
+properties and their default values.
+
+
+=== JNDI
+
+If you need to expose your DataSource in JNDI, simply add the desired `jndiName` to its configuration:
+
+.application.conf
+[source,json]
+----
+jdbc {
+    datasources.first_ds {
+        # ...
+        jndiName = MyDataSource
+    }
+}
+----
+
+It will automatically use the JNDI module running an embedded JNDI service and register the DataSource with the
+configured name.
+
+[TIP]
+.JPA & JNDI
+====
+This is needed for JPA, see the JPA module documentation.
+====
+
+
+=== Logging
+
+The Hikari connection pool will log to SLF4J.
+
+If you need precise JDBC & SQL logging, you can enable the https://code.google.com/p/log4jdbc-log4j2/[log4jdbc]
+integration per DataSource in your configuration:
+
+.application.conf
+[source,json]
+----
+jdbc {
+    datasources.second_ds {
+        # ...
+        log4jdbc = yes
+    }
+}
+----
+
+`log4jdbc` will log using SLF4J to the `jdbc.sqlonly`, `jdbc.sqltiming`, `jdbc.audit`, `jdbc.resultset`,
+`jdbc.resultsettable` and `jdbc.connection` loggers.
+
+
+[TIP]
+.log4jdbc configuration
+====
+This documentation do not cover `log4jdbc` as it is already well covered on official
+https://code.google.com/p/log4jdbc-log4j2/[website].
+
+For convenience the `jdbc.log4jdbc` configuration object is loaded as System Properties.
+This allow you to configure `log4jdbc` from your application config file.
+For example:
+
+.application.conf
+[source,json]
+----
+jdbc {
+    log4jdbc {
+        # Log only for com.acme.*
+        "debug.stack.prefix" = "^com\.acme.*"
+    }
+}
+----
+====
+
+
+=== Metrics
+
+To get JDBC Metrics reported, simply enable it in your configuration:
+
+.application.conf
+[source,json]
+----
+jdbc.metrics = yes
+----
+
+See the Metrics module documentation for more metrics insights.
+
+
 == Usage
 
 Here is how to get a `Connection` to the default `DataSource`:

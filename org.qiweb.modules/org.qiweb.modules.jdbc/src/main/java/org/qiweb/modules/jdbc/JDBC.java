@@ -21,8 +21,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import javax.sql.DataSource;
 
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-
 /**
  * JDBC.
  */
@@ -37,18 +35,43 @@ public class JDBC
         this.defaultDsName = defaultDsName;
     }
 
+    /**
+     * Default DataSource.
+     *
+     * @return The default DataSource
+     */
     public DataSource dataSource()
     {
-        ensureNotEmpty( JDBCPlugin.DEFAULT_DATASOURCE, defaultDsName );
         return dataSource( defaultDsName );
     }
 
+    /**
+     * Connection using the default DataSource.
+     *
+     * @return A Connection using the default DataSource
+     *
+     * @throws UncheckedSQLException if a database access error occurs
+     */
     public Connection connection()
-        throws SQLException
+        throws UncheckedSQLException
     {
-        return dataSource().getConnection();
+        try
+        {
+            return dataSource().getConnection();
+        }
+        catch( SQLException ex )
+        {
+            throw new UncheckedSQLException( ex );
+        }
     }
 
+    /**
+     * DataSource.
+     *
+     * @param dataSourceName Name of the DataSource
+     *
+     * @return The DataSource named {@literal dataSourceName}
+     */
     public DataSource dataSource( String dataSourceName )
     {
         if( !dataSources.containsKey( dataSourceName ) )
@@ -58,10 +81,26 @@ public class JDBC
         return dataSources.get( dataSourceName );
     }
 
+    /**
+     * Connection using a named DataSource.
+     *
+     * @param dataSourceName Name of the DataSource to use
+     *
+     * @return A Connection using the DataSource named {@literal dataSourceName}
+     *
+     * @throws UncheckedSQLException if a database access error occurs
+     */
     public Connection connection( String dataSourceName )
-        throws SQLException
+        throws UncheckedSQLException
     {
-        return dataSource( dataSourceName ).getConnection();
+        try
+        {
+            return dataSource( dataSourceName ).getConnection();
+        }
+        catch( SQLException ex )
+        {
+            throw new UncheckedSQLException( ex );
+        }
     }
 
     /* package */ void passivate()

@@ -28,6 +28,7 @@ def v_jedis = '2.6.0'
 def v_jpa = '2.1.0'
 def v_liquibase = '3.3.0'
 def v_liquibase_slf4j = '1.2.1'
+def v_log4jdbc = '1.16'
 def v_memcache = '2.11.4'
 def v_metrics = '3.1.0'
 def v_qi4j = '2.1-SNAPSHOT' // FIXME Final!
@@ -87,6 +88,7 @@ rootProject.ext {
         jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
         liquibase:          "org.liquibase:liquibase-core:$v_liquibase",
         liquibase_slf4j:    "com.mattbertolini:liquibase-slf4j:$v_liquibase_slf4j",
+        log4jdbc:           "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:$v_log4jdbc",
         memcache:           "net.spy:spymemcached:$v_memcache",
         metrics: [
                             "io.dropwizard.metrics:metrics-core:$v_metrics",

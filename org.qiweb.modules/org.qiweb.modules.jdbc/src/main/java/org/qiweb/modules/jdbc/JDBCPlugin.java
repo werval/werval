@@ -24,8 +24,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.qiweb.api.Application;
@@ -37,16 +39,18 @@ import org.qiweb.modules.metrics.Metrics;
 
 import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.join;
 
 /**
- * JDBC Plugin that manage DataSources using BoneCP pool.
+ * JDBC Plugin that manage DataSources using HikariCP pools.
  */
 public class JDBCPlugin
     implements Plugin<JDBC>
 {
-    /* package */ static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
+    private static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
     private static final String DATASOURCES = "jdbc.datasources";
     private static final String METRICS = "jdbc.metrics";
+    private static final String LOG4JDBC_DRIVER = "net.sf.log4jdbc.sql.jdbcapi.DriverSpy";
     private JDBC jdbc;
 
     @Override
@@ -94,6 +98,7 @@ public class JDBCPlugin
         if( config.has( DATASOURCES ) )
         {
             Config allDsConfig = config.object( DATASOURCES );
+            setupLog4Jdbc( application, allDsConfig );
             for( String dsName : allDsConfig.subKeys() )
             {
                 Config dsConfig = allDsConfig.object( dsName );
@@ -101,7 +106,7 @@ public class JDBCPlugin
                 dataSources.put( dsName, ds );
             }
         }
-        jdbc = new JDBC( dataSources, config.has( DEFAULT_DATASOURCE ) ? config.string( DEFAULT_DATASOURCE ) : null );
+        jdbc = new JDBC( dataSources, config.string( DEFAULT_DATASOURCE ) );
     }
 
     @Override
@@ -114,9 +119,46 @@ public class JDBCPlugin
         }
     }
 
+    private void setupLog4Jdbc( Application application, Config allDsConfig )
+    {
+        // Load log4jdbc properties from application configuration
+        Map<String, String> globalProperties = new HashMap<>();
+        if( application.config().has( "jdbc.log4jdbc" ) )
+        {
+            application.config().stringMap( "jdbc.log4jdbc" ).forEach(
+                (key, value) ->
+                {
+                    globalProperties.put( "log4jdbc." + key, value );
+                }
+            );
+        }
+        // Load used drivers from datasources configuration
+        Set<String> log4jdbcEnabledDrivers = new LinkedHashSet<>();
+        for( String dsName : allDsConfig.subKeys() )
+        {
+            Config dsConfig = allDsConfig.object( dsName );
+            if( dsConfig.has( "log4jdbc" ) && dsConfig.bool( "log4jdbc" ) )
+            {
+                log4jdbcEnabledDrivers.add( dsConfig.string( "driver" ) );
+            }
+        }
+        // Apply if appropriate
+        if( !log4jdbcEnabledDrivers.isEmpty() )
+        {
+            System.setProperty( "log4jdbc.drivers", join( log4jdbcEnabledDrivers, "," ) );
+            globalProperties.forEach(
+                (key, value) ->
+                {
+                    System.setProperty( key, value );
+                }
+            );
+        }
+    }
+
     private HikariDataSource createDataSource( String dsName, Config dsConfig, Application app, boolean metrics )
     {
         // JDBC configuration
+        boolean log4jdbc = dsConfig.has( "log4jdbc" ) && dsConfig.bool( "log4jdbc" );
         String driver = dsConfig.string( "driver" );
         String url = dsConfig.string( "url" );
         String user = null;
@@ -166,6 +208,10 @@ public class JDBCPlugin
         {
             url = "jdbc:" + url;
         }
+        if( log4jdbc )
+        {
+            url = url.substring( 0, 5 ) + "log4jdbc:" + url.substring( 5 );
+        }
         if( dsConfig.has( "user" ) )
         {
             user = dsConfig.string( "user" );
@@ -178,12 +224,20 @@ public class JDBCPlugin
         // Setup DataSource
         try
         {
+            // Load Database Driver Explicitely
             DriverManager.registerDriver(
                 (Driver) Class.forName( driver, true, app.classLoader() ).newInstance()
             );
+            if( log4jdbc )
+            {
+                // Load log4jdbc Driver Explicitely
+                DriverManager.registerDriver(
+                    (Driver) Class.forName( LOG4JDBC_DRIVER, true, app.classLoader() ).newInstance()
+                );
+            }
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setPoolName( dsName );
-            hikariConfig.setDriverClassName( driver );
+            hikariConfig.setDriverClassName( log4jdbc ? LOG4JDBC_DRIVER : driver );
             hikariConfig.setJdbcUrl( url );
             hikariConfig.setUsername( user );
             hikariConfig.setPassword( password );

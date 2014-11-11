@@ -18,30 +18,52 @@ package org.qiweb.modules.jdbc;
 import java.sql.SQLException;
 
 /**
- * RuntimeSQLException.
+ * Unchecked SQLException.
  */
-public class RuntimeSQLException
+public class UncheckedSQLException
     extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
-    private SQLException sqlEx;
+    private final SQLException sqlEx;
 
-    public RuntimeSQLException( SQLException ex )
+    /**
+     * Wrap a SQLException in an UncheckedSQLException.
+     *
+     * @param ex The SQLException
+     */
+    public UncheckedSQLException( SQLException ex )
     {
         super( ex.getMessage(), ex );
         sqlEx = ex;
     }
 
+    /**
+     * Retrieves the original SQLException.
+     *
+     * @return The original SQLException
+     */
     public SQLException getSQLException()
     {
         return sqlEx;
     }
 
+    /**
+     * Retrieves the exception chained to this SQLException object by setNextException(SQLException ex).
+     *
+     * @return The next SQLException object in the chain; null if there are none
+     *
+     * @see SQLException#setNextException(java.sql.SQLException)
+     */
     public SQLException getNextException()
     {
         return sqlEx.getNextException();
     }
 
+    /**
+     * Retrieves the SQLState for this SQLException object.
+     *
+     * @return The SQLState value
+     */
     public String getSQLState()
     {
         return sqlEx.getSQLState();

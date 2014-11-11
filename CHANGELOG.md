@@ -30,6 +30,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - One can now start an application in development or test mode without an `app.secret` defined (even without an `application.conf` file) ; in such a case, a random secret is generated, see #205
 - Plugins can now declare dependencies to others, resolved at application activation, see #42 and #209
 - The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
+- The JDBC module now provide easy integration with [log4jdbc](https://code.google.com/p/log4jdbc-log4j2/), see #145
 - Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
 - Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189
 - Allow to add `extraClassPath` entries in Maven plugin configuration for `devshell` and `start` goals, see #188
