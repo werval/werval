@@ -92,16 +92,9 @@ That points to this controller method:
 ----
 public Outcome index()
 {
-    return outcomes().ok( "Hello QiWeb" ).build();
+    return outcomes().ok( "It works!" ).build();
 }
 ----
-
-[IMPORTANT]
-.Every QiWeb application needs a secret
-====
-This secret is a key used for cypher and signature operations, it must be unique per application.
-Its place is in the application configuration, see `./src/main/resources/application.conf`.
-====
 
 Here is the project tree:
 

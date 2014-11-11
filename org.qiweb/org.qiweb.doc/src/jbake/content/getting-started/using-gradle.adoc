@@ -90,7 +90,7 @@ That points to this controller method:
 ----
 public Outcome index()
 {
-    return outcomes().ok( "Hello QiWeb" ).build();
+    return outcomes().ok( "It Works!" ).build();
 }
 ----
 
