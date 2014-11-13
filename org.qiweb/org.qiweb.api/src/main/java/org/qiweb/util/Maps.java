@@ -363,6 +363,20 @@ public final class Maps
         }
     }
 
+    /**
+     * Returns an unmodifiable view of the specified MultiValueMap.
+     *
+     * @param <K>   Parameterized type of the MultiValueMap keys
+     * @param <V>   Parameterized type of the MultiValueMap values
+     * @param mvmap The MultiValueMap for which an unmodifiable view is to be returned.
+     *
+     * @return An unmodifiable view of the specified MultiValueMap.
+     */
+    public static <K, V> MultiValueMap<K, V> unmodifiableMultiValueMap( MultiValueMap<? extends K, ? extends V> mvmap )
+    {
+        return new UnmodifiableMultiValueMap<>( mvmap );
+    }
+
     private Maps()
     {
     }

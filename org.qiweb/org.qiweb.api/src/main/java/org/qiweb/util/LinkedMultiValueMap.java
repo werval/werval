@@ -33,6 +33,8 @@ import java.util.Set;
 public class LinkedMultiValueMap<K, V>
     implements MultiValueMap<K, V>, Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     private final Map<K, List<V>> internalMap;
 
     public LinkedMultiValueMap()

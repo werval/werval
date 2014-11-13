@@ -15,8 +15,6 @@
  */
 package org.qiweb.util;
 
-import org.qiweb.util.LinkedMultiValueMap;
-import org.qiweb.util.MultiValueMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -25,6 +23,7 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.qiweb.util.Maps.fromMap;
 import static org.qiweb.util.Maps.newConcurrentHashMap;
 import static org.qiweb.util.Maps.newConcurrentSkipListMap;
@@ -34,6 +33,7 @@ import static org.qiweb.util.Maps.newLinkedHashMap;
 import static org.qiweb.util.Maps.newLinkedMultiValueMap;
 import static org.qiweb.util.Maps.newTreeMap;
 import static org.qiweb.util.Maps.newWeakHashMap;
+import static org.qiweb.util.Maps.unmodifiableMultiValueMap;
 
 /**
  * Maps Utilities Test.
@@ -107,5 +107,22 @@ public class MapsTest
         MultiValueMap<String, String> lmvMap = newLinkedMultiValueMap( String.class, String.class )
             .add( "foo", "bar" )
             .toMap();
+    }
+
+    @Test
+    public void unmodifiableMVMap()
+    {
+        MultiValueMap<String, String> mvmap = newLinkedMultiValueMap( String.class, String.class )
+            .add( "foo", "bar", "bazar" )
+            .toMap();
+        MultiValueMap<String, String> unmodifiable = unmodifiableMultiValueMap( mvmap );
+        try
+        {
+            unmodifiable.keySet().remove( unmodifiable.keySet().iterator().next() );
+            fail( "UnmodifiableMultiValueMap is modifiable!" );
+        }
+        catch( UnsupportedOperationException expected )
+        {
+        }
     }
 }
