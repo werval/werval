@@ -1,0 +1,21 @@
+
+description = "XML Module"
+
+dependencies {
+
+    compile "org.qiweb:org.qiweb.api:$version"
+
+    compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
+    // compile 'com.fasterxml:aalto-xml:0.9.9'
+
+    compile 'xerces:xercesImpl:2.11.0'
+
+    compile 'net.sf.saxon:Saxon-HE:9.6.0-1'
+    // compile ( 'xalan:xalan:2.7.2' ) { exclude group: 'xerces', module: '*' }
+
+    compile 'xml-resolver:xml-resolver:1.2'
+
+    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile libs.rest_assured
+
+}
