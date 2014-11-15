@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<x:books xmlns:x="urn:books"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="urn:books books.xsd">
+<books xmlns="urn:books"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="urn:books books.xsd">
     <book id="bk001">
         <author>Writer</author>
         <title>The First Book</title>
@@ -16,6 +16,7 @@
         <title>The Poet's First Poem</title>
         <genre>Poem</genre>
         <price>24.95</price>
+        <pub_date>2000-10-02</pub_date>
         <review>Least poetic poems.</review>
     </book>
-</x:books>
+</books>

@@ -37,6 +37,7 @@ import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ENTITY_COUNT;
 import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ENTITY_DEPTH;
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_ALL;
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_NONE;
+import static org.qiweb.modules.xml.internal.Internal.LOG;
 
 /**
  * XMLInputFactory (StAX) implementation for XMLPlugin.
@@ -74,7 +75,7 @@ public final class XMLInputFactoryImpl
         }
         catch( IllegalArgumentException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
         delegate.setXMLResolver( Internal.RESOLVER.get() );
         delegate.setXMLReporter( Errors.INSTANCE );

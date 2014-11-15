@@ -12,6 +12,6 @@
     </root>
 
     <logger name="org.qiweb"              level="info"/>
-    <logger name="org.qiweb.modules.xml"  level="trace"/>
+    <logger name="org.qiweb.modules.xml"  level="debug"/>
 
 </configuration>

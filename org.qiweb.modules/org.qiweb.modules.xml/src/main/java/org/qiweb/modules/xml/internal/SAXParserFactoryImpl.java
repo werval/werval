@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import org.qiweb.modules.xml.SAX;
+import org.qiweb.modules.xml.UncheckedXMLException;
 import org.xml.sax.HandlerBase;
 import org.xml.sax.InputSource;
 import org.xml.sax.Parser;
@@ -35,6 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_ALL;
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_NONE;
+import static org.qiweb.modules.xml.internal.Internal.LOG;
 
 /**
  * SAXParserFactory implementation for XMLPlugin.
@@ -60,8 +62,9 @@ public final class SAXParserFactoryImpl
         delegate.setFeature( SAX.Features.EXTERNAL_GENERAL_ENTITIES, Internal.EXTERNAL_ENTITIES.get() );
         delegate.setFeature( SAX.Features.EXTERNAL_PARAMETER_ENTITIES, Internal.EXTERNAL_ENTITIES.get() );
         // Xerces
-        // delegate.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
-        // delegate.setFeature( "http://apache.org/xml/features/disallow-doctype-decl", true );
+        delegate.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
+        delegate.setFeature( "http://apache.org/xml/features/standard-uri-conformant", true );
+        setValidating( false );
         // No support but should be disabled anyway, belt'n braces
         delegate.setXIncludeAware( false );
     }
@@ -73,9 +76,28 @@ public final class SAXParserFactoryImpl
     }
 
     @Override
-    public void setValidating( boolean validating )
+    public void setValidating( boolean dtdValidation )
     {
-        delegate.setValidating( validating );
+        try
+        {
+            // Xerces
+            delegate.setFeature( "http://apache.org/xml/features/validation/balance-syntax-trees", dtdValidation );
+            delegate.setFeature( "http://apache.org/xml/features/nonvalidating/load-dtd-grammar", dtdValidation );
+            delegate.setFeature(
+                "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                dtdValidation && Internal.EXTERNAL_ENTITIES.get()
+            );
+            delegate.setFeature( "http://apache.org/xml/features/disallow-doctype-decl", !dtdValidation );
+        }
+        catch( ParserConfigurationException | SAXNotRecognizedException | SAXNotSupportedException ex )
+        {
+            throw new UncheckedXMLException( ex );
+        }
+        delegate.setValidating( dtdValidation );
+        if( dtdValidation )
+        {
+            LOG.warn( "SAXParserFactory.setValidating( true ) Unsafe DTD support enabled" );
+        }
     }
 
     @Override
@@ -153,7 +175,7 @@ public final class SAXParserFactoryImpl
             }
             catch( SAXException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), this.parser );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), this.parser );
             }
             try
             {
@@ -164,7 +186,7 @@ public final class SAXParserFactoryImpl
             }
             catch( SAXException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), this.parser );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), this.parser );
             }
         }
 
@@ -262,7 +284,7 @@ public final class SAXParserFactoryImpl
             }
             catch( SAXNotRecognizedException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), reader );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), reader );
             }
             reader.setFeature( SAX.Features.EXTERNAL_GENERAL_ENTITIES, Internal.EXTERNAL_ENTITIES.get() );
             reader.setFeature( SAX.Features.EXTERNAL_PARAMETER_ENTITIES, Internal.EXTERNAL_ENTITIES.get() );

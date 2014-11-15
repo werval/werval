@@ -15,14 +15,15 @@
  */
 package org.qiweb.modules.xml;
 
+import java.io.UncheckedIOException;
 import org.junit.ClassRule;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.qiweb.test.QiWebRule;
 
 /**
  * No-Catalog Unsafe Resolver Test.
  */
-@Ignore
+//@Ignore( "Not implemented yet" )
 public class NoCatalogUnsafeResolverTest
     extends TestBase
 {
@@ -33,5 +34,77 @@ public class NoCatalogUnsafeResolverTest
     protected XML xml()
     {
         return QIWEB.application().plugin( XML.class );
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void dtdPublic_DOM()
+    {
+        super.dtdPublic_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void dtdPublicURL_DOM()
+    {
+        super.dtdPublicURL_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void dtdSystem_DOM()
+    {
+        super.dtdSystem_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void dtdSystemURL_DOM()
+    {
+        super.dtdSystemURL_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void externalEntityPublic_DOM()
+    {
+        super.externalEntityPublic_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void externalEntityPublicURL_DOM()
+    {
+        super.externalEntityPublicURL_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void externalEntitySystem_DOM()
+    {
+        super.externalEntitySystem_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void externalEntitySystemURL_DOM()
+    {
+        super.externalEntitySystemURL_DOM();
+    }
+
+    // DTD resolution failed
+    @Test( expected = UncheckedIOException.class )
+    @Override
+    public void externalEntityRegexp3_DOM()
+    {
+        super.externalEntityRegexp3_DOM();
     }
 }

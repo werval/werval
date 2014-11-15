@@ -32,22 +32,23 @@ import org.xml.sax.SAXNotSupportedException;
 
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_ALL;
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_NONE;
+import static org.qiweb.modules.xml.internal.Internal.LOG;
 
 /**
- * SchemaFactory implementation for XMLPlugin.
+ * RelaxNG SchemaFactory implementation for XMLPlugin.
  * <p>
  * Factory that creates {@link Schema} objects.
  * Entry-point to the validation API.
  *
  * @see SchemaFactory
  */
-public final class SchemaFactoryImpl
+public class SchemaFactoryRelaxNG
     extends SchemaFactory
 {
-    // Xerces
-    private final SchemaFactory delegate = new org.apache.xerces.jaxp.validation.XMLSchemaFactory();
+    // Jing for RelaxNG
+    private final SchemaFactory delegate = new com.thaiopensource.relaxng.jaxp.XMLSyntaxSchemaFactory();
 
-    public SchemaFactoryImpl()
+    public SchemaFactoryRelaxNG()
         throws SAXException
     {
         super();
@@ -61,7 +62,7 @@ public final class SchemaFactoryImpl
         }
         catch( SAXException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
         try
         {
@@ -72,7 +73,7 @@ public final class SchemaFactoryImpl
         }
         catch( SAXException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
         delegate.setResourceResolver( Internal.RESOLVER.get() );
         delegate.setErrorHandler( Errors.INSTANCE );
@@ -140,43 +141,43 @@ public final class SchemaFactoryImpl
     public Schema newSchema( Source schema )
         throws SAXException
     {
-        return new SchemaImpl( delegate.newSchema( schema ) );
+        return new XSDSchemaImpl( delegate.newSchema( schema ) );
     }
 
     @Override
     public Schema newSchema( File schema )
         throws SAXException
     {
-        return new SchemaImpl( delegate.newSchema( schema ) );
+        return new XSDSchemaImpl( delegate.newSchema( schema ) );
     }
 
     @Override
     public Schema newSchema( URL schema )
         throws SAXException
     {
-        return new SchemaImpl( delegate.newSchema( schema ) );
+        return new XSDSchemaImpl( delegate.newSchema( schema ) );
     }
 
     @Override
     public Schema newSchema( Source[] schemas )
         throws SAXException
     {
-        return new SchemaImpl( delegate.newSchema( schemas ) );
+        return new XSDSchemaImpl( delegate.newSchema( schemas ) );
     }
 
     @Override
     public Schema newSchema()
         throws SAXException
     {
-        return new SchemaImpl( delegate.newSchema() );
+        return new XSDSchemaImpl( delegate.newSchema() );
     }
 
-    private static final class SchemaImpl
+    private static final class XSDSchemaImpl
         extends Schema
     {
         private final Schema schema;
 
-        private SchemaImpl( Schema schema )
+        private XSDSchemaImpl( Schema schema )
         {
             this.schema = schema;
         }
@@ -202,7 +203,7 @@ public final class SchemaFactoryImpl
             }
             catch( SAXException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), validator );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), validator );
             }
             try
             {
@@ -213,7 +214,7 @@ public final class SchemaFactoryImpl
             }
             catch( SAXException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), validator );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), validator );
             }
             validator.setResourceResolver( Internal.RESOLVER.get() );
             validator.setErrorHandler( Errors.INSTANCE );
@@ -241,7 +242,7 @@ public final class SchemaFactoryImpl
             }
             catch( SAXException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), handler );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), handler );
             }
             try
             {
@@ -252,11 +253,12 @@ public final class SchemaFactoryImpl
             }
             catch( SAXException ex )
             {
-                Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), handler );
+                LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), handler );
             }
             handler.setResourceResolver( Internal.RESOLVER.get() );
             handler.setErrorHandler( Errors.INSTANCE );
             return handler;
         }
     }
+
 }

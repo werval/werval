@@ -18,7 +18,6 @@ package org.qiweb.modules.xml;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
-import org.xml.sax.SAXParseException;
 
 /**
  * Empty Resolver Test.
@@ -35,12 +34,43 @@ public class EmptyResolverTest
         return QIWEB.application().plugin( XML.class );
     }
 
-    // Schema cannot be resolved
-    @Test( expected = SAXParseException.class )
+    // DTD resolution blocked
+    @Test( expected = UncheckedXMLException.class )
     @Override
-    public void booksWithValidation()
-        throws Exception
+    public void dtdPublic_DOM()
     {
-        super.booksWithValidation();
+        super.dtdPublic_DOM();
+    }
+
+    // DTD resolution blocked
+    @Test( expected = UncheckedXMLException.class )
+    @Override
+    public void dtdPublicURL_DOM()
+    {
+        super.dtdPublicURL_DOM();
+    }
+
+    // DTD resolution blocked
+    @Test( expected = UncheckedXMLException.class )
+    @Override
+    public void dtdSystem_DOM()
+    {
+        super.dtdSystem_DOM();
+    }
+
+    // DTD resolution blocked
+    @Test( expected = UncheckedXMLException.class )
+    @Override
+    public void dtdSystemURL_DOM()
+    {
+        super.dtdSystemURL_DOM();
+    }
+
+    // DTD resolution blocked
+    @Test( expected = UncheckedXMLException.class )
+    @Override
+    public void externalEntityRegexp3_DOM()
+    {
+        super.externalEntityRegexp3_DOM();
     }
 }

@@ -29,7 +29,7 @@ public final class Internal
     public static final AtomicBoolean EXTERNAL_ENTITIES = new AtomicBoolean( Boolean.FALSE );
     public static final AtomicReference<Resolver> RESOLVER = new AtomicReference<>( EmptyResolver.INSTANCE );
 
-    /* package */ static final Logger LOG = LoggerFactory.getLogger( XML.class );
+    /* package */ static final Logger LOG = LoggerFactory.getLogger( XML.class.getPackage().getName() );
     /* package */ static final String ACCESS_EXTERNAL_NONE = "";
     /* package */ static final String ACCESS_EXTERNAL_LOCAL_ONLY = "file, jar:file";
     /* package */ static final String ACCESS_EXTERNAL_ALL = "all";

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+    <group prefer="public">
+
+        <public publicId="-//DTD1" uri="defensive/cataloged/XML-Parser-Referenced_DTD.xml"/>
+        <system systemId="./XML-Parser-Referenced.xml" uri="defensive/cataloged/XML-Parser-Referenced_DTD.xml"/>
+        <system systemId="http://www.example.com/dtd" uri="defensive/cataloged/XML-Parser-Referenced_DTD.xml"/>
+
+        <public publicId="-//E1" uri="defensive/cataloged/XML-Parser-Referenced_ENTITY.xml"/>
+        <system systemId="./XML-Parser-Referenced_ENTITY.xml" uri="defensive/cataloged/XML-Parser-Referenced_ENTITY.xml"/>
+        <system systemId="http://www.example.com/entity" uri="defensive/cataloged/XML-Parser-Referenced_ENTITY.xml"/>
+
+        <system systemId="./XML-Parser-External_Regexp_3.dtd" uri="defensive/XML-Parser-External_Regexp_3.dtd"/>
+
+    </group>
+
+</catalog>

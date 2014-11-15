@@ -27,6 +27,7 @@ import javax.xml.transform.URIResolver;
 
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_ALL;
 import static org.qiweb.modules.xml.internal.Internal.ACCESS_EXTERNAL_NONE;
+import static org.qiweb.modules.xml.internal.Internal.LOG;
 
 /**
  * TransformerFactory implementation for XMLPlugin.
@@ -55,7 +56,7 @@ public final class TransformerFactoryImpl
         }
         catch( IllegalArgumentException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
         try
         {
@@ -66,7 +67,7 @@ public final class TransformerFactoryImpl
         }
         catch( IllegalArgumentException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
         delegate.setURIResolver( Internal.RESOLVER.get() );
         delegate.setErrorListener( Errors.INSTANCE );

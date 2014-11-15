@@ -17,13 +17,16 @@ package org.qiweb.modules.xml.internal;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Field;
 import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
+import org.apache.xerces.util.XMLCatalogResolver;
 import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLInputSource;
+import org.apache.xml.resolver.CatalogManager;
 import org.qiweb.modules.xml.UncheckedXMLException;
 import org.w3c.dom.ls.LSInput;
 import org.xml.sax.InputSource;
@@ -37,7 +40,50 @@ import static org.qiweb.modules.xml.internal.Internal.LOG;
 public final class CatalogResolver
     implements Resolver
 {
-    private final org.apache.xerces.util.XMLCatalogResolver delegate = new org.apache.xerces.util.XMLCatalogResolver();
+    private static final class Debug
+        extends org.apache.xml.resolver.helpers.Debug
+    {
+        @Override
+        public void message( int level, String message )
+        {
+            if( level <= 2 )
+            {
+                LOG.trace( "CatalogResolver({}) {}", level, message );
+            }
+            else
+            {
+                LOG.debug( "CatalogResolver({}) {}", level, message );
+            }
+        }
+
+        @Override
+        public void message( int level, String message, String spec )
+        {
+            if( level <= 2 )
+            {
+                LOG.trace( "CatalogResolver({}) {}: {}", level, message, spec );
+            }
+            else
+            {
+                LOG.debug( "CatalogResolver({}) {}: {}", level, message, spec );
+            }
+        }
+
+        @Override
+        public void message( int level, String message, String spec1, String spec2 )
+        {
+            if( level <= 2 )
+            {
+                LOG.trace( "CatalogResolver({}) {}: {}\n    {}", level, message, spec1, spec2 );
+            }
+            else
+            {
+                LOG.debug( "CatalogResolver({}) {}: {}\n    {}", level, message, spec1, spec2 );
+            }
+        }
+    }
+
+    private final XMLCatalogResolver delegate = new org.apache.xerces.util.XMLCatalogResolver();
 
     private final boolean throwIfNotFound;
 
@@ -46,26 +92,57 @@ public final class CatalogResolver
         this.throwIfNotFound = throwIfNotFound;
         delegate.setCatalogList( catalogs.toArray( new String[ catalogs.size() ] ) );
         delegate.setPreferPublic( preferPublic );
+        if( LOG.isDebugEnabled() )
+        {
+            try
+            {
+                Field catalogManagerField = XMLCatalogResolver.class.getDeclaredField( "fResolverCatalogManager" );
+                catalogManagerField.setAccessible( true );
+                CatalogManager catalogManager = (CatalogManager) catalogManagerField.get( delegate );
+                catalogManager.setVerbosity( Integer.MAX_VALUE );
+                catalogManager.debug = new Debug();
+                catalogManagerField.setAccessible( false );
+            }
+            catch( NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex )
+            {
+                LOG.warn(
+                    "Unable to setup XML-Catalog resolution logging, something is broken, please report the issue!",
+                    ex
+                );
+            }
+        }
     }
 
     // StAX or SAX
     @Override
     public InputSource resolveEntity( String name, String publicId, String baseURI, String systemId )
     {
-        LOG.debug(
-            "Entity resolution attempt (StAX or SAX): name={} publicId={} baseURI={} systemId={}",
-            name, publicId, baseURI, systemId
-        );
         try
         {
             InputSource source = delegate.resolveEntity( name, publicId, baseURI, systemId );
             if( throwIfNotFound && source == null )
             {
-                throw new UnsupportedOperationException(
+                throw new UncheckedXMLException(
                     String.format(
-                        "Entity resolution attempt (StAX or SAX): name=%s publicId=%s baseURI=%s systemId=%s",
+                        "Entity catalog resolution failure, remote blocked (StAX or SAX): "
+                        + "name=%s publicId=%s baseURI=%s systemId=%s",
                         name, publicId, baseURI, systemId
                     )
+                );
+            }
+            if( source == null )
+            {
+                LOG.warn(
+                    "Entity catalog resolution failure, remote allowed (StAX or SAX): "
+                    + "name={} publicId={} baseURI={} systemId={}",
+                    name, publicId, baseURI, systemId
+                );
+            }
+            else
+            {
+                LOG.debug(
+                    "Entity catalog resolution success (StAX or SAX): name={} publicId={} baseURI={} systemId={}",
+                    name, publicId, baseURI, systemId
                 );
             }
             return source;
@@ -92,11 +169,25 @@ public final class CatalogResolver
         InputSource source = delegate.resolveEntity( publicId, systemId );
         if( throwIfNotFound && source == null )
         {
-            throw new UnsupportedOperationException(
+            throw new UncheckedXMLException(
                 String.format(
-                    "Entity resolution attempt (SAX): publicId=%s systemId=%s",
+                    "Entity catalog resolution failure, remote blocked (SAX): publicId=%s systemId=%s",
                     publicId, systemId
                 )
+            );
+        }
+        if( source == null )
+        {
+            LOG.warn(
+                "Entity catalog resolution failure, remote allowed (SAX): publicId={} systemId={}",
+                publicId, systemId
+            );
+        }
+        else
+        {
+            LOG.debug(
+                "Entity catalog resolution success (SAX): publicId={} systemId={}",
+                publicId, systemId
             );
         }
         return source;
@@ -107,26 +198,47 @@ public final class CatalogResolver
     public InputSource getExternalSubset( String name, String baseURI )
         throws SAXException, IOException
     {
-        // No check here as a null return won't trigger another lookup
-        return delegate.getExternalSubset( name, baseURI );
+        // No remote check here as a null return won't trigger another lookup
+        InputSource source = delegate.getExternalSubset( name, baseURI );
+        if( source == null )
+        {
+            LOG.trace( "External subset catalog resolution failure (SAX): name={} baseURI={}", name, baseURI );
+        }
+        else
+        {
+            LOG.trace( "External subset catalog resolution success (SAX): name={} baseURI={}", name, baseURI );
+        }
+        return source;
     }
 
     // DOM
     @Override
     public LSInput resolveResource( String type, String namespaceURI, String publicId, String systemId, String baseURI )
     {
-        LOG.debug(
-            "Resource resolution attempt (DOM): type={} namespace={} publicId={} systemId={} baseURI={}",
-            type, namespaceURI, publicId, systemId, baseURI
-        );
         LSInput source = delegate.resolveResource( type, namespaceURI, publicId, systemId, baseURI );
         if( throwIfNotFound && source == null )
         {
-            throw new UnsupportedOperationException(
+            throw new UncheckedXMLException(
                 String.format(
-                    "Resource resolution attempt (DOM): type=%s namespace=%s publicId=%s systemId=%s baseURI=%s",
+                    "Resource catalog resolution failure, remote blocked (DOM): "
+                    + "type=%s namespace=%s publicId=%s systemId=%s baseURI=%s",
                     type, namespaceURI, publicId, systemId, baseURI
                 )
+            );
+        }
+        if( source == null )
+        {
+            LOG.warn(
+                "Resource catalog resolution failure, remote allowed (DOM): "
+                + "type={} namespace={} publicId={} systemId={} baseURI={}",
+                type, namespaceURI, publicId, systemId, baseURI
+            );
+        }
+        else
+        {
+            LOG.warn(
+                "Resource catalog resolution success (DOM): type={} namespace={} publicId={} systemId={} baseURI={}",
+                type, namespaceURI, publicId, systemId, baseURI
             );
         }
         return source;
@@ -137,22 +249,24 @@ public final class CatalogResolver
     public Source resolve( String href, String base )
         throws TransformerException
     {
-        LOG.debug(
-            "URI resolution attempt (XSLT): href={} base={}",
-            href, base
-        );
         try
         {
             InputSource source = delegate.resolveEntity( href, base );
             if( throwIfNotFound && source == null )
             {
-                throw new UnsupportedOperationException(
+                throw new UncheckedXMLException(
                     String.format(
-                        "URI resolution attempt (XSLT): href=%s base=%s",
+                        "URI catalog resolution failure, remote blocked (XSLT): href=%s base=%s",
                         href, base
                     )
                 );
             }
+            if( source == null )
+            {
+                LOG.warn( "URI catalog resolution failure, remote allowed (XSLT): href={} base={}", href, base );
+                return null;
+            }
+            LOG.warn( "URI catalog resolution success (XSLT): href={} base={}", href, base );
             StreamSource result = new StreamSource( source.getSystemId() );
             result.setPublicId( source.getPublicId() );
             result.setReader( source.getCharacterStream() );
@@ -170,19 +284,26 @@ public final class CatalogResolver
     public XMLInputSource resolveEntity( XMLResourceIdentifier resourceIdentifier )
         throws XNIException, IOException
     {
-        LOG.debug(
-            "Entity resolution attempt (Xerces XNI): resourceIdentifier={}",
-            resourceIdentifier
-        );
         XMLInputSource source = delegate.resolveEntity( resourceIdentifier );
         if( throwIfNotFound && source == null )
         {
-            throw new UnsupportedOperationException(
+            throw new UncheckedXMLException(
                 String.format(
-                    "Entity resolution attempt (Xerces XNI): resourceIdentifier=%s",
+                    "Entity catalog resolution failure, remote blocked (Xerces XNI): resourceIdentifier=%s",
                     resourceIdentifier
                 )
             );
+        }
+        if( source == null )
+        {
+            LOG.warn(
+                "Entity catalog resolution failure, remote allowed (Xerces XNI): resourceIdentifier={}",
+                resourceIdentifier
+            );
+        }
+        else
+        {
+            LOG.debug( "Entity catalog resolution success (Xerces XNI): resourceIdentifier={}", resourceIdentifier );
         }
         return source;
     }

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Test external entity reference (SYSTEM). -->     
+<!DOCTYPE root [
+<!ELEMENT root (#PCDATA)>
+<!ENTITY e1 SYSTEM "./XML-Parser-Referenced_ENTITY.xml">
+]>
+<root>&e1;</root>

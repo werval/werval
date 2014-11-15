@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is a looser variant of Regexp_1.
+
+XML-Parser-Validate-Regexp_1.xml can be validated using this schema.
+
+The issue exposed by this schema has been reported as a Xerces bug in
+this report:
+
+<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.92.4061&rep=rep1&type=pdf>
+
+The 5000 maxOccurs limit in OpenJDK still allows the creation of
+schemas which require large amounts of time and heap space to
+process.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence maxOccurs="5000">
+        <xs:choice>
+          <xs:choice>
+            <xs:element ref="a"/>
+            <xs:element ref="b"/> 
+            <xs:element ref="c"/>
+         </xs:choice>
+	</xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="a">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="b">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="c">
+    <xs:complexType/>
+  </xs:element>
+</xs:schema>

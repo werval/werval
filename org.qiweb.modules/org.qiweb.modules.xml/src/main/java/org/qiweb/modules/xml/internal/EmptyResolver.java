@@ -28,6 +28,8 @@ import org.w3c.dom.ls.LSInput;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import static org.qiweb.modules.xml.internal.Internal.LOG;
+
 /**
  * Empty XML Resolver.
  * <p>
@@ -46,6 +48,10 @@ public final class EmptyResolver
     @Override
     public InputSource resolveEntity( String name, String publicId, String baseURI, String systemId )
     {
+        LOG.debug(
+            "Entity resolved to empty (StAX or SAX): name={} publicId={} baseURI={} systemId={}",
+            name, publicId, baseURI, systemId
+        );
         return new InputSource( new ByteArrayInputStream( new byte[ 0 ] ) );
     }
 
@@ -54,6 +60,7 @@ public final class EmptyResolver
     public InputSource resolveEntity( String publicId, String systemId )
         throws SAXException, IOException
     {
+        LOG.debug( "Entity resolved to empty (SAX): publicId={} systemId={}", publicId, systemId );
         return new InputSource( new ByteArrayInputStream( new byte[ 0 ] ) );
     }
 
@@ -62,6 +69,7 @@ public final class EmptyResolver
     public InputSource getExternalSubset( String name, String baseURI )
         throws SAXException, IOException
     {
+        LOG.trace( "External subset resolved to none (SAX2): name={} baseURI={}", name, baseURI );
         return null;
     }
 
@@ -69,6 +77,10 @@ public final class EmptyResolver
     @Override
     public LSInput resolveResource( String type, String namespaceURI, String publicId, String systemId, String baseURI )
     {
+        LOG.debug(
+            "Resource resolved to empty (DOM): type={} namespace={} publicId={} systemId={} baseURI={}",
+            type, namespaceURI, publicId, systemId, baseURI
+        );
         return new DOMInputImpl( publicId, systemId, baseURI, "", null );
     }
 
@@ -77,6 +89,7 @@ public final class EmptyResolver
     public Source resolve( String href, String base )
         throws TransformerException
     {
+        LOG.debug( "URI resoled to empty (XSLT): href={} base={}", href, base );
         return new StreamSource( new ByteArrayInputStream( new byte[ 0 ] ) );
     }
 
@@ -85,6 +98,7 @@ public final class EmptyResolver
     public XMLInputSource resolveEntity( XMLResourceIdentifier resourceIdentifier )
         throws XNIException, IOException
     {
+        LOG.debug( "Entity resolution blocked (Xerces XNI): resourceIdentifier={}", resourceIdentifier );
         return new XMLInputSource(
             resourceIdentifier.getPublicId(),
             resourceIdentifier.getLiteralSystemId(),

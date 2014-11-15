@@ -17,12 +17,12 @@ package org.qiweb.modules.xml;
 
 import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.qiweb.test.QiWebRule;
 
 /**
  * Catalogs-Only Resolver Test.
  */
-@Ignore
 public class CatalogsOnlyResolverTest
     extends TestBase
 {
@@ -33,5 +33,13 @@ public class CatalogsOnlyResolverTest
     protected XML xml()
     {
         return QIWEB.application().plugin( XML.class );
+    }
+
+    @Ignore( "DoS - OutOfMemoryError !!!" )
+    @Test
+    @Override
+    public void externalEntityRegexp3_DOM()
+    {
+        super.externalEntityRegexp3_DOM();
     }
 }

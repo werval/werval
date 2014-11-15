@@ -21,6 +21,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 import org.qiweb.modules.xml.SAX;
+import org.qiweb.modules.xml.UncheckedXMLException;
+
+import static org.qiweb.modules.xml.internal.Internal.LOG;
 
 /**
  * DocumentBuilderFactory implementation for XMLPlugin.
@@ -51,7 +54,7 @@ public final class DocumentBuilderFactoryImpl
         }
         catch( IllegalArgumentException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
         try
         {
@@ -62,8 +65,9 @@ public final class DocumentBuilderFactoryImpl
         }
         catch( IllegalArgumentException ex )
         {
-            Internal.LOG.trace( "WARNING - JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
+            LOG.trace( "JAXP<1.5 - {} on {}", ex.getMessage(), delegate );
         }
+        setValidating( false );
         // No support but should be disabled anyway, belt'n braces
         delegate.setXIncludeAware( false );
     }
@@ -85,9 +89,28 @@ public final class DocumentBuilderFactoryImpl
     }
 
     @Override
-    public void setValidating( boolean validating )
+    public void setValidating( boolean dtdValidation )
     {
-        delegate.setValidating( validating );
+        try
+        {
+            // Xerces
+            delegate.setFeature( "http://apache.org/xml/features/validation/balance-syntax-trees", dtdValidation );
+            delegate.setFeature( "http://apache.org/xml/features/nonvalidating/load-dtd-grammar", dtdValidation );
+            delegate.setFeature(
+                "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                dtdValidation && Internal.EXTERNAL_ENTITIES.get()
+            );
+            delegate.setFeature( "http://apache.org/xml/features/disallow-doctype-decl", !dtdValidation );
+        }
+        catch( ParserConfigurationException ex )
+        {
+            throw new UncheckedXMLException( ex );
+        }
+        delegate.setValidating( dtdValidation );
+        if( dtdValidation )
+        {
+            LOG.warn( "DocumentBuilderFactory.setValidating( true ) Unsafe DTD support enabled" );
+        }
     }
 
     @Override
@@ -201,5 +224,4 @@ public final class DocumentBuilderFactoryImpl
     {
         return delegate.isXIncludeAware();
     }
-
 }

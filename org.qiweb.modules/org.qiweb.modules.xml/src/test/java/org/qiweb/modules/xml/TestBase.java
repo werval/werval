@@ -15,16 +15,12 @@
  */
 package org.qiweb.modules.xml;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
+import java.io.InputStream;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -36,6 +32,7 @@ import static org.junit.Assert.fail;
 /**
  * Base XML Test.
  */
+// TODO Validate!
 public abstract class TestBase
 {
     protected static final String SIMPLE_DOC_XML = "<foo>bar</foo>";
@@ -53,6 +50,8 @@ public abstract class TestBase
 
     /**
      * XML Plugin API lookup.
+     * <p>
+     * Each concrete test lookup this in their dedicated Application.
      *
      * @return XML Plugin API
      */
@@ -61,7 +60,7 @@ public abstract class TestBase
     @Test
     public void parseThenAsString()
     {
-        Document doc = xml().parse( SIMPLE_DOC_XML );
+        Document doc = xml().document( SIMPLE_DOC_XML );
         assertThat( xml().asString( doc ), allOf( containsString( SIMPLE_DOC_XML ), startsWith( "<?xml version=\"1" ) ) );
         assertThat( xml().asString( (Node) doc ), equalTo( SIMPLE_DOC_XML ) );
     }
@@ -69,45 +68,301 @@ public abstract class TestBase
     @Test
     public void transformDocumentToString()
     {
-        String result = xml().transformToText( xml().parse( SIMPLE_DOC_XML ), SIMPLE_DOC_XSLT_TEXT );
+        String result = xml().toText( xml().document( SIMPLE_DOC_XML ), xml().xslt( SIMPLE_DOC_XSLT_TEXT ) );
         assertThat( result, equalTo( "bar" ) );
     }
 
     @Test
     public void booksNoValidation()
     {
-        Document books = xml().parse( getClass().getResourceAsStream( "books.xml" ) );
-        System.out.println( xml().asString( books ) );
-        Document invalidBooks = xml().parse( getClass().getResourceAsStream( "books_invalid.xml" ) );
+        xml().document( books( "books.xml" ) );
+        xml().document( books( "books_invalid.xml" ) );
     }
 
     @Test
     public void booksWithValidation()
         throws Exception
     {
-        Schema schema = SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI )
-            .newSchema( getClass().getResource( "books.xsd" ) );
-
-        DocumentBuilderFactory docBuilder = DocumentBuilderFactory.newInstance();
-        docBuilder.setValidating( true );
-        docBuilder.setNamespaceAware( true );
-        docBuilder.setSchema( schema );
-        docBuilder.newDocumentBuilder().parse( getClass().getResourceAsStream( "books.xml" ) );
+        Schema schema = xml().xsd( books( "books.xsd" ) );
+        xml().document( books( "books.xml" ), schema );
         try
         {
-            docBuilder.newDocumentBuilder().parse( getClass().getResourceAsStream( "books_invalid.xml" ) );
+            xml().document( books( "books_invalid.xml" ), schema );
             fail( "Invalid books should not validate!" );
         }
-        catch( SAXException expected )
+        catch( UncheckedXMLException expected )
         {
+        }
+    }
 
+    // ----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+    // Defensive Coding    
+    // ----------------------------------------------------------------------------------------------------------------
+    @Ignore( "DoS - ~1 second" )
+    @Test
+    public void internalEntityExponential_DOM()
+    {
+        try
+        {
+            xml().document( defensive( "XML-Parser-Internal_Entity_Exponential.xml" ), true );
+            fail( "XML-Parser-Internal_Entity_Exponential.xml should not parse!" );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), allOf( containsString( "parser" ), containsString( "limit" ) ) );
+        }
+    }
+
+    @Ignore( "DoS - ~2 seconds" )
+    @Test
+    public void internalEntityExponentialAttribute_DOM()
+    {
+        try
+        {
+            xml().document( defensive( "XML-Parser-Internal_Entity_Exponential_Attribute.xml" ), true );
+            fail( "XML-Parser-Internal_Entity_Exponential_Attribute.xml should not parse!" );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), allOf( containsString( "parser" ), containsString( "limit" ) ) );
+        }
+    }
+
+    @Ignore( "DoS - ~500 ms" )
+    @Test
+    public void internalEntityPolynomial_DOM()
+    {
+        try
+        {
+            xml().document( defensive( "XML-Parser-Internal_Entity_Polynomial.xml" ), true );
+            fail( "XML-Parser-Internal_Entity_Polynomial.xml should not parse!" );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), allOf( containsString( "parser" ), containsString( "limit" ) ) );
+        }
+    }
+
+    @Ignore( "DoS - ~3 MINUTES !!!" )
+    @Test
+    public void internalEntityPolynomialAttribute_DOM()
+    {
+        try
+        {
+            xml().document( defensive( "XML-Parser-Internal_Entity_Polynomial_Attribute.xml" ), true );
+            fail( "XML-Parser-Internal_Entity_Polynomial_Attribute.xml should not parse!" );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), allOf( containsString( "parser" ), containsString( "limit" ) ) );
+        }
+    }
+
+    @Ignore( "DoS - OutOfMemoryError !!!" )
+    @Test
+    public void internalRegexp1_DOM()
+    {
+        xml().document( defensive( "XML-Parser-Internal_Regexp_1.xml" ), true );
+    }
+
+    @Test
+    public void internalRegexp2_DOM()
+    {
+        xml().document( defensive( "XML-Parser-Internal_Regexp_2.xml" ), true );
+    }
+
+    @Test
+    public void internalRegexp3_DOM()
+    {
+        try
+        {
+            xml().document( defensive( "XML-Parser-Internal_Regexp_3.xml" ), true );
+            fail( "XML-Parser-Internal_Regexp_3.xml should not parse!" );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), containsString( "cannot occur within" ) );
         }
     }
 
     @Test
-    public void whoup()
-        throws ParserConfigurationException, SAXException
+    public void dtdPublic_DOM()
     {
-        SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+        xml().document( defensive( "XML-Parser-DTD_Public.xml" ), true );
+    }
+
+    @Test
+    public void dtdPublicURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-DTD_Public_URL.xml" ), true );
+    }
+
+    @Test
+    public void dtdSystem_DOM()
+    {
+        xml().document( defensive( "XML-Parser-DTD_System.xml" ), true );
+    }
+
+    @Test
+    public void dtdSystemURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-DTD_System_URL.xml" ), true );
+    }
+
+    @Test
+    public void notationPublic_DOM()
+    {
+        xml().document( defensive( "XML-Parser-Notation_Public.xml" ), true );
+    }
+
+    @Test
+    public void notationPublicURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-Notation_Public_URL.xml" ), true );
+    }
+
+    @Test
+    public void notationSystem_DOM()
+    {
+        xml().document( defensive( "XML-Parser-Notation_System.xml" ), true );
+    }
+
+    @Test
+    public void notationSystemURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-Notation_System_URL.xml" ), true );
+    }
+
+    @Test
+    public void xsdFile_DOM()
+    {
+        xml().document( defensive( "XML-Parser-XSD-File.xml" ) );
+    }
+
+    @Test
+    public void xsdURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-XSD-URL.xml" ) );
+    }
+
+    @Test
+    public void xsdIncludeFile_DOM()
+    {
+        xml().document( defensive( "XML-Parser-XSD-Include_File.xml" ) );
+    }
+
+    @Test
+    public void xsdIncludeURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-XSD-Include_URL.xml" ) );
+    }
+
+    @Test
+    public void xIncludeFile_DOM()
+    {
+        xml().document( defensive( "XML-Parser-XInclude-File.xml" ) );
+    }
+
+    @Test
+    public void xIncludeURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-XInclude-URL.xml" ) );
+    }
+
+    @Test
+    public void externalEntityPublic_DOM()
+    {
+        xml().document( defensive( "XML-Parser-External_Entity_Public.xml" ), true );
+    }
+
+    @Test
+    public void externalEntityPublicURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-External_Entity_Public_URL.xml" ), true );
+    }
+
+    @Test
+    public void externalEntitySystem_DOM()
+    {
+        xml().document( defensive( "XML-Parser-External_Entity_System.xml" ), true );
+    }
+
+    @Test
+    public void externalEntitySystemURL_DOM()
+    {
+        xml().document( defensive( "XML-Parser-External_Entity_System_URL.xml" ), true );
+    }
+
+    @Test
+    public void externalEntityRegexp3_DOM()
+    {
+        xml().document( defensive( "XML-Parser-External_Regexp_3.xml" ), true );
+    }
+
+    @Test
+    public void validateRegexp1DTD_DOM()
+    {
+        try
+        {
+            xml().document( defensive( "XML-Parser-Validate-Regexp_1.xml" ), true );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), containsString( "must match DOCTYPE" ) );
+        }
+    }
+
+    @Ignore( "DoS - ~1 second" )
+    @Test
+    public void validateRegexp1XSD_DOM()
+    {
+        try
+        {
+            xml().document(
+                defensive( "XML-Parser-Validate-Regexp_1.xml" ),
+                xml().xsd( defensive( "XML-Parser-Validate-Regexp_1.xsd" ) )
+            );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), containsString( "Unique Particle Attribution" ) );
+        }
+    }
+
+    @Test
+    public void validateRegexp4XSD_DOM()
+    {
+        try
+        {
+            xml().document(
+                defensive( "XML-Parser-Validate-Regexp_1.xml" ),
+                xml().xsd( defensive( "XML-Parser-Validate-Regexp_4.xsd" ) )
+            );
+        }
+        catch( UncheckedXMLException ex )
+        {
+            assertThat( ex.getMessage(), containsString( "expansion" ) );
+        }
+    }
+
+    @Ignore( "DoS - ~1 second" )
+    @Test
+    public void validateRegexp1RelaxNG_DOM()
+    {
+        xml().document(
+            defensive( "XML-Parser-Validate-Regexp_1.xml" ),
+            xml().relaxNg( defensive( "XML-Parser-Validate-Regexp_1.rng" ) )
+        );
+    }
+
+    private static InputStream books( String filename )
+    {
+        return TestBase.class.getClassLoader().getResourceAsStream( "books/" + filename );
+    }
+
+    private static InputStream defensive( String filename )
+    {
+        return TestBase.class.getClassLoader().getResourceAsStream( "defensive/" + filename );
     }
 }

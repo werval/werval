@@ -15,14 +15,31 @@
  */
 package org.qiweb.modules.xml;
 
+import org.xml.sax.SAXParseException;
+
 /**
  * Unchecked XML Exception.
  */
 public class UncheckedXMLException
     extends RuntimeException
 {
+    public UncheckedXMLException( String message )
+    {
+        super( message );
+    }
+
     public UncheckedXMLException( Exception ex )
     {
-        super( ex.getMessage(), ex );
+        super( message( ex ), ex );
+    }
+
+    private static String message( Exception ex )
+    {
+        if( ex instanceof SAXParseException )
+        {
+            // Preserve error location if any
+            return ex.toString();
+        }
+        return ex.getMessage();
     }
 }

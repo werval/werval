@@ -15,12 +15,16 @@
  */
 package org.qiweb.modules.xml;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLInputFactory;
@@ -39,18 +43,14 @@ import org.qiweb.modules.xml.internal.Internal;
 import org.qiweb.modules.xml.internal.ThrowingResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import static java.util.Collections.EMPTY_LIST;
 import static org.qiweb.util.Strings.NEWLINE;
 
 /**
  * XML Plugin.
- * <p>
- * See https://docs.fedoraproject.org/en-US/Fedora_Security_Team/html/Defensive_Coding/sect-Defensive_Coding-Tasks-Serialization-XML.html
  */
-// https://xerces.apache.org/xerces2-j/features.html
-// TODO http://apache.org/xml/features/nonvalidating/load-external-dtd
-// TODO http://apache.org/xml/features/disallow-doctype-decl
 // TODO http://apache.org/xml/features/xinclude
 public final class XMLPlugin
     implements Plugin<XML>
@@ -65,47 +65,58 @@ public final class XMLPlugin
             System.setProperty( "jaxp.debug", "yes" );
         }
 
-        // Woodstox for XML Streaming (StAX, aka pull parsing, and SAX[2], aka push parsing)
-        System.setProperty(
-            "javax.xml.stream.XMLEventFactory",
-            org.qiweb.modules.xml.internal.XMLEventFactoryImpl.class.getName()
-        );
-        System.setProperty(
-            "javax.xml.stream.XMLInputFactory",
-            org.qiweb.modules.xml.internal.XMLInputFactoryImpl.class.getName()
-        );
-        System.setProperty(
-            "javax.xml.stream.XMLOutputFactory",
-            org.qiweb.modules.xml.internal.XMLOutputFactoryImpl.class.getName()
-        );
-        System.setProperty(
-            "javax.xml.parsers.SAXParserFactory",
-            org.qiweb.modules.xml.internal.SAXParserFactoryImpl.class.getName()
-        );
+        if( false )
+        {
+            // Woodstox for stream pull parsing (StAX)
+            System.setProperty(
+                "javax.xml.stream.XMLEventFactory",
+                org.qiweb.modules.xml.internal.XMLEventFactoryImpl.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.stream.XMLInputFactory",
+                org.qiweb.modules.xml.internal.XMLInputFactoryImpl.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.stream.XMLOutputFactory",
+                org.qiweb.modules.xml.internal.XMLOutputFactoryImpl.class.getName()
+            );
 
-        // Xerces for DOM and Schema validation
-        System.setProperty(
-            "javax.xml.datatype.DatatypeFactory",
-            org.qiweb.modules.xml.internal.DatatypeFactoryImpl.class.getName()
-        );
-        System.setProperty(
-            "javax.xml.parsers.DocumentBuilderFactory",
-            org.qiweb.modules.xml.internal.DocumentBuilderFactoryImpl.class.getName()
-        );
-        System.setProperty(
-            "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema",
-            org.qiweb.modules.xml.internal.SchemaFactoryImpl.class.getName()
-        );
+            // Xerces for stream push parsing (SAX), DOM and Schema validation
+            System.setProperty(
+                "javax.xml.parsers.SAXParserFactory",
+                org.qiweb.modules.xml.internal.SAXParserFactoryImpl.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.datatype.DatatypeFactory",
+                org.qiweb.modules.xml.internal.DatatypeFactoryImpl.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.parsers.DocumentBuilderFactory",
+                org.qiweb.modules.xml.internal.DocumentBuilderFactoryImpl.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema",
+                org.qiweb.modules.xml.internal.SchemaFactoryXSD.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.validation.SchemaFactory:http://www.w3.org/XML/XMLSchema/v1.1",
+                org.qiweb.modules.xml.internal.SchemaFactoryXSD.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.validation.SchemaFactory:http://relaxng.org/ns/structure/1.",
+                org.qiweb.modules.xml.internal.SchemaFactoryRelaxNG.class.getName()
+            );
 
-        // Saxon for XSLT, XSLT2, XPath and XQuery
-        System.setProperty(
-            "javax.xml.transform.TransformerFactory",
-            org.qiweb.modules.xml.internal.TransformerFactoryImpl.class.getName()
-        );
-        System.setProperty(
-            "javax.xml.xpath.XPathFactory:http://java.sun.com/jaxp/xpath/dom",
-            org.qiweb.modules.xml.internal.XPathFactoryImpl.class.getName()
-        );
+            // Saxon for XSLT, XSLT2, XPath and XQuery
+            System.setProperty(
+                "javax.xml.transform.TransformerFactory",
+                org.qiweb.modules.xml.internal.TransformerFactoryImpl.class.getName()
+            );
+            System.setProperty(
+                "javax.xml.xpath.XPathFactory:http://java.sun.com/jaxp/xpath/dom",
+                org.qiweb.modules.xml.internal.XPathFactoryImpl.class.getName()
+            );
+        }
     }
 
     private XML xml;
@@ -127,7 +138,18 @@ public final class XMLPlugin
         throws ActivationException
     {
         Config config = application.config().object( "xml" );
-        List<String> catalogs = config.stringList( "external_entities.catalogs" );
+        List<String> catalogs = new ArrayList<>();
+        for( String catalog : config.stringList( "external_entities.catalogs" ) )
+        {
+            try
+            {
+                catalogs.add( new URL( catalog ).toExternalForm() );
+            }
+            catch( MalformedURLException ex )
+            {
+                catalogs.add( application.classLoader().getResource( catalog ).toExternalForm() );
+            }
+        }
         boolean catalogsPreferPublic = config.bool( "external_entities.catalogs_prefer_public" );
         switch( config.string( "external_entities.resolver" ) )
         {
@@ -172,40 +194,47 @@ public final class XMLPlugin
     }
 
     private static void ensureXmlApisImplementations( boolean failOnError )
+        throws ActivationException
     {
         try
         {
-            Class<?> xmlEventFactory = XMLEventFactory.newInstance().getClass();
-            Class<?> xmlInputFactory = XMLInputFactory.newInstance().getClass();
-            Class<?> xmlOutputFactory = XMLOutputFactory.newInstance().getClass();
-            Class<?> saxParserFactory = SAXParserFactory.newInstance().getClass();
-            Class<?> datatypeFactory = DatatypeFactory.newInstance().getClass();
-            Class<?> docBuilderFactory = DocumentBuilderFactory.newInstance().getClass();
-            Class<?> schemaFactory = SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI ).getClass();
-            Class<?> transformerFactory = TransformerFactory.newInstance().getClass();
-            Class<?> xPathFactory = XPathFactory.newInstance().getClass();
+            XMLEventFactory xmlEventFactory = XMLEventFactory.newInstance();
+            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            SchemaFactory schemaFactory = SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI );
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            XPathFactory xPathFactory = XPathFactory.newInstance();
 
             boolean wrong = Arrays.asList(
                 xmlEventFactory, xmlInputFactory, xmlOutputFactory, saxParserFactory,
                 datatypeFactory, docBuilderFactory, schemaFactory,
                 transformerFactory, xPathFactory
-            ).stream().anyMatch( c -> !c.getPackage().equals( Internal.class.getPackage() ) );
+            ).stream().anyMatch( c -> !c.getClass().getPackage().equals( Internal.class.getPackage() ) );
 
             if( LOG.isTraceEnabled() || wrong )
             {
                 StringBuilder sb = new StringBuilder();
-                sb.append( "  StAX & SAX" ).append( NEWLINE );
-                sb.append( "    XMLEventFactory        " ).append( xmlEventFactory ).append( NEWLINE );
-                sb.append( "    XMLInputFactory        " ).append( xmlInputFactory ).append( NEWLINE );
-                sb.append( "    XMLOutputFactory       " ).append( xmlOutputFactory ).append( NEWLINE );
-                sb.append( "    SAXParserFactory       " ).append( saxParserFactory ).append( NEWLINE );
-                sb.append( "  DOM & Schema" ).append( NEWLINE );
-                sb.append( "    DatatypeFactory        " ).append( datatypeFactory ).append( NEWLINE );
-                sb.append( "    DocumentBuilderFactory " ).append( docBuilderFactory ).append( NEWLINE );
-                sb.append( "    SchemaFactory          " ).append( schemaFactory ).append( NEWLINE );
+                sb.append( "  Support for XML 1.0" );
+                if( saxParserFactory.getFeature( SAX.Features.XML_1_1 ) )
+                {
+                    sb.append( " & XML 1.1" );
+                }
+                sb.append( NEWLINE ).append( NEWLINE );
+                sb.append( "  StAX" ).append( NEWLINE );
+                sb.append( "    XMLEventFactory        " ).append( xmlEventFactory.getClass() ).append( NEWLINE );
+                sb.append( "    XMLInputFactory        " ).append( xmlInputFactory.getClass() ).append( NEWLINE );
+                sb.append( "    XMLOutputFactory       " ).append( xmlOutputFactory.getClass() ).append( NEWLINE );
+                sb.append( "  SAX, DOM & Schema" ).append( NEWLINE );
+                sb.append( "    SAXParserFactory       " ).append( saxParserFactory.getClass() ).append( NEWLINE );
+                sb.append( "    DatatypeFactory        " ).append( datatypeFactory.getClass() ).append( NEWLINE );
+                sb.append( "    DocumentBuilderFactory " ).append( docBuilderFactory.getClass() ).append( NEWLINE );
+                sb.append( "    SchemaFactory          " ).append( schemaFactory.getClass() ).append( NEWLINE );
                 sb.append( "  XSLT & XPath/XQuery" ).append( NEWLINE );
-                sb.append( "    TransformerFactory     " ).append( transformerFactory ).append( NEWLINE );
-                sb.append( "    XPathFactory           " ).append( xPathFactory ).append( NEWLINE );
+                sb.append( "    TransformerFactory     " ).append( transformerFactory.getClass() ).append( NEWLINE );
+                sb.append( "    XPathFactory           " ).append( xPathFactory.getClass() ).append( NEWLINE );
                 sb.append( "  Entity Resolving" ).append( NEWLINE );
                 sb.append( "    XML.Resolver           " ).append( Internal.RESOLVER.get().getClass() );
                 sb.append( NEWLINE ).append( NEWLINE );
@@ -233,9 +262,9 @@ public final class XMLPlugin
                 }
             }
         }
-        catch( DatatypeConfigurationException ex )
+        catch( DatatypeConfigurationException | ParserConfigurationException | SAXException ex )
         {
-            throw new UncheckedXMLException( ex );
+            throw new ActivationException( ex );
         }
     }
 }

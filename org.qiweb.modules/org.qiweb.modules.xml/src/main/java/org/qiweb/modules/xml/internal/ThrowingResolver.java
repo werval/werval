@@ -18,8 +18,11 @@ package org.qiweb.modules.xml.internal;
 import javax.xml.transform.Source;
 import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.parser.XMLInputSource;
+import org.qiweb.modules.xml.UncheckedXMLException;
 import org.w3c.dom.ls.LSInput;
 import org.xml.sax.InputSource;
+
+import static org.qiweb.modules.xml.internal.Internal.LOG;
 
 /**
  * Throwing Resolver.
@@ -37,9 +40,9 @@ public final class ThrowingResolver
     @Override
     public InputSource resolveEntity( String name, String publicId, String baseURI, String systemId )
     {
-        throw new UnsupportedOperationException(
+        throw new UncheckedXMLException(
             String.format(
-                "Entity resolution attempt (StAX or SAX): name=%s publicId=%s baseURI=%s systemId=%s",
+                "Entity resolution blocked (StAX or SAX): name=%s publicId=%s baseURI=%s systemId=%s",
                 name, publicId, baseURI, systemId
             )
         );
@@ -49,11 +52,8 @@ public final class ThrowingResolver
     @Override
     public InputSource resolveEntity( String publicId, String systemId )
     {
-        throw new UnsupportedOperationException(
-            String.format(
-                "Entity resolution attempt (SAX): publicId=%s systemId=%s",
-                publicId, systemId
-            )
+        throw new UncheckedXMLException(
+            String.format( "Entity resolution blocked (SAX): publicId=%s systemId=%s", publicId, systemId )
         );
     }
 
@@ -61,7 +61,7 @@ public final class ThrowingResolver
     @Override
     public InputSource getExternalSubset( String name, String baseURI )
     {
-        Internal.LOG.debug( "External subset resolution attempt (SAX2): name={} baseURI={}", name, baseURI );
+        LOG.trace( "External subset resolved to none (SAX2): name={} baseURI={}", name, baseURI );
         // No external subset
         return null;
     }
@@ -70,9 +70,9 @@ public final class ThrowingResolver
     @Override
     public LSInput resolveResource( String type, String namespaceURI, String publicId, String systemId, String baseURI )
     {
-        throw new UnsupportedOperationException(
+        throw new UncheckedXMLException(
             String.format(
-                "Resource resolution attempt (DOM): type=%s namespace=%s publicId=%s systemId=%s baseURI=%s",
+                "Resource resolution blocked (DOM): type=%s namespace=%s publicId=%s systemId=%s baseURI=%s",
                 type, namespaceURI, publicId, systemId, baseURI
             )
         );
@@ -82,11 +82,8 @@ public final class ThrowingResolver
     @Override
     public Source resolve( String href, String base )
     {
-        throw new UnsupportedOperationException(
-            String.format(
-                "URI resolution attempt (XSLT): href=%s base=%s",
-                href, base
-            )
+        throw new UncheckedXMLException(
+            String.format( "URI resolution blocked (XSLT): href=%s base=%s", href, base )
         );
     }
 
@@ -94,11 +91,8 @@ public final class ThrowingResolver
     @Override
     public XMLInputSource resolveEntity( XMLResourceIdentifier resourceIdentifier )
     {
-        throw new UnsupportedOperationException(
-            String.format(
-                "Entity resolution attempt (Xerces XNI): resourceIdentifier=%s",
-                resourceIdentifier
-            )
+        throw new UncheckedXMLException(
+            String.format( "Entity resolution blocked (Xerces XNI): resourceIdentifier=%s", resourceIdentifier )
         );
     }
 }

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!-- Test external DTD (PUBLIC URL) -->
+<!DOCTYPE root PUBLIC "-//DTD1" "http://www.example.com/dtd">
+<root>&e1;</root>

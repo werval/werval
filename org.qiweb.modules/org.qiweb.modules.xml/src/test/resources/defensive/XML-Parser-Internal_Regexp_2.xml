@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!-- Test non-deterministic content model matching.
+
+This should not actually pose any problems to validation.
+
+-->
+<!DOCTYPE root [
+<!ELEMENT root (e0|e1|e2|e3|e4|e5|e6|e7|e8|e9|e10|e11|e12|e13|e14|e15|e16|e17|e18|e19|e20|e21|e22|e23|e24|e25|e26|e27|e28|e29)>
+<!ELEMENT e0 EMPTY>
+<!ELEMENT e1 (e0,e0)>
+<!ELEMENT e2 (e1,e1)>
+<!ELEMENT e3 (e2,e2)>
+<!ELEMENT e4 (e3,e3)>
+<!ELEMENT e5 (e4,e4)>
+<!ELEMENT e6 (e5,e5)>
+<!ELEMENT e7 (e6,e6)>
+<!ELEMENT e8 (e7,e7)>
+<!ELEMENT e9 (e8,e8)>
+<!ELEMENT e10 (e9,e9)>
+<!ELEMENT e11 (e10,e10)>
+<!ELEMENT e12 (e11,e11)>
+<!ELEMENT e13 (e12,e12)>
+<!ELEMENT e14 (e13,e13)>
+<!ELEMENT e15 (e14,e14)>
+<!ELEMENT e16 (e15,e15)>
+<!ELEMENT e17 (e16,e16)>
+<!ELEMENT e18 (e17,e17)>
+<!ELEMENT e19 (e18,e18)>
+<!ELEMENT e20 (e19,e19)>
+<!ELEMENT e21 (e20,e20)>
+<!ELEMENT e22 (e21,e21)>
+<!ELEMENT e23 (e22,e22)>
+<!ELEMENT e24 (e23,e23)>
+<!ELEMENT e25 (e24,e24)>
+<!ELEMENT e26 (e25,e25)>
+<!ELEMENT e27 (e26,e26)>
+<!ELEMENT e28 (e27,e27)>
+<!ELEMENT e29 (e28,e28)>
+]>
+<root>
+  <e1><e0/><e0/></e1>
+</root>
+

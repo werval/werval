@@ -17,12 +17,13 @@ package org.qiweb.modules.xml;
 
 import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.qiweb.test.QiWebRule;
 
 /**
  * Catalogs-First Unsafe Resolver Test.
  */
-@Ignore
+// @Ignore( "Not implemented yet" )
 public class CatalogsFirstUnsafeResolverTest
     extends TestBase
 {
@@ -33,5 +34,13 @@ public class CatalogsFirstUnsafeResolverTest
     protected XML xml()
     {
         return QIWEB.application().plugin( XML.class );
+    }
+
+    @Ignore( "DoS - OutOfMemoryError !!!" )
+    @Test
+    @Override
+    public void externalEntityRegexp3_DOM()
+    {
+        super.externalEntityRegexp3_DOM();
     }
 }
