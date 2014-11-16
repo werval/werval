@@ -45,6 +45,8 @@ For minor changes, build system or test changes, see the full [source code histo
 - Modules
     - Upgrade EhCache from `2.8.4` to `2.9.0`, see the [changes-report](http://www.ehcache.org/changes-report)
     - Upgrade Liquibase from `3.2.2` to `3.3.0`, see the [announcement](http://blog.liquibase.org/2014/11/liquibase-3-3-0-released.html)
+- Tooling
+    - Upgrade Gradle from `2.1` to `2.2`, see the [release-notes](http://www.gradle.org/docs/2.2/release-notes)
 
 
 
