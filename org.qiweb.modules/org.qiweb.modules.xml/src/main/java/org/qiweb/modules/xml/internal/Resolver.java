@@ -19,6 +19,7 @@ import javax.xml.stream.XMLResolver;
 import javax.xml.transform.URIResolver;
 import org.apache.xerces.xni.parser.XMLEntityResolver;
 import org.w3c.dom.ls.LSResourceResolver;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.ext.EntityResolver2;
 
 /**
