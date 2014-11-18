@@ -17,6 +17,7 @@ package org.qiweb.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 
 /**
  * QiWeb Gradle Plugin.
@@ -31,12 +32,23 @@ class QiWebPlugin implements Plugin<Project>
 {
     void apply( Project project )
     {
-        if( !project.plugins.hasPlugin( 'java' ) ) {
-            project.apply plugin: 'java'
-        }
-        
-        project.extensions.create( "qiweb", QiWebPluginExtension )
+        // Java 8
+        project.plugins.apply( JavaPlugin )
+        project.sourceCompatibility = '1.8'
+        project.targetCompatibility = '1.8'
+        project.compileJava*.options*.encoding = 'UTF-8'
+        project.compileTestJava*.options*.encoding = 'UTF-8'
 
+        // Extensions
+        project.extensions.create( "qiweb", QiWebDependencies, project.dependencies )
+
+        // Repositories
+        if( project.hasProperty( 'qiwebLocalRepository' ) ) {
+            project.repositories { maven { url project.qiwebLocalRepository } }
+        }
+        project.repositories { maven { url "https://repo.codeartisans.org/qiweb" } }
+
+        // Secret Generation Task
         project.task(
             "secret",
             type: QiWebSecretTask,
@@ -44,6 +56,7 @@ class QiWebPlugin implements Plugin<Project>
             description: 'Generate a new Application Secret.'
         )
 
+        // Production Mode Task
         project.task(
             "start",
             type: QiWebStartTask,
@@ -52,6 +65,7 @@ class QiWebPlugin implements Plugin<Project>
             dependsOn: project.tasks.getByName( "classes" )
         )
 
+        // DevShell Task
         project.configurations.create( "devshell" )
         project.configurations.devshell {
             description = "QiWeb DevShell Configuration"
@@ -76,6 +90,5 @@ class QiWebPlugin implements Plugin<Project>
             description: "Rebuild the Application while in development mode. Do not invoke directly.",
             dependsOn: project.tasks.getByName( "classes" )
         )
-
     }
 }

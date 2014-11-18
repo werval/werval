@@ -52,6 +52,10 @@ dependencies {
     testCompile sourceSets.gradleTestKit.output
 }
 
+
+test.dependsOn install
+
+
 task fetchGradleTestKit( type: org.ajoberstar.gradle.git.tasks.GitClone ) {
     uri "https://github.com/alkemist/gradle-test-kit.git"
     destinationPath "build/tmp/gradle-test-kit-repos"

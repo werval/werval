@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,25 @@
  */
 package org.qiweb.gradle
 
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
 /**
- * QiWeb Gradle Plugin Configuration.
+ * QiWeb Module Plugin.
  */
-class QiWebPluginExtension
+class QiWebModulePlugin implements Plugin<Project>
 {
+    void apply( Project project )
+    {
+        // QiWeb
+        project.plugins.apply( QiWebPlugin )
+
+        // Dependencies
+        QiWebDependencies qiwebDependencies = project.extensions.findByType( QiWebDependencies )
+        project.dependencies {
+            compile qiwebDependencies.api
+            runtime qiwebDependencies.nettyServer
+            testCompile qiwebDependencies.test
+        }
+    }
 }

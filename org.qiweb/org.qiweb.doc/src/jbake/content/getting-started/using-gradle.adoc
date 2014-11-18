@@ -121,33 +121,12 @@ buildscript {
 	repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }    // <1>
 	dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb_version}' } // <2>
 }
-repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }        // <3>
 
-apply plugin: 'java'        // <4>
-apply plugin: 'qiweb'       // <5>
-
-dependencies {
-
-    compile "org.qiweb:org.qiweb.api:{qiweb_version}" // <6>
-    // Add application compile dependencies here
-
-    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb_version}" // <7>
-    // Add application runtime dependencies here
-
-    testCompile "org.qiweb:org.qiweb.test:{qiweb_version}" // <8>
-    // Add application test dependencies here
-
-}
-
+apply plugin: 'qiweb-application'       // <3>
 ----
 <1> Declare QiWeb repository for the build
 <2> Add QiWeb Gradle Plugin to build classpath
-<3> Declare QiWeb repository for the application
-<4> Apply the Gradle http://www.gradle.org/docs/current/userguide/java_plugin.html[Java Plugin]
-<5> Apply the QiWeb Gradle plugin
-<6> Add compile scope dependency to QiWeb API
-<7> Add runtime scope dependency to QiWeb Netty Server Bootstrap
-<8> Add test scope dependency to QiWeb Test Support
+<3> Apply the QiWeb Gradle plugin
 
 TIP: See the link:guides.html#gradle_plugin[QiWeb Gradle Plugin guide] for more insights.
 

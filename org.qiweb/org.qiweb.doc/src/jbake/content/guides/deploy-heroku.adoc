@@ -15,41 +15,25 @@ However, if you feel the need, nothing stops you to gather System Properties dir
 
 Now that we saw the basics we'll walk through two practical cases.
 The first one using Gradle, the second one using Maven.
-If you don't use any of theses to build your application, keep reading.
-What's show below should apply to every situation with a few changes.
 
-In theses two samples, we pass to the application the HTTP server listening port.
+In theses two samples, we pass the HTTP server listening port to the application.
 Heroku set the port to use in the `POST` environment variable.
+
 
 === Using Gradle
 
-.`build.gradle`
-["source","groovy",subs="attributes"]
+Given that your application is named `app`, put the following in a file named `Procfile` at the root of your project:
+
+[source,bash]
 ----
-apply plugin: 'java'
-
-dependencies {
-
-    compile "org.qiweb:org.qiweb.api:{qiweb_version}"
-    // Add application compile dependencies
-
-    runtime "org.qiweb:org.qiweb.server.bootstrap:{qiweb_version}"
-    // Add application runtime dependencies
-
-    test "org.qiweb:org.qiweb.test:{qiweb_version}"
-    // Add application test dependencies
-
-}
-
-apply plugin: 'application'
-
-mainClassName = 'org.qiweb.server.bootstrap.Main'
-applicationName = 'app'
-
-task stage( dependsOn: [ 'clean', 'installApp' ] )
+web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
 ----
 
-To test locally:
+Heroku Gradle support will invoke the `stage` task provided by the `qiweb-application` plugin.
+This task deploy the application distribution filetree in `build/install/app`.
+The `Procfile` will then run your application.
+
+You can use the `stage` task to test locally:
 
 [source,bash]
 ----
@@ -61,12 +45,6 @@ BUILD SUCCESSFUL
 user@host $ ./build/install/app/bin/app
 ----
 
-Procfile
-
-[source,bash]
-----
-web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
-----
 
 === Using Maven
 

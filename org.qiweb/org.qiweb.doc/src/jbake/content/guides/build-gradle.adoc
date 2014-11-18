@@ -1,7 +1,38 @@
 
 == Gradle Plugin
 
-=== Overview
+
+
+=== QiWeb dependencies
+
+Use QiWeb dependencies of the same version as the QiWeb Gradle plugin:
+
+[source]
+----
+dependencies {
+  compile qiweb.api
+  compile qiweb.module('json')
+  runtime qiweb.nettyServer
+  testCompile qiweb.test
+}
+----
+
+
+
+=== Application packaging
+
+`gradle distZip`
+
+TIP: If you need RPM or DEB packaging, use the
+https://github.com/nebula-plugins/gradle-ospackage-plugin[gradle-ospackage-plugin].
+
+
+
+=== Staging for production
+
+`gradle stage`
+
+
 
 === Development mode
 
@@ -49,6 +80,7 @@ Thanks to Gradle's incredible incremental build behaviour, handling complex buil
 productive.
 
 
+
 === Override config location
 
 ["source","groovy"]
@@ -74,7 +106,12 @@ task customStart( type: org.qiweb.gradle.StartTask )
 }
 ----
 
-=== Leverage Gradle SourceSets
+
+
+=== Tips'n tricks
+
+[discrete]
+==== Leverage Gradle SourceSets
 
 ["source","groovy"]
 ----
@@ -96,8 +133,4 @@ start {
 
 See the Java Plugin http://www.gradle.org/docs/current/userguide/java_plugin.html[documentation].
 
-=== Packaging
-
-TIP: If you need RPM or DEB packaging, use the
-https://github.com/nebula-plugins/gradle-ospackage-plugin[gradle-ospackage-plugin]
 

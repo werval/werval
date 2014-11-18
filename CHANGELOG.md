@@ -23,6 +23,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Metrics & HealthChecks Plugin with core and filter annotations metrics plus metrics in other modules, see #186 and #202
 - [Hashids](http://hashids.org/) support, see #199
 - Base62 codec, see #200
+- Hassle free application packaging using Gradle, see #210
 
 ### Enhancements
 
