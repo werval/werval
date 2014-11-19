@@ -12,6 +12,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Breaking changes
 
 - Plugins can now be registered by names in configuration. Registration by FQCN is still possible but the syntax has changed, see #195
+- Gradle plugins IDs have changed to be compliant with the official Gradle Plugin Portal policy, see #212
 
 ### Bug fixes
 
