@@ -122,7 +122,7 @@ buildscript {
 	dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb_version}' } // <2>
 }
 
-apply plugin: 'qiweb-application'       // <3>
+apply plugin: 'org.qiweb.application'       // <3>
 ----
 <1> Declare QiWeb repository for the build
 <2> Add QiWeb Gradle Plugin to build classpath

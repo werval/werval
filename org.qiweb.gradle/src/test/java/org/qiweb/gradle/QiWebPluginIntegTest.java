@@ -77,7 +77,7 @@ public class QiWebPluginIntegTest
           + "  }\n"
           + "  dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
           + "}\n"
-          + "apply plugin: \"qiweb-application\"\n"
+          + "apply plugin: \"org.qiweb.application\"\n"
           + "dependencies {\n"
           + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
           + "}\n"

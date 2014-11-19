@@ -1,6 +1,19 @@
 
 == Gradle Plugin
 
+.`./build.gradle`
+["source","groovy",subs="attributes,callouts"]
+----
+buildscript {
+  repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }    // <1>
+  dependencies { classpath 'org.qiweb:org.qiweb.gradle:{qiweb_version}' } // <2>
+}
+
+apply plugin: 'org.qiweb.application'       // <3>
+----
+<1> Declare QiWeb repository for the build
+<2> Add QiWeb Gradle Plugin to build classpath
+<3> Apply the QiWeb Gradle plugin
 
 
 === QiWeb dependencies
