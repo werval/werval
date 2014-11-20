@@ -26,7 +26,7 @@ import org.gradle.api.plugins.JavaPlugin
  * <p>
  * Create {@literal secret}, {@literal start} and {@literal devshell} tasks.
  * <p>
- * Define 'devshell' configuration for dev mode classpath injection.
+ * Define 'devshell' configuration and 'dev' SourceSet for dev mode classpath enrichment.
  */
 class QiWebPlugin implements Plugin<Project>
 {
@@ -72,10 +72,14 @@ class QiWebPlugin implements Plugin<Project>
         project.configurations.create( "devshell" )
         project.configurations.devshell {
             description = "QiWeb DevShell Configuration"
-            visible = false
+            // visible = false
         }
         project.dependencies {
             devshell group: "org.qiweb", name: "org.qiweb.doc", version: BuildVersion.VERSION, transitive: false
+        }
+
+        project.sourceSets {
+            dev
         }
 
         project.task(
@@ -83,7 +87,7 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebDevShellTask,
             group: "QiWeb",
             description: "Start the Application in development mode.",
-            dependsOn: project.tasks.getByName( "classes" )
+            dependsOn: [ project.tasks.getByName( "classes" ), project.tasks.getByName( "devClasses" ) ]
         )
 
         project.task(
@@ -91,7 +95,7 @@ class QiWebPlugin implements Plugin<Project>
             type: QiWebRebuildTask,
             group: "QiWeb",
             description: "Rebuild the Application while in development mode. Do not invoke directly.",
-            dependsOn: project.tasks.getByName( "classes" )
+            dependsOn: [ project.tasks.getByName( "classes" ), project.tasks.getByName( "devClasses" ) ]
         )
     }
 }

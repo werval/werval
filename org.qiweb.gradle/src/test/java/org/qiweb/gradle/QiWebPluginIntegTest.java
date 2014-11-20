@@ -42,6 +42,7 @@ import org.qiweb.util.InputStreams;
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
@@ -62,6 +63,7 @@ public class QiWebPluginIntegTest
     private static final String BUILD;
     private static final String ROUTES;
     private static final String CONFIG;
+    private static final String CONFIG_DEV;
     private static final String CONTROLLER;
     private static final String CONTROLLER_CHANGED;
     private static final String CONTROLLER_EXCEPTIONAL;
@@ -88,7 +90,7 @@ public class QiWebPluginIntegTest
           + "classes.dependsOn customClasses\n"
           + "devshell {\n"
           + "  sourceSets += project.sourceSets.custom\n"
-          + "  configResource = 'application-custom.conf'\n"
+          + "  configResource = 'development.conf'\n"
           + "}\n"
           + "start {\n"
           + "  sourceSets += project.sourceSets.custom\n"
@@ -97,22 +99,21 @@ public class QiWebPluginIntegTest
           + "\n";
         CONFIG
         = "\n"
-          + "app: {\n"
-          + "    secret: e6bcdba3bc6840aa08013ef20505a0c27f800dbbcced6fbb71e8cf197fe83866\n"
-          + "}\n";
-        ROUTES
-        = "\n"
-          + "GET / controllers.Application.index";
+          + "app.secret = e6bcdba3bc6840aa08013ef20505a0c27f800dbbcced6fbb71e8cf197fe83866\n"
+          + "tag = custom\n";
+        CONFIG_DEV = "include \"application-custom.conf\"\ntag = development\n";
+        ROUTES = "GET / controllers.Application.index";
         CONTROLLER
         = "\n"
           + "package controllers;\n"
           + "import org.qiweb.api.outcomes.Outcome;\n"
+          + "import static org.qiweb.api.context.CurrentContext.application;\n"
           + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"
           + "    {\n"
-          + "        return outcomes().ok( \"I ran!\" ).build();\n"
+          + "        return outcomes().ok( \"I ran! \" + application().config().string( \"tag\" ) ).build();\n"
           + "    }\n"
           + "}\n";
         CONTROLLER_CHANGED
@@ -173,6 +174,12 @@ public class QiWebPluginIntegTest
         Files.write(
             new File( tmp.getRoot(), "build.gradle" ).toPath(),
             BUILD.getBytes( UTF_8 )
+        );
+        File dev = new File( tmp.getRoot(), "src/dev/resources" );
+        Files.createDirectories( dev.toPath() );
+        Files.write(
+            new File( dev, "development.conf" ).toPath(),
+            CONFIG_DEV.getBytes( UTF_8 )
         );
         File custom = new File( tmp.getRoot(), "src/custom/resources" );
         Files.createDirectories( custom.toPath() );
@@ -267,7 +274,7 @@ public class QiWebPluginIntegTest
                         }
                     }
                 },
-                containsString( "I ran!" )
+                allOf( containsString( "I ran!" ), containsString( "development" ) )
             );
 
             // Source code change
@@ -361,7 +368,7 @@ public class QiWebPluginIntegTest
                         }
                     }
                 },
-                containsString( "I ran!" )
+                allOf( containsString( "I ran!" ), containsString( "custom" ) )
             );
 
             client.getConnectionManager().shutdown();

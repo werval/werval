@@ -95,6 +95,43 @@ Thanks to Gradle's incredible incremental build behaviour, handling complex buil
 productive.
 
 
+[discrete]
+==== Development only dependencies
+
+You can enrich the application classpath in development mode by adding dependencies to the `devshell` configuration:
+
+[source]
+----
+dependencies {
+  devshell 'group:id:version'
+}
+----
+
+
+[discrete]
+==== Development only sources
+
+You can also enrich the application classpath in development mode by adding files to the `dev`
+http://www.gradle.org/docs/current/userguide/java_plugin.html[source-set],
+that is in `src/dev/java` and `src/dev/resources`.
+
+Typical usage is to use development specific configuration.
+Putting it in the `dev` source-set prevent it to be in the application distribution.
+
+This is achieved in two steps,
+
+- add a `developement.conf` file in `src/dev/resources` with at least `include "application.conf"` in it ;
+- use `development.conf` as application configuration in development mode:
+
+[source]
+----
+devshell.configResource 'development.conf'
+----
+
+You can now add content to `development.conf` to define configuration properties that will be used in development mode
+only.
+
+
 
 === Override config location
 
@@ -120,32 +157,3 @@ task customStart( type: org.qiweb.gradle.StartTask )
   configResource = "application-custom.conf"
 }
 ----
-
-
-
-=== Tips'n tricks
-
-[discrete]
-==== Leverage Gradle SourceSets
-
-["source","groovy"]
-----
-sourceSets {
-  dev
-  prod
-}
-
-devshell {
-    dependsOn devClasses
-    sourceSets += project.sourceSets.dev
-}
-
-start {
-    dependsOn prodClasses
-    sourceSets += project.sourceSets.prod
-}
-----
-
-See the Java Plugin http://www.gradle.org/docs/current/userguide/java_plugin.html[documentation].
-
-

@@ -26,9 +26,9 @@ import org.qiweb.devshell.JavaWatcher
 class QiWebDevShellTask extends DefaultTask
 {
     /**
-     * Application source sets, default to {@literal main} only.
+     * Application source sets, default to {@literal main} and {@literal dev}.
      */
-    Set<SourceSet> sourceSets = new LinkedHashSet<>( [ project.sourceSets.main ] )
+    Set<SourceSet> sourceSets = new LinkedHashSet<>( [ project.sourceSets.main, project.sourceSets.dev ] )
 
     /**
      * Configuration resource name.
