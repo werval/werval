@@ -56,7 +56,7 @@ import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
  * <p>
  * As this test spawn several Gradle Daemons it ends by killing them all to leave the running system in a proper state.
  */
-public class QiWebPluginIntegTest
+public class QiWebApplicationPluginIntegTest
   extends AbstractQiWebIntegTest
 {
     private static final Charset UTF_8 = Charset.forName( "UTF-8" );
