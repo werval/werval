@@ -17,7 +17,6 @@ package org.qiweb.gradle
 
 import java.io.File
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 

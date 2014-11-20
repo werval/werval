@@ -43,10 +43,12 @@ class QiWebPlugin implements Plugin<Project>
         project.extensions.create( "qiweb", QiWebDependencies, project.dependencies )
 
         // Repositories
-        if( project.hasProperty( 'qiwebLocalRepository' ) ) {
-            project.repositories { maven { url project.qiwebLocalRepository } }
+        project.repositories { 
+            if( project.hasProperty( 'qiwebLocalRepository' ) ) {
+                maven { url project.qiwebLocalRepository }
+            }
+            maven { url "https://repo.codeartisans.org/qiweb" }
         }
-        project.repositories { maven { url "https://repo.codeartisans.org/qiweb" } }
 
         // Secret Generation Task
         project.task(

@@ -56,6 +56,7 @@ import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
  * As this test spawn several Gradle Daemons it ends by killing them all to leave the running system in a proper state.
  */
 public class QiWebPluginIntegTest
+  extends AbstractQiWebIntegTest
 {
     private static final Charset UTF_8 = Charset.forName( "UTF-8" );
     private static final String BUILD;
@@ -153,7 +154,7 @@ public class QiWebPluginIntegTest
         new File( "build/tmp/it" ).mkdirs();
     }
 
-    private final File lock = new File( ".devshell.lock" );
+    private final File devshellLock = new File( ".devshell.lock" );
 
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder( new File( "build/tmp/it" ) )
@@ -161,6 +162,7 @@ public class QiWebPluginIntegTest
         @Override
         public void delete()
         {
+          super.delete();
         }
     };
 
@@ -193,31 +195,13 @@ public class QiWebPluginIntegTest
     }
 
     @After
-    public void killZombies()
+    public void cleanupDevShellLock()
         throws Exception
     {
-        try
-        {
-            final String self = Processes.currentPID( "NO_PID" );
-            Processes.killJvms(
-                new Predicate<String>()
-                {
-                    @Override
-                    public boolean test( String line )
-                    {
-                        return line.contains( "org.gradle.launcher.daemon.bootstrap.GradleDaemon" )
-                               && !line.startsWith( self );
-                    }
-                }
-            );
-        }
-        finally
-        {
-            if( lock.exists() )
-            {
-                Files.delete( lock.toPath() );
-            }
-        }
+          if( devshellLock.exists() )
+          {
+              Files.delete( devshellLock.toPath() );
+          }
     }
 
     @Test
@@ -249,7 +233,7 @@ public class QiWebPluginIntegTest
                     public Boolean call()
                     throws Exception
                     {
-                        return lock.exists();
+                        return devshellLock.exists();
                     }
                 }
             );

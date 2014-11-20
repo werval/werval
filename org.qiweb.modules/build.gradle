@@ -36,7 +36,7 @@ subprojects {
 buildscript {
     repositories {
         maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
-        maven { url 'http://jcenter.bintray.com' }
+        jcenter()
     }
     dependencies { classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0' }
 }

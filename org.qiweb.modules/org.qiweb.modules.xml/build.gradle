@@ -9,9 +9,9 @@ dependencies {
     // compile 'com.fasterxml:aalto-xml:0.9.9'
 
     compile 'xerces:xercesImpl:2.11.0'
+    compile( 'com.thaiopensource:jing:20091111' ) { exclude group: 'xml-apis', module: '*' }
 
     compile 'net.sf.saxon:Saxon-HE:9.6.0-1'
-    compile( 'com.thaiopensource:jing:20091111' ) { exclude group: 'xml-apis', module: '*' }
     // compile ( 'xalan:xalan:2.7.2' ) { exclude group: 'xerces', module: '*' }
 
     compile 'xml-resolver:xml-resolver:1.2'
