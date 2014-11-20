@@ -1,10 +1,15 @@
 import org.gradle.api.artifacts.*
 
 buildscript {
-    repositories { jcenter() }
+    repositories {
+        maven { url qiwebLocalRepository }
+        maven { url 'https://repo.codeartisans.org/qiweb' }
+        jcenter()
+    }
     dependencies { 
         // JDK8_ASM5 // classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.9.0'
+        classpath "org.qiweb:org.qiweb.gradle:${System.properties.version ?: '0'}"
     }
 }
 
@@ -30,100 +35,6 @@ subprojects {
         ext.name = "the original author or authors"
     }
     // JDK8_ASM5 // apply plugin: 'jacoco'
-}
-
-// Documentation Generation
-buildscript {
-    repositories {
-        maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
-        jcenter()
-    }
-    dependencies { classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0' }
-}
-subprojects {
-    if( file( 'src/doc' ).exists() ) {
-        // Generate documentation resources using Asciidoctor
-        def docResourcesPath = 'src/doc'
-        def docGenResourcesPath = 'build/generated-src/asciidoc/resources'
-        def projectSubPath = project.name.replace( '.', '/' ) + '/doc'
-        def docBuildPath = docGenResourcesPath + '/' + projectSubPath
-        apply plugin: 'asciidoctor'
-        asciidoctor {
-            doFirst {
-                // Workaround for https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/61
-                System.setProperty('jruby.logger.class','org.jruby.util.log.StandardErrorLogger')
-            }
-            sourceDir = file( docResourcesPath )
-            outputDir = file( docBuildPath )
-            backend = 'html5'
-            logDocuments = true
-            options = [
-                compact: true,
-                attributes: [
-                    'toc': 'right',
-                    'sectlink': '',
-                    'sectanchors':'',
-                    'linkattrs': '',
-                    'linkcss':'',
-                    'source-highlighter': 'coderay', 'coderay-css': 'class',
-                    'qiweb-version': version
-                ]
-            ]
-            doLast {
-                copy {
-                    from docResourcesPath
-                    into docBuildPath
-                    excludes += [ '**/*.asciidoc', '**/*.adoc', '**/*.asc', '**/*.ad' ]
-                }
-            }
-            inputs.dir file( docResourcesPath )
-            outputs.dir file( docBuildPath )
-        }
-        sourceSets.main.resources.srcDir file( docGenResourcesPath )
-        processResources.dependsOn asciidoctor
-        // Eventually generate reference.conf for Dynamic Documentation registration
-        def originalRefConfFile = file( 'src/main/resources/reference.conf' )
-        def dynDocId = project.name.substring( project.name.lastIndexOf( '.' ) + 1 )
-        if( !originalRefConfFile.exists()
-            || !originalRefConfFile.getText( "UTF-8" ).contains( 'qiweb.devshell.dyndocs.' + dynDocId ) ) {
-            def dynDocsRefConfPath = 'build/generated-src/dyndocs/resources'
-            task genDynDocsReferenceConf {
-                inputs.file file( 'build.gradle' )
-                inputs.file originalRefConfFile
-                outputs.dir file( dynDocsRefConfPath )
-                doLast {
-                    if( originalRefConfFile.exists() ) {
-                        copy {
-                            from originalRefConfFile
-                            into dynDocsRefConfPath
-                        }
-                    }
-                    def dynDocsRefConfFile = file( dynDocsRefConfPath + '/reference.conf' )
-                    if ( !dynDocsRefConfFile.exists() ) {
-                        assert dynDocsRefConfFile.getParentFile().mkdirs()
-                        assert dynDocsRefConfFile.createNewFile()
-                    }
-                    dynDocsRefConfFile.withWriterAppend( "UTF-8" ) { writer ->
-                        writer.write '\n'
-                        writer.write '// BEGIN DynDoc Generated Declaration\n'
-                        writer.write 'qiweb.devshell.dyndocs.' + dynDocId + ' {\n'
-                        writer.write '    name = "' + ( project.description.isEmpty() ? project.name : project.description ) + '"\n'
-                        writer.write '    base_path = "' + projectSubPath + '"\n'
-                        writer.write '}\n'
-                        writer.write '//  END  DynDoc Generated Declaration\n'
-                        writer.write '\n'
-                    }
-                }
-            }
-            sourceSets.main.resources.srcDir file( dynDocsRefConfPath )
-            processResources.dependsOn genDynDocsReferenceConf
-        }
-        // Publish documentation sources ZIP with qiweb-doc classifier
-        task qiwebDocZip(type: Zip, dependsOn: asciidoctor) {
-            classifier = 'qiweb-doc'
-            from asciidoctor.sourceDir
-        }
-        artifacts { archives qiwebDocZip }
-        publishing { publications { qiWebLocalRepoPub { artifact(qiwebDocZip) { classifier = 'qiweb-doc'; extension = 'zip' } } } }
-    }
+    apply plugin: 'org.qiweb.module'
+    moduleDocumentation.dynDocPackagePrefix = project.name
 }

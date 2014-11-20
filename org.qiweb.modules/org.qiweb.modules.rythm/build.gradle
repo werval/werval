@@ -1,11 +1,11 @@
 
 description = "Rythm Templating Module"
 
+moduleDescriptor.plugin 'rythm', impl: 'org.qiweb.modules.rythm.RythmPlugin'
+
 dependencies {
 
     compile project( ":org.qiweb.modules.metrics" )
     compile libs.rythm
     
-    testCompile "org.qiweb:org.qiweb.test:$version"
-
 }

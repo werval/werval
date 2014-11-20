@@ -1,12 +1,12 @@
 
 description = "Spring Module"
 
+moduleDescriptor.plugin 'spring', impl: 'org.qiweb.modules.spring.SpringPlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
     compile libs.spring_context
 
-    testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.spring_test
 
 }

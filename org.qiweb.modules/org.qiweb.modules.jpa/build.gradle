@@ -1,14 +1,14 @@
 
 description = "JPA Module"
 
+moduleDescriptor.plugin 'jpa', impl: 'org.qiweb.modules.jpa.JPAPlugin'
+
 dependencies {
 
     compile project( ":org.qiweb.modules.jdbc" )
     compile project( ":org.qiweb.modules.metrics" )
     compile libs.jpa
     compile libs.eclipselink
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
     testRuntime libs.h2
 

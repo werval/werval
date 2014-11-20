@@ -1,6 +1,8 @@
 
 description = "Liquibase Module"
 
+moduleDescriptor.plugin 'liquibase', impl: 'org.qiweb.modules.liquibase.LiquibasePlugin'
+
 dependencies {
 
     compile project( ":org.qiweb.modules.jdbc" )
@@ -20,8 +22,6 @@ dependencies {
     }
 
     runtime project( ":org.qiweb.modules.jndi" )
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
     testRuntime libs.h2
 

@@ -1,9 +1,9 @@
 
 description = "XML Module"
 
-dependencies {
+moduleDescriptor.plugin 'xml', impl: 'org.qiweb.modules.xml.XMLPlugin'
 
-    compile "org.qiweb:org.qiweb.api:$version"
+dependencies {
 
     compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
     // compile 'com.fasterxml:aalto-xml:0.9.9'
@@ -15,7 +15,5 @@ dependencies {
     // compile ( 'xalan:xalan:2.7.2' ) { exclude group: 'xerces', module: '*' }
 
     compile 'xml-resolver:xml-resolver:1.2'
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
 }

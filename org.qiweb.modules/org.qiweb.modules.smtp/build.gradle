@@ -1,12 +1,13 @@
 
 description = "SMTP Module"
 
+moduleDescriptor.plugin 'smtp', impl: 'org.qiweb.modules.smtp.SmtpPlugin'
+
 dependencies {
 
     compile project( ":org.qiweb.modules.metrics" )
     compile libs.email
     
-    testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.subethasmtp
 
 }

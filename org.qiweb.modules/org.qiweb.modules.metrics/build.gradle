@@ -1,12 +1,12 @@
 
 description = "Metrics Module"
 
+moduleDescriptor.plugin 'metrics', impl: 'org.qiweb.modules.metrics.MetricsPlugin'
+
 dependencies {
 
     compile project( ":org.qiweb.modules.json" )
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile qiweb.spi
     compile libs.metrics
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
 }
