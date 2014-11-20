@@ -14,7 +14,6 @@ dependencies {
     runtime libs.qi4j_runtime
     
     testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
 
 }
 

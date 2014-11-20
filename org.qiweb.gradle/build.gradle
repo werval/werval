@@ -35,7 +35,7 @@ sonarRunner {
 // https://github.com/alkemist/gradle-test-kit
 // Use the fetchGradleTestKit task to update the sourceset
 buildscript {
-    repositories { mavenCentral() }
+    repositories { jcenter() }
     dependencies { classpath 'org.ajoberstar:gradle-git:0.6.4' }
 }
 sourceSets {

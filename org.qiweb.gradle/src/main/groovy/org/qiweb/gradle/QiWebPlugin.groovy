@@ -48,6 +48,7 @@ class QiWebPlugin implements Plugin<Project>
                 maven { url project.qiwebLocalRepository }
             }
             maven { url "https://repo.codeartisans.org/qiweb" }
+            jcenter()
         }
 
         // Secret Generation Task

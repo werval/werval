@@ -17,6 +17,5 @@ dependencies {
     compile 'xml-resolver:xml-resolver:1.2'
 
     testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
 
 }

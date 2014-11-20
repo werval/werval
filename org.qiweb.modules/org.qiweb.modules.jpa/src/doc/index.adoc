@@ -17,6 +17,9 @@ http://www.eclipse.org/eclipselink/documentation/[documentation].
 When working with JPA, you should know about http://docs.oracle.com/javase/tutorial/jdbc/index.html[JDBC] too.
 ====
 
+If you are worried about performance, see the http://www.jpab.org/[JPA Performance Benchmark).
+EclipseLink is the fastest JPA implementation.
+
 
 == Declaration
 

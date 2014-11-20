@@ -4,5 +4,5 @@ if( !localRepository.exists() ) localRepository.mkdirs()
 
 repositories {
     maven { url localRepository }
-	mavenCentral()
+    jcenter()
 }

@@ -9,7 +9,6 @@ dependencies {
     compile libs.eclipselink
 
     testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
 
     testRuntime libs.h2
 

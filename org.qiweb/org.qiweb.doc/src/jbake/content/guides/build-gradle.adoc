@@ -49,6 +49,7 @@ https://github.com/nebula-plugins/gradle-ospackage-plugin[gradle-ospackage-plugi
 
 === Development mode
 
+
 [discrete]
 ==== Build logic
 
@@ -76,6 +77,7 @@ thanks to the `gradle-gulp-plugin`.
 
 Configuring theses tasks in your build allow you to fine tune the work needed to get your app in dev mode and what
 should be done when the source has changed.
+
 
 [discrete]
 ==== Watch extra files or directories

@@ -8,7 +8,6 @@ dependencies {
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.spring_test
-    testCompile libs.rest_assured
 
 }
 
