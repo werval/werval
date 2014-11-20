@@ -25,6 +25,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - [Hashids](http://hashids.org/) support, see #199
 - Base62 codec, see #200
 - Hassle free application packaging using Gradle, see #210
+- The Gradle plugin now has module build support, see #138
 
 ### Enhancements
 
