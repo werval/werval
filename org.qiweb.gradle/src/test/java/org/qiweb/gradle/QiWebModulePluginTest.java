@@ -16,6 +16,10 @@
 package org.qiweb.gradle;
 
 import org.gradle.api.Plugin;
+import org.junit.Test;
+
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * QiWebModulePlugin Test.
@@ -28,4 +32,11 @@ public class QiWebModulePluginTest
     {
         return new QiWebModulePlugin();
     }
+
+    @Test
+    public void moduleDescriptorAndDocumentationTasks()
+    {
+        assertThat( project.getTasks().getByName( "moduleDescriptor" ), notNullValue() );
+        assertThat( project.getTasks().getByName( "moduleDocumentation" ), notNullValue() );
+    }    
 }

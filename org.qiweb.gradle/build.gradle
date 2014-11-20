@@ -9,6 +9,7 @@ targetCompatibility = '1.7'
 
 repositories {
     maven { url "http://repo.gradle.org/gradle/libs-releases-local" }
+    jcenter()
 }
 
 description = "QiWeb Gradle Plugin"
@@ -19,6 +20,7 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
     compile libs.gradle_tooling
+    compile "org.asciidoctor:asciidoctor-gradle-plugin:1.5.0"
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.awaitility

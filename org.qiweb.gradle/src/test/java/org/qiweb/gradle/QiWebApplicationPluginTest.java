@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * QiWebApplicationPlugin Test.
@@ -32,6 +33,18 @@ public class QiWebApplicationPluginTest
     protected Plugin plugin()
     {
         return new QiWebApplicationPlugin();
+    }
+
+    @Test
+    @Override
+    public void qiwebDependencies()
+    {
+        super.qiwebDependencies();
+        assertTrue(
+            artifactsOfConfiguration( "runtime" ).stream().anyMatch(
+                startsWith( "org.qiweb:org.qiweb.server.bootstrap" )
+            )
+        );
     }
 
     @Test

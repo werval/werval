@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
         return config.getDependencies().stream().map( TO_ARTIFACT_STRING ).collect( Collectors.<String>toList() );
     }
 
-    private Predicate<String> startsWith( final String start )
+    protected final Predicate<String> startsWith( final String start )
     {
         return new Predicate<String>()
         {
@@ -64,11 +64,6 @@ import static org.junit.Assert.assertTrue;
         assertTrue(
             artifactsOfConfiguration( "compile" ).stream().anyMatch(
                 startsWith( "org.qiweb:org.qiweb.api" )
-            )
-        );
-        assertTrue(
-            artifactsOfConfiguration( "runtime" ).stream().anyMatch(
-                startsWith( "org.qiweb:org.qiweb.server.bootstrap" )
             )
         );
         assertTrue(
