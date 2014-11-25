@@ -35,6 +35,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
 - The JDBC module now provide easy integration with [log4jdbc](https://code.google.com/p/log4jdbc-log4j2/), see #145
 - Gradle and Maven plugins now open the default browser upon development mode startup, see #214
+- Gradle plugin now keep a persistent daemon connection for faster rebuilds, see #215
 - Gradle plugin now comes with a `dev` `SourceSet`, that is `src/dev/java` and `src/dev/resources`, see #213
 - Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
 - Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189

@@ -103,4 +103,9 @@ public interface DevShellSPI
      */
     void rebuild()
         throws DevShellRebuildException;
+
+    /**
+     * Stop.
+     */
+    void stop();
 }

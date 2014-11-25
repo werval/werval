@@ -385,6 +385,18 @@ public final class DevShell
                 );
             }
 
+            // Signal DevShellSPI
+            try
+            {
+                spi.stop();
+            }
+            catch( Exception ex )
+            {
+                passivationErrors.add(
+                    new QiWebException( "Error while stopping DevShellSPI: " + ex.getMessage(), ex )
+                );
+            }
+
             // Dispose Realms
             try
             {

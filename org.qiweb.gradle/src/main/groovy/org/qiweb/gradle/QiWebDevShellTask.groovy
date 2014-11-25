@@ -109,8 +109,9 @@ class QiWebDevShellTask extends DefaultTask
             runtimeClasspath as URL[],
             toWatch,
             new JavaWatcher(),
-            project.getProjectDir(),
-            ["devshell_rebuild"]
+            [ "devshell_rebuild" ],
+            project.getGradle().getGradleHomeDir(),
+            project.getProjectDir()
         )
         new DevShellCommand( devShellSPI, configResource, configFile, configUrl, openBrowser ).run();
     }

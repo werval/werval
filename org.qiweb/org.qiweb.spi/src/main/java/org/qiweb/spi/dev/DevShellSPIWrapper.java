@@ -65,4 +65,10 @@ public class DevShellSPIWrapper
     {
         wrapped.rebuild();
     }
+
+    @Override
+    public void stop()
+    {
+        wrapped.stop();
+    }
 }
