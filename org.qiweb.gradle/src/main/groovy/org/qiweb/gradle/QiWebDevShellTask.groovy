@@ -77,7 +77,10 @@ class QiWebDevShellTask extends DefaultTask
             sourceSet.allSource.srcDirs.collect { f -> f.toURI().toURL() }
         }.flatten()
         def applicationClasspath = sourceSets.collect { sourceSet ->
-            [ sourceSet.output.classesDir.toURI().toURL(), sourceSet.output.resourcesDir.toURI().toURL() ]
+            (
+                [ sourceSet.output.classesDir.toURI().toURL(), sourceSet.output.resourcesDir.toURI().toURL() ]
+                + sourceSet.output.dirs.collect { d -> d.toURI().toURL() }
+            ).flatten()
         }.flatten()
         def runtimeClasspath = project.configurations.devshell.files.collect { f ->
             f.toURI().toURL()

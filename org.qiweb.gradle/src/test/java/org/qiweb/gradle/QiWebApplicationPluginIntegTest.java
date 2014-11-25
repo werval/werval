@@ -38,7 +38,7 @@ import org.qiweb.runtime.util.Holder;
 import org.qiweb.util.InputStreams;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -84,6 +84,9 @@ public class QiWebApplicationPluginIntegTest
           + "}\n"
           + "sourceSets {\n"
           + "  custom\n"
+          + "  main {\n"
+          + "    output.dir( 'build/SUPPLEMENTARY_OUTPUT' )\n"
+          + "  }\n"
           + "}\n"
           + "classes.dependsOn customClasses\n"
           + "devshell {\n"
@@ -216,7 +219,7 @@ public class QiWebApplicationPluginIntegTest
     {
         GradleRunner runner = GradleRunnerFactory.create();
         runner.setDirectory( tmp.getRoot() );
-        runner.setArguments( singletonList( "secret" ) );
+        runner.setArguments( asList( "secret" ) );
 
         ExecutionResult result = runner.run();
         assertThat( result.getStandardOutput(), containsString( "Generate new QiWeb Application Secret" ) );
@@ -397,7 +400,7 @@ public class QiWebApplicationPluginIntegTest
                 {
                     GradleRunner runner = GradleRunnerFactory.create();
                     runner.setDirectory( tmp.getRoot() );
-                    runner.setArguments( singletonList( task ) );
+                    runner.setArguments( asList( "--debug", "--stacktrace", task ) );
                     runner.run();
                 }
                 catch( Exception ex )
