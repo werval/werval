@@ -30,39 +30,45 @@ public class DevShellCommand
     private final String configResource;
     private final File configFile;
     private final URL configUrl;
+    private final boolean openBrowser;
 
     public DevShellCommand( DevShellSPI spi )
     {
-        this( spi, null, null, null );
+        this( spi, null, null, null, true );
     }
 
     public DevShellCommand( DevShellSPI spi, String configResource )
     {
-        this( spi, configResource, null, null );
+        this( spi, configResource, null, null, true );
     }
 
     public DevShellCommand( DevShellSPI spi, File configFile )
     {
-        this( spi, null, configFile, null );
+        this( spi, null, configFile, null, true );
     }
 
     public DevShellCommand( DevShellSPI spi, URL configUrl )
     {
-        this( spi, null, null, configUrl );
+        this( spi, null, null, configUrl, true );
     }
 
-    public DevShellCommand( DevShellSPI spi, String configResource, File configFile, URL configUrl )
+    public DevShellCommand(
+        DevShellSPI spi,
+        String configResource, File configFile, URL configUrl,
+        boolean openBrowser
+    )
     {
         this.spi = spi;
         this.configResource = configResource;
         this.configFile = configFile;
         this.configUrl = configUrl;
+        this.openBrowser = openBrowser;
     }
 
     @Override
     public void run()
     {
-        DevShell devShell = new DevShell( spi, configResource, configFile, configUrl );
+        DevShell devShell = new DevShell( spi, configResource, configFile, configUrl, openBrowser );
         Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
         devShell.start();
     }

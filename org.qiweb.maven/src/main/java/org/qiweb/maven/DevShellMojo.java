@@ -55,6 +55,12 @@ public class DevShellMojo
     @Parameter( property = "qiwebdev.extraWatch" )
     private String[] extraWatch;
 
+    /**
+     * Open default browser on start.
+     */
+    @Parameter( property = "qiwebdev.openBrowser", defaultValue = "true" )
+    private boolean openBrowser;
+
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
@@ -107,7 +113,7 @@ public class DevShellMojo
                 project.getBasedir(),
                 rebuildPhase
             );
-            new DevShellCommand( devShellSPI, configResource, configFile, configUrl ).run();
+            new DevShellCommand( devShellSPI, configResource, configFile, configUrl, openBrowser ).run();
         }
         catch( Exception ex )
         {

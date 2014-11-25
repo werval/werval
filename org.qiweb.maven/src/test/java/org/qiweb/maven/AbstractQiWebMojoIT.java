@@ -76,6 +76,7 @@ public abstract class AbstractQiWebMojoIT
           + "                <artifactId>org.qiweb.maven</artifactId>\n"
           + "                <version>" + VERSION + "</version>\n"
           + "                <configuration>\n"
+          + "                   <openBrowser>false</openBrowser>\n"
           + "                   <configResource>application-custom.conf</configResource>\n"
           + "                   <extraClassPath>\n"
           + "                       <param>src/main/custom</param>\n"

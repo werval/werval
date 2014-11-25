@@ -23,7 +23,6 @@ import java.net.URL;
 public class DevShellSPIWrapper
     implements DevShellSPI
 {
-
     private final DevShellSPI wrapped;
 
     public DevShellSPIWrapper( DevShellSPI wrapped )

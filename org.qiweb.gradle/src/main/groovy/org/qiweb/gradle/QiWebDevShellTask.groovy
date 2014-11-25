@@ -52,6 +52,11 @@ class QiWebDevShellTask extends DefaultTask
      */
     Set<String> extraWatch = new LinkedHashSet<>()
 
+    /**
+     * Open default browser on start.
+     */
+    boolean openBrowser = true;
+
     @TaskAction
     void runDevShell()
     {
@@ -107,6 +112,6 @@ class QiWebDevShellTask extends DefaultTask
             project.getProjectDir(),
             ["devshell_rebuild"]
         )
-        new DevShellCommand( devShellSPI, configResource, configFile, configUrl ).run();
+        new DevShellCommand( devShellSPI, configResource, configFile, configUrl, openBrowser ).run();
     }
 }

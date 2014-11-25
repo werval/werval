@@ -15,12 +15,15 @@
  */
 package org.qiweb.devshell;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -138,6 +141,7 @@ public final class DevShell
     private final String configResource;
     private final File configFile;
     private final URL configUrl;
+    private final boolean openBrowser;
     private final URLClassLoader originalLoader;
     private ClassWorld classWorld;
     private Object httpServer;
@@ -145,30 +149,31 @@ public final class DevShell
 
     public DevShell( DevShellSPI spi )
     {
-        this( spi, null, null, null );
+        this( spi, null, null, null, true );
     }
 
     public DevShell( DevShellSPI spi, String configResource )
     {
-        this( spi, configResource, null, null );
+        this( spi, configResource, null, null, true );
     }
 
     public DevShell( DevShellSPI spi, File configFile )
     {
-        this( spi, null, configFile, null );
+        this( spi, null, configFile, null, true );
     }
 
     public DevShell( DevShellSPI spi, URL configUrl )
     {
-        this( spi, null, null, configUrl );
+        this( spi, null, null, configUrl, true );
     }
 
-    public DevShell( DevShellSPI spi, String configResource, File configFile, URL configUrl )
+    public DevShell( DevShellSPI spi, String configResource, File configFile, URL configUrl, boolean openBrowser )
     {
         this.spi = spi;
         this.configResource = configResource;
         this.configFile = configFile;
         this.configUrl = configUrl;
+        this.openBrowser = openBrowser;
         this.originalLoader = ( (URLClassLoader) Thread.currentThread().getContextClassLoader() );
     }
 
@@ -308,6 +313,19 @@ public final class DevShell
             httpServer.getClass().getMethod( "activate" ).invoke( httpServer );
 
             System.out.println( white( ">> Ready for requests on " + appUrl + " !" ) );
+
+            // Eventually open default browser
+            if( openBrowser && Desktop.isDesktopSupported() )
+            {
+                try
+                {
+                    Desktop.getDesktop().browse( new URI( appUrl ) );
+                }
+                catch( IOException | URISyntaxException ex )
+                {
+                    System.out.println( yellow( "Unable to open the default browser: " + ex.getMessage() ) );
+                }
+            }
 
             // Interrupt Loop
             running = true;

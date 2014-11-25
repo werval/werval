@@ -149,7 +149,9 @@ public class DevShellSPIAdapter
     /**
      * No operation.
      *
-     * @throws DevShellRebuildException See {@link DevShellSPI#rebuild()}.
+     * @throws DevShellRebuildException if rebuilding fails
+     *
+     * @see DevShellSPI#rebuild()
      */
     protected void doRebuild()
         throws DevShellRebuildException

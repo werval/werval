@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.concurrent.Callable;
-import java.util.function.Predicate;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -36,7 +35,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.qiweb.runtime.util.Holder;
-import org.qiweb.test.util.Processes;
 import org.qiweb.util.InputStreams;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -57,7 +55,7 @@ import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
  * As this test spawn several Gradle Daemons it ends by killing them all to leave the running system in a proper state.
  */
 public class QiWebApplicationPluginIntegTest
-  extends AbstractQiWebIntegTest
+    extends AbstractQiWebIntegTest
 {
     private static final Charset UTF_8 = Charset.forName( "UTF-8" );
     private static final String BUILD;
@@ -89,6 +87,7 @@ public class QiWebApplicationPluginIntegTest
           + "}\n"
           + "classes.dependsOn customClasses\n"
           + "devshell {\n"
+          + "  openBrowser = false\n"
           + "  sourceSets += project.sourceSets.custom\n"
           + "  configResource = 'development.conf'\n"
           + "}\n"
@@ -163,7 +162,7 @@ public class QiWebApplicationPluginIntegTest
         @Override
         public void delete()
         {
-          super.delete();
+            super.delete();
         }
     };
 
@@ -205,10 +204,10 @@ public class QiWebApplicationPluginIntegTest
     public void cleanupDevShellLock()
         throws Exception
     {
-          if( devshellLock.exists() )
-          {
-              Files.delete( devshellLock.toPath() );
-          }
+        if( devshellLock.exists() )
+        {
+            Files.delete( devshellLock.toPath() );
+        }
     }
 
     @Test
