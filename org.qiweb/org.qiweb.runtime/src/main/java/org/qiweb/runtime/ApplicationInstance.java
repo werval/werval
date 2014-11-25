@@ -338,7 +338,7 @@ public final class ApplicationInstance
             if( hasText( configLocation ) )
             {
                 runtimeSummary
-                    .append( indentTwoSpaces( "Configuration Location:", 1 ) )
+                    .append( indentTwoSpaces( "Configuration", 1 ) )
                     .append( NEWLINE )
                     .append( indentTwoSpaces( configLocation, 2 ) )
                     .append( NEWLINE )
@@ -348,14 +348,14 @@ public final class ApplicationInstance
             if( hasText( allRoutes ) )
             {
                 runtimeSummary
-                    .append( indentTwoSpaces( "All routes defined by the application, in order:", 1 ) )
+                    .append( indentTwoSpaces( "Routes", 1 ) )
                     .append( NEWLINE )
                     .append( indentTwoSpaces( allRoutes, 2 ) )
                     .append( NEWLINE )
                     .append( NEWLINE );
             }
             runtimeSummary
-                .append( indentTwoSpaces( "Application Executors:", 1 ) )
+                .append( indentTwoSpaces( "Executors", 1 ) )
                 .append( NEWLINE )
                 .append( indentTwoSpaces( executors.toString(), 2 ) )
                 .append( NEWLINE );
@@ -364,7 +364,7 @@ public final class ApplicationInstance
             {
                 runtimeSummary
                     .append( NEWLINE )
-                    .append( indentTwoSpaces( "Application Plugins:", 1 ) )
+                    .append( indentTwoSpaces( "Plugins", 1 ) )
                     .append( NEWLINE )
                     .append( indentTwoSpaces( allPlugins, 2 ) )
                     .append( NEWLINE );                
@@ -656,7 +656,7 @@ public final class ApplicationInstance
                     {
                         // Invoke Controller FilterChain, ended by Controller Method Invokation
                         // TODO Handle Timeout when invoking Controller FilterChain!
-                        LOG.debug( "Invoking interaction method: {}", route.controllerMethod() );
+                        LOG.trace( "Invoking interaction method: {}", route.controllerMethod() );
                         FilterChain chain = new FilterChainFactory().buildFilterChain( this, global, context );
                         CompletableFuture<Outcome> interaction = chain.next( context );
                         Outcome outcome = interaction.get( 30, TimeUnit.SECONDS );
@@ -686,7 +686,7 @@ public final class ApplicationInstance
                         finalizeOutcome( request, outcome );
 
                         // Done!
-                        LOG.debug( "Interaction outcome: {}", outcome );
+                        LOG.trace( "Interaction outcome: {}", outcome );
                         return outcome;
                     }
                     finally
