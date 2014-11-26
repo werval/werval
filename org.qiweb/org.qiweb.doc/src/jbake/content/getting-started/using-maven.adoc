@@ -33,7 +33,7 @@ To run a QiWeb application in development mode, use the `devshell` Maven goal:
 
 [source]
 ----
-mvn org.qiweb:org.qiweb.maven:devshell
+mvn qiweb:devshell
  _____ _ _ _ _     _      ____          _____ _       _ _
 |     |_| | | |___| |_   |    \ ___ _ _|   __| |_ ___| | |
 |  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |
@@ -61,15 +61,15 @@ This secret is a key used for cypher and signature operations, it must be unique
 Its place is in the application configuration, see `./src/main/resources/application.conf`.
 One can generate a new random secret using the `secret` Maven goal:
 
-    mvn org.qiweb:org.qiweb.maven:secret
+    mvn qiweb:secret
 
 It is easily appended to the `application.conf` file this way:
 
-    mvn -q org.qiweb:org.qiweb.maven:secret >> ./src/main/resources/application.conf
+    mvn -q qiweb:secret >> ./src/main/resources/application.conf
 
 Once you have properly set your application's secret, use the `start` Maven goal to run your application in production mode:
 
-    mvn org.qiweb:org.qiweb.maven:start
+    mvn qiweb:start
 ====
 
 

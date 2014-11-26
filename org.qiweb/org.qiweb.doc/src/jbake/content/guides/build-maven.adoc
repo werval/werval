@@ -18,7 +18,7 @@ code change.
 [discrete]
 ==== Watch extra files or directories
 
-The `devshell` goal has an `extraWatch` property that allow one to add files or directories to watch for changes in
+The `qiweb:devshell` goal has an `extraWatch` property that allow one to add files or directories to watch for changes in
 dev mode:
 
 // TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
@@ -66,7 +66,7 @@ dev mode:
     </build>
 ----
 
-Using Maven plugin `<executions/>` you can override config location for both the `devshell` and `start` goals.
+Using Maven plugin `<executions/>` you can override config location for both the `qiweb:devshell` and `qiweb:start` goals.
 
 === Enrich the application classpath
 
@@ -91,7 +91,7 @@ Using Maven plugin `<executions/>` you can override config location for both the
     </build>
 ----
 
-Using Maven plugin `<executions/>` you can enrich the application classpath for both the `devshell` and `start` goals.
+Using Maven plugin `<executions/>` you can enrich the application classpath for both the `qiweb:devshell` and `qiweb:start` goals.
 
 
 === Packaging
