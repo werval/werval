@@ -1,6 +1,4 @@
 
-== Using Maven
-
 [TIP]
 .TL;DR
 ====
@@ -15,7 +13,7 @@ mvn qiweb:devshell <2>
 ====
 
 
-=== Create a new application
+== Create a new application
 
 To create a new QiWeb application based on Maven, use the following command:
 
@@ -41,32 +39,24 @@ For the time being, you'll have to copy/paste/edit, or type, this horrible comma
 ====
 
 
-=== Run in development mode
+== Run in development mode
 
 To run a QiWeb application in development mode, use the `devshell` Maven goal:
 
 [source]
 ----
 mvn qiweb:devshell
- _____ _ _ _ _     _      ____          _____ _       _ _
-|     |_| | | |___| |_   |    \ ___ _ _|   __| |_ ___| | |
-|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |
-|__  _|_|_____|___|___|  |____/|___|\_/|_____|_|_|___|_|_|
-   |__|
-
-Loading...
-Compiling Application...
->> QiWeb DevShell starting...
->> Ready for requests on http(s)://127.0.0.1:23023!
 ----
+
+Your default browser should have opened http://localhost:23023/ showing the following welcome page:
+
+image::images/welcome.png[Welcome,640]
+
+As stated on the welcome page above, when running the Development Shell, the whole QiWeb documentation is available right from the HTTP server that run your application. Open http://localhost:23023/@doc to browse the documentation. This very article should be available at http://localhost:23023/@doc/getting-started.html but maybe you are already reading it from there.
 
 // TIP: If you want to change the listening address and port override `qiweb.http.address` and `qiweb.http.port` either
 // through the command line by adding `-Dqiweb.http.address=0.0.0.0` and `-Dqiweb.http.port=80` for example ; or in the
 // `application.conf` file.
-
-You can now open your browser to http://localhost:23023/ to see the welcome page.
-
-image::images/welcome.png[Welcome,640]
 
 [TIP]
 ====
@@ -89,7 +79,7 @@ Once you have properly set your application's secret, use the `start` Maven goal
 
 
 
-=== Application Walkthrough
+== Application Walkthrough
 
 The newly created application has a single HTTP route:
 

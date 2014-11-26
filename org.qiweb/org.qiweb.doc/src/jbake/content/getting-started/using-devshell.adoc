@@ -1,14 +1,10 @@
 
 == Using the DevShell
 
+// === Instant feedback
+
 From now on we'll take a closer look at QiWeb Development Shell features.
-
 Begin by starting the application in development mode, see above.
-
-Then, open http://localhost:23023/, you should see the now well known Welcome page.
-
-
-=== Instant feedback
 
 // Add compilation error
 At first we will introduce a compilation error in the application sources.
@@ -97,20 +93,10 @@ This time you should see **Hello World!**.
 This is how the QiWeb Development Shell gives you instant feedback when coding.
 
 
-=== Embedded documentation
-
-When running the Development Shell, the whole QiWeb documentation is available right from the HTTP server that run
-your application.
-
-Open http://localhost:23023/@doc to browse the documentation. This very article should be available at
-http://localhost:23023/@doc/getting-started.html but maybe you are already reading it from there.
-
-
-
-// ==== Introspection resources
+// === Introspection resources
 // /@config
 // /@logs
 // /@classpath
 // /@etc...
-
+// Contributed by modules
 

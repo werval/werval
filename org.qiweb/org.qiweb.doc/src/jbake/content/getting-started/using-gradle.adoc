@@ -1,6 +1,4 @@
 
-== Using Gradle
-
 [TIP]
 .TL;DR
 ====
@@ -15,7 +13,7 @@ gradle devshell <2>
 ====
 
 
-=== Create a new application
+== Create a new application
 
 To create a new QiWeb application based on Gradle, use the following command:
 
@@ -41,32 +39,24 @@ For the time being, you'll have to copy/paste/edit, or type, this horrible comma
 ====
 
 
-=== Run in development mode
+== Run in development mode
 
 To run a QiWeb application in development mode, use the `devshell` Gradle task:
 
 [source]
 ----
-./gradlew devshell
- _____ _ _ _ _     _      ____          _____ _       _ _
-|     |_| | | |___| |_   |    \ ___ _ _|   __| |_ ___| | |
-|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |
-|__  _|_|_____|___|___|  |____/|___|\_/|_____|_|_|___|_|_|
-   |__|
-
-Loading...
-Compiling Application...
->> QiWeb DevShell starting...
->> Ready for requests on http(s)://127.0.0.1:23023!
+gradle devshell
 ----
 
-// TIP: If you want to change the listening address and port override `qiweb.http.address` and `qiweb.http.port` either
-// through the command line by adding `-Dqiweb.http.address=0.0.0.0` and `-Dqiweb.http.port=80` for example ; or in the
-// `application.conf` file.
-
-You can now open your browser to http://localhost:23023/ to see the welcome page.
+Your default browser should have opened http://localhost:23023/ showing the following welcome page:
 
 image::images/welcome.png[Welcome,640]
+
+As stated on the welcome page above, when running the Development Shell, the whole QiWeb documentation is available right from the HTTP server that run your application. Open http://localhost:23023/@doc to browse the documentation. This very article should be available at http://localhost:23023/@doc/getting-started.html but maybe you are already reading it from there.
+
+// If you want to change the listening address and port override `qiweb.http.address` and `qiweb.http.port` either
+// through the command line by adding `-Dqiweb.http.address=0.0.0.0` and `-Dqiweb.http.port=80` for example ; or in the
+// `application.conf` file.
 
 [TIP]
 ====
@@ -75,19 +65,19 @@ This secret is a key used for cypher and signature operations, it must be unique
 Its place is in the application configuration, see `./src/main/resources/application.conf`.
 One can generate a new random secret using the `secret` Gradle task:
 
-    ./gradlew secret
+    gradle secret
 
 It is easily appended to the `application.conf` file this way:
 
-    ./gradlew -q secret >> ./src/main/resources/application.conf
+    gradle -q secret >> ./src/main/resources/application.conf
 
 Once you have properly set your application's secret, use the `start` Gradle task to run your application in production mode:
 
-    ./gradlew start
+    gradle start
 ====
 
 
-=== Application Walkthrough
+== Application Walkthrough
 
 The newly created application has a single HTTP route:
 
@@ -143,4 +133,3 @@ apply plugin: 'org.qiweb.application'       // <3>
 <3> Apply the QiWeb Gradle plugin
 
 TIP: See the link:guides.html#gradle_plugin[QiWeb Gradle Plugin guide] for more insights.
-
