@@ -49,7 +49,7 @@ Now, you need to register the Plugin into your Application in its configuration:
 
 [source,bash]
 ----
-app.plugins = [ "fqcn.of.HelloWorldPlugin" ]
+app.plugins.enabled += fqcn.of.HelloWorldPlugin
 ----
 
 Et voilà!

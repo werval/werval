@@ -1,8 +1,6 @@
 
-== Use QiWeb offline
+// == Use QiWeb offline
 
-=== Distribution archive
+// === Distribution archive
 
-=== Artifact repositories
-
-
+// === Artifact repositories

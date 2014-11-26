@@ -1,8 +1,8 @@
-== Deploy on UN*X
+// == Deploy on UN*X
 
-NOTE: Write UN*X deployment documentation
+// NOTE: Write UN*X deployment documentation
 
-=== Using Gradle
+// === Using Gradle
 
-=== Using Maven
+// === Using Maven
 

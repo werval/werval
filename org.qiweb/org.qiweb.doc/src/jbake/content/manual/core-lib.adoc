@@ -1,16 +1,6 @@
 
-== Core Controllers and Filters
+// == Core Controllers and Filters
 
-=== Controllers
+// === Controllers
 
-- `Default`
-- `Classpath`
-- `Static`
-
-
-=== Filters
-
-- `@Cached`
-- `@MDCSessionID`
-- ...
-
+// === Filters

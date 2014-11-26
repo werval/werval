@@ -1,10 +1,9 @@
 == Deploy on Heroku
 
 Deploy a QiWeb Application on Heroku is rather simple: launching the main class with a correct classpath is enough.
-
 Application classpath building is a good job for a build system with dependency management like Gradle or Maven.
 
-Deploy on Heroku means building an executable version of the application and writing a `Procfile` file relaying the
+Deploying on Heroku means building an executable version of the application and writing a `Procfile` file relaying the
 Heroku environment variables to our application.
 If you are not familiar with Heroku, see the https://devcenter.heroku.com/articles/java[Java] and
 https://devcenter.heroku.com/articles/procfile[Procfile] documentation.
@@ -15,7 +14,6 @@ However, if you feel the need, nothing stops you to gather System Properties dir
 
 Now that we saw the basics we'll walk through two practical cases.
 The first one using Gradle, the second one using Maven.
-
 In theses two samples, we pass the HTTP server listening port to the application.
 Heroku set the port to use in the `POST` environment variable.
 
@@ -46,6 +44,6 @@ user@host $ ./build/install/app/bin/app
 ----
 
 
-=== Using Maven
+// === Using Maven
 
-NOTE: TODO Write Heroku Maven based deployment walkthrough
+// NOTE: TODO Write Heroku Maven based deployment walkthrough

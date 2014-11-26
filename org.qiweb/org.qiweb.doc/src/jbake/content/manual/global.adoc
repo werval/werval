@@ -1,15 +1,15 @@
 
 == The Global object
 
-=== Instanciation
+// === Instanciation
 
-- Controllers
-- Filters
+// - Controllers
+// - Filters
 
-=== Invocation
+// === Invocation
 
-- Controllers
-- Filters
+// - Controllers
+// - Filters
 
 === Error handling
 

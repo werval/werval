@@ -1,6 +1,20 @@
 
 == Using Gradle
 
+[TIP]
+.TL;DR
+====
+["source",subs="callouts"]
+----
+git archive --format=tar --prefix=qiweb-gradle/ --remote=git@scm.codeartisans.org:qiweb/qiweb-skel-gradle.git master | tar -xf - <1>
+cd qiweb-gradle
+gradle devshell <2>
+----
+<1> Create a new application
+<2> Run in development mode
+====
+
+
 === Create a new application
 
 To create a new QiWeb application based on Gradle, use the following command:
