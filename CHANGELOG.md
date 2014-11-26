@@ -24,7 +24,6 @@ For minor changes, build system or test changes, see the full [source code histo
 - #186 & #202 Metrics & HealthChecks Plugin with core and filter annotations metrics plus metrics in other modules
 - #199 [Hashids](http://hashids.org/) support
 - #200 Base62 codec
-- #210 Hassle free application packaging using Gradle
 - #138 The Gradle plugin now has module build support
 
 ### Enhancements
@@ -34,14 +33,14 @@ For minor changes, build system or test changes, see the full [source code histo
 - #42 & #209 Plugins can now declare dependencies to others, resolved at application activation
 - #201 The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling
 - #145 The JDBC module now provide easy integration with [log4jdbc](https://code.google.com/p/log4jdbc-log4j2/)
+- #187 & #189 Allow setting application config location in Gradle and Maven plugins for the `devshell` and `start` tasks/goals
 - #214 Gradle and Maven plugins now open the default browser upon development mode startup
+- #104 Allow to add `SourceSets` in Gradle plugin configuration for the `devshell` and `start` tasks
 - #215 Gradle plugin now keep a persistent daemon connection for faster rebuilds
 - #213 Gradle plugin now comes with a `dev` `SourceSet`, that is `src/dev/java` and `src/dev/resources`
+- #210 Gradle plugin now comes with hassle-free application packaging
+- #188 Allow to add `extraClassPath` entries in Maven plugin configuration for the `devshell` and `start` goals
 - #196 Add `extraWatch` parameter to Maven plugin `devshell` goal
-- #189 Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals
-- #188 Allow to add `extraClassPath` entries in Maven plugin configuration for `devshell` and `start` goals
-- #187 Allow setting application config file in Gradle plugin configuration for `devshell` and `start` tasks
-- #104 Allow to add `SourceSets` in Gradle plugin configuration for `devshell` and `start` tasks
 
 ### Dependency changes
 
