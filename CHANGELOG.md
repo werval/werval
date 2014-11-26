@@ -11,37 +11,37 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### Breaking changes
 
-- Plugins can now be registered by names in configuration. Registration by FQCN is still possible but the syntax has changed, see #195
-- Gradle plugins IDs have changed to be compliant with the official Gradle Plugin Portal policy, see #212
+- #195 Plugins can now be registered by names in configuration. Registration by FQCN is still possible but the syntax has changed
+- #212 Gradle plugins IDs have changed to be compliant with the official Gradle Plugin Portal policy
 
 ### Bug fixes
 
-- Fix Plugin's lookup mechanism to correctly honor polymorphism, see #203
+- #203 Fix Plugin's lookup mechanism to correctly honor polymorphism
 
 ### New features
 
-- Application Events, mainly used for metrics, see #190 and below
-- Metrics & HealthChecks Plugin with core and filter annotations metrics plus metrics in other modules, see #186 and #202
-- [Hashids](http://hashids.org/) support, see #199
-- Base62 codec, see #200
-- Hassle free application packaging using Gradle, see #210
-- The Gradle plugin now has module build support, see #138
+- #190 Application Events, mainly used for metrics, see below
+- #186 & #202 Metrics & HealthChecks Plugin with core and filter annotations metrics plus metrics in other modules
+- #199 [Hashids](http://hashids.org/) support
+- #200 Base62 codec
+- #210 Hassle free application packaging using Gradle
+- #138 The Gradle plugin now has module build support
 
 ### Enhancements
 
-- Refined runtime logging, see #72
-- One can now start an application in development or test mode without an `app.secret` defined (even without an `application.conf` file) ; in such a case, a random secret is generated, see #205
-- Plugins can now declare dependencies to others, resolved at application activation, see #42 and #209
-- The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling, see #201
-- The JDBC module now provide easy integration with [log4jdbc](https://code.google.com/p/log4jdbc-log4j2/), see #145
-- Gradle and Maven plugins now open the default browser upon development mode startup, see #214
-- Gradle plugin now keep a persistent daemon connection for faster rebuilds, see #215
-- Gradle plugin now comes with a `dev` `SourceSet`, that is `src/dev/java` and `src/dev/resources`, see #213
-- Add `extraWatch` parameter to Maven plugin `devshell` goal, see #196
-- Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals, see #189
-- Allow to add `extraClassPath` entries in Maven plugin configuration for `devshell` and `start` goals, see #188
-- Allow setting application config file in Gradle plugin configuration for `devshell` and `start` tasks, see #187
-- Allow to add `SourceSets` in Gradle plugin configuration for `devshell` and `start` tasks, see #104
+- #72 Refined runtime logging
+- #205 One can now start an application in development or test mode without an `app.secret` defined (even without an `application.conf` file) ; in such a case, a random secret is generated
+- #42 & #209 Plugins can now declare dependencies to others, resolved at application activation
+- #201 The JDBC module now use [HikariCP](http://brettwooldridge.github.io/HikariCP/) instead of [BoneCP](https://github.com/wwadge/bonecp) for connection pooling
+- #145 The JDBC module now provide easy integration with [log4jdbc](https://code.google.com/p/log4jdbc-log4j2/)
+- #214 Gradle and Maven plugins now open the default browser upon development mode startup
+- #215 Gradle plugin now keep a persistent daemon connection for faster rebuilds
+- #213 Gradle plugin now comes with a `dev` `SourceSet`, that is `src/dev/java` and `src/dev/resources`
+- #196 Add `extraWatch` parameter to Maven plugin `devshell` goal
+- #189 Allow setting application config file in Maven plugin configuration for `devshell` and `start` goals
+- #188 Allow to add `extraClassPath` entries in Maven plugin configuration for `devshell` and `start` goals
+- #187 Allow setting application config file in Gradle plugin configuration for `devshell` and `start` tasks
+- #104 Allow to add `SourceSets` in Gradle plugin configuration for `devshell` and `start` tasks
 
 ### Dependency changes
 
@@ -62,7 +62,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 #### Bug fixes
 
-- Fix Plugin.afterInterfaction hook that was never called, see #191
+- #191 Fix Plugin.afterInterfaction hook that was never called
 
 
 
@@ -72,7 +72,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 #### Bug fixes
 
-- Fix multipart form uploads failing when < 8k, see #182
+- #182 Fix multipart form uploads failing when < 8k
 
 
 
@@ -82,10 +82,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### Bug fixes
 
-- DevShell: links to application sources in stacktraces are back, a bug removed them, see #178
-- DevShell: source code changes are now properly detected on absents files/dirs, see #136
-- DevShell: fix application source URL corner-case bug when several files have the same name, see #177
-- DevShell: when a build error occurs, the build log is now showed in the browser, see #176
+- #178 DevShell: links to application sources in stacktraces are back, a bug removed them
+- #136 DevShell: source code changes are now properly detected on absents files/dirs
+- #177 DevShell: fix application source URL corner-case bug when several files have the same name
+- #176 DevShell: when a build error occurs, the build log is now showed in the browser
 
 ### New features
 
@@ -104,58 +104,58 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 ### Breaking changes
 
-- Moved `org.qiweb.api.util` to `org.qiweb.util`, see #174
-- Moved all standard controllers from `org.qiweb.api.controllers` to `org.qiweb.controllers`, see #160
-- Moved `@Cached` from `org.qiweb.api.cache` to `org.qiweb.filters`, see #171
-- Renamed `StaticFiles` to `Static`, see #124
-- Renamed `ClasspathResources` to `Classpath`, see #123
-- Renamed `Global::onApplicationError ` to `Global::onRequestError`, see #159
-- The Rythm Plugin now embrace the Templates API and must be used through it, see #172
-- Gradle Plugin development mode build logic revamped, see #125
+- #174 Moved `org.qiweb.api.util` to `org.qiweb.util`
+- #160 Moved all standard controllers from `org.qiweb.api.controllers` to `org.qiweb.controllers`
+- #171 Moved `@Cached` from `org.qiweb.api.cache` to `org.qiweb.filters`
+- #124 Renamed `StaticFiles` to `Static`
+- #123 Renamed `ClasspathResources` to `Classpath`
+- #159 Renamed `Global::onApplicationError ` to `Global::onRequestError`
+- #172 The Rythm Plugin now embrace the Templates API and must be used through it
+- #125 Gradle Plugin development mode build logic revamped
 
 ### Bug fixes
 
-- Fix multi-cookies parsing from requests, see #120
-- Fix handling of request with Content-Type but no Charset, see #121
-- First request in development mode no longer trigger a superflous rebuild, this is snappier!, see #116
-- Fix Application reload after global error in DevShell, see #113
-- Fix POST requests parsing when Keep-Alive in Netty Server, see #152
-- Fix DevShell classpath in Gradle Plugin, see #153
+- #120 Fix multi-cookies parsing from requests
+- #121 Fix handling of request with Content-Type but no Charset
+- #116 First request in development mode no longer trigger a superflous rebuild, this is snappier!
+- #113 Fix Application reload after global error in DevShell
+- #152 Fix POST requests parsing when Keep-Alive in Netty Server
+- #153 Fix DevShell classpath in Gradle Plugin
 
 ### New features
 
-- Application now has a startup banner, see #158
-- Application now has Executors (thread pools) and all application code is run in the default one, see #149
-- Security annotations using Filters for `X-Frame-Options`, `X-XSS-Protection`, `X-Content-Type-Options`,
-  `Strict-Transport-Security`, `Content-Security-Policy`and Do No Track (`DNT`) headers, see #167, #9, #10, #168
-- Server-side templating API supported by plugins for [Rythm](http://rythmengine.org/) and [Thymeleaf](http://www.thymeleaf.org/) engines, see #172 and #173
-- [Liquibase](http://www.liquibase.org/) Plugin for managed database migrations, see #122
-- Proper JSON and [JSON-P](https://en.wikipedia.org/wiki/JSONP) support using [Jackson](http://wiki.fasterxml.com/JacksonHome), see #96
-- Add a Cache implementation backed by [Redis](http://redis.io/), see #112
-- Add `@NeverCache` filter, see #170
-- Maven support on par with Gradle support, see #97
-- Add `start` task/goal to the Gradle and Maven build plugins that start the application in production mode, see #101
+- #158 Application now has a startup banner
+- #149 Application now has Executors (thread pools) and all application code is run in the default one
+- #167, #9, #10 & #168 Security annotations using Filters for `X-Frame-Options`, `X-XSS-Protection`, `X-Content-Type-Options`,
+  `Strict-Transport-Security`, `Content-Security-Policy`and Do No Track (`DNT`) headers
+- #172 & #173 Server-side templating API supported by plugins for [Rythm](http://rythmengine.org/) and [Thymeleaf](http://www.thymeleaf.org/) engines
+- #122 [Liquibase](http://www.liquibase.org/) Plugin for managed database migrations
+- #96 Proper JSON and [JSON-P](https://en.wikipedia.org/wiki/JSONP) support using [Jackson](http://wiki.fasterxml.com/JacksonHome)
+- #112 Add a Cache implementation backed by [Redis](http://redis.io/)
+- #170 Add `@NeverCache` filter
+- #97 Maven support on par with Gradle support
+- #101 Add `start` task/goal to the Gradle and Maven build plugins that start the application in production mode
 
 ### Enhancements
 
-- Application Routes are now logged upon activation, see #130
-- Controller methods can now return either a plain `Outcome` or a `CompletableFuture<Outcome>`, see #148
-- Outome builder API now expose helpers for common Content-Types and Charsets, see #128
-- The Cache API now leverage Java 8 Lambdas, see #127
-- The `Classpath` and `Static` controllers gets uniform index files support, see #134 and #137
-- Filters annotation can now be `@Repeatable` thanks to Java 8, see #169
-- Plugins can now contribute routes with regards to the application mode (`DEV`, `PROD`, `TEST`), see #119
-- Plugins can now use other plugins during activation/passivation, see #42
-- Plugins can now contribute to interactions context, see #166
-- Modules can now contribute dynamic documentation to `/@doc`, see #71
-- The JPA Plugin now has clear lifecycle and thread/context model plus a `@Transactional` annotation, see #114
-- The JPA Plugin now redirects all EclipseLink logging to SLF4J, see #115
-- Resources at `/@doc` in development mode are now all in a dedicated DocumentationPlugin, see #106 and #71
-- Development mode can now watch individual files, see #19
-- Add a file based run lock for the DevShell for easier process monitoring by both the build plugins and their integration tests, #98
-- CLI, Gradle and Maven support converged in `org.qiweb.commands`, see #111
-- Move Gradle Plugin tasks configuration into tasks, see #103
-- Enhance the application skeleton generated by `qiweb new`, see #73, #100
+- #130 Application Routes are now logged upon activation
+- #148 Controller methods can now return either a plain `Outcome` or a `CompletableFuture<Outcome>`
+- #128 Outome builder API now expose helpers for common Content-Types and Charsets
+- #127 The Cache API now leverage Java 8 Lambdas
+- #134 & #137 The `Classpath` and `Static` controllers gets uniform index files support
+- #169 Filters annotation can now be `@Repeatable` thanks to Java 8
+- #119 Plugins can now contribute routes with regards to the application mode (`DEV`, `PROD`, `TEST`)
+- #42 Plugins can now use other plugins during activation/passivation
+- #166 Plugins can now contribute to interactions context
+- #71 Modules can now contribute dynamic documentation to `/@doc`
+- #114 The JPA Plugin now has clear lifecycle and thread/context model plus a `@Transactional` annotation
+- #115 The JPA Plugin now redirects all EclipseLink logging to SLF4J
+- #106 & #71 Resources at `/@doc` in development mode are now all in a dedicated DocumentationPlugin
+- #19 Development mode can now watch individual files
+- #98 Add a file based run lock for the DevShell for easier process monitoring by both the build plugins and their integration tests
+- #111 CLI, Gradle and Maven support converged in `org.qiweb.commands`
+- #103 Move Gradle Plugin tasks configuration into tasks
+- #73 & #100 Enhance the application skeleton generated by `qiweb new`
 
 ### Dependency changes
 
@@ -189,28 +189,28 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 ### Breaking changes
 
-- Moved `org.qiweb.lib.controllers` into `org.qiweb.api.controllers`, see #87 & #91
+- #87 & #91 Moved `org.qiweb.lib.controllers` into `org.qiweb.api.controllers`
 
 ### Bug fixes
 
-- Fix QueryString multi-empty-valued parameters handling, see #78
-- Fix parsing of escaped quotes in forced/defaulted route parameters, see #79
+- #78 Fix QueryString multi-empty-valued parameters handling
+- #79 Fix parsing of escaped quotes in forced/defaulted route parameters
 
 ### New features
 
-- Add HTTP Language Negotiation helpers, see #85
-- Add HTTP Content Negotiation helpers, see #7
-- Complete Cookies support, see #61
-- Add a Cache Extension Plugin and EhCache & Memcache based implementations, see #88
-- Add `@Cached` annotation that leverage both server-side and client-side caching, see #90
+- #85 Add HTTP Language Negotiation helpers
+- #7 Add HTTP Content Negotiation helpers
+- #61 Complete Cookies support
+- #88 Add a Cache Extension Plugin and EhCache & Memcache based implementations
+- #90 Add `@Cached` annotation that leverage both server-side and client-side caching
 - Crypto helpers for `SHA-256`
 
 ### Enhancements
 
-- Add support for default parameters values in Routes, see #76
-- Routes contributed by plugins can now easily be prefixed, see #86
-- Filters can now be declared using custom annotations, see #89
-- The CLI now generate a `build.gradle` file in new applications, see #92
+- #76 Add support for default parameters values in Routes
+- #86 Routes contributed by plugins can now easily be prefixed
+- #89 Filters can now be declared using custom annotations
+- #92 The CLI now generate a `build.gradle` file in new applications
 - Better error reporting on passivation
 - Minor enhancements to test support
 - Some progress towards Windows support in CLI, untested!
@@ -226,7 +226,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 > Hotfix!
 
-- Add support for `DATABASE_URL` Heroku syntax to the JDBC Plugin, fixes samples deployment on Heroku, see #69
+- #69 Add support for `DATABASE_URL` Heroku syntax to the JDBC Plugin, fixes samples deployment on Heroku
 
 
 
@@ -234,7 +234,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 > Hotfix!
 
-- Fix Rythm Plugin template resolution in prod mode, see #74
+- #74 Fix Rythm Plugin template resolution in prod mode
 
 
 
