@@ -17,6 +17,11 @@ package org.qiweb.api.http;
 
 /**
  * Response Header.
+ *
+ * @navcomposed 1 - 1 ProtocolVersion
+ * @navcomposed 1 - 1 Status
+ * @navcomposed 1 - 1 MutableHeaders
+ * @navcomposed 1 - 1 MutableCookies
  */
 public interface ResponseHeader
 {

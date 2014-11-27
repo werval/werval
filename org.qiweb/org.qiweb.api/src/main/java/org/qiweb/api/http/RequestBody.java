@@ -20,6 +20,9 @@ import java.nio.charset.Charset;
 
 /**
  * Request Body.
+ *
+ * @navcomposed 1 - 1 FormAttributes
+ * @navcomposed 1 - 1 FormUploads
  */
 public interface RequestBody
 {

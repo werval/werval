@@ -30,6 +30,8 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Remove Headers Annotation.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( RemoveHeaders.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

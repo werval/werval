@@ -35,6 +35,8 @@ import org.qiweb.spi.ApplicationSPI;
  * <code>routes.conf</code> file.
  * <p>
  * Use the various constructors to to provide your own test configuration and routes.
+ *
+ * @composed 1 - 1 QiWebHttpTest
  */
 public class QiWebHttpRule
     implements QiWebHttpTestSupport, TestRule

@@ -19,6 +19,8 @@ import org.qiweb.api.Plugin;
 
 /**
  * Cache Plugin API.
+ *
+ * @navcomposed 1 - 1 Cache
  */
 public abstract class CachePlugin
     implements Plugin<Cache>

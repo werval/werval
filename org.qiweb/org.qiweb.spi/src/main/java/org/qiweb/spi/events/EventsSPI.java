@@ -20,6 +20,8 @@ import org.qiweb.api.events.Event;
 
 /**
  * Application Events SPI.
+ *
+ * @navassoc 1 emit * Event
  */
 public interface EventsSPI
     extends Events

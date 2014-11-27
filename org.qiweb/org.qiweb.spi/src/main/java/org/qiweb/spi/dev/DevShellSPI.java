@@ -23,6 +23,8 @@ import java.util.Set;
  * Development Shell Service Provider Interface.
  * <p>
  * Methods of this class are used as extension points by the QiWeb Runtime in Development Mode.
+ *
+ * @navassoc 1 throws * DevShellRebuildException
  */
 public interface DevShellSPI
 {
@@ -30,6 +32,9 @@ public interface DevShellSPI
      * File watching abstraction.
      * <p>
      * Allow DevShell implementations to choose their file watching implementation.
+     *
+     * @navassoc 1 signal * SourceChangeListener
+     * @navassoc 1 create * SourceWatch
      */
     interface SourceWatcher
     {

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Application, Global, Config, Plugins, Errors etc….
+ * Application, Global, Config, Plugins, Errors etc&hellip;.
  */
 package org.qiweb.api;

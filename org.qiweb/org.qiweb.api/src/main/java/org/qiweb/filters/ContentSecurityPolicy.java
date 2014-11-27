@@ -63,6 +63,8 @@ import static org.qiweb.util.Strings.hasTextOrNull;
  * Logging level is {@literal WARN} by default, this can be changed by setting the
  * {@literal qiweb.filters.csp.report_log_level} configuration property to {@literal error}, {@literal warn},
  * {@literal info}, {@literal debug} or {@literal trace} value.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( ContentSecurityPolicy.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )
@@ -123,6 +125,8 @@ public @interface ContentSecurityPolicy
 
     /**
      * CSP Violation Logger Controller.
+     *
+     * @navassoc 1 works-with 1 Filter
      */
     public static class ViolationLogger
     {
@@ -163,6 +167,11 @@ public @interface ContentSecurityPolicy
         }
     }
 
+    /**
+     * ContentSecurityPolicy repeatable annotation support.
+     *
+     * @navassoc 1 repeat * ContentSecurityPolicy
+     */
     @Retention( RetentionPolicy.RUNTIME )
     @Target( { ElementType.METHOD, ElementType.TYPE } )
     @Inherited

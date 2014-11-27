@@ -33,7 +33,7 @@ import org.qiweb.util.Numbers;
  * <p>
  * See the the EhCache, Memcache and Redis based Cache Plugins for alternatives.
  */
-/* package */ class MapCache
+public class MapCache
     extends CacheAdapter
 {
     /* package */ final ConcurrentMap<String, Couple<Long, Object>> map = new ConcurrentHashMap<>();

@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to declare Filters on Controller types and methods.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.TYPE, ElementType.METHOD } )

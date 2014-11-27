@@ -35,6 +35,8 @@ import org.qiweb.api.outcomes.Outcome;
  * <a href="https://tools.ietf.org/html/rfc6797">RFC6797</a>.
  * <p>
  * <a href="http://caniuse.com/stricttransportsecurity">Can I use?</a>
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( HSTS.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

@@ -24,6 +24,8 @@ import java.util.Map;
  * Route Controller Params.
  * <p>
  * Used internally by {@link RouteBuilder}.
+ *
+ * @hidden
  */
 public final class ControllerParams
     implements Iterable<ControllerParams.Param>
@@ -86,6 +88,8 @@ public final class ControllerParams
 
     /**
      * Route Controller Param Value Kind.
+     *
+     * @hidden
      */
     public static enum ParamValue
     {
@@ -94,6 +98,8 @@ public final class ControllerParams
 
     /**
      * Route Controller Param.
+     *
+     * @hidden
      */
     public static final class Param
     {

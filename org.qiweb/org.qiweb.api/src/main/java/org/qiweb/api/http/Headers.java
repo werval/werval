@@ -21,6 +21,9 @@ import java.util.Set;
 
 /**
  * HTTP Headers.
+ *
+ * @has 1 - 1 Names
+ * @has 1 - 1 Values
  */
 public interface Headers
 {

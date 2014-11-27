@@ -36,6 +36,15 @@ import org.qiweb.util.Stacktraces;
  * <p>
  * An Application instance can run in different {@link Mode}s, default Mode is {@link Mode#TEST}. For your code to
  * be {@link Mode#DEV} friendly, don't hold references to instances returned by an Application instance.
+ *
+ * @navcomposed 1 - 1 ApplicationExecutors
+ * @navcomposed 1 - 1 Config
+ * @navcomposed 1 - 1 Crypto
+ * @navcomposed 1 - 1 Errors
+ * @composed 1 - 1 Global
+ * @navcomposed 1 - 1 MetaData
+ * @has 1 - 1 Mode
+ * @navcomposed 1 - * Plugin
  */
 @Reflectively.Loaded( by = "DevShell" )
 public interface Application

@@ -85,7 +85,6 @@ configurations { embeddedJavadocConfiguration }
 dependencies { embeddedJavadocProjects().each { p -> embeddedJavadocConfiguration p } }
 
 // Dependency to UMLGraph
-// QUID Replace with http://www.yworks.com/en/products_ydoc.html ?
 configurations { umlgraphDoclet }
 dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 
@@ -113,6 +112,8 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
             "Test Support":      [ "org.qiweb.test",          "org.qiweb.test.*"          ],
             "SPI":               [ "org.qiweb.spi",           "org.qiweb.spi.*"           ]
         ] )
+    // disable the crazy super-strict doclint tool in Java 8
+    options.addStringOption( 'Xdoclint:none', '-quiet' )
     options.docletpath = configurations.umlgraphDoclet.files as List
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
     inputs.dir file( 'src/javadoc' )

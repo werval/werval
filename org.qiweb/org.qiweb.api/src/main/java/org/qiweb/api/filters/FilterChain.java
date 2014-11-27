@@ -21,6 +21,8 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Chain of Filters.
+ *
+ * @composed 1 - * Filter
  */
 public interface FilterChain
 {

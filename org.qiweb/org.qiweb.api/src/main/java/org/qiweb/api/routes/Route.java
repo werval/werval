@@ -25,6 +25,10 @@ import org.qiweb.api.http.RequestHeader;
  * Route.
  * <p>
  * HTTP RequestHeader satisfiedBy.
+ *
+ * @has 1 method 1 Method
+ * @has 1 controller-type 1 Class
+ * @has 1 controller-method 1 java.lang.reflect.Method
  */
 public interface Route
 {

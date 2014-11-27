@@ -84,6 +84,8 @@ public final class Hashids
      * Each method return a new builder instance.
      * <p>
      * Defaults are no salt, {@link #DEFAULT_ALPHABET}, no minimum length and {@link #DEFAULT_SEPARATORS}.
+     *
+     * @navassoc 1 create * Hashids
      */
     public static final class Builder
     {

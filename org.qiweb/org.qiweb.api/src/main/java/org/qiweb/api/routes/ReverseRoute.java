@@ -20,6 +20,11 @@ import org.qiweb.api.http.Method;
 
 /**
  * Mutable Reverse Route.
+ *
+ * @has 1 method 1 Method
+ * @has 1 uri 1 String
+ * @has 1 query-string 1 String
+ * @has 1 fragment-identifier 1 String
  */
 public interface ReverseRoute
 {

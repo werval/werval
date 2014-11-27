@@ -135,6 +135,8 @@ public interface QueryString
      * </pre>
      *
      * @see Decoder
+     *
+     * @hidden
      */
     class Encoder
     {
@@ -294,6 +296,8 @@ public interface QueryString
      * integer parameter.
      *
      * @see Encoder
+     *
+     * @hidden
      */
     class Decoder
     {

@@ -45,6 +45,9 @@ import static org.qiweb.test.QiWebTestHelper.setupRestAssuredDefaults;
  * <p>
  * By default, routes are loaded from the <code>routes.conf</code> file.
  * Override the {@link #routesProvider()} method to provide your own test routes.
+ *
+ * @navcomposed 1 - 1 ApplicationSPI
+ * @navcomposed 1 - 1 HttpServer
  */
 public class QiWebHttpTest
     implements QiWebHttpTestSupport

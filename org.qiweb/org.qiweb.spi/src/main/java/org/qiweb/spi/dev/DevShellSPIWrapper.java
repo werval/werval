@@ -19,6 +19,8 @@ import java.net.URL;
 
 /**
  * Development Shell SPI Wrapper.
+ *
+ * @composed 1 wrap 1 DevShellSPI
  */
 public class DevShellSPIWrapper
     implements DevShellSPI

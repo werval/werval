@@ -40,6 +40,8 @@ import static java.util.Collections.singletonMap;
  * <p>
  * By default, routes are loaded from the <code>routes.conf</code> file.
  * Override the {@link #routesProvider()} method to provide your own test routes.
+ *
+ * @navcomposed 1 - 1 ApplicationSPI
  */
 public class QiWebTest
     implements QiWebTestSupport

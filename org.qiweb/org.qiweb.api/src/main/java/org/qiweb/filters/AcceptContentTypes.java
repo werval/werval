@@ -32,6 +32,8 @@ import org.qiweb.api.outcomes.Outcome;
  * Accept Content Types Annotation.
  * <p>
  * A request with a content-type not listed will be rejected with a {@literal 400 Bad Request}.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( AcceptContentTypes.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

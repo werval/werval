@@ -32,6 +32,10 @@ import org.qiweb.util.Reflectively;
  * Intended for use by HttpServer implementations, the DevShell and Application unit tests.
  * <p>
  * Don't use in your Application code.
+ *
+ * @navcomposed 1 - 1 Global
+ * @navcomposed 1 - 1 EventsSPI
+ * @navcomposed 1 - 1 HttpBuildersSPI
  */
 @Reflectively.Loaded( by = "DevShell" )
 public interface ApplicationSPI

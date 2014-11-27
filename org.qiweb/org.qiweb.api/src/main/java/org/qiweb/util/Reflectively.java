@@ -35,6 +35,8 @@ public interface Reflectively
 {
     /**
      * This type is loaded reflectively.
+     *
+     * @hidden
      */
     @Retention( SOURCE )
     @Target( TYPE )
@@ -48,6 +50,8 @@ public interface Reflectively
 
     /**
      * This constructor or method is invoked reflectively.
+     *
+     * @hidden
      */
     @Retention( SOURCE )
     @Target( { CONSTRUCTOR, METHOD } )
@@ -61,6 +65,8 @@ public interface Reflectively
 
     /**
      * This field's value is get reflectively.
+     *
+     * @hidden
      */
     @Retention( SOURCE )
     @Target( FIELD )
@@ -74,6 +80,8 @@ public interface Reflectively
 
     /**
      * This field's value is set reflectively.
+     *
+     * @hidden
      */
     @Retention( SOURCE )
     @Target( FIELD )

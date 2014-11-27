@@ -42,6 +42,8 @@ import static org.qiweb.api.http.Method.GET;
  * Assert that a Cache Plugin and the @{@link Cached} annotation work as expected.
  * <p>
  * Extends in your Cache Plugin implementations to test it easily.
+ *
+ * @navassoc 1 test * Cache
  */
 public abstract class CacheTest
     extends QiWebTest

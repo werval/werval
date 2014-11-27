@@ -24,6 +24,8 @@ import java.util.Set;
 
 /**
  * Form Uploads.
+ *
+ * @navcomposed 1 - * Upload
  */
 public interface FormUploads
 {

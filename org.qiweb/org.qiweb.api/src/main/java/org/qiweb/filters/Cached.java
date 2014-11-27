@@ -55,6 +55,8 @@ import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
  * <p>
  * The cache key is generated using the current {@literal Route}, the request parameters and the values of all
  * variable headers declared using {@link #vary()}.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( Cached.Filter.class )
 @Target( { ElementType.TYPE, ElementType.METHOD } )

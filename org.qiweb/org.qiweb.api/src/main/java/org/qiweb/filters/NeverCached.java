@@ -42,6 +42,8 @@ import static org.qiweb.api.http.Headers.Names.PRAGMA;
  * Pragma: no-cache
  * Expires: 0
  * </pre></blockquote>
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( NeverCached.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

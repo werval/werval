@@ -19,6 +19,8 @@ import org.qiweb.api.exceptions.TemplateException;
 
 /**
  * Templates.
+ *
+ * @navassoc 1 create * Template
  */
 public interface Templates
 {

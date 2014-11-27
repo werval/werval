@@ -20,6 +20,8 @@ import org.qiweb.util.Charsets;
 
 /**
  * HTTP Status.
+ *
+ * @assoc * - 1 StatusClass
  */
 public final class Status
     implements Comparable<Status>, Serializable

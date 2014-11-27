@@ -53,7 +53,7 @@ the computer program.
 
 * a _key_ is a string JSON would have to the left of `:` and a _value_
 is anything JSON would have to the right of `:`. i.e. the two halves of
-an object _field_.
+an object __field__.
 * a _value_ is any "value" as defined in the JSON spec, plus unquoted
 strings and substitutions as defined in this spec.
 * a _simple value_ is any value excluding an object or array value.
@@ -917,7 +917,7 @@ interpreted as a path expression or a key.
 
 Instead, the next value must be a _quoted_ string or a quoted string
 surrounded by `url()`, `file()`, or `classpath()`. This value is the
-_resource name_.
+__resource name__.
 
 Together, the unquoted `include` and the resource name substitute for an
 object field syntactically, and are separated from the following object
@@ -926,7 +926,7 @@ omitted if there's a newline).
 
 If an unquoted `include` at the start of a key is followed by anything
 other than a single quoted string or the
-`url("")`/`file("")/`classpath("")` syntax, it is invalid and an error
+`url("")`/`file("")`/`classpath("")` syntax, it is invalid and an error
 should be generated.
 
 There can be any amount of whitespace, including newlines, between the

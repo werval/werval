@@ -19,6 +19,9 @@ import java.util.function.Consumer;
 
 /**
  * Application Events.
+ *
+ * @has 1 - * Consumer
+ * @navassoc 1 create * Registration
  */
 public interface Events
 {

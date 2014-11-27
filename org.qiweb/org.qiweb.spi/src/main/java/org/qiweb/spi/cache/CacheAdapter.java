@@ -32,6 +32,8 @@ public abstract class CacheAdapter
      * Cache Event.
      * <p>
      * Used to collect metrics.
+     *
+     * @hidden
      */
     public static enum CacheEvent
     {
@@ -39,6 +41,8 @@ public abstract class CacheAdapter
 
         /**
          * Close metric recording.
+         *
+         * @hidden
          */
         public static interface Closeable
             extends AutoCloseable

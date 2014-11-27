@@ -19,6 +19,9 @@ import java.util.List;
 
 /**
  * Langs.
+ *
+ * @navcomposed 1 default 1 Lang
+ * @navcomposed 1 availables * Lang
  */
 public interface Langs
 {

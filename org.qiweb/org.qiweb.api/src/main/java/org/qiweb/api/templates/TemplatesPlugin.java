@@ -19,6 +19,8 @@ import org.qiweb.api.Plugin;
 
 /**
  * Templates Plugin API.
+ *
+ * @navcomposed 1 - 1 Templates
  */
 public abstract class TemplatesPlugin
     implements Plugin<Templates>

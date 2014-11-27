@@ -29,6 +29,8 @@ import static org.qiweb.util.Maps.fromMap;
 
 /**
  * Templates Test.
+ *
+ * @navassoc 1 test * Templates
  */
 public abstract class TemplatesTest
     extends QiWebTest
