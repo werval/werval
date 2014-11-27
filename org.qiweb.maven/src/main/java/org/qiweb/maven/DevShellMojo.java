@@ -43,8 +43,23 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 public class DevShellMojo
     extends AbstractQiWebMojo
 {
+    /**
+     * Rebuild phase.
+     */
     @Parameter( defaultValue = "compile" )
     private String rebuildPhase;
+
+    /**
+     * Extra files or directories paths to watch for changes, relative to the project base directory.
+     */
+    @Parameter( property = "qiwebdev.extraWatch" )
+    private String[] extraWatch;
+
+    /**
+     * Open default browser on start.
+     */
+    @Parameter( property = "qiwebdev.openBrowser", defaultValue = "true" )
+    private boolean openBrowser;
 
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
@@ -63,6 +78,13 @@ public class DevShellMojo
             // Application Classpath
             Set<URL> appCP = qiwebDocArtifacts();
             appCP.add( new File( project.getBasedir(), "target/classes" ).toURI().toURL() );
+            if( extraClassPath != null )
+            {
+                for( String extraCP : extraClassPath )
+                {
+                    appCP.add( new File( project.getBasedir(), extraCP ).toURI().toURL() );
+                }
+            }
             URL[] applicationClasspath = appCP.toArray( new URL[ appCP.size() ] );
 
             // Runtime Classpath
@@ -74,6 +96,13 @@ public class DevShellMojo
             {
                 toWatch.add( new File( eachToWatch ) );
             }
+            if( extraWatch != null )
+            {
+                for( String extraW : extraWatch )
+                {
+                    toWatch.add( new File( project.getBasedir(), extraW ) );
+                }
+            }
 
             // Start DevShell
             DevShellSPI devShellSPI = new MavenDevShellSPI(
@@ -84,7 +113,7 @@ public class DevShellMojo
                 project.getBasedir(),
                 rebuildPhase
             );
-            new DevShellCommand( devShellSPI ).run();
+            new DevShellCommand( devShellSPI, configResource, configFile, configUrl, openBrowser ).run();
         }
         catch( Exception ex )
         {
@@ -100,7 +129,6 @@ public class DevShellMojo
         {
             sourcesSet.add( new File( applicationSourcesElement ).toURI().toURL() );
         }
-        project.getCompileSourceRoots();
         return sourcesSet.toArray( new URL[ sourcesSet.size() ] );
     }
 

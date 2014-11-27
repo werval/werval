@@ -21,6 +21,9 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
+import org.qiweb.modules.metrics.Metrics;
+import org.qiweb.modules.smtp.internal.MultiPartEmailMetrics;
+import org.qiweb.modules.smtp.internal.SimpleEmailMetrics;
 
 public class Smtp
 {
@@ -34,6 +37,7 @@ public class Smtp
     private final String password;
     private final String bounce;
     private final Charset charset;
+    private final Metrics metrics;
 
     /* package */ Smtp(
         String host, int port,
@@ -41,7 +45,8 @@ public class Smtp
         long connectionTimeout, long ioTimeout,
         String username, String password,
         String bounce,
-        Charset charset
+        Charset charset,
+        Metrics metrics
     )
     {
         this.host = host;
@@ -54,16 +59,17 @@ public class Smtp
         this.password = password;
         this.bounce = bounce;
         this.charset = charset;
+        this.metrics = metrics;
     }
 
     public SimpleEmail newSimpleEmail()
     {
-        return configured( new SimpleEmail() );
+        return configured( metrics == null ? new SimpleEmail() : new SimpleEmailMetrics( metrics ) );
     }
 
     public MultiPartEmail newMultiPartEmail()
     {
-        return configured( new MultiPartEmail() );
+        return configured( metrics == null ? new MultiPartEmail() : new MultiPartEmailMetrics( metrics ) );
     }
 
     public EmailAttachment newAttachment()

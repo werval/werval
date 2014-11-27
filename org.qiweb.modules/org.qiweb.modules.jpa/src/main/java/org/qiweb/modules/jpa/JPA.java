@@ -39,7 +39,9 @@ import org.qiweb.api.filters.Filter;
 import org.qiweb.api.filters.FilterChain;
 import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.modules.jpa.internal.MetricsSessionCustomizer;
 import org.qiweb.modules.jpa.internal.Slf4jSessionLogger;
+import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,12 +57,8 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 // JPA Properties -> http://eclipse.org/eclipselink/documentation/2.4/jpa/extensions/persistenceproperties_ref.htm
 public final class JPA
 {
-    // WARN Not fully functionnal
     @FilterWith( TransactionalFilter.class )
-    @Target(
-                {
-            ElementType.METHOD, ElementType.TYPE
-        } )
+    @Target( { ElementType.METHOD, ElementType.TYPE } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     @Documented
@@ -71,7 +69,6 @@ public final class JPA
         boolean readOnly() default false;
     }
 
-    // WARN Not fully functionnal
     public static class TransactionalFilter
         implements Filter<Transactional>
     {
@@ -114,6 +111,7 @@ public final class JPA
     private final Map<String, Map<String, Object>> unitsProperties;
     private final Map<String, EntityManagerFactory> emfs = new HashMap<>();
     private final String defaultPersistanceUnitName;
+    private final Metrics metrics;
     // Only used out of interaction context
     private final ThreadLocal<JPAContext> threadLocalContext = ThreadLocal.withInitial( () -> new JPAContext() );
 
@@ -121,13 +119,15 @@ public final class JPA
         Mode mode,
         ClassLoader loader,
         Map<String, Map<String, Object>> properties,
-        String defaultPersistanceUnitName
+        String defaultPersistanceUnitName,
+        Metrics metrics
     )
     {
         this.mode = mode;
         this.loader = loader;
         this.unitsProperties = properties;
         this.defaultPersistanceUnitName = defaultPersistanceUnitName;
+        this.metrics = metrics;
     }
 
     public PersistenceUtil util()
@@ -151,6 +151,7 @@ public final class JPA
                 props.putAll( GLOBAL_UNITS_PROPERTIES );
                 if( mode == DEV || mode == TEST )
                 {
+                    // Log query parameters in dev mode
                     props.put( "eclipselink.logging.parameters", "true" );
                 }
                 if( unitsProperties.containsKey( persistenceUnitName ) )
@@ -158,10 +159,17 @@ public final class JPA
                     props.putAll( unitsProperties.get( persistenceUnitName ) );
                 }
                 props.put( "eclipselink.classloader", loader );
-                emfs.put(
-                    persistenceUnitName,
-                    Persistence.createEntityManagerFactory( persistenceUnitName, props )
-                );
+                if( metrics != null )
+                {
+                    MetricsSessionCustomizer.metricsHack = metrics;
+                    props.put( "eclipselink.session.customizer", MetricsSessionCustomizer.class.getName() );
+                }
+                EntityManagerFactory emf = Persistence.createEntityManagerFactory( persistenceUnitName, props );
+                emfs.put( persistenceUnitName, emf );
+                if( metrics != null )
+                {
+                    MetricsSessionCustomizer.metricsHack = null;
+                }
             }
             return emfs.get( persistenceUnitName );
         }

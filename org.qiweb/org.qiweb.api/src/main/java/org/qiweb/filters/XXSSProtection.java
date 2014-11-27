@@ -32,7 +32,7 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
- * X-XSS-Protection.
+ * X-XSS-Protection Annotation.
  * <p>
  * Try to prevent <a href="en.wikipedia.org/wiki/Cross-site_scripting">Cross-Site-Scripting</a> attacks.
  * <p>
@@ -45,6 +45,8 @@ import static org.qiweb.util.Strings.hasTextOrNull;
  * <p>
  * By default, values from configuration are used.
  * Values set with the annotation parameters override thoses from the configuration, except if set to an empty string.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( XXSSProtection.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

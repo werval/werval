@@ -16,6 +16,7 @@
 package org.qiweb.gradle
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 
 import org.qiweb.commands.StartCommand
@@ -25,13 +26,48 @@ import org.qiweb.commands.StartCommand
  */
 class QiWebStartTask extends DefaultTask
 {
-    private String mainClass = "org.qiweb.server.bootstrap.Main"
-    private String[] arguments = new String[ 0 ]
+    /**
+     * Application source sets, default to {@literal main} only.
+     */
+    Set<SourceSet> sourceSets = new LinkedHashSet<>( [ project.sourceSets.main ] )
+
+    /**
+     * Main class, default to org.qiweb.server.bootstrap.Main.
+     */
+    String mainClass = "org.qiweb.server.bootstrap.Main"
+
+    /**
+     * Main class arguments.
+     */
+    String[] arguments = new String[ 0 ]
+
+    /**
+     * Configuration resource name.
+     * <p>
+     * Loaded from the application classpath.
+     */
+    String configResource
+
+    /**
+     * Configuration file.
+     */
+    File configFile
+
+    /**
+     * Configuration URL.
+     */
+    URL configUrl
 
     @TaskAction
     void startProductionMode()
     {
         project.logger.lifecycle ">> QiWeb Production Mode for " + project.getName() + " starting..."
+
+        // Default behaviour
+        if( sourceSets == null )
+        {
+            sourceSets = new LinkedHashSet<>( [ project.sourceSets.main ] )
+        }
 
         StringBuffer msg = new StringBuffer( "Invoking : " );
         msg.append( mainClass );
@@ -45,17 +81,26 @@ class QiWebStartTask extends DefaultTask
         msg.append( ")" );
         project.logger.debug msg.toString()
 
-        def applicationClasspath = [
-            project.sourceSets.main.output.classesDir.toURI().toURL(),
-            project.sourceSets.main.output.resourcesDir.toURI().toURL()
-        ]
-        def runtimeClasspath = project.configurations.runtime.files.collect { f -> f.toURI().toURL() }
+        def applicationClasspath = sourceSets.collect { sourceSet ->
+            [ sourceSet.output.classesDir.toURI().toURL(), sourceSet.output.resourcesDir.toURI().toURL() ]
+        }.flatten()
+        def runtimeClasspath = sourceSets.collect { sourceSet ->
+            project.configurations[sourceSet.runtimeConfigurationName].files.collect { f -> f.toURI().toURL() }
+        }.flatten()
+
+        project.logger.debug "====================================================================================="
+        project.logger.debug "APPLICATION CLASSPATH"
+        project.logger.debug applicationClasspath.toString()
+        project.logger.debug "RUNTIME CLASSPATH"
+        project.logger.debug runtimeClasspath.toString()
+        project.logger.debug "====================================================================================="
 
         new StartCommand(
             StartCommand.ExecutionModel.ISOLATED_THREADS,
             mainClass,
             arguments,
-            ( applicationClasspath + runtimeClasspath ) as URL[]
+            ( applicationClasspath + runtimeClasspath ) as URL[],
+            configResource, configFile, configUrl
         ).run();
     }
 }

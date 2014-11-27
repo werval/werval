@@ -19,6 +19,8 @@ import org.qiweb.api.http.Method;
 
 /**
  * Reverse Routes.
+ *
+ * @navassoc 1 create * ReverseRoute
  */
 public interface ReverseRoutes
 {

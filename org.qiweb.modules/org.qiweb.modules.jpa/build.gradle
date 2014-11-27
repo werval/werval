@@ -1,18 +1,14 @@
 
 description = "JPA Module"
 
+moduleDescriptor.plugin 'jpa', impl: 'org.qiweb.modules.jpa.JPAPlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
+    compile project( ":org.qiweb.modules.jdbc" )
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.jpa
-    compile libs.eclipselink // TODO Move me to runtime, see Slf4jSessionLogger
-
-    runtime project( ":org.qiweb.modules.jdbc" )
-    runtime project( ":org.qiweb.modules.jndi" )
-    
-    testCompile project( ":org.qiweb.modules.jdbc" )
-    testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
+    compile libs.eclipselink
 
     testRuntime libs.h2
 

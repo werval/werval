@@ -39,6 +39,18 @@ public class JNDIPlugin
     private JNDI jndi;
 
     @Override
+    public Class<JNDI> apiType()
+    {
+        return JNDI.class;
+    }
+
+    @Override
+    public JNDI api()
+    {
+        return jndi;
+    }
+
+    @Override
     public void onActivate( Application application )
         throws ActivationException
     {
@@ -73,17 +85,5 @@ public class JNDIPlugin
                 jndi = null;
             }
         }
-    }
-
-    @Override
-    public Class<JNDI> apiType()
-    {
-        return JNDI.class;
-    }
-
-    @Override
-    public JNDI api()
-    {
-        return jndi;
     }
 }

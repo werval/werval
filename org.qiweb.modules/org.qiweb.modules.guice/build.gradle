@@ -1,13 +1,11 @@
 
 description = "Guice Module"
 
+moduleDescriptor.plugin 'guice', impl: 'org.qiweb.modules.guice.GuicePlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
     compile libs.guice
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
 
 }
 

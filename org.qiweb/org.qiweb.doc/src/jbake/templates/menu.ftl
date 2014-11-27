@@ -25,7 +25,6 @@
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>manual.html">Manual</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>modules/index.html">Modules</a></li>
             <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>api/index.html" target="_blank">API Javadoc</a></li>
-            <li><a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>release-notes.html">Release notes</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

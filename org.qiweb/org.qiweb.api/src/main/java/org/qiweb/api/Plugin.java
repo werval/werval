@@ -27,30 +27,49 @@ import static org.qiweb.util.Strings.EMPTY;
 /**
  * Application Plugin.
  * <p>
- * A {@literal Plugin} is activated/passivated alongside the {@literal Application}
- * and can contribute {@literal Routes} to it.
+ * A {@literal Plugin} is activated/passivated alongside the {@literal Application},
+ * can contribute {@literal Routes} to it,
+ * is given a change to hook around interactions
+ * and can depend on other plugins.
+ * <p>
+ * Plugins should not create static state and their instanciation should be as close to {@literal NOOP} as possible.
  *
  * @param <API> Parameterized Plugin API type, ie. the type the {@literal Application} will use.
  */
 public interface Plugin<API>
 {
     /**
-     * @return TRUE is the Plugin is enabled, otherwise return FALSE
-     */
-    default boolean enabled()
-    {
-        return true;
-    }
-
-    /**
+     * Plugin API type.
+     *
      * @return Plugin API type
      */
     Class<API> apiType();
 
     /**
+     * Plugin API.
+     *
      * @return Plugin API for the {@link Application} to use
      */
     API api();
+
+    /**
+     * Plugin dependencies.
+     * <p>
+     * The runtime will use this information to order the plugins activation order according to the dependency graph.
+     * <p>
+     * Defaults to an empty list.
+     * <p>
+     * Application configuration is provided to the plugin so it can decide on what to depend according to its own
+     * configuration.
+     *
+     * @param config Application configuration
+     *
+     * @return This plugin's dependencies
+     */
+    default List<Class<?>> dependencies( Config config )
+    {
+        return EMPTY_LIST;
+    }
 
     /**
      * Invoked on Application activation.
@@ -65,24 +84,6 @@ public interface Plugin<API>
         throws ActivationException
     {
         // NOOP
-    }
-
-    /**
-     * Prefix for Routes contributed by this Plugin.
-     * <p>
-     * Defaults to an empty string unless the Plugin declaration contains a {@literal routesPrefix} value.
-     *
-     * @param pluginConfig Plugin Config Object, null for extra plugins declared in Global
-     *
-     * @return Prefix for Routes contributed by this Plugin or an empty String
-     */
-    default String routesPrefix( Config pluginConfig )
-    {
-        if( pluginConfig == null || !pluginConfig.has( "routesPrefix" ) )
-        {
-            return EMPTY;
-        }
-        return pluginConfig.string( "routesPrefix" );
     }
 
     /**

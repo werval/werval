@@ -15,6 +15,8 @@
  */
 package org.qiweb.commands;
 
+import java.io.File;
+import java.net.URL;
 import org.qiweb.devshell.DevShell;
 import org.qiweb.spi.dev.DevShellSPI;
 
@@ -25,16 +27,48 @@ public class DevShellCommand
     implements Runnable
 {
     private final DevShellSPI spi;
+    private final String configResource;
+    private final File configFile;
+    private final URL configUrl;
+    private final boolean openBrowser;
 
     public DevShellCommand( DevShellSPI spi )
     {
+        this( spi, null, null, null, true );
+    }
+
+    public DevShellCommand( DevShellSPI spi, String configResource )
+    {
+        this( spi, configResource, null, null, true );
+    }
+
+    public DevShellCommand( DevShellSPI spi, File configFile )
+    {
+        this( spi, null, configFile, null, true );
+    }
+
+    public DevShellCommand( DevShellSPI spi, URL configUrl )
+    {
+        this( spi, null, null, configUrl, true );
+    }
+
+    public DevShellCommand(
+        DevShellSPI spi,
+        String configResource, File configFile, URL configUrl,
+        boolean openBrowser
+    )
+    {
         this.spi = spi;
+        this.configResource = configResource;
+        this.configFile = configFile;
+        this.configUrl = configUrl;
+        this.openBrowser = openBrowser;
     }
 
     @Override
     public void run()
     {
-        DevShell devShell = new DevShell( spi );
+        DevShell devShell = new DevShell( spi, configResource, configFile, configUrl, openBrowser );
         Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
         devShell.start();
     }

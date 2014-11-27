@@ -19,11 +19,12 @@ import java.net.URL;
 
 /**
  * Development Shell SPI Wrapper.
+ *
+ * @composed 1 wrap 1 DevShellSPI
  */
 public class DevShellSPIWrapper
     implements DevShellSPI
 {
-
     private final DevShellSPI wrapped;
 
     public DevShellSPIWrapper( DevShellSPI wrapped )
@@ -65,5 +66,11 @@ public class DevShellSPIWrapper
         throws DevShellRebuildException
     {
         wrapped.rebuild();
+    }
+
+    @Override
+    public void stop()
+    {
+        wrapped.stop();
     }
 }

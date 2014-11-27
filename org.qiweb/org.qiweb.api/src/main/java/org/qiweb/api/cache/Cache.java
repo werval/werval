@@ -30,10 +30,7 @@ public interface Cache
      *
      * @return {@literal true} if the cache has an object for the given key
      */
-    default boolean has( String key )
-    {
-        return get( key ) != null;
-    }
+    boolean has( String key );
 
     /**
      * Fetch cached object for a given key.
@@ -53,10 +50,7 @@ public interface Cache
      *
      * @return An Optional of the cached object for the given key
      */
-    default <T> Optional<T> getOptional( String key )
-    {
-        return Optional.ofNullable( get( key ) );
-    }
+    <T> Optional<T> getOptional( String key );
 
     /**
      * Fetch cached object for a given key or set a non-expiring default value.
@@ -71,10 +65,7 @@ public interface Cache
      *
      * @return The existing cached object for the given key, or the given default value, never return {@literal null}
      */
-    default <T> T getOrSetDefault( String key, T defaultValue )
-    {
-        return getOrSetDefault( key, 0, defaultValue );
-    }
+    <T> T getOrSetDefault( String key, T defaultValue );
 
     /**
      * Fetch cached object for a given key or set a non-expiring default value.
@@ -89,10 +80,7 @@ public interface Cache
      *
      * @return The existing cached object for the given key, or the given default value, never return {@literal null}
      */
-    default <T> T getOrSetDefault( String key, Supplier<T> defaultValueSupplier )
-    {
-        return getOrSetDefault( key, 0, defaultValueSupplier.get() );
-    }
+    <T> T getOrSetDefault( String key, Supplier<T> defaultValueSupplier );
 
     /**
      * Fetch cached object for a given key or set an expiring default value.
@@ -126,10 +114,7 @@ public interface Cache
      *
      * @return The existing cached object for the given key, or the given default value, never return {@literal null}
      */
-    default <T> T getOrSetDefault( String key, int ttlSeconds, Supplier<T> defaultValueSupplier )
-    {
-        return getOrSetDefault( key, ttlSeconds, defaultValueSupplier.get() );
-    }
+    <T> T getOrSetDefault( String key, int ttlSeconds, Supplier<T> defaultValueSupplier );
 
     /**
      * Set a non-expiring object for a given key in the Cache.
@@ -138,10 +123,7 @@ public interface Cache
      * @param key   Cache Key
      * @param value Value Object
      */
-    default <T> void set( String key, T value )
-    {
-        set( 0, key, value );
-    }
+    <T> void set( String key, T value );
 
     /**
      * Set an expiring object for a given key in the Cache.

@@ -3,7 +3,9 @@
 
 A QiWeb Application is nothing but a plain old Java program.
 The framework provide a default `main` class/method for you to reuse but you can also write yours if you need it.
-The minimal requirement is a configuration file named `application.conf` containing a `app.secret` entry.
+
+In development and test modes, no configuration file is required.
+To run in production mode, the minimal requirement is a configuration file named `application.conf` containing an `app.secret` entry.
 
 
 === Structure
@@ -27,7 +29,7 @@ A QiWeb Application can run according to three different runtime models:
 
 . **Heavyweight**, with HTTP Service, most used runtime model for a HTTP application.
 . **Middleweight**, with HTTP Context but without HTTP Service, typical runtime model for controller tests.
-. **Lightweight**, with **no** HTTP support, usefull for applying the worker runtime model easily ; that is execute some
+. **Lightweight**, with **no** HTTP support, useful for applying the worker runtime model easily ; that is execute some
 application code in a lightweight process.
 
 TIP: See the Deploy on Heroku guide for lightweight mode usage example implementing Heroku workers.
@@ -40,10 +42,10 @@ QiWeb has a quite simple threading model based on the Netty one.
 - Netty
     - Netty Selector Threads, default to `Runtime.availableProcessors()`
      -Netty IO Threads, default to `Runtime.availableProcessors()`
-- Controllers
-    - Optional Controller Execution Thread Pool
-    - It means that by default, your controller code is executed on the IO Threads and that any controller doing
-      blocking operations will slow your application down.
+- Application
+    - Application Execution Thread Pool
+    - It means that by default, none of your controller code is executed on the IO Threads and that any controller doing
+      blocking operations will not slow your application down.
 
 
 === Summary
@@ -55,16 +57,16 @@ QiWeb has a quite simple threading model based on the Netty one.
 |**Heavyweight Runtime**
 |Typical use while coding
 
-- Single-thread HTTP stack `1*acceptors`+`1*acceptors`
+- Single-thread HTTP stack `1 * acceptor-thread` + `1 * io-thread`
 - Reload on source changes
 - Stacktraces disclosed in responses
 |For tests that require a complete HTTP stack
 
-- Single-thread HTTP stack `1*acceptors`+`1*acceptors`
+- Single-thread HTTP stack `1 * acceptor-thread` + `1 * io-thread`
 - Compiled bytecode execution
 |Typical production model
 
-- Multi-thread HTTP stack `cores*acceptors`+`cores*io`
+- Multi-thread HTTP stack `cores * acceptor-threads` + `cores * io-threads`
 - Compiled bytecode execution
 
 |**Middleweight Runtime**

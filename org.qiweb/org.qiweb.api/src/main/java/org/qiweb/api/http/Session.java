@@ -20,6 +20,8 @@ import org.qiweb.api.http.Cookies.Cookie;
 
 /**
  * Session.
+ *
+ * @navassoc 1 create-signed 1 Cookie
  */
 public interface Session
 {

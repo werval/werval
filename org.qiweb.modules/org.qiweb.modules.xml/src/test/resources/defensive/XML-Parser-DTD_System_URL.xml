@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!-- Test external DTD (SYSTEM URL) -->
+<!DOCTYPE root SYSTEM "http://www.example.com/dtd">
+<root>&e1;</root>

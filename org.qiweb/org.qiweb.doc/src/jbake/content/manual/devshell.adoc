@@ -1,0 +1,10 @@
+
+== Development Mode
+
+Class reloading is implemented using [ClassWorlds](https://github.com/sonatype/plexus-classworlds).
+
+Here is an overview of the development mode classloader hierarchy;
+
+image::images/classloader-hierarchy.png[DevShell Classloader Hierarchy,50%]
+
+The *Application Realm* is the classloader that gets reloaded on source code change.

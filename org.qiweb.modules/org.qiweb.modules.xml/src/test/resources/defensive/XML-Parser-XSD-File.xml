@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!-- Reference to an external XML Schema (file variant) -->
+<root xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="schema.xsd"/>

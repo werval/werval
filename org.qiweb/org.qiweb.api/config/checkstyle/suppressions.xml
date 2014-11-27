@@ -36,6 +36,7 @@
     <suppress checks=".*" files="SetHeader.java"/>
     <suppress checks=".*" files="RemoveHeaders.java"/>
     <suppress checks=".*" files="LinkedMultiValueMap.java"/>
+    <suppress checks=".*" files="UnmodifiableMultiValueMap.java"/>
     <suppress checks=".*" files="ContentSecurityPolicy.java"/>
     <suppress checks=".*" files="DoNotTrack.java"/>
     <suppress checks=".*" files="HSTS.java"/>

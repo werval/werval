@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- Test non-deterministic content model matching.
+
+The content model is chosen based on Theorem 2 of Katja Losemann et al.,
+"Descriptional Complexity of Deterministic Regular Expressions", 2012,
+<http://fox7.eu/wp-content/uploads/losemann-mfcs12.pdf>
+
+-->
+<!DOCTYPE root [
+<!ELEMENT root
+(((a|b)
+|((a|b),(a|b))
+|((a|b),(a|b))
+|((a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))),
+b,
+((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b)))
+>
+<!ELEMENT a EMPTY>
+<!ELEMENT b EMPTY>
+]>
+<root>
+  <b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/><b/>
+</root>
+

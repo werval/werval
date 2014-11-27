@@ -17,6 +17,9 @@ http://www.eclipse.org/eclipselink/documentation/[documentation].
 When working with JPA, you should know about http://docs.oracle.com/javase/tutorial/jdbc/index.html[JDBC] too.
 ====
 
+If you are worried about performance, see the http://www.jpab.org/[JPA Performance Benchmark).
+EclipseLink is the fastest JPA implementation.
+
 
 == Declaration
 
@@ -48,11 +51,7 @@ And finally your application configuration:
 .application.conf
 [source,json]
 ----
-app.plugins = [
-    { plugin = org.qiweb.modules.jndi.JNDIPlugin },
-    { plugin = org.qiweb.modules.jdbc.JDBCPlugin },
-    { plugin = "org.qiweb.modules.jpa.JPAPlugin" }
-]
+app.plugins.enabled += jpa
 ----
 
 [CAUTION]

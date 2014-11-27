@@ -37,7 +37,7 @@ import static org.qiweb.util.Strings.withoutHead;
 import static org.qiweb.util.Strings.withoutTrail;
 
 /**
- * Classpath Resources Controller.
+ * Serve resources from the classpath.
  * <p>
  * Always use chunked transfer encoding.
  * <p>

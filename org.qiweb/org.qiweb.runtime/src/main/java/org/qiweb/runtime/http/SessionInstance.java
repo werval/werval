@@ -80,7 +80,7 @@ public final class SessionInstance
         }
         String signature = splitted[0];
         String payload = splitted[1];
-        if( !signature.equals( crypto.hexHmacSha256( payload ) ) )
+        if( !signature.equals( crypto.hmacSha256Hex( payload ) ) )
         {
             LOG.warn( "Invalid Session Cookie Signature: '{}'. Will use an empty Session.", cookie.value() );
             return;
@@ -91,7 +91,6 @@ public final class SessionInstance
         {
             session.put( matcher.group( 1 ), matcher.group( 2 ) );
         }
-        LOG.trace( "Parsed Signed Session Data: {}", session );
     }
 
     @Override
@@ -159,7 +158,7 @@ public final class SessionInstance
             sb.append( "\u0000" ).append( entry.getKey() ).append( ":" ).append( entry.getValue() ).append( "\u0000" );
         }
         String sessionData = URLs.encode( sb.toString(), config.charset( QIWEB_CHARACTER_ENCODING ) );
-        String signedCookieValue = crypto.hexHmacSha256( sessionData ) + "-" + sessionData;
+        String signedCookieValue = crypto.hmacSha256Hex( sessionData ) + "-" + sessionData;
         return new CookieInstance(
             0,
             config.string( APP_SESSION_COOKIE_NAME ),

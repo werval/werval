@@ -27,7 +27,7 @@ and by so be declared that way;
 
 [source,java]
 ----
-public class HelloWorldPlugin extends org.qiweb.api.PluginAdapter<HelloWorld>
+public class HelloWorldPlugin implements org.qiweb.api.Plugin<HelloWorld>
 {
     private final HelloWorld api = new HelloWorld();
 
@@ -49,7 +49,7 @@ Now, you need to register the Plugin into your Application in its configuration:
 
 [source,bash]
 ----
-app.plugins = [ "fqcn.of.HelloWorldPlugin" ]
+app.plugins.enabled += fqcn.of.HelloWorldPlugin
 ----
 
 Et voilà!
@@ -67,5 +67,5 @@ To go further, the `Plugin` interface declare two lifecycle methods:
 - `onActivation( Application application );`
 - `onPassivation( Application application );`
 
-Theses two are NOOP methods in the `PluginAdapter` class used above.
+Theses two are NOOP defender methods in the `Plugin` interface used above.
 Override theses to hook your Plugin in the Application lifecycle.

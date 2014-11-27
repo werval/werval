@@ -33,6 +33,15 @@ import org.qiweb.api.routes.Route;
  * <p>
  * Parameters are available once bound to a Route, see
  * {@link #bind(org.qiweb.api.routes.ParameterBinders, org.qiweb.api.routes.Route)} and {@link #parameters()}.
+ *
+ * @navcomposed 1 - 1 ProtocolVersion
+ * @navcomposed 1 - 1 Method
+ * @navcomposed 1 - 1 QueryString
+ * @navcomposed 1 - 1 Headers
+ * @navcomposed 1 - 1 Cookies
+ * @navcomposed 1 accepted * Lang
+ * @navcomposed 1 preferred 1 Lang
+ * @navcomposed 1 accepted * MediaRange
  */
 public interface RequestHeader
 {

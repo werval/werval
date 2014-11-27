@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Test non-deterministic content model matching.
+
+This should not actually pose any problems to validation.
+
+-->
+<!DOCTYPE root SYSTEM "./XML-Parser-External_Regexp_3.dtd">
+<root>
+</root>
+

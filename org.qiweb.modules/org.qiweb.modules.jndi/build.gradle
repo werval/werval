@@ -1,11 +1,10 @@
 
 description = "JNDI Module"
 
+moduleDescriptor.plugin 'jndi', impl: 'org.qiweb.modules.jndi.JNDIPlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
     compile libs.tyrex
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
 }

@@ -15,6 +15,7 @@
  */
 package org.qiweb.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,8 +60,20 @@ public class StartCommand
     private final String mainClass;
     private final String[] arguments;
     private final URL[] classpath;
+    private final String configResource;
+    private final File configFile;
+    private final URL configUrl;
 
     public StartCommand( ExecutionModel executionModel, String mainClass, String[] arguments, URL[] classpath )
+    {
+        this( executionModel, mainClass, arguments, classpath, null, null, null );
+    }
+
+    public StartCommand(
+        ExecutionModel executionModel,
+        String mainClass, String[] arguments, URL[] classpath,
+        String configResource, File configFile, URL configUrl
+    )
     {
         ensureNotNull( "Execution Model", executionModel );
         ensureNotEmpty( "Main class", mainClass );
@@ -68,6 +81,9 @@ public class StartCommand
         this.mainClass = mainClass;
         this.arguments = arguments == null ? new String[ 0 ] : arguments;
         this.classpath = classpath == null ? new URL[ 0 ] : classpath;
+        this.configResource = configResource;
+        this.configFile = configFile;
+        this.configUrl = configUrl;
     }
 
     @Override
@@ -103,6 +119,18 @@ public class StartCommand
             }
         }
         cmd.add( cpBuilder.toString() );
+        if( configResource != null )
+        {
+            cmd.add( "-Dconfig.resource=\"" + configResource + "\"" );
+        }
+        if( configFile != null )
+        {
+            cmd.add( "-Dconfig.file=\"" + configFile.getAbsolutePath() + "\"" );
+        }
+        if( configUrl != null )
+        {
+            cmd.add( "-Dconfig.url=\"" + configUrl.toString() + "\"" );
+        }
         cmd.add( mainClass );
         cmd.addAll( Arrays.asList( arguments ) );
         try
@@ -219,6 +247,18 @@ public class StartCommand
             throw new IllegalArgumentException(
                 "Can't call main(String[]) method because it is not static."
             );
+        }
+        if( configResource != null )
+        {
+            System.setProperty( "config.resource", configResource );
+        }
+        if( configFile != null )
+        {
+            System.setProperty( "config.file", configFile.getAbsolutePath() );
+        }
+        if( configUrl != null )
+        {
+            System.setProperty( "config.url", configUrl.toString() );
         }
         main.invoke(
             null,

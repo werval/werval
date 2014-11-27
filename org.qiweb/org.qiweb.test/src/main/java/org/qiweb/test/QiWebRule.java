@@ -33,6 +33,8 @@ import org.qiweb.spi.ApplicationSPI;
  * <code>routes.conf</code> file.
  * <p>
  * Use the various constructors to to provide your own test configuration and routes.
+ *
+ * @composed 1 - 1 QiWebTest
  */
 public class QiWebRule
     implements QiWebTestSupport, TestRule
@@ -46,7 +48,6 @@ public class QiWebRule
 
     public QiWebRule( String configurationResourceName )
     {
-
         this( configurationResourceName, null );
     }
 

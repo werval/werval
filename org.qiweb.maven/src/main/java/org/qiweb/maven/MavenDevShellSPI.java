@@ -55,6 +55,7 @@ public class MavenDevShellSPI
     protected void doRebuild()
         throws DevShellRebuildException
     {
+        System.out.println( "Reload!" );
         DefaultExecutor executor = new DefaultExecutor();
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         executor.setStreamHandler( new PumpStreamHandler( output ) );

@@ -18,7 +18,6 @@ package org.qiweb.spi.cache;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
-import org.qiweb.api.cache.Cache;
 import org.qiweb.util.Couple;
 import org.qiweb.util.Numbers;
 
@@ -30,15 +29,22 @@ import org.qiweb.util.Numbers;
  * Expiration is applied on access only.
  * This may not suit your usage pattern.
  * <p>
- * See the the EhCache and Memcache based Cache Plugins for alternatives.
+ * No metrics gathered.
+ * <p>
+ * See the the EhCache, Memcache and Redis based Cache Plugins for alternatives.
  */
-/* package */ class MapCache
-    implements Cache
+public class MapCache
+    extends CacheAdapter
 {
     /* package */ final ConcurrentMap<String, Couple<Long, Object>> map = new ConcurrentHashMap<>();
 
+    public MapCache()
+    {
+        super();
+    }
+
     @Override
-    public <T> T get( String key )
+    protected <T> T doGet( String key )
     {
         Couple<Long, Object> result = map.computeIfPresent(
             key,
@@ -63,39 +69,13 @@ import org.qiweb.util.Numbers;
     }
 
     @Override
-    public <T> T getOrSetDefault( String key, final int ttlSeconds, final T defaultValue )
-    {
-        Couple<Long, Object> result = map.compute(
-            key,
-            new BiFunction<String, Couple<Long, Object>, Couple<Long, Object>>()
-            {
-                @Override
-                public Couple<Long, Object> apply( String k, Couple<Long, Object> entry )
-                {
-                    long now = System.currentTimeMillis();
-                    if( entry == null || now > entry.left() )
-                    {
-                        return Couple.of( expiration( now, ttlSeconds ), (Object) defaultValue );
-                    }
-                    return entry;
-                }
-            }
-        );
-        if( result != null )
-        {
-            return (T) result.right();
-        }
-        return null;
-    }
-
-    @Override
-    public <T> void set( int ttlSeconds, String key, T value )
+    protected <T> void doSet( int ttlSeconds, String key, T value )
     {
         map.put( key, Couple.of( expiration( System.currentTimeMillis(), ttlSeconds ), (Object) value ) );
     }
 
     @Override
-    public void remove( String key )
+    protected void doRemove( String key )
     {
         map.remove( key );
     }

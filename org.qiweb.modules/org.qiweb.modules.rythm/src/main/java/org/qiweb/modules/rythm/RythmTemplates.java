@@ -22,6 +22,7 @@ import java.util.Map;
 import org.qiweb.api.exceptions.TemplateException;
 import org.qiweb.api.templates.Template;
 import org.qiweb.api.templates.Templates;
+import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.rythmengine.RythmEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,24 +35,26 @@ import org.slf4j.LoggerFactory;
 {
     private static final Logger LOG = LoggerFactory.getLogger( RythmTemplates.class );
     private final RythmEngine engine;
+    private final TemplatesMetricsHandler metricsHandler;
 
-    /* package */ RythmTemplates( RythmEngine engine )
+    /* package */ RythmTemplates( RythmEngine engine, TemplatesMetricsHandler metricsHandler )
     {
         this.engine = engine;
+        this.metricsHandler = metricsHandler;
     }
 
     @Override
     public Template named( String templateName )
         throws TemplateException
     {
-        return new NamedTemplate( engine, templateName );
+        return new NamedTemplate( engine, metricsHandler, templateName );
     }
 
     @Override
     public Template of( String templateContent )
         throws TemplateException
     {
-        return new StringTemplate( engine, templateContent );
+        return new StringTemplate( engine, metricsHandler, templateContent );
     }
 
     /* package */ void shutdown()
@@ -63,11 +66,13 @@ import org.slf4j.LoggerFactory;
         implements Template
     {
         private final RythmEngine engine;
+        private final TemplatesMetricsHandler metricsHandler;
         private final String templateName;
 
-        public NamedTemplate( RythmEngine engine, String templateName )
+        public NamedTemplate( RythmEngine engine, TemplatesMetricsHandler metricsHandler, String templateName )
         {
             this.engine = engine;
+            this.metricsHandler = metricsHandler;
             this.templateName = templateName;
         }
 
@@ -79,7 +84,7 @@ import org.slf4j.LoggerFactory;
             {
                 LOG.debug( "{}.render( {} )", this, context );
             }
-            try
+            try( TemplatesMetricsHandler.Closeable namedTimer = metricsHandler.namedRenderTimer( templateName ) )
             {
                 output.write( engine.render( templateName, context ) );
             }
@@ -100,11 +105,13 @@ import org.slf4j.LoggerFactory;
         implements Template
     {
         private final RythmEngine engine;
+        private final TemplatesMetricsHandler metricsHandler;
         private final String templateContent;
 
-        public StringTemplate( RythmEngine engine, String templateContent )
+        public StringTemplate( RythmEngine engine, TemplatesMetricsHandler metricsHandler, String templateContent )
         {
             this.engine = engine;
+            this.metricsHandler = metricsHandler;
             this.templateContent = templateContent;
         }
 
@@ -116,7 +123,7 @@ import org.slf4j.LoggerFactory;
             {
                 LOG.debug( "{}.render( {} )", this, context );
             }
-            try
+            try( TemplatesMetricsHandler.Closeable inlineTimer = metricsHandler.inlineRenderTimer() )
             {
                 output.write( engine.renderString( templateContent, context ) );
             }

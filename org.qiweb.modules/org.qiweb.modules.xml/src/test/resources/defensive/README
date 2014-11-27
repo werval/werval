@@ -1,0 +1,25 @@
+
+Sample files to defensively assert parsers behaviours
+
+Files in this directory are from the fedora-defensive-coding book.
+
+See https://github.com/fweimer/fedora-secure-coding and the LICENSE file next to this one.
+
+All thoses files are not distributed within QiWeb artifacts, they are only used for automated testing purpose.
+
+
+Local changes
+-------------
+
+Files in the 'cataloged' subdirectory were added to run the test suite with a XML-Catalog.
+
+XML-Parser-External_Entity_Public.xml and XML-Parser-External_Entity_System.xml had to be changed because it they the
+same systemId for a referenced entity than other files use for a referenced DTD.
+
+Change
+
+    <!ENTITY e1 SYSTEM "./XML-Parser-Referenced.xml">
+
+To
+
+    <!ENTITY e1 SYSTEM "./XML-Parser-Referenced_ENTITY.xml">

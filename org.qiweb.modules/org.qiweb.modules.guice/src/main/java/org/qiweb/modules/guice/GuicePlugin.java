@@ -33,6 +33,18 @@ public class GuicePlugin
     private Injector injector;
 
     @Override
+    public Class<Injector> apiType()
+    {
+        return Injector.class;
+    }
+
+    @Override
+    public Injector api()
+    {
+        return injector;
+    }
+
+    @Override
     public void onActivate( Application application )
         throws ActivationException
     {
@@ -52,17 +64,5 @@ public class GuicePlugin
     public void onPassivate( Application application )
     {
         injector = null;
-    }
-
-    @Override
-    public Class<Injector> apiType()
-    {
-        return Injector.class;
-    }
-
-    @Override
-    public Injector api()
-    {
-        return injector;
     }
 }

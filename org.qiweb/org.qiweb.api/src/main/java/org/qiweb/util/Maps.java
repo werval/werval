@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Maps Utilities.
+ *
+ * @navassoc 1 create * MapBuilder
  */
 public final class Maps
 {
@@ -37,6 +39,8 @@ public final class Maps
      * @param <M> Map parameterized type
      * @param <K> Key parameterized type
      * @param <V> Value parameterized type
+     *
+     * @navassoc 1 create * Map
      */
     public interface MapBuilder<M extends Map<K, V>, K, V>
     {
@@ -66,6 +70,8 @@ public final class Maps
      * @param <M> Map parameterized type
      * @param <K> Key parameterized type
      * @param <V> Value parameterized type
+     *
+     * @navassoc 1 create * MultiValueMap
      */
     public interface MultiValueMapBuilder<M extends Map<K, List<V>>, K, V>
         extends MapBuilder<M, K, List<V>>
@@ -361,6 +367,20 @@ public final class Maps
         {
             return map;
         }
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified MultiValueMap.
+     *
+     * @param <K>   Parameterized type of the MultiValueMap keys
+     * @param <V>   Parameterized type of the MultiValueMap values
+     * @param mvmap The MultiValueMap for which an unmodifiable view is to be returned.
+     *
+     * @return An unmodifiable view of the specified MultiValueMap.
+     */
+    public static <K, V> MultiValueMap<K, V> unmodifiableMultiValueMap( MultiValueMap<? extends K, ? extends V> mvmap )
+    {
+        return new UnmodifiableMultiValueMap<>( mvmap );
     }
 
     private Maps()

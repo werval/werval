@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * QiWeb Standard Filters and their annotations.
+ * Standard Filters and their annotations.
  */
 package org.qiweb.filters;

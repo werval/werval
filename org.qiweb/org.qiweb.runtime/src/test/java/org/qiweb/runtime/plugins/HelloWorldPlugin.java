@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,52 +22,31 @@ import org.qiweb.api.Plugin;
  * Plugin that register {@link HelloWorld} as a Plugin.
  */
 public class HelloWorldPlugin
-    implements Plugin<HelloWorld>
+    implements Plugin<HelloWorldImpl>
 {
-    private int activations = 0;
-    private int passivations = 0;
-    private final HelloWorld api = new HelloWorld()
-    {
-        @Override
-        public int activations()
-        {
-            return activations;
-        }
-
-        @Override
-        public int passivations()
-        {
-            return passivations;
-        }
-
-        @Override
-        public String sayHello( String name )
-        {
-            return String.format( "Hello %s!", name );
-        }
-    };
+    private final HelloWorldImpl impl = new HelloWorldImpl();
 
     @Override
-    public Class<HelloWorld> apiType()
+    public Class<HelloWorldImpl> apiType()
     {
-        return HelloWorld.class;
+        return HelloWorldImpl.class;
     }
 
     @Override
-    public HelloWorld api()
+    public HelloWorldImpl api()
     {
-        return api;
+        return impl;
     }
 
     @Override
     public void onActivate( Application application )
     {
-        activations++;
+        impl.activations++;
     }
 
     @Override
     public void onPassivate( Application application )
     {
-        passivations++;
+        impl.passivations++;
     }
 }

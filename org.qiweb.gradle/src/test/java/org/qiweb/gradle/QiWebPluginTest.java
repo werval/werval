@@ -15,7 +15,9 @@
  */
 package org.qiweb.gradle;
 
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,30 +27,42 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * Assert that the plugin register extension and tasks.
+ * QiWebPlugin Test.
  */
 public class QiWebPluginTest
 {
-    private Project project;
-    private QiWebPlugin plugin;
+    protected Project project;
 
     @Before
     public void before()
     {
         project = ProjectBuilder.builder().build();
-        plugin = new QiWebPlugin();
-        plugin.apply( project );
+        plugin().apply( project );
+    }
+
+    protected Plugin plugin()
+    {
+        return new QiWebPlugin();
     }
 
     @Test
-    public void pluginExtension()
+    public void javaPlugin()
+    {
+        assertThat(
+            project.getPlugins().findPlugin( JavaPlugin.class ),
+            notNullValue()
+        );
+    }
+
+    @Test
+    public void dependenciesExtension()
     {
         assertThat( project.getExtensions().getByName( "qiweb" ), notNullValue() );
-        assertThat( project.getExtensions().getByType( QiWebPluginExtension.class ), notNullValue() );
+        assertThat( project.getExtensions().getByType( QiWebDependencies.class ), notNullValue() );
     }
 
     @Test
-    public void taskRegistration()
+    public void secretStartAndDevShellTasks()
     {
         assertThat( project.getTasks().getByName( "secret" ), instanceOf( QiWebSecretTask.class ) );
         assertThat( project.getTasks().getByName( "start" ), instanceOf( QiWebStartTask.class ) );

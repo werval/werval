@@ -1,4 +1,4 @@
 
 group = 'org.qiweb'
-version = System.properties.version ?: "0"
-description = group + ":" + name + ":" + version
+version = System.properties.version ?: '0'
+description = "$group:$name:$version"

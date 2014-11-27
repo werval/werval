@@ -329,7 +329,7 @@ public class RequestHeaderInstance
     @Override
     public List<MediaRange> acceptedMimeTypes()
     {
-        return MediaRangeInstance.parseList( headers.singleValue( ACCEPT ) );
+        return MediaRangeInstance.parseList( Strings.join( headers.values( ACCEPT ), "," ) );
     }
 
     @Override

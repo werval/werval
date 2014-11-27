@@ -28,6 +28,8 @@ import java.util.List;
  * Errors is an Iterable&lt;Error&gt;.
  * Implementations are required to provide predictible and sorted iteration starting with the last error and
  * ending with the oldest recorded error.
+ *
+ * @navcomposed 1 - * Error
  */
 public interface Errors
     extends Iterable<org.qiweb.api.Error>

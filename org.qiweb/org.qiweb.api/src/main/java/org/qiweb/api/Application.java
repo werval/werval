@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
 import org.qiweb.api.cache.Cache;
+import org.qiweb.api.events.Events;
 import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.api.http.HttpBuilders;
 import org.qiweb.api.i18n.Langs;
@@ -35,6 +36,15 @@ import org.qiweb.util.Stacktraces;
  * <p>
  * An Application instance can run in different {@link Mode}s, default Mode is {@link Mode#TEST}. For your code to
  * be {@link Mode#DEV} friendly, don't hold references to instances returned by an Application instance.
+ *
+ * @navcomposed 1 - 1 ApplicationExecutors
+ * @navcomposed 1 - 1 Config
+ * @navcomposed 1 - 1 Crypto
+ * @navcomposed 1 - 1 Errors
+ * @composed 1 - 1 Global
+ * @navcomposed 1 - 1 MetaData
+ * @has 1 - 1 Mode
+ * @navcomposed 1 - * Plugin
  */
 @Reflectively.Loaded( by = "DevShell" )
 public interface Application
@@ -175,12 +185,19 @@ public interface Application
     ApplicationExecutors executors();
 
     /**
-     * HTTP API Objects Builders SPI.
+     * Application Events.
+     *
+     * @return Application Events
+     */
+    Events events();
+
+    /**
+     * HTTP API Objects Builders.
      * <p>
      * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
      * All builders are immutable and reusable.
      *
-     * @return HTTP API Objects Builders SPI
+     * @return HTTP API Objects Builders
      */
     HttpBuilders httpBuilders();
 

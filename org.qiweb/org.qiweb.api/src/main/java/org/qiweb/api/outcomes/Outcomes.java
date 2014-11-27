@@ -21,6 +21,8 @@ import java.util.Map;
 
 /**
  * Outcomes fluent api.
+ *
+ * @navassoc 1 create * OutcomeBuilder
  */
 public interface Outcomes
 {

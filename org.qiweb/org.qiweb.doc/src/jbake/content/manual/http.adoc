@@ -12,10 +12,10 @@ The Session Cookie contains a `Map<String,String>` and is signed using the manda
 Signature use the HmacSHA1 algorithm.
 
 
-=== Cookies
+// === Cookies
 
 
-=== Forms & Uploads
+// === Forms & Uploads
 
 
 === Query String

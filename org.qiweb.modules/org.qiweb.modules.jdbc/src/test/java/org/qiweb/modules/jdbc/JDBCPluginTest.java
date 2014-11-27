@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.jdbc;
 
+import com.codahale.metrics.MetricRegistry;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.naming.InitialContext;
@@ -22,8 +23,10 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.test.QiWebRule;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -73,5 +76,12 @@ public class JDBCPluginTest
         Object ds = new InitialContext().lookup( "defaultDS" );
         assertThat( ds, notNullValue() );
         assertThat( ds, instanceOf( DataSource.class ) );
+    }
+
+    @Test
+    public void metrics()
+    {
+        MetricRegistry metrics = QIWEB.application().plugin( Metrics.class ).metrics();
+        assertThat( metrics.getGauges().get( "default.pool.TotalConnections" ).getValue(), is( 10 ) );
     }
 }

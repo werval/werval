@@ -38,7 +38,7 @@ import static org.qiweb.api.http.Headers.Names.EXPIRES;
 import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
 
 /**
- * Annotation to easily cache controllers outcomes.
+ * Cached Annotation.
  * <p>
  * The annotation can be used on controllers and on their methods.
  * <p>
@@ -55,6 +55,8 @@ import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
  * <p>
  * The cache key is generated using the current {@literal Route}, the request parameters and the values of all
  * variable headers declared using {@link #vary()}.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( Cached.Filter.class )
 @Target( { ElementType.TYPE, ElementType.METHOD } )
@@ -74,7 +76,7 @@ public @interface Cached
     String[] vary() default "";
 
     /**
-     * Cached Filter Implementation.
+     * Cached Filter.
      */
     public static class Filter
         implements org.qiweb.api.filters.Filter<Cached>
@@ -145,7 +147,7 @@ public @interface Cached
                     }
                 }
             }
-            return context.application().crypto().base64Sha256( sb.toString() );
+            return context.application().crypto().sha256Base64( sb.toString() );
         }
     }
 }

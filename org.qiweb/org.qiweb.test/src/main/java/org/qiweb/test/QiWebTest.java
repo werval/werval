@@ -17,13 +17,18 @@ package org.qiweb.test;
 
 import org.junit.After;
 import org.junit.Before;
-import org.qiweb.api.Config;
 import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
+import org.qiweb.runtime.ConfigKeys;
+import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.spi.ApplicationSPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.singletonMap;
 
 /**
  * Base QiWeb JUnit Test.
@@ -35,10 +40,13 @@ import org.qiweb.spi.ApplicationSPI;
  * <p>
  * By default, routes are loaded from the <code>routes.conf</code> file.
  * Override the {@link #routesProvider()} method to provide your own test routes.
+ *
+ * @navcomposed 1 - 1 ApplicationSPI
  */
 public class QiWebTest
     implements QiWebTestSupport
 {
+    private static final Logger LOG = LoggerFactory.getLogger( QiWebTest.class );
     private final String configurationResourceNameOverride;
     private final RoutesProvider routesProviderOverride;
     private ApplicationSPI app;
@@ -60,11 +68,21 @@ public class QiWebTest
     @Before
     public final void beforeEachQiWebTestMethod()
     {
-        ClassLoader classLoader = getClass().getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String conf = configurationResourceNameOverride == null
                       ? configurationResourceName()
                       : configurationResourceNameOverride;
-        Config config = new ConfigInstance( classLoader, conf );
+        ConfigInstance config = new ConfigInstance( classLoader, conf );
+        try
+        {
+            config.string( ConfigKeys.APP_SECRET );
+        }
+        catch( com.typesafe.config.ConfigException.Missing noAppSecret )
+        {
+            String secret = CryptoInstance.newRandomSecret256BitsHex();
+            LOG.info( "Application has no 'app.secret', using a random one for test mode: {}", secret );
+            config = new ConfigInstance( classLoader, conf, null, null, singletonMap( "app.secret", secret ) );
+        }
         RoutesProvider routesProvider = routesProviderOverride == null
                                         ? routesProvider()
                                         : routesProviderOverride;
@@ -108,7 +126,7 @@ public class QiWebTest
      */
     protected String configurationResourceName()
     {
-        return "application.conf";
+        return null;
     }
 
     /**

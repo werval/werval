@@ -32,13 +32,15 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.hasTextOrNull;
 
 /**
- * X-Frame-Options.
+ * X-Frame-Options Annotation.
  * <p>
  * <a href="http://tools.ietf.org/html/rfc7034">RFC7034</a> - HTTP Header Field X-Frame-Options
  * <p>
  * By default, values from configuration are used.
  * Values set with the annotation parameters override thoses from the configuration, except if set to an empty string.
  * </p>
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( XFrameOptions.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

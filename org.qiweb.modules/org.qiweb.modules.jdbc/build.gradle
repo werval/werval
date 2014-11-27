@@ -1,14 +1,15 @@
 
 description = "JDBC Module"
 
+moduleDescriptor.plugin 'jdbc', impl: 'org.qiweb.modules.jdbc.JDBCPlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
-    compile libs.bonecp
+    compile project( ":org.qiweb.modules.jndi" )
+    compile project( ":org.qiweb.modules.metrics" )
+    compile libs.hikaricp
+    compile libs.log4jdbc
 
-    testCompile "org.qiweb:org.qiweb.test:$version"
-
-    testRuntime project( ":org.qiweb.modules.jndi" )
     testRuntime libs.h2
     testRuntime libs.postgres
 

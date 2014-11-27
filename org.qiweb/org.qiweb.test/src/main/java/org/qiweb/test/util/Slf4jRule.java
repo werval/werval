@@ -37,6 +37,11 @@ import static java.util.stream.Collectors.toList;
 public class Slf4jRule
     extends TestWatcher
 {
+    /**
+     * Logging Level.
+     *
+     * @hidden
+     */
     public enum Level
     {
         TRACE( ch.qos.logback.classic.Level.TRACE ),

@@ -30,12 +30,14 @@ import org.qiweb.api.http.Headers;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
- * Do Not Track.
+ * Do Not Track Annotation.
  * <p>
  * Set a Context MetaData boolean value indicating whether the client advertised a Do-Not-Track header using the
  * {@literal DNT} key.
  * <p>
  * See the <a href="http://www.w3.org/TR/tracking-dnt/">Tracking Preference Expression (DNT)</a> working draft at IETF.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( DoNotTrack.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

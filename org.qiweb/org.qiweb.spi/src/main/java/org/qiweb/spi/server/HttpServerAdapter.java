@@ -83,6 +83,8 @@ public abstract class HttpServerAdapter
     // Fail-fast
     public final void activate()
     {
+        long start = System.currentTimeMillis();
+
         // Activate Application
         app.activate();
 
@@ -94,6 +96,17 @@ public abstract class HttpServerAdapter
 
         // Notify Global object that the HttpServer started listening to network connections
         app.global().afterHttpBind( app );
+
+        // Log
+        if( LOG.isInfoEnabled() )
+        {
+            String address = app.config().string( "qiweb.http.address" );
+            int port = app.config().intNumber( "qiweb.http.port" );
+            LOG.info(
+                "Http Service Activated on http://{}:{}/ - Took {}ms",
+                address, port, System.currentTimeMillis() - start
+            );
+        }
     }
 
     @Override
@@ -119,7 +132,7 @@ public abstract class HttpServerAdapter
         try
         {
             passivateHttpServer();
-            LOG.debug( "Http Service Passivated" );
+            LOG.info( "Http Service Passivated" );
         }
         catch( Exception ex )
         {

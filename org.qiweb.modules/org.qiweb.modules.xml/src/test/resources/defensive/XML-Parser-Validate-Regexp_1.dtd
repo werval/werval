@@ -1,0 +1,28 @@
+<!-- This DTD is invalid because the content model is not deterministic. -->
+<!ELEMENT root
+(((a|b)
+|((a|b),(a|b))
+|((a|b),(a|b))
+|((a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))
+|((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b))),
+b,
+((a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b),(a|b)))
+>
+<!ELEMENT a EMPTY>
+<!ELEMENT b EMPTY>

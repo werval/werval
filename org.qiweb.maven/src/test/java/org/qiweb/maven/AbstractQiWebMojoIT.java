@@ -75,6 +75,13 @@ public abstract class AbstractQiWebMojoIT
           + "                <groupId>org.qiweb</groupId>\n"
           + "                <artifactId>org.qiweb.maven</artifactId>\n"
           + "                <version>" + VERSION + "</version>\n"
+          + "                <configuration>\n"
+          + "                   <openBrowser>false</openBrowser>\n"
+          + "                   <configResource>application-custom.conf</configResource>\n"
+          + "                   <extraClassPath>\n"
+          + "                       <param>src/main/custom</param>\n"
+          + "                   </extraClassPath>\n"
+          + "                </configuration>\n"
           + "            </plugin>\n"
           + "            <plugin>\n"
           + "                <artifactId>maven-resources-plugin</artifactId>\n"
@@ -166,12 +173,14 @@ public abstract class AbstractQiWebMojoIT
             new File( tmp.getRoot(), "pom.xml" ).toPath(),
             POM.getBytes( UTF_8 )
         );
-        File resources = new File( tmp.getRoot(), "src/main/resources" );
-        Files.createDirectories( resources.toPath() );
+        File custom = new File( tmp.getRoot(), "src/main/custom" );
+        Files.createDirectories( custom.toPath() );
         Files.write(
-            new File( resources, "application.conf" ).toPath(),
+            new File( custom, "application-custom.conf" ).toPath(),
             CONFIG.getBytes( UTF_8 )
         );
+        File resources = new File( tmp.getRoot(), "src/main/resources" );
+        Files.createDirectories( resources.toPath() );
         Files.write(
             new File( resources, "routes.conf" ).toPath(),
             ROUTES.getBytes( UTF_8 )

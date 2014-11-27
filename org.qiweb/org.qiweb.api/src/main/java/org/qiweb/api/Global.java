@@ -21,6 +21,8 @@ import java.util.List;
 import org.qiweb.api.context.Context;
 import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.api.http.RequestHeader;
+import org.qiweb.api.http.Status;
+import org.qiweb.api.outcomes.DefaultErrorOutcomes;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.Outcomes;
 import org.qiweb.util.Stacktraces;
@@ -28,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.EMPTY_LIST;
+import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
+import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Application Global Object.
@@ -285,39 +289,53 @@ public class Global
      * <p>
      * Happens right before {@link Error} recording.
      * <p>
-     * Default to logging the error and producing a minimal HTML page advertising a 500 status code and the
-     * corresponding reason phrase.
+     * Default to logging the error and producing a minimal {@literal HTML} page, {@literal JSON} document or
+     * {@literal text/plain} response advertising a 500 status code and the corresponding reason phrase.
+     * Response content-type depends on content negociation.
      * <p>
-     * Stacktrace is disclosed in development mode only, with links to project sources when available.
+     * Stacktrace is disclosed in development mode only.
+     * In {@literal HTML} mode, links to project sources are added when available.
      * <p>
      * If this method is overriden and throws an exception, the later is added as suppressed to the original cause
      * and default behaviour is replayed.
-     * This mecanism is the {@literal Application} fault barrier.
+     * This mecanism is the {@link Application} fault barrier.
      *
      * @param application Application
+     * @param request     Request header
      * @param outcomes    Outcomes utilities
      * @param cause       Cause
      *
      * @return Outcome to send back to the client
      */
-    public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
+    public Outcome onRequestError( Application application, RequestHeader request, Outcomes outcomes, Throwable cause )
     {
         // Log error
         LOG.error( "Request error: {}: {}", cause.getClass(), cause.getMessage(), cause );
 
         // Generate Error Outcome
-        StringBuilder html = new StringBuilder();
-        html.append( "<html>\n<head><title>500 Internal Server Error</title></head>\n" );
-        html.append( "<body>\n<h1>500 Internal Server Error</h1>\n" );
+        String detail;
         if( application.mode() == Mode.DEV )
         {
-            html.append( Stacktraces.toHtml( cause, application.sourceFileURLGenerator() ) );
+            if( TEXT_HTML.equals( request.preferredMimeType() ) )
+            {
+                detail = Stacktraces.toHtml( cause, application.sourceFileURLGenerator() ).toString();
+            }
+            else
+            {
+                detail = Stacktraces.toString( cause );
+            }
         }
-        html.append( "</body>\n</html>\n" );
-        return outcomes.internalServerError().
-            withBody( html.toString() ).
-            asHtml().
-            build();
+        else
+        {
+            detail = EMPTY;
+        }
+        return DefaultErrorOutcomes.errorOutcome(
+            request,
+            Status.INTERNAL_SERVER_ERROR,
+            Status.INTERNAL_SERVER_ERROR.reasonPhrase(),
+            detail,
+            outcomes
+        ).build();
     }
 
     /**

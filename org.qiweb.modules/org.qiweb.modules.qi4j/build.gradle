@@ -6,15 +6,13 @@ repositories {
     maven { url = "https://repository-qi4j.forge.cloudbees.com/snapshot/" }
 }
 
+moduleDescriptor.plugin 'qi4j', impl: 'org.qiweb.modules.qi4j.Qi4jPlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.api:$version"
     compile libs.qi4j_bootstrap
     
     runtime libs.qi4j_runtime
     
-    testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
-
 }
 

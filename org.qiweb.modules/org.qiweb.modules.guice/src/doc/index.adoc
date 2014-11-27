@@ -45,9 +45,7 @@ And finally your application configuration:
 .application.conf
 [source,json]
 ----
-app.plugins = [
-    { plugin = "org.qiweb.modules.guice.GuicePlugin" }
-]
+app.plugins.enabled += guice
 ----
 
 

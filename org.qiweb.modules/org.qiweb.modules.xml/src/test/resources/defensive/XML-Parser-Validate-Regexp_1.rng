@@ -1,0 +1,1010 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This Relax NG schema has a non-deterministic content model
+     (which is allowed).  XML-Parser-Validate-Regexp_1.xml should
+     validate against this schema. -->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+  <define name="root">
+    <element name="root">
+      <ref name="attlist.root"/>
+      <choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+        <group>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+          <choice>
+            <ref name="a"/>
+            <ref name="b"/>
+          </choice>
+        </group>
+      </choice>
+      <ref name="b"/>
+      <group>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+        <choice>
+          <ref name="a"/>
+          <ref name="b"/>
+        </choice>
+      </group>
+    </element>
+  </define>
+  <define name="attlist.root" combine="interleave">
+    <empty/>
+  </define>
+  <define name="a">
+    <element name="a">
+      <ref name="attlist.a"/>
+      <empty/>
+    </element>
+  </define>
+  <define name="attlist.a" combine="interleave">
+    <empty/>
+  </define>
+  <define name="b">
+    <element name="b">
+      <ref name="attlist.b"/>
+      <empty/>
+    </element>
+  </define>
+  <define name="attlist.b" combine="interleave">
+    <empty/>
+  </define>
+  <start>
+    <choice>
+      <ref name="root"/>
+    </choice>
+  </start>
+</grammar>

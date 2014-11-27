@@ -52,21 +52,25 @@ public class DevShellRebuildException
     public String htmlErrorPage()
     {
         StringBuilder html = new StringBuilder();
-        html.append( "<html>\n<head><title>Rebuild error: " ).append( getMessage() ).append( "</title></head>\n" );
-        html.append( "<body>\n<h1>Rebuild error: " ).append( getMessage() ).append( "</h1>\n" );
+        html.append( "<!DOCTYPE html>\\n<html>\n<head><title>Rebuild error: " )
+            .append( getMessage() )
+            .append( "</title></head>\n" )
+            .append( "<body>\n<h1>Rebuild error: " )
+            .append( getMessage() )
+            .append( "</h1>\n" );
         if( buildLog != null )
         {
-            html.append( "<h3>Build log</h3>\n" );
-            html.append( "<div class=\"qiweb-buildlog\" style=\"white-space: pre; font-family: monospace\">\n" );
-            html.append( buildLog );
-            html.append( "</div>\n" );
+            html.append( "<h3>Build log</h3>\n" )
+                .append( "<div class=\"qiweb-buildlog\" style=\"white-space: pre; font-family: monospace\">\n" )
+                .append( buildLog )
+                .append( "</div>\n" );
         }
         else
         {
-            html.append( "<h3>StackTrace</h3>\n" );
-            html.append( "<div class=\"qiweb-stacktrace\" style=\"white-space: pre; font-family: monospace\">\n" );
-            html.append( Stacktraces.toString( getCause() ) );
-            html.append( "</div>\n" );
+            html.append( "<h3>StackTrace</h3>\n" )
+                .append( "<div class=\"qiweb-stacktrace\" style=\"white-space: pre; font-family: monospace\">\n" )
+                .append( Stacktraces.toString( getCause() ) )
+                .append( "</div>\n" );
         }
         html.append( "</body>\n</html>\n" );
         return html.toString();

@@ -29,6 +29,8 @@ import org.qiweb.api.http.Cookies.Cookie;
  * <li><a href="http://tools.ietf.org/html/rfc2965">RFC2965 - HTTP State Management Mechanism - 2000</a>,</li>
  * <li><a href="http://tools.ietf.org/html/rfc6265">RFC6265 - HTTP State Management Mechanism - 2011</a>.</li>
  * </ul>
+ *
+ * @navcomposed 1 - * Cookie
  */
 public interface Cookies
     extends Iterable<Cookie>

@@ -15,7 +15,7 @@
     <!--suppress checks=".*" files=".*"/-->
 
     <!-- Javadoc -->
-    <suppress checks="JavadocPackage" files=".*"/>
+    <suppress checks="Javadoc.*" files=".*"/>
 
     <!-- Builders & Big Constructors -->
     <suppress checks="ParameterNumber" files="HttpBuildersInstance.java"/>
@@ -47,5 +47,7 @@
     <suppress checks=".*" files="PluginsInstance.java"/>
     <suppress checks=".*" files="Versions.java"/>
     <suppress checks=".*" files="ContextExecutor.java"/>
+    <suppress checks=".*" files="EventsInstance.java"/>
+    <suppress checks=".*" files="Lazy.java"/>
 
 </suppressions>

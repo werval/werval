@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- Test notation (PUBLIC URL). -->     
+<!DOCTYPE root [
+<!NOTATION n1 PUBLIC "-//N1" "http://www.example.com/notation">
+<!ELEMENT root (#PCDATA)>
+<!ATTLIST root attr NOTATION (n1) #IMPLIED>
+]>
+<root attr="n1"></root>

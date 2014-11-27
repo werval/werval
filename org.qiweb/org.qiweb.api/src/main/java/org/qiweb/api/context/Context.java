@@ -28,6 +28,15 @@ import org.qiweb.api.routes.Route;
  * HTTP Interaction Context.
  * <p>
  * Accessible using {@link CurrentContext#get()} and other static helpers in {@link CurrentContext}.
+ *
+ * @navassoc 1 - 1 Application
+ * @navassoc 1 - 1 Session
+ * @navassoc 1 - 1 Route
+ * @navassoc 1 - 1 Outcomes
+ * @navassoc 1 - 1 ExecutorService
+ * @navcomposed 1 - 1 Request
+ * @navcomposed 1 - 1 ResponseHeader
+ * @navcomposed 1 - 1 MetaData
  */
 public interface Context
 {

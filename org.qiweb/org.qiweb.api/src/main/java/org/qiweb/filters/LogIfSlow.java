@@ -36,9 +36,11 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.qiweb.util.Strings.EMPTY;
 
 /**
- * LogIfSlow.
+ * LogIfSlow Annotation.
  * <p>
  * Logs method and URI of requests which take longer than a given duration.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( LogIfSlow.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

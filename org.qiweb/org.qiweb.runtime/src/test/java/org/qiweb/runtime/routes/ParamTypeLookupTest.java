@@ -18,6 +18,7 @@ package org.qiweb.runtime.routes;
 import com.acme.app.CustomParam;
 import org.junit.Test;
 import org.qiweb.api.Application;
+import org.qiweb.api.Mode;
 import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 
@@ -32,7 +33,7 @@ public class ParamTypeLookupTest
     @Test
     public void givenFullyQualifiedCustomParamTypeWhenLookupExpectFound()
     {
-        Application app = new ApplicationInstance( new RoutesParserProvider(
+        Application app = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET /:custom com.acme.app.FakeController.customParam( com.acme.app.CustomParam custom )" ) );
         app.activate();
         try
@@ -50,7 +51,7 @@ public class ParamTypeLookupTest
     @Test
     public void givenCustomParamInConfigImportedPackagesTypeWhenLookupExpectFound()
     {
-        Application app = new ApplicationInstance( new RoutesParserProvider(
+        Application app = new ApplicationInstance( Mode.TEST, new RoutesParserProvider(
             "GET /:custom com.acme.app.FakeController.customParam( CustomParam custom )" ) );
         app.activate();
         try

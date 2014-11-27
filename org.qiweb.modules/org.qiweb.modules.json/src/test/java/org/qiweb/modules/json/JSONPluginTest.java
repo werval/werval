@@ -81,7 +81,7 @@ public class JSONPluginTest
         expect()
             .statusCode( 200 )
             .contentType( APPLICATION_JAVASCRIPT )
-            .body( equalTo( "callback([\"foo\",\"bar\"]);" ) )
+            .body( equalTo( "callback([\"foo\",\"bar\"])" ) )
             .when()
             .get( "/jsonp" );
 
@@ -90,7 +90,7 @@ public class JSONPluginTest
             .expect()
             .statusCode( 200 )
             .contentType( APPLICATION_JAVASCRIPT )
-            .body( equalTo( "customFunction([\"foo\",\"bar\"]);" ) )
+            .body( equalTo( "customFunction([\"foo\",\"bar\"])" ) )
             .when()
             .get( "/jsonp" );
     }

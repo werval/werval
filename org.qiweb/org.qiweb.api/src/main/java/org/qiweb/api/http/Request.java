@@ -17,6 +17,8 @@ package org.qiweb.api.http;
 
 /**
  * A Request is a RequestHeader plus a RequestBody.
+ *
+ * @navcomposed 1 - 1 RequestBody
  */
 public interface Request
     extends RequestHeader

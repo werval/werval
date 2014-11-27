@@ -19,6 +19,8 @@ import org.qiweb.api.http.ResponseHeader;
 
 /**
  * Outcome of a HTTP Request processing.
+ *
+ * @navcomposed 1 - 1 ResponseHeader
  */
 public interface Outcome
 {

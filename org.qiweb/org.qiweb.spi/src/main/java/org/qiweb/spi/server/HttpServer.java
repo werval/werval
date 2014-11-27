@@ -21,6 +21,9 @@ import org.qiweb.util.Reflectively;
 
 /**
  * QiWeb Http Server.
+ *
+ * @navcomposed 1 - 1 ApplicationSPI
+ * @navcomposed 1 - 1 DevShellSPI
  */
 @Reflectively.Loaded( by = "DevShell" )
 public interface HttpServer

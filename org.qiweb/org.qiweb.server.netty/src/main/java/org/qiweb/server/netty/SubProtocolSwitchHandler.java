@@ -23,6 +23,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
+import org.qiweb.spi.server.HttpServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ public class SubProtocolSwitchHandler
     private final ChannelGroup allChannels;
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
+    private final HttpServerHelper helper = new HttpServerHelper();
 
     public SubProtocolSwitchHandler( ChannelGroup allChannels, ApplicationSPI app, DevShellSPI devSpi )
     {
@@ -68,7 +70,7 @@ public class SubProtocolSwitchHandler
             int diskThreshold = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
             pipeline.addLast(
                 "http-aggregator",
-                new HttpRequestAggregator( maxBodySize, diskThreshold, app.tmpdir() )
+                new HttpRequestAggregator( helper, app.events(), maxBodySize, diskThreshold, app.tmpdir() )
             );
             pipeline.addLast(
                 "qiweb-http",

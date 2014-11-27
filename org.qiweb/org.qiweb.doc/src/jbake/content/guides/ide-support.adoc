@@ -3,9 +3,7 @@
 
 QiWeb is build system agnostic.
 As long as your IDE support the one you choose you're good to go.
-
 Depending on the language you write your applications you'll want to choose the IDE that best suit your needs.
-
 Two types of files needs special attention here: the routes and the configuration.
 No IDE will give you syntax highlighting nor autocompletion in theses.
 
@@ -15,7 +13,6 @@ Below are some quick pointers to get started with the three main Java IDEs.
 === Netbeans
 
 Netbeans comes with Maven support out of the box.
-
 For Gradle support you need to install the https://github.com/kelemen/netbeans-gradle-project[appropriate] Netbeans
 plugin.
 The latest release can be downloaded from the
@@ -42,7 +39,6 @@ This will download all project's dependencies source and javadoc and thus make t
 === IDEA
 
 IDEA comes with both Maven and Gradle support out of the box.
-
 You can also use the http://www.gradle.org/docs/current/userguide/idea_plugin.html[IDEA plugin for Gradle] to
 generate the IDEA metadata.
 
@@ -50,9 +46,7 @@ generate the IDEA metadata.
 === Eclipse
 
 Eclipse comes with no Maven nor Gradle support out of the box.
-
 For Maven support you need to install the http://www.eclipse.org/m2e/[appropriate] Eclipse plugin.
-
 For Gradle support you need to install the https://github.com/spring-projects/eclipse-integration-gradle/[appropriate]
 Eclipse plugin.
 You can also use the http://www.gradle.org/docs/current/userguide/eclipse_plugin.html[Eclipse plugin for Gradle] to

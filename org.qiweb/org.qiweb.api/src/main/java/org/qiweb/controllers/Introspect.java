@@ -26,7 +26,7 @@ import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
- * Controller with methods to introspect QiWeb Runtime.
+ * Introspect QiWeb Runtime.
  * <p>
  * Used by the QiWeb DevShell.
  * <p>

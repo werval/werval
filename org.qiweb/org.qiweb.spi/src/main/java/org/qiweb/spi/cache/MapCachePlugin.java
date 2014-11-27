@@ -22,6 +22,8 @@ import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * Cache Plugin backed by a HashMap.
+ *
+ * @navcomposed 1 - 1 MapCache
  */
 public class MapCachePlugin
     extends CachePlugin

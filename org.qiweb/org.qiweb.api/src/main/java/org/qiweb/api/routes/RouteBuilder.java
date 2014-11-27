@@ -52,6 +52,8 @@ import org.qiweb.api.routes.internal.RouteBuilderContext;
  * </pre>
  * The last line would output:
  * <pre>GET /foo/bar/:id f.q.n.MyController.another( String id, Integer slug = 2 )</pre>
+ *
+ * @navassoc 1 create * Route
  */
 public interface RouteBuilder
 {
@@ -89,6 +91,8 @@ public interface RouteBuilder
 
     /**
      * Route Declaration.
+     *
+     * @hidden
      */
     interface RouteDeclaration
     {
@@ -140,6 +144,8 @@ public interface RouteBuilder
 
     /**
      * Route Parser.
+     *
+     * @hidden
      */
     interface RouteParser
     {

@@ -143,9 +143,6 @@ git clone git@scm.codeartisans.org:qiweb/qiweb-sample-beerdb.git
 
 Gradle and Maven both need some configuration before going any further.
 
-Until QiWeb goes public, the artifact repository used for dependencies and QiWeb releases is password protected.
-Yes, `qiweb:qiweb` are pretty loosy credentials but that's the way it works for now.
-
 Moreover, the core QiWeb build create a local repository to deploy development versions locally.
 
 Theses two needs proper configuration.
@@ -153,10 +150,6 @@ Theses two needs proper configuration.
 .~/.gradle/gradle.properties
 [source,groovy]
 ----
-// QiWeb Repo Account
-qiwebRepoUsername=qiweb
-qiwebRepoPassword=qiweb
-
 // Qiweb Local Repository
 qiwebLocalRepository=file:///home/you/src/qiweb-related/qiweb/repository
 ----
@@ -165,13 +158,6 @@ qiwebLocalRepository=file:///home/you/src/qiweb-related/qiweb/repository
 [source,xml]
 ----
 <settings>
-    <servers>
-        <server>
-            <id>qiwebRepos</id>
-            <username>qiweb</username>
-            <password>qiweb</password>
-        </server>
-    </servers>
     <profiles>
         <profile>
             <id>qiwebDevelopment</id>

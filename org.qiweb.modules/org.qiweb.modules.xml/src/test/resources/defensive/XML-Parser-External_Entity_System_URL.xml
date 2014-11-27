@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Test external entity reference (SYSTEM with URL). -->     
+<!DOCTYPE root [
+<!ELEMENT root (#PCDATA)>
+<!ENTITY e1 SYSTEM "http://www.example.com/entity">
+]>
+<root>&e1;</root>

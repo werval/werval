@@ -17,6 +17,8 @@ package org.qiweb.api.mime;
 
 /**
  * Generated interface with all MimeTypes defined by Apache.
+ *
+ * @hidden
  */
 public interface MimeTypesNames
 {

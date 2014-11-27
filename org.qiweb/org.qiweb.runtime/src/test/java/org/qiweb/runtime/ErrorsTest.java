@@ -33,7 +33,7 @@ public class ErrorsTest
     @Test
     public void testErrors()
     {
-        Config config = new ConfigInstance();
+        Config config = new ConfigInstance( getClass().getClassLoader() );
         Errors errors = new ErrorsInstance( config );
         assertThat( errors.count(), is( 0 ) );
         assertThat( errors.get( "whatever" ), nullValue() );
@@ -62,7 +62,7 @@ public class ErrorsTest
     @Test
     public void testMaxErrors()
     {
-        Config config = new ConfigInstance();
+        Config config = new ConfigInstance( getClass().getClassLoader() );
         Errors errors = new ErrorsInstance( config );
         for( int idx = 1; idx <= 20; idx++ )
         {

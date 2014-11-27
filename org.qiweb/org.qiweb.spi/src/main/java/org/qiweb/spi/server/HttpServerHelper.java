@@ -20,6 +20,8 @@ import org.qiweb.util.UUIDIdentityGenerator;
 
 /**
  * Helper object for HttpServer implementations.
+ *
+ * @composed 1 - 1 IdentityGenerator
  */
 public class HttpServerHelper
 {

@@ -5,5 +5,7 @@
 apply from: rootProject.file( '../gradle/java.gradle' )
 
 dependencies {
-    // Adding dependencies here will add the dependencies to each submodule.
+    // Adding dependencies here will add the dependencies to all submodules.
+    testCompile libs.awaitility
+    testCompile libs.rest_assured
 }

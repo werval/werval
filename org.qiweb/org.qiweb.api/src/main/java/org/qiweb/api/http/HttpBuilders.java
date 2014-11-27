@@ -25,6 +25,8 @@ import org.qiweb.api.http.Cookies.Cookie;
  * Typically used in controllers and filters.
  * <p>
  * All builders are immutable and reusable.
+ *
+ * @navassoc 1 create * CookieBuilder
  */
 public interface HttpBuilders
 {
@@ -41,6 +43,8 @@ public interface HttpBuilders
      * Cookie Builder.
      * <p>
      * Name is mandatory.
+     *
+     * @navassoc 1 create * Cookie
      */
     interface CookieBuilder
     {

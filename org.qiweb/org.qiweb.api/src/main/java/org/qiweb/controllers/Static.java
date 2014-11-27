@@ -47,7 +47,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
- * Controller to serve static files or directory tree.
+ * Serve static files or directory trees.
  * <p>
  * Cache behaviour can be tweeked with <code>qiweb.controllers.static</code> config properties.
  * <p>

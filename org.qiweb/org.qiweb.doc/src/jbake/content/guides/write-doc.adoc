@@ -26,8 +26,7 @@ the like.
 [discrete]
 ===== Core documentation
 
-Core documentation includes a getting started guide, the other guides, the manual, the release-notes and the API
-javadoc.
+Core documentation includes a getting started guide, the other guides, the manual and the API javadoc.
 Its sources are in the `org.qiweb.doc` project.
 
 The `org.qiweb.doc` build generates the core documentation using JBake.

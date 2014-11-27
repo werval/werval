@@ -36,6 +36,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
+import org.qiweb.api.events.HttpEvent;
+import org.qiweb.spi.events.EventsSPI;
+import org.qiweb.spi.server.HttpServerHelper;
 import org.qiweb.util.IdentityGenerator;
 import org.qiweb.util.UUIDIdentityGenerator;
 import org.slf4j.Logger;
@@ -77,6 +80,8 @@ public class HttpRequestAggregator
     private static final ByteBuf HTTP_100_CONTINUE = copiedBuffer( "HTTP/1.1 100 Continue\r\n\r\n", US_ASCII );
     private static final IdentityGenerator TEMP_FILE_ID_GEN = new UUIDIdentityGenerator( "body" );
 
+    private final HttpServerHelper helper;
+    private final EventsSPI eventsSpi;
     private final int maxContentLength;
     private final int diskThreshold;
     private final File diskOverflowDirectory;
@@ -85,8 +90,13 @@ public class HttpRequestAggregator
     private ByteBuf bodyBuf;
     private File bodyFile;
 
-    public HttpRequestAggregator( int maxContentLength, int diskThreshold, File diskOverflowDirectory )
+    public HttpRequestAggregator(
+        HttpServerHelper helper, EventsSPI eventsSpi,
+        int maxContentLength, int diskThreshold, File diskOverflowDirectory
+    )
     {
+        this.helper = helper;
+        this.eventsSpi = eventsSpi;
         this.maxContentLength = maxContentLength;
         this.diskThreshold = diskThreshold;
         this.diskOverflowDirectory = diskOverflowDirectory;
@@ -153,6 +163,19 @@ public class HttpRequestAggregator
             return;
         }
 
+        // Generate new request identity
+        String requestIdentity = helper.generateNewRequestIdentity();
+
+        // Http Request Received Event
+        context.channel().attr( Attrs.REQUEST_IDENTITY ).set( requestIdentity );
+        eventsSpi.emit(
+            new HttpEvent.RequestReceived(
+                requestIdentity,
+                newRequestHeader.getMethod().name(),
+                newRequestHeader.getUri()
+            )
+        );
+
         currentRequestHeader = new DefaultHttpRequest( newRequestHeader.getProtocolVersion(),
                                                        newRequestHeader.getMethod(),
                                                        newRequestHeader.getUri() );
@@ -178,11 +201,11 @@ public class HttpRequestAggregator
             response.headers().set( CONTENT_TYPE, "text/plain; charset=" + US_ASCII.name().toLowerCase( US ) );
             response.headers().set( CONTENT_LENGTH, response.content().readableBytes() );
             response.headers().set( CONNECTION, CLOSE );
-            context.write( response ).addListener( ChannelFutureListener.CLOSE );
+            context.write( response ).addListener( ChannelFutureListener.CLOSE ); // HERE
             return;
         }
 
-        // Append chunk data to aggregated File
+        // Append chunk data to aggregated buffer or file
         if( chunk.content().isReadable() )
         {
             // Test disk threshold

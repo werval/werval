@@ -1,12 +1,12 @@
 
 description = "Memcache Cache Module"
 
+moduleDescriptor.plugin 'cache-memcache', impl: 'org.qiweb.modules.cache.MemcachePlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.memcache
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
 }
 

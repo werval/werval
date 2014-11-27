@@ -31,6 +31,18 @@ public class JSONPlugin
     private JacksonJSON json;
 
     @Override
+    public Class<JSON> apiType()
+    {
+        return JSON.class;
+    }
+
+    @Override
+    public JSON api()
+    {
+        return json;
+    }
+
+    @Override
     public void onActivate( Application application )
         throws ActivationException
     {
@@ -44,17 +56,5 @@ public class JSONPlugin
     public void onPassivate( Application application )
     {
         json = null;
-    }
-
-    @Override
-    public Class<JSON> apiType()
-    {
-        return JSON.class;
-    }
-
-    @Override
-    public JSON api()
-    {
-        return json;
     }
 }

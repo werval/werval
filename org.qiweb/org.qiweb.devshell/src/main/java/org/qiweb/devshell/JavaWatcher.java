@@ -347,7 +347,7 @@ public class JavaWatcher
                                 Path name = ev.context();
                                 Path child = watched.path().resolve( name );
 
-                                LOG.debug( "{}: {}", event.kind().name(), child );
+                                LOG.trace( "{}: {}", event.kind().name(), child );
 
                                 // if directory is created then register it and its sub-directories
                                 if( kind == ENTRY_CREATE && isDirectory( child, NOFOLLOW_LINKS ) )

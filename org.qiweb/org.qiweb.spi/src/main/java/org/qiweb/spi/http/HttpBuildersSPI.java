@@ -34,6 +34,8 @@ import org.qiweb.util.ByteSource;
  * Typically used in unit tests running an Application.
  * <p>
  * All builders are immutable and reusable.
+ *
+ * @navassoc 1 create * RequestBuilder
  */
 public interface HttpBuildersSPI
     extends HttpBuilders
@@ -51,6 +53,8 @@ public interface HttpBuildersSPI
      * Request Builder.
      * <p>
      * HTTP Method and URI are mandatory.
+     *
+     * @navassoc 1 create * Request
      */
     interface RequestBuilder
     {

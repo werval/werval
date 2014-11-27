@@ -29,7 +29,7 @@ import org.qiweb.api.filters.FilterWith;
 import org.qiweb.api.outcomes.Outcome;
 
 /**
- * X-Content-Type-Options.
+ * X-Content-Type-Options Annotation.
  * <p>
  * The only defined value, "nosniff", prevents browsers from infering the MIME type.
  * <p>
@@ -38,6 +38,8 @@ import org.qiweb.api.outcomes.Outcome;
  * <p>
  * This also applies to Google Chrome, when
  * <a href="https://developer.chrome.com/extensions/hosting">downloading extensions</a>.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( XContentTypeOptions.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )

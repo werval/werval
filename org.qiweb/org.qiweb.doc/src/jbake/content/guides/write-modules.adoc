@@ -1,25 +1,28 @@
 == Write Modules
 
-=== Overview
+=== Quickstart
+
+Module build is easy when using Gradle as a dedicated plugin is available.
+
+`apply plugin: 'org.qiweb.module'`
+
+You can also start from the `qiweb-skel-module` skeleton that comes with a complete sample Plugin including unit tests.
+
 
 === Plugins
 
-=== Configuration
+Declare Plugins in your build:
+
+`moduleDescriptor.plugin 'name', impl: 'fqcn.of.YourPlugin'`
+
+You can declare several of them.
+
 
 === Documentation
 
-Use Asciidoc.
-
-Generate html using Asciidoctor defaults into your modules resources so it ends up on the classpath,
-in `com/acme/your-module-id/doc` for example.
-
-Add the following to a `reference.conf` file at your module's classpath root:
-
-    qiweb.devshell.dyndoc.your-module-id {
-        name = "Your shiny module's name"
-        base_path = com/acme/your-module-id/doc
-    }
+Documentation must be put in `src/doc` in Asciidoc format.
+At least the `index.adoc` file must be present.
+You can add other files and resources (images...).
 
 When your module is present in an application classpath, its documentation will be automatically listed at
 `/@doc/modules/index.html` and integrated at `/@doc/modules/your-module-id` in development mode.
-

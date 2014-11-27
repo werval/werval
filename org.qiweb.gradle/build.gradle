@@ -9,6 +9,7 @@ targetCompatibility = '1.7'
 
 repositories {
     maven { url "http://repo.gradle.org/gradle/libs-releases-local" }
+    jcenter()
 }
 
 description = "QiWeb Gradle Plugin"
@@ -19,6 +20,7 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
     compile libs.gradle_tooling
+    compile "org.asciidoctor:asciidoctor-gradle-plugin:1.5.0"
 
     testCompile "org.qiweb:org.qiweb.test:$version"
     testCompile libs.awaitility
@@ -35,7 +37,7 @@ sonarRunner {
 // https://github.com/alkemist/gradle-test-kit
 // Use the fetchGradleTestKit task to update the sourceset
 buildscript {
-    repositories { mavenCentral() }
+    repositories { jcenter() }
     dependencies { classpath 'org.ajoberstar:gradle-git:0.6.4' }
 }
 sourceSets {
@@ -51,6 +53,10 @@ dependencies {
     gradleTestKitCompile libs.gradle_tooling
     testCompile sourceSets.gradleTestKit.output
 }
+
+
+test.dependsOn install
+
 
 task fetchGradleTestKit( type: org.ajoberstar.gradle.git.tasks.GitClone ) {
     uri "https://github.com/alkemist/gradle-test-kit.git"

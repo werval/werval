@@ -70,7 +70,6 @@ import org.slf4j.LoggerFactory;
  * <li>SEVERE -&gt; ERROR</li>
  * </ul>
  */
-// TODO Move into its own Gradle SourceSet so that org.qiweb.modules.jpa do not depend on eclipselink at compile time
 public class Slf4jSessionLogger
     extends AbstractSessionLog
 {

@@ -16,11 +16,17 @@
 package org.qiweb.modules.cache;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import net.sf.ehcache.CacheManager;
 import org.qiweb.api.Application;
+import org.qiweb.api.Config;
 import org.qiweb.api.cache.Cache;
 import org.qiweb.api.cache.CachePlugin;
 import org.qiweb.api.exceptions.ActivationException;
+import org.qiweb.modules.metrics.Metrics;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * EhCache Plugin.
@@ -32,15 +38,34 @@ public class EhCachePlugin
     private CacheManager manager;
 
     @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        if( config.bool( "ehcache.metrics" ) )
+        {
+            return Arrays.asList( Metrics.class );
+        }
+        return EMPTY_LIST;
+    }
+
+    @Override
+    public Cache api()
+    {
+        return ehcache;
+    }
+
+    @Override
     public void onActivate( Application application )
         throws ActivationException
     {
-        String configResourceName = application.config().string( "ehcache.configResource" );
+        Config config = application.config().object( "ehcache" );
+        String configResourceName = config.string( "configResource" );
         URL configResourceURL = application.classLoader().getResource( configResourceName );
         CacheManager cacheManager = CacheManager.create( configResourceURL );
-        net.sf.ehcache.Cache backingCache = cacheManager.getCache( "qiweb-cache" );
+        net.sf.ehcache.Ehcache backingCache = cacheManager.getCache( "qiweb-cache" );
         this.manager = cacheManager;
-        this.ehcache = new EhCache( backingCache );
+        this.ehcache = config.bool( "metrics" )
+                       ? new EhCache( application.plugin( Metrics.class ), backingCache )
+                       : new EhCache( backingCache );
     }
 
     @Override
@@ -52,11 +77,5 @@ public class EhCachePlugin
             manager = null;
         }
         ehcache = null;
-    }
-
-    @Override
-    public Cache api()
-    {
-        return ehcache;
     }
 }

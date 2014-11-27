@@ -1,12 +1,11 @@
 
 description = "Thymeleaf Templating Module"
 
+moduleDescriptor.plugin 'thymeleaf', impl: 'org.qiweb.modules.thymeleaf.ThymeleafPlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.thymeleaf
     
-    testCompile "org.qiweb:org.qiweb.test:$version"
-    testCompile libs.rest_assured
-
 }

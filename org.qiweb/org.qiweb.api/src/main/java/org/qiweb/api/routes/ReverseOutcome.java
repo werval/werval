@@ -23,6 +23,8 @@ import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Reverse Outcome.
+ *
+ * @hidden
  */
 public final class ReverseOutcome
     implements Outcome

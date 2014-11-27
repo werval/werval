@@ -35,7 +35,9 @@ import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.isEmpty;
 
 /**
- * Set Header.
+ * Set Header Annotation.
+ *
+ * @navassoc 1 apply 1 Filter
  */
 @FilterWith( SetHeader.Filter.class )
 @Target( { ElementType.METHOD, ElementType.TYPE } )
@@ -88,6 +90,11 @@ public @interface SetHeader
         }
     }
 
+    /**
+     * SetHeader repeatable annotation support.
+     *
+     * @navassoc 1 repeat * SetHeader
+     */
     @Retention( RetentionPolicy.RUNTIME )
     @Target( { ElementType.METHOD, ElementType.TYPE } )
     @Inherited

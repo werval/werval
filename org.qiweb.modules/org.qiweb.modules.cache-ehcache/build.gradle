@@ -1,12 +1,11 @@
 
 description = "EhCache Cache Module"
 
+moduleDescriptor.plugin 'cache-ehcache', impl: 'org.qiweb.modules.cache.EhCachePlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.ehcache
 
-    testCompile "org.qiweb:org.qiweb.test:$version"
-
 }
-

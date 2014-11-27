@@ -15,21 +15,25 @@
  */
 package org.qiweb.test;
 
-import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.Before;
-import org.qiweb.api.Config;
 import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
+import org.qiweb.runtime.ConfigKeys;
+import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.server.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.singletonMap;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+import static org.qiweb.test.QiWebTestHelper.setupRestAssuredDefaults;
 
 /**
  * Base QiWeb HTTP JUnit Test.
@@ -41,10 +45,14 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
  * <p>
  * By default, routes are loaded from the <code>routes.conf</code> file.
  * Override the {@link #routesProvider()} method to provide your own test routes.
+ *
+ * @navcomposed 1 - 1 ApplicationSPI
+ * @navcomposed 1 - 1 HttpServer
  */
 public class QiWebHttpTest
     implements QiWebHttpTestSupport
 {
+    private static final Logger LOG = LoggerFactory.getLogger( QiWebHttpTest.class );
     private final String configurationResourceNameOverride;
     private final RoutesProvider routesProviderOverride;
     private HttpServer httpServer;
@@ -81,27 +89,24 @@ public class QiWebHttpTest
         String conf = configurationResourceNameOverride == null
                       ? configurationResourceName()
                       : configurationResourceNameOverride;
-        Config config = new ConfigInstance( classLoader, conf );
+        ConfigInstance config = new ConfigInstance( classLoader, conf );
+        try
+        {
+            config.string( ConfigKeys.APP_SECRET );
+        }
+        catch( com.typesafe.config.ConfigException.Missing noAppSecret )
+        {
+            String secret = CryptoInstance.newRandomSecret256BitsHex();
+            LOG.info( "Application has no 'app.secret', using a random one for test mode: {}", secret );
+            config = new ConfigInstance( classLoader, conf, null, null, singletonMap( "app.secret", secret ) );
+        }
         RoutesProvider routesProvider = routesProviderOverride == null
                                         ? routesProvider()
                                         : routesProviderOverride;
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
         httpServer = new NettyServer( app );
         httpServer.activate();
-
-        // Setup RestAssured defaults if present
-        try
-        {
-            Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
-            restAssuredPortField.set( null, app.config().intNumber( QIWEB_HTTP_PORT ) );
-            Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
-            restAssuredBaseURLField.set( null, "http://" + app.config().string( QIWEB_HTTP_ADDRESS ) );
-        }
-        catch( ClassNotFoundException | NoSuchFieldException |
-               IllegalArgumentException | IllegalAccessException noRestAssured )
-        {
-            // RestAssured is not present, we simply don't configure it.
-        }
+        setupRestAssuredDefaults( config );
     }
 
     /**
@@ -152,7 +157,7 @@ public class QiWebHttpTest
      */
     protected String configurationResourceName()
     {
-        return "application.conf";
+        return null;
     }
 
     /**

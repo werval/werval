@@ -25,7 +25,8 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.qiweb.api.Crypto;
 import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.runtime.util.Hex;
+import org.qiweb.util.Hex;
+import org.qiweb.util.Reflectively;
 
 /**
  * Cryptography service instance.
@@ -48,57 +49,91 @@ public class CryptoInstance
         }
         if( this.secretBytes.length < 32 )
         {
-            throw new QiWebException( "Wrong Application Secret: must be at least 256bits long" );
+            throw new QiWebException( "Weak Application Secret: must be at least 256bits long" );
         }
         this.charset = charset;
     }
 
     @Override
-    public String genNew256bitsHexSecret()
+    public byte[] newSecret()
     {
-        return genRandom256bitsHexSecret();
+        return newRandomSecret256Bits();
     }
 
-    public static String genRandom256bitsHexSecret()
+    @Override
+    public String newSecretHex()
+    {
+        return newRandomSecret256BitsHex();
+    }
+
+    @Override
+    public String newSecretBase64()
+    {
+        return Base64.getEncoder().encodeToString( newRandomSecret256Bits() );
+    }
+
+    @Reflectively.Invoked( by = "DevShell" )
+    public static String newRandomSecret256BitsHex()
+    {
+        return Hex.encode( newRandomSecret256Bits() );
+    }
+
+    private static byte[] newRandomSecret256Bits()
     {
         try
         {
             byte[] bytes = new byte[ 32 ];
             SecureRandom.getInstanceStrong().nextBytes( bytes );
-            return Hex.encode( bytes );
+            return bytes;
         }
         catch( NoSuchAlgorithmException ex )
         {
-            throw new InternalError( ex.getMessage() );
+            throw new InternalError( ex.getMessage(), ex );
         }
     }
 
     @Override
-    public String hexHmacSha256( String message )
+    public byte[] hmacSha256( byte[] message )
     {
-        return hexHmacSha256( message, secretBytes );
+        return hmacSha256( message, secretBytes );
     }
 
     @Override
-    public String hexHmacSha256( String message, String secret )
-    {
-        return hexHmacSha256( message, Hex.decode( secret.toCharArray() ) );
-    }
-
-    private String hexHmacSha256( String message, byte[] secret )
+    public byte[] hmacSha256( byte[] message, byte[] secret )
     {
         try
         {
             SecretKeySpec signingKey = new SecretKeySpec( secret, "HmacSHA256" );
             Mac mac = Mac.getInstance( "HmacSHA256" );
             mac.init( signingKey );
-            byte[] rawHmac = mac.doFinal( message.getBytes( charset ) );
-            return Hex.encode( rawHmac );
+            return mac.doFinal( message );
         }
         catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException ex )
         {
             throw new QiWebException( "Unable to HMAC message", ex );
         }
+    }
+
+    @Override
+    public String hmacSha256Hex( CharSequence message )
+    {
+        return Hex.encode(
+            hmacSha256(
+                message.toString().getBytes( charset ),
+                secretBytes
+            )
+        );
+    }
+
+    @Override
+    public String hmacSha256Hex( CharSequence message, String secret )
+    {
+        return Hex.encode(
+            hmacSha256(
+                message.toString().getBytes( charset ),
+                Hex.decode( secret.toCharArray() )
+            )
+        );
     }
 
     @Override
@@ -121,13 +156,13 @@ public class CryptoInstance
     }
 
     @Override
-    public String hexSha256( CharSequence message )
+    public String sha256Hex( CharSequence message )
     {
         return Hex.encode( sha256( message ) );
     }
 
     @Override
-    public String base64Sha256( CharSequence message )
+    public String sha256Base64( CharSequence message )
     {
         return Base64.getEncoder().encodeToString( sha256( message ) );
     }

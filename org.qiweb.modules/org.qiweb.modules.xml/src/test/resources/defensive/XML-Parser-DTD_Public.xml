@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!-- Test external DTD (PUBLIC) -->
+<!DOCTYPE root PUBLIC "-//DTD1" "./XML-Parser-Referenced.xml">
+<root>&e1;</root>

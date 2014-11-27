@@ -15,57 +15,98 @@
  */
 package org.qiweb.modules.jdbc;
 
-import com.jolbox.bonecp.BoneCPDataSource;
-import com.jolbox.bonecp.ConnectionHandle;
-import com.jolbox.bonecp.hooks.AbstractConnectionHook;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.qiweb.api.Application;
 import org.qiweb.api.Config;
 import org.qiweb.api.Plugin;
 import org.qiweb.api.exceptions.ActivationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.qiweb.modules.jndi.JNDI;
+import org.qiweb.modules.metrics.Metrics;
 
 import static org.qiweb.util.Strings.EMPTY;
 import static org.qiweb.util.Strings.isEmpty;
+import static org.qiweb.util.Strings.join;
 
 /**
- * JDBC Plugin that manage DataSources using BoneCP pool.
+ * JDBC Plugin that manage DataSources using HikariCP pools.
  */
 public class JDBCPlugin
     implements Plugin<JDBC>
 {
-    /* package */ static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
+    private static final String DEFAULT_DATASOURCE = "jdbc.default_datasource";
     private static final String DATASOURCES = "jdbc.datasources";
-    private static final Logger BONECP_LOG = LoggerFactory.getLogger( "com.jolbox.bonecp" );
+    private static final String METRICS = "jdbc.metrics";
+    private static final String LOG4JDBC_DRIVER = "net.sf.log4jdbc.sql.jdbcapi.DriverSpy";
     private JDBC jdbc;
+
+    @Override
+    public Class<JDBC> apiType()
+    {
+        return JDBC.class;
+    }
+
+    @Override
+    public List<Class<?>> dependencies( Config config )
+    {
+        List<Class<?>> deps = new ArrayList<>();
+        if( config.has( DATASOURCES ) )
+        {
+            Config allDsConfig = config.object( DATASOURCES );
+            for( String dsName : allDsConfig.subKeys() )
+            {
+                if( allDsConfig.object( dsName ).has( "jndiName" ) )
+                {
+                    // At least one DataSource has to be registered in JNDI, depend on the JNDI plugin
+                    deps.add( JNDI.class );
+                    break;
+                }
+            }
+        }
+        if( config.bool( METRICS ) )
+        {
+            deps.add( Metrics.class );
+        }
+        return deps;
+    }
+
+    @Override
+    public JDBC api()
+    {
+        return jdbc;
+    }
 
     @Override
     public void onActivate( Application application )
         throws ActivationException
     {
         Config config = application.config();
-        Map<String, BoneCPDataSource> dataSources = new HashMap<>();
+        Map<String, HikariDataSource> dataSources = new HashMap<>();
         if( config.has( DATASOURCES ) )
         {
             Config allDsConfig = config.object( DATASOURCES );
+            setupLog4Jdbc( application, allDsConfig );
             for( String dsName : allDsConfig.subKeys() )
             {
                 Config dsConfig = allDsConfig.object( dsName );
-                BoneCPDataSource ds = createDataSource( dsName, dsConfig, application.classLoader() );
+                HikariDataSource ds = createDataSource( dsName, dsConfig, application, config.bool( METRICS ) );
                 dataSources.put( dsName, ds );
             }
         }
-        jdbc = new JDBC( dataSources, config.has( DEFAULT_DATASOURCE ) ? config.string( DEFAULT_DATASOURCE ) : null );
+        jdbc = new JDBC( dataSources, config.string( DEFAULT_DATASOURCE ) );
     }
 
     @Override
@@ -78,21 +119,46 @@ public class JDBCPlugin
         }
     }
 
-    @Override
-    public Class<JDBC> apiType()
+    private void setupLog4Jdbc( Application application, Config allDsConfig )
     {
-        return JDBC.class;
+        // Load log4jdbc properties from application configuration
+        Map<String, String> globalProperties = new HashMap<>();
+        if( application.config().has( "jdbc.log4jdbc" ) )
+        {
+            application.config().stringMap( "jdbc.log4jdbc" ).forEach(
+                (key, value) ->
+                {
+                    globalProperties.put( "log4jdbc." + key, value );
+                }
+            );
+        }
+        // Load used drivers from datasources configuration
+        Set<String> log4jdbcEnabledDrivers = new LinkedHashSet<>();
+        for( String dsName : allDsConfig.subKeys() )
+        {
+            Config dsConfig = allDsConfig.object( dsName );
+            if( dsConfig.has( "log4jdbc" ) && dsConfig.bool( "log4jdbc" ) )
+            {
+                log4jdbcEnabledDrivers.add( dsConfig.string( "driver" ) );
+            }
+        }
+        // Apply if appropriate
+        if( !log4jdbcEnabledDrivers.isEmpty() )
+        {
+            System.setProperty( "log4jdbc.drivers", join( log4jdbcEnabledDrivers, "," ) );
+            globalProperties.forEach(
+                (key, value) ->
+                {
+                    System.setProperty( key, value );
+                }
+            );
+        }
     }
 
-    @Override
-    public JDBC api()
-    {
-        return jdbc;
-    }
-
-    private BoneCPDataSource createDataSource( String dsName, Config dsConfig, ClassLoader loader )
+    private HikariDataSource createDataSource( String dsName, Config dsConfig, Application app, boolean metrics )
     {
         // JDBC configuration
+        boolean log4jdbc = dsConfig.has( "log4jdbc" ) && dsConfig.bool( "log4jdbc" );
         String driver = dsConfig.string( "driver" );
         String url = dsConfig.string( "url" );
         String user = null;
@@ -142,6 +208,10 @@ public class JDBCPlugin
         {
             url = "jdbc:" + url;
         }
+        if( log4jdbc )
+        {
+            url = url.substring( 0, 5 ) + "log4jdbc:" + url.substring( 5 );
+        }
         if( dsConfig.has( "user" ) )
         {
             user = dsConfig.string( "user" );
@@ -151,126 +221,105 @@ public class JDBCPlugin
             password = dsConfig.string( "password" );
         }
 
-        // Connection configuration
-        final boolean autocommit = dsConfig.has( "autocommit" ) ? dsConfig.bool( "autocommit" ) : true;
-        final Integer isolation;
-        if( dsConfig.has( "isolation" ) )
-        {
-            String isolationString = dsConfig.string( "isolation" );
-            switch( isolationString )
-            {
-                case "NONE":
-                    isolation = Connection.TRANSACTION_NONE;
-                    break;
-                case "READ_COMMITED":
-                    isolation = Connection.TRANSACTION_READ_COMMITTED;
-                    break;
-                case "READ_UNCOMMITED":
-                    isolation = Connection.TRANSACTION_READ_UNCOMMITTED;
-                    break;
-                case "REPEATABLE_READ":
-                    isolation = Connection.TRANSACTION_REPEATABLE_READ;
-                    break;
-                case "SERIALIZABLE":
-                    isolation = Connection.TRANSACTION_SERIALIZABLE;
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                        "Unknown isolation level '" + isolationString + "' for DataSource '" + dsName + "'"
-                    );
-            }
-        }
-        else
-        {
-            isolation = null;
-        }
-        final String defaultCatalog = dsConfig.has( "defaultCatalog" ) ? dsConfig.string( "defaultCatalog" ) : null;
-        final boolean readOnly = dsConfig.has( "readOnly" ) ? dsConfig.bool( "readOnly" ) : false;
-
         // Setup DataSource
         try
         {
-            DriverManager.registerDriver( (Driver) Class.forName( driver, true, loader ).newInstance() );
-            BoneCPDataSource ds = new BoneCPDataSource();
-            ds.setClassLoader( loader );
-            ds.setConnectionHook(
-                new AbstractConnectionHook()
-                {
-                    @Override
-                    public void onCheckOut( ConnectionHandle connection )
-                    {
-                        try
-                        {
-                            connection.setAutoCommit( autocommit );
-                            if( isolation != null )
-                            {
-                                connection.setTransactionIsolation( isolation );
-                            }
-                            connection.setReadOnly( readOnly );
-                            if( defaultCatalog != null )
-                            {
-                                connection.setCatalog( defaultCatalog );
-                            }
-                        }
-                        catch( SQLException ex )
-                        {
-                            throw new RuntimeSQLException( ex );
-                        }
-                        if( BONECP_LOG.isTraceEnabled() )
-                        {
-                            BONECP_LOG.trace( "Check out connection {} [{} leased]", connection, ds.getTotalLeased() );
-                        }
-                    }
-
-                    @Override
-                    public void onCheckIn( ConnectionHandle connection )
-                    {
-                        if( BONECP_LOG.isTraceEnabled() )
-                        {
-                            BONECP_LOG.trace( "Check in connection {} [{} leased]", connection, ds.getTotalLeased() );
-                        }
-                    }
-                }
+            // Load Database Driver Explicitely
+            DriverManager.registerDriver(
+                (Driver) Class.forName( driver, true, app.classLoader() ).newInstance()
             );
-            ds.setJdbcUrl( url );
-            ds.setUsername( user );
-            ds.setPassword( password );
+            if( log4jdbc )
+            {
+                // Load log4jdbc Driver Explicitely
+                DriverManager.registerDriver(
+                    (Driver) Class.forName( LOG4JDBC_DRIVER, true, app.classLoader() ).newInstance()
+                );
+            }
+            HikariConfig hikariConfig = new HikariConfig();
+            hikariConfig.setPoolName( dsName );
+            hikariConfig.setDriverClassName( log4jdbc ? LOG4JDBC_DRIVER : driver );
+            hikariConfig.setJdbcUrl( url );
+            hikariConfig.setUsername( user );
+            hikariConfig.setPassword( password );
+            if( dsConfig.has( "autocommit" ) )
+            {
+                hikariConfig.setAutoCommit( dsConfig.bool( "autocommit" ) );
+            }
+            if( dsConfig.has( "isolation" ) )
+            {
+                hikariConfig.setTransactionIsolation( dsConfig.string( "isolation" ) );
+            }
+            if( dsConfig.has( "readOnly" ) )
+            {
+                hikariConfig.setReadOnly( dsConfig.bool( "readOnly" ) );
+            }
+            if( dsConfig.has( "catalog" ) )
+            {
+                hikariConfig.setCatalog( dsConfig.string( "catalog" ) );
+            }
 
             // Pool configuration
-            ds.setPartitionCount( dsConfig.has( "partitionCount" ) ? dsConfig.intNumber( "partitionCount" ) : 1 );
-            ds.setMaxConnectionsPerPartition( dsConfig.has( "maxConnectionsPerPartition" ) ? dsConfig.intNumber( "maxConnectionsPerPartition" ) : 30 );
-            ds.setMinConnectionsPerPartition( dsConfig.has( "minConnectionsPerPartition" ) ? dsConfig.intNumber( "minConnectionsPerPartition" ) : 5 );
-            ds.setAcquireIncrement( dsConfig.has( "acquireIncrement" ) ? dsConfig.intNumber( "acquireIncrement" ) : 1 );
-            ds.setAcquireRetryAttempts( dsConfig.has( "acquireRetryAttempts" ) ? dsConfig.intNumber( "acquireRetryAttempts" ) : 10 );
-            ds.setAcquireRetryDelayInMs( dsConfig.has( "acquireRetryDelay" ) ? dsConfig.milliseconds( "acquireRetryDelay" ) : 1000 );
-            ds.setConnectionTimeoutInMs( dsConfig.has( "connectionTimeout" ) ? dsConfig.milliseconds( "connectionTimeout" ) : 1000 );
-            ds.setIdleMaxAgeInSeconds( dsConfig.has( "idleMaxAge" ) ? dsConfig.seconds( "idleMaxAge" ) : 600 );
-            ds.setMaxConnectionAgeInSeconds( dsConfig.has( "maxConnectionAge" ) ? dsConfig.seconds( "maxConnectionAge" ) : 3600 );
-            ds.setDisableJMX( dsConfig.has( "disableJMX" ) ? dsConfig.bool( "disableJMX" ) : true );
-            ds.setStatisticsEnabled( dsConfig.has( "statisticsEnabled" ) ? dsConfig.bool( "statisticsEnabled" ) : false );
-            ds.setIdleConnectionTestPeriodInSeconds( dsConfig.has( "idleConnectionTestPeriod" ) ? dsConfig.seconds( "idleConnectionTestPeriod" ) : 60 );
-            ds.setDisableConnectionTracking( dsConfig.has( "disableConnectionTracking" ) ? dsConfig.bool( "disableConnectionTracking" ) : true );
-            if( dsConfig.has( "initSQL" ) )
+            if( dsConfig.has( "minimumIdle" ) )
             {
-                ds.setInitSQL( dsConfig.string( "initSQL" ) );
+                hikariConfig.setMinimumIdle( dsConfig.intNumber( "minimumIdle" ) );
             }
-            if( dsConfig.has( "logStatements" ) )
+            if( dsConfig.has( "maximumPoolSize" ) )
             {
-                ds.setLogStatementsEnabled( dsConfig.bool( "logStatements" ) );
+                hikariConfig.setMaximumPoolSize( dsConfig.intNumber( "maximumPoolSize" ) );
             }
-            if( dsConfig.has( "connectionTestStatement" ) )
+            if( dsConfig.has( "connectionTimeout" ) )
             {
-                ds.setConnectionTestStatement( dsConfig.string( "connectionTestStatement" ) );
+                hikariConfig.setConnectionTimeout( dsConfig.milliseconds( "connectionTimeout" ) );
             }
+            if( dsConfig.has( "idleTimeout" ) )
+            {
+                hikariConfig.setIdleTimeout( dsConfig.milliseconds( "idleTimeout" ) );
+            }
+            if( dsConfig.has( "maxLifetime" ) )
+            {
+                hikariConfig.setMaxLifetime( dsConfig.milliseconds( "maxLifetime" ) );
+            }
+            if( dsConfig.has( "initializationFailFast" ) )
+            {
+                hikariConfig.setInitializationFailFast( dsConfig.bool( "initializationFailFast" ) );
+            }
+            if( dsConfig.has( "leakDetectionThreshold" ) )
+            {
+                hikariConfig.setLeakDetectionThreshold( dsConfig.milliseconds( "leakDetectionThreshold" ) );
+            }
+            if( dsConfig.has( "connectionInitSql" ) )
+            {
+                hikariConfig.setConnectionInitSql( dsConfig.string( "connectionInitSql" ) );
+            }
+            if( dsConfig.has( "connectionTestQuery" ) )
+            {
+                hikariConfig.setConnectionTestQuery( dsConfig.string( "connectionTestQuery" ) );
+            }
+            if( dsConfig.has( "registerMbeans" ) )
+            {
+                hikariConfig.setRegisterMbeans( dsConfig.bool( "registerMbeans" ) );
+            }
+            if( dsConfig.has( "isolateInternalQueries" ) )
+            {
+                hikariConfig.setIsolateInternalQueries( dsConfig.bool( "isolateInternalQueries" ) );
+            }
+
+            // Metrics
+            if( metrics )
+            {
+                hikariConfig.setMetricRegistry( app.plugin( Metrics.class ).metrics() );
+            }
+
+            HikariDataSource hds = new HikariDataSource( hikariConfig );
 
             // JNDI
             if( dsConfig.has( "jndiName" ) )
             {
                 String jndiName = dsConfig.string( "jndiName" );
-                new InitialContext().rebind( jndiName, ds );
+                new InitialContext().rebind( jndiName, hds );
             }
 
-            return ds;
+            return hds;
         }
         catch( ClassNotFoundException | IllegalAccessException | InstantiationException |
                SQLException | NamingException ex )

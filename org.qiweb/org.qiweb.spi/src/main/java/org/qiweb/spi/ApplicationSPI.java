@@ -22,6 +22,7 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.spi.events.EventsSPI;
 import org.qiweb.spi.http.HttpBuildersSPI;
 import org.qiweb.util.Reflectively;
 
@@ -31,6 +32,10 @@ import org.qiweb.util.Reflectively;
  * Intended for use by HttpServer implementations, the DevShell and Application unit tests.
  * <p>
  * Don't use in your Application code.
+ *
+ * @navcomposed 1 - 1 Global
+ * @navcomposed 1 - 1 EventsSPI
+ * @navcomposed 1 - 1 HttpBuildersSPI
  */
 @Reflectively.Loaded( by = "DevShell" )
 public interface ApplicationSPI
@@ -45,6 +50,14 @@ public interface ApplicationSPI
      * @return Application Global object
      */
     Global global();
+
+    /**
+     * Application Events SPI.
+     *
+     * @return Application Events SPI
+     */
+    @Override
+    EventsSPI events();
 
     /**
      * HTTP API Objects Builders SPI.

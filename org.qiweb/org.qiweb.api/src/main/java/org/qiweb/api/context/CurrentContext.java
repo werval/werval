@@ -35,6 +35,8 @@ import org.qiweb.api.templates.Templates;
  * Current Context.
  * <p>
  * Static utility methods to get a hand on the thread local Context.
+ *
+ * @navcomposed 0 - 1 Context
  */
 public final class CurrentContext
 {

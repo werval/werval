@@ -19,6 +19,8 @@ package org.qiweb.api.routes;
  * Controller Call Recorder functional interface for route building and reverse routing fluent APIs.
  *
  * @param <ControllerType> Parameterized type of the Controller
+ *
+ * @hidden
  */
 @FunctionalInterface
 public interface ControllerCallRecorder<ControllerType>

@@ -10,7 +10,6 @@ Quick walkthrough writing some HTTP "Hello World" using Maven
 toc::[]
 
 include::getting-started/preamble.adoc[]
-include::getting-started/setup.adoc[]
 include::getting-started/using-maven.adoc[]
 include::getting-started/using-devshell.adoc[]
 include::getting-started/next-steps.adoc[]

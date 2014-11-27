@@ -1,12 +1,12 @@
 
 description = "Redis Cache Module"
 
+moduleDescriptor.plugin 'cache-redis', impl: 'org.qiweb.modules.cache.RedisCachePlugin'
+
 dependencies {
 
-    compile "org.qiweb:org.qiweb.spi:$version"
+    compile project( ":org.qiweb.modules.metrics" )
     compile libs.jedis
-
-    testCompile "org.qiweb:org.qiweb.test:$version"
 
 }
 

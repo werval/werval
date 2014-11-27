@@ -23,8 +23,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
+import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProgressEvent;
+import org.gradle.tooling.ProgressListener;
 import org.gradle.tooling.ProjectConnection;
+import org.gradle.tooling.ResultHandler;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
@@ -34,7 +38,7 @@ import static org.qiweb.util.Strings.hasText;
 
 /**
  * Gradle DevShellSPI implementation.
- *
+ * <p>
  * Use the Gradle Tooling API to rebuild the project.
  */
 public final class GradleDevShellSPI
@@ -56,45 +60,81 @@ public final class GradleDevShellSPI
                                   + "|_____||____|_____||_____|__| |__|\n"
                                   + "-------------------------------------------------------------------------------\n"
                                   + "\n";
+
     /**
-     * Gradle Tooling API Connector.
+     * Number of connection retries to attempt.
      */
-    private final GradleConnector connector = GradleConnector.newConnector();
+    private static final int MAX_RETRIES = 3;
 
     /**
      * Names of the Gradle tasks to run to rebuild the sources.
      */
     private final List<String> rebuildTasks;
 
+    /**
+     * Gradle Tooling API Connector.
+     */
+    private final GradleConnector connector;
+
+    /**
+     * Gradle Daemon Connection.
+     */
+    private ProjectConnection connection;
+
     public GradleDevShellSPI(
         URL[] applicationSources,
         URL[] applicationClassPath, URL[] runtimeClassPath,
         Set<File> toWatch, SourceWatcher watcher,
-        File rootDir, List<String> rebuildTasks
+        List<String> rebuildTasks,
+        File gradleHomeDir, File projectDir
     )
     {
         super( applicationSources, applicationClassPath, runtimeClassPath, toWatch, watcher, false );
-        this.connector.forProjectDirectory( rootDir );
         this.rebuildTasks = rebuildTasks;
+        this.connector = GradleConnector.newConnector()
+            .useInstallation( gradleHomeDir )
+            .forProjectDirectory( projectDir );
     }
 
     @Override
     protected void doRebuild()
         throws DevShellRebuildException
     {
-        ProjectConnection connection = connector.connect();
+        effectivelyRebuild( 0 );
+    }
+
+    private void effectivelyRebuild( int retries )
+    {
+        if( connection == null )
+        {
+            connection = connector.connect();
+        }
         ByteArrayOutputStream stdout = new ByteArrayOutputStream();
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
         try
         {
             connection.newBuild()
+                .withArguments( "-q" )
                 .setStandardOutput( stdout )
                 .setStandardError( stderr )
                 .forTasks( rebuildTasks.toArray( new String[ rebuildTasks.size() ] ) )
                 .run();
         }
-        catch( Exception ex )
+        catch( IllegalStateException disconnected )
         {
+            if( retries < MAX_RETRIES )
+            {
+                connection = null;
+                effectivelyRebuild( retries + 1 );
+            }
+            else
+            {
+                throw disconnected;
+            }
+        }
+        catch( Exception buildError )
+        {
+            closeConnection();
             String stdoutString = uncheckedToString( stdout, UTF_8 );
             String stderrString = uncheckedToString( stderr, UTF_8 );
             boolean stdoutHasText = hasText( stdoutString );
@@ -114,13 +154,24 @@ public final class GradleDevShellSPI
             }
             throw new DevShellRebuildException(
                 "Gradle build error for tasks: " + rebuildTasks,
-                ex,
+                buildError,
                 buildOutput.toString()
             );
         }
-        finally
+    }
+
+    @Override
+    protected void doStop()
+    {
+        closeConnection();
+    }
+
+    private void closeConnection()
+    {
+        if( connection != null )
         {
             connection.close();
+            connection = null;
         }
     }
 

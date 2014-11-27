@@ -20,6 +20,8 @@ import java.nio.charset.Charset;
 
 /**
  * Builder for Outcomes.
+ *
+ * @navassoc 1 create * Outcome
  */
 public interface OutcomeBuilder
 {

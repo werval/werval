@@ -85,7 +85,6 @@ configurations { embeddedJavadocConfiguration }
 dependencies { embeddedJavadocProjects().each { p -> embeddedJavadocConfiguration p } }
 
 // Dependency to UMLGraph
-// QUID Replace with http://www.yworks.com/en/products_ydoc.html ?
 configurations { umlgraphDoclet }
 dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 
@@ -103,13 +102,18 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
     options.links(
         "http://docs.oracle.com/javase/8/docs/api/",
         "http://www.slf4j.org/apidocs/",
-        "http://junit.org/javadoc/latest/"
+        "http://junit.org/apidocs/"
     )
     options.group( [
-            "QiWeb API":               [ "org.qiweb.api",       "org.qiweb.api.*"       ],
-            "QiWeb Test Support":      [ "org.qiweb.test",      "org.qiweb.test.*"      ],
-            "QiWeb SPI":               [ "org.qiweb.spi",       "org.qiweb.spi.*"       ]
+            "API":               [ "org.qiweb.api",           "org.qiweb.api.*"           ],
+            "Controllers":       [ "org.qiweb.controllers",   "org.qiweb.controllers.*"   ],
+            "Filters":           [ "org.qiweb.filters",       "org.qiweb.filters.*"       ],
+            "Utilities":         [ "org.qiweb.util",          "org.qiweb.util.*"          ],
+            "Test Support":      [ "org.qiweb.test",          "org.qiweb.test.*"          ],
+            "SPI":               [ "org.qiweb.spi",           "org.qiweb.spi.*"           ]
         ] )
+    // disable the crazy super-strict doclint tool in Java 8
+    options.addStringOption( 'Xdoclint:none', '-quiet' )
     options.docletpath = configurations.umlgraphDoclet.files as List
     options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
     inputs.dir file( 'src/javadoc' )
@@ -153,13 +157,17 @@ task prepareJBakeInput(type: Copy) {
     from file('src/jbake')
     into file('build/tmp/jbake')
 }
+task copyDevShellDocImages(type: Copy) {
+    from file('../org.qiweb.devshell/src/doc/classloader-hierarchy.png')
+    into file('build/tmp/jbake/assets/images/')
+}
 task prepareJBakeJavadoc(type: Copy) {
     dependsOn generateEmbeddedJavadoc
     from javadocGenResourcesPath
     into file('build/tmp/jbake/assets/api')
 }
 jbake {
-    dependsOn prepareJBakeInput, prepareJBakeJavadoc
+    dependsOn prepareJBakeInput, copyDevShellDocImages, prepareJBakeJavadoc
     input file( 'build/tmp/jbake' )
     configuration = [
         'qiweb_version': version

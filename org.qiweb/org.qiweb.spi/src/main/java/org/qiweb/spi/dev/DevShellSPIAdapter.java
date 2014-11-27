@@ -146,13 +146,31 @@ public class DevShellSPIAdapter
         }
     }
 
+    @Override
+    public final void stop()
+    {
+        doStop();
+    }
+
     /**
      * No operation.
      *
-     * @throws DevShellRebuildException See {@link DevShellSPI#rebuild()}.
+     * @throws DevShellRebuildException if rebuilding fails
+     *
+     * @see DevShellSPI#rebuild()
      */
     protected void doRebuild()
         throws DevShellRebuildException
+    {
+        // NOOP
+    }
+
+    /**
+     * No operation.
+     *
+     * @see DevShellSPI#stop()
+     */
+    protected void doStop()
     {
         // NOOP
     }

@@ -22,7 +22,7 @@ import static org.qiweb.test.util.Assume.assumeConnectivity;
 
 /**
  * RedisCache Test.
- *
+ * <p>
  * Run only if connectivity to localhost:6379 is available.
  */
 public class RedisCacheTest

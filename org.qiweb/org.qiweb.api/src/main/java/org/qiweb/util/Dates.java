@@ -24,6 +24,8 @@ import java.util.TimeZone;
 
 /**
  * Utilities to work with dates.
+ *
+ * @composed 1 - 1 HTTP
  */
 public final class Dates
 {
