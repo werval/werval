@@ -234,6 +234,7 @@ task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from 
 // Create javadoc JAR
 javadoc {
     title = "${project.name} (${version})"
+    exclude "**/internal/**"
     options.encoding = 'UTF-8'
     options.docFilesSubDirs = true
     options.links(
@@ -241,6 +242,8 @@ javadoc {
         "http://www.slf4j.org/apidocs/",
         "http://junit.org/apidocs/"
     )
+    // disable the crazy super-strict doclint tool in Java 8
+    options.addStringOption( 'Xdoclint:none', '-quiet' )
     doLast {
         copy {
             from 'src/main/javadoc'
