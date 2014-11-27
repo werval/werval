@@ -4,6 +4,10 @@ This log of changes contains security fixes, bug fixes, breaking changes, new fe
 For minor changes, build system or test changes, see the full [source code history](https://scm.codeartisans.org/qiweb/qiweb/network/master).
 
 
+## develop - [history](https://scm.codeartisans.org/qiweb/qiweb/network/develop)
+
+> Unreleased!
+
 
 ## 0.4.0 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.4.0)
 
