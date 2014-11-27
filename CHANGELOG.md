@@ -22,6 +22,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - #190 Application Events, mainly used for metrics, see below
 - #186 & #202 Metrics & HealthChecks Plugin with core and filter annotations metrics plus metrics in other modules
+- #133 XML Module, secure by default, gradually relaxable, provide a Plugin allowing easy production and consumption of XML
 - #199 [Hashids](http://hashids.org/) support
 - #200 Base62 codec
 - #138 The Gradle plugin now has module build support

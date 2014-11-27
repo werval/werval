@@ -1,4 +1,4 @@
 # XML Module
 
-XML using the org.w3c API
-
+The XML module provide a Plugin allowing easy production and consumption of XML.
+Secure by default, gradually relaxable.

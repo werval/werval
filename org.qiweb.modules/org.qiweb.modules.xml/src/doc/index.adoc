@@ -1,0 +1,51 @@
+= XML Module
+XML support for your Application
+:jbake-type: module
+
+The XML module provide a Plugin allowing easy production and consumption of XML.
+Secure by default, gradually relaxable.
+
+
+## XML Processing
+
+The Java ecosystem is rich when it somes to XML librairies, maybe too much.
+But it seems to be the case in many stacks.
+This modules leverage the standard `JAXP` APIs providing `StAX`, `SAX`, `DOM`, `XSLT` and `XPath` processing.
+No fancy fluent API is provided but the plugin expose a collection of utility methods that should cover most of the
+frequent use cases.
+
+Under the hood, Woodstox is used for stream pull parsing (StAX) ;
+https://xerces.apache.org/xerces2-j/[Xerces] for stream push parsing (SAX & SAX2), DOM handling and Schema validation ;
+and http://saxonica.com/[Saxon] for XSLT, XPath and XQuery support.
+
+Special attention has been taken to normalize and tighten the security of XML processing amongst used libraries.
+
+// https://docs.fedoraproject.org/en-US/Fedora_Security_Team/html/Defensive_Coding/sect-Defensive_Coding-Tasks-Serialization-XML.html
+
+[IMPORTANT]
+.DTD is dangerous
+====
+By default, `DTD` processing is disabled.
+It can easily be enabled by using the `setValidating()` method of `SAXParserFactory` or `DocumentBuilderFactory`.
+
+But before enabling it beware that if you process documents coming from untrusted sources, one could easily DoS the application (eg. `OutOfMemoryError` using not so cleverly crafter regular expressions or simply consume all your computing power using exponential or polynomial nested entity references).
+Theses attacks are know as *XML Entity Expansion Attacks* or https://en.wikipedia.org/wiki/Billion_laughs[Billion laughs].
+
+You have been warned.
+====
+
+
+### External Entities
+
+//https://en.wikipedia.org/wiki/XML_external_entity
+//https://en.wikipedia.org/wiki/Billion_laughs
+//https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+//http://www.exploit-db.com/download_pdf/16093/
+
+Default behaviour is to fail on any external entities lookup.
+That's pretty good for your safety as this could be used to read files from the file system, internal network, or DoS
+the application.
+But it is not good if you need complex validation and/or transformation processing.
+Think of this as firewall rules, you start with a simple `Deny All` rule then open what you need,
+knowing what you are doing.
+
