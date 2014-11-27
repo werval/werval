@@ -48,5 +48,6 @@
     <suppress checks=".*" files="Versions.java"/>
     <suppress checks=".*" files="ContextExecutor.java"/>
     <suppress checks=".*" files="EventsInstance.java"/>
+    <suppress checks=".*" files="Lazy.java"/>
 
 </suppressions>
