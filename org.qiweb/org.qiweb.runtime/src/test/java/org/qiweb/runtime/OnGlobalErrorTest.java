@@ -542,7 +542,9 @@ public class OnGlobalErrorTest
         extends Global
     {
         @Override
-        public Outcome onRequestError( Application application, Outcomes outcomes, Throwable cause )
+        public Outcome onRequestError(
+            Application application, RequestHeader request, Outcomes outcomes, Throwable cause
+        )
         {
             throw new RuntimeException( "onRequestError" );
         }

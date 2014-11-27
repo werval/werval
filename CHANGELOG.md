@@ -13,6 +13,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - #195 Plugins can now be registered by names in configuration. Registration by FQCN is still possible but the syntax has changed
 - #212 Gradle plugins IDs have changed to be compliant with the official Gradle Plugin Portal policy
+- #216 Error responses now comply with content negiciation (`HTML`, `JSON` or `text/plain`). `Global.onRequestError(...)` method signature had to be changed.
 
 ### Bug fixes
 

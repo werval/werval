@@ -50,8 +50,10 @@ import org.qiweb.api.http.ProtocolVersion;
 import org.qiweb.api.http.Request;
 import org.qiweb.api.http.RequestHeader;
 import org.qiweb.api.http.Session;
+import org.qiweb.api.http.Status;
 import org.qiweb.api.i18n.Langs;
 import org.qiweb.api.mime.MimeTypes;
+import org.qiweb.api.outcomes.DefaultErrorOutcomes;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.outcomes.OutcomeBuilder;
 import org.qiweb.api.outcomes.Outcomes;
@@ -93,6 +95,7 @@ import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
 import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
+import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
 import static org.qiweb.runtime.ConfigKeys.APP_BANNER;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
@@ -791,22 +794,35 @@ public final class ApplicationInstance
             StringBuilder details = new StringBuilder();
             if( mode == Mode.DEV )
             {
-                details.append( "<p>Tried:</p>\n<pre>\n" );
+                if( TEXT_HTML.equals( request.preferredMimeType() ) )
+                {
+                    details.append( "<p>Tried:</p>\n<pre>\n" );
+                }
+                else
+                {
+                    details.append( "Tried:\n\n");
+                }
                 for( Route route : routes )
                 {
                     if( !route.path().startsWith( "/@" ) )
                     {
-                        details.append( route.toString() ).append( "\n" );
+                        details.append( route.toString() ).append( NEWLINE );
                     }
                 }
-                details.append( "</pre>\n" );
+                if( TEXT_HTML.equals( request.preferredMimeType() ) )
+                {
+                    details.append( "</pre>\n" );
+                }
             }
             return finalizeOutcome(
                 request,
-                outcomes.notFound().
-                withBody( errorHtml( "404 Route Not Found", details ) ).
-                asHtml().
-                build()
+                DefaultErrorOutcomes.errorOutcome(
+                    request,
+                    Status.NOT_FOUND,
+                    "404 Route Not Found",
+                    details.toString(),
+                    outcomes
+                ).build()
             );
         }
         else if( rootCause instanceof ParameterBinderException )
@@ -821,10 +837,13 @@ public final class ApplicationInstance
             }
             return finalizeOutcome(
                 request,
-                outcomes.badRequest().
-                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                asHtml().
-                build()
+                DefaultErrorOutcomes.errorOutcome(
+                    request,
+                    Status.BAD_REQUEST,
+                    Status.BAD_REQUEST.reasonPhrase(),
+                    rootCause.getMessage(),
+                    outcomes
+                ).build()
             );
         }
         else if( rootCause instanceof BadRequestException )
@@ -839,10 +858,13 @@ public final class ApplicationInstance
             }
             return finalizeOutcome(
                 request,
-                outcomes.badRequest().
-                withBody( errorHtml( "400 Bad Request", rootCause.getMessage() ) ).
-                asHtml().
-                build()
+                DefaultErrorOutcomes.errorOutcome(
+                    request,
+                    Status.BAD_REQUEST,
+                    Status.BAD_REQUEST.reasonPhrase(),
+                    rootCause.getMessage(),
+                    outcomes
+                ).build()
             );
         }
 
@@ -853,12 +875,12 @@ public final class ApplicationInstance
             // Delegates Outcome generation to Global object
             if( executors.inDefaultExecutor() )
             {
-                outcome = global.onRequestError( this, outcomes, rootCause );
+                outcome = global.onRequestError( this, request, outcomes, rootCause );
             }
             else
             {
                 outcome = executors.supplyAsync(
-                    () -> global.onRequestError( this, outcomes, rootCause )
+                    () -> global.onRequestError( this, request, outcomes, rootCause )
                 ).join();
             }
         }
@@ -868,12 +890,12 @@ public final class ApplicationInstance
             rootCause.addSuppressed( ex );
             if( executors.inDefaultExecutor() )
             {
-                outcome = new Global().onRequestError( this, outcomes, rootCause );
+                outcome = new Global().onRequestError( this, request, outcomes, rootCause );
             }
             else
             {
                 outcome = executors.supplyAsync(
-                    () -> new Global().onRequestError( this, outcomes, rootCause )
+                    () -> new Global().onRequestError( this, request, outcomes, rootCause )
                 ).join();
             }
         }
@@ -883,16 +905,6 @@ public final class ApplicationInstance
 
         // Done!
         return finalizeOutcome( request, outcome );
-    }
-
-    private CharSequence errorHtml( CharSequence title, CharSequence content )
-    {
-        return new StringBuilder().
-            append( "<!DOCTYPE html>\n<html>\n<head><title>" ).append( title ).append( "</title></head>\n" ).
-            append( "<body>\n" ).
-            append( "<h1>" ).append( title ).append( "</h1>\n" ).
-            append( content ).append( "\n" ).
-            append( "</body>\n</html>\n" );
     }
 
     private Outcome finalizeOutcome( RequestHeader request, Outcome outcome )
@@ -961,11 +973,15 @@ public final class ApplicationInstance
                 );
 
                 // Return 503 to incoming requests while shutting down
-                OutcomeBuilder builder = outcomes.serviceUnavailable().
-                withBody( errorHtml( "503 Service Unavailable", "Service is shutting down" ) ).
-                asHtml().
-                withHeader( CONNECTION, CLOSE ).
-                withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
+                OutcomeBuilder builder = DefaultErrorOutcomes.errorOutcome( 
+                    null,
+                    Status.SERVICE_UNAVAILABLE,
+                    Status.SERVICE_UNAVAILABLE.reasonPhrase(),
+                    "Service is shutting down",
+                    outcomes
+                );
+                builder.withHeader( CONNECTION, CLOSE )
+                    .withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
 
                 // By default, no Retry-After, only if defined in configuration
                 if( config.has( QIWEB_SHUTDOWN_RETRYAFTER ) )
