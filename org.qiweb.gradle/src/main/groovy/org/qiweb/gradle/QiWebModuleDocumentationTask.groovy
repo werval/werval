@@ -56,14 +56,6 @@ class QiWebModuleDocumentationTask extends DefaultTask
     String dynDocPackagePrefix = "${project.group}.${project.name}"
 
     /**
-     * Documentation sources archive publication.
-     * <p>
-     * Defaults to none, set to enable publication of documentation sources archive artifact.
-     */
-    // TODO Set to qiWebLocalRepoPub for official modules in order to build the website
-    Object docSourcesPublication = null;
-
-    /**
      * Documentation sources archive classifier, defaulted to {@literal qiweb-doc}.
      */
     String docSourcesClassifier = "qiweb-doc";

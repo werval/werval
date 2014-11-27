@@ -19,6 +19,9 @@ import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.publish.internal.DefaultPublishingExtension;
+import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.bundling.Zip
 
 import static org.qiweb.util.Strings.withoutHead;
@@ -168,19 +171,20 @@ class QiWebModulePlugin implements Plugin<Project>
                     description: 'Generate Module Documentation - Doc archive sub-task, don\'t use directly',
                     dependsOn: project.moduleDocumentation_asciidoctor
                 ) {
-                    classifier = 'qiweb-doc'
+                    classifier = project.moduleDocumentation.docSourcesClassifier
                     from project.moduleDocumentation.sourcesDir
                 }
-                project.artifacts { archives project.moduleDocumentation_doczip }
-                if( project.moduleDocumentation.docSourcesPublication != null ) {
-                    project.publishing {
-                        publications {
-                            project.moduleDocumentation.docSourcesPublication {
-                                artifact( project.moduleDocumentation_doczip ) {
-                                    classifier = project.moduleDocumentation.docSourcesClassifier
-                                    extension = 'zip'
-                                }
-                            }
+                project.artifacts {
+                    archives project.moduleDocumentation_doczip
+                }
+                // Special care must be taken configuring publishing because the extension must be created once only
+                // See http://stackoverflow.com/questions/21190230
+                project.plugins.withType(PublishingPlugin) { PublishingPlugin publishingPlugin ->
+                    DefaultPublishingExtension publishingExtension = project.getExtensions().getByType(DefaultPublishingExtension)
+                    publishingExtension.publications.withType(MavenPublication) {
+                        artifact( project.moduleDocumentation_doczip ) {
+                            classifier = project.moduleDocumentation.docSourcesClassifier
+                            extension = 'zip'
                         }
                     }
                 }
