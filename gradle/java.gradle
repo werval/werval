@@ -140,6 +140,10 @@ public interface BuildVersion
 
 // Checkstyle setup
 apply plugin: 'checkstyle'
+checkstyleMain {
+    inputs.dir rootProject.file( '../config/checkstyle' )
+    inputs.dir project.file( 'config/checkstyle' )
+}
 checkstyle {
     configFile = rootProject.file( '../config/checkstyle/qiweb-checks.xml' )
     configProperties = [
@@ -156,7 +160,7 @@ checkstyle {
     // Checkstyle generates a report per sourceset
     sourceSets = [ project.sourceSets.main ]
     // Fix used checkstyle version
-    toolVersion = 5.7
+    toolVersion = '6.1.1'
 }
 // Generate checkstyle HTML report
 task checkstyleMainHtmlReport {
@@ -167,6 +171,8 @@ task checkstyleMainHtmlReport {
     // Declare input/outputs for nice incremental build
     inputs.file xsl
     inputs.dir reportDir
+    inputs.dir rootProject.file( '../config/checkstyle' )
+    inputs.dir project.file( 'config/checkstyle' )
     outputs.dir reportDir
     doLast {
         // Apply XSLT on every XML reports found
