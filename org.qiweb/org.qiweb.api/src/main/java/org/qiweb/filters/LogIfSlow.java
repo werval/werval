@@ -64,7 +64,7 @@ public @interface LogIfSlow
     public static class Filter
         implements org.qiweb.api.filters.Filter<LogIfSlow>
     {
-        private final static Logger LOG = LoggerFactory.getLogger( LogIfSlow.class );
+        private static final Logger LOG = LoggerFactory.getLogger( LogIfSlow.class );
 
         @Override
         public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<LogIfSlow> annotation )

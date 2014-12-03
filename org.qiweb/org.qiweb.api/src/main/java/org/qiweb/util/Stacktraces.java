@@ -29,7 +29,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
  */
 public final class Stacktraces
 {
-    private static class RecursivePredicate
+    private static final class RecursivePredicate
         implements Predicate<Throwable>
     {
         private final Predicate<Throwable> predicate;

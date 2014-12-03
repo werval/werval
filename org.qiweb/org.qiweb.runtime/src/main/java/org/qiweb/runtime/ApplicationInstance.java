@@ -370,7 +370,7 @@ public final class ApplicationInstance
                     .append( indentTwoSpaces( "Plugins", 1 ) )
                     .append( NEWLINE )
                     .append( indentTwoSpaces( allPlugins, 2 ) )
-                    .append( NEWLINE );                
+                    .append( NEWLINE );
             }
             LOG.info( runtimeSummary.toString() );
         }
@@ -800,7 +800,7 @@ public final class ApplicationInstance
                 }
                 else
                 {
-                    details.append( "Tried:\n\n");
+                    details.append( "Tried:\n\n" );
                 }
                 for( Route route : routes )
                 {
@@ -973,7 +973,7 @@ public final class ApplicationInstance
                 );
 
                 // Return 503 to incoming requests while shutting down
-                OutcomeBuilder builder = DefaultErrorOutcomes.errorOutcome( 
+                OutcomeBuilder builder = DefaultErrorOutcomes.errorOutcome(
                     null,
                     Status.SERVICE_UNAVAILABLE,
                     Status.SERVICE_UNAVAILABLE.reasonPhrase(),

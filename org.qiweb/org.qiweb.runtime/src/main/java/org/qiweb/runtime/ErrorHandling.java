@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 /**
  * ErrorHandling.
  */
-/* package */ class ErrorHandling
+/* package */ final class ErrorHandling
 {
     /* package */ static Throwable cleanUpStackTrace( ApplicationSPI application, Logger log, Throwable cause )
     {

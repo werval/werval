@@ -361,7 +361,9 @@ import static org.qiweb.util.Strings.rightPad;
         try
         {
             LinkedHashMap<String, String> pluginsDescriptors = new LinkedHashMap<>();
-            Enumeration<URL> descriptors = application.classLoader().getResources( "META-INF/qiweb-plugins.properties" );
+            Enumeration<URL> descriptors = application.classLoader().getResources(
+                "META-INF/qiweb-plugins.properties"
+            );
             while( descriptors.hasMoreElements() )
             {
                 try( InputStream stream = descriptors.nextElement().openStream() )

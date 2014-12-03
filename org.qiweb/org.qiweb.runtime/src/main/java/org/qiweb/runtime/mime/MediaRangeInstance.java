@@ -33,7 +33,7 @@ import static org.qiweb.util.Strings.EMPTY;
 /**
  * Media Range Instance.
  */
-public class MediaRangeInstance
+public final class MediaRangeInstance
     implements MediaRange
 {
     private static final MediaRange WILDCARD = new MediaRangeInstance( "*", "*", 1D, emptyList() );

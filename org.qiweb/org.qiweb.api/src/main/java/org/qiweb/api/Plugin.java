@@ -22,7 +22,6 @@ import org.qiweb.api.routes.Route;
 import org.qiweb.api.routes.RouteBuilder;
 
 import static java.util.Collections.EMPTY_LIST;
-import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Application Plugin.

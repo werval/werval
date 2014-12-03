@@ -241,7 +241,9 @@ final class UnmodifiableMultiValueMap<K, V>
     }
 
     @Override
-    public List<V> computeIfPresent( K key, BiFunction<? super K, ? super List<V>, ? extends List<V>> remappingFunction )
+    public List<V> computeIfPresent(
+        K key, BiFunction<? super K, ? super List<V>, ? extends List<V>> remappingFunction
+    )
     {
         throw new UnsupportedOperationException();
     }
@@ -253,7 +255,9 @@ final class UnmodifiableMultiValueMap<K, V>
     }
 
     @Override
-    public List<V> merge( K key, List<V> value, BiFunction<? super List<V>, ? super List<V>, ? extends List<V>> remappingFunction )
+    public List<V> merge(
+        K key, List<V> value, BiFunction<? super List<V>, ? super List<V>, ? extends List<V>> remappingFunction
+    )
     {
         throw new UnsupportedOperationException();
     }
@@ -311,7 +315,7 @@ final class UnmodifiableMultiValueMap<K, V>
         static final class UnmodifiableEntrySetSpliterator<K, V>
             implements Spliterator<Entry<K, V>>
         {
-            final Spliterator<Map.Entry<K, V>> s;
+            private final Spliterator<Map.Entry<K, V>> s;
 
             UnmodifiableEntrySetSpliterator( Spliterator<Entry<K, V>> s )
             {
@@ -511,7 +515,7 @@ final class UnmodifiableMultiValueMap<K, V>
          * an ill-behaved Map.Entry that attempts to modify another
          * Map Entry when asked to perform an equality check.
          */
-        private static class UnmodifiableEntry<K, V>
+        private static final class UnmodifiableEntry<K, V>
             implements Map.Entry<K, V>
         {
             private final Map.Entry<? extends K, ? extends V> entry;

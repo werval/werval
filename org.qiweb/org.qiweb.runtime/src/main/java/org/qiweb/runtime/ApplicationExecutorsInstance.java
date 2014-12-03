@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.qiweb.api.ApplicationExecutors;
 import org.qiweb.api.Config;
 import org.qiweb.api.Global;
-import org.qiweb.api.Mode;
 import org.qiweb.runtime.context.ContextExecutor;
 import org.qiweb.runtime.util.ForkJoinPoolNamedThreadFactory;
 import org.qiweb.runtime.util.NamedThreadFactory;
@@ -84,7 +83,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
         }
     }
 
-    private static class UncaughtExceptionHandler
+    private static final class UncaughtExceptionHandler
         implements Thread.UncaughtExceptionHandler
     {
         private final ApplicationSPI application;
@@ -186,12 +185,12 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
                                 : executorName + "_thread";
 
             // Override default executor in development mode
-            if( defaultExecutor.equals( executorName ) && application.mode() == Mode.DEV )
-            {
-                // TODO Investigate how we could limit concurrency in development mode!
-                // type = "thread-pool";
-                // count = 1;
-            }
+            // if( defaultExecutor.equals( executorName ) && application.mode() == Mode.DEV )
+            // {
+            //     // TODO Investigate how we could limit concurrency in development mode!
+            //     type = "thread-pool";
+            //     count = 1;
+            // }
 
             // Create executor
             ExecutorService executor;

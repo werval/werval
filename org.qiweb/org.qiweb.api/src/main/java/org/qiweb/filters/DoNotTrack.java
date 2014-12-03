@@ -54,7 +54,7 @@ public @interface DoNotTrack
     /**
      * Context MetaData key for a boolean value indicating whether the client advertised a Do-Not-Track header.
      */
-    public static final String DNT = "DNT";
+    String DNT = "DNT";
 
     /**
      * Do Not Track Filter.

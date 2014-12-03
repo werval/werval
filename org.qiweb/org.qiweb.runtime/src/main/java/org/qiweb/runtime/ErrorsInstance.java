@@ -40,11 +40,11 @@ public final class ErrorsInstance
     private static final class ErrorInstance
         implements Error
     {
-        final Long timestamp;
-        final String errorId;
-        final String requestId;
-        final String message;
-        final Throwable cause;
+        private final Long timestamp;
+        private final String errorId;
+        private final String requestId;
+        private final String message;
+        private final Throwable cause;
 
         private ErrorInstance( long timestamp, String errorId, String requestId, String message, Throwable cause )
         {
