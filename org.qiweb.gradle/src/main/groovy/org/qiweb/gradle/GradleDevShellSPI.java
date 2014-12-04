@@ -23,12 +23,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
-import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ProgressEvent;
-import org.gradle.tooling.ProgressListener;
 import org.gradle.tooling.ProjectConnection;
-import org.gradle.tooling.ResultHandler;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
@@ -81,6 +77,9 @@ public final class GradleDevShellSPI
      */
     private ProjectConnection connection;
 
+    /**
+     * Create a new DevShellSPI for the Gradle plugin.
+     */
     public GradleDevShellSPI(
         URL[] applicationSources,
         URL[] applicationClassPath, URL[] runtimeClassPath,
