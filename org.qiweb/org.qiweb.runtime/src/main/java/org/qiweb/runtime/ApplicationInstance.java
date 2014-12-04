@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +97,10 @@ import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 import static org.qiweb.api.http.Headers.Values.CLOSE;
 import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
+import static org.qiweb.runtime.BuildVersion.COMMIT;
+import static org.qiweb.runtime.BuildVersion.DATE;
+import static org.qiweb.runtime.BuildVersion.DIRTY;
+import static org.qiweb.runtime.BuildVersion.VERSION;
 import static org.qiweb.runtime.ConfigKeys.APP_BANNER;
 import static org.qiweb.runtime.ConfigKeys.APP_GLOBAL;
 import static org.qiweb.runtime.ConfigKeys.APP_LANGS;
@@ -337,6 +342,27 @@ public final class ApplicationInstance
         if( LOG.isInfoEnabled() )
         {
             StringBuilder runtimeSummary = new StringBuilder( "Runtime Summary\n\n" );
+            String header = String.format(
+                "QiWeb v%s\n"
+                + "  Git commit: %s%s, built on: %s\n"
+                + "  Java version: %s, vendor: %s\n"
+                + "  Java home: %s\n"
+                + "  Default locale: %s, platform encoding: %s\n"
+                + "  OS name: %s, version: %s, arch: %s\n",
+                VERSION,
+                COMMIT,
+                ( DIRTY ? " (DIRTY)" : "" ),
+                DATE,
+                System.getProperty( "java.version" ),
+                System.getProperty( "java.vendor" ),
+                System.getProperty( "java.home" ),
+                Locale.getDefault().toString(),
+                System.getProperty( "file.encoding" ),
+                System.getProperty( "os.name" ),
+                System.getProperty( "os.version" ),
+                System.getProperty( "os.arch" )
+            );
+            runtimeSummary.append( indentTwoSpaces( header, 1 ) ).append( NEWLINE ).append( NEWLINE );
             String configLocation = config.location().toStringShort();
             if( hasText( configLocation ) )
             {
