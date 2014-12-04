@@ -8,9 +8,17 @@
 
 <suppressions>
 
-    <!-- Add your suppression for this project here -->
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
 
-    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
-    <suppress checks=".*" files=".*"/>
+    <!-- Empty blocks. -->
+    <suppress checks="EmptyBlock" files="Assume.java"/>
+    <suppress checks="EmptyBlock" files="QiWebTestHelper.java"/>
+    <suppress checks="EmptyBlock" files="Processes.java"/>
+
+    <!-- Spacing issues in need for better global checks -->
+    <suppress checks=".*" files="Assume.java"/>
+    <suppress checks=".*" files="QiWebTestHelper.java"/>
 
 </suppressions>
