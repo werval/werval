@@ -24,6 +24,9 @@ import org.qiweb.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Handle WebSockets.
+ */
 public class QiWebSocketHandler
     extends SimpleChannelInboundHandler<WebSocketFrame>
 {

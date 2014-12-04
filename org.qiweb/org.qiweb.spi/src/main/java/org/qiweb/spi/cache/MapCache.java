@@ -36,7 +36,7 @@ import org.qiweb.util.Numbers;
 public class MapCache
     extends CacheAdapter
 {
-    /* package */ final ConcurrentMap<String, Couple<Long, Object>> map = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<String, Couple<Long, Object>> map = new ConcurrentHashMap<>();
 
     public MapCache()
     {

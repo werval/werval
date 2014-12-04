@@ -40,6 +40,9 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 public class StartCommand
     implements Runnable
 {
+    /**
+     * Execution model.
+     */
     public static enum ExecutionModel
     {
         /**
@@ -104,7 +107,7 @@ public class StartCommand
 
     private void runFork()
     {
-        // java -cp class:path mainClass arg um ents
+        // java -cp class:path main.Class arg um ents
         List<String> cmd = new ArrayList<>();
         cmd.add( "java" );
         cmd.add( "-cp" );

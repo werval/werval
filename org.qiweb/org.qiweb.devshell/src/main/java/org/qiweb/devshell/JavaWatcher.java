@@ -68,7 +68,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
 public class JavaWatcher
     implements SourceWatcher
 {
-    private static abstract class Watched
+    private abstract static class Watched
     {
         protected final Path path;
 
@@ -625,7 +625,9 @@ public class JavaWatcher
                 }
                 else if( exists( start ) )
                 {
-                    throw new DevShellStartException( "Cannot watch '" + start + "', it is neither a file nor a directory." );
+                    throw new DevShellStartException(
+                        "Cannot watch '" + start + "', it is neither a file nor a directory."
+                    );
                 }
                 else
                 {

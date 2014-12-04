@@ -120,8 +120,12 @@ public class NettyServer
         if( bootstrap != null )
         {
             // app.config() can be null if activation failed, allow gracefull shutdown
-            long shutdownQuietPeriod = app.config() == null ? 1000 : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
-            long shutdownTimeout = app.config() == null ? 5000 : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
+            long shutdownQuietPeriod = app.config() == null
+                ? 1000
+                : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
+            long shutdownTimeout = app.config() == null
+                ? 5000
+                : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
 
             // Record all passivation errors here to report them at once at the end
             List<Exception> passivationErrors = new ArrayList<>();

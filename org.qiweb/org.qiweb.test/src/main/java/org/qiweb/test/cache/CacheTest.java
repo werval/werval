@@ -48,6 +48,9 @@ import static org.qiweb.api.http.Method.GET;
 public abstract class CacheTest
     extends QiWebTest
 {
+    /**
+     * Controller.
+     */
     public static class Controller
     {
         private static int hits = 0;

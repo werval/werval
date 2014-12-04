@@ -94,7 +94,7 @@ public class SubProtocolSwitchHandler
 
             pipeline.remove( this );
 
-            frame.retain(); // FIXME Check this
+            frame.retain(); // TODO Check this
             context.fireChannelRead( frame );
         }
         else

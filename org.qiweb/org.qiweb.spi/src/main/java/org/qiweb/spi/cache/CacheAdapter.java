@@ -44,11 +44,11 @@ public abstract class CacheAdapter
          *
          * @hidden
          */
-        public static interface Closeable
+        public interface Closeable
             extends AutoCloseable
         {
             @Override
-            public void close();
+            void close();
         }
 
         /**

@@ -49,11 +49,14 @@ public class DynamicDocumentations
                       + "<body><div id=\"header\"><h1>Dynamic Documentation</h1></div>"
                       + "<div id=\"content\">"
                       + "<p>Modules contains non-core functionnality. "
-                      + "Modules are simple JARs and can contain controllers, utility classes and QiWeb Plugins.</p>"
+                      + "Modules are simple JARs and can contain controllers, utility classes and Plugins.</p>"
                       + "<ul>";
         for( DynDoc dyndoc : dyndocs.values() )
         {
-            String dyndocUrl = reverseRoutes().get( getClass(), c -> c.resource( dyndoc.id, dyndoc.entryPoint ) ).httpUrl();
+            String dyndocUrl = reverseRoutes().get(
+                getClass(),
+                c -> c.resource( dyndoc.id, dyndoc.entryPoint )
+            ).httpUrl();
             html += "<li><a href=\"" + dyndocUrl + "\">" + dyndoc.name + "</a></li>";
         }
         html += "</ul></div><div id=\"footer\"></div></body></html>";
@@ -98,7 +101,7 @@ public class DynamicDocumentations
         return outcomes().ok( decoratedHtml ).asHtml().build();
     }
 
-    private static class DynDoc
+    private static final class DynDoc
     {
         private final String id;
         private final String basePath;

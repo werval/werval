@@ -33,6 +33,9 @@ import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.util.InputStreamByteSource;
 import org.qiweb.util.InputStreams;
 
+/**
+ * com.sun.net HTTP Handler.
+ */
 public class QiWebHttpHandler
     implements HttpHandler
 {

@@ -172,14 +172,29 @@ public final class DamnSmallDevShell
             // Handle --version
             if( cmd.hasOption( "version" ) )
             {
-                System.out.println(
-                    "QiWeb CLI v" + VERSION + "\n"
-                    + "Git commit: " + COMMIT + ( DIRTY ? " (DIRTY)" : "" ) + ", built on: " + DATE + "\n"
-                    + "Licence: Apache License Version 2.0, http://www.apache.org/licenses/LICENSE-2.0\n"
-                    + "Java version: " + System.getProperty( "java.version" ) + ", vendor: " + System.getProperty( "java.vendor" ) + "\n"
-                    + "Java home: " + System.getProperty( "java.home" ) + "\n"
-                    + "Default locale: " + Locale.getDefault().toString() + ", platform encoding: " + System.getProperty( "file.encoding" ) + "\n"
-                    + "OS name: " + System.getProperty( "os.name" ) + ", version: " + System.getProperty( "os.version" ) + ", arch: " + System.getProperty( "os.arch" ) );
+                System.out.print(
+                    String.format(
+                        "QiWeb CLI v%s\n"
+                        + "Git commit: %s%s, built on: %s\n"
+                        + "Java version: %s, vendor: %s\n"
+                        + "Java home: %s\n"
+                        + "Default locale: %s, platform encoding: %s\n"
+                        + "OS name: %s, version: %s, arch: %s\n",
+                        VERSION,
+                        COMMIT,
+                        ( DIRTY ? " (DIRTY)" : "" ),
+                        DATE,
+                        System.getProperty( "java.version" ),
+                        System.getProperty( "java.vendor" ),
+                        System.getProperty( "java.home" ),
+                        Locale.getDefault().toString(),
+                        System.getProperty( "file.encoding" ),
+                        System.getProperty( "os.name" ),
+                        System.getProperty( "os.version" ),
+                        System.getProperty( "os.arch" )
+                    )
+                );
+                System.out.flush();
                 System.exit( 0 );
             }
 
@@ -288,7 +303,7 @@ public final class DamnSmallDevShell
 
         // Generate Gradle build file
         String gradle = "buildscript {\n"
-                        + "	 repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }\n"
+                        + "  repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }\n"
                         + "	 dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
                         + "}\n"
                         + "repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }\n"

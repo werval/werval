@@ -353,7 +353,8 @@ public final class DevShell
             {
                 cause = ex.getCause();
             }
-            String msg = "Unable to start QiWeb DevShell: " + cause.getClass().getSimpleName() + " " + cause.getMessage();
+            String msg = "Unable to start QiWeb DevShell: "
+                + cause.getClass().getSimpleName() + " " + cause.getMessage();
             System.err.println( red( msg ) );
             throw new DevShellStartException( msg, cause );
         }

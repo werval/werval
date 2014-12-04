@@ -27,7 +27,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
 /**
  * Internal QiWeb Test Helper.
  */
-/* package */ class QiWebTestHelper
+/* package */ final class QiWebTestHelper
 {
     /**
      * Print Errors traces to STDERR.
@@ -72,5 +72,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
         {
             // RestAssured is not present, we simply don't configure it.
         }
+    }
+
+    private QiWebTestHelper()
+    {
     }
 }
