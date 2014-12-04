@@ -36,7 +36,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
 /**
- * Development Shell Mojo.
+ * Run the application in development mode.
  */
 @Mojo( name = "devshell", requiresDependencyResolution = RUNTIME, threadSafe = true )
 @Execute( phase = COMPILE )

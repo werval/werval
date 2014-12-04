@@ -13,25 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
-
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.qiweb.commands.SecretCommand;
-
 /**
- * Generates a new application secret.
+ * QiWeb Maven Plugin.
  */
-@Mojo( name = "secret", requiresProject = false, threadSafe = true )
-public class SecretMojo
-    extends AbstractMojo
-{
-    @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        new SecretCommand().run();
-    }
-}
+package org.qiweb.maven;

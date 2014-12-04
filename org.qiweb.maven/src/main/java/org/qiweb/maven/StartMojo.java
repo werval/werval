@@ -31,7 +31,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
 /**
- * Start Mojo.
+ * Run the application in production mode.
  */
 @Mojo( name = "start", requiresDependencyResolution = RUNTIME, threadSafe = true )
 @Execute( phase = COMPILE )

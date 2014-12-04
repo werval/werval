@@ -27,6 +27,9 @@ import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
+/**
+ * Maven DevShellSPI implementation.
+ */
 public class MavenDevShellSPI
     extends DevShellSPIAdapter
 {
