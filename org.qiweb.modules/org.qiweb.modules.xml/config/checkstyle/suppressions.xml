@@ -8,9 +8,21 @@
 
 <suppressions>
 
-    <!-- Add your suppression for this project here -->
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
 
-    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
-    <suppress checks=".*" files=".*"/>
+    <!-- Naming convention violation -->
+    <suppress checks="MethodName" files="XML.java"/>
+
+    <!-- Builders & Big Constructors -->
+    <suppress checks="ParameterNumber" files="DatatypeFactoryImpl.java"/>
+
+    <!-- Unable to get class information for XNIException -->
+    <suppress checks="RedundantThrows" files="CatalogResolver.java"/>
+    <suppress checks="RedundantThrows" files="EmptyResolver.java"/>
+
+    <!-- Spacing issues in need for better global checks -->
+    <suppress checks=".*" files="XML.java"/>
 
 </suppressions>

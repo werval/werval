@@ -19,7 +19,6 @@ import javax.xml.stream.XMLResolver;
 import javax.xml.transform.URIResolver;
 import org.apache.xerces.xni.parser.XMLEntityResolver;
 import org.w3c.dom.ls.LSResourceResolver;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.ext.EntityResolver2;
 
 /**
@@ -28,7 +27,7 @@ import org.xml.sax.ext.EntityResolver2;
  * Implemented interfaces:
  * <ul>
  * <li>{@link XMLResolver} for {@literal javax.xml.stream} (StAX)</li>
- * <li>{@link EntityResolver}, {@link EntityResolver2} for {@literal org.xml.sax} (SAX and SAX2)</li>
+ * <li>{@link org.xml.sax.EntityResolver}, {@link EntityResolver2} for {@literal org.xml.sax} (SAX and SAX2)</li>
  * <li>{@link LSResourceResolver} for {@literal org.w3c.dom} (DOM)</li>
  * <li>{@link URIResolver} for {@literal javax.xml.transform} (XSLT)</li>
  * <li>{@link XMLEntityResolver} for {@literal org.apache.xerces.xni} (Xerces XNI)</li>

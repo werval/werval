@@ -25,7 +25,10 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 public interface TemplatesMetricsHandler
 {
-    static interface Closeable
+    /**
+     * Closeable.
+     */
+    interface Closeable
         extends AutoCloseable
     {
         @Override
@@ -38,6 +41,9 @@ public interface TemplatesMetricsHandler
 
     TemplatesMetricsHandler NOOP = new Impl.NoopHandler();
 
+    /**
+     * Implementation.
+     */
     static final class Impl
         implements TemplatesMetricsHandler
     {

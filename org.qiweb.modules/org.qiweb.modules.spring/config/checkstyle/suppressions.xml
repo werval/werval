@@ -8,9 +8,8 @@
 
 <suppressions>
 
-    <!-- Add your suppression for this project here -->
-
-    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
-    <suppress checks=".*" files=".*"/>
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
 
 </suppressions>

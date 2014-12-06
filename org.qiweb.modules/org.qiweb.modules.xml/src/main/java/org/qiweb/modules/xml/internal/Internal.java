@@ -33,4 +33,8 @@ public final class Internal
     /* package */ static final String ACCESS_EXTERNAL_NONE = "";
     /* package */ static final String ACCESS_EXTERNAL_LOCAL_ONLY = "file, jar:file";
     /* package */ static final String ACCESS_EXTERNAL_ALL = "all";
+
+    private Internal()
+    {
+    }
 }

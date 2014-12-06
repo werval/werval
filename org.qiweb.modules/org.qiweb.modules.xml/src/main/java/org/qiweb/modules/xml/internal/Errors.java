@@ -33,7 +33,7 @@ import static org.qiweb.util.Strings.SPACE;
  * <li>{@link javax.xml.transform.ErrorListener} for XSLT and Transformation</li>
  * </ul>
  */
-/* package */ class Errors
+/* package */ final class Errors
     implements javax.xml.stream.XMLReporter, org.xml.sax.ErrorHandler, javax.xml.transform.ErrorListener
 {
     /* package */ static final Errors INSTANCE = new Errors();

@@ -57,6 +57,9 @@ import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 // JPA Properties -> http://eclipse.org/eclipselink/documentation/2.4/jpa/extensions/persistenceproperties_ref.htm
 public final class JPA
 {
+    /**
+     * Transactional annotation.
+     */
     @FilterWith( TransactionalFilter.class )
     @Target( { ElementType.METHOD, ElementType.TYPE } )
     @Retention( RetentionPolicy.RUNTIME )
@@ -69,7 +72,10 @@ public final class JPA
         boolean readOnly() default false;
     }
 
-    public static class TransactionalFilter
+    /**
+     * Transactional filter.
+     */
+    public static final class TransactionalFilter
         implements Filter<Transactional>
     {
         @Override

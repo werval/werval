@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
         return new SLF4JLogger( clazz );
     }
 
-    private static class SLF4JLogger
+    private static final class SLF4JLogger
         implements ILogger
     {
         private final Logger logger;

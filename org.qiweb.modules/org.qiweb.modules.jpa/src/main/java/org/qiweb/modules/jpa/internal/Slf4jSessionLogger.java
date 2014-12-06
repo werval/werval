@@ -159,6 +159,8 @@ public class Slf4jSessionLogger
             case ERROR:
                 resp = logger.isErrorEnabled();
                 break;
+            default:
+                resp = true;
         }
         return resp;
     }

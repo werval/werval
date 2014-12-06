@@ -42,7 +42,7 @@ import static org.qiweb.modules.xml.internal.Internal.LOG;
  *
  * @see SchemaFactory
  */
-public class SchemaFactoryRelaxNG
+public final class SchemaFactoryRelaxNG
     extends SchemaFactory
 {
     // Jing for RelaxNG

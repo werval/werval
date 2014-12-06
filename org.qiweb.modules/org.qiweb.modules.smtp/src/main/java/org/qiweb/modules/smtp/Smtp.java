@@ -25,6 +25,9 @@ import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.modules.smtp.internal.MultiPartEmailMetrics;
 import org.qiweb.modules.smtp.internal.SimpleEmailMetrics;
 
+/**
+ * SMTP.
+ */
 public class Smtp
 {
     private final String host;

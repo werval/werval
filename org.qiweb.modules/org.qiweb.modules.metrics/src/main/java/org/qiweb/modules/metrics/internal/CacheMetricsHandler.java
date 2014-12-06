@@ -18,8 +18,6 @@ package org.qiweb.modules.metrics.internal;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import java.util.function.Function;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.spi.cache.CacheAdapter;
 import org.qiweb.spi.cache.CacheAdapter.CacheEvent;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -70,6 +68,8 @@ public class CacheMetricsHandler
             case REMOVE:
                 Timer.Context removeTimer = metrics.timer( removesName ).time();
                 return () -> removeTimer.close();
+            default:
+                break;
         }
         return CacheEvent.NOOP_CLOSEABLE;
     }

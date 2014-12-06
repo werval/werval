@@ -41,7 +41,7 @@ import org.thymeleaf.util.Validate;
     }
 
     @Override
-    public InputStream getResourceAsStream( TemplateProcessingParameters templateProcessingParameters, String resourceName )
+    public InputStream getResourceAsStream( TemplateProcessingParameters processingParams, String resourceName )
     {
         Validate.notNull( resourceName, "Resource name cannot be null" );
         return loader.getResourceAsStream( resourceName );

@@ -8,9 +8,14 @@
 
 <suppressions>
 
-    <!-- Add your suppression for this project here -->
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
 
-    <!-- Remeber to remove the suppression below, it disable checkstyle for all files! -->
-    <suppress checks=".*" files=".*"/>
+    <!-- Builders & Big Constructors -->
+    <suppress checks="ParameterNumber" files="MetricsPlugin.java"/>
+
+    <!-- Spacing issues in need for better global checks -->
+    <suppress checks=".*" files="Timer.java"/>
 
 </suppressions>
