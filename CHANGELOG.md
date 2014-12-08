@@ -8,6 +8,11 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased!
 
+### Dependency changes
+
+- Tooling
+    - Upgrade Gradle from `2.2` to `2.2.1`, see the [release-notes](http://www.gradle.org/docs/2.2.1/release-notes)
+
 
 ## 0.4.0 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.4.0)
 
