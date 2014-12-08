@@ -75,6 +75,7 @@ public class QiWebApplicationPluginIntegTest
           + "  repositories {\n"
           + "    maven { url qiwebLocalRepository }\n"
           + "    maven { url 'https://repo.codeartisans.org/qiweb' }\n"
+          + "    jcenter()\n"
           + "  }\n"
           + "  dependencies { classpath 'org.qiweb:org.qiweb.gradle:" + VERSION + "' }\n"
           + "}\n"

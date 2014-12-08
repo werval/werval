@@ -50,6 +50,10 @@
             <id>qiwebRepo</id>
             <url>https://repo.codeartisans.org/qiweb</url>
         </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
     </repositories>
 
     <dependencies>
