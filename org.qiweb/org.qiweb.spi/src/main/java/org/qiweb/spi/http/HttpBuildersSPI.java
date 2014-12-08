@@ -29,7 +29,7 @@ import org.qiweb.util.ByteSource;
 /**
  * HTTP API Objects Builders SPI.
  * <p>
- * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
+ * Use this to create instances of HTTP API Objects found in the {@literal org.qiweb.api.http} package.
  * <p>
  * Typically used in unit tests running an Application.
  * <p>

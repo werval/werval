@@ -30,12 +30,13 @@
  * <p>
  * JUnit support comes in two flavours:
  * <ul>
- * <li>as JUnit Rules: {@link QiWebRule} and {@link QiWebHttpRule};</li>
- * <li>or as base classes for your JUnit tests to extend: {@link QiWebTest} and {@link QiWebHttpTest}.</li>
+ * <li>as JUnit Rules: {@link org.qiweb.test.QiWebRule} and {@link org.qiweb.test.QiWebHttpRule};</li>
+ * <li>or as base classes for your JUnit tests to extend: {@link org.qiweb.test.QiWebTest} and
+ * {@link org.qiweb.test.QiWebHttpTest}.</li>
  * </ul>
  * You can choose to use whichever suits your needs and habits.
  * <p>
- * Using <code>QiWebRule</code> and <code>QiWebHttpRule</code> is the prefered way of writing QiWeb tests as it
+ * Using {@literal QiWebRule} and {@literal QiWebHttpRule} is the prefered way of writing QiWeb tests as it
  * don't force you to extend from any base class.
  * <p>
  * QiWeb HTTP JUnit Support has transparent integration with

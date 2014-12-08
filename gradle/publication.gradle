@@ -16,7 +16,6 @@ apply plugin: 'maven'
 // Setup for install in local internal repository
 // Use the new maven publication support in gradle
 // Generated POM is minimal here as this repository is only used for inter-build dependencies
-// WARNING Seems we're now using it for the distribution archive now
 publishing {
     publications.create( 'qiWebLocalRepoPub' , MavenPublication ) {
         pom.withXml {
