@@ -105,18 +105,6 @@ public class ContentNegotiationTest
     }
 
     @Test
-    public void acceptedMultipleAcceptHeaders()
-    {
-        given()
-            .header( ACCEPT, APPLICATION_JSON )
-            .header( ACCEPT, TEXT_HTML )
-            .expect()
-            .statusCode( 400 )
-            .when()
-            .get( "/accepted" );
-    }
-
-    @Test
     public void acceptedListBasic()
     {
         given()

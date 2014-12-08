@@ -44,7 +44,7 @@ def v_gradle_tooling = '2.2.1'
 def v_awaitility = '1.6.3'
 def v_fluentlenium = '0.10.2'
 def v_junit = '4.11'
-def v_rest_assured = '2.3.4'
+def v_rest_assured = '2.4.0'
 
 // Test libraries versions
 def v_h2 = '1.4.182'
