@@ -29,6 +29,8 @@ import io.werval.api.exceptions.WervalException;
 import io.werval.api.http.FormUploads.Upload;
 import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.Request;
+import io.werval.spi.http.HttpBuildersSPI;
+import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
 import io.werval.util.ByteSource;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -41,8 +43,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
-import org.qiweb.spi.http.HttpBuildersSPI;
-import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;

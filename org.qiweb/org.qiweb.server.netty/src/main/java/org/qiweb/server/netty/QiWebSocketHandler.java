@@ -18,9 +18,9 @@ package org.qiweb.server.netty;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.dev.DevShellRebuildException;
-import org.qiweb.spi.dev.DevShellSPI;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

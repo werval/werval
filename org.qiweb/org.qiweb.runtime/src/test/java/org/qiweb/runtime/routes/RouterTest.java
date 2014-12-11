@@ -16,9 +16,9 @@
 package org.qiweb.runtime.routes;
 
 import io.werval.api.http.Status;
+import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
 import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;

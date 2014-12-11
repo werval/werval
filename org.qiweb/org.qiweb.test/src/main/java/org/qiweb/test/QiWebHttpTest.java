@@ -16,6 +16,8 @@
 package org.qiweb.test;
 
 import io.werval.api.Mode;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.server.HttpServer;
 import org.junit.After;
 import org.junit.Before;
 import org.qiweb.runtime.ApplicationInstance;
@@ -25,8 +27,6 @@ import org.qiweb.runtime.CryptoInstance;
 import org.qiweb.runtime.routes.RoutesConfProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.server.netty.NettyServer;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.server.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

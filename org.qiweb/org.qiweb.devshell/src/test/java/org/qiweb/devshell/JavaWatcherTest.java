@@ -15,6 +15,8 @@
  */
 package org.qiweb.devshell;
 
+import io.werval.spi.dev.DevShellSPI.SourceChangeListener;
+import io.werval.spi.dev.DevShellSPI.SourceWatch;
 import io.werval.util.DeltreeFileVisitor;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -22,8 +24,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.qiweb.spi.dev.DevShellSPI.SourceChangeListener;
-import org.qiweb.spi.dev.DevShellSPI.SourceWatch;
 import org.qiweb.test.util.Slf4jRule;
 
 import static com.jayway.awaitility.Awaitility.await;

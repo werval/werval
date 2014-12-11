@@ -28,12 +28,12 @@ import io.werval.api.i18n.Langs;
 import io.werval.util.ByteSource;
 import io.werval.util.Strings;
 import io.werval.util.URLs;
+import io.werval.spi.http.HttpBuildersSPI;
 import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.spi.http.HttpBuildersSPI;
 
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
 import static io.werval.api.http.Headers.Names.COOKIE;

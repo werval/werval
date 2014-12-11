@@ -27,9 +27,9 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.werval.api.events.ConnectionEvent;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
 import java.net.InetSocketAddress;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.dev.DevShellSPI;
 
 import static java.util.Locale.US;
 import static java.util.concurrent.TimeUnit.SECONDS;

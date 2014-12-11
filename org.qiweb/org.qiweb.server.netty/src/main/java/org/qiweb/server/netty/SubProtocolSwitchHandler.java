@@ -21,9 +21,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.spi.server.HttpServerHelper;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.server.HttpServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -17,6 +17,9 @@ package org.qiweb.devshell;
 
 import io.werval.api.exceptions.PassivationException;
 import io.werval.api.exceptions.WervalException;
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.dev.DevShellSPIWrapper;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -38,9 +41,6 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
-import org.qiweb.spi.dev.DevShellRebuildException;
-import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.spi.dev.DevShellSPIWrapper;
 
 import static io.werval.util.ClassLoaders.printLoadedClasses;
 import static io.werval.util.ClassLoaders.printURLs;
@@ -131,7 +131,7 @@ public final class DevShell
     private static final String CRYPTO_RUNTIME_CLASS = "org.qiweb.runtime.CryptoInstance";
     private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
     private static final String MODE_API_CLASS = "io.werval.api.Mode";
-    private static final String APPLICATION_SPI_CLASS = "org.qiweb.spi.ApplicationSPI";
+    private static final String APPLICATION_SPI_CLASS = "io.werval.spi.ApplicationSPI";
     private static final String NETTY_SERVER_CLASS = "org.qiweb.server.netty.NettyServer";
     private static final File RUN_LOCK_FILE = new File( Paths.get( "" ).toAbsolutePath().toFile(), ".devshell.lock" );
     private static final long RUN_LOCK_FILE_POLL_INTERVAL_MILLIS = 500;
@@ -479,7 +479,7 @@ public final class DevShell
             depRealm.addURL( runtimeClasspathElement );
         }
         depRealm.importFrom( devRealm, "org.qiweb.devshell.*" );
-        depRealm.importFrom( devRealm, "org.qiweb.spi.dev.*" );
+        depRealm.importFrom( devRealm, "io.werval.spi.dev.*" );
 
         setupApplicationRealm( depRealm );
     }

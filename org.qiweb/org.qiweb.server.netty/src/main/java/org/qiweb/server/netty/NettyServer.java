@@ -22,15 +22,15 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.werval.api.exceptions.PassivationException;
 import io.werval.api.exceptions.WervalException;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.server.HttpServerAdapter;
 import io.werval.util.Reflectively;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.util.NamedThreadFactory;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.spi.server.HttpServerAdapter;
 
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;

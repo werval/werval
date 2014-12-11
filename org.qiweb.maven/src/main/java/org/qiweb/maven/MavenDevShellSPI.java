@@ -15,6 +15,9 @@
  */
 package org.qiweb.maven;
 
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI.SourceWatcher;
+import io.werval.spi.dev.DevShellSPIAdapter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
@@ -23,9 +26,6 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.maven.MavenExecutionException;
-import org.qiweb.spi.dev.DevShellRebuildException;
-import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
-import org.qiweb.spi.dev.DevShellSPIAdapter;
 
 /**
  * Maven DevShellSPI implementation.

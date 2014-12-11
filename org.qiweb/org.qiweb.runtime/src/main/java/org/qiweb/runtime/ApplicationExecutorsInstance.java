@@ -18,6 +18,7 @@ package org.qiweb.runtime;
 import io.werval.api.ApplicationExecutors;
 import io.werval.api.Config;
 import io.werval.api.Global;
+import io.werval.spi.ApplicationSPI;
 import io.werval.util.Couple;
 import io.werval.util.Strings;
 import java.util.HashMap;
@@ -33,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import org.qiweb.runtime.context.ContextExecutor;
 import org.qiweb.runtime.util.ForkJoinPoolNamedThreadFactory;
 import org.qiweb.runtime.util.NamedThreadFactory;
-import org.qiweb.spi.ApplicationSPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

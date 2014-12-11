@@ -15,7 +15,7 @@
  */
 package org.qiweb.test;
 
-import org.qiweb.spi.ApplicationSPI;
+import io.werval.spi.ApplicationSPI;
 
 /**
  * QiWeb HTTP Test Support contract.

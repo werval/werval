@@ -15,12 +15,12 @@
  */
 package org.qiweb.modules.cache;
 
+import io.werval.spi.cache.CacheAdapter;
 import java.util.UUID;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.modules.metrics.internal.CacheMetricsHandler;
-import org.qiweb.spi.cache.CacheAdapter;
 
 /**
  * Memcache Cache.

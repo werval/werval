@@ -15,11 +15,11 @@
  */
 package org.qiweb.test;
 
+import io.werval.spi.ApplicationSPI;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.qiweb.runtime.routes.RoutesProvider;
-import org.qiweb.spi.ApplicationSPI;
 
 /**
  * QiWeb JUnit Rule.

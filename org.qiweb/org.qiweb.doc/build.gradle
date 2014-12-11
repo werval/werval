@@ -76,7 +76,7 @@ toc::[]
 // Included projects
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p ->
-        p.name == 'io.werval.api' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test'
+        p.name == 'io.werval.api' || p.name == 'io.werval.spi' || p.name == 'org.qiweb.test'
     }
 }
 
@@ -110,7 +110,7 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
             "Filters":           [ "io.werval.filters",       "io.werval.filters.*"       ],
             "Utilities":         [ "io.werval.util",          "io.werval.util.*"          ],
             "Test Support":      [ "org.qiweb.test",          "org.qiweb.test.*"          ],
-            "SPI":               [ "org.qiweb.spi",           "org.qiweb.spi.*"           ]
+            "SPI":               [ "io.werval.spi",           "io.werval.spi.*"           ]
         ] )
     // disable the crazy super-strict doclint tool in Java 8
     options.addStringOption( 'Xdoclint:none', '-quiet' )

@@ -15,6 +15,7 @@
  */
 package org.qiweb.maven;
 
+import io.werval.spi.dev.DevShellSPI;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,7 +30,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.qiweb.commands.DevShellCommand;
 import org.qiweb.devshell.JavaWatcher;
-import org.qiweb.spi.dev.DevShellSPI;
 
 import static java.util.Collections.EMPTY_SET;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;

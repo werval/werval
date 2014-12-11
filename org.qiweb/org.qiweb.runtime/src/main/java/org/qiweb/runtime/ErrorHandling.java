@@ -15,7 +15,7 @@
  */
 package org.qiweb.runtime;
 
-import org.qiweb.spi.ApplicationSPI;
+import io.werval.spi.ApplicationSPI;
 import org.slf4j.Logger;
 
 /**

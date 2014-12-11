@@ -30,7 +30,7 @@ public final class Versions
     public static void ensureQiWebComponentsVersions()
     {
         Stream<String> versions = Arrays.asList(
-            io.werval.api.BuildVersion.VERSION, org.qiweb.spi.BuildVersion.VERSION
+            io.werval.api.BuildVersion.VERSION, io.werval.spi.BuildVersion.VERSION
         ).stream();
         if( !versions.allMatch( v -> v.equals( org.qiweb.runtime.BuildVersion.VERSION ) ) )
         {
@@ -38,7 +38,7 @@ public final class Versions
                 String.format(
                     "Werval Core classpath mismatch: io.werval.api:%s io.werval.spi:%s io.werval.runtime:%s",
                     io.werval.api.BuildVersion.VERSION,
-                    org.qiweb.spi.BuildVersion.VERSION,
+                    io.werval.spi.BuildVersion.VERSION,
                     org.qiweb.runtime.BuildVersion.VERSION
                 )
             );

@@ -15,10 +15,10 @@
  */
 package org.qiweb.commands;
 
+import io.werval.spi.dev.DevShellSPI;
 import java.io.File;
 import java.net.URL;
 import org.qiweb.devshell.DevShell;
-import org.qiweb.spi.dev.DevShellSPI;
 
 /**
  * DevShell Command.

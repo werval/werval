@@ -39,7 +39,7 @@ class QiWebDependencies
 
     Dependency getSpi()
     {
-        dependency( "spi" )
+        dependencies.create( "${GROUP}:io.werval.spi:$BuildVersion.VERSION" )
     }
 
     Dependency module( String module )

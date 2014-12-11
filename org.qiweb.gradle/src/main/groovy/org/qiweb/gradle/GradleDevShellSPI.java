@@ -15,6 +15,9 @@
  */
 package org.qiweb.gradle;
 
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI.SourceWatcher;
+import io.werval.spi.dev.DevShellSPIAdapter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UncheckedIOException;
@@ -25,9 +28,6 @@ import java.util.List;
 import java.util.Set;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
-import org.qiweb.spi.dev.DevShellRebuildException;
-import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
-import org.qiweb.spi.dev.DevShellSPIAdapter;
 
 import static io.werval.util.Charsets.UTF_8;
 import static io.werval.util.Strings.hasText;

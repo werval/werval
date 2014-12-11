@@ -15,10 +15,10 @@
  */
 package org.qiweb.modules.cache;
 
+import io.werval.spi.cache.CacheAdapter;
 import net.sf.ehcache.Element;
 import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.modules.metrics.internal.CacheMetricsHandler;
-import org.qiweb.spi.cache.CacheAdapter;
 
 /**
  * EhCache.

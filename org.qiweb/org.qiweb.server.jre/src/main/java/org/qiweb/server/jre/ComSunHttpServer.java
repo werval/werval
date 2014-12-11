@@ -16,12 +16,12 @@
 package org.qiweb.server.jre;
 
 import com.sun.net.httpserver.HttpServer;
+import io.werval.spi.server.HttpServerAdapter;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.spi.server.HttpServerAdapter;
-import org.qiweb.spi.ApplicationSPI;
-import org.qiweb.spi.dev.DevShellSPI;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;

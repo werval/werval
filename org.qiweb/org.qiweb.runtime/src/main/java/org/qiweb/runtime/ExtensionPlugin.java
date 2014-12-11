@@ -17,7 +17,7 @@ package org.qiweb.runtime;
 
 import io.werval.api.Plugin;
 import io.werval.api.cache.Cache;
-import org.qiweb.spi.cache.MapCachePlugin;
+import io.werval.spi.cache.MapCachePlugin;
 
 /**
  * Extension Plugins.
