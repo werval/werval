@@ -16,4 +16,4 @@
 /**
  * com.sun.net HTTP Server.
  */
-package org.qiweb.server.jre;
+package io.werval.server.jre;
