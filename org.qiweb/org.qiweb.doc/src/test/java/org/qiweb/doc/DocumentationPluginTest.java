@@ -15,9 +15,9 @@
  */
 package org.qiweb.doc;
 
+import io.werval.test.QiWebHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 

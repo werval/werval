@@ -20,11 +20,11 @@ import io.werval.api.Config;
 import io.werval.api.Plugin;
 import io.werval.api.cache.Cache;
 import io.werval.api.exceptions.ActivationException;
+import io.werval.test.WervalRule;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -45,7 +45,7 @@ public class PluginsDependenciesTest
     // The configuration file declare the plugins in the wrong order
     // This test ensure that the dependency resolution algorithm does its job
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( "plugin-dependencies-test.conf" );
+    public static final WervalRule WERVAL = new WervalRule( "plugin-dependencies-test.conf" );
 
     public static class UnderTheSea
     {
@@ -178,8 +178,8 @@ public class PluginsDependenciesTest
     @Test
     public void ensurePluginsActivated()
     {
-        assertThat( QIWEB.application().plugin( Upstream.class ), notNullValue() );
-        assertThat( QIWEB.application().plugin( InTheMiddle.class ), notNullValue() );
-        assertThat( QIWEB.application().plugin( Downstream.class ), notNullValue() );
+        assertThat(WERVAL.application().plugin( Upstream.class ), notNullValue() );
+        assertThat(WERVAL.application().plugin( InTheMiddle.class ), notNullValue() );
+        assertThat(WERVAL.application().plugin( Downstream.class ), notNullValue() );
     }
 }

@@ -17,11 +17,11 @@ package io.werval.filters;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
+import io.werval.test.util.Slf4jRule;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
-import org.qiweb.test.util.Slf4jRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 public class LogIfSlowTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /quick io.werval.filters.LogIfSlowTest$Controller.quick\n"
         + "GET /slow io.werval.filters.LogIfSlowTest$Controller.slow\n"
     ) );

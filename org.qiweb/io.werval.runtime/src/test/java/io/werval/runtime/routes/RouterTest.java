@@ -17,9 +17,9 @@ package io.werval.runtime.routes;
 
 import io.werval.api.http.Status;
 import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
+import io.werval.test.WervalRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThat;
 public class RouterTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( new RoutesParserProvider(
+    public static final WervalRule WERVAL = new WervalRule( new RoutesParserProvider(
         "GET / com.acme.app.FakeControllerInstance.index()\n"
         + "GET /foo com.acme.app.FakeControllerInstance.foo()\n"
         + "GET /:id/:slug com.acme.app.FakeControllerInstance.another( String id, Integer slug )"
@@ -37,26 +37,21 @@ public class RouterTest
     public void testRoutes()
         throws Exception
     {
-        RequestBuilder builder = QIWEB.newRequestBuilder();
-        assertThat(
-            QIWEB.application().handleRequest( builder.get( "/" ).build() ).join().responseHeader().status(),
-            equalTo( Status.OK )
+        RequestBuilder builder = WERVAL.newRequestBuilder();
+        assertThat( WERVAL.application().handleRequest( builder.get( "/" ).build() ).join().responseHeader().status(),
+                    equalTo( Status.OK )
         );
-        assertThat(
-            QIWEB.application().handleRequest( builder.post( "/" ).build() ).join().responseHeader().status(),
-            equalTo( Status.NOT_FOUND )
+        assertThat( WERVAL.application().handleRequest( builder.post( "/" ).build() ).join().responseHeader().status(),
+                    equalTo( Status.NOT_FOUND )
         );
-        assertThat(
-            QIWEB.application().handleRequest( builder.get( "/foo" ).build() ).join().responseHeader().status(),
-            equalTo( Status.OK )
+        assertThat( WERVAL.application().handleRequest( builder.get( "/foo" ).build() ).join().responseHeader().status(),
+                    equalTo( Status.OK )
         );
-        assertThat(
-            QIWEB.application().handleRequest( builder.get( "/bazar" ).build() ).join().responseHeader().status(),
-            equalTo( Status.NOT_FOUND )
+        assertThat( WERVAL.application().handleRequest( builder.get( "/bazar" ).build() ).join().responseHeader().status(),
+                    equalTo( Status.NOT_FOUND )
         );
-        assertThat(
-            QIWEB.application().handleRequest( builder.get( "/azertyuiop/1234" ).build() ).join().responseHeader().status(),
-            equalTo( Status.OK )
+        assertThat( WERVAL.application().handleRequest( builder.get( "/azertyuiop/1234" ).build() ).join().responseHeader().status(),
+                    equalTo( Status.OK )
         );
     }
 }

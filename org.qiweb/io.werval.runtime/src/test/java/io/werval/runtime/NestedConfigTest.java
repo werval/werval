@@ -16,11 +16,11 @@
 package io.werval.runtime;
 
 import io.werval.api.Config;
+import io.werval.test.WervalRule;
 import java.util.List;
 import java.util.Set;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -33,12 +33,12 @@ import static org.junit.Assert.assertTrue;
 public class NestedConfigTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( "nested-config.conf" );
+    public static final WervalRule WERVAL = new WervalRule( "nested-config.conf" );
 
     @Test
     public void nestedObjectsAndArrays()
     {
-        Config config = QIWEB.application().config();
+        Config config = WERVAL.application().config();
         assertTrue( config.has( "nested" ) );
         assertTrue( config.has( "nested.list" ) );
 
@@ -55,7 +55,7 @@ public class NestedConfigTest
     @Test
     public void dynamicNestedObjects()
     {
-        Config config = QIWEB.application().config();
+        Config config = WERVAL.application().config();
         assertTrue( config.has( "nested" ) );
         assertTrue( config.has( "nested.dynamics" ) );
 

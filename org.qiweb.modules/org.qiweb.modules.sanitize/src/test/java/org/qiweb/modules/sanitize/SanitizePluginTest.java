@@ -15,11 +15,11 @@
  */
 package org.qiweb.modules.sanitize;
 
+import io.werval.test.QiWebRule;
 import org.hamcrest.Matcher;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static io.werval.util.Strings.EMPTY;
 import static org.hamcrest.Matchers.allOf;

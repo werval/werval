@@ -17,11 +17,11 @@ package org.qiweb.modules.json;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.QiWebHttpRule;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;

@@ -15,13 +15,13 @@
  */
 package io.werval.runtime;
 
+import io.werval.test.WervalRule;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static io.werval.util.Charsets.UTF_8;
 import static io.werval.util.InputStreams.BUF_SIZE_4K;
@@ -51,7 +51,7 @@ public class BannerTest
     }
 
     @Rule
-    public final QiWebRule QIWEB = new QiWebRule( "banner-ascii.conf" );
+    public final WervalRule QIWEB = new WervalRule( "banner-ascii.conf" );
 
     @Test
     public void asciiBanner()

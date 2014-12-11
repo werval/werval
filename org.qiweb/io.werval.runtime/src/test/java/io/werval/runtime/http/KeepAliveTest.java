@@ -17,6 +17,7 @@ package io.werval.runtime.http;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -24,7 +25,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -67,7 +67,7 @@ public class KeepAliveTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "\n"
         + "GET /ok io.werval.runtime.http.KeepAliveTest$Controller.ok\n"
         + "GET /clientError io.werval.runtime.http.KeepAliveTest$Controller.clientError\n"
@@ -130,7 +130,7 @@ public class KeepAliveTest
         throws IOException
     {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet( QIWEB.baseHttpUrl() + "/ok" );
+        HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
         get.getParams().setParameter( PROTOCOL_VERSION, new ProtocolVersion( "HTTP", 1, 0 ) );
         // Apache HttpClient is a mess, without this it force Keep-Alive on HTTP/1.0 requests ...
         get.setHeader( CONNECTION, "NOT PRESENT" );
@@ -144,7 +144,7 @@ public class KeepAliveTest
         throws IOException
     {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet( QIWEB.baseHttpUrl() + "/ok" );
+        HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
         get.getParams().setParameter( PROTOCOL_VERSION, new ProtocolVersion( "HTTP", 1, 0 ) );
         get.setHeader( CONNECTION, CLOSE );
         HttpResponse response = client.execute( get );
@@ -157,7 +157,7 @@ public class KeepAliveTest
         throws IOException
     {
         DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet( QIWEB.baseHttpUrl() + "/ok" );
+        HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
         get.getParams().setParameter( PROTOCOL_VERSION, new ProtocolVersion( "HTTP", 1, 0 ) );
         get.setHeader( CONNECTION, KEEP_ALIVE );
         HttpResponse response = client.execute( get );

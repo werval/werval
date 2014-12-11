@@ -18,9 +18,9 @@ package io.werval.runtime.http;
 import io.werval.api.http.RequestHeader;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -44,7 +44,7 @@ public class XForwardedForTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET / io.werval.runtime.http.XForwardedForTest$Controller.remoteAddress" ) );
 
     @Test

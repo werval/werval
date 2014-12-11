@@ -49,7 +49,7 @@ class QiWebDependencies
 
     Dependency getTest()
     {
-        dependency( "test" )
+        dependencies.create( "${GROUP}:io.werval.test:$BuildVersion.VERSION" )
     }
 
     Dependency getNettyServer()

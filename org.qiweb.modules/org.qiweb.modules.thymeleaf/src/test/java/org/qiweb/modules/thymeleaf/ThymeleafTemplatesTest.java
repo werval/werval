@@ -16,9 +16,9 @@
 package org.qiweb.modules.thymeleaf;
 
 import com.codahale.metrics.MetricRegistry;
+import io.werval.test.templates.TemplatesTest;
 import org.junit.Test;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.test.templates.TemplatesTest;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import static io.werval.util.Charsets.UTF_8;

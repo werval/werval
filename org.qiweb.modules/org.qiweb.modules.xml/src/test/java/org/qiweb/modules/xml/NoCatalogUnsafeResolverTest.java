@@ -15,10 +15,10 @@
  */
 package org.qiweb.modules.xml;
 
+import io.werval.test.QiWebRule;
 import java.io.UncheckedIOException;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 /**
  * No-Catalog Unsafe Resolver Test.

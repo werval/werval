@@ -15,9 +15,9 @@
  */
 package io.werval.runtime;
 
+import io.werval.test.WervalRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,20 +25,20 @@ import static org.junit.Assert.assertThat;
 public class CryptoTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final WervalRule WERVAL = new WervalRule();
 
     @Test
     public void testGenerateNewSecret()
     {
-        String secret = QIWEB.application().crypto().newSecretHex();
+        String secret = WERVAL.application().crypto().newSecretHex();
         assertThat( secret.length(), equalTo( 64 ) );
     }
 
     @Test
     public void testSignature()
     {
-        String left = QIWEB.application().crypto().hmacSha256Hex( "Text to be signed." );
-        String right = QIWEB.application().crypto().hmacSha256Hex( "Text to be signed." );
+        String left = WERVAL.application().crypto().hmacSha256Hex( "Text to be signed." );
+        String right = WERVAL.application().crypto().hmacSha256Hex( "Text to be signed." );
         assertThat( left, equalTo( right ) );
     }
 }

@@ -15,10 +15,10 @@
  */
 package org.qiweb.modules.cache;
 
+import io.werval.test.cache.CacheTest;
 import org.junit.BeforeClass;
-import org.qiweb.test.cache.CacheTest;
 
-import static org.qiweb.test.util.Assume.assumeConnectivity;
+import static io.werval.test.util.Assume.assumeConnectivity;
 
 /**
  * Memcache Test.

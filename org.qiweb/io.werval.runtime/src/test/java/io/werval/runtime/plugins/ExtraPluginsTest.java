@@ -15,9 +15,9 @@
  */
 package io.werval.runtime.plugins;
 
+import io.werval.test.WervalRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -28,12 +28,12 @@ import static org.junit.Assert.assertThat;
 public class ExtraPluginsTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( "extra-plugin-test.conf" );
+    public static final WervalRule WERVAL = new WervalRule( "extra-plugin-test.conf" );
 
     @Test
     public void givenRegisteredPluginWhenUsePluginExpectCorrectResult()
     {
-        String hello = QIWEB.application().plugin( HelloWorld.class ).sayHello( "John" );
+        String hello = WERVAL.application().plugin( HelloWorld.class ).sayHello( "John" );
         assertThat( hello, equalTo( "Hello John!" ) );
     }
 }

@@ -17,11 +17,11 @@ package io.werval.controllers;
 
 import com.jayway.restassured.response.Response;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.io.File;
 import java.math.BigDecimal;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 public class StaticTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /single io.werval.controllers.Static.file( String file = 'src/test/resources/logback.xml' )\n"
         + "GET /tree/*path io.werval.controllers.Static.tree( String root = 'src/test/resources', String path )"
     ) );

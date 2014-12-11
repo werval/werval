@@ -17,9 +17,9 @@ package io.werval.runtime.routes;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.api.routes.ReverseRoute;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -71,7 +71,7 @@ public class ReverseRoutesTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /simpleMethod io.werval.runtime.routes.ReverseRoutesTest$Controller.simpleMethod\n"
         + "GET /simpleMethod/:param/foo io.werval.runtime.routes.ReverseRoutesTest$Controller.simpleMethod( String param )\n"
         + "GET /wild/*card io.werval.runtime.routes.ReverseRoutesTest$Controller.wild( String card )\n"
@@ -84,7 +84,7 @@ public class ReverseRoutesTest
     public void testSimpleMethod()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/simpleMethod";
+        String url = WERVAL.baseHttpUrl() + "/simpleMethod";
         expect()
             .statusCode( 200 )
             .body( equalTo( url ) )
@@ -96,7 +96,7 @@ public class ReverseRoutesTest
     public void testSimpleMethodWithParam()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/simpleMethod/test/foo";
+        String url = WERVAL.baseHttpUrl() + "/simpleMethod/test/foo";
         expect()
             .statusCode( 200 )
             .body( equalTo( url ) )
@@ -108,7 +108,7 @@ public class ReverseRoutesTest
     public void testWildcard()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/wild/wild/wild/card";
+        String url = WERVAL.baseHttpUrl() + "/wild/wild/wild/card";
         expect()
             .statusCode( 200 )
             .body( equalTo( url ) )
@@ -120,7 +120,7 @@ public class ReverseRoutesTest
     public void testQueryString()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bazar";
+        String url = WERVAL.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bazar";
         expect()
             .statusCode( 200 )
             .body( equalTo( url ) )
@@ -132,7 +132,7 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParam()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=";
+        String url = WERVAL.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=";
         expect()
             .statusCode( 200 )
             .body( equalTo( url ) )
@@ -144,7 +144,7 @@ public class ReverseRoutesTest
     public void testAppendedQueryString()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/appended/qs";
+        String url = WERVAL.baseHttpUrl() + "/appended/qs";
         given()
             .queryParam( "bar", "bazar" )
             .queryParam( "foo", "bar" )
@@ -159,7 +159,7 @@ public class ReverseRoutesTest
     public void testFragmentIdentifier()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/fragment/identifier";
+        String url = WERVAL.baseHttpUrl() + "/fragment/identifier";
         expect()
             .statusCode( 200 )
             .body( equalTo( url + "#bazar" ) )
@@ -171,7 +171,7 @@ public class ReverseRoutesTest
     public void testQueryStringWithNoValueParamSeveralTimes()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
+        String url = WERVAL.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=&qsTwo=";
         expect()
             .statusCode( 400 )
             .when()
@@ -182,7 +182,7 @@ public class ReverseRoutesTest
     public void testQueryStringWithSameValueParamSeveralTimes()
         throws Exception
     {
-        String url = QIWEB.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
+        String url = WERVAL.baseHttpUrl() + "/query/foo/string?qsOne=bar&qsTwo=bar&qsTwo=bar";
         expect()
             .statusCode( 400 )
             .when()

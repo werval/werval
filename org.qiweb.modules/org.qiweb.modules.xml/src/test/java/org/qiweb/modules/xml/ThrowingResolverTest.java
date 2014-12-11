@@ -15,9 +15,9 @@
  */
 package org.qiweb.modules.xml;
 
+import io.werval.test.QiWebRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 /**
  * Default settings XML Test.

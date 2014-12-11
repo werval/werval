@@ -22,7 +22,7 @@ dependencies {
     compile libs.gradle_tooling
     compile "org.asciidoctor:asciidoctor-gradle-plugin:1.5.0"
 
-    testCompile "org.qiweb:org.qiweb.test:$version"
+    testCompile "org.qiweb:io.werval.test:$version"
     testCompile libs.awaitility
     
 }

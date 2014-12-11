@@ -20,11 +20,11 @@ import io.werval.api.filters.FilterChain;
 import io.werval.api.filters.FilterWith;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
@@ -52,8 +52,9 @@ public class FiltersTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule(
-        new RoutesParserProvider( "GET / io.werval.runtime.filters.FiltersTest$Controller.filtered" ) );
+    public static final WervalHttpRule WERVAL = new WervalHttpRule(
+        new RoutesParserProvider( "GET / io.werval.runtime.filters.FiltersTest$Controller.filtered" )
+    );
 
     @Test
     public void testFilters()

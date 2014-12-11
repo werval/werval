@@ -20,11 +20,11 @@ import io.werval.api.http.Session;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.http.CookiesInstance.CookieInstance;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -57,17 +57,18 @@ public class SessionTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /set/:name/:value io.werval.runtime.http.SessionTest$Controller.set( String name, String value )\n"
         + "GET /clear io.werval.runtime.http.SessionTest$Controller.clear\n"
-        + "GET /show io.werval.runtime.http.SessionTest$Controller.show" ) );
+        + "GET /show io.werval.runtime.http.SessionTest$Controller.show"
+    ) );
 
     private String sessionCookieName;
 
     @Before
     public void beforeSessionTest()
     {
-        sessionCookieName = QIWEB.application().config().string( APP_SESSION_COOKIE_NAME );
+        sessionCookieName = WERVAL.application().config().string( APP_SESSION_COOKIE_NAME );
     }
 
     @Test
@@ -82,15 +83,15 @@ public class SessionTest
             false, true,
             null, null
         );
-        Session session = new SessionInstance( QIWEB.application().config(), QIWEB.application().crypto(), sessionCookie );
+        Session session = new SessionInstance( WERVAL.application().config(), WERVAL.application().crypto(), sessionCookie );
         assertThat( session.get( "foo" ), equalTo( "bar" ) );
     }
 
     @Test
     public void testValidSessionAssured()
     {
-        String signedSession = new SessionInstance( QIWEB.application().config(),
-                                                    QIWEB.application().crypto(),
+        String signedSession = new SessionInstance( WERVAL.application().config(),
+                                                    WERVAL.application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
         given().cookie( sessionCookieName, signedSession ).
             expect().body( equalTo( "{foo=bar}" ) ).
@@ -100,8 +101,8 @@ public class SessionTest
     @Test
     public void testInvalidSessionAssured()
     {
-        String signedSession = new SessionInstance( QIWEB.application().config(),
-                                                    QIWEB.application().crypto(),
+        String signedSession = new SessionInstance( WERVAL.application().config(),
+                                                    WERVAL.application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
         // Invalidate Session Data
         signedSession = signedSession.substring( 1 );
@@ -113,8 +114,8 @@ public class SessionTest
     @Test
     public void testClearSessionAssured()
     {
-        String signedSession = new SessionInstance( QIWEB.application().config(),
-                                                    QIWEB.application().crypto(),
+        String signedSession = new SessionInstance( WERVAL.application().config(),
+                                                    WERVAL.application().crypto(),
                                                     Collections.singletonMap( "foo", "bar" ) ).signedCookie().value();
         given().cookie( sessionCookieName, signedSession ).
             expect().body( equalTo( "{}" ) ).

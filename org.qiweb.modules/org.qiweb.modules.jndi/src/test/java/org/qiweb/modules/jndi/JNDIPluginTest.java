@@ -15,13 +15,13 @@
  */
 package org.qiweb.modules.jndi;
 
+import io.werval.test.QiWebRule;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;

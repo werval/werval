@@ -15,11 +15,11 @@
  */
 package org.qiweb.modules.qi4j;
 
+import io.werval.test.QiWebRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qi4j.api.structure.Application;
 import org.qi4j.api.structure.Module;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;

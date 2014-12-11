@@ -342,7 +342,7 @@ public final class ApplicationInstance
         {
             StringBuilder runtimeSummary = new StringBuilder( "Runtime Summary\n\n" );
             String header = String.format(
-                "werval v%s\n"
+                "Werval v%s\n"
                 + "  Git commit: %s%s, built on: %s\n"
                 + "  Java version: %s, vendor: %s\n"
                 + "  Java home: %s\n"

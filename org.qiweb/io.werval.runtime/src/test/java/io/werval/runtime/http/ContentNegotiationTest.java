@@ -17,9 +17,9 @@ package io.werval.runtime.http;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -75,7 +75,7 @@ public class ContentNegotiationTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /accepted io.werval.runtime.http.ContentNegotiationTest$Controller.accepted\n"
         + "GET /preferredEmpty io.werval.runtime.http.ContentNegotiationTest$Controller.preferredEmpty\n"
         + "GET /preferredAmong io.werval.runtime.http.ContentNegotiationTest$Controller.preferredAmong\n"

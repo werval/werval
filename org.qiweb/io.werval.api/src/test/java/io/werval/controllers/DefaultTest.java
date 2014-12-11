@@ -16,16 +16,16 @@
 package io.werval.controllers;
 
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 
 public class DefaultTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /notFound io.werval.controllers.Default.notFound\n"
         + "GET /internalServerError io.werval.controllers.Default.internalServerError\n"
         + "GET /notImplemented io.werval.controllers.Default.notImplemented" ) );

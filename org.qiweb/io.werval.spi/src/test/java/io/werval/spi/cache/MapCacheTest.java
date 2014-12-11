@@ -15,7 +15,7 @@
  */
 package io.werval.spi.cache;
 
-import org.qiweb.test.cache.CacheTest;
+import io.werval.test.cache.CacheTest;
 
 /**
  * MapCache Test.

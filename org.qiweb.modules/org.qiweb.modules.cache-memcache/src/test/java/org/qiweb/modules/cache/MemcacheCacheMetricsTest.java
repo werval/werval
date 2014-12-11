@@ -18,17 +18,17 @@ package org.qiweb.modules.cache;
 import io.werval.api.cache.Cache;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.QiWebHttpRule;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.metrics.Tools;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.plugin;
 import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
+import static io.werval.test.util.Assume.assumeConnectivity;
 import static org.hamcrest.CoreMatchers.is;
-import static org.qiweb.test.util.Assume.assumeConnectivity;
 
 /**
  * Memcache Plugin Metrics Test.

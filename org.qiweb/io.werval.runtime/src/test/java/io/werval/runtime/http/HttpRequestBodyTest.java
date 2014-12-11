@@ -17,9 +17,9 @@ package io.werval.runtime.http;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.given;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -41,7 +41,7 @@ public class HttpRequestBodyTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "POST /echo io.werval.runtime.http.HttpRequestBodyTest$Controller.echo" ) );
 
     @Test

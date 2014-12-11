@@ -20,11 +20,11 @@ import io.werval.api.Error;
 import io.werval.api.context.CurrentContext;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.io.IOException;
 import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.http.Headers.Names.CONNECTION;
@@ -60,7 +60,7 @@ public class OnApplicationErrorTest
     }
 
     @Rule
-    public final QiWebHttpRule qiweb = new QiWebHttpRule( new RoutesParserProvider(
+    public final WervalHttpRule werval = new WervalHttpRule( new RoutesParserProvider(
         "GET /success io.werval.runtime.OnApplicationErrorTest$Ctrl.success\n"
         + "GET /internalServerError io.werval.runtime.OnApplicationErrorTest$Ctrl.internalServerError\n"
         + "GET /exception io.werval.runtime.OnApplicationErrorTest$Ctrl.exception" )
@@ -75,7 +75,7 @@ public class OnApplicationErrorTest
             header( X_QIWEB_REQUEST_ID, notNullValue() ).
             when().
             get( "/success" );
-        assertThat( qiweb.application().errors().count(), is( 0 ) );
+        assertThat(werval.application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -88,7 +88,7 @@ public class OnApplicationErrorTest
             header( CONNECTION, CLOSE ).
             when().
             get( "/internalServerError" );
-        assertThat( qiweb.application().errors().count(), is( 0 ) );
+        assertThat(werval.application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -101,12 +101,12 @@ public class OnApplicationErrorTest
             when().
             get( "/exception" );
 
-        assertThat( qiweb.application().errors().count(), is( 1 ) );
+        assertThat(werval.application().errors().count(), is( 1 ) );
 
         String requestId = response.header( X_QIWEB_REQUEST_ID );
         assertThat( requestId, notNullValue() );
 
-        List<Error> requestErrors = qiweb.application().errors().ofRequest( requestId );
+        List<Error> requestErrors = werval.application().errors().ofRequest( requestId );
         assertThat( requestErrors.size(), is( 1 ) );
 
         Error requestError = requestErrors.get( 0 );

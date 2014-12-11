@@ -19,10 +19,10 @@ import io.werval.api.http.FormAttributes;
 import io.werval.api.http.FormUploads;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.util.Arrays;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.given;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -53,7 +53,7 @@ public class FormTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "POST /attributes io.werval.runtime.http.FormTest$Controller.attributes\n"
         + "POST /uploads io.werval.runtime.http.FormTest$Controller.uploads"
     ) );

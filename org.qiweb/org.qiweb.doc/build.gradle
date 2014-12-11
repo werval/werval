@@ -11,7 +11,7 @@ dependencies {
     compile project( ":io.werval.api" )
     compile libs.sitemesh
 
-    testCompile project( ":org.qiweb.test" )
+    testCompile project( ":io.werval.test" )
     testCompile libs.rest_assured
 }
 
@@ -76,7 +76,7 @@ toc::[]
 // Included projects
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p ->
-        p.name == 'io.werval.api' || p.name == 'io.werval.spi' || p.name == 'org.qiweb.test'
+        p.name == 'io.werval.api' || p.name == 'io.werval.spi' || p.name == 'io.werval.test'
     }
 }
 
@@ -109,7 +109,7 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
             "Controllers":       [ "io.werval.controllers",   "io.werval.controllers.*"   ],
             "Filters":           [ "io.werval.filters",       "io.werval.filters.*"       ],
             "Utilities":         [ "io.werval.util",          "io.werval.util.*"          ],
-            "Test Support":      [ "org.qiweb.test",          "org.qiweb.test.*"          ],
+            "Test Support":      [ "io.werval.test",          "io.werval.test.*"          ],
             "SPI":               [ "io.werval.spi",           "io.werval.spi.*"           ]
         ] )
     // disable the crazy super-strict doclint tool in Java 8

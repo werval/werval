@@ -17,12 +17,12 @@ package io.werval.controllers;
 
 import com.jayway.restassured.response.Response;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.either;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThat;
 public class ClasspathTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /*path io.werval.controllers.Classpath.metainf( String path )" ) );
 
     @Test

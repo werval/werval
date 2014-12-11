@@ -9,6 +9,6 @@ dependencies {
 
     compile project( ":io.werval.api" )
 
-    testCompile project( ":org.qiweb.test" )
+    testCompile project( ":io.werval.test" )
 
 }

@@ -15,9 +15,9 @@
  */
 package org.qiweb.gradle;
 
+import io.werval.test.util.Processes;
 import java.util.function.Predicate;
 import org.junit.After;
-import org.qiweb.test.util.Processes;
 
 /* package */ abstract class AbstractQiWebIntegTest
 {

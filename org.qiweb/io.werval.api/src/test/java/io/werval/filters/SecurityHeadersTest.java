@@ -17,11 +17,11 @@ package io.werval.filters;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
+import io.werval.test.util.Slf4jRule;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
-import org.qiweb.test.util.Slf4jRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class SecurityHeadersTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /frameOptions io.werval.filters.SecurityHeadersTest$Controller.frameOptions\n"
         + "GET /frameOptionsConfig io.werval.filters.SecurityHeadersTest$Controller.frameOptionsConfig\n"
         + "GET /xssProtection io.werval.filters.SecurityHeadersTest$Controller.xssProtection\n"

@@ -17,9 +17,9 @@ package io.werval.spi.server;
 
 import io.werval.api.Mode;
 import io.werval.runtime.ApplicationInstance;
+import io.werval.test.util.Slf4jRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.test.util.Slf4jRule;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;

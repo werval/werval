@@ -18,10 +18,10 @@ package org.qiweb.modules.cache;
 import io.werval.api.cache.Cache;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.QiWebHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.metrics.Tools;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.plugin;

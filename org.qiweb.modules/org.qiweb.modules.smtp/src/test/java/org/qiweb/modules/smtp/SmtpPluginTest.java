@@ -16,6 +16,7 @@
 package org.qiweb.modules.smtp;
 
 import com.codahale.metrics.MetricRegistry;
+import io.werval.test.QiWebRule;
 import java.util.List;
 import javax.mail.MessagingException;
 import org.apache.commons.mail.EmailException;
@@ -25,7 +26,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.test.QiWebRule;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 

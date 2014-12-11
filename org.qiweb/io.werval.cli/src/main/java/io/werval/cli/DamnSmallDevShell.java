@@ -378,7 +378,7 @@ public final class DamnSmallDevShell
                      + "\n"
                      + "        <dependency>\n"
                      + "            <groupId>org.qiweb</groupId>\n"
-                     + "            <artifactId>org.qiweb.test</artifactId>\n"
+                     + "            <artifactId>io.werval.test</artifactId>\n"
                      + "            <version>" + VERSION + "</version>\n"
                      + "            <scope>test</scope>\n"
                      + "        </dependency>\n"

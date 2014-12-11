@@ -15,13 +15,13 @@
  */
 package org.qiweb.modules.liquibase;
 
+import io.werval.test.QiWebRule;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.jdbc.JDBC;
-import org.qiweb.test.QiWebRule;
 
 import static org.junit.Assert.assertTrue;
 

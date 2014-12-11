@@ -18,10 +18,10 @@ package io.werval.runtime.plugins;
 import io.werval.api.outcomes.Outcome;
 import io.werval.api.routes.Route;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import java.util.Iterator;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertThat;
 public class PluginRoutesTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule(
         "plugin-routes-test.conf",
         new RoutesParserProvider( "GET / io.werval.runtime.plugins.PluginRoutesTest$ApplicationController.index" )
     );
@@ -75,7 +75,7 @@ public class PluginRoutesTest
     @Test
     public void pluginRoutesAreInCorrectOrder()
     {
-        Iterator<Route> routes = QIWEB.application().routes().iterator();
+        Iterator<Route> routes = WERVAL.application().routes().iterator();
         assertThat( routes.next().controllerMethodName(), equalTo( "prepended" ) );
         assertThat( routes.next().controllerMethodName(), equalTo( "index" ) );
         assertThat( routes.next().controllerMethodName(), equalTo( "appended" ) );

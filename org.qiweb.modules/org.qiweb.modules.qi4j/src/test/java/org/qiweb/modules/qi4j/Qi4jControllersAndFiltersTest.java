@@ -22,6 +22,7 @@ import io.werval.api.filters.FilterChain;
 import io.werval.api.filters.FilterWith;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.QiWebHttpRule;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
@@ -32,7 +33,6 @@ import org.qi4j.bootstrap.ApplicationAssembly;
 import org.qi4j.bootstrap.ApplicationAssemblyFactory;
 import org.qi4j.bootstrap.AssemblyException;
 import org.qi4j.bootstrap.ModuleAssembly;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.outcomes;

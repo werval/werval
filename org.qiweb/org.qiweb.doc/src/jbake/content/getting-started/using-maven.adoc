@@ -160,7 +160,7 @@ Here is what you'll find inside:
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.test</artifactId>
+            <artifactId>io.werval.test</artifactId>
             <version>{qiweb_version}</version>
             <scope>test</scope>
         </dependency>

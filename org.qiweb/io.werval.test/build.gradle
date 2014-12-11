@@ -1,0 +1,12 @@
+
+description = "Werval Test Support"
+
+dependencies {
+
+    compile project( ':io.werval.server.bootstrap' )
+    compile libs.junit
+    compile libs.logback
+
+    testCompile libs.rest_assured
+
+}

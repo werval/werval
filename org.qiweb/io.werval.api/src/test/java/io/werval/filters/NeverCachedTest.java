@@ -17,9 +17,9 @@ package io.werval.filters;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -31,12 +31,12 @@ import static io.werval.api.http.StatusClass.SERVER_ERROR;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 /**
- * NeverCachedTest.
+ * NeverCached Test.
  */
 public class NeverCachedTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /normal io.werval.filters.NeverCachedTest$Controller.normal\n"
         + "GET /error io.werval.filters.NeverCachedTest$Controller.error\n"
         + "GET /errorNeverCached io.werval.filters.NeverCachedTest$Controller.errorNeverCached\n"
@@ -55,10 +55,7 @@ public class NeverCachedTest
             return outcomes().internalServerError().build();
         }
 
-        @NeverCached(
-        {
-            SERVER_ERROR, CLIENT_ERROR
-        } )
+        @NeverCached( { SERVER_ERROR, CLIENT_ERROR } )
         public Outcome errorNeverCached()
         {
             return outcomes().internalServerError().build();

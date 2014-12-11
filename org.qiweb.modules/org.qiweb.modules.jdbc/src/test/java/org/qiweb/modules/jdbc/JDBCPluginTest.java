@@ -16,6 +16,7 @@
 package org.qiweb.modules.jdbc;
 
 import com.codahale.metrics.MetricRegistry;
+import io.werval.test.QiWebRule;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.naming.InitialContext;
@@ -24,7 +25,6 @@ import javax.sql.DataSource;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
