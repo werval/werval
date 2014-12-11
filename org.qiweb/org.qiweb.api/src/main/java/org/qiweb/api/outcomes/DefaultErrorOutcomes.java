@@ -59,7 +59,6 @@ public final class DefaultErrorOutcomes
         switch( preferredMimeType )
         {
             case APPLICATION_JSON:
-                System.out.println( "ERROR WILL BE RETURNED AS application/json" );
                 StringBuilder json = new StringBuilder();
                 json.append( "{ \"code\": " ).append( theStatus.code() )
                     .append( ", \"title\": \"" ).append( theTitle ).append( "\"" ); // TODO JSON Escape!
@@ -71,7 +70,6 @@ public final class DefaultErrorOutcomes
                 builder.withBody( json.toString() ).asJson();
                 break;
             case TEXT_HTML:
-                System.out.println( "ERROR WILL BE RETURNED AS text/html" );
                 StringBuilder html = new StringBuilder();
                 html.append( "<!DOCTYPE html>\n<html>\n<head><title>" )
                     .append( theTitle )
@@ -85,7 +83,6 @@ public final class DefaultErrorOutcomes
                 builder.withBody( html.toString() ).asHtml();
                 break;
             default:
-                System.out.println( "ERROR WILL BE RETURNED AS text/plain" );
                 StringBuilder text = new StringBuilder();
                 text.append( theTitle ).append( NEWLINE );
                 if( hasText( detail ) )
