@@ -13,7 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.werval.server.bootstrap;
+
+import io.werval.api.Mode;
+import io.werval.runtime.ApplicationInstance;
+import io.werval.server.netty.NettyServer;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.server.HttpServer;
+
 /**
- * Server bootstrap.
+ * Werval HTTP Server Bootstrap Main Class.
  */
-package org.qiweb.server.bootstrap;
+public final class Main
+{
+    public static void main( String[] args )
+        throws Exception
+    {
+        ApplicationSPI app = new ApplicationInstance( Mode.PROD );
+        HttpServer server = new NettyServer( app );
+        server.registerPassivationShutdownHook();
+        server.activate();
+    }
+
+    private Main()
+    {
+    }
+}

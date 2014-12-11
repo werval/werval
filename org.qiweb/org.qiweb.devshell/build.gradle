@@ -7,7 +7,7 @@ description = "QiWeb Development Shell"
 
 dependencies {
 
-    compile project( ":org.qiweb.server.bootstrap" )
+    compile project( ":io.werval.server.bootstrap" )
     compile project( ":org.qiweb.doc" ) // QUID?
     compile libs.classworlds
 

@@ -154,7 +154,7 @@ Here is what you'll find inside:
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.server.bootstrap</artifactId>
+            <artifactId>io.werval.server.bootstrap</artifactId>
             <version>{qiweb_version}</version>
             <scope>runtime</scope>
         </dependency>

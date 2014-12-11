@@ -41,7 +41,7 @@ public class StartMojo
     /**
      * Main class.
      */
-    @Parameter( property = "qiwebstart.mainClass", defaultValue = "org.qiweb.server.bootstrap.Main" )
+    @Parameter( property = "qiwebstart.mainClass", defaultValue = "io.werval.server.bootstrap.Main" )
     private String mainClass;
 
     /**

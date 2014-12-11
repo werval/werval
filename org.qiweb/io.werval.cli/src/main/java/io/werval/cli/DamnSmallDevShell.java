@@ -308,28 +308,22 @@ public final class DamnSmallDevShell
                         + "}\n"
                         + "repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }\n"
                         + "\n"
-                        + "apply plugin: 'java'\n"
-                        + "apply plugin: 'qiweb'\n"
-                        + "apply plugin: 'application'\n"
+                        + "apply plugin: 'org.qiweb.application'\n"
                         + "\n"
                         + "sourceCompatibility = '1.8'\n"
                         + "targetCompatibility = '1.8'\n"
                         + "\n"
                         + "[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'\n"
                         + "\n"
-                        + "mainClassName = 'org.qiweb.server.bootstrap.Main'\n"
                         + "applicationName = '" + name + "'\n"
                         + "\n"
                         + "dependencies {\n"
                         + "\n"
-                        + "    compile 'org.qiweb:io.werval.api:" + VERSION + "'\n"
                         + "    // Add application compile dependencies here\n"
                         + "\n"
-                        + "    runtime 'org.qiweb:org.qiweb.server.bootstrap:" + VERSION + "'\n"
                         + "    runtime 'ch.qos.logback:logback-classic:1.1.2'\n"
                         + "    // Add application runtime dependencies here\n"
                         + "\n"
-                        + "    testCompile 'org.qiweb:org.qiweb.test:" + VERSION + "'\n"
                         + "    // Add application test dependencies here\n"
                         + "\n"
                         + "}\n"
@@ -370,7 +364,7 @@ public final class DamnSmallDevShell
                      + "\n"
                      + "        <dependency>\n"
                      + "            <groupId>org.qiweb</groupId>\n"
-                     + "            <artifactId>org.qiweb.server.bootstrap</artifactId>\n"
+                     + "            <artifactId>io.werval.server.bootstrap</artifactId>\n"
                      + "            <version>" + VERSION + "</version>\n"
                      + "            <scope>runtime</scope>\n"
                      + "        </dependency>\n"
@@ -430,7 +424,7 @@ public final class DamnSmallDevShell
                      + "                            <programs>\n"
                      + "                                <program>\n"
                      + "                                    <id>qiweb-sample-maven</id>\n"
-                     + "                                    <mainClass>org.qiweb.server.bootstrap.Main</mainClass>\n"
+                     + "                                    <mainClass>io.werval.server.bootstrap.Main</mainClass>\n"
                      + "                                </program>\n"
                      + "                            </programs>\n"
                      + "                        </configuration>\n"
@@ -520,7 +514,7 @@ public final class DamnSmallDevShell
         globalClasspath.addAll( Arrays.asList( applicationClasspath ) );
         new StartCommand(
             StartCommand.ExecutionModel.FORK,
-            org.qiweb.server.bootstrap.Main.class.getName(),
+            io.werval.server.bootstrap.Main.class.getName(),
             new String[ 0 ],
             globalClasspath.toArray( new URL[ globalClasspath.size() ] )
         ).run();

@@ -32,9 +32,9 @@ class QiWebStartTask extends DefaultTask
     Set<SourceSet> sourceSets = new LinkedHashSet<>( [ project.sourceSets.main ] )
 
     /**
-     * Main class, default to org.qiweb.server.bootstrap.Main.
+     * Main class, default to io.werval.server.bootstrap.Main.
      */
-    String mainClass = "org.qiweb.server.bootstrap.Main"
+    String mainClass = "io.werval.server.bootstrap.Main"
 
     /**
      * Main class arguments.

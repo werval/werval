@@ -42,7 +42,7 @@ public class QiWebApplicationPluginTest
         super.qiwebDependencies();
         assertTrue(
             artifactsOfConfiguration( "runtime" ).stream().anyMatch(
-                startsWith( "org.qiweb:org.qiweb.server.bootstrap" )
+                startsWith( "org.qiweb:io.werval.server.bootstrap" )
             )
         );
     }

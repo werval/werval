@@ -54,7 +54,7 @@ class QiWebDependencies
 
     Dependency getNettyServer()
     {
-        dependency( "server.bootstrap" )
+        dependencies.create( "${GROUP}:io.werval.server.bootstrap:$BuildVersion.VERSION" )
     }
 
     Dependency dependency( String name )

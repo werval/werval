@@ -41,7 +41,7 @@ class QiWebApplicationPlugin implements Plugin<Project>
         // Application Distribution
         project.plugins.apply( ApplicationPlugin )
         project.applicationName = project.name
-        project.mainClassName = "org.qiweb.server.bootstrap.Main"
+        project.mainClassName = "io.werval.server.bootstrap.Main"
         project.applicationDistribution.from( "src/main/resources" ) {
             include "*.conf"
             into "etc"

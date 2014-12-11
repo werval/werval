@@ -110,7 +110,7 @@ public abstract class AbstractQiWebMojoIT
           + "        </dependency>\n"
           + "        <dependency>\n"
           + "            <groupId>org.qiweb</groupId>\n"
-          + "            <artifactId>org.qiweb.server.bootstrap</artifactId>\n"
+          + "            <artifactId>io.werval.server.bootstrap</artifactId>\n"
           + "            <version>" + VERSION + "</version>\n"
           + "            <scope>runtime</scope>\n"
           + "        </dependency>\n"
