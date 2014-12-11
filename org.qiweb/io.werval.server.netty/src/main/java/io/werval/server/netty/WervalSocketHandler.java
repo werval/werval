@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.netty;
+package io.werval.server.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,14 +27,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Handle WebSockets.
  */
-public class QiWebSocketHandler
+public class WervalSocketHandler
     extends SimpleChannelInboundHandler<WebSocketFrame>
 {
-    private static final Logger LOG = LoggerFactory.getLogger( QiWebSocketHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WervalSocketHandler.class );
     private final ApplicationSPI app;
     private final DevShellSPI devSpi;
 
-    public QiWebSocketHandler( ApplicationSPI app, DevShellSPI devSpi )
+    public WervalSocketHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.app = app;

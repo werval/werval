@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.netty;
+package io.werval.server.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.group.ChannelGroup;
@@ -57,7 +57,7 @@ public class NettyServer
     public NettyServer()
     {
         super();
-        this.allChannels = new DefaultChannelGroup( "qiweb-netty-server", null );
+        this.allChannels = new DefaultChannelGroup( "werval-netty-server", null );
     }
 
     public NettyServer( ApplicationSPI app )
@@ -87,8 +87,8 @@ public class NettyServer
                         ? app.config().intNumber( WERVAL_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group(
-            new NioEventLoopGroup( app.mode() == PROD ? acceptors : 1, new NamedThreadFactory( "qiweb-acceptor" ) ),
-            new NioEventLoopGroup( app.mode() == PROD ? iothreads : 1, new NamedThreadFactory( "qiweb-io" ) )
+            new NioEventLoopGroup( app.mode() == PROD ? acceptors : 1, new NamedThreadFactory( "werval-acceptor" ) ),
+            new NioEventLoopGroup( app.mode() == PROD ? iothreads : 1, new NamedThreadFactory( "werval-io" ) )
         );
         // Server Channel
         bootstrap.channel( NioServerSocketChannel.class );

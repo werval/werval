@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.netty;
+package io.werval.server.netty;
 
 import io.netty.buffer.AbstractByteBuf;
 import io.netty.buffer.ByteBuf;
@@ -39,7 +39,7 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 /**
  * Read-only ByteBuff wrapping a File.
  * <p>Used by {@link HttpRequestAggregator} to aggregate requests bodies.</p>
- * <p>Used by {@link QiWebHttpHandler} to parse requests bodies.</p>
+ * <p>Used by {@link WervalHttpHandler} to parse requests bodies.</p>
  */
 // CHECKSTYLE:OFF
 public final class FileByteBuff

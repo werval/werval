@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.netty;
+package io.werval.server.netty;
 
 import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.ChannelFuture;
@@ -56,8 +56,8 @@ import static io.werval.api.http.Headers.Names.TRANSFER_ENCODING;
 import static io.werval.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 import static io.werval.api.http.Headers.Values.CHUNKED;
 import static io.werval.util.Charsets.UTF_8;
-import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
-import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
+import static io.werval.server.netty.NettyHttpFactories.remoteAddressOf;
+import static io.werval.server.netty.NettyHttpFactories.requestOf;
 
 /**
  * Handle HTTP Requests.
@@ -68,10 +68,10 @@ import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
  * types, it's the application responsibility to do the parsing.
  */
 // TODO WebSocket UPGRADE
-public final class QiWebHttpHandler
+public final class WervalHttpHandler
     extends SimpleChannelInboundHandler<FullHttpRequest>
 {
-    private static final Logger LOG = LoggerFactory.getLogger( QiWebHttpHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WervalHttpHandler.class );
 
     private final class HttpRequestCompleteChannelFutureListener
         implements ChannelFutureListener
@@ -100,7 +100,7 @@ public final class QiWebHttpHandler
     private String requestIdentity;
     private RequestHeader requestHeader;
 
-    public QiWebHttpHandler( ApplicationSPI app, DevShellSPI devSpi )
+    public WervalHttpHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         super();
         this.app = app;
@@ -313,7 +313,7 @@ public final class QiWebHttpHandler
     /**
      * Apply Headers and Cookies into Netty HttpResponse.
      *
-     * @param response      QiWeb ResponseHeader
+     * @param response      Werval ResponseHeader
      * @param nettyResponse Netty HttpResponse
      */
     private void applyResponseHeader( ResponseHeader response, HttpResponse nettyResponse )

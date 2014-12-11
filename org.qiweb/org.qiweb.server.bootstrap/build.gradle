@@ -5,7 +5,7 @@ dependencies {
 
     compile project( ":io.werval.runtime" )
     // TODO Remove me!
-    compile project( ":org.qiweb.server.netty" )
+    compile project( ":io.werval.server.netty" )
     
 }
 

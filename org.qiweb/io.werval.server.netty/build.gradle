@@ -1,5 +1,5 @@
 
-description = "QiWeb Server - Netty"
+description = "Werval Server - Netty"
 
 dependencies {
 

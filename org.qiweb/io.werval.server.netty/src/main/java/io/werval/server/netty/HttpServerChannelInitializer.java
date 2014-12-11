@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.netty;
+package io.werval.server.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -70,7 +70,7 @@ import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_TIMEOUT_WRITE;
             LogLevel level = LogLevel.valueOf(
                 app.config().string( WERVAL_HTTP_LOG_LOWLEVEL_LEVEL ).toUpperCase( US )
             );
-            pipeline.addLast( "byte-logging", new LoggingHandler( "org.qiweb.server.netty.LowLevelLogger", level ) );
+            pipeline.addLast( "byte-logging", new LoggingHandler( "io.werval.server.netty.LowLevelLogger", level ) );
         }
 
         // Read/Write Timeout

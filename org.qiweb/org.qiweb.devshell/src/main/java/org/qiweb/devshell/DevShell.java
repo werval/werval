@@ -132,7 +132,7 @@ public final class DevShell
     private static final String APPLICATION_RUNTIME_CLASS = "io.werval.runtime.ApplicationInstance";
     private static final String MODE_API_CLASS = "io.werval.api.Mode";
     private static final String APPLICATION_SPI_CLASS = "io.werval.spi.ApplicationSPI";
-    private static final String NETTY_SERVER_CLASS = "org.qiweb.server.netty.NettyServer";
+    private static final String NETTY_SERVER_CLASS = "io.werval.server.netty.NettyServer";
     private static final File RUN_LOCK_FILE = new File( Paths.get( "" ).toAbsolutePath().toFile(), ".devshell.lock" );
     private static final long RUN_LOCK_FILE_POLL_INTERVAL_MILLIS = 500;
     private static final AtomicLong APPLICATION_REALM_COUNT = new AtomicLong( 0L );

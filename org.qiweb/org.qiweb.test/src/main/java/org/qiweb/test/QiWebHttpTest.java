@@ -22,11 +22,11 @@ import io.werval.runtime.ConfigKeys;
 import io.werval.runtime.CryptoInstance;
 import io.werval.runtime.routes.RoutesConfProvider;
 import io.werval.runtime.routes.RoutesProvider;
+import io.werval.server.netty.NettyServer;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.server.HttpServer;
 import org.junit.After;
 import org.junit.Before;
-import org.qiweb.server.netty.NettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

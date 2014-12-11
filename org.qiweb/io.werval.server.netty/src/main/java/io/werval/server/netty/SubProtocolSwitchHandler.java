@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.server.netty;
+package io.werval.server.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -73,8 +73,8 @@ public class SubProtocolSwitchHandler
                 new HttpRequestAggregator( helper, app.events(), maxBodySize, diskThreshold, app.tmpdir() )
             );
             pipeline.addLast(
-                "qiweb-http",
-                new QiWebHttpHandler( app, devSpi )
+                "werval-http",
+                new WervalHttpHandler( app, devSpi )
             );
 
             pipeline.remove( this );
@@ -88,8 +88,8 @@ public class SubProtocolSwitchHandler
             ChannelPipeline pipeline = context.pipeline();
 
             pipeline.addLast(
-                "qiweb-websocket",
-                new QiWebSocketHandler( app, devSpi )
+                "werval-websocket",
+                new WervalSocketHandler( app, devSpi )
             );
 
             pipeline.remove( this );
