@@ -15,12 +15,12 @@
  */
 package org.qiweb.doc;
 
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.ReverseRoute;
-import org.qiweb.controllers.Classpath;
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.routes.ReverseRoute;
+import io.werval.controllers.Classpath;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.reverseRoutes;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.reverseRoutes;
 
 /**
  * Core Documentations Controller.

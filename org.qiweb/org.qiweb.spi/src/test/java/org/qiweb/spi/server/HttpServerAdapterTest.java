@@ -15,9 +15,9 @@
  */
 package org.qiweb.spi.server;
 
+import io.werval.api.Mode;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.test.util.Slf4jRule;
 

@@ -15,10 +15,10 @@
  */
 package org.qiweb.runtime.context;
 
+import io.werval.api.context.Context;
+import io.werval.api.context.CurrentContext;
+import io.werval.api.context.ThreadContextHelper;
 import java.util.concurrent.ExecutorService;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.context.CurrentContext;
-import org.qiweb.api.context.ThreadContextHelper;
 import org.qiweb.runtime.util.ExecutorServiceDecoratorAdapter;
 
 /**

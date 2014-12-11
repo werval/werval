@@ -15,6 +15,8 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.http.FormUploads;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,16 +30,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.http.FormUploads;
 import org.qiweb.runtime.exceptions.BadRequestException;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 public class FormUploadsInstance
     implements FormUploads
@@ -234,7 +234,7 @@ public class FormUploadsInstance
             }
             catch( FileNotFoundException ex )
             {
-                throw new QiWebException( ex.getMessage(), ex );
+                throw new WervalException( ex.getMessage(), ex );
             }
         }
 
@@ -251,7 +251,7 @@ public class FormUploadsInstance
             }
             catch( IOException ex )
             {
-                throw new QiWebException( ex.getMessage(), ex );
+                throw new WervalException( ex.getMessage(), ex );
             }
         }
 
@@ -283,7 +283,7 @@ public class FormUploadsInstance
             }
             catch( IOException ex )
             {
-                throw new QiWebException( ex.getMessage(), ex );
+                throw new WervalException( ex.getMessage(), ex );
             }
         }
 

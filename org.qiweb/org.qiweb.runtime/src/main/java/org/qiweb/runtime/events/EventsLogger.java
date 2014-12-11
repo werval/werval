@@ -15,8 +15,8 @@
  */
 package org.qiweb.runtime.events;
 
+import io.werval.api.events.Event;
 import java.util.function.Consumer;
-import org.qiweb.api.events.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

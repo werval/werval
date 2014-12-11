@@ -26,8 +26,8 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import io.werval.api.events.ConnectionEvent;
 import java.net.InetSocketAddress;
-import org.qiweb.api.events.ConnectionEvent;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 

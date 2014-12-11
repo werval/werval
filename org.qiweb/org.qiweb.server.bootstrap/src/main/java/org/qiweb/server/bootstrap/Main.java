@@ -15,7 +15,7 @@
  */
 package org.qiweb.server.bootstrap;
 
-import org.qiweb.api.Mode;
+import io.werval.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.server.netty.NettyServer;
 import org.qiweb.spi.ApplicationSPI;

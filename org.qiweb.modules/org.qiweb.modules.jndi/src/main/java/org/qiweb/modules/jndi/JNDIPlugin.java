@@ -15,11 +15,11 @@
  */
 package org.qiweb.modules.jndi;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 import javax.naming.NamingException;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * JNDI Plugin.

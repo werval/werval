@@ -15,19 +15,19 @@
  */
 package org.qiweb.runtime.plugins;
 
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.routes.Route;
 import java.util.Iterator;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static io.werval.api.context.CurrentContext.outcomes;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Plugin Routes Test.

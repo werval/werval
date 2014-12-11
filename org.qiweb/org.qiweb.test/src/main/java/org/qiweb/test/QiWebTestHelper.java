@@ -15,11 +15,11 @@
  */
 package org.qiweb.test;
 
+import io.werval.api.Config;
+import io.werval.api.Errors;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import org.qiweb.api.Config;
-import org.qiweb.api.Errors;
 
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
@@ -42,7 +42,7 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
             PrintWriter pw = new PrintWriter( writer );
             pw.append( String.valueOf( errors.count() ) )
                 .append( " Errors recorded by the QiWeb Application during the test:\n" );
-            for( org.qiweb.api.Error error : errors.asList() )
+            for( io.werval.api.Error error : errors.asList() )
             {
                 pw.append( "\n" )
                     .append( "Error ID  :" ).append( error.errorId() ).append( "\n" )

@@ -16,24 +16,24 @@
 package org.qiweb.runtime;
 
 import com.jayway.restassured.response.Response;
+import io.werval.api.Error;
+import io.werval.api.context.CurrentContext;
+import io.werval.api.outcomes.Outcome;
 import java.io.IOException;
 import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.api.Error;
-import org.qiweb.api.context.CurrentContext;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Values.CLOSE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
 
 /**
  * Assert that Application errors triggers the right code paths.

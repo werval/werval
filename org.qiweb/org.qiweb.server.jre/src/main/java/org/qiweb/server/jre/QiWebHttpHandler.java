@@ -15,14 +15,16 @@
  */
 package org.qiweb.server.jre;
 
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.api.outcomes.Outcome;
+import io.werval.util.InputStreamByteSource;
+import io.werval.util.InputStreams;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.InputStream;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
@@ -30,8 +32,6 @@ import org.qiweb.spi.server.HttpServerHelper;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.util.InputStreamByteSource;
-import org.qiweb.util.InputStreams;
 
 /**
  * com.sun.net HTTP Handler.

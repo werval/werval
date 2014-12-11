@@ -17,10 +17,10 @@ package org.qiweb.server.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.werval.util.ByteSource;
+import io.werval.util.InputStreams;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.qiweb.util.ByteSource;
-import org.qiweb.util.InputStreams;
 
 /**
  * ByteSource backed by a Netty ByteBuf.

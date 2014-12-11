@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import static org.qiweb.util.Charsets.UTF_8;
+import static io.werval.util.Charsets.UTF_8;
 
 /**
  * Jackson JSON.

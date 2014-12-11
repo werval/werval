@@ -15,24 +15,24 @@
  */
 package org.qiweb.runtime.outcomes;
 
+import io.werval.api.Config;
+import io.werval.api.http.ResponseHeader;
+import io.werval.api.mime.MimeTypes;
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.outcomes.OutcomeBuilder;
+import io.werval.util.ByteArrayByteSource;
+import io.werval.util.ByteSource;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import org.qiweb.api.Config;
-import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.api.mime.MimeTypes;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.outcomes.OutcomeBuilder;
-import org.qiweb.util.ByteArrayByteSource;
-import org.qiweb.util.ByteSource;
 
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_XML;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static io.werval.api.mime.MimeTypesNames.APPLICATION_XML;
+import static io.werval.api.mime.MimeTypesNames.TEXT_HTML;
+import static io.werval.api.mime.MimeTypesNames.TEXT_PLAIN;
+import static io.werval.util.ByteSource.EMPTY_BYTES;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_CHARACTER_ENCODING;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_CHUNKSIZE;
-import static org.qiweb.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Outcome Builder instance.

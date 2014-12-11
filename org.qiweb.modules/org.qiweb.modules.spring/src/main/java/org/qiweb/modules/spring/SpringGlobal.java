@@ -15,8 +15,8 @@
  */
 package org.qiweb.modules.spring;
 
-import org.qiweb.api.Application;
-import org.qiweb.api.Global;
+import io.werval.api.Application;
+import io.werval.api.Global;
 import org.springframework.context.ApplicationContext;
 
 /**

@@ -15,21 +15,21 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.FormAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.qiweb.api.http.FormAttributes;
 import org.qiweb.runtime.exceptions.BadRequestException;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.Strings.EMPTY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.Strings.EMPTY;
 
 public class FormAttributesInstance
     implements FormAttributes

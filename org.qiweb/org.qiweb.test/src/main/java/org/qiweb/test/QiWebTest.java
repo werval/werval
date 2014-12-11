@@ -15,9 +15,9 @@
  */
 package org.qiweb.test;
 
+import io.werval.api.Mode;
 import org.junit.After;
 import org.junit.Before;
-import org.qiweb.api.Mode;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.ConfigInstance;
 import org.qiweb.runtime.ConfigKeys;

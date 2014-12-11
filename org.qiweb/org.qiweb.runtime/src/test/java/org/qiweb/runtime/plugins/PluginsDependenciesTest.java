@@ -15,15 +15,15 @@
  */
 package org.qiweb.runtime.plugins;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.cache.Cache;
+import io.werval.api.exceptions.ActivationException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.Matchers.notNullValue;

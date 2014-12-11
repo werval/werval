@@ -15,8 +15,8 @@
  */
 package org.qiweb.spi.server;
 
-import org.qiweb.util.IdentityGenerator;
-import org.qiweb.util.UUIDIdentityGenerator;
+import io.werval.util.IdentityGenerator;
+import io.werval.util.UUIDIdentityGenerator;
 
 /**
  * Helper object for HttpServer implementations.

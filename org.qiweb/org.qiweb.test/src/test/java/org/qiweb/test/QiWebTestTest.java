@@ -15,15 +15,15 @@
  */
 package org.qiweb.test;
 
+import io.werval.api.http.Request;
+import io.werval.api.outcomes.Outcome;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 
+import static io.werval.api.context.CurrentContext.outcomes;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Assert QiWeb Test behaviour.

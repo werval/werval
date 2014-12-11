@@ -15,10 +15,10 @@
  */
 package org.qiweb.spi.cache;
 
+import io.werval.api.cache.Cache;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import org.qiweb.api.cache.Cache;
 
 /**
  * Cache Adapter.

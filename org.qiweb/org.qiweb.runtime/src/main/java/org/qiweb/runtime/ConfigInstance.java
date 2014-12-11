@@ -15,6 +15,8 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.Config;
+import io.werval.util.Reflectively;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,12 +28,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import org.qiweb.api.Config;
-import org.qiweb.util.Reflectively;
 
+import static io.werval.util.Charsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.qiweb.util.Charsets.UTF_8;
 
 /**
  * Config Instance backed by TypeSafe Config.

@@ -17,17 +17,17 @@ package org.qiweb.runtime.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.werval.api.outcomes.Outcome;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.request;
 import static org.hamcrest.Matchers.equalTo;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.request;
 
 public class QueryStringTest
 {

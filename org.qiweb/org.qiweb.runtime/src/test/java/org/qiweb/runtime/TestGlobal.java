@@ -15,7 +15,7 @@
  */
 package org.qiweb.runtime;
 
-import org.qiweb.api.Global;
+import io.werval.api.Global;
 
 public class TestGlobal
     extends Global

@@ -23,11 +23,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
 
+import static io.werval.util.Charsets.UTF_8;
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
+import static io.werval.util.InputStreams.readAllAsString;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.util.Charsets.UTF_8;
-import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.util.InputStreams.readAllAsString;
 
 /**
  * Banner Test.

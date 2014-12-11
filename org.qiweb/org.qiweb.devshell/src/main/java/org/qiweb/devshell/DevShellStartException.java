@@ -15,13 +15,13 @@
  */
 package org.qiweb.devshell;
 
-import org.qiweb.api.exceptions.QiWebException;
+import io.werval.api.exceptions.WervalException;
 
 /**
  * DevShell Start Exception.
  */
 public class DevShellStartException
-    extends QiWebException
+    extends WervalException
 {
     public DevShellStartException( String message )
     {

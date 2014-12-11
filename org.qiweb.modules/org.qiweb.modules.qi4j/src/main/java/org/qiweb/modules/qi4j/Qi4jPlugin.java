@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * See the Qi4j documentation at <a href="http://qi4j.org/">qi4j.org</a>.
  */
 public class Qi4jPlugin
-    implements org.qiweb.api.Plugin<org.qi4j.api.structure.Application>
+    implements io.werval.api.Plugin<org.qi4j.api.structure.Application>
 {
     private static final Logger LOG = LoggerFactory.getLogger( Qi4jPlugin.class );
     private org.qi4j.api.structure.Application qi4jApplication;
@@ -49,14 +49,14 @@ public class Qi4jPlugin
     }
 
     @Override
-    public void onActivate( org.qiweb.api.Application application )
-        throws org.qiweb.api.exceptions.ActivationException
+    public void onActivate( io.werval.api.Application application )
+        throws io.werval.api.exceptions.ActivationException
     {
         boolean hasAssembler = application.config().has( "qi4j.assembler" );
         boolean hasAssembly = application.config().has( "qi4j.assembly" );
         if( hasAssembler && hasAssembly )
         {
-            throw new org.qiweb.api.exceptions.ActivationException(
+            throw new io.werval.api.exceptions.ActivationException(
                 "Qi4j Plugin cannot have both 'qi4j.assembler' and 'qi4j.assembly' configuration properties set, "
                 + "remove one and retry."
             );
@@ -100,12 +100,12 @@ public class Qi4jPlugin
                JSONException | IOException |
                org.qi4j.bootstrap.AssemblyException | org.qi4j.api.activation.ActivationException ex )
         {
-            throw new org.qiweb.api.exceptions.ActivationException( ex.getMessage(), ex );
+            throw new io.werval.api.exceptions.ActivationException( ex.getMessage(), ex );
         }
     }
 
     @Override
-    public void onPassivate( org.qiweb.api.Application application )
+    public void onPassivate( io.werval.api.Application application )
     {
         if( qi4jApplication != null )
         {
@@ -115,7 +115,7 @@ public class Qi4jPlugin
             }
             catch( org.qi4j.api.activation.PassivationException ex )
             {
-                throw new org.qiweb.api.exceptions.PassivationException( ex.getMessage(), ex );
+                throw new io.werval.api.exceptions.PassivationException( ex.getMessage(), ex );
             }
             finally
             {

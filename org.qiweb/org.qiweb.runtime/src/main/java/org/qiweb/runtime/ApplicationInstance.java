@@ -15,6 +15,43 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.Application;
+import io.werval.api.ApplicationExecutors;
+import io.werval.api.Config;
+import io.werval.api.Crypto;
+import io.werval.api.Errors;
+import io.werval.api.Global;
+import io.werval.api.MetaData;
+import io.werval.api.Mode;
+import io.werval.api.cache.Cache;
+import io.werval.api.context.Context;
+import io.werval.api.context.ThreadContextHelper;
+import io.werval.api.exceptions.ParameterBinderException;
+import io.werval.api.exceptions.PassivationException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.exceptions.RouteNotFoundException;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.http.Cookies.Cookie;
+import io.werval.api.http.FormUploads;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.api.http.RequestHeader;
+import io.werval.api.http.Session;
+import io.werval.api.http.Status;
+import io.werval.api.i18n.Langs;
+import io.werval.api.mime.MimeTypes;
+import io.werval.api.outcomes.DefaultErrorOutcomes;
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.outcomes.OutcomeBuilder;
+import io.werval.api.outcomes.Outcomes;
+import io.werval.api.routes.ParameterBinder;
+import io.werval.api.routes.ParameterBinders;
+import io.werval.api.routes.ReverseRoutes;
+import io.werval.api.routes.Route;
+import io.werval.api.routes.Routes;
+import io.werval.api.templates.Templates;
+import io.werval.util.Reflectively;
+import io.werval.util.Stacktraces;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,41 +66,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import org.qiweb.api.Application;
-import org.qiweb.api.ApplicationExecutors;
-import org.qiweb.api.Config;
-import org.qiweb.api.Crypto;
-import org.qiweb.api.Errors;
-import org.qiweb.api.Global;
-import org.qiweb.api.MetaData;
-import org.qiweb.api.Mode;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.context.ThreadContextHelper;
-import org.qiweb.api.exceptions.ParameterBinderException;
-import org.qiweb.api.exceptions.PassivationException;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.exceptions.RouteNotFoundException;
-import org.qiweb.api.filters.FilterChain;
-import org.qiweb.api.http.Cookies.Cookie;
-import org.qiweb.api.http.FormUploads;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.http.Session;
-import org.qiweb.api.http.Status;
-import org.qiweb.api.i18n.Langs;
-import org.qiweb.api.mime.MimeTypes;
-import org.qiweb.api.outcomes.DefaultErrorOutcomes;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.outcomes.OutcomeBuilder;
-import org.qiweb.api.outcomes.Outcomes;
-import org.qiweb.api.routes.ParameterBinder;
-import org.qiweb.api.routes.ParameterBinders;
-import org.qiweb.api.routes.ReverseRoutes;
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.Routes;
-import org.qiweb.api.templates.Templates;
 import org.qiweb.runtime.context.ContextInstance;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.filters.FilterChainFactory;
@@ -84,19 +86,23 @@ import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.http.HttpBuildersSPI;
 import org.qiweb.spi.events.EventsSPI;
-import org.qiweb.util.Reflectively;
-import org.qiweb.util.Stacktraces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Names.COOKIE;
-import static org.qiweb.api.http.Headers.Names.RETRY_AFTER;
-import static org.qiweb.api.http.Headers.Names.SET_COOKIE;
-import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Names.COOKIE;
+import static io.werval.api.http.Headers.Names.RETRY_AFTER;
+import static io.werval.api.http.Headers.Names.SET_COOKIE;
+import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Values.CLOSE;
+import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
+import static io.werval.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
+import static io.werval.util.InputStreams.transferTo;
+import static io.werval.util.Strings.NEWLINE;
+import static io.werval.util.Strings.hasText;
+import static io.werval.util.Strings.indentTwoSpaces;
 import static org.qiweb.runtime.BuildVersion.COMMIT;
 import static org.qiweb.runtime.BuildVersion.DATE;
 import static org.qiweb.runtime.BuildVersion.DIRTY;
@@ -117,12 +123,6 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_MIMETYPES_TEXTUAL;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_PARAMETERBINDERS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_RETRYAFTER;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_TMPDIR;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
-import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.util.InputStreams.transferTo;
-import static org.qiweb.util.Strings.NEWLINE;
-import static org.qiweb.util.Strings.hasText;
-import static org.qiweb.util.Strings.indentTwoSpaces;
 
 /**
  * An Application Instance.
@@ -301,8 +301,7 @@ public final class ApplicationInstance
 
             // Global
             String globalClassName = config.string( APP_GLOBAL );
-            this.global = executors.supplyAsync(
-                () ->
+            this.global = executors.supplyAsync(() ->
                 {
                     try
                     {
@@ -311,7 +310,7 @@ public final class ApplicationInstance
                     catch( ClassNotFoundException | ClassCastException |
                            InstantiationException | IllegalAccessException ex )
                     {
-                        throw new QiWebException( "Invalid Global class: " + globalClassName, ex );
+                        throw new WervalException( "Invalid Global class: " + globalClassName, ex );
                     }
                 }
             ).join();
@@ -1060,11 +1059,11 @@ public final class ApplicationInstance
         File tmpdirFile = config.file( QIWEB_TMPDIR );
         if( tmpdirFile.isFile() )
         {
-            throw new QiWebException( "tmpdir already exist but is a file: " + tmpdirFile );
+            throw new WervalException( "tmpdir already exist but is a file: " + tmpdirFile );
         }
         if( !tmpdirFile.exists() && !tmpdirFile.mkdirs() )
         {
-            throw new QiWebException( "Unable to create non existant tmpdir: " + tmpdirFile );
+            throw new WervalException( "Unable to create non existant tmpdir: " + tmpdirFile );
         }
         tmpdir = tmpdirFile;
     }

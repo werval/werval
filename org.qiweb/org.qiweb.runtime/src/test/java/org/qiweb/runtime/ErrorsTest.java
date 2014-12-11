@@ -15,10 +15,10 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.Config;
+import io.werval.api.Error;
+import io.werval.api.Errors;
 import org.junit.Test;
-import org.qiweb.api.Config;
-import org.qiweb.api.Error;
-import org.qiweb.api.Errors;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

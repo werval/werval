@@ -25,6 +25,11 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDec
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.IncompatibleDataDecoderException;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDataDecoderException;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.http.FormUploads.Upload;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.util.ByteSource;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -35,24 +40,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.http.FormUploads.Upload;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.Request;
 import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
 import org.qiweb.spi.http.HttpBuildersSPI;
 import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
-import org.qiweb.util.ByteSource;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Factory methods used by the server.
@@ -157,7 +157,7 @@ import static org.qiweb.util.IllegalArguments.ensureNotNull;
                     catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
                            NotEnoughDataDecoderException | IOException ex )
                     {
-                        throw new QiWebException( "Form or multipart parsing error", ex );
+                        throw new WervalException( "Form or multipart parsing error", ex );
                     }
                 default:
                     ByteSource bodyBytes = new ByteBufByteSource( request.content() );

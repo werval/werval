@@ -15,21 +15,21 @@
  */
 package org.qiweb.modules.json;
 
+import io.werval.api.outcomes.Outcome;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.mime.MimeTypesNames.APPLICATION_JAVASCRIPT;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JAVASCRIPT;
 import static org.qiweb.modules.json.JSON.json;
 
 /**

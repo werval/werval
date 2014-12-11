@@ -29,35 +29,35 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
+import io.werval.api.events.HttpEvent;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.api.http.RequestHeader;
+import io.werval.api.http.ResponseHeader;
+import io.werval.api.http.Status;
+import io.werval.api.outcomes.Outcome;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.api.http.Status;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
 import org.qiweb.runtime.outcomes.InputStreamOutcome;
 import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.api.events.HttpEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
-import static org.qiweb.api.http.Headers.Names.TRAILER;
-import static org.qiweb.api.http.Headers.Names.TRANSFER_ENCODING;
-import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
-import static org.qiweb.api.http.Headers.Values.CHUNKED;
+import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Names.TRAILER;
+import static io.werval.api.http.Headers.Names.TRANSFER_ENCODING;
+import static io.werval.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Values.CHUNKED;
+import static io.werval.util.Charsets.UTF_8;
 import static org.qiweb.server.netty.NettyHttpFactories.remoteAddressOf;
 import static org.qiweb.server.netty.NettyHttpFactories.requestOf;
-import static org.qiweb.util.Charsets.UTF_8;
 
 /**
  * Handle HTTP Requests.

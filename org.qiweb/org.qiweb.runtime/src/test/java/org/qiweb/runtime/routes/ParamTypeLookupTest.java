@@ -16,10 +16,10 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.CustomParam;
+import io.werval.api.Application;
+import io.werval.api.Mode;
+import io.werval.api.routes.Route;
 import org.junit.Test;
-import org.qiweb.api.Application;
-import org.qiweb.api.Mode;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 
 import static org.hamcrest.CoreMatchers.equalTo;

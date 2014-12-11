@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.jpa;
 
+import io.werval.api.exceptions.WervalException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import org.qiweb.api.exceptions.QiWebException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class JPAContext
         }
         if( !errors.isEmpty() )
         {
-            QiWebException ex = new QiWebException( "Errors occured while closing all EntityManagers" );
+            WervalException ex = new WervalException( "Errors occured while closing all EntityManagers" );
             errors.forEach( err -> ex.addSuppressed( err ) );
             throw ex;
         }

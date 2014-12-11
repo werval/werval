@@ -15,11 +15,11 @@
  */
 package org.qiweb.spi.cache;
 
+import io.werval.util.Couple;
+import io.werval.util.Numbers;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
-import org.qiweb.util.Couple;
-import org.qiweb.util.Numbers;
 
 /**
  * In-Memory Cache backed by a {@link ConcurrentHashMap}.

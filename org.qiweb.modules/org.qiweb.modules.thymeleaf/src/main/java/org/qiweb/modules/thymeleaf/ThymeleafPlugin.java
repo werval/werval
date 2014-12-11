@@ -15,24 +15,24 @@
  */
 package org.qiweb.modules.thymeleaf;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.api.templates.Templates;
+import io.werval.api.templates.TemplatesPlugin;
 import java.util.Arrays;
 import java.util.List;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.exceptions.ActivationException;
-import org.qiweb.api.templates.Templates;
-import org.qiweb.api.templates.TemplatesPlugin;
 import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
+import static io.werval.api.Mode.DEV;
+import static io.werval.util.Strings.EMPTY;
+import static io.werval.util.Strings.withTrail;
+import static io.werval.util.Strings.withoutHead;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Locale.US;
-import static org.qiweb.api.Mode.DEV;
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.withTrail;
-import static org.qiweb.util.Strings.withoutHead;
 
 /**
  * Thymeleaf Templates Plugin.

@@ -15,8 +15,8 @@
  */
 package org.qiweb.runtime.outcomes;
 
+import io.werval.api.http.ResponseHeader;
 import java.io.InputStream;
-import org.qiweb.api.http.ResponseHeader;
 
 /**
  * {@link InputStream} based Outcome for chunked output.

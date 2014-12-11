@@ -15,6 +15,8 @@
  */
 package org.qiweb.devshell;
 
+import io.werval.api.exceptions.PassivationException;
+import io.werval.api.exceptions.WervalException;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -36,12 +38,12 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
-import org.qiweb.api.exceptions.PassivationException;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.dev.DevShellSPIWrapper;
 
+import static io.werval.util.ClassLoaders.printLoadedClasses;
+import static io.werval.util.ClassLoaders.printURLs;
 import static java.util.Collections.singletonMap;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
@@ -49,8 +51,6 @@ import static org.qiweb.runtime.util.AnsiColor.cyan;
 import static org.qiweb.runtime.util.AnsiColor.red;
 import static org.qiweb.runtime.util.AnsiColor.white;
 import static org.qiweb.runtime.util.AnsiColor.yellow;
-import static org.qiweb.util.ClassLoaders.printLoadedClasses;
-import static org.qiweb.util.ClassLoaders.printURLs;
 
 /**
  * QiWeb DevShell.
@@ -126,11 +126,11 @@ public final class DevShell
     private static final String DEVSHELL_REALM_ID = "DevShellRealm";
     private static final String DEPENDENCIES_REALM_ID = "DependenciesRealm";
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
-    private static final String CONFIG_API_CLASS = "org.qiweb.api.Config";
+    private static final String CONFIG_API_CLASS = "io.werval.api.Config";
     private static final String CONFIG_RUNTIME_CLASS = "org.qiweb.runtime.ConfigInstance";
     private static final String CRYPTO_RUNTIME_CLASS = "org.qiweb.runtime.CryptoInstance";
     private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
-    private static final String MODE_API_CLASS = "org.qiweb.api.Mode";
+    private static final String MODE_API_CLASS = "io.werval.api.Mode";
     private static final String APPLICATION_SPI_CLASS = "org.qiweb.spi.ApplicationSPI";
     private static final String NETTY_SERVER_CLASS = "org.qiweb.server.netty.NettyServer";
     private static final File RUN_LOCK_FILE = new File( Paths.get( "" ).toAbsolutePath().toFile(), ".devshell.lock" );
@@ -381,8 +381,7 @@ public final class DevShell
             }
             catch( Exception ex )
             {
-                passivationErrors.add(
-                    new QiWebException( "Error while passivating HTTP Server: " + ex.getMessage(), ex )
+                passivationErrors.add(new WervalException( "Error while passivating HTTP Server: " + ex.getMessage(), ex )
                 );
             }
 
@@ -393,8 +392,7 @@ public final class DevShell
             }
             catch( Exception ex )
             {
-                passivationErrors.add(
-                    new QiWebException( "Error while stopping DevShellSPI: " + ex.getMessage(), ex )
+                passivationErrors.add(new WervalException( "Error while stopping DevShellSPI: " + ex.getMessage(), ex )
                 );
             }
 
@@ -405,8 +403,7 @@ public final class DevShell
             }
             catch( Exception ex )
             {
-                passivationErrors.add(
-                    new QiWebException( "Error while disposing Classworld Realms: " + ex.getMessage(), ex )
+                passivationErrors.add(new WervalException( "Error while disposing Classworld Realms: " + ex.getMessage(), ex )
                 );
             }
 

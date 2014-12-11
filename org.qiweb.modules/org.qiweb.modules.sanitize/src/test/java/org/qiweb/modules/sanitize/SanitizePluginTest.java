@@ -21,6 +21,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.test.QiWebRule;
 
+import static io.werval.util.Strings.EMPTY;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
@@ -28,7 +29,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.qiweb.modules.sanitize.Sanitize.ANTISAMY_ANYTHINGGOES;
-import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Sanitize Plugin Test.

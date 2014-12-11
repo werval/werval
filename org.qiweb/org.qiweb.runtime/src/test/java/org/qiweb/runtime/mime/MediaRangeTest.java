@@ -15,23 +15,23 @@
  */
 package org.qiweb.runtime.mime;
 
+import io.werval.api.mime.MediaRange;
+import io.werval.util.Couple;
 import java.util.List;
 import org.junit.Test;
-import org.qiweb.api.mime.MediaRange;
-import org.qiweb.util.Couple;
 
+import static io.werval.api.mime.MimeTypes.APPLICATION_ATOM_XML;
+import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
+import static io.werval.api.mime.MimeTypes.IMAGE_JPEG;
+import static io.werval.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.api.mime.MimeTypes.TEXT_PLAIN;
+import static io.werval.api.mime.MimeTypes.TEXT_X_C;
+import static io.werval.api.mime.MimeTypes.VIDEO_MP4;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_ATOM_XML;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypes.IMAGE_JPEG;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
-import static org.qiweb.api.mime.MimeTypes.TEXT_PLAIN;
-import static org.qiweb.api.mime.MimeTypes.TEXT_X_C;
-import static org.qiweb.api.mime.MimeTypes.VIDEO_MP4;
 
 /**
  * MediaRange Test.

@@ -17,7 +17,7 @@ package org.qiweb.server.netty;
 
 import io.netty.util.AttributeKey;
 
-import static org.qiweb.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
 
 /**
  * Attrs.

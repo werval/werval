@@ -63,7 +63,7 @@ import static org.junit.Assert.assertTrue;
     {
         assertTrue(
             artifactsOfConfiguration( "compile" ).stream().anyMatch(
-                startsWith( "org.qiweb:org.qiweb.api" )
+                startsWith( "org.qiweb:io.werval.api" )
             )
         );
         assertTrue(

@@ -15,6 +15,8 @@
  */
 package org.qiweb.devshell;
 
+import io.werval.util.LinkedMultiValueMap;
+import io.werval.util.MultiValueMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -32,11 +34,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.qiweb.spi.dev.DevShellSPI.SourceChangeListener;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatch;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
-import org.qiweb.util.LinkedMultiValueMap;
-import org.qiweb.util.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.werval.util.IllegalArguments.ensureNotNull;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
@@ -48,7 +49,6 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 import static org.qiweb.runtime.util.Iterables.first;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Java WatchService based SourceWatcher.

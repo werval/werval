@@ -10,7 +10,7 @@ buildscript {
 
 apply from: rootProject.file( '../gradle/common.gradle' )
 
-description = "QiWeb"
+description = "werval"
 
 apply plugin: 'base' // To add "clean" task to the root project.
 apply plugin: 'sonar-runner'
@@ -33,7 +33,7 @@ subprojects {
 }
 
 task mergedJavadoc( type: Javadoc, description: 'Creates Javadoc from all the projects.' ) {
-    title = 'QiWeb ' + version
+    title = 'werval ' + version
     destinationDir = new File( project.buildDir, 'merged-javadoc' )
     // Note: The closures below are executed lazily.
     source {

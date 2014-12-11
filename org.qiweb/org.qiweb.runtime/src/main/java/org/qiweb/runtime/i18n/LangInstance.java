@@ -15,12 +15,12 @@
  */
 package org.qiweb.runtime.i18n;
 
+import io.werval.api.i18n.Lang;
 import java.util.Locale;
 import java.util.Objects;
-import org.qiweb.api.i18n.Lang;
 
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
-import static org.qiweb.util.Strings.EMPTY;
+import static io.werval.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.Strings.EMPTY;
 
 /**
  * Lang Instance.

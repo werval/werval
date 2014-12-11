@@ -15,9 +15,9 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.MetaData;
 import java.util.ArrayList;
 import org.junit.Test;
-import org.qiweb.api.MetaData;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNull;

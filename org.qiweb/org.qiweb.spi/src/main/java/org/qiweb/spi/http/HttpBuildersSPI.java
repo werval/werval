@@ -15,21 +15,21 @@
  */
 package org.qiweb.spi.http;
 
+import io.werval.api.http.Cookies;
+import io.werval.api.http.FormUploads;
+import io.werval.api.http.Headers;
+import io.werval.api.http.HttpBuilders;
+import io.werval.api.http.Method;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.util.ByteSource;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.http.Cookies;
-import org.qiweb.api.http.FormUploads;
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.HttpBuilders;
-import org.qiweb.api.http.Method;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.Request;
-import org.qiweb.util.ByteSource;
 
 /**
  * HTTP API Objects Builders SPI.
  * <p>
- * Use this to create instances of HTTP API Objects found in the {@literal org.qiweb.api.http} package.
+ * Use this to create instances of HTTP API Objects found in the {@literal io.werval.api.http} package.
  * <p>
  * Typically used in unit tests running an Application.
  * <p>

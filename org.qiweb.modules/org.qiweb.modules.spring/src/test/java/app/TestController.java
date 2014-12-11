@@ -15,12 +15,12 @@
  */
 package app;
 
-import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.outcomes.Outcome;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.outcomes;
 
 /**
  * TestController.

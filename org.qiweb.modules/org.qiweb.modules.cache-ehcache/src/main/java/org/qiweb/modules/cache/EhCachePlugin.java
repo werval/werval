@@ -15,15 +15,15 @@
  */
 package org.qiweb.modules.cache;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.cache.Cache;
+import io.werval.api.cache.CachePlugin;
+import io.werval.api.exceptions.ActivationException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import net.sf.ehcache.CacheManager;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.api.cache.CachePlugin;
-import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.modules.metrics.Metrics;
 
 import static java.util.Collections.EMPTY_LIST;

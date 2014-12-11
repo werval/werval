@@ -15,12 +15,12 @@
  */
 package org.qiweb.modules.guice;
 
+import io.werval.api.Application;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.qiweb.api.Application;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
 
 /**
  * Guice Plugin.

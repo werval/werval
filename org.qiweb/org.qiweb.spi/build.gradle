@@ -7,7 +7,7 @@ description = "QiWeb SPI"
 
 dependencies {
 
-    compile project( ":org.qiweb.api" )
+    compile project( ":io.werval.api" )
 
     testCompile project( ":org.qiweb.test" )
 

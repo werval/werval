@@ -15,9 +15,9 @@
  */
 package com.acme.app;
 
-import org.qiweb.api.outcomes.Outcome;
+import io.werval.api.outcomes.Outcome;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.outcomes;
 
 public class FakeControllerInstance
     implements FakeController

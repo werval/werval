@@ -15,6 +15,13 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.Application;
+import io.werval.api.Mode;
+import io.werval.api.Plugin;
+import io.werval.api.context.Context;
+import io.werval.api.exceptions.PassivationException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.routes.Route;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -34,21 +41,14 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
-import org.qiweb.api.Application;
-import org.qiweb.api.Mode;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.exceptions.PassivationException;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.routes.RouteBuilderInstance;
 
+import static io.werval.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.Strings.EMPTY;
+import static io.werval.util.Strings.NEWLINE;
+import static io.werval.util.Strings.rightPad;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.NEWLINE;
-import static org.qiweb.util.Strings.rightPad;
 
 /**
  * Plugins Instance.
@@ -267,7 +267,7 @@ import static org.qiweb.util.Strings.rightPad;
         }
         if( !errors.isEmpty() )
         {
-            QiWebException ex = new QiWebException( "There were errors during Plugins after interaction hooks" );
+            WervalException ex = new WervalException( "There were errors during Plugins after interaction hooks" );
             for( Exception err : errors )
             {
                 ex.addSuppressed( err );
@@ -440,7 +440,7 @@ import static org.qiweb.util.Strings.rightPad;
         }
         catch( ClassNotFoundException ex )
         {
-            throw new QiWebException( "Unable to load application plugins", ex );
+            throw new WervalException( "Unable to load application plugins", ex );
         }
     }
 
@@ -475,7 +475,7 @@ import static org.qiweb.util.Strings.rightPad;
         }
         catch( ClassNotFoundException ex )
         {
-            throw new QiWebException( "Unable to load dynamic plugins", ex );
+            throw new WervalException( "Unable to load dynamic plugins", ex );
         }
     }
 
@@ -530,7 +530,7 @@ import static org.qiweb.util.Strings.rightPad;
                         // If no match, throw
                         if( match == null )
                         {
-                            throw new QiWebException( "Plugin dependency not resolved: " + dependency );
+                            throw new WervalException( "Plugin dependency not resolved: " + dependency );
                         }
                         // Add to queue so dependencies of dependency gets resolved
                         queue.addFirst( match );

@@ -22,9 +22,9 @@ import org.sitemesh.offline.SiteMeshOffline;
 import org.sitemesh.offline.directory.Directory;
 import org.sitemesh.offline.directory.InMemoryDirectory;
 
-import static org.qiweb.util.Charsets.UTF_8;
-import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.util.InputStreams.readAllAsString;
+import static io.werval.util.Charsets.UTF_8;
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
+import static io.werval.util.InputStreams.readAllAsString;
 
 /**
  * SiteMesh Helper.

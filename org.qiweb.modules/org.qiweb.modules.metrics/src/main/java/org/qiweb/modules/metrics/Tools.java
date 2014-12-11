@@ -19,21 +19,21 @@ import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.jvm.ThreadDump;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.werval.api.outcomes.Outcome;
+import io.werval.controllers.Classpath;
+import io.werval.filters.ContentSecurityPolicy;
+import io.werval.filters.NeverCached;
+import io.werval.filters.XContentTypeOptions;
+import io.werval.filters.XFrameOptions;
+import io.werval.filters.XXSSProtection;
 import java.io.ByteArrayOutputStream;
 import java.lang.management.ManagementFactory;
 import java.util.SortedMap;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.controllers.Classpath;
-import org.qiweb.filters.ContentSecurityPolicy;
-import org.qiweb.filters.NeverCached;
-import org.qiweb.filters.XContentTypeOptions;
-import org.qiweb.filters.XFrameOptions;
-import org.qiweb.filters.XXSSProtection;
 import org.qiweb.modules.json.JSON;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.plugin;
-import static org.qiweb.api.context.CurrentContext.request;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.plugin;
+import static io.werval.api.context.CurrentContext.request;
 
 /**
  * Metrics Tools.

@@ -15,18 +15,18 @@
  */
 package org.qiweb.runtime.mime;
 
+import io.werval.api.mime.MimeTypes;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
-import org.qiweb.api.mime.MimeTypes;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 import static java.util.Locale.US;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * Application MimeType instance.

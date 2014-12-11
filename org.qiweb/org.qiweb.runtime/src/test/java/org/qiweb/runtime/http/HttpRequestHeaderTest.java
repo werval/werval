@@ -15,19 +15,19 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.Headers;
+import io.werval.api.http.MutableHeaders;
+import io.werval.api.http.RequestHeader;
+import io.werval.util.Strings;
 import org.junit.Test;
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.util.Strings;
 
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.http.Headers.Names.HOST;
+import static io.werval.api.http.ProtocolVersion.HTTP_1_1;
+import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.http.Headers.Names.HOST;
-import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 
 public class HttpRequestHeaderTest
 {

@@ -15,12 +15,12 @@
  */
 package org.qiweb.modules.jpa.internal;
 
+import io.werval.util.Strings;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.persistence.logging.AbstractSessionLog;
 import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.logging.SessionLogEntry;
-import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

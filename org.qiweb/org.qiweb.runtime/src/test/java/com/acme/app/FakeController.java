@@ -15,7 +15,7 @@
  */
 package com.acme.app;
 
-import org.qiweb.api.outcomes.Outcome;
+import io.werval.api.outcomes.Outcome;
 
 public interface FakeController
 {

@@ -15,9 +15,9 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.http.Status;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.http.Status;
 import org.qiweb.spi.http.HttpBuildersSPI.RequestBuilder;
 import org.qiweb.test.QiWebRule;
 

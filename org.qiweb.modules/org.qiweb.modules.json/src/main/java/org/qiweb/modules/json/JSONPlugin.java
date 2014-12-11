@@ -18,9 +18,9 @@ package org.qiweb.modules.json;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import org.qiweb.api.Application;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
+import io.werval.api.Application;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 
 /**
  * JsonPlugin.

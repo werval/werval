@@ -23,7 +23,7 @@ public class CustomParam
     }
 
     public static class ParameterBinder
-        implements org.qiweb.api.routes.ParameterBinder<CustomParam>
+        implements io.werval.api.routes.ParameterBinder<CustomParam>
     {
 
         @Override

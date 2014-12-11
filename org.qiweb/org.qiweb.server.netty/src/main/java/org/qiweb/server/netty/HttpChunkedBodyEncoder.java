@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedInput;
 
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
-import static org.qiweb.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
 
 /**
  * Encode a ChunkedInput&lt;ByteBuf&gt; into HTTP chunks.

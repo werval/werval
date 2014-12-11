@@ -15,46 +15,46 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.Config;
+import io.werval.api.http.Cookies;
+import io.werval.api.http.Cookies.Cookie;
+import io.werval.api.http.FormUploads;
+import io.werval.api.http.Headers;
+import io.werval.api.http.Method;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.QueryString;
+import io.werval.api.http.Request;
+import io.werval.api.i18n.Langs;
+import io.werval.util.ByteSource;
+import io.werval.util.Strings;
+import io.werval.util.URLs;
 import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.Config;
-import org.qiweb.api.http.Cookies;
-import org.qiweb.api.http.Cookies.Cookie;
-import org.qiweb.api.http.FormUploads;
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.Method;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.QueryString;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.i18n.Langs;
 import org.qiweb.spi.http.HttpBuildersSPI;
-import org.qiweb.util.ByteSource;
-import org.qiweb.util.Strings;
-import org.qiweb.util.URLs;
 
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.http.Headers.Names.COOKIE;
-import static org.qiweb.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
-import static org.qiweb.api.http.Method.CONNECT;
-import static org.qiweb.api.http.Method.DELETE;
-import static org.qiweb.api.http.Method.GET;
-import static org.qiweb.api.http.Method.HEAD;
-import static org.qiweb.api.http.Method.OPTIONS;
-import static org.qiweb.api.http.Method.PATCH;
-import static org.qiweb.api.http.Method.POST;
-import static org.qiweb.api.http.Method.PUT;
-import static org.qiweb.api.http.Method.TRACE;
-import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.http.Headers.Names.COOKIE;
+import static io.werval.api.http.Headers.Names.X_HTTP_METHOD_OVERRIDE;
+import static io.werval.api.http.Method.CONNECT;
+import static io.werval.api.http.Method.DELETE;
+import static io.werval.api.http.Method.GET;
+import static io.werval.api.http.Method.HEAD;
+import static io.werval.api.http.Method.OPTIONS;
+import static io.werval.api.http.Method.PATCH;
+import static io.werval.api.http.Method.POST;
+import static io.werval.api.http.Method.PUT;
+import static io.werval.api.http.Method.TRACE;
+import static io.werval.api.http.ProtocolVersion.HTTP_1_1;
+import static io.werval.util.IllegalArguments.ensureInRange;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
 import static org.qiweb.runtime.http.RequestHeaderInstance.extractCharset;
-import static org.qiweb.util.IllegalArguments.ensureInRange;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
 
 /**
  * HTTP API Objects Builders Instance.

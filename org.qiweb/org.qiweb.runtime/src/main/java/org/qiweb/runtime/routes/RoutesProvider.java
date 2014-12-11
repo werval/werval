@@ -15,10 +15,10 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.Application;
+import io.werval.api.routes.Route;
+import io.werval.util.Reflectively;
 import java.util.List;
-import org.qiweb.api.Application;
-import org.qiweb.api.routes.Route;
-import org.qiweb.util.Reflectively;
 
 /**
  * Routes Provider.

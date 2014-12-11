@@ -15,8 +15,8 @@
  */
 package org.qiweb.spi.dev;
 
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.util.Stacktraces;
+import io.werval.api.exceptions.WervalException;
+import io.werval.util.Stacktraces;
 
 /**
  * Thrown if something goes wrong while rebuilding the Application in development mode.
@@ -24,7 +24,7 @@ import org.qiweb.util.Stacktraces;
  * See {@link DevShellSPI#rebuild()}.
  */
 public class DevShellRebuildException
-    extends QiWebException
+    extends WervalException
 {
     private final String buildLog;
 

@@ -16,6 +16,10 @@
 package org.qiweb.modules.metrics;
 
 import com.codahale.metrics.MetricRegistry;
+import io.werval.api.context.Context;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -24,12 +28,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.filters.FilterChain;
-import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Meter Metric Annotation.
@@ -51,7 +51,7 @@ public @interface Meter
      * Meter Metric Filter.
      */
     public static class Filter
-        implements org.qiweb.api.filters.Filter<Meter>
+        implements io.werval.api.filters.Filter<Meter>
     {
         @Override
         public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Meter> annotation )

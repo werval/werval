@@ -15,14 +15,14 @@
  */
 package org.qiweb.runtime.filters;
 
+import io.werval.api.context.Context;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.filters.FilterChain;
-import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class FiltersTest
 {
     public static class Filter
-        implements org.qiweb.api.filters.Filter<Void>
+        implements io.werval.api.filters.Filter<Void>
     {
         @Override
         public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> annotation )
@@ -47,7 +47,7 @@ public class FiltersTest
         @FilterWith( Filter.class )
         public Outcome filtered()
         {
-            return org.qiweb.api.context.CurrentContext.outcomes().ok().build();
+            return io.werval.api.context.CurrentContext.outcomes().ok().build();
         }
     }
 

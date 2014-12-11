@@ -15,9 +15,9 @@
  */
 package org.qiweb.spi.server;
 
+import io.werval.util.Reflectively;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
-import org.qiweb.util.Reflectively;
 
 /**
  * QiWeb Http Server.
@@ -48,7 +48,7 @@ public interface HttpServer
      * Activate the QiWeb Http Server.
      *
      * @throws IllegalStateException                   if ApplicationSPI is not set
-     * @throws org.qiweb.api.exceptions.QiWebException if unable to activate HttpServer
+     * @throws io.werval.api.exceptions.QiWebException if unable to activate HttpServer
      */
     @Reflectively.Invoked( by = "DevShell" )
     void activate();
@@ -56,7 +56,7 @@ public interface HttpServer
     /**
      * Passivate the QiWeb Http Server.
      *
-     * @throws org.qiweb.api.exceptions.QiWebException if unable to passivate HttpServer
+     * @throws io.werval.api.exceptions.QiWebException if unable to passivate HttpServer
      */
     @Reflectively.Invoked( by = "DevShell" )
     void passivate();

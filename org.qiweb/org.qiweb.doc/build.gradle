@@ -1,14 +1,14 @@
 
-description = "QiWeb Documentation"
+description = "Werval Documentation"
 
 // The produced JAR contains:
-// - QiWeb Core documentation and javadocs
+// - Werval Core documentation and javadocs
 // - a Plugin for development mode that serve the core and dynamically discovered modules documentations at /@doc
 //
 // It is made available to application classloader by DevShell frontends (CLI, Gradle & Maven plugins).
 
 dependencies {
-    compile project( ":org.qiweb.api" )
+    compile project( ":io.werval.api" )
     compile libs.sitemesh
 
     testCompile project( ":org.qiweb.test" )
@@ -44,7 +44,7 @@ task fetchHoconDoc(type: Exec) {
                 content += """:jbake-type: page
 :title: HOCON (Human-Optimized Config Object Notation)
 :description: HOCON format specification
-:keywords: qiweb, documentation, configuration, hocon
+:keywords: werval, documentation, configuration, hocon
 :toc: right
 :toc-title: HOCON
 
@@ -76,7 +76,7 @@ toc::[]
 // Included projects
 def embeddedJavadocProjects() {
     rootProject.subprojects.findAll { p ->
-        p.name == 'org.qiweb.api' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test'
+        p.name == 'io.werval.api' || p.name == 'org.qiweb.spi' || p.name == 'org.qiweb.test'
     }
 }
 
@@ -91,7 +91,7 @@ dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
 // Javadoc Task
 def javadocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/embedded-javadoc"
 task generateEmbeddedJavadoc( type: Javadoc ) {
-    title = "QiWeb API Reference (${version})"
+    title = "Werval API Reference (${version})"
     classpath = files( embeddedJavadocProjects().collect { p -> p.sourceSets.main.compileClasspath } )
     source = embeddedJavadocProjects().collect { p -> p.sourceSets.main.allJava }
     exclude "**/internal/**"
@@ -105,10 +105,10 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
         "http://junit.org/apidocs/"
     )
     options.group( [
-            "API":               [ "org.qiweb.api",           "org.qiweb.api.*"           ],
-            "Controllers":       [ "org.qiweb.controllers",   "org.qiweb.controllers.*"   ],
-            "Filters":           [ "org.qiweb.filters",       "org.qiweb.filters.*"       ],
-            "Utilities":         [ "org.qiweb.util",          "org.qiweb.util.*"          ],
+            "API":               [ "io.werval.api",           "io.werval.api.*"           ],
+            "Controllers":       [ "io.werval.controllers",   "io.werval.controllers.*"   ],
+            "Filters":           [ "io.werval.filters",       "io.werval.filters.*"       ],
+            "Utilities":         [ "io.werval.util",          "io.werval.util.*"          ],
             "Test Support":      [ "org.qiweb.test",          "org.qiweb.test.*"          ],
             "SPI":               [ "org.qiweb.spi",           "org.qiweb.spi.*"           ]
         ] )

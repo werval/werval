@@ -15,13 +15,13 @@
  */
 package org.qiweb.modules.jpa;
 
+import io.werval.api.outcomes.Outcome;
 import java.util.concurrent.CompletableFuture;
 import javax.persistence.EntityManager;
-import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.context.CurrentContext.application;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.plugin;
+import static io.werval.api.context.CurrentContext.application;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.plugin;
 
 /**
  * Controller under test.

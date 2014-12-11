@@ -15,15 +15,15 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.MutableCookies;
+import io.werval.api.http.MutableHeaders;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.ResponseHeader;
+import io.werval.api.http.Status;
 import java.io.Serializable;
-import org.qiweb.api.http.MutableCookies;
-import org.qiweb.api.http.MutableHeaders;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.api.http.Status;
 
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 
 /**
  * Response Header Instance.

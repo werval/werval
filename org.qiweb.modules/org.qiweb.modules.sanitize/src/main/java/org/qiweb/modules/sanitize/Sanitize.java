@@ -17,6 +17,7 @@ package org.qiweb.modules.sanitize;
 
 import com.codahale.metrics.Timer;
 import com.google.json.JsonSanitizer;
+import io.werval.api.i18n.Lang;
 import java.net.URL;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -27,14 +28,13 @@ import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.InternalPolicy;
 import org.owasp.validator.html.Policy;
-import org.qiweb.api.i18n.Lang;
 import org.qiweb.modules.metrics.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.isEmpty;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.Strings.EMPTY;
+import static io.werval.util.Strings.isEmpty;
 
 /**
  * Sanitize and encode.

@@ -27,12 +27,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static io.werval.api.BuildVersion.VERSION;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.qiweb.api.BuildVersion.VERSION;
 
 public class QiWebModulePluginIntegTest
     extends AbstractQiWebIntegTest

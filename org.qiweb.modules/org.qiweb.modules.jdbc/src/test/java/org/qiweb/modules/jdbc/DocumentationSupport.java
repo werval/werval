@@ -15,10 +15,10 @@
  */
 package org.qiweb.modules.jdbc;
 
+import io.werval.api.outcomes.Outcome;
 import java.sql.*;
-import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.context.CurrentContext.*;
+import static io.werval.api.context.CurrentContext.*;
 
 public class DocumentationSupport
 {

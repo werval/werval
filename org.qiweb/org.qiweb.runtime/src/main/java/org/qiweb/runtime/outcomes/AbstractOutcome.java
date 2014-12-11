@@ -15,9 +15,9 @@
  */
 package org.qiweb.runtime.outcomes;
 
+import io.werval.api.http.ResponseHeader;
+import io.werval.api.outcomes.Outcome;
 import java.io.Serializable;
-import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.api.outcomes.Outcome;
 
 /**
  * Base Outcome class.

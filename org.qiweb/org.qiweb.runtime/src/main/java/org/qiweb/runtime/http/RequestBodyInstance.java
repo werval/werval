@@ -15,17 +15,17 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.FormAttributes;
+import io.werval.api.http.FormUploads;
+import io.werval.api.http.FormUploads.Upload;
+import io.werval.api.http.RequestBody;
+import io.werval.util.ByteSource;
+import io.werval.util.Strings;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.http.FormAttributes;
-import org.qiweb.api.http.FormUploads;
-import org.qiweb.api.http.FormUploads.Upload;
-import org.qiweb.api.http.RequestBody;
-import org.qiweb.util.ByteSource;
-import org.qiweb.util.Strings;
 
 import static java.util.Collections.emptyMap;
 

@@ -15,14 +15,14 @@
  */
 package org.qiweb.modules.cache;
 
+import io.werval.util.Serializables;
 import java.util.UUID;
 import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.modules.metrics.internal.CacheMetricsHandler;
 import org.qiweb.spi.cache.CacheAdapter;
-import org.qiweb.util.Serializables;
 import redis.clients.jedis.Jedis;
 
-import static org.qiweb.util.Charsets.UTF_8;
+import static io.werval.util.Charsets.UTF_8;
 
 /**
  * Redis Cache.

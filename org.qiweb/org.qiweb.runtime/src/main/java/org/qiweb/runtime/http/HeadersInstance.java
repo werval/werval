@@ -15,23 +15,23 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.Headers;
+import io.werval.api.http.MutableHeaders;
+import io.werval.util.Strings;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.MutableHeaders;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.util.Strings;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Instance of HTTP Headers.

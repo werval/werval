@@ -15,8 +15,8 @@
  */
 package org.qiweb.runtime;
 
-import org.qiweb.api.Plugin;
-import org.qiweb.api.cache.Cache;
+import io.werval.api.Plugin;
+import io.werval.api.cache.Cache;
 import org.qiweb.spi.cache.MapCachePlugin;
 
 /**

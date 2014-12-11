@@ -15,19 +15,19 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.RequestHeader;
+import io.werval.api.outcomes.Outcome;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.request;
+import static io.werval.api.http.Headers.Names.X_FORWARDED_FOR;
 import static org.hamcrest.Matchers.equalTo;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.request;
-import static org.qiweb.api.http.Headers.Names.X_FORWARDED_FOR;
 
 /**
  * Assert default {@link RequestHeader#remoteAddress()} behaviour.

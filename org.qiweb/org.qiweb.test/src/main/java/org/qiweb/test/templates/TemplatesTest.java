@@ -15,17 +15,17 @@
  */
 package org.qiweb.test.templates;
 
+import io.werval.api.templates.Template;
+import io.werval.api.templates.Templates;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.Test;
-import org.qiweb.api.templates.Template;
-import org.qiweb.api.templates.Templates;
 import org.qiweb.test.QiWebTest;
 
+import static io.werval.util.Maps.fromMap;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.util.Maps.fromMap;
 
 /**
  * Templates Test.

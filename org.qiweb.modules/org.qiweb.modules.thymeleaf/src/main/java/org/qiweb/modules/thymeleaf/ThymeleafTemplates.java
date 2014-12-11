@@ -15,11 +15,11 @@
  */
 package org.qiweb.modules.thymeleaf;
 
+import io.werval.api.exceptions.TemplateException;
+import io.werval.api.templates.Template;
+import io.werval.api.templates.Templates;
 import java.io.Writer;
 import java.util.Map;
-import org.qiweb.api.exceptions.TemplateException;
-import org.qiweb.api.templates.Template;
-import org.qiweb.api.templates.Templates;
 import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;

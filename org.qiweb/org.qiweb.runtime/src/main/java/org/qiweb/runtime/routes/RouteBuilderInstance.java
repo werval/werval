@@ -15,6 +15,16 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.Application;
+import io.werval.api.exceptions.IllegalRouteException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.http.Method;
+import io.werval.api.routes.ControllerCallRecorder;
+import io.werval.api.routes.ControllerParams;
+import io.werval.api.routes.ControllerParams.Param;
+import io.werval.api.routes.ControllerParams.ParamValue;
+import io.werval.api.routes.Route;
+import io.werval.api.routes.internal.RouteBuilderContext;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -27,32 +37,22 @@ import java.util.Scanner;
 import java.util.Set;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import org.qiweb.api.Application;
-import org.qiweb.api.exceptions.IllegalRouteException;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.http.Method;
-import org.qiweb.api.routes.ControllerCallRecorder;
-import org.qiweb.api.routes.ControllerParams;
-import org.qiweb.api.routes.ControllerParams.Param;
-import org.qiweb.api.routes.ControllerParams.ParamValue;
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.internal.RouteBuilderContext;
 import org.qiweb.runtime.util.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.werval.util.Strings.EMPTY;
+import static io.werval.util.Strings.isEmpty;
+import static io.werval.util.Strings.withHead;
+import static io.werval.util.Strings.withoutTrail;
 import static java.util.Collections.EMPTY_SET;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_ROUTES_IMPORTEDPACKAGES;
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.isEmpty;
-import static org.qiweb.util.Strings.withHead;
-import static org.qiweb.util.Strings.withoutTrail;
 
 /**
  * RouteBuilder Instance.
  */
 public class RouteBuilderInstance
-    implements org.qiweb.api.routes.RouteBuilder
+    implements io.werval.api.routes.RouteBuilder
 {
     private final Application app;
     private final String pathPrefix;
@@ -60,7 +60,7 @@ public class RouteBuilderInstance
     /**
      * Create a new RouteBuilder instance that cannot parse.
      *
-     * See {@link #RouteBuilderInstance(org.qiweb.api.Application)}.
+     * See {@link #RouteBuilderInstance(io.werval.api.Application)}.
      */
     public RouteBuilderInstance()
     {
@@ -70,7 +70,7 @@ public class RouteBuilderInstance
     /**
      * Create a new RouteBuilder instance that cannot parse and apply a path prefix to all built routes.
      *
-     * See {@link #RouteBuilderInstance(org.qiweb.api.Application)}.
+     * See {@link #RouteBuilderInstance(io.werval.api.Application)}.
      *
      * @param pathPrefix Path prefix
      */
@@ -211,7 +211,7 @@ public class RouteBuilderInstance
                 }
                 catch( Exception ex )
                 {
-                    throw new QiWebException(
+                    throw new WervalException(
                         "Error while recording Controller call for Route building: " + ex.getMessage(),
                         ex
                     );
@@ -308,7 +308,7 @@ public class RouteBuilderInstance
             }
             catch( InstantiationException | IllegalAccessException ex )
             {
-                throw new QiWebException( "Unable to record controller method in RouteBuilder", ex );
+                throw new WervalException( "Unable to record controller method in RouteBuilder", ex );
             }
             finally
             {

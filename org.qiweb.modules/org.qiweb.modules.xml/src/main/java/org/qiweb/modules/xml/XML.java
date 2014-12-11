@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.xml;
 
+import io.werval.api.context.CurrentContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,13 +50,12 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.qiweb.api.context.CurrentContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static org.qiweb.util.Maps.fromMap;
+import static io.werval.util.Maps.fromMap;
 
 /**
  * XML.

@@ -16,24 +16,24 @@
 package org.qiweb.modules.metrics;
 
 import com.codahale.metrics.MetricRegistry;
+import io.werval.api.outcomes.Outcome;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.plugin;
+import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
+import static io.werval.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.api.mime.MimeTypes.TEXT_PLAIN;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.plugin;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
-import static org.qiweb.api.mime.MimeTypes.TEXT_PLAIN;
 
 /**
  * Metrics Test.
@@ -42,9 +42,9 @@ public class MetricsTest
 {
     @ClassRule
     public static QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
-        "GET / org.qiweb.controllers.Default.ok\n"
-        + "GET /redir org.qiweb.controllers.Default.seeOther( String url = / )\n"
-        + "GET /error org.qiweb.controllers.Default.internalServerError\n"
+        "GET / io.werval.controllers.Default.ok\n"
+        + "GET /redir io.werval.controllers.Default.seeOther( String url = / )\n"
+        + "GET /error io.werval.controllers.Default.internalServerError\n"
         + "GET /unknown org.qiweb.modules.metrics.MetricsTest$Controller.unknown\n"
         + "GET /@metrics org.qiweb.modules.metrics.Tools.devShellIndex\n"
         + "GET /@metrics/metrics org.qiweb.modules.metrics.Tools.metrics\n"

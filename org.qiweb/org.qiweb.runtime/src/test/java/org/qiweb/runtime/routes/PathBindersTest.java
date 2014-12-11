@@ -16,6 +16,8 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.CustomParam;
+import io.werval.api.routes.ParameterBinder;
+import io.werval.api.routes.ParameterBinders;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -39,8 +41,6 @@ import java.util.Locale;
 import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiweb.api.routes.ParameterBinder;
-import org.qiweb.api.routes.ParameterBinders;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

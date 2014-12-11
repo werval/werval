@@ -15,27 +15,27 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.Application;
+import io.werval.api.Mode;
+import io.werval.api.http.RequestHeader;
+import io.werval.api.routes.Route;
 import com.acme.app.FakeController;
 import java.util.Map;
 import org.junit.Test;
-import org.qiweb.api.Application;
-import org.qiweb.api.Mode;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.CookiesInstance;
 import org.qiweb.runtime.http.HeadersInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 import org.qiweb.runtime.http.RequestHeaderInstance;
 
+import static io.werval.api.http.Method.GET;
+import static io.werval.api.http.ProtocolVersion.HTTP_1_1;
+import static io.werval.api.routes.RouteBuilder.p;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.http.Method.GET;
-import static org.qiweb.api.http.ProtocolVersion.HTTP_1_1;
-import static org.qiweb.api.routes.RouteBuilder.p;
 
 /**
  * Assert wildcard in routes behaviour.

@@ -15,6 +15,19 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.Cookies;
+import io.werval.api.http.Headers;
+import io.werval.api.http.Method;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.QueryString;
+import io.werval.api.http.RequestHeader;
+import io.werval.api.i18n.Lang;
+import io.werval.api.i18n.Langs;
+import io.werval.api.mime.MediaRange;
+import io.werval.api.routes.ParameterBinders;
+import io.werval.api.routes.Route;
+import io.werval.util.Couple;
+import io.werval.util.Strings;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,38 +36,25 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.qiweb.api.http.Cookies;
-import org.qiweb.api.http.Headers;
-import org.qiweb.api.http.Method;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.QueryString;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.i18n.Lang;
-import org.qiweb.api.i18n.Langs;
-import org.qiweb.api.mime.MediaRange;
-import org.qiweb.api.routes.ParameterBinders;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.exceptions.BadRequestException;
 import org.qiweb.runtime.mime.MediaRangeInstance;
-import org.qiweb.util.Couple;
-import org.qiweb.util.Strings;
 
+import static io.werval.api.http.Headers.Names.ACCEPT;
+import static io.werval.api.http.Headers.Names.ACCEPT_LANGUAGE;
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.http.Headers.Names.HOST;
+import static io.werval.api.http.Headers.Names.X_FORWARDED_FOR;
+import static io.werval.api.http.Headers.Values.CLOSE;
+import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
+import static io.werval.util.Strings.EMPTY;
+import static io.werval.util.Strings.isEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
-import static org.qiweb.api.http.Headers.Names.ACCEPT;
-import static org.qiweb.api.http.Headers.Names.ACCEPT_LANGUAGE;
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.http.Headers.Names.HOST;
-import static org.qiweb.api.http.Headers.Names.X_FORWARDED_FOR;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 import static org.qiweb.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.isEmpty;
 
 /**
  * RequestHeader instance.

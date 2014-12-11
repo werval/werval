@@ -15,9 +15,9 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.Application;
+import io.werval.api.routes.Route;
 import java.util.List;
-import org.qiweb.api.Application;
-import org.qiweb.api.routes.Route;
 
 /**
  * RouteProvider that parse routes from a string.

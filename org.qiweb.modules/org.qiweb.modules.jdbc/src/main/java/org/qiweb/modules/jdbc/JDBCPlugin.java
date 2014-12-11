@@ -17,6 +17,10 @@ package org.qiweb.modules.jdbc;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Driver;
@@ -30,16 +34,12 @@ import java.util.Map;
 import java.util.Set;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.modules.jndi.JNDI;
 import org.qiweb.modules.metrics.Metrics;
 
-import static org.qiweb.util.Strings.EMPTY;
-import static org.qiweb.util.Strings.isEmpty;
-import static org.qiweb.util.Strings.join;
+import static io.werval.util.Strings.EMPTY;
+import static io.werval.util.Strings.isEmpty;
+import static io.werval.util.Strings.join;
 
 /**
  * JDBC Plugin that manage DataSources using HikariCP pools.

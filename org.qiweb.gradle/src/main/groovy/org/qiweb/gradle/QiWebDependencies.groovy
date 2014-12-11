@@ -34,7 +34,7 @@ class QiWebDependencies
 
     Dependency getApi()
     {
-        dependency( "api" )
+        dependencies.create( "${GROUP}:io.werval.api:$BuildVersion.VERSION" )
     }
 
     Dependency getSpi()

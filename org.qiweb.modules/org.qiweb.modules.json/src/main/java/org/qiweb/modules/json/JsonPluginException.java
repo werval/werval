@@ -15,14 +15,14 @@
  */
 package org.qiweb.modules.json;
 
+import io.werval.api.exceptions.WervalException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * JsonPluginException.
  */
 public class JsonPluginException
-    extends QiWebException
+    extends WervalException
 {
     /* package */ JsonPluginException( JsonProcessingException cause )
     {

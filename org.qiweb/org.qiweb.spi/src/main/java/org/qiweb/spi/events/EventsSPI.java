@@ -15,8 +15,8 @@
  */
 package org.qiweb.spi.events;
 
-import org.qiweb.api.events.Events;
-import org.qiweb.api.events.Event;
+import io.werval.api.events.Events;
+import io.werval.api.events.Event;
 
 /**
  * Application Events SPI.

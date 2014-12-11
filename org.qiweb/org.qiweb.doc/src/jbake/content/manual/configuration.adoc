@@ -15,7 +15,7 @@ All configuration properties are available to your controllers and filters via t
 
 [source,java]
 ----
-import static org.qiweb.api.context.CurrentContext.*;
+import static io.werval.api.context.CurrentContext.*;
 public MyController {
   public Outcome aControllerMethod() {
     String configValue = application().config().string("your.custom.config.key");

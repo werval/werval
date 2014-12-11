@@ -7,7 +7,7 @@ controllers/filters.
 
 TIP: To use a plugin in your Application it is enough for it to be on the classpath and declared in your configuration.
 
-Writing a plugin is as easy as implementing `org.qiweb.api.Plugin`.
+Writing a plugin is as easy as implementing `io.werval.api.Plugin`.
 As an example is worth a thousand words, we'll go through the process of writing a *Hello World* Plugin.
 
 Our `HelloWorldPlugin` will expose a `HelloWorld` API to the Application code;
@@ -27,7 +27,7 @@ and by so be declared that way;
 
 [source,java]
 ----
-public class HelloWorldPlugin implements org.qiweb.api.Plugin<HelloWorld>
+public class HelloWorldPlugin implements io.werval.api.Plugin<HelloWorld>
 {
     private final HelloWorld api = new HelloWorld();
 

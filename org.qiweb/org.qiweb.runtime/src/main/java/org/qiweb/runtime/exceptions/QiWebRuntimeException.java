@@ -15,13 +15,13 @@
  */
 package org.qiweb.runtime.exceptions;
 
-import org.qiweb.api.exceptions.QiWebException;
+import io.werval.api.exceptions.WervalException;
 
 /**
  * Thrown when an unexpected error occurs inside the QiWeb Runtime.
  */
 public class QiWebRuntimeException
-    extends QiWebException
+    extends WervalException
 {
     private static final long serialVersionUID = 1L;
 

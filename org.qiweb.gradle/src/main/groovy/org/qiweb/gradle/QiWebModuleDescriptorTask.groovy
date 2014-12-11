@@ -24,7 +24,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
-import static org.qiweb.util.Strings.isEmpty;
+import static io.werval.util.Strings.isEmpty;
 
 /**
  * QiWeb Module Descriptor Task.

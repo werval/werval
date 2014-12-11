@@ -15,6 +15,7 @@
  */
 package org.qiweb.gradle;
 
+import io.werval.util.InputStreams;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -35,17 +36,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.qiweb.runtime.util.Holder;
-import org.qiweb.util.InputStreams;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static io.werval.api.BuildVersion.VERSION;
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.BuildVersion.VERSION;
-import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
 
 /**
  * Assert that the {@literal secret}, {@literal start} and {@literal devshell} tasks execute successfuly.
@@ -109,9 +109,9 @@ public class QiWebApplicationPluginIntegTest
         CONTROLLER
         = "\n"
           + "package controllers;\n"
-          + "import org.qiweb.api.outcomes.Outcome;\n"
-          + "import static org.qiweb.api.context.CurrentContext.application;\n"
-          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "import io.werval.api.outcomes.Outcome;\n"
+          + "import static io.werval.api.context.CurrentContext.application;\n"
+          + "import static io.werval.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"
@@ -122,8 +122,8 @@ public class QiWebApplicationPluginIntegTest
         CONTROLLER_CHANGED
         = "\n"
           + "package controllers;\n"
-          + "import org.qiweb.api.outcomes.Outcome;\n"
-          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "import io.werval.api.outcomes.Outcome;\n"
+          + "import static io.werval.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"
@@ -134,8 +134,8 @@ public class QiWebApplicationPluginIntegTest
         CONTROLLER_EXCEPTIONAL
         = "\n"
           + "package controllers;\n"
-          + "import org.qiweb.api.outcomes.Outcome;\n"
-          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "import io.werval.api.outcomes.Outcome;\n"
+          + "import static io.werval.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"
@@ -146,8 +146,8 @@ public class QiWebApplicationPluginIntegTest
         CONTROLLER_BUILD_ERROR
         = "\n"
           + "package controllers;\n"
-          + "import org.qiweb.api.outcomes.Outcome;\n"
-          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "import io.werval.api.outcomes.Outcome;\n"
+          + "import static io.werval.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"

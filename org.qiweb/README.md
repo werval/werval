@@ -1,2 +1,2 @@
-# QiWeb Core
+# werval core
 

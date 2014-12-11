@@ -15,12 +15,12 @@
  */
 package org.qiweb.runtime.events;
 
+import io.werval.api.events.Event;
+import io.werval.api.events.Registration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
-import org.qiweb.api.events.Event;
-import org.qiweb.api.events.Registration;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.events.EventsSPI;
 

@@ -20,24 +20,24 @@ import java.util.stream.Stream;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
 /**
- * QiWeb Versions Utilities.
+ * Werval Versions Utilities.
  */
 public final class Versions
 {
     /**
-     * Ensure that QiWeb API, SPI and Runtime versions are equals.
+     * Ensure that werval api, spi and runtime versions are equals.
      */
     public static void ensureQiWebComponentsVersions()
     {
         Stream<String> versions = Arrays.asList(
-            org.qiweb.api.BuildVersion.VERSION, org.qiweb.spi.BuildVersion.VERSION
+            io.werval.api.BuildVersion.VERSION, org.qiweb.spi.BuildVersion.VERSION
         ).stream();
         if( !versions.allMatch( v -> v.equals( org.qiweb.runtime.BuildVersion.VERSION ) ) )
         {
             throw new QiWebRuntimeException(
                 String.format(
-                    "QiWeb Core classpath mismatch: org.qiweb.api:%s org.qiweb.spi:%s org.qiweb.runtime:%s",
-                    org.qiweb.api.BuildVersion.VERSION,
+                    "Werval Core classpath mismatch: io.werval.api:%s io.werval.spi:%s io.werval.runtime:%s",
+                    io.werval.api.BuildVersion.VERSION,
                     org.qiweb.spi.BuildVersion.VERSION,
                     org.qiweb.runtime.BuildVersion.VERSION
                 )

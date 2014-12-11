@@ -1,5 +1,5 @@
 
-// Apply common qiweb publication build logic
+// Apply common werval publication build logic
 apply from: rootProject.file( '../gradle/publication.gradle' )
 apply from: rootProject.file( '../gradle/repositories.gradle' )
 apply from: rootProject.file( '../gradle/libraries.gradle' )

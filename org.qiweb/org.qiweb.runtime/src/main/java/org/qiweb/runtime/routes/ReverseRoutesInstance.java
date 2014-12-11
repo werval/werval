@@ -15,6 +15,14 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.Application;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.exceptions.RouteNotFoundException;
+import io.werval.api.http.Method;
+import io.werval.api.routes.ControllerCallRecorder;
+import io.werval.api.routes.ReverseRoute;
+import io.werval.api.routes.ReverseRoutes;
+import io.werval.api.routes.Route;
 import java.lang.reflect.InvocationHandler;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -23,25 +31,17 @@ import java.util.stream.Collectors;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
-import org.qiweb.api.Application;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.exceptions.RouteNotFoundException;
-import org.qiweb.api.http.Method;
-import org.qiweb.api.routes.ControllerCallRecorder;
-import org.qiweb.api.routes.ReverseRoute;
-import org.qiweb.api.routes.ReverseRoutes;
-import org.qiweb.api.routes.Route;
 
-import static org.qiweb.api.http.Method.CONNECT;
-import static org.qiweb.api.http.Method.DELETE;
-import static org.qiweb.api.http.Method.GET;
-import static org.qiweb.api.http.Method.HEAD;
-import static org.qiweb.api.http.Method.OPTIONS;
-import static org.qiweb.api.http.Method.PATCH;
-import static org.qiweb.api.http.Method.POST;
-import static org.qiweb.api.http.Method.PUT;
-import static org.qiweb.api.http.Method.TRACE;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
+import static io.werval.api.http.Method.CONNECT;
+import static io.werval.api.http.Method.DELETE;
+import static io.werval.api.http.Method.GET;
+import static io.werval.api.http.Method.HEAD;
+import static io.werval.api.http.Method.OPTIONS;
+import static io.werval.api.http.Method.PATCH;
+import static io.werval.api.http.Method.POST;
+import static io.werval.api.http.Method.PUT;
+import static io.werval.api.http.Method.TRACE;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 
 public class ReverseRoutesInstance
     implements ReverseRoutes
@@ -144,7 +144,7 @@ public class ReverseRoutesInstance
             }
             catch( InstantiationException | IllegalAccessException ex )
             {
-                throw new QiWebException( "Unable to reverse route", ex );
+                throw new WervalException( "Unable to reverse route", ex );
             }
         }
 
@@ -155,7 +155,7 @@ public class ReverseRoutesInstance
         }
         catch( Exception ex )
         {
-            throw new QiWebException(
+            throw new WervalException(
                 "Error while recording Controller call for Reverse routing: " + ex.getMessage(),
                 ex
             );

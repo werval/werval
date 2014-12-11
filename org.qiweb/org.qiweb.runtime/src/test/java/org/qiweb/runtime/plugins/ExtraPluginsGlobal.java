@@ -15,9 +15,9 @@
  */
 package org.qiweb.runtime.plugins;
 
+import io.werval.api.Global;
+import io.werval.api.Plugin;
 import java.util.List;
-import org.qiweb.api.Global;
-import org.qiweb.api.Plugin;
 
 import static java.util.Collections.singletonList;
 

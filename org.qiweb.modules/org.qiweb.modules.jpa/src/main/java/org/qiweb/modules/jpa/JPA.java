@@ -15,6 +15,14 @@
  */
 package org.qiweb.modules.jpa;
 
+import io.werval.api.Mode;
+import io.werval.api.context.Context;
+import io.werval.api.context.CurrentContext;
+import io.werval.api.filters.Filter;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
+import io.werval.util.Strings;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -32,24 +40,16 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUtil;
-import org.qiweb.api.Mode;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.context.CurrentContext;
-import org.qiweb.api.filters.Filter;
-import org.qiweb.api.filters.FilterChain;
-import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.modules.jpa.internal.MetricsSessionCustomizer;
 import org.qiweb.modules.jpa.internal.Slf4jSessionLogger;
 import org.qiweb.modules.metrics.Metrics;
-import org.qiweb.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.Mode.DEV;
-import static org.qiweb.api.Mode.TEST;
+import static io.werval.api.Mode.DEV;
+import static io.werval.api.Mode.TEST;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static org.qiweb.modules.jpa.JPAContext.METADATA_CONTEXT_KEY;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * JPA 2 Plugin API.

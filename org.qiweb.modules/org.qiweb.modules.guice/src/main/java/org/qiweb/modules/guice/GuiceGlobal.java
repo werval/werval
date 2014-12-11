@@ -15,9 +15,9 @@
  */
 package org.qiweb.modules.guice;
 
+import io.werval.api.Application;
+import io.werval.api.Global;
 import com.google.inject.Injector;
-import org.qiweb.api.Application;
-import org.qiweb.api.Global;
 
 /**
  * GuiceGlobal.

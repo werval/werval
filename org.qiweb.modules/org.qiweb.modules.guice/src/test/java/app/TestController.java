@@ -15,11 +15,11 @@
  */
 package app;
 
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
 import javax.inject.Inject;
-import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.outcomes.Outcome;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.outcomes;
 
 /**
  * TestController.

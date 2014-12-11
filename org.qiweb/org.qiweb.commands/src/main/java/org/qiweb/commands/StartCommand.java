@@ -15,6 +15,7 @@
  */
 package org.qiweb.commands;
 
+import io.werval.api.exceptions.WervalException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -29,10 +30,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.qiweb.api.exceptions.QiWebException;
 
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 
 /**
  * Start Command.
@@ -142,19 +142,19 @@ public class StartCommand
             int status = process.waitFor();
             if( status != 0 )
             {
-                throw new QiWebException(
+                throw new WervalException(
                     "An exception occured while executing the QiWeb Application, status was: " + status
                 );
             }
         }
         catch( IOException ex )
         {
-            throw new QiWebException( "An exception occured while executing the QiWeb Application.", ex );
+            throw new WervalException( "An exception occured while executing the QiWeb Application.", ex );
         }
         catch( InterruptedException ex )
         {
             Thread.interrupted();
-            throw new QiWebException( "An exception occured while executing the QiWeb Application.", ex );
+            throw new WervalException( "An exception occured while executing the QiWeb Application.", ex );
         }
     }
 
@@ -219,7 +219,7 @@ public class StartCommand
         {
             if( threadGroup.uncaughtException != null )
             {
-                throw new QiWebException(
+                throw new WervalException(
                     "An exception occured while executing the QiWeb Application. "
                     + threadGroup.uncaughtException.getMessage(),
                     threadGroup.uncaughtException

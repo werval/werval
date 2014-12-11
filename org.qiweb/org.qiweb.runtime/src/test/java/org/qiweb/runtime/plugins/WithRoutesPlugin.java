@@ -15,17 +15,17 @@
  */
 package org.qiweb.runtime.plugins;
 
+import io.werval.api.Mode;
+import io.werval.api.Plugin;
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.routes.Route;
+import io.werval.api.routes.RouteBuilder;
 import java.io.IOException;
 import java.util.List;
-import org.qiweb.api.Mode;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.Route;
-import org.qiweb.api.routes.RouteBuilder;
 
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.routes.RouteBuilder.p;
 import static java.util.Collections.singletonList;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.routes.RouteBuilder.p;
 
 /**
  * WithRoutesPlugin.

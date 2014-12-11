@@ -15,10 +15,10 @@
  */
 package org.qiweb.runtime.outcomes;
 
-import org.qiweb.api.http.ResponseHeader;
-import org.qiweb.util.ByteSource;
+import io.werval.api.http.ResponseHeader;
+import io.werval.util.ByteSource;
 
-import static org.qiweb.util.ByteSource.EMPTY_BYTES;
+import static io.werval.util.ByteSource.EMPTY_BYTES;
 
 /**
  * Simple {@link ByteSource} based Outcome.

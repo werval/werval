@@ -29,8 +29,8 @@ import org.qiweb.spi.dev.DevShellRebuildException;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatcher;
 import org.qiweb.spi.dev.DevShellSPIAdapter;
 
-import static org.qiweb.util.Charsets.UTF_8;
-import static org.qiweb.util.Strings.hasText;
+import static io.werval.util.Charsets.UTF_8;
+import static io.werval.util.Strings.hasText;
 
 /**
  * Gradle DevShellSPI implementation.

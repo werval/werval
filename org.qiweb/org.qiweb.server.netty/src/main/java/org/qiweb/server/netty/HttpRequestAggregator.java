@@ -29,6 +29,9 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.werval.api.events.HttpEvent;
+import io.werval.util.IdentityGenerator;
+import io.werval.util.UUIDIdentityGenerator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,11 +39,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.api.events.HttpEvent;
 import org.qiweb.spi.events.EventsSPI;
 import org.qiweb.spi.server.HttpServerHelper;
-import org.qiweb.util.IdentityGenerator;
-import org.qiweb.util.UUIDIdentityGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,12 +50,12 @@ import static io.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static io.netty.handler.codec.http.HttpHeaders.removeTransferEncodingChunked;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.http.Headers.Values.CLOSE;
+import static io.werval.util.Charsets.US_ASCII;
 import static java.util.Locale.US;
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Names.CONTENT_LENGTH;
-import static org.qiweb.api.http.Headers.Names.CONTENT_TYPE;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.util.Charsets.US_ASCII;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.

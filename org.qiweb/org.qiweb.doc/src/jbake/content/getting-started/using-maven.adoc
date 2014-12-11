@@ -149,7 +149,7 @@ Here is what you'll find inside:
     <dependencies>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.api</artifactId>
+            <artifactId>io.werval.api</artifactId>
             <version>{qiweb_version}</version>
         </dependency>
         <dependency>

@@ -16,20 +16,20 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
+import io.werval.api.Application;
+import io.werval.api.Mode;
+import io.werval.api.routes.Route;
 import java.util.Map;
 import org.junit.Test;
-import org.qiweb.api.Application;
-import org.qiweb.api.Mode;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.runtime.http.QueryStringInstance;
 
+import static io.werval.api.routes.RouteBuilder.d;
+import static io.werval.api.routes.RouteBuilder.p;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.routes.RouteBuilder.d;
-import static org.qiweb.api.routes.RouteBuilder.p;
 
 public class ParamDefaultValueParsingTest
 {

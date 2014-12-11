@@ -15,20 +15,20 @@
  */
 package org.qiweb.runtime.mime;
 
+import io.werval.api.mime.MediaRange;
+import io.werval.util.Couple;
+import io.werval.util.Strings;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.qiweb.api.mime.MediaRange;
-import org.qiweb.util.Couple;
-import org.qiweb.util.Strings;
 
+import static io.werval.api.mime.MimeTypes.WILDCARD_MIMETYPE;
+import static io.werval.util.Strings.EMPTY;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
-import static org.qiweb.api.mime.MimeTypes.WILDCARD_MIMETYPE;
-import static org.qiweb.util.Strings.EMPTY;
 
 /**
  * Media Range Instance.

@@ -3,7 +3,6 @@ description = "QiWeb Runtime"
 
 dependencies {
 
-    compile project( ":org.qiweb.api" )
     compile project( ":org.qiweb.spi" )
     compile libs.typesafe_config
     compile libs.javassist

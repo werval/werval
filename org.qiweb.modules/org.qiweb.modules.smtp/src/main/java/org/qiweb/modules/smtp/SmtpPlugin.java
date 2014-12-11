@@ -15,13 +15,13 @@
  */
 package org.qiweb.modules.smtp;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.modules.metrics.Metrics;
 
 import static java.util.Collections.EMPTY_LIST;

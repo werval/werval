@@ -15,9 +15,9 @@
  */
 package org.qiweb.modules.spring;
 
-import org.qiweb.api.Application;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
+import io.werval.api.Application;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

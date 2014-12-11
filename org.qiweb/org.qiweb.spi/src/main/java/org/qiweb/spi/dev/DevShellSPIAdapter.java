@@ -15,6 +15,7 @@
  */
 package org.qiweb.spi.dev;
 
+import io.werval.api.exceptions.WervalException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import org.qiweb.api.exceptions.QiWebException;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.
@@ -123,7 +123,7 @@ public class DevShellSPIAdapter
             }
             catch( URISyntaxException | IOException ex )
             {
-                throw new QiWebException( ex.getMessage(), ex );
+                throw new WervalException( ex.getMessage(), ex );
             }
         }
         return null;

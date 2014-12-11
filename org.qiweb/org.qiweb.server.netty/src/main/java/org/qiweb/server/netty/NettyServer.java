@@ -20,21 +20,21 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.werval.api.exceptions.PassivationException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.util.Reflectively;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.qiweb.api.exceptions.PassivationException;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.qiweb.runtime.util.NamedThreadFactory;
 import org.qiweb.spi.ApplicationSPI;
 import org.qiweb.spi.dev.DevShellSPI;
 import org.qiweb.spi.server.HttpServerAdapter;
-import org.qiweb.util.Reflectively;
 
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
-import static org.qiweb.api.Mode.PROD;
+import static io.werval.api.Mode.PROD;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
 import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
@@ -142,7 +142,7 @@ public class NettyServer
             catch( Exception ex )
             {
                 passivationErrors.add(
-                    new QiWebException( "Error while shutting down IO Threads: " + ex.getMessage(), ex )
+                    new WervalException( "Error while shutting down IO Threads: " + ex.getMessage(), ex )
                 );
             }
 
@@ -158,7 +158,7 @@ public class NettyServer
             catch( Exception ex )
             {
                 passivationErrors.add(
-                    new QiWebException( "Error while shutting down Accept Threads: " + ex.getMessage(), ex )
+                    new WervalException( "Error while shutting down Accept Threads: " + ex.getMessage(), ex )
                 );
             }
 
@@ -173,7 +173,7 @@ public class NettyServer
             catch( Exception ex )
             {
                 passivationErrors.add(
-                    new QiWebException( "Error while force-closing remaining open channels: " + ex.getMessage(), ex )
+                    new WervalException( "Error while force-closing remaining open channels: " + ex.getMessage(), ex )
                 );
             }
             finally

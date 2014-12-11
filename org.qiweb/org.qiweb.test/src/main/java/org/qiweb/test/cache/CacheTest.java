@@ -15,15 +15,19 @@
  */
 package org.qiweb.test.cache;
 
+import io.werval.api.cache.Cache;
+import io.werval.api.http.Request;
+import io.werval.api.outcomes.Outcome;
+import io.werval.filters.Cached;
 import org.junit.Test;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.filters.Cached;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
 
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.http.Headers.Names.ETAG;
+import static io.werval.api.http.Headers.Names.IF_NONE_MATCH;
+import static io.werval.api.http.Method.GET;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.Is.is;
@@ -31,10 +35,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.http.Headers.Names.ETAG;
-import static org.qiweb.api.http.Headers.Names.IF_NONE_MATCH;
-import static org.qiweb.api.http.Method.GET;
 
 /**
  * Cache Test.

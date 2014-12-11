@@ -15,16 +15,16 @@
  */
 package org.qiweb.runtime.outcomes;
 
+import io.werval.api.outcomes.Outcome;
 import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.executors;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.executors;
 
 /**
  * Future&lt;Outcome&gt; Test.

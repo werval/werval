@@ -15,18 +15,18 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.routes.ReverseRoute;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.routes.ReverseRoute;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.request;
+import static io.werval.api.context.CurrentContext.reverseRoutes;
 import static org.hamcrest.Matchers.equalTo;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.request;
-import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 
 public class ReverseRoutesTest
 {

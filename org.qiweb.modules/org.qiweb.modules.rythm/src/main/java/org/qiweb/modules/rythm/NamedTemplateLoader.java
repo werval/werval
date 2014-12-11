@@ -15,8 +15,8 @@
  */
 package org.qiweb.modules.rythm;
 
+import io.werval.api.Application;
 import java.net.URL;
-import org.qiweb.api.Application;
 import org.rythmengine.RythmEngine;
 import org.rythmengine.extension.ICodeType;
 import org.rythmengine.extension.ITemplateResourceLoader;
@@ -28,7 +28,7 @@ import org.rythmengine.utils.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.util.Strings.withoutHead;
+import static io.werval.util.Strings.withoutHead;
 
 /**
  * Named Rythm Template Resource Loader.

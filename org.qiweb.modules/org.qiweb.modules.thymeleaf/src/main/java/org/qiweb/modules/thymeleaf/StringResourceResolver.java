@@ -15,17 +15,17 @@
  */
 package org.qiweb.modules.thymeleaf;
 
+import io.werval.util.IdentityGenerator;
+import io.werval.util.UUIDIdentityGenerator;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.qiweb.util.IdentityGenerator;
-import org.qiweb.util.UUIDIdentityGenerator;
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 import org.thymeleaf.util.Validate;
 
-import static org.qiweb.util.Charsets.UTF_8;
+import static io.werval.util.Charsets.UTF_8;
 
 /**
  * Thymeleaf TemplateResolver for named templates.

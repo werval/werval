@@ -15,19 +15,19 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.Cookies.Cookie;
+import io.werval.api.outcomes.Outcome;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.http.Cookies.Cookie;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
-import static org.qiweb.api.context.CurrentContext.builders;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.request;
-import static org.qiweb.api.context.CurrentContext.response;
+import static io.werval.api.context.CurrentContext.builders;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.request;
+import static io.werval.api.context.CurrentContext.response;
 
 public class CookiesTest
 {

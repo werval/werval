@@ -15,6 +15,11 @@
  */
 package org.qiweb.modules.liquibase;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.api.exceptions.WervalException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -25,15 +30,10 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.modules.jdbc.JDBC;
 
-import static org.qiweb.api.Mode.TEST;
-import static org.qiweb.util.Strings.EMPTY;
+import static io.werval.api.Mode.TEST;
+import static io.werval.util.Strings.EMPTY;
 
 /**
  * Liquibase Plugin.
@@ -94,7 +94,7 @@ public class LiquibasePlugin
         }
         catch( ClassNotFoundException | LiquibaseException | SQLException ex )
         {
-            throw new QiWebException( "Unable to apply database changelog: " + ex.getMessage(), ex );
+            throw new WervalException( "Unable to apply database changelog: " + ex.getMessage(), ex );
         }
         finally
         {
@@ -112,7 +112,7 @@ public class LiquibasePlugin
         }
         catch( ClassNotFoundException | LiquibaseException | SQLException ex )
         {
-            throw new QiWebException( "Unable to drop database data: " + ex.getMessage(), ex );
+            throw new WervalException( "Unable to drop database data: " + ex.getMessage(), ex );
         }
         finally
         {

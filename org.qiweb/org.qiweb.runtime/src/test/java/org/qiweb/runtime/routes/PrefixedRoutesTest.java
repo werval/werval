@@ -16,15 +16,15 @@
 package org.qiweb.runtime.routes;
 
 import com.acme.app.FakeController;
+import io.werval.api.routes.Route;
 import org.junit.Test;
-import org.qiweb.api.routes.Route;
 
+import static io.werval.api.http.Method.GET;
+import static io.werval.api.routes.RouteBuilder.p;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.qiweb.api.http.Method.GET;
-import static org.qiweb.api.routes.RouteBuilder.p;
 
 /**
  * Prefixed Routes Test.

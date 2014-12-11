@@ -15,19 +15,19 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.Cookies;
+import io.werval.api.http.MutableCookies;
+import io.werval.util.Strings;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.qiweb.api.http.Cookies;
-import org.qiweb.api.http.MutableCookies;
 import org.qiweb.runtime.util.Comparators;
-import org.qiweb.util.Strings;
 
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
-import static org.qiweb.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 
 /**
  * Cookies instance.

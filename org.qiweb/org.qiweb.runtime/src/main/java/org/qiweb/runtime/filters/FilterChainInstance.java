@@ -15,17 +15,17 @@
  */
 package org.qiweb.runtime.filters;
 
+import io.werval.api.Application;
+import io.werval.api.Global;
+import io.werval.api.context.Context;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.filters.Filter;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.outcomes.Outcome;
+import io.werval.util.Couple;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import org.qiweb.api.Application;
-import org.qiweb.api.Global;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.api.filters.Filter;
-import org.qiweb.api.filters.FilterChain;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.util.Couple;
 
 /**
  * Instance of FilterChain.
@@ -61,7 +61,7 @@ import org.qiweb.util.Couple;
                 }
                 catch( ClassCastException ex )
                 {
-                    throw new QiWebException(
+                    throw new WervalException(
                         context.route().controllerMethod()
                         + " returned a CompletableFuture of something else than Outcome. Check your code.",
                         ex
@@ -72,7 +72,7 @@ import org.qiweb.util.Couple;
             {
                 return CompletableFuture.completedFuture( (Outcome) result );
             }
-            throw new QiWebException(
+            throw new WervalException(
                 context.route().controllerMethod()
                 + " did not return an Outcome nor a CompletableFuture<Outcome> but a "
                 + result.getClass()

@@ -15,6 +15,7 @@
  */
 package org.qiweb.devshell;
 
+import io.werval.util.DeltreeFileVisitor;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import org.junit.Before;
@@ -24,9 +25,9 @@ import org.junit.rules.TemporaryFolder;
 import org.qiweb.spi.dev.DevShellSPI.SourceChangeListener;
 import org.qiweb.spi.dev.DevShellSPI.SourceWatch;
 import org.qiweb.test.util.Slf4jRule;
-import org.qiweb.util.DeltreeFileVisitor;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static io.werval.util.Strings.indentTwoSpaces;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Files.delete;
@@ -39,7 +40,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.qiweb.util.Strings.indentTwoSpaces;
 
 /**
  * JavaWatcher Test.

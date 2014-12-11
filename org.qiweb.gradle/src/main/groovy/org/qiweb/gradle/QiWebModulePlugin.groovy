@@ -24,7 +24,7 @@ import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.tasks.bundling.Zip
 
-import static org.qiweb.util.Strings.withoutHead;
+import static io.werval.util.Strings.withoutHead;
 
 /**
  * QiWeb Module Plugin.

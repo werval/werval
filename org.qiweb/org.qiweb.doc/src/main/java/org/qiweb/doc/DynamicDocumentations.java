@@ -15,24 +15,24 @@
  */
 package org.qiweb.doc;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.outcomes.Outcome;
+import io.werval.controllers.Classpath;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.controllers.Classpath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.api.context.CurrentContext.application;
-import static org.qiweb.api.context.CurrentContext.mimeTypes;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
-import static org.qiweb.util.Charsets.UTF_8;
-import static org.qiweb.util.InputStreams.BUF_SIZE_4K;
-import static org.qiweb.util.InputStreams.readAllAsString;
+import static io.werval.api.context.CurrentContext.application;
+import static io.werval.api.context.CurrentContext.mimeTypes;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.reverseRoutes;
+import static io.werval.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.util.Charsets.UTF_8;
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
+import static io.werval.util.InputStreams.readAllAsString;
 
 /**
  * Dynamic Documentations Controller.

@@ -18,6 +18,7 @@ package org.qiweb.server.netty;
 import io.netty.buffer.AbstractByteBuf;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.werval.api.exceptions.WervalException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,7 +31,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
-import org.qiweb.api.exceptions.QiWebException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public final class FileByteBuff
         }
         catch( FileNotFoundException ex )
         {
-            throw new QiWebException( "File " + file + " backing FileByteBuff disapeared! " + ex.getMessage(), ex );
+            throw new WervalException( "File " + file + " backing FileByteBuff disapeared! " + ex.getMessage(), ex );
         }
     }
 
@@ -90,7 +90,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -104,7 +104,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -118,7 +118,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -138,7 +138,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -152,7 +152,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -245,7 +245,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -270,7 +270,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 
@@ -331,7 +331,7 @@ public final class FileByteBuff
         }
         catch( IOException ex )
         {
-            throw new QiWebException( ex.getMessage(), ex );
+            throw new WervalException( ex.getMessage(), ex );
         }
     }
 

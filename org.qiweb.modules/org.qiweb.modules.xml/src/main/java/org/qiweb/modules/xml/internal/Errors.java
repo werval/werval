@@ -21,7 +21,7 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import static org.qiweb.util.Strings.SPACE;
+import static io.werval.util.Strings.SPACE;
 
 /**
  * XML Parsing Errors Handler.

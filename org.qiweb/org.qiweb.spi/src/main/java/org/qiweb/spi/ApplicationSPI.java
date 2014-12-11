@@ -15,16 +15,16 @@
  */
 package org.qiweb.spi;
 
+import io.werval.api.Application;
+import io.werval.api.Global;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.api.http.RequestHeader;
+import io.werval.api.outcomes.Outcome;
+import io.werval.util.Reflectively;
 import java.util.concurrent.CompletableFuture;
-import org.qiweb.api.Application;
-import org.qiweb.api.Global;
-import org.qiweb.api.http.ProtocolVersion;
-import org.qiweb.api.http.Request;
-import org.qiweb.api.http.RequestHeader;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.spi.events.EventsSPI;
 import org.qiweb.spi.http.HttpBuildersSPI;
-import org.qiweb.util.Reflectively;
 
 /**
  * Application SPI.
@@ -62,7 +62,7 @@ public interface ApplicationSPI
     /**
      * HTTP API Objects Builders SPI.
      * <p>
-     * Use this to create instances of HTTP API Objects found in the {@link org.qiweb.api.http} package.
+     * Use this to create instances of HTTP API Objects found in the {@literal io.werval.api.http} package.
      * All builders are immutable and reusable.
      *
      * @return HTTP API Objects Builders SPI

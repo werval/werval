@@ -15,10 +15,10 @@
  */
 package org.qiweb.spi.cache;
 
-import org.qiweb.api.Application;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.api.cache.CachePlugin;
-import org.qiweb.api.exceptions.ActivationException;
+import io.werval.api.Application;
+import io.werval.api.cache.Cache;
+import io.werval.api.cache.CachePlugin;
+import io.werval.api.exceptions.ActivationException;
 
 /**
  * Cache Plugin backed by a HashMap.

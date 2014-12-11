@@ -15,15 +15,15 @@
  */
 package org.qiweb.runtime.routes;
 
+import io.werval.api.Application;
+import io.werval.api.routes.Route;
+import io.werval.util.Strings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
-import org.qiweb.api.Application;
-import org.qiweb.api.routes.Route;
 import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.util.Strings;
 
 /**
  * Routes Provider using 'routes.conf' from the Application classpath root.

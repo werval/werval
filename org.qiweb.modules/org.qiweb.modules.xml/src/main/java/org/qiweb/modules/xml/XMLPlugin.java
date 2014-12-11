@@ -15,6 +15,11 @@
  */
 package org.qiweb.modules.xml;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.api.exceptions.WervalException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,11 +37,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPathFactory;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.exceptions.ActivationException;
-import org.qiweb.api.exceptions.QiWebException;
 import org.qiweb.modules.xml.internal.CatalogResolver;
 import org.qiweb.modules.xml.internal.EmptyResolver;
 import org.qiweb.modules.xml.internal.Internal;
@@ -45,8 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import static io.werval.util.Strings.NEWLINE;
 import static java.util.Collections.EMPTY_LIST;
-import static org.qiweb.util.Strings.NEWLINE;
 
 /**
  * XML Plugin.
@@ -174,7 +174,7 @@ public final class XMLPlugin
                 Internal.RESOLVER.set( new CatalogResolver( false, EMPTY_LIST, catalogsPreferPublic ) );
                 break;
             default:
-                throw new QiWebException(
+                throw new WervalException(
                     String.format(
                         "Uknown value for 'xml.external_entities' config property: %s",
                         config.string( "external_entities" )
@@ -250,7 +250,7 @@ public final class XMLPlugin
                 String report = sb.toString();
                 if( wrong && failOnError )
                 {
-                    throw new QiWebException( "XML Plugin JAXP setup failure!\n\n" + report );
+                    throw new WervalException( "XML Plugin JAXP setup failure!\n\n" + report );
                 }
                 if( wrong )
                 {

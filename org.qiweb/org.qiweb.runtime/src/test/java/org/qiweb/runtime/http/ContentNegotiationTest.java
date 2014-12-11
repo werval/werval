@@ -15,22 +15,22 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.outcomes.Outcome;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.request;
+import static io.werval.api.http.Headers.Names.ACCEPT;
+import static io.werval.api.http.Headers.Names.VARY;
+import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
+import static io.werval.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.api.mime.MimeTypes.WILDCARD_MIMETYPE;
 import static org.hamcrest.Matchers.equalTo;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.request;
-import static org.qiweb.api.http.Headers.Names.ACCEPT;
-import static org.qiweb.api.http.Headers.Names.VARY;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypes.TEXT_HTML;
-import static org.qiweb.api.mime.MimeTypes.WILDCARD_MIMETYPE;
 
 /**
  * Content Negotiation Test.

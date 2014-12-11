@@ -24,7 +24,7 @@ Signature use the HmacSHA1 algorithm.
 
 [source,java]
 ----
-import static org.qiweb.api.context.CurrentContext.*;
+import static io.werval.api.context.CurrentContext.*;
 public MyController {
   public Outcome aControllerMethod() {
     String singleFoo = request().queryString().singleValueOf("foo");
@@ -65,7 +65,7 @@ When enabled, `foo=bar&foo=baz` is accepted and your application code can access
 
 [source,java]
 ----
-import static org.qiweb.api.context.CurrentContext.*;
+import static io.werval.api.context.CurrentContext.*;
 public MyController {
   public Outcome aControllerMethod() {
     String singleFoo        = request().queryString().singleValueOf("foo"); <1>

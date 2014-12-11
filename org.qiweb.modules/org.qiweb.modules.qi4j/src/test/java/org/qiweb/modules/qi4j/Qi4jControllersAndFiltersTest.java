@@ -15,6 +15,12 @@
  */
 package org.qiweb.modules.qi4j;
 
+import io.werval.api.Application;
+import io.werval.api.context.Context;
+import io.werval.api.filters.Filter;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
@@ -25,20 +31,14 @@ import org.qi4j.bootstrap.ApplicationAssembly;
 import org.qi4j.bootstrap.ApplicationAssemblyFactory;
 import org.qi4j.bootstrap.AssemblyException;
 import org.qi4j.bootstrap.ModuleAssembly;
-import org.qiweb.api.Application;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.filters.Filter;
-import org.qiweb.api.filters.FilterChain;
-import org.qiweb.api.filters.FilterWith;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static io.werval.api.context.CurrentContext.outcomes;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.context.CurrentContext.outcomes;
 
 /**
  * Assert that using Qi4j Composites as Controllers and Filters work as expected.
@@ -139,7 +139,7 @@ public class Qi4jControllersAndFiltersTest
      * Get QiWeb Filters instances from Qi4j Transients.
      */
     public static class Global
-        extends org.qiweb.api.Global
+        extends io.werval.api.Global
     {
         @Override
         public <T> T getControllerInstance( Application application, Class<T> controllerType )

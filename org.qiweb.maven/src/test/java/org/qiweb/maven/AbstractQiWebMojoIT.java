@@ -33,7 +33,7 @@ import org.junit.rules.TemporaryFolder;
 import org.qiweb.runtime.util.Holder;
 import org.qiweb.test.util.Processes;
 
-import static org.qiweb.api.BuildVersion.VERSION;
+import static io.werval.api.BuildVersion.VERSION;
 
 /**
  * Base class for QiWeb Mojos Integration Tests.
@@ -105,7 +105,7 @@ public abstract class AbstractQiWebMojoIT
           + "    <dependencies>\n"
           + "        <dependency>\n"
           + "            <groupId>org.qiweb</groupId>\n"
-          + "            <artifactId>org.qiweb.api</artifactId>\n"
+          + "            <artifactId>io.werval.api</artifactId>\n"
           + "            <version>" + VERSION + "</version>\n"
           + "        </dependency>\n"
           + "        <dependency>\n"
@@ -130,8 +130,8 @@ public abstract class AbstractQiWebMojoIT
         ROUTES = "GET / controllers.Application.index";
         CONTROLLER
         = "package controllers;\n"
-          + "import org.qiweb.api.outcomes.Outcome;\n"
-          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "import io.werval.api.outcomes.Outcome;\n"
+          + "import static io.werval.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"
@@ -141,8 +141,8 @@ public abstract class AbstractQiWebMojoIT
           + "}\n";
         CONTROLLER_CHANGED
         = "package controllers;\n"
-          + "import org.qiweb.api.outcomes.Outcome;\n"
-          + "import static org.qiweb.api.context.CurrentContext.outcomes;\n"
+          + "import io.werval.api.outcomes.Outcome;\n"
+          + "import static io.werval.api.context.CurrentContext.outcomes;\n"
           + "public class Application\n"
           + "{\n"
           + "    public Outcome index()\n"

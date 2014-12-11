@@ -15,22 +15,22 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.http.QueryString;
+import io.werval.util.Strings;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.qiweb.api.http.QueryString;
 import org.qiweb.runtime.exceptions.BadRequestException;
-import org.qiweb.util.Strings;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.qiweb.runtime.util.Comparators.LOWER_CASE;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 public class QueryStringInstance
     implements QueryString, Serializable

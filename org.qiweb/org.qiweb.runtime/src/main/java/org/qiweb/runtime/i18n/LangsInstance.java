@@ -15,12 +15,12 @@
  */
 package org.qiweb.runtime.i18n;
 
+import io.werval.api.i18n.Lang;
+import io.werval.api.i18n.Langs;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.qiweb.api.i18n.Lang;
-import org.qiweb.api.i18n.Langs;
 
 import static java.util.stream.Collectors.toList;
 

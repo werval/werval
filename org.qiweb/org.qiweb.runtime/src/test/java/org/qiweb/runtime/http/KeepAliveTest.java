@@ -15,6 +15,7 @@
  */
 package org.qiweb.runtime.http;
 
+import io.werval.api.outcomes.Outcome;
 import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -22,21 +23,20 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Values.CLOSE;
+import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 import static java.util.Locale.US;
 import static org.apache.http.params.CoreProtocolPNames.PROTOCOL_VERSION;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.http.Headers.Names.CONNECTION;
-import static org.qiweb.api.http.Headers.Values.CLOSE;
-import static org.qiweb.api.http.Headers.Values.KEEP_ALIVE;
 
 /**
  * Assert correct Kepp-Alive behaviour.

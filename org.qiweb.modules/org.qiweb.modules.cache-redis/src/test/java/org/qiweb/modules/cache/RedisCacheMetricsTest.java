@@ -15,19 +15,19 @@
  */
 package org.qiweb.modules.cache;
 
+import io.werval.api.cache.Cache;
+import io.werval.api.outcomes.Outcome;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.cache.Cache;
-import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.modules.metrics.Tools;
 import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static io.werval.api.context.CurrentContext.plugin;
+import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.is;
-import static org.qiweb.api.context.CurrentContext.plugin;
-import static org.qiweb.api.mime.MimeTypes.APPLICATION_JSON;
 import static org.qiweb.test.util.Assume.assumeConnectivity;
 
 /**

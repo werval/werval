@@ -15,8 +15,8 @@
  */
 package org.qiweb.runtime.plugins;
 
-import org.qiweb.api.Application;
-import org.qiweb.api.Plugin;
+import io.werval.api.Application;
+import io.werval.api.Plugin;
 
 /**
  * Plugin that register {@link HelloWorld} as a Plugin.

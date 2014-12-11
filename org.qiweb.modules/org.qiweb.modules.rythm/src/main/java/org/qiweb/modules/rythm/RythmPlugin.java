@@ -15,16 +15,16 @@
  */
 package org.qiweb.modules.rythm;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Mode;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.api.templates.Templates;
+import io.werval.api.templates.TemplatesPlugin;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Mode;
-import org.qiweb.api.exceptions.ActivationException;
-import org.qiweb.api.templates.Templates;
-import org.qiweb.api.templates.TemplatesPlugin;
 import org.qiweb.modules.metrics.Metrics;
 import org.qiweb.modules.metrics.internal.TemplatesMetricsHandler;
 import org.rythmengine.Rythm;

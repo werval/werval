@@ -15,11 +15,11 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.Config;
 import java.util.List;
 import java.util.Set;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.api.Config;
 import org.qiweb.test.QiWebRule;
 
 import static org.hamcrest.core.Is.is;

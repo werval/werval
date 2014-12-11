@@ -15,16 +15,16 @@
  */
 package org.qiweb.modules.jpa;
 
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.context.Context;
+import io.werval.api.exceptions.ActivationException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.qiweb.api.Application;
-import org.qiweb.api.Config;
-import org.qiweb.api.Plugin;
-import org.qiweb.api.context.Context;
-import org.qiweb.api.exceptions.ActivationException;
 import org.qiweb.modules.jdbc.JDBC;
 import org.qiweb.modules.metrics.Metrics;
 

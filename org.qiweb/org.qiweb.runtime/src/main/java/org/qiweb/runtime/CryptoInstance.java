@@ -15,6 +15,10 @@
  */
 package org.qiweb.runtime;
 
+import io.werval.api.Crypto;
+import io.werval.api.exceptions.WervalException;
+import io.werval.util.Hex;
+import io.werval.util.Reflectively;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -23,10 +27,6 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import org.qiweb.api.Crypto;
-import org.qiweb.api.exceptions.QiWebException;
-import org.qiweb.util.Hex;
-import org.qiweb.util.Reflectively;
 
 /**
  * Cryptography service instance.
@@ -45,11 +45,11 @@ public class CryptoInstance
         }
         catch( IllegalArgumentException ex )
         {
-            throw new QiWebException( "Wrong Application Secret: " + ex.getMessage(), ex );
+            throw new WervalException( "Wrong Application Secret: " + ex.getMessage(), ex );
         }
         if( this.secretBytes.length < 32 )
         {
-            throw new QiWebException( "Weak Application Secret: must be at least 256bits long" );
+            throw new WervalException( "Weak Application Secret: must be at least 256bits long" );
         }
         this.charset = charset;
     }
@@ -110,7 +110,7 @@ public class CryptoInstance
         }
         catch( NoSuchAlgorithmException | InvalidKeyException | IllegalStateException ex )
         {
-            throw new QiWebException( "Unable to HMAC message", ex );
+            throw new WervalException( "Unable to HMAC message", ex );
         }
     }
 
@@ -145,7 +145,7 @@ public class CryptoInstance
         }
         catch( NoSuchAlgorithmException ex )
         {
-            throw new QiWebException( "Unable to SHA256 message", ex );
+            throw new WervalException( "Unable to SHA256 message", ex );
         }
     }
 

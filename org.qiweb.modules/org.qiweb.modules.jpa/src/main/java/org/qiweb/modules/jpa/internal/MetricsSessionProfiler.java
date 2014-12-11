@@ -26,7 +26,7 @@ import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.queries.DatabaseQuery;
 import org.qiweb.modules.metrics.Metrics;
 
-import static org.qiweb.util.Strings.EMPTY;
+import static io.werval.util.Strings.EMPTY;
 
 /**
  * EclipseLink SessionProfiler that creates Performance Metrics.
