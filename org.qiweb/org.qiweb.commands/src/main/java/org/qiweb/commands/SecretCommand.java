@@ -15,7 +15,7 @@
  */
 package org.qiweb.commands;
 
-import org.qiweb.runtime.CryptoInstance;
+import io.werval.runtime.CryptoInstance;
 
 /**
  * Secret Command.

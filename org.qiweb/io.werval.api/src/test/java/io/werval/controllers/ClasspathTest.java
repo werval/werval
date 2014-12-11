@@ -16,12 +16,12 @@
 package io.werval.controllers;
 
 import com.jayway.restassured.response.Response;
+import io.werval.runtime.routes.RoutesParserProvider;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;

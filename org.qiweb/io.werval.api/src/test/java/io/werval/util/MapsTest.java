@@ -20,10 +20,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static io.werval.util.Maps.fromMap;
 import static io.werval.util.Maps.newConcurrentHashMap;
 import static io.werval.util.Maps.newConcurrentSkipListMap;
@@ -34,6 +30,10 @@ import static io.werval.util.Maps.newLinkedMultiValueMap;
 import static io.werval.util.Maps.newTreeMap;
 import static io.werval.util.Maps.newWeakHashMap;
 import static io.werval.util.Maps.unmodifiableMultiValueMap;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Maps Utilities Test.

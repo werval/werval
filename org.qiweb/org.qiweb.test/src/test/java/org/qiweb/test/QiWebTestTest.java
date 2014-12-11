@@ -17,9 +17,9 @@ package org.qiweb.test;
 
 import io.werval.api.http.Request;
 import io.werval.api.outcomes.Outcome;
+import io.werval.runtime.routes.RoutesParserProvider;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 
 import static io.werval.api.context.CurrentContext.outcomes;
 import static org.hamcrest.core.Is.is;

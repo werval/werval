@@ -16,10 +16,10 @@
 package io.werval.filters;
 
 import io.werval.api.outcomes.Outcome;
+import io.werval.runtime.routes.RoutesParserProvider;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 import org.qiweb.test.util.Slf4jRule;
 

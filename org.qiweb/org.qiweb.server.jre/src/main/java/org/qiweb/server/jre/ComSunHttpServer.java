@@ -16,16 +16,16 @@
 package org.qiweb.server.jre;
 
 import com.sun.net.httpserver.HttpServer;
+import io.werval.runtime.exceptions.WervalRuntimeException;
 import io.werval.spi.server.HttpServerAdapter;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellSPI;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
+import static io.werval.runtime.ConfigKeys.WERVAL_SHUTDOWN_TIMEOUT;
 
 /**
  * com.sun.net HTTP Server.
@@ -60,13 +60,13 @@ public class ComSunHttpServer
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( "Unable to create HttpServer", ex );
+            throw new WervalRuntimeException( "Unable to create HttpServer", ex );
         }
 
         server.createContext( "/", new QiWebHttpHandler( app, devSpi ) );
 
-        String address = app.config().string( QIWEB_HTTP_ADDRESS );
-        int port = app.config().intNumber( QIWEB_HTTP_PORT );
+        String address = app.config().string( WERVAL_HTTP_ADDRESS );
+        int port = app.config().intNumber( WERVAL_HTTP_PORT );
 
         try
         {
@@ -75,8 +75,10 @@ public class ComSunHttpServer
         }
         catch( IOException ex )
         {
-            throw new QiWebRuntimeException( "Unable to bind to http(s)://" + address + ":" + port + "/ "
-                                             + "Port already in use?", ex );
+            throw new WervalRuntimeException(
+                "Unable to bind to http(s)://" + address + ":" + port + "/ " + "Port already in use?",
+                ex
+            );
         }
     }
 
@@ -86,7 +88,7 @@ public class ComSunHttpServer
         if( server != null )
         {
             // app.config() can be null if activation failed, allow gracefull shutdown
-            long shutdownTimeout = app.config() == null ? 5 : app.config().seconds( QIWEB_SHUTDOWN_TIMEOUT );
+            long shutdownTimeout = app.config() == null ? 5 : app.config().seconds( WERVAL_SHUTDOWN_TIMEOUT );
             server.stop( (int) shutdownTimeout );
         }
     }

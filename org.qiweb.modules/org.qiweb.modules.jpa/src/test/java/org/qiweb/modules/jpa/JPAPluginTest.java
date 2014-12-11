@@ -15,6 +15,7 @@
  */
 package org.qiweb.modules.jpa;
 
+import io.werval.runtime.routes.RoutesParserProvider;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -25,7 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.jdbc.JDBC;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;

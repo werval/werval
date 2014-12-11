@@ -20,12 +20,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.Test;
 
+import static io.werval.util.Maps.fromMap;
+import static io.werval.util.Strings.leftPad;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static io.werval.util.Maps.fromMap;
-import static io.werval.util.Strings.leftPad;
 
 /**
  * Base62 Test.

@@ -16,9 +16,9 @@
 package org.qiweb.server.bootstrap;
 
 import io.werval.api.Mode;
+import io.werval.runtime.ApplicationInstance;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.server.HttpServer;
-import org.qiweb.runtime.ApplicationInstance;
 import org.qiweb.server.netty.NettyServer;
 
 /**

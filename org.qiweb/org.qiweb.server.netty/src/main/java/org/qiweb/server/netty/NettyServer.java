@@ -22,6 +22,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.werval.api.exceptions.PassivationException;
 import io.werval.api.exceptions.WervalException;
+import io.werval.runtime.exceptions.WervalRuntimeException;
+import io.werval.runtime.util.NamedThreadFactory;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellSPI;
 import io.werval.spi.server.HttpServerAdapter;
@@ -29,18 +31,16 @@ import io.werval.util.Reflectively;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.qiweb.runtime.exceptions.QiWebRuntimeException;
-import org.qiweb.runtime.util.NamedThreadFactory;
 
 import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
 import static io.netty.channel.ChannelOption.TCP_NODELAY;
 import static io.werval.api.Mode.PROD;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ACCEPTORS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_IOTHREADS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_QUIETPERIOD;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_SHUTDOWN_TIMEOUT;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ACCEPTORS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_IOTHREADS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
+import static io.werval.runtime.ConfigKeys.WERVAL_SHUTDOWN_QUIETPERIOD;
+import static io.werval.runtime.ConfigKeys.WERVAL_SHUTDOWN_TIMEOUT;
 
 /**
  * Netty HTTP Server.
@@ -80,11 +80,11 @@ public class NettyServer
 
         // I/O Event Loops.
         // The first is used to handle the accept of new connections and the second will serve the IO of them.
-        int acceptors = app.config().has( QIWEB_HTTP_ACCEPTORS )
-                        ? app.config().intNumber( QIWEB_HTTP_ACCEPTORS )
+        int acceptors = app.config().has( WERVAL_HTTP_ACCEPTORS )
+                        ? app.config().intNumber( WERVAL_HTTP_ACCEPTORS )
                         : DEFAULT_POOL_SIZE;
-        int iothreads = app.config().has( QIWEB_HTTP_IOTHREADS )
-                        ? app.config().intNumber( QIWEB_HTTP_IOTHREADS )
+        int iothreads = app.config().has( WERVAL_HTTP_IOTHREADS )
+                        ? app.config().intNumber( WERVAL_HTTP_IOTHREADS )
                         : DEFAULT_POOL_SIZE;
         bootstrap.group(
             new NioEventLoopGroup( app.mode() == PROD ? acceptors : 1, new NamedThreadFactory( "qiweb-acceptor" ) ),
@@ -100,8 +100,8 @@ public class NettyServer
         bootstrap.option( SO_KEEPALIVE, true );
 
         // Bind
-        String address = app.config().string( QIWEB_HTTP_ADDRESS );
-        int port = app.config().intNumber( QIWEB_HTTP_PORT );
+        String address = app.config().string( WERVAL_HTTP_ADDRESS );
+        int port = app.config().intNumber( WERVAL_HTTP_PORT );
         try
         {
             bootstrap.localAddress( address, port );
@@ -109,8 +109,8 @@ public class NettyServer
         }
         catch( InterruptedException ex )
         {
-            throw new QiWebRuntimeException( "Unable to bind to http(s)://" + address + ":" + port + "/ "
-                                             + "Port already in use?", ex );
+            throw new WervalRuntimeException( "Unable to bind to http(s)://" + address + ":" + port + "/ "
+                                              + "Port already in use?", ex );
         }
     }
 
@@ -121,11 +121,11 @@ public class NettyServer
         {
             // app.config() can be null if activation failed, allow gracefull shutdown
             long shutdownQuietPeriod = app.config() == null
-                ? 1000
-                : app.config().milliseconds( QIWEB_SHUTDOWN_QUIETPERIOD );
+                                       ? 1000
+                                       : app.config().milliseconds( WERVAL_SHUTDOWN_QUIETPERIOD );
             long shutdownTimeout = app.config() == null
-                ? 5000
-                : app.config().milliseconds( QIWEB_SHUTDOWN_TIMEOUT );
+                                   ? 5000
+                                   : app.config().milliseconds( WERVAL_SHUTDOWN_TIMEOUT );
 
             // Record all passivation errors here to report them at once at the end
             List<Exception> passivationErrors = new ArrayList<>();

@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.werval.runtime.util.Iterables.first;
 import static io.werval.util.IllegalArguments.ensureNotNull;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
@@ -48,7 +49,6 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-import static org.qiweb.runtime.util.Iterables.first;
 
 /**
  * Java WatchService based SourceWatcher.

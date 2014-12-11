@@ -32,6 +32,7 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.werval.api.events.HttpEvent;
 import io.werval.spi.events.EventsSPI;
 import io.werval.spi.server.HttpServerHelper;
+import io.werval.runtime.exceptions.WervalRuntimeException;
 import io.werval.util.IdentityGenerator;
 import io.werval.util.UUIDIdentityGenerator;
 import java.io.File;
@@ -40,7 +41,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
-import org.qiweb.runtime.exceptions.QiWebRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +132,7 @@ public class HttpRequestAggregator
         }
         else
         {
-            throw new QiWebRuntimeException( "Unexpected message type in Netty pipeline, something is broken: " + msg );
+            throw new WervalRuntimeException( "Unexpected message type in Netty pipeline, something is broken: " + msg );
         }
     }
 

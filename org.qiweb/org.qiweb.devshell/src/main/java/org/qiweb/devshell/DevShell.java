@@ -42,15 +42,15 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
 
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
+import static io.werval.runtime.util.AnsiColor.cyan;
+import static io.werval.runtime.util.AnsiColor.red;
+import static io.werval.runtime.util.AnsiColor.white;
+import static io.werval.runtime.util.AnsiColor.yellow;
 import static io.werval.util.ClassLoaders.printLoadedClasses;
 import static io.werval.util.ClassLoaders.printURLs;
 import static java.util.Collections.singletonMap;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
-import static org.qiweb.runtime.util.AnsiColor.cyan;
-import static org.qiweb.runtime.util.AnsiColor.red;
-import static org.qiweb.runtime.util.AnsiColor.white;
-import static org.qiweb.runtime.util.AnsiColor.yellow;
 
 /**
  * QiWeb DevShell.
@@ -127,9 +127,9 @@ public final class DevShell
     private static final String DEPENDENCIES_REALM_ID = "DependenciesRealm";
     private static final String APPLICATION_REALM_ID = "ApplicationRealm";
     private static final String CONFIG_API_CLASS = "io.werval.api.Config";
-    private static final String CONFIG_RUNTIME_CLASS = "org.qiweb.runtime.ConfigInstance";
-    private static final String CRYPTO_RUNTIME_CLASS = "org.qiweb.runtime.CryptoInstance";
-    private static final String APPLICATION_RUNTIME_CLASS = "org.qiweb.runtime.ApplicationInstance";
+    private static final String CONFIG_RUNTIME_CLASS = "io.werval.runtime.ConfigInstance";
+    private static final String CRYPTO_RUNTIME_CLASS = "io.werval.runtime.CryptoInstance";
+    private static final String APPLICATION_RUNTIME_CLASS = "io.werval.runtime.ApplicationInstance";
     private static final String MODE_API_CLASS = "io.werval.api.Mode";
     private static final String APPLICATION_SPI_CLASS = "io.werval.spi.ApplicationSPI";
     private static final String NETTY_SERVER_CLASS = "org.qiweb.server.netty.NettyServer";
@@ -535,10 +535,10 @@ public final class DevShell
         };
         String httpHost = (String) configClass
             .getMethod( "string", argsTypes )
-            .invoke( configInstance, QIWEB_HTTP_ADDRESS );
+            .invoke(configInstance, WERVAL_HTTP_ADDRESS );
         int httpPort = (int) configClass
             .getMethod( "intNumber", argsTypes )
-            .invoke( configInstance, QIWEB_HTTP_PORT );
+            .invoke(configInstance, WERVAL_HTTP_PORT );
         if( "127.0.0.1".equals( httpHost ) )
         {
             httpHost = "localhost";

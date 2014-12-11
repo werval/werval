@@ -17,12 +17,12 @@ package org.qiweb.modules.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import io.werval.api.outcomes.Outcome;
+import io.werval.runtime.routes.RoutesParserProvider;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;

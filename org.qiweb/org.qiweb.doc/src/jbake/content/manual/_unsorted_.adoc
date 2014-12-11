@@ -9,13 +9,6 @@ We strongly recommend http://logback.qos.ch/[Logback].
 You have full control on logging configuration.
 
 All QiWeb loggers are present in the `org.qiweb` namespace according to code packages.
-Here are the most useful:
-
-- `org.qiweb.runtime.server` QiWeb Http Server
-- `org.qiweb.runtime.routes` QiWeb Http Router
-- `org.qiweb.runtime.controllers` QiWeb Controller
-- `org.qiweb.runtime.filters` QiWeb Controller Filters
-- etc...
 
 TIP: QiWeb Runtime leverage SLF4J http://www.slf4j.org/manual.html#mdc[Mapped Diagnosic Context], aka. MDC, by putting
 the current request ID at the `X-QiWeb-Request-ID` key.

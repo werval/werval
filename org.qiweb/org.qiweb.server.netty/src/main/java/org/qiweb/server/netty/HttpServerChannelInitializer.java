@@ -33,10 +33,10 @@ import java.net.InetSocketAddress;
 
 import static java.util.Locale.US;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_LOG_LOWLEVEL_ENABLED;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_LOG_LOWLEVEL_LEVEL;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_READ;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_LOG_LOWLEVEL_ENABLED;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_LOG_LOWLEVEL_LEVEL;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_TIMEOUT_READ;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_TIMEOUT_WRITE;
 
 /* package */ class HttpServerChannelInitializer
     extends ChannelInitializer<Channel>
@@ -64,16 +64,18 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_TIMEOUT_WRITE;
             future -> app.events().emit( new ConnectionEvent.Closed( remoteHostString ) )
         );
 
-        if( app.config().bool( QIWEB_HTTP_LOG_LOWLEVEL_ENABLED ) )
+        if( app.config().bool( WERVAL_HTTP_LOG_LOWLEVEL_ENABLED ) )
         {
             // Log Netty Bytes
-            LogLevel level = LogLevel.valueOf( app.config().string( QIWEB_HTTP_LOG_LOWLEVEL_LEVEL ).toUpperCase( US ) );
+            LogLevel level = LogLevel.valueOf(
+                app.config().string( WERVAL_HTTP_LOG_LOWLEVEL_LEVEL ).toUpperCase( US )
+            );
             pipeline.addLast( "byte-logging", new LoggingHandler( "org.qiweb.server.netty.LowLevelLogger", level ) );
         }
 
         // Read/Write Timeout
-        long readTimeout = app.config().seconds( QIWEB_HTTP_TIMEOUT_READ );
-        long writeTimeout = app.config().seconds( QIWEB_HTTP_TIMEOUT_WRITE );
+        long readTimeout = app.config().seconds( WERVAL_HTTP_TIMEOUT_READ );
+        long writeTimeout = app.config().seconds( WERVAL_HTTP_TIMEOUT_WRITE );
         pipeline.addLast( "read-timeout", new ReadTimeoutHandler( readTimeout, SECONDS ) );
         pipeline.addLast( "write-timeout", new WriteTimeoutHandler( writeTimeout, SECONDS ) );
 

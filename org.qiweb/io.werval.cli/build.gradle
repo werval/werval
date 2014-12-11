@@ -1,5 +1,5 @@
 
-description = "werval cli"
+description = "Werval CLI"
 
 dependencies {
     compile project( ':org.qiweb.commands' )

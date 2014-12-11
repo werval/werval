@@ -31,6 +31,7 @@ import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.Request;
 import io.werval.spi.http.HttpBuildersSPI;
 import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
+import io.werval.runtime.http.FormUploadsInstance.UploadInstance;
 import io.werval.util.ByteSource;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -42,7 +43,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.qiweb.runtime.http.FormUploadsInstance.UploadInstance;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
@@ -50,9 +50,9 @@ import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.runtime.http.RequestHeaderInstance.extractContentType;
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static io.werval.util.IllegalArguments.ensureNotNull;
-import static org.qiweb.runtime.http.RequestHeaderInstance.extractContentType;
 
 /**
  * Factory methods used by the server.

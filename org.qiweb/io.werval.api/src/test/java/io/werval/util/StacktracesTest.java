@@ -15,10 +15,10 @@
  */
 package io.werval.util;
 
+import io.werval.api.exceptions.WervalException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import org.junit.Test;
-import io.werval.api.exceptions.WervalException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

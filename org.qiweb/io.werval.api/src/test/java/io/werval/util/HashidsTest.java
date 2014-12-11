@@ -18,15 +18,15 @@ package io.werval.util;
 import java.util.Arrays;
 import org.junit.Test;
 
+import static io.werval.util.Hashids.DEFAULT_ALPHABET;
+import static io.werval.util.Hashids.DEFAULT_SEPARATORS;
+import static io.werval.util.Strings.hasText;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static io.werval.util.Hashids.DEFAULT_ALPHABET;
-import static io.werval.util.Hashids.DEFAULT_SEPARATORS;
-import static io.werval.util.Strings.hasText;
 
 /**
  * Hashids Test.

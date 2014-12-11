@@ -16,9 +16,9 @@
 package org.qiweb.modules.spring;
 
 import app.TestFilter;
+import io.werval.runtime.routes.RoutesParserProvider;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -27,7 +27,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
- * SpringPluginTest.
+ * Spring Plugin Test.
  */
 public class SpringPluginTest
 {

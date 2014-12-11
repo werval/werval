@@ -16,9 +16,9 @@
 package org.qiweb.modules.guice;
 
 import app.TestFilter;
+import io.werval.runtime.routes.RoutesParserProvider;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 
 import static com.jayway.restassured.RestAssured.expect;

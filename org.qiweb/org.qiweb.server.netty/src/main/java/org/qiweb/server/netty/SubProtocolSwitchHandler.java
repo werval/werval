@@ -27,8 +27,8 @@ import io.werval.spi.server.HttpServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_REQUESTS_BODY_DISK_THRESHOLD;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_REQUESTS_BODY_MAX_SIZE;
 
 /**
  * Distinguish HttpRequests and WebSocketFrames and setup the pipeline accordingly.
@@ -66,8 +66,8 @@ public class SubProtocolSwitchHandler
             LOG.trace( "Switching to plain HTTP protocol" );
             ChannelPipeline pipeline = context.pipeline();
 
-            int maxBodySize = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_MAX_SIZE );
-            int diskThreshold = app.config().intNumber( QIWEB_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
+            int maxBodySize = app.config().intNumber( WERVAL_HTTP_REQUESTS_BODY_MAX_SIZE );
+            int diskThreshold = app.config().intNumber( WERVAL_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
             pipeline.addLast(
                 "http-aggregator",
                 new HttpRequestAggregator( helper, app.events(), maxBodySize, diskThreshold, app.tmpdir() )

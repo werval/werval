@@ -16,23 +16,23 @@
 package org.qiweb.test;
 
 import io.werval.api.Mode;
+import io.werval.runtime.ApplicationInstance;
+import io.werval.runtime.ConfigInstance;
+import io.werval.runtime.ConfigKeys;
+import io.werval.runtime.CryptoInstance;
+import io.werval.runtime.routes.RoutesConfProvider;
+import io.werval.runtime.routes.RoutesProvider;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.server.HttpServer;
 import org.junit.After;
 import org.junit.Before;
-import org.qiweb.runtime.ApplicationInstance;
-import org.qiweb.runtime.ConfigInstance;
-import org.qiweb.runtime.ConfigKeys;
-import org.qiweb.runtime.CryptoInstance;
-import org.qiweb.runtime.routes.RoutesConfProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.server.netty.NettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonMap;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
 import static org.qiweb.test.QiWebTestHelper.setupRestAssuredDefaults;
 
 /**
@@ -130,7 +130,7 @@ public class QiWebHttpTest
     @Override
     public final String httpHost()
     {
-        String httpHost = app.config().string( QIWEB_HTTP_ADDRESS );
+        String httpHost = app.config().string( WERVAL_HTTP_ADDRESS );
         if( "127.0.0.1".equals( httpHost ) )
         {
             httpHost = "localhost";
@@ -141,7 +141,7 @@ public class QiWebHttpTest
     @Override
     public final int httpPort()
     {
-        return app.config().intNumber( QIWEB_HTTP_PORT );
+        return app.config().intNumber( WERVAL_HTTP_PORT );
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.qiweb.maven;
 
+import io.werval.runtime.util.Holder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -30,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.rules.TemporaryFolder;
-import org.qiweb.runtime.util.Holder;
 import org.qiweb.test.util.Processes;
 
 import static io.werval.api.BuildVersion.VERSION;

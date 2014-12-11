@@ -15,20 +15,20 @@
  */
 package io.werval.filters;
 
+import io.werval.api.outcomes.Outcome;
+import io.werval.runtime.routes.RoutesParserProvider;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import io.werval.api.outcomes.Outcome;
-import org.qiweb.runtime.routes.RoutesParserProvider;
 import org.qiweb.test.QiWebHttpRule;
 import org.qiweb.test.util.Slf4jRule;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertTrue;
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
 import static io.werval.api.mime.MimeTypes.APPLICATION_XML;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Security Headers Test.

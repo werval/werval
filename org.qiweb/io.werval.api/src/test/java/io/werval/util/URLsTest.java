@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
+import static io.werval.util.Charsets.UTF_8;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static io.werval.util.Charsets.UTF_8;
 
 public class URLsTest
 {

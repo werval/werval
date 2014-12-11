@@ -21,8 +21,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_ADDRESS;
-import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
+import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
 
 /**
  * Internal QiWeb Test Helper.
@@ -63,9 +63,9 @@ import static org.qiweb.runtime.ConfigKeys.QIWEB_HTTP_PORT;
         try
         {
             Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
-            restAssuredPortField.set( null, config.intNumber( QIWEB_HTTP_PORT ) );
+            restAssuredPortField.set(null, config.intNumber(WERVAL_HTTP_PORT ) );
             Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
-            restAssuredBaseURLField.set( null, "http://" + config.string( QIWEB_HTTP_ADDRESS ) );
+            restAssuredBaseURLField.set(null, "http://" + config.string(WERVAL_HTTP_ADDRESS ) );
         }
         catch( ClassNotFoundException | NoSuchFieldException |
                IllegalArgumentException | IllegalAccessException noRestAssured )

@@ -36,15 +36,15 @@ import io.werval.api.http.RequestHeader;
 import io.werval.api.http.ResponseHeader;
 import io.werval.api.http.Status;
 import io.werval.api.outcomes.Outcome;
+import io.werval.runtime.outcomes.ChunkedInputOutcome;
+import io.werval.runtime.outcomes.InputStreamOutcome;
+import io.werval.runtime.outcomes.SimpleOutcome;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellRebuildException;
 import io.werval.spi.dev.DevShellSPI;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
-import org.qiweb.runtime.outcomes.ChunkedInputOutcome;
-import org.qiweb.runtime.outcomes.InputStreamOutcome;
-import org.qiweb.runtime.outcomes.SimpleOutcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

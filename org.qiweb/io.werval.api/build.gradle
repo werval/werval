@@ -1,5 +1,5 @@
 
-description = "werval api"
+description = "Werval API"
 
 dependencies {
 
@@ -14,7 +14,7 @@ dependencies {
 
 
 // Generate API for all mimetypes
-task updateMimeTypesNames( description: "Generate MimeTypesNames from output of org.qiweb.runtime:updateMimeTypes task" ) << {
+task updateMimeTypesNames( description: "Generate MimeTypesNames from output of io.werval.runtime:updateMimeTypes task" ) << {
     def outFile = new File( project.projectDir, "src/main/java/io/werval/api/mime/MimeTypesNames.java" )
     outFile.getParentFile().mkdirs()
     outFile.write( """/*
@@ -42,7 +42,7 @@ package io.werval.api.mime;
 public interface MimeTypesNames
 {""")
     def props = new Properties()
-    new File( "${project.projectDir}/../org.qiweb.runtime/src/main/resources/org/qiweb/runtime/mime/mime-types-extensions.properties" ).withInputStream {
+    new File( "${project.projectDir}/../io.werval.runtime/src/main/resources/io/werval/runtime/mime/mime-types-extensions.properties" ).withInputStream {
         stream -> props.load( stream )
     }
     def seen = []

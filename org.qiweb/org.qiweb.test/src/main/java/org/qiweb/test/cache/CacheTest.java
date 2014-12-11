@@ -19,9 +19,9 @@ import io.werval.api.cache.Cache;
 import io.werval.api.http.Request;
 import io.werval.api.outcomes.Outcome;
 import io.werval.filters.Cached;
+import io.werval.runtime.routes.RoutesParserProvider;
+import io.werval.runtime.routes.RoutesProvider;
 import org.junit.Test;
-import org.qiweb.runtime.routes.RoutesParserProvider;
-import org.qiweb.runtime.routes.RoutesProvider;
 import org.qiweb.test.QiWebTest;
 
 import static io.werval.api.context.CurrentContext.outcomes;

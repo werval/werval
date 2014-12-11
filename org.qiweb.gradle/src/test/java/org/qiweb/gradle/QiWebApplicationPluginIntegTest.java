@@ -15,6 +15,7 @@
  */
 package org.qiweb.gradle;
 
+import io.werval.runtime.util.Holder;
 import io.werval.util.InputStreams;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.qiweb.runtime.util.Holder;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static io.werval.api.BuildVersion.VERSION;
