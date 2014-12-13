@@ -3,7 +3,7 @@
     "-//Puppy Crawl//DTD Suppressions 1.1//EN"
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
-<!-- Checkstyle Suppressions for org.qiweb.*                             -->
+<!-- Checkstyle Suppressions for io.werval.*                             -->
 <!-- See http://checkstyle.sourceforge.net/config.html#SuppressionFilter -->
 
 <suppressions>

@@ -48,7 +48,7 @@ public class ModulePluginIntegTest
           + "buildscript {\n"
           + "  repositories {\n"
           + "    maven { url wervalLocalRepository }\n"
-          + "    maven { url 'https://repo.codeartisans.org/qiweb' }\n"
+          + "    maven { url 'https://repo.codeartisans.org/werval' }\n"
           + "    jcenter()\n"
           + "  }\n"
           + "  dependencies { classpath 'org.qiweb:io.werval.gradle:" + VERSION + "' }\n"
@@ -111,7 +111,7 @@ public class ModulePluginIntegTest
         assertTrue(
             new File(
                 tmp.getRoot(),
-                "build/generated-src/werval-dyndesc/resources/META-INF/qiweb-plugins.properties"
+                "build/generated-src/werval-dyndesc/resources/META-INF/werval-plugins.properties"
             ).exists()
         );
 

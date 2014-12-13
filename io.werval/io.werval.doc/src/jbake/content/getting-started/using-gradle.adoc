@@ -122,7 +122,7 @@ Here is what you'll find inside:
 ["source","groovy",subs="attributes,callouts"]
 ----
 buildscript {
-	repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }    // <1>
+	repositories { maven { url 'https://repo.codeartisans.org/werval' } }    // <1>
 	dependencies { classpath 'org.qiweb:io.werval.gradle:{werval_version}' } // <2>
 }
 

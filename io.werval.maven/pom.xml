@@ -26,9 +26,9 @@
     <description>Werval Maven Plugin</description>
   
     <scm>
-        <url>https://scm.codeartisans.org/qiweb/qiweb</url>
-        <connection>scm:git:https://scm.codeartisans.org/qiweb/qiweb.git</connection>
-        <developerConnection>scm:git:git@scm.codeartisans.org:qiweb/qiweb.git</developerConnection>
+        <url>https://github.com/werval/werval</url>
+        <connection>scm:git:https://github.com/werval/werval.git</connection>
+        <developerConnection>scm:git:git@github.com:werval/werval.git</developerConnection>
     </scm>
 
     <licenses>
@@ -48,7 +48,7 @@
     <repositories>
         <repository>
             <id>wervalRepo</id>
-            <url>https://repo.codeartisans.org/qiweb</url>
+            <url>https://repo.codeartisans.org/werval</url>
         </repository>
         <repository>
             <id>jcenter</id>
@@ -317,10 +317,10 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <propertyExpansion>
-                        suppressionsCommon=${project.basedir}/../config/checkstyle/qiweb-suppressions.xml
+                        suppressionsCommon=${project.basedir}/../config/checkstyle/werval-suppressions.xml
                         suppressionsCustom=${project.basedir}/config/checkstyle/suppressions.xml
                     </propertyExpansion>
-                    <configLocation>${project.basedir}/../config/checkstyle/qiweb-checks.xml</configLocation>
+                    <configLocation>${project.basedir}/../config/checkstyle/werval-checks.xml</configLocation>
                 </configuration>
                 <executions>
                     <execution>

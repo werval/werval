@@ -145,10 +145,10 @@ checkstyleMain {
     inputs.dir project.file( 'config/checkstyle' )
 }
 checkstyle {
-    configFile = rootProject.file( '../config/checkstyle/qiweb-checks.xml' )
+    configFile = rootProject.file( '../config/checkstyle/werval-checks.xml' )
     configProperties = [
         // Global suppressions, applied to every modules
-        suppressionsCommon: rootProject.file( '../config/checkstyle/qiweb-suppressions.xml' ).absolutePath,
+        suppressionsCommon: rootProject.file( '../config/checkstyle/werval-suppressions.xml' ).absolutePath,
         // Project suppressions, applied to this module only
         suppressionsCustom: project.file( 'config/checkstyle/suppressions.xml' ).absolutePath
     ]

@@ -74,7 +74,7 @@ public class ApplicationPluginIntegTest
           + "buildscript {\n"
           + "  repositories {\n"
           + "    maven { url wervalLocalRepository }\n"
-          + "    maven { url 'https://repo.codeartisans.org/qiweb' }\n"
+          + "    maven { url 'https://repo.codeartisans.org/werval' }\n"
           + "    jcenter()\n"
           + "  }\n"
           + "  dependencies { classpath 'org.qiweb:io.werval.gradle:" + VERSION + "' }\n"
