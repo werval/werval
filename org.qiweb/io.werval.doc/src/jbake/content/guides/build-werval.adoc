@@ -129,7 +129,7 @@ Theses two needs proper configuration.
 [source,groovy]
 ----
 // Werval Local Repository
-qiwebLocalRepository=file:///home/you/src/werval-related/werval/repository
+wervalLocalRepository=file:///home/you/src/werval-related/werval/repository
 ----
 
 .~/.m2/settings.xml
@@ -144,13 +144,13 @@ qiwebLocalRepository=file:///home/you/src/werval-related/werval/repository
             </activation>
             <repositories>
                 <repository>
-                    <id>qiwebLocalRepository</id>
+                    <id>wervalLocalRepository</id>
                     <url>file:///home/you/src/werval-related/werval/repository</url>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
-                    <id>qiwebLocalRepository</id>
+                    <id>wervalLocalRepository</id>
                     <url>file:///home/you/src/werval-related/werval/repository</url>
                 </pluginRepository>
             </pluginRepositories>

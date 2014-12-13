@@ -6,10 +6,10 @@
 ----
 buildscript {
   repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }    // <1>
-  dependencies { classpath 'org.qiweb:org.qiweb.gradle:{werval_version}' } // <2>
+  dependencies { classpath 'org.qiweb:io.werval.gradle:{werval_version}' } // <2>
 }
 
-apply plugin: 'org.qiweb.application'       // <3>
+apply plugin: 'io.werval.application'       // <3>
 ----
 <1> Declare Werval repository for the build
 <2> Add Werval Gradle Plugin to build classpath
@@ -23,10 +23,10 @@ Use Werval dependencies of the same version as the Werval Gradle plugin:
 [source]
 ----
 dependencies {
-  compile qiweb.api
-  compile qiweb.module('json')
-  runtime qiweb.nettyServer
-  testCompile qiweb.test
+  compile werval.api
+  compile werval.module('json')
+  runtime werval.nettyServer
+  testCompile werval.test
 }
 ----
 
@@ -152,7 +152,7 @@ start {
 }
 
 // Sample custom start task
-task customStart( type: org.qiweb.gradle.StartTask )
+task customStart( type: io.werval.gradle.StartTask )
 {
   configResource = "application-custom.conf"
 }

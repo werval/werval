@@ -47,7 +47,7 @@
     
     <repositories>
         <repository>
-            <id>qiwebRepo</id>
+            <id>wervalRepo</id>
             <url>https://repo.codeartisans.org/qiweb</url>
         </repository>
         <repository>

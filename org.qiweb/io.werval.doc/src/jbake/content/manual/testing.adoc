@@ -36,7 +36,7 @@ import org.junit.Test;
 import io.werval.test.Werval[Http]Test;
 
 public class MyTest {
-  @Rule public Werval[Http]Rule qiweb = new Werval[Http]Rule();
+  @Rule public Werval[Http]Rule werval = new Werval[Http]Rule();
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -56,7 +56,7 @@ import org.junit.Test;
 import io.werval.test.Werval[Http]Test;
 
 public class MyTest {
-  @ClassRule public static final Werval[Http]Rule QIWEB = new Werval[Http]Rule();
+  @ClassRule public static final Werval[Http]Rule WERVAL = new Werval[Http]Rule();
   @Test
   public void myTest() {
     // Assert what you have to here

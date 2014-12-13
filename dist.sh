@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Build QiWeb distribution archives without running quality checks and tests
+# Build Werval distribution archives without running quality checks and tests
 
 set -e
 
@@ -18,13 +18,13 @@ fi
 
 
 # core
-$FIGLET org.qiweb
+$FIGLET io.werval
 ./gradlew -b org.qiweb/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 # gradle plugin
-$FIGLET org.qiweb.gradle
-./gradlew -b org.qiweb.gradle/build.gradle install check idea -x checkstyleMain -x test
+$FIGLET io.werval.gradle
+./gradlew -b io.werval.gradle/build.gradle install check idea -x checkstyleMain -x test
 echo "Built."
 
 # maven plugin
@@ -33,12 +33,12 @@ $MAVEN -f io.werval.maven/pom.xml install dependency:sources -DskipTests -Dgpg.s
 echo "Built."
 
 # modules
-$FIGLET org.qiweb.modules
+$FIGLET oio.werval.modules
 ./gradlew -b org.qiweb.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 # dist
-$FIGLET org.qiweb.dist
+$FIGLET io.werval.dist
 ./gradlew -b org.qiweb.dist/build.gradle install
 echo "Built."
 

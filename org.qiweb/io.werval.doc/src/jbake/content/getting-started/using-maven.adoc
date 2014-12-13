@@ -141,7 +141,7 @@ Here is what you'll find inside:
 
     <repositories>
         <repository>
-            <id>qiwebRepo</id>
+            <id>wervalRepo</id>
             <url>https://repo.codeartisans.org/qiweb</url>
         </repository>
     </repositories>
@@ -168,7 +168,7 @@ Here is what you'll find inside:
 
     <pluginRepositories>
         <pluginRepository>
-            <id>qiwebRepo</id>
+            <id>wervalRepo</id>
             <url>https://repo.codeartisans.org/qiweb</url>
         </pluginRepository>
     </pluginRepositories>
