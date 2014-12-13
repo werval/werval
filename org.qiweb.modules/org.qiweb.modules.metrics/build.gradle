@@ -6,7 +6,7 @@ moduleDescriptor.plugin 'metrics', impl: 'org.qiweb.modules.metrics.MetricsPlugi
 dependencies {
 
     compile project( ":org.qiweb.modules.json" )
-    compile qiweb.spi
+    compile werval.spi
     compile libs.metrics
 
 }

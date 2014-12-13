@@ -9,7 +9,7 @@ buildscript {
     dependencies { 
         // JDK8_ASM5 // classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.9.0'
-        classpath "org.qiweb:org.qiweb.gradle:${System.properties.version ?: '0'}"
+        classpath "org.qiweb:io.werval.gradle:${System.properties.version ?: '0'}"
     }
 }
 
@@ -35,6 +35,6 @@ subprojects {
         ext.name = "the original author or authors"
     }
     // JDK8_ASM5 // apply plugin: 'jacoco'
-    apply plugin: 'org.qiweb.module'
+    apply plugin: 'io.werval.module'
     moduleDocumentation.dynDocPackagePrefix = project.name
 }
