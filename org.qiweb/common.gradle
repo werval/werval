@@ -1,5 +1,5 @@
 //
-// This file is to be applied to every org.qiweb submodules.
+// This file is to be applied to every io.werval submodules.
 //
 
 apply from: rootProject.file( '../gradle/java.gradle' )
