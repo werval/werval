@@ -16,9 +16,9 @@
 package org.qiweb.commands;
 
 import io.werval.spi.dev.DevShellSPI;
+import io.werval.devshell.DevShell;
 import java.io.File;
 import java.net.URL;
-import org.qiweb.devshell.DevShell;
 
 /**
  * DevShell Command.

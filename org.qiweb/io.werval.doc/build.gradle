@@ -158,7 +158,7 @@ task prepareJBakeInput(type: Copy) {
     into file('build/tmp/jbake')
 }
 task copyDevShellDocImages(type: Copy) {
-    from file('../org.qiweb.devshell/src/doc/classloader-hierarchy.png')
+    from file('../io.werval.devshell/src/doc/classloader-hierarchy.png')
     into file('build/tmp/jbake/assets/images/')
 }
 task prepareJBakeJavadoc(type: Copy) {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.devshell;
+package io.werval.devshell;
 
 import io.werval.api.exceptions.PassivationException;
 import io.werval.api.exceptions.WervalException;
@@ -53,9 +53,9 @@ import static io.werval.util.ClassLoaders.printURLs;
 import static java.util.Collections.singletonMap;
 
 /**
- * QiWeb DevShell.
+ * Werval DevShell.
  *
- * Bind a build plugin to a QiWeb runtime using a DevShellSPI.
+ * Bind a build plugin to a Werval runtime using a DevShellSPI.
  * <p>
  * Class reloading is implemented using <a href="https://github.com/sonatype/plexus-classworlds">ClassWorlds</a>.
  * <p>
@@ -197,7 +197,7 @@ public final class DevShell
                 + "Is another instance already running?"
             );
         }
-        System.out.println( white( ">> QiWeb DevShell starting..." ) );
+        System.out.println( white( ">> Werval DevShell starting..." ) );
         try
         {
             System.out.println( cyan( "Isolating worlds..." ) );
@@ -206,7 +206,7 @@ public final class DevShell
             ClassRealm appRealm = classWorld.getRealm( currentApplicationRealmID() );
             Thread.currentThread().setContextClassLoader( appRealm );
 
-            System.out.println( cyan( "Starting isolated QiWeb Application..." ) );
+            System.out.println( cyan( "Starting isolated Werval Application..." ) );
 
             // Config
             Class<?> configClass = appRealm.loadClass( CONFIG_API_CLASS );
@@ -353,8 +353,8 @@ public final class DevShell
             {
                 cause = ex.getCause();
             }
-            String msg = "Unable to start QiWeb DevShell: "
-                + cause.getClass().getSimpleName() + " " + cause.getMessage();
+            String msg = "Unable to start Werval DevShell: "
+                         + cause.getClass().getSimpleName() + " " + cause.getMessage();
             System.err.println( red( msg ) );
             throw new DevShellStartException( msg, cause );
         }
@@ -369,7 +369,7 @@ public final class DevShell
         if( running )
         {
             running = false;
-            System.out.println( white( ">> QiWeb DevShell stopping..." ) );
+            System.out.println( white( ">> Werval DevShell stopping..." ) );
 
             // Record all passivation errors here to report them at once at the end
             List<Exception> passivationErrors = new ArrayList<>();
@@ -381,7 +381,7 @@ public final class DevShell
             }
             catch( Exception ex )
             {
-                passivationErrors.add(new WervalException( "Error while passivating HTTP Server: " + ex.getMessage(), ex )
+                passivationErrors.add( new WervalException( "Error while passivating HTTP Server: " + ex.getMessage(), ex )
                 );
             }
 
@@ -392,7 +392,7 @@ public final class DevShell
             }
             catch( Exception ex )
             {
-                passivationErrors.add(new WervalException( "Error while stopping DevShellSPI: " + ex.getMessage(), ex )
+                passivationErrors.add( new WervalException( "Error while stopping DevShellSPI: " + ex.getMessage(), ex )
                 );
             }
 
@@ -403,7 +403,8 @@ public final class DevShell
             }
             catch( Exception ex )
             {
-                passivationErrors.add(new WervalException( "Error while disposing Classworld Realms: " + ex.getMessage(), ex )
+                passivationErrors.add(
+                    new WervalException( "Error while disposing Classworld Realms: " + ex.getMessage(), ex )
                 );
             }
 
@@ -420,7 +421,7 @@ public final class DevShell
             // Report errors if any
             if( !passivationErrors.isEmpty() )
             {
-                PassivationException ex = new PassivationException( "Unable to stop QiWeb DevShell" );
+                PassivationException ex = new PassivationException( "Unable to stop Werval DevShell" );
                 System.err.println( red( ex.getMessage() ) );
                 for( Exception passivationError : passivationErrors )
                 {
@@ -472,13 +473,13 @@ public final class DevShell
         ClassRealm devRealm = classWorld.newRealm( DEVSHELL_REALM_ID, originalLoader );
 
         // Dependencies Realm contains all Application dependencies JARs
-        // and import QiWeb DevShell and Dev SPI packages from DevShell Realm
+        // and import Werval DevShell and Dev SPI packages from DevShell Realm
         ClassRealm depRealm = classWorld.newRealm( DEPENDENCIES_REALM_ID, null );
         for( URL runtimeClasspathElement : spi.runtimeClassPath() )
         {
             depRealm.addURL( runtimeClasspathElement );
         }
-        depRealm.importFrom( devRealm, "org.qiweb.devshell.*" );
+        depRealm.importFrom( devRealm, "io.werval.devshell.*" );
         depRealm.importFrom( devRealm, "io.werval.spi.dev.*" );
 
         setupApplicationRealm( depRealm );
@@ -535,10 +536,10 @@ public final class DevShell
         };
         String httpHost = (String) configClass
             .getMethod( "string", argsTypes )
-            .invoke(configInstance, WERVAL_HTTP_ADDRESS );
+            .invoke( configInstance, WERVAL_HTTP_ADDRESS );
         int httpPort = (int) configClass
             .getMethod( "intNumber", argsTypes )
-            .invoke(configInstance, WERVAL_HTTP_PORT );
+            .invoke( configInstance, WERVAL_HTTP_PORT );
         if( "127.0.0.1".equals( httpHost ) )
         {
             httpHost = "localhost";

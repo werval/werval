@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.devshell;
+package io.werval.devshell;
 
 import io.werval.spi.dev.DevShellSPI.SourceChangeListener;
 import io.werval.spi.dev.DevShellSPI.SourceWatch;

@@ -28,7 +28,7 @@ import java.util.List;
  * information as JSON respectively at {@literal /@config} and {@literal /@version}.
  * <p>
  * Due to DevShell classloading mechanism, this should not use Javassist hence use Route parsing instead of the API.
- * Moreover, this class shall not be put in `org.qiweb.devshell`, nor `io.werval.spi.dev` because the loading of classes
+ * Moreover, this class shall not be put in `io.werval.devshell`, nor `io.werval.spi.dev` because the loading of classes
  * in theses packages is done in the original DevShell classloader hierarchy, not in the application one.
  */
 public class DocumentationPlugin

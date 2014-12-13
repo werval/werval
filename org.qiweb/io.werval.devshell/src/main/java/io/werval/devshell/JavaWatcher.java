@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.devshell;
+package io.werval.devshell;
 
 import io.werval.util.LinkedMultiValueMap;
 import io.werval.util.MultiValueMap;
@@ -56,7 +56,7 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
  * Based on the <a href="http://docs.oracle.com/javase/tutorial/essential/io/notification.html">Watching a Directory
  * for Changes</a> Java Tutorial.
  * <p>
- * Adapted for QiWeb needs and extended to support watching individual files and deletion of watched directories.
+ * Adapted for Werval needs and extended to support watching individual files and deletion of watched directories.
  */
 // Note that thanks to the akward Java WatchService API, this code is pretty fragile.
 // This implementation is greedy and may leak. Not critical tough as it is used in dev mode only.
@@ -634,7 +634,7 @@ public class JavaWatcher
                     registerAbsent( start, watchService, keys );
                 }
             }
-            String watchThreadName = "qiweb-devshell-watcher-" + THREAD_NUMBER.getAndIncrement();
+            String watchThreadName = "werval-devshell-watcher-" + THREAD_NUMBER.getAndIncrement();
             final SourceChangeWatcher sourceChangeWatcher = new SourceChangeWatcher( watchService, keys, listener );
             final Thread watchThread = new Thread( sourceChangeWatcher, watchThreadName );
             watchThread.start();

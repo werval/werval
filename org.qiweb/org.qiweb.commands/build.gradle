@@ -3,7 +3,7 @@ description = "QiWeb Commands"
 
 dependencies {
 
-    compile project( ':org.qiweb.devshell' )
+    compile project( ':io.werval.devshell' )
 
 }
 
