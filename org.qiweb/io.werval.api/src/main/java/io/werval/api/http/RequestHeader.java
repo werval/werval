@@ -90,12 +90,12 @@ public interface RequestHeader
      * <p>
      * Default value is the underlying socket client address.
      * <p>
-     * If the {@literal qiweb.http.headers.x_forwarded_for.enabled} configuration property is {@literal yes}, then
+     * If the {@literal werval.http.headers.x_forwarded_for.enabled} configuration property is {@literal yes}, then
      * the value is computed from the {@literal X-Forwarded-For} header value. This is the default behaviour.
      * <p>
-     * If the {@literal qiweb.http.headers.x_forwarded_for.check_proxies} configuration property is {@literal yes},
+     * If the {@literal werval.http.headers.x_forwarded_for.check_proxies} configuration property is {@literal yes},
      * then {@literal X-Forwarded-For} value is accepted only if all proxies in the chain are present in the
-     * {@literal qiweb.http.headers.x_forwarded_for.trusted_proxies} configuration list. This is the default
+     * {@literal werval.http.headers.x_forwarded_for.trusted_proxies} configuration list. This is the default
      * behaviour trusting only {@literal 127.0.0.1}.
      * <p>
      * If the {@literal X-Forwarded-For} cannot be trusted, Werval will respond with a {@literal 400 Bad Request}.

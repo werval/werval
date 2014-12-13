@@ -100,8 +100,8 @@ public abstract class HttpServerAdapter
         // Log
         if( LOG.isInfoEnabled() )
         {
-            String address = app.config().string( "qiweb.http.address" );
-            int port = app.config().intNumber( "qiweb.http.port" );
+            String address = app.config().string( "werval.http.address" );
+            int port = app.config().intNumber( "werval.http.port" );
             LOG.info(
                 "Http Service Activated on http://{}:{}/ - Took {}ms",
                 address, port, System.currentTimeMillis() - start

@@ -55,7 +55,7 @@ link:write-modules.html#documentation[module writing guide].
 Dynamic documentations are registered by adding the following lines to a `reference.conf` files in the module's
 classpath root:
 
-    qiweb.devshell.dyndoc.your-module-id {
+    werval.devshell.dyndoc.your-module-id {
         name = "Your shiny module's name"
         base_path = io/werval/modules/your-module-id/doc
     }

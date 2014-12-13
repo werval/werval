@@ -30,11 +30,11 @@ import java.nio.charset.Charset;
  * <img src="doc-files/apache-httpd.jpg" alt="Apache HTTP Server">
  * <p>
  * You can add Mime Type definitions in <code>application.conf</code> at the
- * <code>qiweb.mimetypes.supplementary</code> config property.
+ * <code>werval.mimetypes.supplementary</code> config property.
  * <p>
  * Here is an example defining two more Mime Types:
  * <pre>
- * qiweb.mimetypes.supplementary: {
+ * werval.mimetypes.supplementary: {
  *     foo: "application/vnd.acme.foo",
  *     bar: "application/vnd.acme.bar"
  * }
@@ -55,8 +55,8 @@ import java.nio.charset.Charset;
  * Here is an example registering the two mimetypes used above as textual
  * while defining their default character encoding:
  * <pre>
- * qiweb.character-encoding: utf-8
- * qiweb.mimetypes.textuals: {
+ * werval.character-encoding: utf-8
+ * werval.mimetypes.textuals: {
  *      "application/vnd.acme.foo": default,
  *      "application/vnd.acme.bar": koi8-ru
  * }

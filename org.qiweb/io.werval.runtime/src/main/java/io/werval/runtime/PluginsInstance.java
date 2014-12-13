@@ -403,8 +403,8 @@ import static java.util.stream.Collectors.toList;
         Map<String, String> routesPrefixes = application.config().stringMap( "app.plugins.routes_prefixes" );
         if( application.mode() == Mode.DEV )
         {
-            enabled.addAll( application.config().stringList( "qiweb.devshell.plugins.enabled" ) );
-            routesPrefixes.putAll( application.config().stringMap( "qiweb.devshell.plugins.routes_prefixes" ) );
+            enabled.addAll( application.config().stringList( "werval.devshell.plugins.enabled" ) );
+            routesPrefixes.putAll( application.config().stringMap( "werval.devshell.plugins.routes_prefixes" ) );
         }
         try
         {

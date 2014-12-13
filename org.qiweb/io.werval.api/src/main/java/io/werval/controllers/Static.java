@@ -49,7 +49,7 @@ import static io.werval.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
 /**
  * Serve static files or directory trees.
  * <p>
- * Cache behaviour can be tweeked with <code>qiweb.controllers.static</code> config properties.
+ * Cache behaviour can be tweeked with <code>werval.controllers.static</code> config properties.
  * <p>
  * Always use streamed identity transfer encoding.
  * <p>
@@ -68,7 +68,7 @@ public class Static
     /**
      * Serve a filesystem directory as read-only resources.
      * <p>
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
+     * If a directory is requested, filenames set in the <code>werval.controllers.static.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param root Root of the file tree to serve
@@ -85,7 +85,7 @@ public class Static
     /**
      * Serve a filesystem directory as read-only resources.
      * <p>
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
+     * If a directory is requested, filenames set in the <code>werval.controllers.static.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param root Root of the file tree to serve
@@ -102,7 +102,7 @@ public class Static
     /**
      * Serve a filesystem directory as read-only resources.
      * <p>
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.static.index</code> config property
+     * If a directory is requested, filenames set in the <code>werval.controllers.static.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param root Root of the file tree to serve
@@ -122,7 +122,7 @@ public class Static
         File file = new File( root, path );
         if( file.isDirectory() )
         {
-            List<String> indexFileNames = application().config().stringList( "qiweb.controllers.static.index" );
+            List<String> indexFileNames = application().config().stringList( "werval.controllers.static.index" );
             for( String indexFileName : indexFileNames )
             {
                 File indexFile = new File( file, indexFileName );
@@ -199,7 +199,7 @@ public class Static
         }
         else
         {
-            Long maxAge = application().config().seconds( "qiweb.controllers.static.cache.maxage" );
+            Long maxAge = application().config().seconds( "werval.controllers.static.cache.maxage" );
             if( maxAge.equals( 0L ) )
             {
                 response().headers().with( CACHE_CONTROL, "no-cache" );
@@ -212,7 +212,7 @@ public class Static
         // ETag
         long lastModified = file.lastModified();
         final String etag = "\"" + lastModified + "-" + file.hashCode() + "\"";
-        if( application().config().bool( "qiweb.controllers.static.cache.etag" ) )
+        if( application().config().bool( "werval.controllers.static.cache.etag" ) )
         {
             response().headers().with( ETAG, etag );
         }

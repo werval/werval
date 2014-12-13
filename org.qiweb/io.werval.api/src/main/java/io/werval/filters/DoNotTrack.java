@@ -83,7 +83,7 @@ public @interface DoNotTrack
                     boolean optIn = annotation.map(
                         annot -> annot.optIn() ? true : null
                     ).orElse(
-                        context.application().config().bool( "qiweb.filters.dnt.opt_in" )
+                        context.application().config().bool( "werval.filters.dnt.opt_in" )
                     );
                     outcome.responseHeader().headers().withSingle( DNT, optIn ? "0" : "1" );
                     return outcome;

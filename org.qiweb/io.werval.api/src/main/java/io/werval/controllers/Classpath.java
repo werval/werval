@@ -57,7 +57,7 @@ public class Classpath
     /**
      * Serve static files from META-INF/resources in classpath.
      * <p>
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
+     * If a directory is requested, filenames set in the <code>werval.controllers.classpath.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param path Path of the requested resources, relative to META-INF/resources
@@ -72,7 +72,7 @@ public class Classpath
     /**
      * Serve static resources from classpath.
      * <p>
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
+     * If a directory is requested, filenames set in the <code>werval.controllers.classpath.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param basepath Base path of the requested resources, relative to the classpath root
@@ -88,7 +88,7 @@ public class Classpath
     /**
      * Serve static resources from classpath.
      * <p>
-     * If a directory is requested, filenames set in the <code>qiweb.controllers.classpath.index</code> config property
+     * If a directory is requested, filenames set in the <code>werval.controllers.classpath.index</code> config property
      * are used to find an index file. Default value is <strong>no index file support</strong>.
      *
      * @param path Path of the requested resource, relative to the classpath root
@@ -110,7 +110,7 @@ public class Classpath
         }
         if( !resourceExists( application().classLoader(), path ) )
         {
-            List<String> indexFileNames = application().config().stringList( "qiweb.controllers.classpath.index" );
+            List<String> indexFileNames = application().config().stringList( "werval.controllers.classpath.index" );
             for( String indexFileName : indexFileNames )
             {
                 String indexPath = path + "/" + indexFileName;
@@ -138,7 +138,7 @@ public class Classpath
         }
         else
         {
-            Long maxAge = application().config().seconds( "qiweb.controllers.classpath.cache.maxage" );
+            Long maxAge = application().config().seconds( "werval.controllers.classpath.cache.maxage" );
             if( maxAge.equals( 0L ) )
             {
                 response().headers().with( CACHE_CONTROL, "no-cache" );

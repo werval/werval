@@ -77,7 +77,7 @@ public @interface LogIfSlow
                         annotation.map(
                             annot -> annot.threshold()
                         ).orElse(
-                            context.application().config().milliseconds( "qiweb.filters.log_if_slow.threshold" )
+                            context.application().config().milliseconds( "werval.filters.log_if_slow.threshold" )
                         )
                     );
                     long nanos = System.nanoTime() - startTime;

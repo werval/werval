@@ -54,8 +54,8 @@ image::images/welcome.png[Welcome,640]
 
 As stated on the welcome page above, when running the Development Shell, the whole Werval documentation is available right from the HTTP server that run your application. Open http://localhost:23023/@doc to browse the documentation. This very article should be available at http://localhost:23023/@doc/getting-started.html but maybe you are already reading it from there.
 
-// TIP: If you want to change the listening address and port override `qiweb.http.address` and `qiweb.http.port` either
-// through the command line by adding `-Dqiweb.http.address=0.0.0.0` and `-Dqiweb.http.port=80` for example ; or in the
+// TIP: If you want to change the listening address and port override `werval.http.address` and `werval.http.port` either
+// through the command line by adding `-Dwerval.http.address=0.0.0.0` and `-Dwerval.http.port=80` for example ; or in the
 // `application.conf` file.
 
 [TIP]

@@ -24,7 +24,7 @@ Given that your application is named `app`, put the following in a file named `P
 
 [source,bash]
 ----
-web: ./build/install/app/bin/app.sh -Dqiweb.http.address=0.0.0.0 -Dqiweb.http.port=$PORT
+web: ./build/install/app/bin/app.sh -Dwerval.http.address=0.0.0.0 -Dwerval.http.port=$PORT
 ----
 
 Heroku Gradle support will invoke the `stage` task provided by the `io.werval.application` plugin.

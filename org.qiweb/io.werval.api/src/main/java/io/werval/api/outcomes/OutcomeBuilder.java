@@ -144,7 +144,7 @@ public interface OutcomeBuilder
      *
      * Content-Length header will NOT be set and chunked Transfer-Encoding used.
      * <p>
-     * Use a chunk size as configured in <code>qiweb.http.chunksize</code>
+     * Use a chunk size as configured in <code>werval.http.chunksize</code>
      *
      * @param body Body InputStream
      *

@@ -121,7 +121,7 @@ class WervalModulePlugin implements Plugin<Project>
                 def originalRefConfFile = project.moduleDocumentation.referenceConfig
                 def dynDocId = project.moduleDocumentation.dynDocId
                 if( !originalRefConfFile.exists()
-                    || !originalRefConfFile.getText( 'UTF-8' ).contains( "qiweb.devshell.dyndocs.$dynDocId" ) ) {
+                    || !originalRefConfFile.getText( 'UTF-8' ).contains( "werval.devshell.dyndocs.$dynDocId" ) ) {
                     def dynDocsRefConfPath = 'build/generated-src/werval-dyndocs/resources'
                     project.task(
                         'moduleDocumentation_dyndocs',
@@ -146,7 +146,7 @@ class WervalModulePlugin implements Plugin<Project>
                             dynDocsRefConfFile.withWriterAppend( 'UTF-8' ) { writer ->
                                 writer.write '\n'
                                 writer.write '// BEGIN DynDoc Generated Declaration\n'
-                                writer.write 'qiweb.devshell.dyndocs.' + dynDocId + ' {\n'
+                                writer.write 'werval.devshell.dyndocs.' + dynDocId + ' {\n'
                                 writer.write '    name = "' + ( 
                                         ( project.description == null || project.description.isEmpty() ) 
                                         ? project.name 

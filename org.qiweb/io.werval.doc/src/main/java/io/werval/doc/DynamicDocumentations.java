@@ -129,9 +129,9 @@ public class DynamicDocumentations
     private static Map<String, DynDoc> discoverDynDocs( Application application )
     {
         Map<String, DynDoc> map = new LinkedHashMap<>();
-        if( application.config().has( "qiweb.devshell.dyndocs" ) )
+        if( application.config().has( "werval.devshell.dyndocs" ) )
         {
-            Config dyndocsConfig = application.config().object( "qiweb.devshell.dyndocs" );
+            Config dyndocsConfig = application.config().object( "werval.devshell.dyndocs" );
             for( String id : dyndocsConfig.subKeys() )
             {
                 Config dyndocConfig = dyndocsConfig.object( id );

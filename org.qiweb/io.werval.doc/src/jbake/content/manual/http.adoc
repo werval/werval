@@ -57,7 +57,7 @@ and a warning is logged.
 // TODO In dev-mode, put meta-data in exceptions with pointers to documentation!!!
 
 On the other hand, and if you really need it, you can easily enable multiple values support by setting the
-`qiweb.http.query-string.multi-valued` to yes.
+`werval.http.query-string.multi-valued` to yes.
 
 TIP: Did you take a look at the OWASP link mentioned earlier? No? Now is a good time.
 
@@ -84,7 +84,7 @@ public MyController {
 
 The `QueryString` API leave you in control regarding which value you want to use.
 
-NOTE: Enabling `qiweb.http.query-string.multi-valued` do not enable any *syntax*. A request with multiple `foo[]`
+NOTE: Enabling `werval.http.query-string.multi-valued` do not enable any *syntax*. A request with multiple `foo[]`
 values will pass but the values will be in the `"foo[]"` parameter, not `"foo"`. Be careful, there's no magic.
 Speaking of which, something along the line of Ruby on Rails
 http://guides.rubyonrails.org/action_controller_overview.html#hash-and-array-parameters[Hash and Array Parameters]

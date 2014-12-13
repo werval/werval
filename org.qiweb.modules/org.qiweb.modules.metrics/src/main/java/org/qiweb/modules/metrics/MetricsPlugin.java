@@ -260,7 +260,7 @@ public class MetricsPlugin
 
     private void registerMetrics( Application application, MetricRegistry metrics )
     {
-        Config config = application.config().object( "qiweb.metrics" );
+        Config config = application.config().object( "metrics" );
 
         // JVM Meters
         if( config.bool( "jvm.bufferpools.enabled" ) )
@@ -307,7 +307,7 @@ public class MetricsPlugin
 
     private void registerMetricsReporters( Application application, MetricRegistry metrics )
     {
-        Config config = application.config().object( "qiweb.metrics" );
+        Config config = application.config().object( "metrics" );
 
         reporters = new ArrayList<>();
 
@@ -366,7 +366,7 @@ public class MetricsPlugin
 
     private void registerHealthChecks( Application application, HealthCheckRegistry healthChecks )
     {
-        Config config = application.config().object( "qiweb.metrics" );
+        Config config = application.config().object( "metrics" );
 
         // JVM HealthChecks
         if( config.bool( "healthchecks.deadlocks.enabled" ) )

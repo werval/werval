@@ -12,7 +12,7 @@ All Werval loggers are present in the `io.werval` namespace according to code pa
 
 TIP: Werval Runtime leverage SLF4J http://www.slf4j.org/manual.html#mdc[Mapped Diagnosic Context], aka. MDC, by putting
 the current request ID at the `X-Werval-Request-ID` key.
-Moreover, you can enable the `qiweb.http.log.context.client_ip` configuration property to add the current request client
+Moreover, you can enable the `werval.http.log.context.client_ip` configuration property to add the current request client
 IP address at the `X-Werval-Client-IP` key.
 You can use theses keys in your loggers output patterns.
 
@@ -20,7 +20,7 @@ You can use theses keys in your loggers output patterns.
 === Character encoding
 
 By default all character encoding is done in UTF-8.
-Character encoding can be changed by setting the `qiweb.character-encoding` configuration property.
+Character encoding can be changed by setting the `werval.character-encoding` configuration property.
 
 Werval ignore the runtime platform default encoding and complies to its configuration only.
 This is the only way to get a consistent behaviour accross different environments and prevent

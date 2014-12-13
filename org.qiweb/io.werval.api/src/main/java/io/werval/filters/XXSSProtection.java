@@ -81,7 +81,7 @@ public @interface XXSSProtection
                         annotation.map(
                             annot -> hasTextOrNull( annot.value() )
                         ).orElse(
-                            context.application().config().string( "qiweb.filters.x_xss_protection.value" )
+                            context.application().config().string( "werval.filters.x_xss_protection.value" )
                         )
                     );
                     return outcome;

@@ -75,7 +75,7 @@ public @interface XFrameOptions
                         annotation.map(
                             annot -> hasTextOrNull( annot.value() )
                         ).orElse(
-                            context.application().config().string( "qiweb.filters.x_frame_options.value" )
+                            context.application().config().string( "werval.filters.x_frame_options.value" )
                         )
                     );
                     return outcome;

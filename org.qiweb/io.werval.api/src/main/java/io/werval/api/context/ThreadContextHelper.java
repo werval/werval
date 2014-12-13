@@ -105,12 +105,12 @@ public final class ThreadContextHelper
         if( context != null )
         {
             Thread.currentThread().setContextClassLoader( context.application().classLoader() );
-            logRequestId = context.application().config().bool( "qiweb.http.log.context.request_id" );
+            logRequestId = context.application().config().bool( "werval.http.log.context.request_id" );
             if( logRequestId )
             {
                 MDC.put( X_WERVAL_REQUEST_ID, context.request().identity() );
             }
-            logClientIp = context.application().config().bool( "qiweb.http.log.context.client_ip" );
+            logClientIp = context.application().config().bool( "werval.http.log.context.client_ip" );
             if( logClientIp )
             {
                 MDC.put( X_WERVAL_CLIENT_IP, context.request().remoteAddress() );

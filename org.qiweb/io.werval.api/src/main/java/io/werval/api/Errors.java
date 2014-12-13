@@ -23,7 +23,7 @@ import java.util.List;
  * Records errors happening in the application.
  * <p>
  * To prevent OOME when errors are frequent, it is possible to limit the amount of recorded errors with the
- * `qiweb.errors.max` configuration property. This default to 100.
+ * `werval.errors.max` configuration property. This default to 100.
  * <p>
  * Errors is an Iterable&lt;Error&gt;.
  * Implementations are required to provide predictible and sorted iteration starting with the last error and

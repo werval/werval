@@ -55,7 +55,7 @@ public @interface HSTS
      * double edged sword of HSTS persistence and privacy</a> for tremendous details.
      * </p>
      * <p>
-     * Default to {@literal qiweb.filters.hsts.max_age} configuration property value.
+     * Default to {@literal werval.filters.hsts.max_age} configuration property value.
      * </p>
      *
      * @return The max-age directive value, in seconds
@@ -66,7 +66,7 @@ public @interface HSTS
      * {@literal includeSubDomains} directive.
      *
      * <p>
-     * Default to {@literal qiweb.filters.hsts.include_sub_domains} configuration property value.
+     * Default to {@literal werval.filters.hsts.include_sub_domains} configuration property value.
      * </p>
      *
      * @return {@literal TRUE} if the {@literal includeSubDomains} directive should be included, {@literal FALSE}
@@ -87,7 +87,7 @@ public @interface HSTS
             return chain.next( context ).thenApply(
                 (outcome) ->
                 {
-                    Config config = context.application().config().object( "qiweb.filters.hsts" );
+                    Config config = context.application().config().object( "werval.filters.hsts" );
                     long maxAge = annotation.map(
                         annot -> annot.maxAge() == -1 ? null : annot.maxAge()
                     ).orElse(

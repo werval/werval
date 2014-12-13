@@ -61,7 +61,7 @@ import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
  * <pre>POST /csp-violations io.werval.filters.ContentSecurityPolicy$ViolationLogger.logViolation</pre>
  * </blockquote>
  * Logging level is {@literal WARN} by default, this can be changed by setting the
- * {@literal qiweb.filters.csp.report_log_level} configuration property to {@literal error}, {@literal warn},
+ * {@literal werval.filters.csp.report_log_level} configuration property to {@literal error}, {@literal warn},
  * {@literal info}, {@literal debug} or {@literal trace} value.
  *
  * @navassoc 1 apply 1 Filter
@@ -98,12 +98,12 @@ public @interface ContentSecurityPolicy
                     String value = annotation.map(
                         annot -> hasTextOrNull( annot.policy() )
                     ).orElse(
-                        config.string( "qiweb.filters.csp.policy" )
+                        config.string( "werval.filters.csp.policy" )
                     );
                     boolean reportOnly = annotation.map(
                         annot -> annot.reportOnly() ? true : null
                     ).orElse(
-                        config.bool( "qiweb.filters.csp.report_only" )
+                        config.bool( "werval.filters.csp.report_only" )
                     );
                     outcome.responseHeader().headers().withSingle(
                         reportOnly ? "Content-Security-Policy-Report-Only" : "Content-Security-Policy",
@@ -145,7 +145,7 @@ public @interface ContentSecurityPolicy
                 return outcomes().badRequest().build();
             }
             String violationReport = request().body().asString();
-            switch( application().config().string( "qiweb.filters.csp.report_log_level" ).toLowerCase( Locale.US ) )
+            switch( application().config().string( "werval.filters.csp.report_log_level" ).toLowerCase( Locale.US ) )
             {
                 case "error":
                     LOG.error( violationReport );
