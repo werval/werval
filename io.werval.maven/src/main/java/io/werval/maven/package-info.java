@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * QiWeb Maven Plugin.
+ * Werval Maven Plugin.
  */
-package org.qiweb.maven;
+package io.werval.maven;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
 import io.werval.commands.DevShellCommand;
 import io.werval.devshell.JavaWatcher;
@@ -41,7 +41,7 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 @Mojo( name = "devshell", requiresDependencyResolution = RUNTIME, threadSafe = true )
 @Execute( phase = COMPILE )
 public class DevShellMojo
-    extends AbstractQiWebMojo
+    extends AbstractRunGoal
 {
     /**
      * Rebuild phase.
@@ -52,13 +52,13 @@ public class DevShellMojo
     /**
      * Extra files or directories paths to watch for changes, relative to the project base directory.
      */
-    @Parameter( property = "qiwebdev.extraWatch" )
+    @Parameter( property = "wervaldev.extraWatch" )
     private String[] extraWatch;
 
     /**
      * Open default browser on start.
      */
-    @Parameter( property = "qiwebdev.openBrowser", defaultValue = "true" )
+    @Parameter( property = "wervaldev.openBrowser", defaultValue = "true" )
     private boolean openBrowser;
 
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
@@ -68,7 +68,7 @@ public class DevShellMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( ">> QiWeb DevShell for " + project.getArtifactId() + " starting..." );
+        getLog().info( ">> Werval DevShell for " + project.getArtifactId() + " starting..." );
 
         try
         {
@@ -76,7 +76,7 @@ public class DevShellMojo
             URL[] applicationSources = applicationSources();
 
             // Application Classpath
-            Set<URL> appCP = qiwebDocArtifacts();
+            Set<URL> appCP = wervalDocArtifacts();
             appCP.add( new File( project.getBasedir(), "target/classes" ).toURI().toURL() );
             if( extraClassPath != null )
             {
@@ -132,17 +132,17 @@ public class DevShellMojo
         return sourcesSet.toArray( new URL[ sourcesSet.size() ] );
     }
 
-    protected Set<URL> qiwebDocArtifacts()
+    protected Set<URL> wervalDocArtifacts()
         throws MalformedURLException
     {
-        Artifact qiwebDocArtifact = null;
+        Artifact wervalDocArtifact = null;
         Artifact sitemeshArtifact = null;
         for( Artifact pluginArtifact : pluginArtifacts )
         {
             if( "org.qiweb".equals( pluginArtifact.getGroupId() )
                 && "io.werval.doc".equals( pluginArtifact.getArtifactId() ) )
             {
-                qiwebDocArtifact = pluginArtifact;
+                wervalDocArtifact = pluginArtifact;
             }
             else if( "org.sitemesh".equals( pluginArtifact.getGroupId() )
                      && "sitemesh".equals( pluginArtifact.getArtifactId() ) )
@@ -151,17 +151,17 @@ public class DevShellMojo
             }
         }
 
-        if( qiwebDocArtifact == null || sitemeshArtifact == null )
+        if( wervalDocArtifact == null || sitemeshArtifact == null )
         {
             getLog().warn(
-                "QiWeb Documentation not in the Maven Plugin Classpath, please report the issue: "
-                + "https://scm.codeartisans.org/qiweb/qiweb/issues/new"
+                "Werval Documentation not in the Maven Plugin Classpath, please report the issue: "
+                + "https://github.com/werval/werval/issues/new"
             );
             return EMPTY_SET;
         }
 
         Set<URL> result = new LinkedHashSet<>();
-        result.add( qiwebDocArtifact.getFile().toURI().toURL() );
+        result.add( wervalDocArtifact.getFile().toURI().toURL() );
         result.add( sitemeshArtifact.getFile().toURI().toURL() );
         return result;
     }

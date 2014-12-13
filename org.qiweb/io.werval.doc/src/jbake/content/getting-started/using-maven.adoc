@@ -185,7 +185,7 @@ Here is what you'll find inside:
             </plugin>
             <plugin>
                 <groupId>org.qiweb</groupId>
-                <artifactId>org.qiweb.maven</artifactId>
+                <artifactId>io.werval.maven</artifactId>
                 <version>{werval_version}</version>
             </plugin>
         </plugins>

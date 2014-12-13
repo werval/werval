@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
 import io.werval.commands.StartCommand;
 import java.io.File;
@@ -36,25 +36,25 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 @Mojo( name = "start", requiresDependencyResolution = RUNTIME, threadSafe = true )
 @Execute( phase = COMPILE )
 public class StartMojo
-    extends AbstractQiWebMojo
+    extends AbstractRunGoal
 {
     /**
      * Main class.
      */
-    @Parameter( property = "qiwebstart.mainClass", defaultValue = "io.werval.server.bootstrap.Main" )
+    @Parameter( property = "wervalstart.mainClass", defaultValue = "io.werval.server.bootstrap.Main" )
     private String mainClass;
 
     /**
      * Main class arguments.
      */
-    @Parameter( property = "qiwebstart.arguments" )
+    @Parameter( property = "wervalstart.arguments" )
     private String[] arguments;
 
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( ">> QiWeb Production Mode for " + project.getArtifactId() + " starting..." );
+        getLog().info( ">> Werval Production Mode for " + project.getArtifactId() + " starting..." );
 
         if( null == arguments )
         {

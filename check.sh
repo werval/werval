@@ -31,8 +31,8 @@ $FIGLET org.qiweb.gradle
 echo "Checked."
 
 # maven plugin
-$FIGLET org.qiweb.maven
-$MAVEN -f org.qiweb.maven/pom.xml clean verify dependency:sources -Dgpg.skip
+$FIGLET io.werval.maven
+$MAVEN -f io.werval.maven/pom.xml clean verify dependency:sources -Dgpg.skip
 echo "Checked."
 
 # modules

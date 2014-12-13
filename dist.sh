@@ -28,8 +28,8 @@ $FIGLET org.qiweb.gradle
 echo "Built."
 
 # maven plugin
-$FIGLET org.qiweb.maven
-$MAVEN -f org.qiweb.maven/pom.xml install dependency:sources -DskipTests -Dgpg.skip
+$FIGLET io.werval.maven
+$MAVEN -f io.werval.maven/pom.xml install dependency:sources -DskipTests -Dgpg.skip
 echo "Built."
 
 # modules

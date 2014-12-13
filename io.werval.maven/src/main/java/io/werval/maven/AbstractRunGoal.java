@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -26,9 +26,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * AbstractQiWebMojo.
+ * Abstract Run Goal.
  */
-public abstract class AbstractQiWebMojo
+public abstract class AbstractRunGoal
     extends AbstractMojo
 {
     /**
@@ -36,25 +36,25 @@ public abstract class AbstractQiWebMojo
      * <p>
      * Loaded from the application classpath.
      */
-    @Parameter( property = "qiweb.configResource" )
+    @Parameter( property = "werval.configResource" )
     protected String configResource;
 
     /**
      * Configuration file.
      */
-    @Parameter( property = "qiweb.configFile" )
+    @Parameter( property = "werval.configFile" )
     protected File configFile;
 
     /**
      * Configuration URL.
      */
-    @Parameter( property = "qiweb.configUrl" )
+    @Parameter( property = "werval.configUrl" )
     protected URL configUrl;
 
     /**
      * Extra classpath files or directories paths, relative to the project base directory.
      */
-    @Parameter( property = "qiweb.extraClassPath" )
+    @Parameter( property = "werval.extraClassPath" )
     protected String[] extraClassPath;
 
     @Parameter( property = "project", required = true, readonly = true )

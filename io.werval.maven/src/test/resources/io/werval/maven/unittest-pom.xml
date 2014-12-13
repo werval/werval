@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.qiweb.maven.test</groupId>
-    <artifactId>org.qiweb.maven.test.unit</artifactId>
+    <groupId>io.werval.maven.test</groupId>
+    <artifactId>io.werval.maven.test.unit</artifactId>
     <version>0</version>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.qiweb</groupId>
-                <artifactId>org.qiweb.maven</artifactId>
+                <artifactId>io.werval.maven</artifactId>
                 <version>0</version>
                 <configuration>
                 </configuration>

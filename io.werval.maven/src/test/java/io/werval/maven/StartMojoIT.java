@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
 import io.werval.runtime.util.Holder;
 import java.io.IOException;
@@ -30,11 +30,11 @@ import static org.hamcrest.core.StringContains.containsString;
 
 /**
  * StartMojo Integration Test.
- *
+ * <p>
  * Generates a project, run it in prod mode and assert applicaiton is available.
  */
 public class StartMojoIT
-    extends AbstractQiWebMojoIT
+    extends AbstractRunGoalIT
 {
     @Test
     public void startMojoIntegrationTest()
@@ -42,8 +42,8 @@ public class StartMojoIT
     {
         final Holder<Exception> errorHolder = new Holder<>();
         Thread runThread = new Thread(
-            newRunnable( errorHolder, "qiweb:start" ),
-            "maven-qiweb-start-thread"
+            newRunnable( errorHolder, "werval:start" ),
+            "maven-werval-start-thread"
         );
         try
         {

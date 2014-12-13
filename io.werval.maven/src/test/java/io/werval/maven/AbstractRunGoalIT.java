@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
 import io.werval.runtime.util.Holder;
 import io.werval.test.util.Processes;
@@ -36,12 +36,12 @@ import org.junit.rules.TemporaryFolder;
 import static io.werval.api.BuildVersion.VERSION;
 
 /**
- * Base class for QiWeb Mojos Integration Tests.
- *
+ * Base class for run goals integration tests.
+ * <p>
  * Deploy a test project into a temporary folder, gracefully shutdown devshell if running, provide base code for
  * parallel maven invocation etc...
  */
-public abstract class AbstractQiWebMojoIT
+public abstract class AbstractRunGoalIT
 {
     protected static final Charset UTF_8 = Charset.forName( "UTF-8" );
     private static final String POM;
@@ -60,8 +60,8 @@ public abstract class AbstractQiWebMojoIT
           + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n"
           + "    <modelVersion>4.0.0</modelVersion>\n"
           + "\n"
-          + "    <groupId>org.qiweb.maven.test</groupId>\n"
-          + "    <artifactId>org.qiweb.maven.test.unit</artifactId>\n"
+          + "    <groupId>io.werval.maven.test</groupId>\n"
+          + "    <artifactId>io.werval.maven.test.unit</artifactId>\n"
           + "    <version>" + VERSION + "</version>\n"
           + "\n"
           + "    <properties>\n"
@@ -73,7 +73,7 @@ public abstract class AbstractQiWebMojoIT
           + "        <plugins>\n"
           + "            <plugin>\n"
           + "                <groupId>org.qiweb</groupId>\n"
-          + "                <artifactId>org.qiweb.maven</artifactId>\n"
+          + "                <artifactId>io.werval.maven</artifactId>\n"
           + "                <version>" + VERSION + "</version>\n"
           + "                <configuration>\n"
           + "                   <openBrowser>false</openBrowser>\n"

@@ -18,12 +18,12 @@
     </parent>
 
     <groupId>org.qiweb</groupId>
-    <artifactId>org.qiweb.maven</artifactId>
+    <artifactId>io.werval.maven</artifactId>
     <version>0</version>
 
     <packaging>maven-plugin</packaging>
     <name>${project.artifactId}</name>
-    <description>QiWeb Maven Plugin</description>
+    <description>Werval Maven Plugin</description>
   
     <scm>
         <url>https://scm.codeartisans.org/qiweb/qiweb</url>
@@ -233,8 +233,8 @@
                 <version>2.5.1</version>
                 <executions>
                     <execution>
-                        <id>qiweb-install</id>
-                        <!-- Install org.qiweb.maven artifact into the QiWeb local dev repository -->
+                        <id>werval-install</id>
+                        <!-- Install io.werval.maven artifact into the Werval local dev repository -->
                         <phase>install</phase>
                         <goals>
                             <goal>install-file</goal>
@@ -262,10 +262,10 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <goalPrefix>qiweb</goalPrefix>
+                    <goalPrefix>werval</goalPrefix>
                     <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-                    <helpPackageName>org.qiweb.maven</helpPackageName>
+                    <helpPackageName>io.werval.maven</helpPackageName>
                 </configuration>
                 <executions>
                     <execution>

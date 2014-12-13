@@ -405,7 +405,7 @@ public final class DamnSmallDevShell
                      + "            </plugin>\n"
                      + "            <plugin>\n"
                      + "                <groupId>org.qiweb</groupId>\n"
-                     + "                <artifactId>org.qiweb.maven</artifactId>\n"
+                     + "                <artifactId>io.werval.maven</artifactId>\n"
                      + "                <version>" + VERSION + "</version>\n"
                      + "            </plugin>\n"
                      + "            <plugin>\n"

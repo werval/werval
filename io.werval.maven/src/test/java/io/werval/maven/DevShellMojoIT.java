@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
 import io.werval.runtime.util.Holder;
 import java.io.File;
@@ -33,11 +33,11 @@ import static org.junit.Assert.assertThat;
 
 /**
  * DevShellMojo Integration Test.
- *
+ * <p>
  * Generates a project, run it in dev mode using the plugin, change source code and assert code is reloaded.
  */
 public class DevShellMojoIT
-    extends AbstractQiWebMojoIT
+    extends AbstractRunGoalIT
 {
     @Test
     public void devshellMojoIntegrationTest()
@@ -45,8 +45,8 @@ public class DevShellMojoIT
     {
         final Holder<Exception> errorHolder = new Holder<>();
         Thread devshellThread = new Thread(
-            newRunnable( errorHolder, "qiweb:devshell" ),
-            "maven-qiweb-devshell-thread"
+            newRunnable( errorHolder, "werval:devshell" ),
+            "maven-werval-devshell-thread"
         );
         try
         {

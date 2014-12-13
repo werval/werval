@@ -136,7 +136,7 @@ task distributionArchive_src {
             include 'org.qiweb.modules/gradle/**'
             modules_array.each { m -> include "org.qiweb.modules/org.qiweb.modules.$m/**" }
             include 'org.qiweb.gradle/**'
-            include 'org.qiweb.maven/**'
+            include 'io.werval.maven/**'
             exclude '**/build/**'
             exclude '**/target/**'
             exclude '**/*.iml'
@@ -156,7 +156,7 @@ dependencies {
     binDist "org.qiweb:org.qiweb.test:$version:javadoc"
     modules_array.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
     binDist "org.qiweb:org.qiweb.gradle:$version:javadoc"
-    binDist "org.qiweb:org.qiweb.maven:$version:javadoc"
+    binDist "org.qiweb:io.werval.maven:$version:javadoc"
 }
 task distributionArchive_artifacts {
     dependsOn configurations.binDist

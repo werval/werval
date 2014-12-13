@@ -13,43 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.maven;
+package io.werval.maven;
 
-import java.io.ByteArrayOutputStream;
+import io.werval.maven.HelpMojo;
 import java.io.File;
-import java.io.PrintStream;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 
 /**
- * SecretMojo Test.
+ * HelpMojo Test.
  */
-public class SecretMojoTest
+public class HelpMojoTest
     extends AbstractMojoTestCase
 {
     private final File basedir = new File( System.getProperty( "project.basedir", "" ) );
 
-    public void testSecret()
+    public void testHelp()
         throws Exception
     {
-        File pom = new File( basedir, "src/test/resources/org/qiweb/maven/unittest-pom.xml" );
+        File pom = new File( basedir, "src/test/resources/io/werval/maven/unittest-pom.xml" );
         assertTrue( pom.exists() );
 
-        SecretMojo secretMojo = (SecretMojo) lookupMojo( "secret", pom );
-        assertNotNull( secretMojo );
-
-        PrintStream oldOut = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream( baos );
-        System.setOut( out );
-
-        secretMojo.execute();
-
-        System.setOut( oldOut );
-        out.flush();
-        String output = new String( baos.toByteArray() );
-        assertThat( output, containsString( "app.secret = " ) );
+        HelpMojo helpMojo = (HelpMojo) lookupMojo( "help", pom );
+        assertNotNull( helpMojo );
     }
 }

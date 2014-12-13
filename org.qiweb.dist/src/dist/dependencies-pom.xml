@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.maven</artifactId>
+            <artifactId>io.werval.maven</artifactId>
             <version>${qiweb.version}</version>
         </dependency>
 QIWEB_MODULES
