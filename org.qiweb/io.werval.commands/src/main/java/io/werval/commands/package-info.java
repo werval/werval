@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.commands;
-
-import io.werval.runtime.CryptoInstance;
-
 /**
- * Secret Command.
+ * Werval Commands.
  */
-public class SecretCommand
-    implements Runnable
-{
-    @Override
-    public void run()
-    {
-        System.out.println();
-        System.out.println( "app.secret = " + CryptoInstance.newRandomSecret256BitsHex() );
-        System.out.println();
-    }
-}
+package io.werval.commands;

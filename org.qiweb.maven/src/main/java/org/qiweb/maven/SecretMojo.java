@@ -15,11 +15,11 @@
  */
 package org.qiweb.maven;
 
+import io.werval.commands.SecretCommand;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.qiweb.commands.SecretCommand;
 
 /**
  * Generates a new application secret.

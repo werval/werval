@@ -2,7 +2,7 @@
 description = "Werval CLI"
 
 dependencies {
-    compile project( ':org.qiweb.commands' )
+    compile project( ':io.werval.commands' )
     compile libs.cli
 }
 

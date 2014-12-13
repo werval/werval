@@ -15,6 +15,7 @@
  */
 package org.qiweb.maven;
 
+import io.werval.commands.StartCommand;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -25,7 +26,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.qiweb.commands.StartCommand;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;

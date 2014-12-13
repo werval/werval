@@ -69,7 +69,7 @@
 
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.commands</artifactId>
+            <artifactId>io.werval.commands</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -16,10 +16,10 @@
 
 package org.qiweb.gradle
 
+import io.werval.commands.SecretCommand
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
-import org.qiweb.commands.SecretCommand
 
 /**
  * Output a newly generated Application secret.
@@ -33,7 +33,7 @@ class QiWebSecretTask extends DefaultTask
         // Reflective call to prevent JDK8/ASM headache with Gradle Groovy Compiler
         // Should be rewritten once Gradle use ASM 5
         // new SecretCommand().run()
-        Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass( "org.qiweb.commands.SecretCommand" )
+        Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass( "io.werval.commands.SecretCommand" )
         Object secretCommand = clazz.newInstance()
         clazz.getDeclaredMethod( "run" ).invoke( secretCommand )
     }

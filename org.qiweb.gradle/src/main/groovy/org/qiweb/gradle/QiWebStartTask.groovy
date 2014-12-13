@@ -15,11 +15,10 @@
  */
 package org.qiweb.gradle
 
+import io.werval.commands.StartCommand
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
-
-import org.qiweb.commands.StartCommand
 
 /**
  * QiWeb Start Task.

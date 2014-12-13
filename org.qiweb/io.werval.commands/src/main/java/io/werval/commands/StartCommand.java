@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.commands;
+package io.werval.commands;
 
 import io.werval.api.exceptions.WervalException;
 import java.io.File;
@@ -143,18 +143,18 @@ public class StartCommand
             if( status != 0 )
             {
                 throw new WervalException(
-                    "An exception occured while executing the QiWeb Application, status was: " + status
+                    "An exception occured while executing the Werval Application, status was: " + status
                 );
             }
         }
         catch( IOException ex )
         {
-            throw new WervalException( "An exception occured while executing the QiWeb Application.", ex );
+            throw new WervalException( "An exception occured while executing the Werval Application.", ex );
         }
         catch( InterruptedException ex )
         {
             Thread.interrupted();
-            throw new WervalException( "An exception occured while executing the QiWeb Application.", ex );
+            throw new WervalException( "An exception occured while executing the Werval Application.", ex );
         }
     }
 
@@ -220,7 +220,7 @@ public class StartCommand
             if( threadGroup.uncaughtException != null )
             {
                 throw new WervalException(
-                    "An exception occured while executing the QiWeb Application. "
+                    "An exception occured while executing the Werval Application. "
                     + threadGroup.uncaughtException.getMessage(),
                     threadGroup.uncaughtException
                 );
@@ -398,7 +398,7 @@ public class StartCommand
         {
             System.err.println( "NOTE: " + uncooperativeThreads.size()
                                 + " thread(s) did not finish despite being asked to via interruption."
-                                + " This is not a problem with QiWeb Run, it is a problem with the running code."
+                                + " This is not a problem with Werval Run, it is a problem with the running code."
                                 + " Although not serious, it should be remedied." );
         }
         else

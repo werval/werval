@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.qiweb.commands;
+package io.werval.commands;
 
 import io.werval.spi.dev.DevShellSPI;
 import io.werval.devshell.DevShell;
@@ -69,7 +69,7 @@ public class DevShellCommand
     public void run()
     {
         DevShell devShell = new DevShell( spi, configResource, configFile, configUrl, openBrowser );
-        Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "qiweb-devshell-shutdown" ) );
+        Runtime.getRuntime().addShutdownHook( new Thread( () -> devShell.stop(), "werval-devshell-shutdown" ) );
         devShell.start();
     }
 }

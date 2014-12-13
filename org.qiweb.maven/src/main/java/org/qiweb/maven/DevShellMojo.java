@@ -15,6 +15,7 @@
  */
 package org.qiweb.maven;
 
+import io.werval.commands.DevShellCommand;
 import io.werval.devshell.JavaWatcher;
 import io.werval.spi.dev.DevShellSPI;
 import java.io.File;
@@ -29,7 +30,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.qiweb.commands.DevShellCommand;
 
 import static java.util.Collections.EMPTY_SET;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;

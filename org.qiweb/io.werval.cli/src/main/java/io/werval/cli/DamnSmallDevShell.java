@@ -16,6 +16,9 @@
 package io.werval.cli;
 
 import io.werval.api.exceptions.WervalException;
+import io.werval.commands.DevShellCommand;
+import io.werval.commands.SecretCommand;
+import io.werval.commands.StartCommand;
 import io.werval.devshell.JavaWatcher;
 import io.werval.runtime.CryptoInstance;
 import io.werval.spi.dev.DevShellRebuildException;
@@ -50,9 +53,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.qiweb.commands.DevShellCommand;
-import org.qiweb.commands.SecretCommand;
-import org.qiweb.commands.StartCommand;
 
 import static io.werval.cli.BuildVersion.COMMIT;
 import static io.werval.cli.BuildVersion.DATE;
