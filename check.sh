@@ -22,7 +22,7 @@ fi
 
 # core
 $FIGLET io.werval
-./gradlew -b org.qiweb/build.gradle check install idea
+./gradlew -b io.werval/build.gradle check install idea
 echo "Checked."
 
 # gradle plugin

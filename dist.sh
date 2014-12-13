@@ -19,7 +19,7 @@ fi
 
 # core
 $FIGLET io.werval
-./gradlew -b org.qiweb/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
+./gradlew -b io.werval/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 # gradle plugin
