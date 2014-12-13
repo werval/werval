@@ -326,10 +326,10 @@ public class QiWebApplicationPluginIntegTest
                 containsString( "I ran!" )
             );
 
-            // QiWeb Documentation
+            // Werval Documentation
             assertThat(
                 client.execute( new HttpGet( "http://localhost:23023/@doc" ), successHandler ),
-                containsString( "QiWeb Documentation" )
+                containsString( "Werval Documentation" )
             );
 
             client.getConnectionManager().shutdown();

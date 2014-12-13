@@ -75,7 +75,7 @@ class QiWebPlugin implements Plugin<Project>
             // visible = false
         }
         project.dependencies {
-            devshell group: "org.qiweb", name: "org.qiweb.doc", version: BuildVersion.VERSION, transitive: false
+            devshell group: "org.qiweb", name: "io.werval.doc", version: BuildVersion.VERSION, transitive: false
         }
 
         project.sourceSets {

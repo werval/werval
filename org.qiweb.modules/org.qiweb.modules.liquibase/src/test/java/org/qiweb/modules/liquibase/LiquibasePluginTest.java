@@ -15,7 +15,7 @@
  */
 package org.qiweb.modules.liquibase;
 
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,13 +31,13 @@ import static org.junit.Assert.assertTrue;
 public class LiquibasePluginTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final WervalRule WERVAL = new WervalRule();
 
     @Test
     public void liquibase()
         throws SQLException
     {
-        try( Connection connection = QIWEB.application().plugin( JDBC.class ).connection();
+        try( Connection connection = WERVAL.application().plugin( JDBC.class ).connection();
              ResultSet resultSet = connection.getMetaData().getTables( null, null, "BREWERIES", null ) )
         {
             assertTrue( resultSet.next() );

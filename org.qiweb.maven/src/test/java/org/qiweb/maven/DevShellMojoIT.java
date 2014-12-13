@@ -86,7 +86,7 @@ public class DevShellMojoIT
 
             assertThat(
                 client.execute( new HttpGet( "http://localhost:23023/@doc" ), handler ),
-                containsString( "QiWeb Documentation" )
+                containsString( "Werval Documentation" )
             );
 
             client.getConnectionManager().shutdown();

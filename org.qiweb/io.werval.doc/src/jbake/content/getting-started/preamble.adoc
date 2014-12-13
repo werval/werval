@@ -1,0 +1,23 @@
+
+[IMPORTANT]
+.Install Java 8
+====
+You need to install the link:http://www.oracle.com/technetwork/java/javase/downloads/[Java 8 JDK] and ensure that both of the
+following commands show the proper same version:
+
+[source,bash]
+----
+java -version
+$JAVA_HOME/bin/java -version
+----
+
+Should output something like:
+
+[source,bash]
+----
+java version "1.8.X_XX" <1>
+Java(TM) SE Runtime Environment (build 1.8.X_XX-bXXX)
+Java HotSpot(TM) 64-Bit Server VM (build XX.XX-bXX, mixed mode)
+----
+<1> This is Java 8
+====

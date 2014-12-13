@@ -36,12 +36,12 @@
     <dependencies>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.server.bootstrap</artifactId>
+            <artifactId>io.werval.server.bootstrap</artifactId>
             <version>${qiweb.version}</version>
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.test</artifactId>
+            <artifactId>io.werval.test</artifactId>
             <version>${qiweb.version}</version>
         </dependency>
         <dependency>
@@ -78,7 +78,7 @@ QIWEB_MODULES
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <useRepositoryLayout>true</useRepositoryLayout>
-                            <excludeGroupIds>org.qiweb</excludeGroupIds>
+                            <excludeGroupIds>org.qiweb,io.werval</excludeGroupIds>
                             <includeClassifiers>sources,javadoc</includeClassifiers>
                         </configuration>
                     </execution>

@@ -17,7 +17,7 @@ package org.qiweb.modules.guice;
 
 import app.TestFilter;
 import io.werval.runtime.routes.RoutesParserProvider;
-import io.werval.test.QiWebHttpRule;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
 public class GuicePluginTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET / app.TestController.index"
     ) );
 

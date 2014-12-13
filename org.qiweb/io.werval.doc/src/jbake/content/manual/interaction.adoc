@@ -1,0 +1,35 @@
+
+== Interactions
+
+=== Routes
+
+Routes are defined by:
+
+- a HTTP method ;
+- a path expression ;
+- a fully qualified method name ;
+- optionaly a method parameters definition ;
+- and finaly optional modifiers.
+
+The default Werval router allows for textual representation of routes definition.
+
+    http-method path-expression controller-fqcn.method-name[(parameters)] [modifiers]
+
+You can also express routes definitions in code using the Routes API.
+
+Request URI Path and QueryString are the source of Controller Parameters.
+
+You can also handle all the routing in your Global object.
+
+NOTE: URI Fragment identifier is considered useful on the client side only, hence not taken into account when routing.
+However, the reverse routing API allow you to append a fragment identifier to generated URIs.
+
+
+
+// === Controllers
+
+
+// === Outcomes
+
+
+// === Filters

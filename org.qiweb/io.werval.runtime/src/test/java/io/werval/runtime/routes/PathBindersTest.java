@@ -220,12 +220,12 @@ public class PathBindersTest
         throws MalformedURLException
     {
         assertThat(
-            binders.bind( URL.class, NAME, "http://qiweb.org" ),
-            equalTo( new URL( "http://qiweb.org" ) )
+            binders.bind( URL.class, NAME, "http://werval.io" ),
+            equalTo( new URL( "http://werval.io" ) )
         );
         assertThat(
-            binders.unbind( URL.class, NAME, new URL( "http://qiweb.org" ) ),
-            equalTo( "http://qiweb.org" )
+            binders.unbind( URL.class, NAME, new URL( "http://werval.io" ) ),
+            equalTo( "http://werval.io" )
         );
     }
 

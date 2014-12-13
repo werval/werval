@@ -155,7 +155,7 @@ public interface FormUploads
         byte[] asBytes();
 
         /**
-         * @return Upload data as a String using the upload character encoding if defined, the QiWeb default character
+         * @return Upload data as a String using the upload character encoding if defined, the default character
          *         encoding otherwise.
          */
         String asString();

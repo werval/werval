@@ -271,7 +271,7 @@ artifacts {
 
 // For local publication
 publishing {
-    publications.qiWebLocalRepoPub {
+    publications.wervalLocalRepoPub {
         from components.java
         artifact javadocJar
         artifact sourcesJar

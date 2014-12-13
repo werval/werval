@@ -18,7 +18,7 @@ package org.qiweb.modules.metrics;
 import com.codahale.metrics.MetricRegistry;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
-import io.werval.test.QiWebHttpRule;
+import io.werval.test.WervalHttpRule;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -41,7 +41,7 @@ import static org.junit.Assert.assertThat;
 public class MetricsTest
 {
     @ClassRule
-    public static QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET / io.werval.controllers.Default.ok\n"
         + "GET /redir io.werval.controllers.Default.seeOther( String url = / )\n"
         + "GET /error io.werval.controllers.Default.internalServerError\n"
@@ -68,7 +68,7 @@ public class MetricsTest
     public void devShellRoutesAndMetrics()
         throws Exception
     {
-        MetricRegistry metrics = QIWEB.application().plugin( Metrics.class ).metrics();
+        MetricRegistry metrics = WERVAL.application().plugin( Metrics.class ).metrics();
 
         expect()
             .statusCode( 200 )

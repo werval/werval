@@ -32,7 +32,7 @@ public class StacktracesTest
 
     public StacktracesTest()
     {
-        Throwable ex = new WervalException( "QiWeb" );
+        Throwable ex = new WervalException( "Werval" );
         ex.addSuppressed( new IllegalStateException( "IllegalState" ) );
         root = new IllegalArgumentException( "IllegalArgument", ex );
         root.addSuppressed( new RuntimeException( "Runtime", new UnsupportedEncodingException( "UnsupportedEncoding" ) ) );
@@ -42,7 +42,7 @@ public class StacktracesTest
     public void containsEqual()
     {
         assertTrue( Stacktraces.containsEqual( IllegalArgumentException.class ).test( root ) );
-        assertTrue(Stacktraces.containsEqual(WervalException.class ).test( root ) );
+        assertTrue( Stacktraces.containsEqual( WervalException.class ).test( root ) );
         assertTrue( Stacktraces.containsEqual( IllegalStateException.class ).test( root ) );
         assertTrue( Stacktraces.containsEqual( UnsupportedEncodingException.class ).test( root ) );
 
@@ -54,7 +54,7 @@ public class StacktracesTest
     @Test
     public void containsAssignable()
     {
-        assertTrue(Stacktraces.containsAssignable(WervalException.class ).test( root ) );
+        assertTrue( Stacktraces.containsAssignable( WervalException.class ).test( root ) );
         assertTrue( Stacktraces.containsAssignable( IOException.class ).test( root ) );
 
         assertFalse( Stacktraces.containsAssignable( Error.class ).test( root ) );
@@ -64,7 +64,7 @@ public class StacktracesTest
     @Test
     public void containsMessage()
     {
-        assertTrue( Stacktraces.containsMessage( "QiWeb" ).test( root ) );
+        assertTrue( Stacktraces.containsMessage( "Werval" ).test( root ) );
         assertTrue( Stacktraces.containsMessage( "IllegalState" ).test( root ) );
         assertTrue( Stacktraces.containsMessage( "IllegalArgument" ).test( root ) );
         assertTrue( Stacktraces.containsMessage( "Runtime" ).test( root ) );
@@ -77,7 +77,7 @@ public class StacktracesTest
     @Test
     public void containsInMessage()
     {
-        assertTrue( Stacktraces.containsInMessage( "iWe" ).test( root ) );
+        assertTrue( Stacktraces.containsInMessage( "erva" ).test( root ) );
         assertTrue( Stacktraces.containsInMessage( "legalSta" ).test( root ) );
         assertTrue( Stacktraces.containsInMessage( "legalArg" ).test( root ) );
         assertTrue( Stacktraces.containsInMessage( "ntim" ).test( root ) );

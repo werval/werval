@@ -56,9 +56,9 @@ class QiWebModuleDocumentationTask extends DefaultTask
     String dynDocPackagePrefix = "${project.group}.${project.name}"
 
     /**
-     * Documentation sources archive classifier, defaulted to {@literal qiweb-doc}.
+     * Documentation sources archive classifier, defaulted to {@literal werval-doc}.
      */
-    String docSourcesClassifier = "qiweb-doc";
+    String docSourcesClassifier = "werval-doc";
 
     @TaskAction
     void moduleDoc()

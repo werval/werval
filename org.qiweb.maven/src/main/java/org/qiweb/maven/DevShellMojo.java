@@ -140,7 +140,7 @@ public class DevShellMojo
         for( Artifact pluginArtifact : pluginArtifacts )
         {
             if( "org.qiweb".equals( pluginArtifact.getGroupId() )
-                && "org.qiweb.doc".equals( pluginArtifact.getArtifactId() ) )
+                && "io.werval.doc".equals( pluginArtifact.getArtifactId() ) )
             {
                 qiwebDocArtifact = pluginArtifact;
             }

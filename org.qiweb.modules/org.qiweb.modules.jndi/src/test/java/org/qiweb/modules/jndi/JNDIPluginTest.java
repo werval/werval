@@ -15,7 +15,7 @@
  */
 package org.qiweb.modules.jndi;
 
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
@@ -35,14 +35,14 @@ import static org.junit.Assert.fail;
 public class JNDIPluginTest
 {
     @Rule
-    public final QiWebRule qiweb = new QiWebRule();
+    public final WervalRule werval = new WervalRule();
     private static InitialContext ctx;
 
     @Before
     public void setJNDIEntriesUp()
         throws NamingException
     {
-        ctx = qiweb.application().plugin( JNDI.class ).initialContext();
+        ctx = werval.application().plugin( JNDI.class ).initialContext();
         ctx.rebind( "foo", "bar" );
         ctx.rebind( "baz", "bazar" );
     }

@@ -14,11 +14,11 @@
 
     <!-- Empty blocks. -->
     <suppress checks="EmptyBlock" files="Assume.java"/>
-    <suppress checks="EmptyBlock" files="QiWebTestHelper.java"/>
+    <suppress checks="EmptyBlock" files="WervalTestHelper.java"/>
     <suppress checks="EmptyBlock" files="Processes.java"/>
 
     <!-- Spacing issues in need for better global checks -->
     <suppress checks=".*" files="Assume.java"/>
-    <suppress checks=".*" files="QiWebTestHelper.java"/>
+    <suppress checks=".*" files="WervalTestHelper.java"/>
 
 </suppressions>

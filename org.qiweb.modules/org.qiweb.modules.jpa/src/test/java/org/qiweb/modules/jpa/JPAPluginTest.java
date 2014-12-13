@@ -16,7 +16,7 @@
 package org.qiweb.modules.jpa;
 
 import io.werval.runtime.routes.RoutesParserProvider;
-import io.werval.test.QiWebHttpRule;
+import io.werval.test.WervalHttpRule;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -42,7 +42,7 @@ import static org.junit.Assert.assertThat;
 public class JPAPluginTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /directUsage org.qiweb.modules.jpa.Controller.directUsage\n"
         + "GET /withTransaction org.qiweb.modules.jpa.Controller.withTransaction\n"
         + "GET /transactional org.qiweb.modules.jpa.Controller.transactional\n"
@@ -57,7 +57,7 @@ public class JPAPluginTest
         throws SQLException
     {
         // Create schema using plain JDBC, you'll want to use something like Liquibase or Flyway in a real application
-        JDBC jdbc = QIWEB.application().plugin( JDBC.class );
+        JDBC jdbc = WERVAL.application().plugin( JDBC.class );
 
         // Default PU
         String createFooTable = "CREATE TABLE FOOENTITY (ID bigint AUTO_INCREMENT, NAME varchar(255), PRIMARY KEY (ID));";
@@ -109,7 +109,7 @@ public class JPAPluginTest
     @Test
     public void multiplePersistenceUnits()
     {
-        JPA jpa = QIWEB.application().plugin( JPA.class );
+        JPA jpa = WERVAL.application().plugin( JPA.class );
 
         assertThat( jpa.emf(), equalTo( jpa.emf( "default" ) ) );
         assertThat( jpa.emf( "another" ), notNullValue() );
@@ -127,7 +127,7 @@ public class JPAPluginTest
     public void outOfContextDirectUsage()
     {
         // Use JPA
-        JPA jpa = QIWEB.application().plugin( JPA.class );
+        JPA jpa = WERVAL.application().plugin( JPA.class );
         EntityManager em = jpa.newEntityManager();
         try
         {
@@ -153,7 +153,7 @@ public class JPAPluginTest
     public void outOfContextWithTransaction()
     {
         // Use JPA.withTransaction
-        JPA jpa = QIWEB.application().plugin( JPA.class );
+        JPA jpa = WERVAL.application().plugin( JPA.class );
         try
         {
             Long id = jpa.supplyWithReadWriteTx(

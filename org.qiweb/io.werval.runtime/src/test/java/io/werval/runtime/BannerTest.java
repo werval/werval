@@ -51,7 +51,7 @@ public class BannerTest
     }
 
     @Rule
-    public final WervalRule QIWEB = new WervalRule( "banner-ascii.conf" );
+    public final WervalRule WERVAL = new WervalRule( "banner-ascii.conf" );
 
     @Test
     public void asciiBanner()

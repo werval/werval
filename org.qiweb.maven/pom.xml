@@ -370,7 +370,7 @@
                         <extraArtifact>org.apache.maven.plugins:maven-surefire-plugin:2.12.4</extraArtifact>
                         <extraArtifact>org.apache.maven.plugins:maven-jar-plugin:2.4</extraArtifact>
                         <extraArtifact>org.sitemesh:sitemesh:3.0-alpha-2</extraArtifact>
-                        <extraArtifact>org.qiweb:org.qiweb.doc:${project.version}</extraArtifact>
+                        <extraArtifact>org.qiweb:io.werval.doc:${project.version}</extraArtifact>
                     </extraArtifacts>
                 </configuration>
                 <executions>

@@ -16,7 +16,7 @@
 package org.qiweb.modules.smtp;
 
 import com.codahale.metrics.MetricRegistry;
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import java.util.List;
 import javax.mail.MessagingException;
 import org.apache.commons.mail.EmailException;
@@ -40,7 +40,7 @@ import static org.junit.Assert.assertThat;
 public class SmtpPluginTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final WervalRule WERVAL = new WervalRule();
     private Wiser wiser;
 
     @Before
@@ -64,7 +64,7 @@ public class SmtpPluginTest
     public void testSimpleEmail()
         throws EmailException, MessagingException
     {
-        Smtp smtp = QIWEB.application().plugin( Smtp.class );
+        Smtp smtp = WERVAL.application().plugin( Smtp.class );
         assertThat( smtp, notNullValue() );
 
         SimpleEmail email = smtp.newSimpleEmail();
@@ -80,7 +80,7 @@ public class SmtpPluginTest
         assertThat( message.getMimeMessage().getHeader( "To" )[0], equalTo( "to@qiweb.org" ) );
         assertThat( message.getMimeMessage().getHeader( "Subject" )[0], equalTo( "Simple Email" ) );
 
-        MetricRegistry metrics = QIWEB.application().plugin( Metrics.class ).metrics();
+        MetricRegistry metrics = WERVAL.application().plugin( Metrics.class ).metrics();
         assertThat( metrics.meter( "org.qiweb.modules.smtp.sent" ).getCount(), is( 1L ) );
         assertThat( metrics.meter( "org.qiweb.modules.smtp.errors" ).getCount(), is( 0L ) );
     }

@@ -17,7 +17,7 @@ package org.qiweb.modules.json;
 
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
-import io.werval.test.QiWebHttpRule;
+import io.werval.test.WervalHttpRule;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.ClassRule;
@@ -53,7 +53,7 @@ public class JSONPluginTest
     }
 
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET /static org.qiweb.modules.json.JSONPluginTest$Controller.staticJson\n"
         + "GET /jsonp org.qiweb.modules.json.JSONPluginTest$Controller.jsonp( String callback ?= 'callback' )"
     ) );
@@ -61,7 +61,7 @@ public class JSONPluginTest
     @Test
     public void objectMapper()
     {
-        JSON json = QIWEB.application().plugin( JSON.class );
+        JSON json = WERVAL.application().plugin( JSON.class );
         assertThat( json, notNullValue() );
         assertThat( json.mapper(), notNullValue() );
     }

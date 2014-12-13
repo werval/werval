@@ -1,0 +1,102 @@
+
+== Using the DevShell
+
+// === Instant feedback
+
+From now on we'll take a closer look at Werval Development Shell features.
+Begin by starting the application in development mode, see above.
+
+// Add compilation error
+At first we will introduce a compilation error in the application sources.
+Open `./src/main/java/controllers/Application.java` and make changes that won't compile, eg:
+
+[source,java]
+----
+package controllers;
+
+import io.werval.controllers.*;
+
+public class Application {
+
+    public Outcome index()
+    {
+        THIS WON'T COMPILE
+        return new io.werval.controllers.Welcome().welcome();
+    }
+
+}
+----
+
+If you now hit your browser refresh button you'll see something like that:
+
+image::images/devshell-compile-error.png[Compilation failed,640]
+
+This tells you where the error is.
+
+Now, let's remove the compilation error but throw an exception:
+
+[source,java]
+----
+package controllers;
+
+import io.werval.controllers.*;
+
+public class Application {
+
+    public Outcome index()
+        throws java.io.IOException
+    {
+        if( true )
+        {
+            Exception crash = new RuntimeException( "Wow, it crashed!" );
+            throw new java.io.IOException( "And this would be an explicit error message.", crash );
+        }
+        return new io.werval.controllers.Welcome().welcome();
+    }
+
+}
+----
+
+If you hit your browser refresh button again, this should show up:
+
+image::images/devshell-exception-error.png[Exception,640]
+
+You'll notice that when application sources are concerned, the error page has links to open them quickly.
+Of course this will work better is you setup your development environment to open the files with the right applications.
+
+// Add new feature
+
+Ok, things are failing well :-)
+We will now finally say "Hello World" from our HTTP Application.
+
+Change the controller content to:
+
+[source,java]
+----
+package controllers;
+
+import io.werval.api.context.*;
+
+public class Application {
+
+    public Outcome index()
+    {
+        return CurrentContext.outcomes().ok( "Hello World!" ).build();
+    }
+
+}
+----
+
+Hit your browser refresh button again.
+This time you should see **Hello World!**.
+
+This is how the Werval Development Shell gives you instant feedback when coding.
+
+
+// === Introspection resources
+// /@config
+// /@logs
+// /@classpath
+// /@etc...
+// Contributed by modules
+

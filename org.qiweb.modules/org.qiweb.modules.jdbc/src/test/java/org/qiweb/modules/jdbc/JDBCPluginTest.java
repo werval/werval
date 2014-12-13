@@ -16,7 +16,7 @@
 package org.qiweb.modules.jdbc;
 
 import com.codahale.metrics.MetricRegistry;
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.naming.InitialContext;
@@ -38,12 +38,12 @@ import static org.junit.Assert.assertThat;
 public class JDBCPluginTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final WervalRule WERVAL = new WervalRule();
 
     @Test
     public void dataSourcesSetup()
     {
-        JDBC jdbc = QIWEB.application().plugin( JDBC.class );
+        JDBC jdbc = WERVAL.application().plugin( JDBC.class );
         assertThat( jdbc.dataSource(), equalTo( jdbc.dataSource( "default" ) ) );
         assertThat( jdbc.dataSource( "another" ), notNullValue() );
     }
@@ -52,7 +52,7 @@ public class JDBCPluginTest
     public void dataSourceUsage()
         throws SQLException
     {
-        DataSource dataSource = QIWEB.application().plugin( JDBC.class ).dataSource();
+        DataSource dataSource = WERVAL.application().plugin( JDBC.class ).dataSource();
         try( Connection connection = dataSource.getConnection() )
         {
             connection.getMetaData().getTypeInfo();
@@ -63,7 +63,7 @@ public class JDBCPluginTest
     public void connectionUsage()
         throws SQLException
     {
-        try( Connection connection = QIWEB.application().plugin( JDBC.class ).connection() )
+        try( Connection connection = WERVAL.application().plugin( JDBC.class ).connection() )
         {
             connection.getMetaData().getTypeInfo();
         }
@@ -81,7 +81,7 @@ public class JDBCPluginTest
     @Test
     public void metrics()
     {
-        MetricRegistry metrics = QIWEB.application().plugin( Metrics.class ).metrics();
+        MetricRegistry metrics = WERVAL.application().plugin( Metrics.class ).metrics();
         assertThat( metrics.getGauges().get( "default.pool.TotalConnections" ).getValue(), is( 10 ) );
     }
 }

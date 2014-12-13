@@ -15,7 +15,7 @@
  */
 package org.qiweb.modules.xml;
 
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,12 +27,12 @@ public class CatalogsOnlyResolverTest
     extends TestBase
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( "catalogs-only.conf" );
+    public static final WervalRule WERVAL = new WervalRule( "catalogs-only.conf" );
 
     @Override
     protected XML xml()
     {
-        return QIWEB.application().plugin( XML.class );
+        return WERVAL.application().plugin( XML.class );
     }
 
     @Ignore( "DoS - OutOfMemoryError !!!" )

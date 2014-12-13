@@ -1,7 +1,7 @@
-QiWeb CLI Installation Instructions
+Werval CLI Installation Instructions
 ===================================
 
 - Prepend the `bin` directory to your PATH
-- Use the `qiweb` executable on UN*X
-- Use the `qiweb.bat` executable on Windows
+- Use the `werval` executable on UN*X
+- Use the `werval.bat` executable on Windows
 

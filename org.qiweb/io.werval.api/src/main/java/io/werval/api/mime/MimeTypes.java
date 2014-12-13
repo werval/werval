@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
  * <p>
  * If unable to detect, {@link #APPLICATION_OCTET_STREAM} is returned.
  * <p>
- * The known Mime Types are extracted from Apache HTTP Server source code by the QiWeb Build System.
+ * The known Mime Types are extracted from Apache HTTP Server source code by the Werval Build System.
  * <p>
  * <img src="doc-files/apache-httpd.jpg" alt="Apache HTTP Server">
  * <p>
@@ -50,7 +50,7 @@ import java.nio.charset.Charset;
  * You can ask the default charset to use for a given textual mimetype.
  * <p>
  * As a shortcut, methods named <code>of*WithCharset</code> add a charset if the mimetype is textual using the default
- * QiWeb character encoding or an override from the textuals mimetypes definition in configuration.
+ * Werval character encoding or an override from the textuals mimetypes definition in configuration.
  * <p>
  * Here is an example registering the two mimetypes used above as textual
  * while defining their default character encoding:

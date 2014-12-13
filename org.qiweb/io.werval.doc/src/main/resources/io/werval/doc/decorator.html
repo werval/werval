@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title><sitemesh:write property='title'></sitemesh:write></title>
+        <!-- Decorated page <head> -->
+        <sitemesh:write property='head'></sitemesh:write>
+        <!-- Decorated page </head> -->
+        <link rel="stylesheet" href="/@doc/css/bootstrap_lumen.css"></link>
+        <link rel="stylesheet" href="/@doc/css/base.css"></link>
+        <link rel="stylesheet" href="/@doc/css/io.werval.doc.css"></link>
+        <link rel="stylesheet" href="/@doc/css/prettify.css"></link>
+        <!-- Intentionaly placed in <head/> so that it is available for decorated pages. -->
+        <script type="text/javascript" src="/@doc/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/@doc/js/bootstrap.min.js"></script>
+    </head>
+    <body onload="prettyPrint()" class="article toc2 toc-right">
+        <div id="wrap">
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+              <div class="container">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="/@doc/index.html">Werval Documentation</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav">
+                    <li><a href="/@doc/getting-started.html">Getting started</a></li>
+                    <li><a href="/@doc/guides.html">Guides</a></li>
+                    <li><a href="/@doc/manual.html">Manual</a></li>
+                    <li class="active"><a href="/@doc/modules/index.html">Modules</a></li>
+                    <li><a href="/@doc/api/index.html" target="_blank">API Javadoc</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="container">
+                <!-- Decorated page <body> -->
+                <sitemesh:write property='body'></sitemesh:write>
+                <!-- Decorated page </body> -->
+            </div>
+            <div id="push"></div>
+        </div>
+        <div id="footer">
+            <p class="muted credit">© 2014 | The Werval Community</p>
+            <p class="muted credit">Mixed with <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> | Baked with <a href="http://jbake.org" target="_blank">JBake</a></p>
+        </div>
+        <script type="text/javascript" src="/@doc/js/prettify.js"></script>
+        <script type="text/javascript" src="/@doc/js/io.werval.doc.js"></script>
+    </body>
+</html>

@@ -47,7 +47,7 @@ public interface RequestBody
     byte[] asBytes();
 
     /**
-     * @return Body data as a String using the body character encoding if defined, the QiWeb default character
+     * @return Body data as a String using the body character encoding if defined, the default character
      *         encoding otherwise.
      */
     String asString();

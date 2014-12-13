@@ -68,7 +68,7 @@ import static io.werval.util.Strings.join;
 import static java.io.File.separator;
 
 /**
- * Damn Small QiWeb DevShell.
+ * Damn Small Werval DevShell.
  */
 public final class DamnSmallDevShell
 {
@@ -135,7 +135,7 @@ public final class DamnSmallDevShell
             }
         }
     }
-    // figlet -f rectangles  "QiWeb DevShell"
+    // figlet -f rectangles  "Werval DevShell"
     private static final String LOGO;
 
     static
@@ -147,7 +147,7 @@ public final class DamnSmallDevShell
           + "|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |\n"
           + "|__  _|_|_____|___|___|  |____/|___|\\_/|_____|_|_|___|_|_|\n"
           + "   |__|                                "
-          + "QiWeb v" + VERSION + "-" + COMMIT + ( DIRTY ? " (DIRTY)" : "" )
+          + "Werval v" + VERSION + "-" + COMMIT + ( DIRTY ? " (DIRTY)" : "" )
           + "\n";
     }
 
@@ -174,7 +174,7 @@ public final class DamnSmallDevShell
             {
                 System.out.print(
                     String.format(
-                        "QiWeb CLI v%s\n"
+                        "Werval CLI v%s\n"
                         + "Git commit: %s%s, built on: %s\n"
                         + "Java version: %s, vendor: %s\n"
                         + "Java home: %s\n"
@@ -227,7 +227,7 @@ public final class DamnSmallDevShell
                 {
                     case "new":
                         System.out.println( LOGO );
-                        newCommand( commandsIterator.hasNext() ? commandsIterator.next() : "qiweb-application", cmd );
+                        newCommand( commandsIterator.hasNext() ? commandsIterator.next() : "werval-application", cmd );
                         break;
                     case "clean":
                         cleanCommand( debug, tmpDir );
@@ -292,7 +292,7 @@ public final class DamnSmallDevShell
                             + "import io.werval.api.outcomes.Outcome;\n\n"
                             + "public class Application {\n\n"
                             + "    public Outcome index() {\n"
-                            + "        return new org.qiweb.controllers.Welcome().welcome();\n"
+                            + "        return new io.werval.controllers.Welcome().welcome();\n"
                             + "    }\n\n"
                             + "}\n";
         Files.write( new File( ctrlDir, "Application.java" ).toPath(), controller.getBytes( UTF_8 ) );
@@ -423,7 +423,7 @@ public final class DamnSmallDevShell
                      + "                            <repositoryLayout>flat</repositoryLayout>\n"
                      + "                            <programs>\n"
                      + "                                <program>\n"
-                     + "                                    <id>qiweb-sample-maven</id>\n"
+                     + "                                    <id>werval-sample-maven</id>\n"
                      + "                                    <mainClass>io.werval.server.bootstrap.Main</mainClass>\n"
                      + "                                </program>\n"
                      + "                            </programs>\n"
@@ -442,7 +442,7 @@ public final class DamnSmallDevShell
         Files.write( new File( baseDir, ".gitignore" ).toPath(), gitignore.getBytes( UTF_8 ) );
 
         // Inform user
-        System.out.println( "New QiWeb Application generated in '" + baseDir.getAbsolutePath() + "'." );
+        System.out.println( "New Werval Application generated in '" + baseDir.getAbsolutePath() + "'." );
     }
 
     private static void cleanCommand( boolean debug, File tmpDir )
@@ -488,7 +488,7 @@ public final class DamnSmallDevShell
         rebuild( applicationClasspath, runtimeClasspath, sourceRoots, classesDir );
 
         // Run DevShell
-        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "werval-cli-cleanup" ) );
         new DevShellCommand(
             new SPI( applicationSources, applicationClasspath, runtimeClasspath, sourceRoots, watcher, classesDir )
         ).run();
@@ -509,7 +509,7 @@ public final class DamnSmallDevShell
 
         // Start
         System.out.println( "Starting!" );
-        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "qiweb-cli-cleanup" ) );
+        Runtime.getRuntime().addShutdownHook( new Thread( new ShutdownHook( tmpDir ), "werval-cli-cleanup" ) );
         List<URL> globalClasspath = new ArrayList<>( Arrays.asList( runtimeClasspath ) );
         globalClasspath.addAll( Arrays.asList( applicationClasspath ) );
         new StartCommand(
@@ -774,10 +774,10 @@ public final class DamnSmallDevShell
     {
         HelpFormatter help = new HelpFormatter();
         help.setOptionComparator( new OptionsComparator() );
-        help.printUsage( out, WIDTH, "org.qiweb.cli [options] [command(s)]" );
+        help.printUsage( out, WIDTH, "io.werval.cli [options] [command(s)]" );
         out.print(
             "\n"
-            + "  The Damn Small QiWeb DevShell\n"
+            + "  The Damn Small Werval DevShell\n"
             + "  - do not manage dependencies ;\n"
             + "  - do not allow you to extend the build ;\n"
             + "  - do not assemble applications.\n"
@@ -790,7 +790,7 @@ public final class DamnSmallDevShell
             + "Prefer the Gradle or Maven build systems integration."
         );
         out.println(
-            "\n  org.qiweb.cli is part of the QiWeb Development Kit - http://qiweb.org"
+            "\n  io.werval.cli is part of the Werval Development Kit - http://werval.io"
         );
         out.println(
             "\n"

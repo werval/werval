@@ -35,31 +35,31 @@ public class HttpRequestHeaderTest
     public void testPort()
     {
         assertThat(
-            withUri( "http://qiweb.org/" ).port(),
+            withUri( "http://werval.io/" ).port(),
             equalTo( 80 ) );
         assertThat(
-            withUri( "https://qiweb.org/" ).port(),
+            withUri( "https://werval.io/" ).port(),
             equalTo( 443 ) );
         assertThat(
-            withUri( "https://jdoe@qiweb.org/" ).port(),
+            withUri( "https://jdoe@werval.io/" ).port(),
             equalTo( 443 ) );
         assertThat(
-            withUri( "http://qiweb.org:23023/" ).port(),
+            withUri( "http://werval.io:23023/" ).port(),
             equalTo( 23023 ) );
         assertThat(
-            withUri( "http://qiweb.org:23023/download" ).port(),
+            withUri( "http://werval.io:23023/download" ).port(),
             equalTo( 23023 ) );
         assertThat(
-            withUri( "http://qiweb.org:23023/download?foo=bar#test:with:columns" ).port(),
+            withUri( "http://werval.io:23023/download?foo=bar#test:with:columns" ).port(),
             equalTo( 23023 ) );
         assertThat(
-            withUri( "http://qiweb.org:23023/shorten?longUrl=http://qiweb.org" ).port(),
+            withUri( "http://werval.io:23023/shorten?longUrl=http://werval.io" ).port(),
             equalTo( 23023 ) );
         assertThat(
-            withUri( "http://127.0.0.1:23023/shorten?longUrl=http://qiweb.org/path" ).port(),
+            withUri( "http://127.0.0.1:23023/shorten?longUrl=http://werval.io/path" ).port(),
             equalTo( 23023 ) );
         assertThat(
-            withUri( "http://localhost:23023/shorten?longUrl=http://qiweb.org:8080/path" ).port(),
+            withUri( "http://localhost:23023/shorten?longUrl=http://werval.io:8080/path" ).port(),
             equalTo( 23023 ) );
     }
 
@@ -68,11 +68,11 @@ public class HttpRequestHeaderTest
     {
         MutableHeaders headers = new HeadersInstance();
         assertThat(
-            withHeaders( headers.withSingle( HOST, "qiweb.org" ) ).domain(),
-            equalTo( "qiweb.org" ) );
+            withHeaders( headers.withSingle( HOST, "werval.io" ) ).domain(),
+            equalTo( "werval.io" ) );
         assertThat(
-            withHeaders( headers.withSingle( HOST, "qiweb.org:23023" ) ).domain(),
-            equalTo( "qiweb.org" ) );
+            withHeaders( headers.withSingle( HOST, "werval.io:23023" ) ).domain(),
+            equalTo( "werval.io" ) );
     }
 
     @Test

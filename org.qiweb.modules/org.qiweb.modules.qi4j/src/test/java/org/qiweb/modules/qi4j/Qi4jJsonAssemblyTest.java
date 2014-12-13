@@ -15,7 +15,7 @@
  */
 package org.qiweb.modules.qi4j;
 
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qi4j.api.structure.Application;
@@ -27,12 +27,12 @@ import static org.junit.Assert.assertThat;
 public class Qi4jJsonAssemblyTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule( "qi4j-assembly.conf" );
+    public static final WervalRule WERVAL = new WervalRule( "qi4j-assembly.conf" );
 
     @Test
     public void test()
     {
-        Application qi4jApplication = QIWEB.application().plugin( Application.class );
+        Application qi4jApplication = WERVAL.application().plugin( Application.class );
         Module module = qi4jApplication.findModule( "Layer 1", "Module 1" );
         HelloWorld helloWorld = module.findService( HelloWorld.class ).get();
         assertThat( helloWorld.sayHello( "World" ), equalTo( "Hello World!" ) );

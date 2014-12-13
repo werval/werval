@@ -15,7 +15,7 @@
  */
 package org.qiweb.modules.sanitize;
 
-import io.werval.test.QiWebRule;
+import io.werval.test.WervalRule;
 import org.hamcrest.Matcher;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -36,14 +36,14 @@ import static org.qiweb.modules.sanitize.Sanitize.ANTISAMY_ANYTHINGGOES;
 public class SanitizePluginTest
 {
     @ClassRule
-    public static final QiWebRule QIWEB = new QiWebRule();
+    public static final WervalRule WERVAL = new WervalRule();
 
     private static Sanitize sanitize;
 
     @BeforeClass
     public static void setupSanitizer()
     {
-        sanitize = QIWEB.application().plugin( Sanitize.class );
+        sanitize = WERVAL.application().plugin( Sanitize.class );
     }
 
     @Test

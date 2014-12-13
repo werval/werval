@@ -119,7 +119,7 @@ public class QiWebModulePluginIntegTest
         assertTrue(
             new File(
                 tmp.getRoot(),
-                "build/generated-src/qiweb-doc/resources/" + tmp.getRoot().getName() + "/doc/index.html"
+                "build/generated-src/werval-doc/resources/" + tmp.getRoot().getName() + "/doc/index.html"
             ).exists()
         );
 

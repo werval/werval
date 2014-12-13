@@ -30,12 +30,12 @@ buildscript {
 }
 configurations { docDist { transitive = false } }
 dependencies {
-    docDist "org.qiweb:org.qiweb.doc:$version:qiweb-doc@zip"
-    modules_array.each { module -> docDist "org.qiweb:org.qiweb.modules.$module:$version:qiweb-doc@zip" }
+    docDist "org.qiweb:io.werval.doc:$version:werval-doc@zip"
+    modules_array.each { module -> docDist "org.qiweb:org.qiweb.modules.$module:$version:werval-doc@zip" }
 }
 task extractCoreDoc(type: Copy) {
     inputs.file configurations.docDist
-    from zipTree( configurations.docDist.fileCollection{ it.name == 'org.qiweb.doc' }.singleFile )
+    from zipTree( configurations.docDist.fileCollection{ it.name == 'io.werval.doc' }.singleFile )
     into file('build/tmp/core-doc')
     includeEmptyDirs = false
 }
@@ -83,7 +83,7 @@ apply plugin: 'jbake'
 jbake {
     dependsOn prepareJBakeInput
     input file( 'build/tmp/jbake' )
-    configuration = [ 'qiweb_version': version ]
+    configuration = [ 'werval_version': version ]
 }
 // TODO DELETE BEGIN
 task documentationArchive(type: Zip, dependsOn: jbake) {
@@ -164,7 +164,7 @@ task distributionArchive_artifacts {
         copy {
             from fileTree( '../repository' )
             modules_array.each { m -> include "org/qiweb/org.qiweb.modules.$m/**" }
-            exclude '**/*-qiweb-doc.*'
+            exclude '**/*-werval-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
         }
@@ -173,7 +173,7 @@ task distributionArchive_artifacts {
             exclude 'org/qiweb/org.qiweb.modules.*/**'
             exclude 'org/qiweb/org.qiweb.server.jre/**'
             exclude 'org/qiweb/org.qiweb.dist/**'
-            exclude '**/*-qiweb-doc.*'
+            exclude '**/*-werval-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
         }
@@ -234,7 +234,7 @@ artifacts {
     archives documentationArchive
     archives distributionArchive
 }
-publishing { publications { qiWebLocalRepoPub {
+publishing { publications { wervalLocalRepoPub {
     artifact(documentationArchive) { classifier = 'doc'; extension = 'zip' }
     artifact(distributionArchive) { classifier = 'distribution'; extension = 'zip' }
 } } }

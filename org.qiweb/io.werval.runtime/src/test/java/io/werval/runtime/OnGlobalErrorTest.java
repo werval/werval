@@ -106,14 +106,14 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void onActivate()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_onActivate.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_onActivate.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -130,14 +130,14 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void beforeHttpBind()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_beforeHttpBind.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_beforeHttpBind.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -154,14 +154,14 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void afterHttpBind()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_afterHttpBind.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_afterHttpBind.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -188,14 +188,14 @@ public class OnGlobalErrorTest
     @Test
     public void onPassivate()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_onPassivate.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_onPassivate.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -212,14 +212,14 @@ public class OnGlobalErrorTest
     @Test
     public void beforeHttpUnbind()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_beforeHttpUnbind.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_beforeHttpUnbind.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -236,14 +236,14 @@ public class OnGlobalErrorTest
     @Test
     public void afterHttpUnbind()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_afterHttpUnbind.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_afterHttpUnbind.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -273,14 +273,14 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void extraPlugins()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_extraPlugins.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_extraPlugins.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -297,14 +297,14 @@ public class OnGlobalErrorTest
     @Test( expected = RuntimeException.class )
     public void getPluginInstance()
     {
-        WervalHttpTest qiweb = new WervalHttpTest( "global-errors-test_getPluginInstance.conf" );
+        WervalHttpTest werval = new WervalHttpTest( "global-errors-test_getPluginInstance.conf" );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -331,28 +331,28 @@ public class OnGlobalErrorTest
     @Test
     public void getFilterInstance()
     {
-        WervalHttpTest qiweb = new WervalHttpTest(
+        WervalHttpTest werval = new WervalHttpTest(
             "global-errors-test_getFilterInstance.conf",
             new RoutesParserProvider( "GET / io.werval.runtime.OnGlobalErrorTest$TestController.action" )
         );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
             Response response = expect()
                 .statusCode( 500 )
                 .header( X_QIWEB_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
-            assertThat( qiweb.application().errors().count(), is( 1 ) );
+            assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                qiweb.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
                 equalTo( "getFilterInstance" )
             );
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -369,28 +369,28 @@ public class OnGlobalErrorTest
     @Test
     public void getControllerInstance()
     {
-        WervalHttpTest qiweb = new WervalHttpTest(
+        WervalHttpTest werval = new WervalHttpTest(
             "global-errors-test_getControllerInstance.conf",
             new RoutesParserProvider( "GET / io.werval.runtime.OnGlobalErrorTest$TestController.action" )
         );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
             Response response = expect()
                 .statusCode( 500 )
                 .header( X_QIWEB_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
-            assertThat( qiweb.application().errors().count(), is( 1 ) );
+            assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                qiweb.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
                 equalTo( "getControllerInstance" )
             );
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -417,28 +417,28 @@ public class OnGlobalErrorTest
     @Test
     public void invokeControllerMethod()
     {
-        WervalHttpTest qiweb = new WervalHttpTest(
+        WervalHttpTest werval = new WervalHttpTest(
             "global-errors-test_invokeControllerMethod.conf",
             new RoutesParserProvider( "GET / io.werval.runtime.OnGlobalErrorTest$TestController.action" )
         );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
             Response response = expect()
                 .statusCode( 500 )
                 .header( X_QIWEB_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
-            assertThat( qiweb.application().errors().count(), is( 1 ) );
+            assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                qiweb.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
                 equalTo( "invokeControllerMethod" )
             );
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -468,13 +468,13 @@ public class OnGlobalErrorTest
     @Test
     public void onHttpRequestComplete()
     {
-        WervalHttpTest qiweb = new WervalHttpTest(
+        WervalHttpTest werval = new WervalHttpTest(
             "global-errors-test_onHttpRequestComplete.conf",
             new RoutesParserProvider( "GET / io.werval.runtime.OnGlobalErrorTest$TestController.action" )
         );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
             expect()
                 .statusCode( 200 )
                 .header( X_QIWEB_REQUEST_ID, notNullValue() )
@@ -482,11 +482,11 @@ public class OnGlobalErrorTest
                 .when()
                 .get( "/" );
             await().until( () -> SLF4J.contains( "onHttpRequestComplete" ) );
-            assertThat( qiweb.application().errors().count(), is( 0 ) );
+            assertThat( werval.application().errors().count(), is( 0 ) );
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -513,28 +513,28 @@ public class OnGlobalErrorTest
     @Test
     public void getRootCause()
     {
-        WervalHttpTest qiweb = new WervalHttpTest(
+        WervalHttpTest werval = new WervalHttpTest(
             "global-errors-test_getRootCause.conf",
             new RoutesParserProvider( "GET / io.werval.runtime.OnGlobalErrorTest$TestController.error" )
         );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
             expect()
                 .statusCode( 500 )
                 .header( X_QIWEB_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
-            assertThat( qiweb.application().errors().count(), is( 1 ) );
+            assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                Stacktraces.containsMessage( "getRootCause" ).test( qiweb.application().errors().last().cause() ),
+                Stacktraces.containsMessage( "getRootCause" ).test( werval.application().errors().last().cause() ),
                 is( true )
             );
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 
@@ -553,28 +553,28 @@ public class OnGlobalErrorTest
     @Test
     public void onRequestError()
     {
-        WervalHttpTest qiweb = new WervalHttpTest(
+        WervalHttpTest werval = new WervalHttpTest(
             "global-errors-test_onRequestError.conf",
             new RoutesParserProvider( "GET / io.werval.runtime.OnGlobalErrorTest$TestController.error" )
         );
         try
         {
-            qiweb.beforeEachTestMethod();
+            werval.beforeEachTestMethod();
             expect()
                 .statusCode( 500 )
                 .header( X_QIWEB_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
-            assertThat( qiweb.application().errors().count(), is( 1 ) );
+            assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                Stacktraces.containsMessage( "onRequestError" ).test( qiweb.application().errors().last().cause() ),
+                Stacktraces.containsMessage( "onRequestError" ).test( werval.application().errors().last().cause() ),
                 is( true )
             );
         }
         finally
         {
-            qiweb.afterEachTestMethod();
+            werval.afterEachTestMethod();
         }
     }
 }

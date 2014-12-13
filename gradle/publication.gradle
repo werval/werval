@@ -17,7 +17,7 @@ apply plugin: 'maven'
 // Use the new maven publication support in gradle
 // Generated POM is minimal here as this repository is only used for inter-build dependencies
 publishing {
-    publications.create( 'qiWebLocalRepoPub' , MavenPublication ) {
+    publications.create( 'wervalLocalRepoPub' , MavenPublication ) {
         pom.withXml {
             // Gradle Publishing feature is exporting dependencies as 'runtime' scope,
             // rather than 'compile'; fix that.
@@ -27,10 +27,10 @@ publishing {
         }
     }
     repositories {
-        maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
+        maven { name "WervalLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
     }
 }
-task finalizeInstall( dependsOn: "publishQiWebLocalRepoPubPublicationToQiWebLocalRepository" )
+task finalizeInstall( dependsOn: "publishWervalLocalRepoPubPublicationToWervalLocalRepository" )
 install.finalizedBy finalizeInstall
 
 // Setup remote artifact publication
@@ -64,11 +64,11 @@ uploadArchives {
     project {
         name project.name
         description project.description
-        url "http://qiweb.org"
+        url "http://werval.io"
         inceptionYear '2013'
         organization {
-            name 'QiWeb Community'
-            url 'https://scm.codeartisans.org/qiweb'
+            name 'Werval Community'
+            url 'https://github.com/werval'
         }
         licenses {
             license {
@@ -78,13 +78,13 @@ uploadArchives {
             }
         }
         issueManagement {
-            system 'Gitlab'
-            url 'https://scm.codeartisans.org/qiweb/qiweb/issues'
+            system 'Github'
+            url 'https://github.com/werval/werval/issues'
         }
         scm {
-            url 'https://scm.codeartisans.org/qiweb/qiweb'
-            connection 'scm:git:https://scm.codeartisans.org/qiweb/qiweb.git'
-            developerConnection 'scm:git:git@scm.codeartisans.org:qiweb/qiweb.git'
+            url 'https://github.com/werval/werval'
+            connection 'scm:git:https://github.com/werval/werval.git'
+            developerConnection 'scm:git:git@github.com:werval/werval.git'
         }
         developers {
             developer {

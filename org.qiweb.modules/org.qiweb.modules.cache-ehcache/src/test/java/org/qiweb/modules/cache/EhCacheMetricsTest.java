@@ -18,7 +18,7 @@ package org.qiweb.modules.cache;
 import io.werval.api.cache.Cache;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
-import io.werval.test.QiWebHttpRule;
+import io.werval.test.WervalHttpRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.qiweb.modules.metrics.Tools;
@@ -34,7 +34,7 @@ import static org.hamcrest.CoreMatchers.is;
 public class EhCacheMetricsTest
 {
     @ClassRule
-    public static QiWebHttpRule QIWEB = new QiWebHttpRule( new RoutesParserProvider(
+    public static WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "GET / " + Controller.class.getName() + ".interaction"
     ) );
 

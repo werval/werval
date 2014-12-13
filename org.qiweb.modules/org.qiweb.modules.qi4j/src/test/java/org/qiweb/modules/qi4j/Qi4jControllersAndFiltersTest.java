@@ -22,7 +22,7 @@ import io.werval.api.filters.FilterChain;
 import io.werval.api.filters.FilterWith;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.routes.RoutesParserProvider;
-import io.werval.test.QiWebHttpRule;
+import io.werval.test.WervalHttpRule;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.junit.ClassRule;
@@ -53,7 +53,7 @@ public class Qi4jControllersAndFiltersTest
      * QiWeb JUnit Class Rule.
      */
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule(
+    public static final WervalHttpRule WERVAL = new WervalHttpRule(
         "qi4j-controllers-and-filters.conf",
         new RoutesParserProvider( "GET / org.qiweb.modules.qi4j.Qi4jControllersAndFiltersTest$TestController.index" )
     );
