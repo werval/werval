@@ -362,7 +362,7 @@ import static java.util.stream.Collectors.toList;
         {
             LinkedHashMap<String, String> pluginsDescriptors = new LinkedHashMap<>();
             Enumeration<URL> descriptors = application.classLoader().getResources(
-                "META-INF/qiweb-plugins.properties"
+                "META-INF/werval-plugins.properties"
             );
             while( descriptors.hasMoreElements() )
             {

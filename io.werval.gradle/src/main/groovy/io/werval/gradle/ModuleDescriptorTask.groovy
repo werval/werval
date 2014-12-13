@@ -42,9 +42,9 @@ class ModuleDescriptorTask extends DefaultTask
     List<Map> plugins = []
 
     /**
-     * Project's plugins descriptor, defaulted to {@literal src/main/resources/META-INF/qiweb-plugins.properties}.
+     * Project's plugins descriptor, defaulted to {@literal src/main/resources/META-INF/werval-plugins.properties}.
      */
-    File descriptorFile = project.file( 'src/main/resources/META-INF/qiweb-plugins.properties' )
+    File descriptorFile = project.file( 'src/main/resources/META-INF/werval-plugins.properties' )
 
     void plugin( Map namedParams, String name )
     {
@@ -96,7 +96,7 @@ class ModuleDescriptorTask extends DefaultTask
             {
                 assert genDescBaseDir.mkdirs()
             }
-            def genDescRefConfFile = new File( genDescBaseDir,  'qiweb-plugins.properties' )
+            def genDescRefConfFile = new File( genDescBaseDir,  'werval-plugins.properties' )
             genDescRefConfFile.withOutputStream { output ->
                 props.save( output, "UTF-8" )
             }

@@ -33,12 +33,12 @@ import static org.junit.Assert.assertThat;
  * Plugins Dependencies Test.
  * <p>
  * This test assert that plugins are ordered according to their dependency graph and that undeclared plugins present
- * in the classpath are automatically resolved if they are registered in a {@literal META-INF/qiweb-plugins.properties}
+ * in the classpath are automatically resolved if they are registered in a {@literal META-INF/werval-plugins.properties}
  * descriptor.
  * <p>
  * Configuration file `plugin-dependencies-test.conf` declares plugins in the wrong order.
  * <p>
- * Descriptor file `META-INF/qiweb-plugin.properties` declare all plugins even if it is not needed.
+ * Descriptor file `META-INF/werval-plugins.properties` declare all plugins even if it is not needed.
  */
 public class PluginsDependenciesTest
 {
