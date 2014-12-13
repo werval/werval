@@ -98,7 +98,7 @@ public interface RequestHeader
      * {@literal qiweb.http.headers.x_forwarded_for.trusted_proxies} configuration list. This is the default
      * behaviour trusting only {@literal 127.0.0.1}.
      * <p>
-     * If the {@literal X-Forwarded-For} cannot be trusted, QiWeb respond with a {@literal 400 Bad Request}.
+     * If the {@literal X-Forwarded-For} cannot be trusted, Werval will respond with a {@literal 400 Bad Request}.
      *
      * @return The HTTP Client Address
      */

@@ -18,8 +18,8 @@ package io.werval.api.context;
 import java.util.concurrent.Callable;
 import org.slf4j.MDC;
 
-import static io.werval.api.http.Headers.Names.X_QIWEB_CLIENT_IP;
-import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Names.X_WERVAL_CLIENT_IP;
+import static io.werval.api.http.Headers.Names.X_WERVAL_REQUEST_ID;
 
 /**
  * Current Thread Context Helper.
@@ -89,11 +89,11 @@ public final class ThreadContextHelper
      * <li>Set thread {@link ClassLoader}.</li>
      * <li>Set thread Context {@literal ThreadLocal}.</li>
      * <li>
-     * Put current Request ID in SLF4J MDC at the {@link io.werval.api.http.Headers.Names#X_QIWEB_REQUEST_ID} key.
+     * Put current Request ID in SLF4J MDC at the {@link io.werval.api.http.Headers.Names#X_WERVAL_REQUEST_ID} key.
      * </li>
      * <li>
      * Put current Request Client IP in SLF4J MDC at the
-     * {@link io.werval.api.http.Headers.Names#X_QIWEB_CLIENT_IP} key if enabled in the configuration.
+     * {@link io.werval.api.http.Headers.Names#X_WERVAL_CLIENT_IP} key if enabled in the configuration.
      * </li>
      * </ul>
      *
@@ -108,12 +108,12 @@ public final class ThreadContextHelper
             logRequestId = context.application().config().bool( "qiweb.http.log.context.request_id" );
             if( logRequestId )
             {
-                MDC.put( X_QIWEB_REQUEST_ID, context.request().identity() );
+                MDC.put( X_WERVAL_REQUEST_ID, context.request().identity() );
             }
             logClientIp = context.application().config().bool( "qiweb.http.log.context.client_ip" );
             if( logClientIp )
             {
-                MDC.put( X_QIWEB_CLIENT_IP, context.request().remoteAddress() );
+                MDC.put( X_WERVAL_CLIENT_IP, context.request().remoteAddress() );
             }
         }
         CurrentContext.CONTEXT_THREAD_LOCAL.set( context );
@@ -133,11 +133,11 @@ public final class ThreadContextHelper
     {
         if( logRequestId )
         {
-            MDC.remove( X_QIWEB_REQUEST_ID );
+            MDC.remove( X_WERVAL_REQUEST_ID );
         }
         if( logClientIp )
         {
-            MDC.remove( X_QIWEB_CLIENT_IP );
+            MDC.remove( X_WERVAL_CLIENT_IP );
         }
         Thread.currentThread().setContextClassLoader( previousLoader );
         previousLoader = null;

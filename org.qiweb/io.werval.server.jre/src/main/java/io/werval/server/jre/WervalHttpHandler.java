@@ -36,7 +36,7 @@ import java.io.InputStream;
 /**
  * com.sun.net HTTP Handler.
  */
-public class QiWebHttpHandler
+public class WervalHttpHandler
     implements HttpHandler
 {
     private static final int HTTP_BUF_SIZE = 16_384;
@@ -44,7 +44,7 @@ public class QiWebHttpHandler
     private final DevShellSPI devSpi;
     private final HttpServerHelper helper = new HttpServerHelper();
 
-    public QiWebHttpHandler( ApplicationSPI app, DevShellSPI devSpi )
+    public WervalHttpHandler( ApplicationSPI app, DevShellSPI devSpi )
     {
         this.app = app;
         this.devSpi = devSpi;

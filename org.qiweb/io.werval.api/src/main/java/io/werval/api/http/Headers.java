@@ -419,17 +419,17 @@ public interface Headers
          */
         String X_HTTP_METHOD_OVERRIDE = "X-HTTP-Method-Override";
         /**
-         * {@code "X-QiWeb-Content-Length"}.
+         * {@code "X-Werval-Content-Length"}.
          */
-        String X_QIWEB_CONTENT_LENGTH = "X-QiWeb-Content-Length";
+        String X_WERVAL_CONTENT_LENGTH = "X-Werval-Content-Length";
         /**
-         * {@code "X-QiWeb-Client-IP"}.
+         * {@code "X-Werval-Client-IP"}.
          */
-        String X_QIWEB_CLIENT_IP = "X-QiWeb-Client-IP";
+        String X_WERVAL_CLIENT_IP = "X-Werval-Client-IP";
         /**
-         * {@code "X-QiWeb-Request-ID"}.
+         * {@code "X-Werval-Request-ID"}.
          */
-        String X_QIWEB_REQUEST_ID = "X-QiWeb-Request-ID";
+        String X_WERVAL_REQUEST_ID = "X-Werval-Request-ID";
     }
 
     /**

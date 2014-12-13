@@ -37,7 +37,7 @@ public class FiltersTest
         @Override
         public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<Void> annotation )
         {
-            context.response().headers().with( "X-QiWeb-Filtered", "true" );
+            context.response().headers().with( "X-Werval-Filtered", "true" );
             return chain.next( context );
         }
     }
@@ -62,7 +62,7 @@ public class FiltersTest
     {
         expect().
             statusCode( 200 ).
-            header( "X-QiWeb-Filtered", equalTo( "true" ) ).
+            header( "X-Werval-Filtered", equalTo( "true" ) ).
             when().
             get( "/" );
     }

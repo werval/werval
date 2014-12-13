@@ -11,9 +11,9 @@ You have full control on logging configuration.
 All Werval loggers are present in the `io.werval` namespace according to code packages.
 
 TIP: Werval Runtime leverage SLF4J http://www.slf4j.org/manual.html#mdc[Mapped Diagnosic Context], aka. MDC, by putting
-the current request ID at the `X-QiWeb-Request-ID` key.
+the current request ID at the `X-Werval-Request-ID` key.
 Moreover, you can enable the `qiweb.http.log.context.client_ip` configuration property to add the current request client
-IP address at the `X-QiWeb-Client-IP` key.
+IP address at the `X-Werval-Client-IP` key.
 You can use theses keys in your loggers output patterns.
 
 

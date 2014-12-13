@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.http.Headers.Names.CONNECTION;
-import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Names.X_WERVAL_REQUEST_ID;
 import static io.werval.api.http.Headers.Values.CLOSE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * Assert that Application errors triggers the right code paths.
+ * Assert that errors in Application code triggers the right code paths.
  */
 public class OnApplicationErrorTest
 {
@@ -72,10 +72,10 @@ public class OnApplicationErrorTest
     {
         expect().
             statusCode( 200 ).
-            header( X_QIWEB_REQUEST_ID, notNullValue() ).
+            header( X_WERVAL_REQUEST_ID, notNullValue() ).
             when().
             get( "/success" );
-        assertThat(werval.application().errors().count(), is( 0 ) );
+        assertThat( werval.application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -84,11 +84,11 @@ public class OnApplicationErrorTest
     {
         expect().
             statusCode( 500 ).
-            header( X_QIWEB_REQUEST_ID, notNullValue() ).
+            header( X_WERVAL_REQUEST_ID, notNullValue() ).
             header( CONNECTION, CLOSE ).
             when().
             get( "/internalServerError" );
-        assertThat(werval.application().errors().count(), is( 0 ) );
+        assertThat( werval.application().errors().count(), is( 0 ) );
     }
 
     @Test
@@ -101,9 +101,9 @@ public class OnApplicationErrorTest
             when().
             get( "/exception" );
 
-        assertThat(werval.application().errors().count(), is( 1 ) );
+        assertThat( werval.application().errors().count(), is( 1 ) );
 
-        String requestId = response.header( X_QIWEB_REQUEST_ID );
+        String requestId = response.header( X_WERVAL_REQUEST_ID );
         assertThat( requestId, notNullValue() );
 
         List<Error> requestErrors = werval.application().errors().ofRequest( requestId );

@@ -24,7 +24,7 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedInput;
 
 import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
-import static io.werval.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Names.X_WERVAL_CONTENT_LENGTH;
 
 /**
  * Encode a ChunkedInput&lt;ByteBuf&gt; into HTTP chunks.
@@ -76,7 +76,7 @@ public class HttpChunkedBodyEncoder
         {
             isLastChunkRead = true;
             LastHttpContent lastChunk = new DefaultLastHttpContent( EMPTY_BUFFER );
-            lastChunk.trailingHeaders().add( X_QIWEB_CONTENT_LENGTH, contentLength );
+            lastChunk.trailingHeaders().add( X_WERVAL_CONTENT_LENGTH, contentLength );
             return lastChunk;
         }
         ByteBuf buffer = chunkedBody.readChunk( context );

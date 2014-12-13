@@ -93,7 +93,7 @@ import static io.werval.api.http.Headers.Names.CONNECTION;
 import static io.werval.api.http.Headers.Names.COOKIE;
 import static io.werval.api.http.Headers.Names.RETRY_AFTER;
 import static io.werval.api.http.Headers.Names.SET_COOKIE;
-import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Names.X_WERVAL_REQUEST_ID;
 import static io.werval.api.http.Headers.Values.CLOSE;
 import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 import static io.werval.api.mime.MimeTypes.TEXT_HTML;
@@ -301,7 +301,8 @@ public final class ApplicationInstance
 
             // Global
             String globalClassName = config.string( APP_GLOBAL );
-            this.global = executors.supplyAsync(() ->
+            this.global = executors.supplyAsync(
+                () ->
                 {
                     try
                     {
@@ -740,7 +741,7 @@ public final class ApplicationInstance
     private void validatesRequestHeader( RequestHeader requestHeader )
     {
         // Multi-valued QueryString parameters
-        if( !config.bool(WERVAL_HTTP_QUERYSTRING_MULTIVALUED ) )
+        if( !config.bool( WERVAL_HTTP_QUERYSTRING_MULTIVALUED ) )
         {
             for( List<String> values : requestHeader.queryString().allValues().values() )
             {
@@ -751,7 +752,7 @@ public final class ApplicationInstance
             }
         }
         // Multi-valued Headers
-        if( !config.bool(WERVAL_HTTP_HEADERS_MULTIVALUED ) )
+        if( !config.bool( WERVAL_HTTP_HEADERS_MULTIVALUED ) )
         {
             for( List<String> values : requestHeader.headers().allValues().values() )
             {
@@ -775,7 +776,7 @@ public final class ApplicationInstance
     private void validatesRequestBody( Request request )
     {
         // Multi-valued Form Attributes
-        if( !config.bool(WERVAL_HTTP_FORMS_MULTIVALUED ) )
+        if( !config.bool( WERVAL_HTTP_FORMS_MULTIVALUED ) )
         {
             for( List<String> values : request.body().formAttributes().allValues().values() )
             {
@@ -786,7 +787,7 @@ public final class ApplicationInstance
             }
         }
         // Multi-valued Form Uploads
-        if( !config.bool(WERVAL_HTTP_UPLOADS_MULTIVALUED ) )
+        if( !config.bool( WERVAL_HTTP_UPLOADS_MULTIVALUED ) )
         {
             for( List<FormUploads.Upload> values : request.body().formUploads().allValues().values() )
             {
@@ -936,8 +937,8 @@ public final class ApplicationInstance
     {
         // Apply Keep-Alive
         applyKeepAlive( request, outcome );
-        // Add X-QiWeb-Request-ID
-        outcome.responseHeader().headers().withSingle( X_QIWEB_REQUEST_ID, request.identity() );
+        // Add X-Werval-Request-ID
+        outcome.responseHeader().headers().withSingle( X_WERVAL_REQUEST_ID, request.identity() );
         return outcome;
     }
 
@@ -987,7 +988,8 @@ public final class ApplicationInstance
     @Override
     public CompletableFuture<Outcome> shuttingDownOutcome( ProtocolVersion version, String requestIdentity )
     {
-        return executors.supplyAsync(() ->
+        return executors.supplyAsync(
+            () ->
             {
                 // Outcomes
                 Outcomes outcomes = new OutcomesInstance(
@@ -1004,13 +1006,12 @@ public final class ApplicationInstance
                     "Service is shutting down",
                     outcomes
                 );
-                builder.withHeader( CONNECTION, CLOSE )
-                    .withHeader( X_QIWEB_REQUEST_ID, requestIdentity );
+                builder.withHeader( CONNECTION, CLOSE ).withHeader( X_WERVAL_REQUEST_ID, requestIdentity );
 
                 // By default, no Retry-After, only if defined in configuration
-                if( config.has(WERVAL_SHUTDOWN_RETRYAFTER ) )
+                if( config.has( WERVAL_SHUTDOWN_RETRYAFTER ) )
                 {
-                    builder.withHeader(RETRY_AFTER, String.valueOf(config.seconds(WERVAL_SHUTDOWN_RETRYAFTER ) ) );
+                    builder.withHeader( RETRY_AFTER, String.valueOf( config.seconds( WERVAL_SHUTDOWN_RETRYAFTER ) ) );
                 }
 
                 // Build!
@@ -1040,7 +1041,7 @@ public final class ApplicationInstance
 
     private void configureDefaultCharset()
     {
-        this.defaultCharset = config.charset(WERVAL_CHARACTER_ENCODING );
+        this.defaultCharset = config.charset( WERVAL_CHARACTER_ENCODING );
     }
 
     private void configureCrypto()
@@ -1055,7 +1056,7 @@ public final class ApplicationInstance
 
     private void configureTmpdir()
     {
-        File tmpdirFile = config.file(WERVAL_TMPDIR );
+        File tmpdirFile = config.file( WERVAL_TMPDIR );
         if( tmpdirFile.isFile() )
         {
             throw new WervalException( "tmpdir already exist but is a file: " + tmpdirFile );
@@ -1070,7 +1071,7 @@ public final class ApplicationInstance
     private void configureParameterBinders()
     {
         List<ParameterBinder<?>> list = new ArrayList<>();
-        for( String parameterBinderClassName : config.stringList(WERVAL_ROUTES_PARAMETERBINDERS ) )
+        for( String parameterBinderClassName : config.stringList( WERVAL_ROUTES_PARAMETERBINDERS ) )
         {
             try
             {
@@ -1089,7 +1090,7 @@ public final class ApplicationInstance
     {
         // Load textuals mime-types
         Map<String, Charset> textuals = new LinkedHashMap<>();
-        for( Map.Entry<String, String> textConfig : config.stringMap(WERVAL_MIMETYPES_TEXTUAL ).entrySet() )
+        for( Map.Entry<String, String> textConfig : config.stringMap( WERVAL_MIMETYPES_TEXTUAL ).entrySet() )
         {
             String mimetype = textConfig.getKey();
             String charsetString = textConfig.getValue().trim();
@@ -1099,9 +1100,9 @@ public final class ApplicationInstance
             textuals.put( mimetype, charset );
         }
         // Load supplementary mime-types
-        if( config.has(WERVAL_MIMETYPES_SUPPLEMENTARY ) )
+        if( config.has( WERVAL_MIMETYPES_SUPPLEMENTARY ) )
         {
-            Map<String, String> supplementaryMimetypes = config.stringMap(WERVAL_MIMETYPES_SUPPLEMENTARY );
+            Map<String, String> supplementaryMimetypes = config.stringMap( WERVAL_MIMETYPES_SUPPLEMENTARY );
             mimeTypes = new MimeTypesInstance( defaultCharset, supplementaryMimetypes, textuals );
         }
         else

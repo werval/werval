@@ -53,7 +53,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
 import static io.werval.api.http.Headers.Names.TRAILER;
 import static io.werval.api.http.Headers.Names.TRANSFER_ENCODING;
-import static io.werval.api.http.Headers.Names.X_QIWEB_CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Names.X_WERVAL_CONTENT_LENGTH;
 import static io.werval.api.http.Headers.Values.CHUNKED;
 import static io.werval.util.Charsets.UTF_8;
 import static io.werval.server.netty.NettyHttpFactories.remoteAddressOf;
@@ -245,7 +245,7 @@ public final class WervalHttpHandler
             // Headers
             applyResponseHeader( responseHeader, nettyResponse );
             nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
-            nettyResponse.headers().set( TRAILER, X_QIWEB_CONTENT_LENGTH );
+            nettyResponse.headers().set( TRAILER, X_WERVAL_CONTENT_LENGTH );
             // Body
             nettyContext.write( nettyResponse );
             writeFuture = nettyContext.writeAndFlush(

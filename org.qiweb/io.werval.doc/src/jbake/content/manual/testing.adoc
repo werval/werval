@@ -3,20 +3,20 @@
 
 The `io.werval.test` module provide http://junit.org[JUnit] based construct to ease tests implementation.
 
-First construct is `QiWeb[Http]Test` that should be subclassed by your test classes.
-Second one is `QiWeb[Http]Rule`, a JUnit Rule to be declared in your test classes.
+First construct is `Werval[Http]Test` that should be subclassed by your test classes.
+Second one is `Werval[Http]Rule`, a JUnit Rule to be declared in your test classes.
 Both have the same extension points, choose the one that suits your needs and habits.
 
 Using the JUnit Rules is the prefered way of writing Werval tests as they don't force you to extend from any base class.
 
-=== QiWeb[Http]Test usage
+=== Werval[Http]Test usage
 
 [source,java]
 ----
 import org.junit.Test;
-import io.werval.test.QiWeb[Http]Test;
+import io.werval.test.Werval[Http]Test;
 
-public class MyTest extends QiWeb[Http]Test {
+public class MyTest extends Werval[Http]Test {
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -27,16 +27,16 @@ public class MyTest extends QiWeb[Http]Test {
 Your Application will be activated/passivated around each test method.
 
 
-=== QiWebRule usage
+=== WervalRule usage
 
 [source,java]
 ----
 import org.junit.Rule;
 import org.junit.Test;
-import io.werval.test.QiWeb[Http]Test;
+import io.werval.test.Werval[Http]Test;
 
 public class MyTest {
-  @Rule public QiWeb[Http]Rule qiweb = new QiWeb[Http]Rule();
+  @Rule public Werval[Http]Rule qiweb = new Werval[Http]Rule();
   @Test
   public void myTest() {
     // Assert what you have to here
@@ -53,10 +53,10 @@ annotation.
 ----
 import org.junit.ClassRule;
 import org.junit.Test;
-import io.werval.test.QiWeb[Http]Test;
+import io.werval.test.Werval[Http]Test;
 
 public class MyTest {
-  @ClassRule public static final QiWeb[Http]Rule QIWEB = new QiWeb[Http]Rule();
+  @ClassRule public static final Werval[Http]Rule QIWEB = new Werval[Http]Rule();
   @Test
   public void myTest() {
     // Assert what you have to here

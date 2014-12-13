@@ -40,7 +40,7 @@ import static com.jayway.awaitility.Awaitility.await;
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.http.Headers.Names.CONNECTION;
-import static io.werval.api.http.Headers.Names.X_QIWEB_REQUEST_ID;
+import static io.werval.api.http.Headers.Names.X_WERVAL_REQUEST_ID;
 import static io.werval.api.http.Headers.Values.CLOSE;
 import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 import static org.hamcrest.core.Is.is;
@@ -340,13 +340,13 @@ public class OnGlobalErrorTest
             werval.beforeEachTestMethod();
             Response response = expect()
                 .statusCode( 500 )
-                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( X_WERVAL_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                werval.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).message(),
                 equalTo( "getFilterInstance" )
             );
         }
@@ -378,13 +378,13 @@ public class OnGlobalErrorTest
             werval.beforeEachTestMethod();
             Response response = expect()
                 .statusCode( 500 )
-                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( X_WERVAL_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                werval.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).message(),
                 equalTo( "getControllerInstance" )
             );
         }
@@ -426,13 +426,13 @@ public class OnGlobalErrorTest
             werval.beforeEachTestMethod();
             Response response = expect()
                 .statusCode( 500 )
-                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( X_WERVAL_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                werval.application().errors().lastOfRequest( response.header( X_QIWEB_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).message(),
                 equalTo( "invokeControllerMethod" )
             );
         }
@@ -477,7 +477,7 @@ public class OnGlobalErrorTest
             werval.beforeEachTestMethod();
             expect()
                 .statusCode( 200 )
-                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( X_WERVAL_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, KEEP_ALIVE )
                 .when()
                 .get( "/" );
@@ -522,7 +522,7 @@ public class OnGlobalErrorTest
             werval.beforeEachTestMethod();
             expect()
                 .statusCode( 500 )
-                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( X_WERVAL_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );
@@ -562,7 +562,7 @@ public class OnGlobalErrorTest
             werval.beforeEachTestMethod();
             expect()
                 .statusCode( 500 )
-                .header( X_QIWEB_REQUEST_ID, notNullValue() )
+                .header( X_WERVAL_REQUEST_ID, notNullValue() )
                 .header( CONNECTION, CLOSE )
                 .when()
                 .get( "/" );

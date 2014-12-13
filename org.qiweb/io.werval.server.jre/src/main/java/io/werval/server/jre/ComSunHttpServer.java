@@ -63,7 +63,7 @@ public class ComSunHttpServer
             throw new WervalRuntimeException( "Unable to create HttpServer", ex );
         }
 
-        server.createContext( "/", new QiWebHttpHandler( app, devSpi ) );
+        server.createContext( "/", new WervalHttpHandler( app, devSpi ) );
 
         String address = app.config().string( WERVAL_HTTP_ADDRESS );
         int port = app.config().intNumber( WERVAL_HTTP_PORT );
