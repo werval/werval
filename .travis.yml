@@ -1,0 +1,15 @@
+
+language: java
+
+jdk:
+    - oraclejdk8
+
+before_install:
+    - sudo apt-get update -qq
+
+install:
+    - sudo apt-get install -qq graphviz maven
+    - ./clean.sh
+
+script:
+    - ./build.sh
