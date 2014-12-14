@@ -47,7 +47,7 @@ uploadArchives {
             if( !version.contains( "SNAPSHOT" ) ) {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
             }
-            if( hasProperty( 'codeartisansNexusUsername' ) ) {
+            if( project.hasProperty( 'codeartisansNexusUsername' ) ) {
                 repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
                     authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
                 }
@@ -141,37 +141,39 @@ buildscript {
     repositories { jcenter() }
     dependencies { classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0' }
 }
-apply plugin: com.jfrog.bintray.gradle.BintrayPlugin
-bintray {
-    user = bintrayUsername
-    key = bintrayApiKey
-    configurations = [ 'archives' ]
-    dryRun = false
-    publish = false
-    pkg {
-        repo = "werval"
-        name = "werval"
-        desc = "werval"
-        websiteUrl = "http://werval.io/"
-        licenses = ['Apache-2.0']
-        publicDownloadNumbers = false
-        version {
-            mavenCentralSync {
-                sync = false
-                user = mavenCentralUsername
-                password = mavenCentralPassword
-            }
-            gpg {
-                sign = false
+if( project.hasProperty( 'bintrayUsername' ) ) {
+    apply plugin: com.jfrog.bintray.gradle.BintrayPlugin
+    bintray {
+        user = bintrayUsername
+        key = bintrayApiKey
+        configurations = [ 'archives' ]
+        dryRun = false
+        publish = false
+        pkg {
+            repo = "werval"
+            name = "werval"
+            desc = "werval"
+            websiteUrl = "http://werval.io/"
+            licenses = ['Apache-2.0']
+            publicDownloadNumbers = false
+            version {
+                mavenCentralSync {
+                    sync = false
+                    user = mavenCentralUsername
+                    password = mavenCentralPassword
+                }
+                gpg {
+                    sign = false
+                }
             }
         }
     }
-}
-bintrayUpload {
-    doFirst {
-        if( version == "0" ) {
-            throw new RuntimeException( "'version' must be given as a system property to perform a release." )
+    bintrayUpload {
+        doFirst {
+            if( version == "0" ) {
+                throw new RuntimeException( "'version' must be given as a system property to perform a release." )
+            }
         }
+        dependsOn signArchives
     }
-    dependsOn signArchives
 }
