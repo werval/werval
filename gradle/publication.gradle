@@ -23,6 +23,7 @@ publishing {
             // rather than 'compile'; fix that.
             if( asNode().dependencies[0] ) {
                 asNode().dependencies[0].dependency.each { dep -> dep.scope[0].value = 'compile' }
+                // asNode().dependencies[0].removeAll { dep -> dep.scope[0].value == 'test' }
             }
         }
     }
@@ -57,7 +58,9 @@ uploadArchives {
 }
 
 // POM Setup for publication
-[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
+def installer = install.repositories.mavenInstaller
+def deployer = uploadArchives.repositories.mavenDeployer
+[installer, deployer]*.pom {
     groupId = project.group
     artifactId = project.name
     version = project.version
@@ -128,4 +131,46 @@ uploadArchives {
         }
     }
 }
+[installer, deployer]*.pom*.whenConfigured { pom ->
+    pom.dependencies.removeAll( it.scope == 'test' )
+}
 
+// Bintray!
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0' }
+}
+apply plugin: com.jfrog.bintray.gradle.BintrayPlugin
+bintray {
+    user = bintrayUsername
+    key = bintrayApiKey
+    configurations = [ 'archives' ]
+    dryRun = false
+    publish = false
+    pkg {
+        repo = "werval"
+        name = "werval"
+        desc = "werval"
+        websiteUrl = "http://werval.io/"
+        licenses = ['Apache-2.0']
+        publicDownloadNumbers = false
+        version {
+            mavenCentralSync {
+                sync = false
+                user = mavenCentralUsername
+                password = mavenCentralPassword
+            }
+            gpg {
+                sign = false
+            }
+        }
+    }
+}
+bintrayUpload {
+    doFirst {
+        if( version == "0" ) {
+            throw new RuntimeException( "'version' must be given as a system property to perform a release." )
+        }
+    }
+    dependsOn signArchives
+}

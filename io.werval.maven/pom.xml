@@ -438,8 +438,8 @@
                 <version>2.8.1</version>
                 <configuration>
                     <updateReleaseInfo>true</updateReleaseInfo>
-                    <altReleaseDeploymentRepository>codeartisansNexus::default::https://repo.codeartisans.org/content/repositories/qiweb-releases</altReleaseDeploymentRepository>
-                    <altSnapshotDeploymentRepository>codeartisansNexus::default::https://repo.codeartisans.org/content/repositories/qiweb-snapshots</altSnapshotDeploymentRepository>
+                    <altReleaseDeploymentRepository>bintray::default::https://api.bintray.com/maven/eskatos/werval/werval</altReleaseDeploymentRepository>
+                    <altSnapshotDeploymentRepository>bintray::default::https://api.bintray.com/maven/eskatos/werval/werval</altSnapshotDeploymentRepository>
                 </configuration>
             </plugin>
 
