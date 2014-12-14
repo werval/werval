@@ -131,9 +131,6 @@ def deployer = uploadArchives.repositories.mavenDeployer
         }
     }
 }
-[installer, deployer]*.pom*.whenConfigured { pom ->
-    pom.dependencies.removeAll( it.scope == 'test' )
-}
 
 // Bintray!
 buildscript {
