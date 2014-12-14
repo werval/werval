@@ -39,7 +39,7 @@ echo "Built."
 
 # dist
 $FIGLET io.werval.dist
-./gradlew -b org.qiweb.dist/build.gradle install
+./gradlew -b io.werval.dist/build.gradle install
 echo "Built."
 
 echo ""

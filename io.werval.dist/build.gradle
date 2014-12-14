@@ -2,7 +2,7 @@
 apply from: file( '../gradle/publication.gradle' )
 apply from: file( '../gradle/repositories.gradle' )
 
-description = "QiWeb Distributions"
+description = "Werval Distributions"
 
 // Modules included in the distribution
 def modules_array = new groovy.json.JsonSlurper().parseText(modules)
@@ -62,7 +62,7 @@ task generateModulesIndex {
 :toc: right
 :toc-title: Modules
 
-Modules released with this version of QiWeb can be found below.
+Modules released with this version of Werval can be found below.
 
 toc::[]
 
@@ -105,9 +105,9 @@ task documentationArchive(type: Zip, dependsOn: jbake) {
 
 // In fact, a single archive with all bundled would be much simpler.
 //
-// org.qiweb.dist-VERSION-zip/
+// org.werval.dist-VERSION-zip/
 //               src/                   Full copy of the SDK sources, with build system, tests etc...
-//               artifacts/             Maven repository with all QiWeb artifacts (binaries, javadoc and source jars)
+//               artifacts/             Maven repository with all Werval artifacts (binaries, javadoc and source jars)
 //               dependencies/          Generated maven project allowing to go offline in a single command
 //               doc/                   Static website with full documentation
 //               README
@@ -115,7 +115,7 @@ task documentationArchive(type: Zip, dependsOn: jbake) {
 //               NOTICE
 
 // ~/dependencies/
-// - Generate a pom.xml that depends on everything QiWeb
+// - Generate a pom.xml that depends on everything Werval
 // - Run maven dependencies plugin on it to create the dependencies repository
 //
 // See http://maven.apache.org/plugins/maven-dependency-plugin/copy-dependencies-mojo.html
@@ -172,7 +172,7 @@ task distributionArchive_artifacts {
             from fileTree( '../repository' )
             exclude 'org/qiweb/io.werval.modules.*/**'
             exclude 'org/qiweb/io.werval.server.jre/**'
-            exclude 'org/qiweb/org.qiweb.dist/**'
+            exclude 'org/qiweb/io.werval.dist/**'
             exclude '**/*-werval-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
@@ -199,25 +199,25 @@ task distributionArchive( type: Zip ) {
     classifier 'distribution'
     // Sources
     from( 'build/tmp/distributionArchive_src' ) {
-        into "qiweb-$project.version/src"
+        into "werval-$project.version/src"
     }
     // Artifacts
     from( 'build/tmp/distributionArchive_artifacts' ) {
-        into "qiweb-$project.version/artifacts"
+        into "werval-$project.version/artifacts"
     }
     // Dependencies
     from( 'build/tmp/distributionArchive_dependencies' ) {
-        into "qiweb-$project.version/dependencies"
+        into "werval-$project.version/dependencies"
     }
     // Documentation
     from( jbake ) {
         includeEmptyDirs = false
-        into "qiweb-$project.version/doc"
+        into "werval-$project.version/doc"
     }
     // Overlay
     from( 'src/dist/overlay' ) {
         includeEmptyDirs = false
-        into "qiweb-$project.version/"
+        into "werval-$project.version/"
     }
 }
 

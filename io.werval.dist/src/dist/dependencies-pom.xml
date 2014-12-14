@@ -8,28 +8,28 @@
 
     <!-- TODO CHECK THAT SOURCES AND JAVADOCS ARE DOWNLOADED -->
 
-    <groupId>org.qiweb</groupId>
-    <artifactId>org.qiweb.dist.dependencies</artifactId>
+    <groupId>io.werval</groupId>
+    <artifactId>io.werval.dist.dependencies</artifactId>
     <version>WERVAL_VERSION</version>
 
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
-    <description>QiWeb Distribution - Dependencies Pom</description>
+    <description>Werval Distribution - Dependencies Pom</description>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <qiweb.version>WERVAL_VERSION</qiweb.version>
+        <werval.version>WERVAL_VERSION</werval.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>qiweb-distribution-artifacts-repository</id>
+            <id>werval-distribution-artifacts-repository</id>
             <url>file://${project.baseDir}/../artifacts</url>
         </repository>
         <repository>
-            <id>gradle-libs-releases-repository</id>
-            <url>http://repo.gradle.org/gradle/libs-releases-local</url>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
         </repository>
     </repositories>
 
@@ -37,22 +37,22 @@
         <dependency>
             <groupId>org.qiweb</groupId>
             <artifactId>io.werval.server.bootstrap</artifactId>
-            <version>${qiweb.version}</version>
+            <version>${werval.version}</version>
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
             <artifactId>io.werval.test</artifactId>
-            <version>${qiweb.version}</version>
+            <version>${werval.version}</version>
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
-            <artifactId>org.qiweb.gradle</artifactId>
-            <version>${qiweb.version}</version>
+            <artifactId>io.werval.gradle</artifactId>
+            <version>${werval.version}</version>
         </dependency>
         <dependency>
             <groupId>org.qiweb</groupId>
             <artifactId>io.werval.maven</artifactId>
-            <version>${qiweb.version}</version>
+            <version>${werval.version}</version>
         </dependency>
 WERVAL_MODULES
     </dependencies>
@@ -65,7 +65,7 @@ WERVAL_MODULES
                 <version>2.8</version>
                 <executions>
                     <execution>
-                        <id>qiweb-distribution-dependencies-copy</id>
+                        <id>werval-distribution-dependencies-copy</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
