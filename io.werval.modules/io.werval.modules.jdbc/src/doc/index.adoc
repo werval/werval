@@ -40,7 +40,7 @@ When using Gradle:
 .build.gradle
 [source,groovy,subs="attributes,specialcharacters"]
 ----
-compile 'org.qiweb:io.werval.modules.jdbc:{werval-version}'
+compile 'io.werval:io.werval.modules.jdbc:{werval-version}'
 ----
 
 When using Maven:
@@ -49,7 +49,7 @@ When using Maven:
 [source,xml,subs="attributes,specialcharacters"]
 ----
 <dependency>
-    <groupId>org.qiweb</groupId>
+    <groupId>io.werval</groupId>
     <artifactId>io.werval.modules.jdbc</artifactId>
     <version>{werval-version}</version>
 </dependency>

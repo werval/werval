@@ -16,13 +16,13 @@ description = "Werval Gradle Plugin"
 
 dependencies {
 
-    compile "org.qiweb:io.werval.commands:$version"
+    compile "io.werval:io.werval.commands:$version"
     compile localGroovy()
     compile gradleApi()
     compile libs.gradle_tooling
     compile "org.asciidoctor:asciidoctor-gradle-plugin:1.5.0"
 
-    testCompile "org.qiweb:io.werval.test:$version"
+    testCompile "io.werval:io.werval.test:$version"
     testCompile libs.awaitility
     
 }

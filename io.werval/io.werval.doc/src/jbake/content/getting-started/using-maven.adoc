@@ -148,18 +148,18 @@ Here is what you'll find inside:
 
     <dependencies>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.api</artifactId>
             <version>{werval_version}</version>
         </dependency>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.server.bootstrap</artifactId>
             <version>{werval_version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.test</artifactId>
             <version>{werval_version}</version>
             <scope>test</scope>
@@ -184,7 +184,7 @@ Here is what you'll find inside:
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.qiweb</groupId>
+                <groupId>io.werval</groupId>
                 <artifactId>io.werval.maven</artifactId>
                 <version>{werval_version}</version>
             </plugin>

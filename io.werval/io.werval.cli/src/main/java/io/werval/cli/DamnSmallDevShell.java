@@ -135,18 +135,17 @@ public final class DamnSmallDevShell
             }
         }
     }
-    // figlet -f rectangles  "Werval DevShell"
+    // figlet -f rectangles  "Werval"
     private static final String LOGO;
 
     static
     {
         LOGO
         = ""
-          + " _____ _ _ _ _     _      ____          _____ _       _ _ \n"
-          + "|     |_| | | |___| |_   |    \\ ___ _ _|   __| |_ ___| | |\n"
-          + "|  |  | | | | | -_| . |  |  |  | -_| | |__   |   | -_| | |\n"
-          + "|__  _|_|_____|___|___|  |____/|___|\\_/|_____|_|_|___|_|_|\n"
-          + "   |__|                                "
+          + " _ _ _                 _\n"
+          + "| | | |___ ___ _ _ ___| |\n"
+          + "| | | | -_|  _| | | .'| |\n"
+          + "|_____|___|_|  \\_/|__,|_|\n"
           + "Werval v" + VERSION + "-" + COMMIT + ( DIRTY ? " (DIRTY)" : "" )
           + "\n";
     }
@@ -304,7 +303,7 @@ public final class DamnSmallDevShell
         // Generate Gradle build file
         String gradle = "buildscript {\n"
                         + "  repositories { maven { url 'https://repo.codeartisans.org/werval' } }\n"
-                        + "	 dependencies { classpath 'org.qiweb:io.werval.gradle:" + VERSION + "' }\n"
+                        + "	 dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
                         + "}\n"
                         + "repositories { maven { url 'https://repo.codeartisans.org/werval' } }\n"
                         + "\n"
@@ -351,14 +350,14 @@ public final class DamnSmallDevShell
                      + "    <dependencies>\n"
                      + "\n"
                      + "        <dependency>\n"
-                     + "            <groupId>org.qiweb</groupId>\n"
+                     + "            <groupId>io.werval</groupId>\n"
                      + "            <artifactId>io.werval.api</artifactId>\n"
                      + "            <version>" + VERSION + "</version>\n"
                      + "        </dependency>\n"
                      + "        <!-- Add application compile dependencies here -->\n"
                      + "\n"
                      + "        <dependency>\n"
-                     + "            <groupId>org.qiweb</groupId>\n"
+                     + "            <groupId>io.werval</groupId>\n"
                      + "            <artifactId>io.werval.server.bootstrap</artifactId>\n"
                      + "            <version>" + VERSION + "</version>\n"
                      + "            <scope>runtime</scope>\n"
@@ -372,7 +371,7 @@ public final class DamnSmallDevShell
                      + "        <!-- Add application runtime dependencies here -->\n"
                      + "\n"
                      + "        <dependency>\n"
-                     + "            <groupId>org.qiweb</groupId>\n"
+                     + "            <groupId>io.werval</groupId>\n"
                      + "            <artifactId>io.werval.test</artifactId>\n"
                      + "            <version>" + VERSION + "</version>\n"
                      + "            <scope>test</scope>\n"
@@ -399,7 +398,7 @@ public final class DamnSmallDevShell
                      + "                </configuration>\n"
                      + "            </plugin>\n"
                      + "            <plugin>\n"
-                     + "                <groupId>org.qiweb</groupId>\n"
+                     + "                <groupId>io.werval</groupId>\n"
                      + "                <artifactId>io.werval.maven</artifactId>\n"
                      + "                <version>" + VERSION + "</version>\n"
                      + "            </plugin>\n"

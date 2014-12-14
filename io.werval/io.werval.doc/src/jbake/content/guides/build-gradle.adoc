@@ -5,8 +5,8 @@
 ["source","groovy",subs="attributes,callouts"]
 ----
 buildscript {
-  repositories { maven { url 'https://repo.codeartisans.org/qiweb' } }    // <1>
-  dependencies { classpath 'org.qiweb:io.werval.gradle:{werval_version}' } // <2>
+  repositories { maven { url 'https://repo.codeartisans.org/werval' } }    // <1>
+  dependencies { classpath 'io.werval:io.werval.gradle:{werval_version}' } // <2>
 }
 
 apply plugin: 'io.werval.application'       // <3>

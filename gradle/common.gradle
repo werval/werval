@@ -1,4 +1,4 @@
 
-group = 'org.qiweb'
+group = 'io.werval'
 version = System.properties.version ?: '0'
 description = "$group:$name:$version"

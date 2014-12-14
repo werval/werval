@@ -23,7 +23,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
  */
 class WervalDependencies
 {
-    public static final String GROUP = "org.qiweb"
+    public static final String GROUP = "io.werval"
 
     private final DependencyHandler dependencies
 
@@ -34,12 +34,12 @@ class WervalDependencies
 
     Dependency getApi()
     {
-        dependencies.create( "${GROUP}:io.werval.api:$BuildVersion.VERSION" )
+        dependency( "api" )
     }
 
     Dependency getSpi()
     {
-        dependencies.create( "${GROUP}:io.werval.spi:$BuildVersion.VERSION" )
+        dependency( "spi" )
     }
 
     Dependency module( String module )
@@ -49,12 +49,12 @@ class WervalDependencies
 
     Dependency getTest()
     {
-        dependencies.create( "${GROUP}:io.werval.test:$BuildVersion.VERSION" )
+        dependency( "test" )
     }
 
     Dependency getNettyServer()
     {
-        dependencies.create( "${GROUP}:io.werval.server.bootstrap:$BuildVersion.VERSION" )
+        dependency( "server.bootstrap" )
     }
 
     Dependency dependency( String name )

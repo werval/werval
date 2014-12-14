@@ -28,7 +28,7 @@ dev mode:
     <build>
       <plugins>
         <plugin>
-          <groupId>org.qiweb</groupId>
+          <groupId>io.werval</groupId>
           <artifactId>io.werval.maven</artifactId>
           <version>{werval_version}</version>
           <configuration>
@@ -52,7 +52,7 @@ dev mode:
     <build>
       <plugins>
         <plugin>
-          <groupId>org.qiweb</groupId>
+          <groupId>io.werval</groupId>
           <artifactId>io.werval.maven</artifactId>
           <version>{werval_version}</version>
           <configuration>
@@ -77,7 +77,7 @@ Using Maven plugin `<executions/>` you can override config location for both the
     <build>
       <plugins>
         <plugin>
-          <groupId>org.qiweb</groupId>
+          <groupId>io.werval</groupId>
           <artifactId>io.werval.maven</artifactId>
           <version>{werval_version}</version>
           <configuration>

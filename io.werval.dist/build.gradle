@@ -30,8 +30,8 @@ buildscript {
 }
 configurations { docDist { transitive = false } }
 dependencies {
-    docDist "org.qiweb:io.werval.doc:$version:werval-doc@zip"
-    modules_array.each { module -> docDist "org.qiweb:io.werval.modules.$module:$version:werval-doc@zip" }
+    docDist "io.werval:io.werval.doc:$version:werval-doc@zip"
+    modules_array.each { module -> docDist "io.werval:io.werval.modules.$module:$version:werval-doc@zip" }
 }
 task extractCoreDoc(type: Copy) {
     inputs.file configurations.docDist
@@ -152,27 +152,27 @@ task distributionArchive_src {
 repositories { maven { url "http://repo.gradle.org/gradle/libs-releases-local" } }
 configurations { binDist }
 dependencies {
-    binDist "org.qiweb:io.werval.server.bootstrap:$version:javadoc"
-    binDist "org.qiweb:io.werval.test:$version:javadoc"
-    binDist "org.qiweb:io.werval.gradle:$version:javadoc"
-    binDist "org.qiweb:io.werval.maven:$version:javadoc"
-    modules_array.each { module -> binDist "org.qiweb:io.werval.modules.$module:$version:javadoc" }
+    binDist "io.werval:io.werval.server.bootstrap:$version:javadoc"
+    binDist "io.werval:io.werval.test:$version:javadoc"
+    binDist "io.werval:io.werval.gradle:$version:javadoc"
+    binDist "io.werval:io.werval.maven:$version:javadoc"
+    modules_array.each { module -> binDist "io.werval:io.werval.modules.$module:$version:javadoc" }
 }
 task distributionArchive_artifacts {
     dependsOn configurations.binDist
     doLast {
         copy {
             from fileTree( '../repository' )
-            modules_array.each { m -> include "org/qiweb/io.werval.modules.$m/**" }
+            modules_array.each { m -> include "io/werval/io.werval.modules.$m/**" }
             exclude '**/*-werval-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
         }
         copy {
             from fileTree( '../repository' )
-            exclude 'org/qiweb/io.werval.modules.*/**'
-            exclude 'org/qiweb/io.werval.server.jre/**'
-            exclude 'org/qiweb/io.werval.dist/**'
+            exclude 'io/werval/io.werval.modules.*/**'
+            exclude 'io/werval/io.werval.server.jre/**'
+            exclude 'io/werval/io.werval.dist/**'
             exclude '**/*-werval-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
@@ -184,7 +184,7 @@ task distributionArchive_dependencies {
     doLast {
         def modulesDeps = "\n"
         modules_array.each { m ->
-            modulesDeps += "        <dependency><groupId>org.qiweb</groupId><artifactId>io.werval.modules.$m</artifactId><version>$project.version</version></dependency>\n"
+            modulesDeps += "        <dependency><groupId>io.werval</groupId><artifactId>io.werval.modules.$m</artifactId><version>$project.version</version></dependency>\n"
         }
         def pom = file( 'src/dist/dependencies-pom.xml').text
         pom = pom.replaceAll( 'WERVAL_VERSION', project.version )

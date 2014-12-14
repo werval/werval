@@ -11,7 +11,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.qiweb</groupId>
+                <groupId>io.werval</groupId>
                 <artifactId>io.werval.maven</artifactId>
                 <version>0</version>
                 <configuration>

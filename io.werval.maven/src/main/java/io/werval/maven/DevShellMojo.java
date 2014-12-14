@@ -139,7 +139,7 @@ public class DevShellMojo
         Artifact sitemeshArtifact = null;
         for( Artifact pluginArtifact : pluginArtifacts )
         {
-            if( "org.qiweb".equals( pluginArtifact.getGroupId() )
+            if( "io.werval".equals( pluginArtifact.getGroupId() )
                 && "io.werval.doc".equals( pluginArtifact.getArtifactId() ) )
             {
                 wervalDocArtifact = pluginArtifact;

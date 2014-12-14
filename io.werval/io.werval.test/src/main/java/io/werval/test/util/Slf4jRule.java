@@ -20,10 +20,10 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.read.ListAppender;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,7 @@ public class Slf4jRule
 
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
     private final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-    private final List<String> sources = new ArrayList<>();
+    private final List<String> sources = new CopyOnWriteArrayList<>();
     private Level level = Level.TRACE;
 
     @Override

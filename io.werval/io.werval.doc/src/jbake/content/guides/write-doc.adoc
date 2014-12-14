@@ -36,7 +36,7 @@ NOTE: `io.werval.doc` contains the JBake project that is used later to build the
 
 All documentation source is assembled in a ZIP artifact published with the `doc` classifier:
 
-    org.qiweb:io.werval.doc:{werval_version}:doc@zip
+    io.werval:io.werval.doc:{werval_version}:doc@zip
 
 It contains the complete JBake project.
 
@@ -66,9 +66,9 @@ All documentation source is assembled in a ZIP artifact published with the `doc`
 
 Example for the SMTP Module:
 
-    org.qiweb:org.qiweb.modules.smtp:{werval_version}:doc@zip
+    io.werval:io.werval.modules.smtp:{werval_version}:doc@zip
 
-The build system of `org.qiweb.modules` do all that automatically as soon as it can find the `src/doc` directory in a
+The build system of `io.werval.modules` do all that automatically as soon as it can find the `src/doc` directory in a
 module's project.
 
 
@@ -99,16 +99,16 @@ Or, to see the result in-situ, with dynamic documentation served, you can:
 [discrete]
 ===== Documentations archives
 
-The `org.qiweb.dist` project that create distributions, does the job of assembling documentation archives.
+The `io.werval.dist` project that create distributions, does the job of assembling documentation archives.
 
-It depends on `org.qiweb:io.werval.doc::doc@zip` and all the `doc` classified ZIP artifacts from officially supported
+It depends on `io.werval:io.werval.doc::doc@zip` and all the `doc` classified ZIP artifacts from officially supported
 modules to generate the documentation website.
 Dynamic documentation index is generated as an Asciidoc file.
 
 Aggregated documentation JBake project is then processed.
 The result is assembled in a ZIP archive published with the `doc` classifier for easy download and offline browsing.
 
-    org.qiweb:org.qiweb.dist:{werval_version}:doc@zip
+    io.werval:io.werval.dist:{werval_version}:doc@zip
 
 [discrete]
 ===== Website

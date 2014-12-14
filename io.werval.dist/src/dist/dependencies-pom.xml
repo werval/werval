@@ -35,22 +35,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.server.bootstrap</artifactId>
             <version>${werval.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.test</artifactId>
             <version>${werval.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.gradle</artifactId>
             <version>${werval.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.qiweb</groupId>
+            <groupId>io.werval</groupId>
             <artifactId>io.werval.maven</artifactId>
             <version>${werval.version}</version>
         </dependency>
@@ -78,7 +78,7 @@ WERVAL_MODULES
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <useRepositoryLayout>true</useRepositoryLayout>
-                            <excludeGroupIds>org.qiweb,io.werval</excludeGroupIds>
+                            <excludeGroupIds>io.werval</excludeGroupIds>
                             <includeClassifiers>sources,javadoc</includeClassifiers>
                         </configuration>
                     </execution>

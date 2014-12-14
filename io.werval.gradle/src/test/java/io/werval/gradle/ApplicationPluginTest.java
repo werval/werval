@@ -42,7 +42,7 @@ public class ApplicationPluginTest
         super.wervalDependencies();
         assertTrue(
             artifactsOfConfiguration( "runtime" ).stream().anyMatch(
-                startsWith( "org.qiweb:io.werval.server.bootstrap" )
+                startsWith( "io.werval:io.werval.server.bootstrap" )
             )
         );
     }
