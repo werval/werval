@@ -117,7 +117,7 @@ The Werval website provide general information about Werval and its community an
 current and develop versions documentations mini-sites.
 
 Notable things included in the website are out of the Werval releases lifecycle, like Skeletons and Samples.
-Thus, this is built in a separate project, in a separate git repository named `qiweb-website`.
+Thus, this is built in a separate project, in a separate git repository named `werval-website`.
 
 The Werval website is generated using JBake again.
 
@@ -160,5 +160,5 @@ Here are the Werval specific attributes that are set while rendering the documen
 
 `io.werval.doc` styles the Werval Documentation for DevShell and distributions archives.
 
-`org.qiweb.website` embed the Werval Documentation as is and styles the website home and some other root pages.
+`io.werval.website` embed the Werval Documentation as is and styles the website home and some other root pages.
 

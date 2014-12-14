@@ -6,7 +6,7 @@ Module build is easy when using Gradle as a dedicated plugin is available.
 
 `apply plugin: 'io.werval.module'`
 
-You can also start from the `qiweb-skel-module` skeleton that comes with a complete sample Plugin including unit tests.
+You can also start from the `werval-skel-module` skeleton that comes with a complete sample Plugin including unit tests.
 
 
 === Plugins
