@@ -1,0 +1,29 @@
+
+description = "Liquibase Module"
+
+moduleDescriptor.plugin 'liquibase', impl: 'io.werval.modules.liquibase.LiquibasePlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.jdbc" )
+    compile( libs.liquibase ) {
+        // Liquibase brings a lot of useless dependencies, exclude them to reduce footprint
+        exclude group: 'commons-cli', module: '*'
+        exclude group: 'junit', module: '*'
+        exclude group: 'org.eclipse.jetty', module: '*'
+        exclude group: 'org.apache.velocity', module: '*'
+    }
+    compile( libs.liquibase_slf4j ) {
+        // Liquibase brings a lot of useless dependencies, exclude them to reduce footprint
+        exclude group: 'commons-cli', module: '*'
+        exclude group: 'junit', module: '*'
+        exclude group: 'org.eclipse.jetty', module: '*'
+        exclude group: 'org.apache.velocity', module: '*'
+    }
+
+    runtime project( ":io.werval.modules.jndi" )
+
+    testRuntime libs.h2
+
+}
+

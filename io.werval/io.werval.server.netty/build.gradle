@@ -1,0 +1,10 @@
+
+description = "Werval Server - Netty"
+
+dependencies {
+
+    compile project( ":io.werval.runtime" )
+    compile libs.netty_http
+    
+}
+

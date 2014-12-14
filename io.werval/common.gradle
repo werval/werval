@@ -1,0 +1,9 @@
+//
+// This file is to be applied to every io.werval submodules.
+//
+
+apply from: rootProject.file( '../gradle/java.gradle' )
+
+dependencies {
+    // Adding dependencies here will add the dependencies to each submodule.
+}

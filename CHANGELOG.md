@@ -1,12 +1,16 @@
 # Changelog
 
 This log of changes contains security fixes, bug fixes, breaking changes, new features or enhancements and dependencies changes.
-For minor changes, build system or test changes, see the full [source code history](https://scm.codeartisans.org/qiweb/qiweb/network/master).
+For minor changes, build system or test changes, see the full [source code history](https://github.com/werval/werval).
 
 
 ## develop - [history](https://scm.codeartisans.org/qiweb/qiweb/network/develop)
 
 > Unreleased!
+
+### Breaking changes
+
+- #226 Renamed the project to `werval` changing artifacts ids, packages etc... a massive breaking-change
 
 ### Dependency changes
 

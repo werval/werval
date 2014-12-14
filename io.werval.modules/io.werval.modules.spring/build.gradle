@@ -1,0 +1,13 @@
+
+description = "Spring Module"
+
+moduleDescriptor.plugin 'spring', impl: 'io.werval.modules.spring.SpringPlugin'
+
+dependencies {
+
+    compile libs.spring_context
+
+    testCompile libs.spring_test
+
+}
+

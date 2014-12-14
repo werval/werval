@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Run `mvn package` to create a repository of all dependencies in `$WERVAL_DIST/dependencies/repo`. -->
+
+    <!-- TODO CHECK THAT SOURCES AND JAVADOCS ARE DOWNLOADED -->
+
+    <groupId>io.werval</groupId>
+    <artifactId>io.werval.dist.dependencies</artifactId>
+    <version>WERVAL_VERSION</version>
+
+    <packaging>pom</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>Werval Distribution - Dependencies Pom</description>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <werval.version>WERVAL_VERSION</werval.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>werval-distribution-artifacts-repository</id>
+            <url>file://${project.baseDir}/../artifacts</url>
+        </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.werval</groupId>
+            <artifactId>io.werval.server.bootstrap</artifactId>
+            <version>${werval.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.werval</groupId>
+            <artifactId>io.werval.test</artifactId>
+            <version>${werval.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.werval</groupId>
+            <artifactId>io.werval.gradle</artifactId>
+            <version>${werval.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.werval</groupId>
+            <artifactId>io.werval.maven</artifactId>
+            <version>${werval.version}</version>
+        </dependency>
+WERVAL_MODULES
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>werval-distribution-dependencies-copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.baseDir}/repo</outputDirectory>
+                            <addParentPoms>true</addParentPoms>
+                            <copyPom>true</copyPom>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <useRepositoryLayout>true</useRepositoryLayout>
+                            <excludeGroupIds>io.werval</excludeGroupIds>
+                            <includeClassifiers>sources,javadoc</includeClassifiers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

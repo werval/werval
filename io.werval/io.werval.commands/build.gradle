@@ -1,0 +1,9 @@
+
+description = "Werval Commands"
+
+dependencies {
+
+    compile project( ':io.werval.devshell' )
+
+}
+

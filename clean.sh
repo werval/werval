@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Clean the QiWeb source tree
+# Clean the Werval source tree
 #
-# Don't run from outside of the QiWeb source tree, it is pretty greedy :)
+# Don't run from outside of the Werval source tree, it is pretty greedy :)
 
 set -e
 
@@ -15,7 +15,7 @@ fi
 # builds
 $FIGLET builds
 find . -type d -name build | xargs rm -rf
-rm -rf org.qiweb.maven/target
+rm -rf io.werval.maven/target
 echo "Clean."
 
 # repository

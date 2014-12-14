@@ -1,6 +1,6 @@
-// Define libraries and webjars used accross QiWeb projects and their versions
+// Define libraries and webjars used accross projects and their versions
 
-// QiWeb Core libraries versions
+// Core libraries versions
 def v_slf4j = '1.7.7'
 def v_typesafe_config = '1.2.1'
 def v_javassist = '3.18.2-GA'
@@ -61,7 +61,7 @@ def v_subethasmtp = '3.1.7'
 rootProject.ext {
     libs = [
 
-        // QiWeb Core libraries
+        // Core libraries
         slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
         typesafe_config:    "com.typesafe:config:$v_typesafe_config",
         javassist:          "org.javassist:javassist:$v_javassist",

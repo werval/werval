@@ -1,0 +1,16 @@
+
+description = "JDBC Module"
+
+moduleDescriptor.plugin 'jdbc', impl: 'io.werval.modules.jdbc.JDBCPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.jndi" )
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.hikaricp
+    compile libs.log4jdbc
+
+    testRuntime libs.h2
+    testRuntime libs.postgres
+
+}

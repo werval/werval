@@ -1,0 +1,164 @@
+
+== Werval Documentation
+
+The whole Werval documentation is built using Gradle alongside the codebase.
+
+=== Toolchain explained
+
+The complete documentation toolchain involve more than Gradle itself, it is use as an orchestrator of Asciidoctor for
+Asciidoc support, Freemarker for templating and finally, JBake to bake the static websites
+
+Documentation of a given Werval version includes core documentation plus dynamic documentation for officially supported
+modules.
+
+The documentation build is organized to allow documentation:
+
+- to be hosted in development mode, including the documentation of modules found in your application classpath ;
+- to be packaged as downloadable archives including documentation for all officialy supported modules ;
+- and to be included in the Werval website, versionned, for all Werval releases.
+
+
+==== Core & Dynamic documentation
+
+Both core and dynamic documentation are written using Asciidoc and can contain other static assets such as images and
+the like.
+
+[discrete]
+===== Core documentation
+
+Core documentation includes a getting started guide, the other guides, the manual and the API javadoc.
+Its sources are in the `io.werval.doc` project.
+
+The `io.werval.doc` build generates the core documentation using JBake.
+The resulting files are included in the JAR at `io/werval/doc/html`.
+
+NOTE: `io.werval.doc` contains the JBake project that is used later to build the Werval Documentation
+
+All documentation source is assembled in a ZIP artifact published with the `doc` classifier:
+
+    io.werval:io.werval.doc:{werval_version}:doc@zip
+
+It contains the complete JBake project.
+
+
+[discrete]
+===== Dynamic documentation
+
+Each Werval module can have its own documentation included thanks to dynamic documentation.
+This is not called *modules documentation* on purpose, *dynamic documentation* way better convey what is going on under
+the hood.
+Moreover, this mechanism is applied to officially supported modules only.
+
+TIP: Community modules are documented as explained in the
+link:write-modules.html#documentation[module writing guide].
+
+Dynamic documentations are registered by adding the following lines to a `reference.conf` files in the module's
+classpath root:
+
+    werval.devshell.dyndoc.your-module-id {
+        name = "Your shiny module's name"
+        base_path = io/werval/modules/your-module-id/doc
+    }
+
+Static documentation is then be generated at `base_path` in the module's classpath.
+
+All documentation source is assembled in a ZIP artifact published with the `doc` classifier.
+
+Example for the SMTP Module:
+
+    io.werval:io.werval.modules.smtp:{werval_version}:doc@zip
+
+The build system of `io.werval.modules` do all that automatically as soon as it can find the `src/doc` directory in a
+module's project.
+
+
+==== Documentation targets
+
+[discrete]
+===== Development shell
+
+The `io.werval.doc` project host the `DocumentationPlugin` that gets automatically registered in development
+mode and setup routes to serve documentation at `/@doc`.
+
+The `DocumentationPlugin` serve core and dynamic documentations directly from the classpath.
+It generates a dynamic page with links to all registered dynamic documentations found in the application classpath.
+Dynamic documentation and its index are passed through SiteMesh to decorate them with the documentation website layout.
+
+There's no easy way to get live reload of changes made in `io.werval.doc`.
+
+The `jbake` Gradle task generates the development mode documentation static part in the `build/jbake` directory.
+You can open the static website from there and run `gradle jbake` to see changes applied.
+
+Or, to see the result in-situ, with dynamic documentation served, you can:
+
+- use any application that depends on the Werval development version ;
+- `gradle install` the `io.werval.doc` project ;
+- `gradle devshell` your application ;
+- refresh `/@doc`.
+
+[discrete]
+===== Documentations archives
+
+The `io.werval.dist` project that create distributions, does the job of assembling documentation archives.
+
+It depends on `io.werval:io.werval.doc::doc@zip` and all the `doc` classified ZIP artifacts from officially supported
+modules to generate the documentation website.
+Dynamic documentation index is generated as an Asciidoc file.
+
+Aggregated documentation JBake project is then processed.
+The result is assembled in a ZIP archive published with the `doc` classifier for easy download and offline browsing.
+
+    io.werval:io.werval.dist:{werval_version}:doc@zip
+
+[discrete]
+===== Website
+
+The Werval website provide general information about Werval and its community and embedd documentation sites for all past,
+current and develop versions documentations mini-sites.
+
+Notable things included in the website are out of the Werval releases lifecycle, like Skeletons and Samples.
+Thus, this is built in a separate project, in a separate git repository named `werval-website`.
+
+The Werval website is generated using JBake again.
+
+The project depends on documentation archives of the past releases, current stable release and development version.
+All documentation websites are extracted and used as JBake assets under `/doc`.
+
+The project use the Gradle Werval plugin allowing you to get live reload on changes made in the JBake project
+(`gradle devshell`).
+
+A `deployWebsite` task allow to deploy the website with a single command line, it is for internal use only though.
+
+
+=== Contributing to Documentation
+
+As the documentation is stored alongside the code, the contribution workflow is the same as for code contributions.
+
+==== Content
+
+The documents can use code snippets which will extract code from the project.
+This is preferred way to include source code in the documentation, since any refactoring will be reflected in the
+documentation.
+
+Try to put one sentence on each line.
+Lines without empty lines between them still belongs to the same paragraph.
+This makes it easy to move content around and produce easier to review patches.
+
+As `{}` are used for Asciidoc attributes, everything inside will be treated as an attribute.
+What you have to do is to escape the opening brace: `\{`.
+If you don’t, the braces and the text inside them will be removed without any warning being issued!
+
+Here are the Werval specific attributes that are set while rendering the documentation:
+
+[role="table table-hover"]
+|=======================================================================================================================
+|`werval_version`            |The version of Werval that is being built
+|=======================================================================================================================
+
+
+==== Styling
+
+`io.werval.doc` styles the Werval Documentation for DevShell and distributions archives.
+
+`io.werval.website` embed the Werval Documentation as is and styles the website home and some other root pages.
+

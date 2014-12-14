@@ -1,9 +1,0 @@
-
-description = "QiWeb Server - JRE"
-
-dependencies {
-
-    compile project( ":org.qiweb.runtime" )
-    
-}
-

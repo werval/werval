@@ -1,32 +1,31 @@
-# QiWeb
-     _____ _ _ _ _     _      _____ ____  _____ 
-    |     |_| | | |___| |_   |   __|    \|  |  |
-    |  |  | | | | | -_| . |  |__   |  |  |    -|
-    |__  _|_|_____|___|___|  |_____|____/|__|__|
-       |__|
+# Werval
+    _ _ _                 _
+   | | | |___ ___ _ _ ___| |
+   | | | | -_|  _| | | .'| |
+   |_____|___|_|  \_/|__,|_|
 
 > Zen and Energy for Web Development
 >
-> [qiweb.codeartisans.org](https://qiweb.codeartisans.org/)
+> [werval.io](http://werval.io/)
 
-QiWeb is an open source JVM based toolkit for building HTTP services. A lightweight core, live reload dev mode, useful modules, plugins for several build tools and multiple languages support leave you free to choose the right architecture for your domain.
+Werval is an open source JVM based toolkit for building HTTP services. A lightweight core, live reload dev mode, useful modules, plugins for several build tools and multiple languages support leave you free to choose the right architecture for your domain.
 
-* [Documentation](https://qiweb.codeartisans.org/doc/current/)
-* [Javadoc](https://qiweb.codeartisans.org/doc/current/api/)
+* [Documentation](http://werval.io/doc/current/)
+* [Javadoc](http://werval.io/doc/current/api/)
 
-You can also use the application [skeletons](https://qiweb.codeartisans.org/resources/skeletons.html) or study the [samples](https://qiweb.codeartisans.org/resources/samples.html).
+You can also use the application [skeletons](http://werval.io/resources/skeletons.html) or study the [samples](http://werval.io/resources/samples.html).
 
 
 ## Getting Help
 
-To discuss with the QiWeb community, post questions and get answers, it is, for now, easiest to do so at the project’s [issue tracker](https://scm.codeartisans.org/qiweb/qiweb/issues).
+To discuss with the Werval community, post questions and get answers, it is, for now, easiest to do so at the project’s [issue tracker](https://github.com/werval/werval/issues).
 
-If you found a bug, want to request a new feature or enhancement or would like to contribute to QiWeb, start [here](https://qiweb.codeartisans.org/community.html).
+If you found a bug, want to request a new feature or enhancement or would like to contribute to Werval, start [here](http://werval.io/community.html).
 
 
 ## Versioning Scheme
 
-QiWeb follows [Semantic Versioning 2](http://semver.org/).
+Werval follows [Semantic Versioning 2](http://semver.org/).
 
 `MAJOR.MINOR.PATCH`
 
@@ -39,12 +38,12 @@ Additional labels for pre-release (`alpha`, `beta` or `rc`) and build metadata a
 
 ## Changelog
 
-A log of changes is maintained in [CHANGELOG.md](CHANGELOG.md), for source code changes, see the full [history](https://scm.codeartisans.org/qiweb/qiweb/network/master).
+A log of changes is maintained in [CHANGELOG.md](CHANGELOG.md), for source code changes, see the full [history](https://github.com/werval/werval).
 
 
 ## License
 
-QiWeb is free software published under the following license:
+Werval is free software published under the following license:
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

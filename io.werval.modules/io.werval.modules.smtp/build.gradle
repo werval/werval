@@ -1,0 +1,14 @@
+
+description = "SMTP Module"
+
+moduleDescriptor.plugin 'smtp', impl: 'io.werval.modules.smtp.SmtpPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.email
+    
+    testCompile libs.subethasmtp
+
+}
+

@@ -1,0 +1,11 @@
+
+description = "Guice Module"
+
+moduleDescriptor.plugin 'guice', impl: 'io.werval.modules.guice.GuicePlugin'
+
+dependencies {
+
+    compile libs.guice
+
+}
+

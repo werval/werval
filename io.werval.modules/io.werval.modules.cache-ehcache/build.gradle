@@ -1,0 +1,11 @@
+
+description = "EhCache Cache Module"
+
+moduleDescriptor.plugin 'cache-ehcache', impl: 'io.werval.modules.cache.EhCachePlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.ehcache
+
+}

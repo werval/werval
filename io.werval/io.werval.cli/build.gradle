@@ -1,0 +1,25 @@
+
+description = "Werval CLI"
+
+dependencies {
+    compile project( ':io.werval.commands' )
+    compile libs.cli
+}
+
+apply plugin: 'application'
+
+mainClassName = 'io.werval.cli.DamnSmallDevShell'
+applicationName = 'werval'
+
+distZip {
+    classifier = 'dist'
+}
+
+artifacts {
+    archives distZip
+}
+
+// Uncomment to publish to Werval Local Repository
+// publishing { publications { cliDist( MavenPublication ) { artifact distZip } } }
+// task finalizeCliInstall( dependsOn: "publishCliDistPublicationToWervalLocalRepository" )
+// install.finalizedBy finalizeCliInstall
