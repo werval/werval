@@ -1,0 +1,17 @@
+= Sanitize Module
+Input/Output sanitization and encoding
+:jbake-type: module
+
+The Sanitize module provide a `SanitizePlugin` that provide utilities for
+input/output sanitization and encoding thanks to https://www.owasp.org/[OWASP] projects.
+
+HTML/CSS/Javascript sanitization uses https://code.google.com/p/owaspantisamy/[AntiSamy].
+By default, the
+https://code.google.com/p/owaspantisamy/downloads/detail?name=antisamy-slashdot-1.4.4.xml[slashdot policy] used.
+You can provide your policy through the `sanitize.policy` configuration property.
+All default AntiySamy policies are bundled within the module at the classpath's root.
+
+
+JSON sanitization uses https://code.google.com/p/json-sanitizer/[json-sanitizer].
+
+Encoding for output uses https://code.google.com/p/owasp-java-encoder/[java-encoder].

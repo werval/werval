@@ -1,0 +1,11 @@
+
+== Introduction
+
+Werval is a HTTP development kit.
+Werval is not a full stack framework.
+
+In other words, Werval don't compell you to use any persistence mechanism nor templating engine.
+You are free to choose whatever may suit your needs.
+
+image::images/overview.png[Overview,640]
+

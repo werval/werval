@@ -1,0 +1,102 @@
+
+== Maven Plugin
+
+=== Overview
+
+=== Development mode
+
+[discrete]
+==== Build logic
+
+The `werval:devshell` goal depends on the `compile` phase by default.
+
+Rebuilds trigger the `compile` phase by default too.
+
+In other words, the project is compiled before running the development mode and at each rebuild triggered by a source
+code change.
+
+[discrete]
+==== Watch extra files or directories
+
+The `werval:devshell` goal has an `extraWatch` property that allow one to add files or directories to watch for changes in
+dev mode:
+
+// TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
+.`./pom.xml`
+[source,xml]
+----
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>io.werval</groupId>
+          <artifactId>io.werval.maven</artifactId>
+          <version>{werval_version}</version>
+          <configuration>
+            <extraWatch>
+              <param>path/to/dir</param>
+              <param>another/path/to/file.ext</param>
+            </extraWatch>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+----
+
+
+=== Override config location
+
+// TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
+.`./pom.xml`
+[source,xml]
+----
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>io.werval</groupId>
+          <artifactId>io.werval.maven</artifactId>
+          <version>{werval_version}</version>
+          <configuration>
+            <!-- Only one of theses three can be set -->
+            <configResource>application-dev.conf</configResource>
+            <configFile>path/to/file.conf</configFile>
+            <configUrl>http://url.to/file.conf</configUrl>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+----
+
+Using Maven plugin `<executions/>` you can override config location for both the `werval:devshell` and `werval:start` goals.
+
+=== Enrich the application classpath
+
+// TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
+.`./pom.xml`
+[source,xml]
+----
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>io.werval</groupId>
+          <artifactId>io.werval.maven</artifactId>
+          <version>{werval_version}</version>
+          <configuration>
+            <extraClassPath>
+              <param>custom/dir</param>
+              <param>custom-file.jar</param>
+            </extraClassPath>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+----
+
+Using Maven plugin `<executions/>` you can enrich the application classpath for both the `werval:devshell` and `werval:start` goals.
+
+
+=== Packaging
+
+TIP: If you need RPM or DEB packaging, use the http://mojo.codehaus.org/rpm-maven-plugin[rpm-maven-plugin]
+and https://github.com/tcurdt/jdeb[jdeb-maven-plugin]
+
+

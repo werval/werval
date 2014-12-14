@@ -1,0 +1,204 @@
+== Build Werval from sources
+
+IMPORTANT: This guide is intended for developers who want to build applications against the development version of
+Werval or want to contribute code or documentation.
+
+=== Install needed programs
+
+You need to install:
+
+- The link:http://www.oracle.com/technetwork/java/javase/downloads/[Java 8 JDK]
+- link:http://www.gradle.org/[Gradle]
+- http://maven.apache.org/[Maven]
+- http://www.graphviz.org/[GraphViz], optional
+
+Before going any further, ensure that the following commands show proper versions:
+
+[discrete]
+==== Java
+
+[source,bash]
+----
+java -version
+----
+
+Should output something like:
+
+[source,bash]
+----
+java version "1.8.0" <1>
+Java(TM) SE Runtime Environment (build 1.8.0-bXXX)
+Java HotSpot(TM) 64-Bit Server VM (build 25.0-bXX, mixed mode)
+----
+<1> This is Java 8
+
+[discrete]
+==== Gradle
+
+[source,bash]
+----
+gradle --version
+----
+
+Should output something like:
+
+[source,bash]
+----
+------------------------------------------------------------
+Gradle 2.1 <1>
+------------------------------------------------------------
+
+Build time:   2014-09-08 10:40:39 UTC
+Build number: none
+Revision:     e6cf70745ac11fa943e19294d19a2c527a669a53
+
+Groovy:       2.3.6
+Ant:          Apache Ant(TM) version 1.9.3 compiled on December 23 2013
+JVM:          1.8.0_11 (Oracle Corporation 25.11-b03) <2>
+----
+<1> This is Gradle 2.1
+<2> Using Java 8
+
+[discrete]
+==== Maven
+
+[source,bash]
+----
+mvn --version
+----
+
+Should output something like:
+
+[source,bash]
+----
+Apache Maven 3.2.1 <1>
+Maven home: /path/to/your/maven/installation
+Java version: 1.8.0, vendor: Oracle Corporation <2>
+Java home: /path/to/your/java/installation <3>
+----
+<1> This is Maven 3.2.x
+<2> Using Java 8
+<3> From the right JAVA_HOME
+
+=== Clone the Werval repositories
+
+We recommend to create a local directory to put all Werval repositories.
+
+[source,bash]
+----
+mkdir -p ~/src/werval-related    <1>
+cd ~/src/werval-related          <2>
+----
+<1> Create a `werval-related` directory
+<2> Move into the `werval-related` directory
+
+[discrete]
+==== Werval SDK
+
+[source,bash]
+----
+git clone git@github.com:werval/werval.git
+----
+
+[discrete]
+==== Werval WebSite
+
+[source,bash]
+----
+git clone git@github.com:werval/werval-website.git
+----
+
+[discrete]
+==== Werval Samples
+
+[source,bash]
+----
+git clone git@github.com:werval/werval-sample-beerdb.git
+----
+
+
+=== Configure Gradle & Maven
+
+Gradle and Maven both need some configuration before going any further.
+
+Moreover, the core Werval build create a local repository to deploy development versions locally.
+
+Theses two needs proper configuration.
+
+.~/.gradle/gradle.properties
+[source,groovy]
+----
+// Werval Local Repository
+wervalLocalRepository=file:///home/you/src/werval-related/werval/repository
+----
+
+.~/.m2/settings.xml
+[source,xml]
+----
+<settings>
+    <profiles>
+        <profile>
+            <id>wervalDevelopment</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>wervalLocalRepository</id>
+                    <url>file:///home/you/src/werval-related/werval/repository</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>wervalLocalRepository</id>
+                    <url>file:///home/you/src/werval-related/werval/repository</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+</settings>
+----
+
+We're now done with the setup, time to build!
+
+
+=== Build the SDK
+
+The Werval SDK lies in the `werval` repository, previously cloned into `~/src/werval/related/werval`.
+
+This very git repository contains several independent projects.
+
+    io.werval               Werval Core
+    io.werval.modules       Modules
+    io.werval.gradle        Gradle Plugin
+    io.werval.maven         Maven Plugin
+    io.werval.dist          Werval Distributions
+
+For convenience, four shell scripts are provided:
+
+    clean.sh                Clean the repository of built artifacts
+    build.sh                Quick build without tests
+    check.sh                Full build with all tests
+    dist.sh                 Create distributions archives, without tests
+
+Please note that if you want to get UML diagrams generated in Javadocs you'll need to have GraphViz installed.
+The build will pass without though.
+But with less fun.
+
+When working on the Werval source code, it is recommended to run all tests first, giving you confidence that the whole
+thing work on your computer.
+You can do that easily by running the `check.sh` build script.
+
+Werval do not have much dependencies but the build system and the tests do.
+As a consequence, a vast amount of code is downloaded the first time you run a build.
+Theses downloads are cached in `~/.gradle/caches`.
+
+Werval artifacts produced by the build are installed in the local Werval repository
+(`~/src/werval-related/werval/repository`) for use by other projects.
+
+By default version number `0` is used, you can override this with `-Dversion=WHATEVER`.
+
+If you encounter any problem, please link:https://github.com/werval/werval/issues/new[fill an issue] with the output
+of the build process.
+
+

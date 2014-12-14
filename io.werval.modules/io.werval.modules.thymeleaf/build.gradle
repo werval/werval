@@ -1,0 +1,11 @@
+
+description = "Thymeleaf Templating Module"
+
+moduleDescriptor.plugin 'thymeleaf', impl: 'io.werval.modules.thymeleaf.ThymeleafPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.thymeleaf
+    
+}

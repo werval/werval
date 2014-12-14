@@ -1,0 +1,7 @@
+Werval CLI Installation Instructions
+===================================
+
+- Prepend the `bin` directory to your PATH
+- Use the `werval` executable on UN*X
+- Use the `werval.bat` executable on Windows
+

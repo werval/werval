@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<!-- Checkstyle Suppressions                                             -->
+<!-- See http://checkstyle.sourceforge.net/config.html#SuppressionFilter -->
+
+<suppressions>
+
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
+
+    <!-- Empty blocks. -->
+    <suppress checks="EmptyBlock" files="Assume.java"/>
+    <suppress checks="EmptyBlock" files="WervalTestHelper.java"/>
+    <suppress checks="EmptyBlock" files="Processes.java"/>
+
+    <!-- Spacing issues in need for better global checks -->
+    <suppress checks=".*" files="Assume.java"/>
+    <suppress checks=".*" files="WervalTestHelper.java"/>
+
+</suppressions>

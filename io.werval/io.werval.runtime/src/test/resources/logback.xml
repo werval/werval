@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[@%-10thread] %-5level %logger{42} [ID:%X{X-Werval-Request-ID}, FROM:%X{X-Werval-Client-IP}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="stdout" />
+    </root>
+
+    <logger name="io.netty"                 level="warn"/>
+
+    <logger name="io.werval"                level="trace"/>
+    <logger name="io.werval.runtime.routes" level="debug"/>
+
+</configuration>

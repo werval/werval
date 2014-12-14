@@ -1,11 +1,28 @@
 # Changelog
 
 This log of changes contains security fixes, bug fixes, breaking changes, new features or enhancements and dependencies changes.
-For minor changes, build system or test changes, see the full [source code history](https://scm.codeartisans.org/qiweb/qiweb/network/master).
+For minor changes, build system or test changes, see the full [source code history](https://github.com/werval/werval).
 
 
+## 0.5.0 - [history](https://github.com/werval/werval/commits/0.5.0)
 
-## 0.4.0 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.4.0)
+> Werval!
+
+### Breaking changes
+
+- #226 Renamed the project to `werval` changing artifacts ids, packages etc... a massive breaking-change
+
+### New features
+
+- #3 Sanitize Module, allow easy inputs sanitization and outputs encoding thanks to several OWASP projects
+
+### Dependency changes
+
+- Tooling
+    - Upgrade Gradle from `2.2` to `2.2.1`, see the [release-notes](http://www.gradle.org/docs/2.2.1/release-notes)
+
+
+## 0.4.0 - [history](https://github.com/werval/werval/commits/0.4.0)
 
 > [Dwr Budr - Orbital - In Sides](http://grooveshark.com/s/Dwr+Budr/2Nl0gw?src=5)
 
@@ -57,7 +74,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-## 0.3.3 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.3)
+## 0.3.3 - [history](https://github.com/werval/werval/commits/0.3.3)
 
 > Punk is not dead and has been bugfixed, more than a few times!
 
@@ -67,7 +84,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-## 0.3.2 - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.2)
+## 0.3.2 - [history](https://github.com/werval/werval/commits/0.3.2)
 
 > Punk is not dead and has been bugfixed, twice!
 
@@ -77,7 +94,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-## 0.3.1-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.1-beta)
+## 0.3.1-beta - [history](https://github.com/werval/werval/commits/0.3.1-beta)
 
 > Punk is not dead and has been bugfixed!
 
@@ -94,7 +111,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-## 0.3.0-beta - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.3.0-beta)
+## 0.3.0-beta - [history](https://github.com/werval/werval/commits/0.3.0-beta)
 
 > Punk is not dead!
 
@@ -184,7 +201,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 
 
-## 0.2.0.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.2.0.Alpha)
+## 0.2.0.Alpha - [history](https://github.com/werval/werval/commits/0.2.0.Alpha)
 
 > Complete HTTP Protocol Support, Caching and various enhancements
 
@@ -223,7 +240,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 
 
-## 0.1.3.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.3.Alpha)
+## 0.1.3.Alpha - [history](https://github.com/werval/werval/commits/0.1.3.Alpha)
 
 > Hotfix!
 
@@ -231,7 +248,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 
 
-## 0.1.2.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.2.Alpha)
+## 0.1.2.Alpha - [history](https://github.com/werval/werval/commits/0.1.2.Alpha)
 
 > Hotfix!
 
@@ -239,7 +256,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 
 
-## 0.1.1.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.1.Alpha)
+## 0.1.1.Alpha - [history](https://github.com/werval/werval/commits/0.1.1.Alpha)
 
 > Hotfix!
 
@@ -248,7 +265,7 @@ Along the way, breaking changes were mades. That's what beta versions are for!
 
 
 
-## 0.1.0.Alpha - [history](https://scm.codeartisans.org/qiweb/qiweb/network/master?utf8=%E2%9C%93&extended_sha1=0.1.0.Alpha)
+## 0.1.0.Alpha - [history](https://github.com/werval/werval/commits/0.1.0.Alpha)
 
 > First release!
 

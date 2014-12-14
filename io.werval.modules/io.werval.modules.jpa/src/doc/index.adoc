@@ -1,0 +1,307 @@
+= JPA Module
+Java Persistence API support for your Application
+:jbake-type: module
+
+The JPA module provide a Plugin allowing easy usage of the
+https://en.wikipedia.org/wiki/Java_Persistence_API[Java Persistence API]
+(version 2.1) thanks to http://www.eclipse.org/eclipselink/[EclipseLink].
+
+
+[TIP]
+.JPA & EclipseLink Documentation
+====
+This documentation do not cover JPA nor EclipseLink itself as it is already well covered on the respective official
+https://jcp.org/en/jsr/detail?id=338[specification] and
+http://www.eclipse.org/eclipselink/documentation/[documentation].
+
+When working with JPA, you should know about http://docs.oracle.com/javase/tutorial/jdbc/index.html[JDBC] too.
+====
+
+If you are worried about performance, see the http://www.jpab.org/[JPA Performance Benchmark).
+EclipseLink is the fastest JPA implementation.
+
+
+== Declaration
+
+In order to use the `JPAPlugin` you must add a dependency to `io.werval.modules.jpa` and register the plugin in your
+configuration.
+
+When using Gradle:
+
+.build.gradle
+[source,groovy,subs="attributes,specialcharacters"]
+----
+compile 'io.werval:io.werval.modules.jpa:{werval-version}'
+----
+
+When using Maven:
+
+.pom.xml
+[source,xml,subs="attributes,specialcharacters"]
+----
+<dependency>
+    <groupId>io.werval</groupId>
+    <artifactId>io.werval.modules.jpa</artifactId>
+    <version>{werval-version}</version>
+</dependency>
+----
+
+And finally your application configuration:
+
+.application.conf
+[source,json]
+----
+app.plugins.enabled += jpa
+----
+
+[CAUTION]
+.JNDI & JDBC
+====
+The JPA module depends on both the JNDI and JDBC modules.
+You don't need to depend on each one as your build system dependency manager will automatically add them to your
+classpath.
+But you need to declare both of the plugins, in order, for your application to start properly.
+====
+
+
+== Configuration
+
+Multiple *Persistence Units* in a single application are supported.
+To ease the most common usage, that is a single *Persistence Unit*, there's a _default_ one.
+
+Each *Persistence Unit* needs a JDBC `DataSource`.
+We'll start by configuring the _default_ one.
+
+.application.conf
+[source,json]
+----
+jdbc {
+    datasources.default {
+        driver = "org.h2.Driver"
+        url = "jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;MVCC=TRUE"
+        user = "sa"
+        password = "sa"
+    }
+}
+----
+
+The configuration snippet above use the http://h2database.com/[H2 Database Engine] with an in-memory database.
+Of course you can use the database engine of your choice as long as you put the relevant JDBC driver in your application
+classpath.
+
+Next, for JPA to be able to use the JDBC `DataSource` it needs to be exposed in JNDI.
+That's why we declared the JNDIPlugin above.
+In order to do that you only have to add a `jndiName` property to the `DataSource` configuration.
+
+Here is the complete `DataSource` configuration, exposed in JNDI as `DefaultDS` :
+
+.application.conf
+[source,json]
+----
+jdbc {
+    datasources.default {
+        driver = "org.h2.Driver"
+        url = "jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;MVCC=TRUE"
+        user = "sa"
+        password = "sa"
+        jndiName = "DefaultDS"
+    }
+}
+----
+
+Finally you must create a `META-INF/persistence.xml` file declaring your *Persistence Units* and *Entities*:
+
+.META-INF/persistence.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+
+    <persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
+        <class>entities.User</class>
+        <class>entities.Post</class>
+        <class>entities.Comment</class>
+        <non-jta-data-source>DefaultDS</non-jta-data-source>
+    </persistence-unit>
+
+</persistence>
+----
+
+When using a single *Persistence Unit*, it is named `default`.
+
+
+
+== Usage
+
+Here is how to get the current `EntityManager` for the default *Persistence Unit* in a controller method:
+
+.SomeController.java
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/DocumentationSupport.java[lines=18..22,indent=0]
+
+include::src/test/java/io/werval/modules/jpa/DocumentationSupport.java[lines=26..35,indent=0]
+----
+
+An `EntityManager` obtained in a HTTP interaction context (in a Filter or in a Controller), will be automatically
+closed when the HTTP interaction ends.
+
+Here is how to get a new `EntityManager` that you need to close yourself (usefull in tasks of background jobs):
+
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/DocumentationSupport.java[lines=39..47,indent=0]
+----
+
+
+
+=== Multiple Persistence Units
+
+Here is a configuration sample for two `DataSource`s, a `default` one and another one named `another`, respectively
+exposed in JNDI as `DefaultDS` and `AnotherDS`:
+
+.application.conf
+[source,json]
+----
+jdbc {
+    datasources.default {
+        driver = "org.h2.Driver"
+        url = "jdbc:h2:mem:default;DB_CLOSE_DELAY=-1;MVCC=TRUE"
+        user = "sa"
+        password = "sa"
+        jndiName = "DefaultDS"
+    }
+    datasources.another {
+        driver = "org.h2.Driver"
+        url = "jdbc:h2:mem:another;DB_CLOSE_DELAY=-1;MVCC=TRUE"
+        user = "sa"
+        password = "sa"
+        jndiName = "AnotherDS"
+    }
+}
+----
+
+And here is the relevant `META-INF/persistence.xml` file:
+
+.META-INF/persistence.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+
+    <persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
+        <class>entities.User</class>
+        <class>entities.Post</class>
+        <class>entities.Comment</class>
+        <non-jta-data-source>DefaultDS</non-jta-data-source>
+    </persistence-unit>
+
+    <persistence-unit name="another" transaction-type="RESOURCE_LOCAL">
+        <class>entities.another.AnotherEntity</class>
+        <class>entities.another.DifferentEntity</class>
+        <non-jta-data-source>AnotherDS</non-jta-data-source>
+    </persistence-unit>
+
+</persistence>
+----
+
+
+Here is how to get the current `EntityManager` for the *Persistence Unit* named `another` in a controller method:
+
+.AnotherController.java
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/DocumentationSupport.java[lines=18..22,indent=0]
+
+include::src/test/java/io/werval/modules/jpa/DocumentationSupport.java[lines=50..59,indent=0]
+----
+
+Here is how to get a new `EntityManager` for the *Persistence Unit* named `another`:
+
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/DocumentationSupport.java[lines=63..71,indent=0]
+----
+
+
+
+
+== Lifecycle
+
+On Application activation, all `EntityManagerFactories` are created, one per *Persistence Unit*.
+
+On Application passivation, all `EntityManagerFactories` are closed.
+
+In any case, calls to `newEntityManager()` or `newEntityManager( String pu )` will always create a new `EntityManager`
+without holding it in a "Context Local" or a `ThreadLocal`.
+
+
+=== HTTP Interaction Context
+
+In a HTTP Interaction Context, calls to `em()` or `em( String pu )` will use a "Context Local" `EntityManager`,
+creating one if needed.
+
+When the HTTP Interaction ends, all the "Context Local" `EntityManager`s are automatically closed.
+
+
+=== Without Context
+
+Without HTTP Interaction Context, calls to `em()` or `em( String pu )` will use a `ThreadLocal` `EntityManager`,
+creating one if needed.
+
+Remember to close all `EntityManager`s obtained out of context.
+
+
+
+
+== Transactions
+
+Transactions are not automatically opened nor closed.
+You need to do it, either using the JPA API, using the helper methods provided by the plugin, or by using the
+`@JPA.Transactional` annotation.
+
+.Using the JPA API
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=19..20,indent=0]
+import io.werval.modules.jpa.JPA;
+
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=23..24,indent=0]
+
+public class AnyController
+{
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=31..47,indent=4]
+}
+----
+
+.Using the JPA Plugin helper methods
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=19..20,indent=0]
+import io.werval.modules.jpa.JPA;
+
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=23..24,indent=0]
+
+public class AnyController
+{
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=49..67,indent=4]
+}
+----
+
+.Using the @JPA.Transactional annotation
+[source,java]
+----
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=19..20,indent=0]
+import io.werval.modules.jpa.JPA;
+
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=23..24,indent=0]
+
+public class AnyController
+{
+include::src/test/java/io/werval/modules/jpa/Controller.java[lines=69..76,indent=4]
+}
+----

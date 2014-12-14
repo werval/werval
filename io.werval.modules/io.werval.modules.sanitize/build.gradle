@@ -1,0 +1,36 @@
+
+description = "Sanitize Module"
+
+moduleDescriptor.plugin 'sanitize', impl: 'io.werval.modules.sanitize.SanitizePlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile project( ":io.werval.modules.xml" )
+
+    // https://code.google.com/p/owaspantisamy/
+    compile 'org.owasp.antisamy:antisamy:1.5.3'
+    compile 'net.sourceforge.nekohtml:nekohtml:1.9.21'
+    compile 'commons-codec:commons-codec:1.10'
+    compile 'commons-logging:commons-logging:1.2'
+
+    // https://code.google.com/p/json-sanitizer/
+    compile 'com.mikesamuel:json-sanitizer:1.0'
+
+    // https://code.google.com/p/owasp-java-encoder/
+    compile 'org.owasp.encoder:encoder:1.1.1'
+
+    // http://jsoup.org/cookbook/cleaning-html/whitelist-sanitizer
+    // compile 'org.jsoup:jsoup:1.8.1'
+
+    // https://code.google.com/p/owasp-java-html-sanitizer/
+    // compile 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:r239'
+
+    // https://code.google.com/p/owasp-java-fileio/
+    // No repository, shade it?
+    // Add task for dep upgrade check
+
+    // https://code.google.com/p/google-caja/
+    // Bad repository, shade it?
+    // Add task for dep upgrade check
+}

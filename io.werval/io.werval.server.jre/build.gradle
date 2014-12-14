@@ -1,0 +1,9 @@
+
+description = "Werval Server - JRE"
+
+dependencies {
+
+    compile project( ":io.werval.runtime" )
+    
+}
+

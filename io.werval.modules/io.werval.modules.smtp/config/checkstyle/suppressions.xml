@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<!-- Checkstyle Suppressions                                             -->
+<!-- See http://checkstyle.sourceforge.net/config.html#SuppressionFilter -->
+
+<suppressions>
+
+    <!-- Uncomment while working on the source -->
+    <!-- DO NOT COMMIT -->
+    <!--suppress checks=".*" files=".*"/-->
+
+    <!-- Builders & Big Constructors -->
+    <suppress checks="ParameterNumber" files="Smtp.java"/>
+
+</suppressions>

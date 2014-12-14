@@ -1,0 +1,11 @@
+
+description = "Rythm Templating Module"
+
+moduleDescriptor.plugin 'rythm', impl: 'io.werval.modules.rythm.RythmPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.rythm
+    
+}

@@ -16,22 +16,22 @@ apply plugin: 'maven'
 // Setup for install in local internal repository
 // Use the new maven publication support in gradle
 // Generated POM is minimal here as this repository is only used for inter-build dependencies
-// WARNING Seems we're now using it for the distribution archive now
 publishing {
-    publications.create( 'qiWebLocalRepoPub' , MavenPublication ) {
+    publications.create( 'wervalLocalRepoPub' , MavenPublication ) {
         pom.withXml {
             // Gradle Publishing feature is exporting dependencies as 'runtime' scope,
             // rather than 'compile'; fix that.
             if( asNode().dependencies[0] ) {
                 asNode().dependencies[0].dependency.each { dep -> dep.scope[0].value = 'compile' }
+                // asNode().dependencies[0].removeAll { dep -> dep.scope[0].value == 'test' }
             }
         }
     }
     repositories {
-        maven { name "QiWebLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
+        maven { name "WervalLocal"; url "$rootProject.projectDir.absolutePath/../repository/" }
     }
 }
-task finalizeInstall( dependsOn: "publishQiWebLocalRepoPubPublicationToQiWebLocalRepository" )
+task finalizeInstall( dependsOn: "publishWervalLocalRepoPubPublicationToWervalLocalRepository" )
 install.finalizedBy finalizeInstall
 
 // Setup remote artifact publication
@@ -58,18 +58,20 @@ uploadArchives {
 }
 
 // POM Setup for publication
-[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom {
+def installer = install.repositories.mavenInstaller
+def deployer = uploadArchives.repositories.mavenDeployer
+[installer, deployer]*.pom {
     groupId = project.group
     artifactId = project.name
     version = project.version
     project {
         name project.name
         description project.description
-        url "http://qiweb.org"
+        url "http://werval.io"
         inceptionYear '2013'
         organization {
-            name 'QiWeb Community'
-            url 'https://scm.codeartisans.org/qiweb'
+            name 'Werval Community'
+            url 'https://github.com/werval'
         }
         licenses {
             license {
@@ -79,13 +81,13 @@ uploadArchives {
             }
         }
         issueManagement {
-            system 'Gitlab'
-            url 'https://scm.codeartisans.org/qiweb/qiweb/issues'
+            system 'Github'
+            url 'https://github.com/werval/werval/issues'
         }
         scm {
-            url 'https://scm.codeartisans.org/qiweb/qiweb'
-            connection 'scm:git:https://scm.codeartisans.org/qiweb/qiweb.git'
-            developerConnection 'scm:git:git@scm.codeartisans.org:qiweb/qiweb.git'
+            url 'https://github.com/werval/werval'
+            connection 'scm:git:https://github.com/werval/werval.git'
+            developerConnection 'scm:git:git@github.com:werval/werval.git'
         }
         developers {
             developer {
@@ -130,3 +132,42 @@ uploadArchives {
     }
 }
 
+// Bintray!
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0' }
+}
+apply plugin: com.jfrog.bintray.gradle.BintrayPlugin
+bintray {
+    user = bintrayUsername
+    key = bintrayApiKey
+    configurations = [ 'archives' ]
+    dryRun = false
+    publish = false
+    pkg {
+        repo = "werval"
+        name = "werval"
+        desc = "werval"
+        websiteUrl = "http://werval.io/"
+        licenses = ['Apache-2.0']
+        publicDownloadNumbers = false
+        version {
+            mavenCentralSync {
+                sync = false
+                user = mavenCentralUsername
+                password = mavenCentralPassword
+            }
+            gpg {
+                sign = false
+            }
+        }
+    }
+}
+bintrayUpload {
+    doFirst {
+        if( version == "0" ) {
+            throw new RuntimeException( "'version' must be given as a system property to perform a release." )
+        }
+    }
+    dependsOn signArchives
+}

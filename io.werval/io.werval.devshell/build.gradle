@@ -1,0 +1,18 @@
+
+// Gradle Groovy Compiler is not JDK8_ASM5 ready
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+description = "Werval Development Shell"
+
+dependencies {
+
+    compile project( ":io.werval.server.bootstrap" )
+    compile project( ":io.werval.doc" ) // QUID?
+    compile libs.classworlds
+
+    testCompile project( ":io.werval.test" )
+    testCompile libs.awaitility
+    
+}
+

@@ -1,0 +1,14 @@
+
+// Gradle Groovy Compiler is not JDK8_ASM5 ready
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+description = "Werval SPI"
+
+dependencies {
+
+    compile project( ":io.werval.api" )
+
+    testCompile project( ":io.werval.test" )
+
+}

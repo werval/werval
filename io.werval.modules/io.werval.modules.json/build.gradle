@@ -1,0 +1,11 @@
+
+description = "JSON Module"
+
+moduleDescriptor.plugin 'json', impl: 'io.werval.modules.json.JSONPlugin'
+
+dependencies {
+
+    compile libs.jackson
+    
+}
+
