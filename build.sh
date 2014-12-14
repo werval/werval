@@ -37,7 +37,7 @@ echo "Built."
 
 # modules
 $FIGLET io.werval.modules
-./gradlew -b org.qiweb.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
+./gradlew -b io.werval.modules/build.gradle install check idea -x licenseMain -x checkstyleMain -x test
 echo "Built."
 
 echo ""

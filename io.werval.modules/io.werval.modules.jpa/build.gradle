@@ -1,0 +1,15 @@
+
+description = "JPA Module"
+
+moduleDescriptor.plugin 'jpa', impl: 'io.werval.modules.jpa.JPAPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.jdbc" )
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.jpa
+    compile libs.eclipselink
+
+    testRuntime libs.h2
+
+}

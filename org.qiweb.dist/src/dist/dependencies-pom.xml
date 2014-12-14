@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Run `mvn package` to create a repository of all dependencies in `$QIWEB_DIST/dependencies/repo`. -->
+    <!-- Run `mvn package` to create a repository of all dependencies in `$WERVAL_DIST/dependencies/repo`. -->
 
     <!-- TODO CHECK THAT SOURCES AND JAVADOCS ARE DOWNLOADED -->
 
     <groupId>org.qiweb</groupId>
     <artifactId>org.qiweb.dist.dependencies</artifactId>
-    <version>QIWEB_VERSION</version>
+    <version>WERVAL_VERSION</version>
 
     <packaging>pom</packaging>
 
@@ -19,7 +19,7 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <qiweb.version>QIWEB_VERSION</qiweb.version>
+        <qiweb.version>WERVAL_VERSION</qiweb.version>
     </properties>
 
     <repositories>
@@ -54,7 +54,7 @@
             <artifactId>io.werval.maven</artifactId>
             <version>${qiweb.version}</version>
         </dependency>
-QIWEB_MODULES
+WERVAL_MODULES
     </dependencies>
 
     <build>

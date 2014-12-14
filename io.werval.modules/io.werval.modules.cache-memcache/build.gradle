@@ -1,0 +1,12 @@
+
+description = "Memcache Cache Module"
+
+moduleDescriptor.plugin 'cache-memcache', impl: 'io.werval.modules.cache.MemcachePlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.memcache
+
+}
+

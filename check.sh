@@ -37,7 +37,7 @@ echo "Checked."
 
 # modules
 $FIGLET io.werval.modules
-./gradlew -b org.qiweb.modules/build.gradle check install idea
+./gradlew -b io.werval.modules/build.gradle check install idea
 echo "Checked."
 
 echo ""

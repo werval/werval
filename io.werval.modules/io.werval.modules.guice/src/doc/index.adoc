@@ -1,0 +1,57 @@
+= Guice Module
+Dependency Injection for your Application
+:jbake-type: module
+
+The Guice module provide a `GuicePlugin` that brings dependency injection thanks to
+https://code.google.com/p/google-guice/[Google Guice].
+
+
+[TIP]
+.Guice Documentation
+====
+This documentation do not cover Guice itself as it is already well covered on the official
+https://code.google.com/p/google-guice/wiki/Motivation[user guide].
+====
+
+
+
+== Declaration
+
+In order to use the `GuicePlugin` you must add a dependency to `io.werval.modules.guice` and register the plugin in your
+configuration.
+
+When using Gradle:
+
+.build.gradle
+[source,groovy,subs="attributes,specialcharacters"]
+----
+compile 'org.qiweb:io.werval.modules.guice:{werval-version}'
+----
+
+When using Maven:
+
+.pom.xml
+[source,xml,subs="attributes,specialcharacters"]
+----
+<dependency>
+    <groupId>org.qiweb</groupId>
+    <artifactId>io.werval.modules.guice</artifactId>
+    <version>{werval-version}</version>
+</dependency>
+----
+
+And finally your application configuration:
+
+.application.conf
+[source,json]
+----
+app.plugins.enabled += guice
+----
+
+
+== Configuration
+
+
+
+== Usage
+

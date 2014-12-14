@@ -1,0 +1,12 @@
+
+description = "Metrics Module"
+
+moduleDescriptor.plugin 'metrics', impl: 'io.werval.modules.metrics.MetricsPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.json" )
+    compile werval.spi
+    compile libs.metrics
+
+}

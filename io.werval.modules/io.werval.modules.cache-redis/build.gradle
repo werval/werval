@@ -1,0 +1,12 @@
+
+description = "Redis Cache Module"
+
+moduleDescriptor.plugin 'cache-redis', impl: 'io.werval.modules.cache.RedisCachePlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.jedis
+
+}
+

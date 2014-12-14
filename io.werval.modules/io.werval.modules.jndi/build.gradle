@@ -1,0 +1,10 @@
+
+description = "JNDI Module"
+
+moduleDescriptor.plugin 'jndi', impl: 'io.werval.modules.jndi.JNDIPlugin'
+
+dependencies {
+
+    compile libs.tyrex
+
+}

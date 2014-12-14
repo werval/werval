@@ -31,7 +31,7 @@ buildscript {
 configurations { docDist { transitive = false } }
 dependencies {
     docDist "org.qiweb:io.werval.doc:$version:werval-doc@zip"
-    modules_array.each { module -> docDist "org.qiweb:org.qiweb.modules.$module:$version:werval-doc@zip" }
+    modules_array.each { module -> docDist "org.qiweb:io.werval.modules.$module:$version:werval-doc@zip" }
 }
 task extractCoreDoc(type: Copy) {
     inputs.file configurations.docDist
@@ -45,7 +45,7 @@ task extractModules {
     doLast {
         modules_array.each { module ->
             copy {
-                from zipTree( configurations.docDist.fileCollection{ it.name == "org.qiweb.modules.$module" }.singleFile )
+                from zipTree( configurations.docDist.fileCollection{ it.name == "io.werval.modules.$module" }.singleFile )
                 into file("build/tmp/dyn-doc/$module")
                 includeEmptyDirs = false
             }
@@ -132,10 +132,10 @@ task distributionArchive_src {
             include 'config/**'
             include 'gradle/**'
             include 'io.werval/**'
-            include 'org.qiweb.modules/*'
-            include 'org.qiweb.modules/gradle/**'
-            modules_array.each { m -> include "org.qiweb.modules/org.qiweb.modules.$m/**" }
-            include 'org.qiweb.gradle/**'
+            include 'io.werval.modules/*'
+            include 'io.werval.modules/gradle/**'
+            modules_array.each { m -> include "io.werval.modules/io.werval.modules.$m/**" }
+            include 'io.werval.gradle/**'
             include 'io.werval.maven/**'
             exclude '**/build/**'
             exclude '**/target/**'
@@ -156,21 +156,21 @@ dependencies {
     binDist "org.qiweb:io.werval.test:$version:javadoc"
     binDist "org.qiweb:io.werval.gradle:$version:javadoc"
     binDist "org.qiweb:io.werval.maven:$version:javadoc"
-    modules_array.each { module -> binDist "org.qiweb:org.qiweb.modules.$module:$version:javadoc" }
+    modules_array.each { module -> binDist "org.qiweb:io.werval.modules.$module:$version:javadoc" }
 }
 task distributionArchive_artifacts {
     dependsOn configurations.binDist
     doLast {
         copy {
             from fileTree( '../repository' )
-            modules_array.each { m -> include "org/qiweb/org.qiweb.modules.$m/**" }
+            modules_array.each { m -> include "org/qiweb/io.werval.modules.$m/**" }
             exclude '**/*-werval-doc.*'
             includeEmptyDirs = false
             into 'build/tmp/distributionArchive_artifacts'
         }
         copy {
             from fileTree( '../repository' )
-            exclude 'org/qiweb/org.qiweb.modules.*/**'
+            exclude 'org/qiweb/io.werval.modules.*/**'
             exclude 'org/qiweb/io.werval.server.jre/**'
             exclude 'org/qiweb/org.qiweb.dist/**'
             exclude '**/*-werval-doc.*'
@@ -184,11 +184,11 @@ task distributionArchive_dependencies {
     doLast {
         def modulesDeps = "\n"
         modules_array.each { m ->
-            modulesDeps += "        <dependency><groupId>org.qiweb</groupId><artifactId>org.qiweb.modules.$m</artifactId><version>$project.version</version></dependency>\n"
+            modulesDeps += "        <dependency><groupId>org.qiweb</groupId><artifactId>io.werval.modules.$m</artifactId><version>$project.version</version></dependency>\n"
         }
         def pom = file( 'src/dist/dependencies-pom.xml').text
-        pom = pom.replaceAll( 'QIWEB_VERSION', project.version )
-        pom = pom.replaceAll( 'QIWEB_MODULES', modulesDeps )
+        pom = pom.replaceAll( 'WERVAL_VERSION', project.version )
+        pom = pom.replaceAll( 'WERVAL_MODULES', modulesDeps )
         file( 'build/tmp/distributionArchive_dependencies' ).mkdirs()
         file( 'build/tmp/distributionArchive_dependencies/pom.xml' ).write( pom )
     }
