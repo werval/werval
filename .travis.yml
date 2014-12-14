@@ -8,7 +8,7 @@ before_install:
     - sudo apt-get update -qq
 
 install:
-    - sudo apt-get install -qq graphviz maven
+    - sudo apt-get install -qq graphviz maven figlet
     - ./clean.sh
 
 script:
