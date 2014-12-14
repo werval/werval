@@ -47,11 +47,15 @@ uploadArchives {
             if( !version.contains( "SNAPSHOT" ) ) {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom( deployment ) }
             }
-            repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
-                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
-            }
-            snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/qiweb-snapshots" ) {
-                authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
+            if( hasProperty( 'codeartisansNexusUsername' ) ) {
+                repository( url: "https://repo.codeartisans.org/content/repositories/qiweb-releases" ) {
+                    authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
+                }
+                snapshotRepository( url: "https://repo.codeartisans.org/content/repositories/qiweb-snapshots" ) {
+                    authentication( userName: codeartisansNexusUsername, password: codeartisansNexusPassword)
+                }
+            } else {
+                project.logger.lifecycle "No uploadArchives repository set up, see gradle/publication.gradle"
             }
         }
     }
