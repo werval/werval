@@ -11,8 +11,7 @@ before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq graphviz
 
-install:
-    - ./build.sh
+install: true
 
 script:
     - ./check.sh
