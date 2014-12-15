@@ -4,12 +4,9 @@ language: java
 jdk:
     - oraclejdk8
 
-before_install:
-    - sudo apt-get update -qq
-
-install:
-    - sudo apt-get install -qq graphviz
-
 script:
     - ./check.sh
 
+notifications:
+    irc: "chat.freenode.net##werval"
+    use_notice: true
