@@ -20,7 +20,7 @@ You can also use the application [skeletons](http://werval.io/resources/skeleton
 
 ## Getting Help
 
-To discuss with the Werval community, post questions and get answers, it is, for now, easiest to do so at the project’s [issue tracker](https://github.com/werval/werval/issues).
+To discuss with the Werval community, post questions and get answers, join us at http://freenode.net/[freenode], IRC channel `##werval`.
 
 If you found a bug, want to request a new feature or enhancement or would like to contribute to Werval, start [here](http://werval.io/community.html).
 
