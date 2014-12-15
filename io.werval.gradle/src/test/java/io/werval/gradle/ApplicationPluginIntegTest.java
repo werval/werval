@@ -73,7 +73,7 @@ public class ApplicationPluginIntegTest
         = "\n"
           + "buildscript {\n"
           + "  repositories {\n"
-          + "    maven { url wervalLocalRepository }\n"
+          + "    if( project.hasProperty( 'wervalLocalRepository' ) { maven { url wervalLocalRepository } }\n"
           + "    maven { url 'https://repo.codeartisans.org/werval' }\n"
           + "    jcenter()\n"
           + "  }\n"
