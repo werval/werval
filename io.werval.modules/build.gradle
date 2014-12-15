@@ -8,7 +8,6 @@ description = "Werval Modules"
 buildscript {
     repositories {
         maven { url rootProject.file( '../repository' ) }
-        maven { url 'https://repo.codeartisans.org/werval' }
         jcenter()
     }
     dependencies { 

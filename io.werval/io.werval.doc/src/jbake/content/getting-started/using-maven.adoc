@@ -141,8 +141,8 @@ Here is what you'll find inside:
 
     <repositories>
         <repository>
-            <id>wervalRepo</id>
-            <url>https://repo.codeartisans.org/werval</url>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
         </repository>
     </repositories>
 
@@ -168,8 +168,8 @@ Here is what you'll find inside:
 
     <pluginRepositories>
         <pluginRepository>
-            <id>wervalRepo</id>
-            <url>https://repo.codeartisans.org/werval</url>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
         </pluginRepository>
     </pluginRepositories>
 

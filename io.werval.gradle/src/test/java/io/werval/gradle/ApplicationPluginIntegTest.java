@@ -69,12 +69,12 @@ public class ApplicationPluginIntegTest
 
     static
     {
+        String localRepo = new File( "../repository" ).getAbsolutePath();
         BUILD
         = "\n"
           + "buildscript {\n"
           + "  repositories {\n"
-          + "    if( project.hasProperty( 'wervalLocalRepository' ) { maven { url wervalLocalRepository } }\n"
-          + "    maven { url 'https://repo.codeartisans.org/werval' }\n"
+          + "    maven { url 'file://" + localRepo + "' }\n"
           + "    jcenter()\n"
           + "  }\n"
           + "  dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
