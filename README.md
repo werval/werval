@@ -40,7 +40,7 @@ Additional labels for pre-release (`alpha`, `beta` or `rc`) and build metadata a
 
 ## Changelog
 
-A log of changes is maintained in [CHANGELOG.md](CHANGELOG.md), for source code changes, see the full [history](https://github.com/werval/werval).
+A log of changes is maintained in [CHANGELOG.md](CHANGELOG.md), for source code changes, see the full [history](https://github.com/werval/werval/commits).
 
 
 ## License
