@@ -8,7 +8,7 @@
 >
 > [werval.io](http://werval.io/)
 
-[ ![Download](https://api.bintray.com/packages/eskatos/werval/werval/images/download.svg) ](https://bintray.com/eskatos/werval/werval/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/eskatos/werval/werval/images/download.svg) ](https://bintray.com/eskatos/werval/werval/_latestVersion) [![Build Status](https://travis-ci.org/werval/werval.svg?branch=develop)](https://travis-ci.org/werval/werval)
 
 Werval is an open source JVM based toolkit for building HTTP services. A lightweight core, live reload dev mode, useful modules, plugins for several build tools and multiple languages support leave you free to choose the right architecture for your domain.
 
