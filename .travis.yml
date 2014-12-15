@@ -7,13 +7,17 @@ jdk:
 env:
     - TERM=dumb
 
-before_install: true
+before_install:
+    - sudo apt-get install -qq graphviz
 
 install:
     - ./build.sh
 
 script:
     - ./check.sh
+
+after_failure:
+    - ./travis/after_failure.sh
 
 notifications:
     irc: "chat.freenode.net##werval"
