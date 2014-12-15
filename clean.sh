@@ -20,7 +20,7 @@ echo "Clean."
 
 # repository
 $FIGLET repository
-rm -rf repository/org
+rm -rf repository/io
 echo "Clean."
 
 echo ""
