@@ -13,7 +13,7 @@ buildscript {
     }
     dependencies { 
         // JDK8_ASM5 // classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.9.0'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath "io.werval:io.werval.gradle:${System.properties.version ?: '0'}"
     }
 }
@@ -28,10 +28,8 @@ subprojects {
         header = rootProject.file( '../config/license/header.txt' )
         strictCheck = true
         ignoreFailures = true
-        sourceSets = [ sourceSets.main ]
-        mapping {
-            conf="DOUBLESLASH_STYLE"
-        }
+        sourceSets = [ project.sourceSets.main ]
+        includes( ["**/*.java", "**/*.groovy"] )
         ext.year = Calendar.getInstance().get( Calendar.YEAR )
         ext.name = "the original author or authors"
     }
