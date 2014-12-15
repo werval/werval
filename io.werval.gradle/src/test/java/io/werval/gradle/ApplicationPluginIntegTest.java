@@ -79,6 +79,7 @@ public class ApplicationPluginIntegTest
           + "  }\n"
           + "  dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
           + "}\n"
+          + "repositories { maven { url 'file://" + localRepo + "' } }\n"
           + "apply plugin: \"io.werval.application\"\n"
           + "dependencies {\n"
           + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"

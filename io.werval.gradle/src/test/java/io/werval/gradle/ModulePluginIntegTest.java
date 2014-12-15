@@ -53,6 +53,7 @@ public class ModulePluginIntegTest
           + "  }\n"
           + "  dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
           + "}\n"
+          + "repositories { maven { url 'file://" + localRepo + "' } }\n"
           + "apply plugin: \"io.werval.module\"\n"
           + "moduleDescriptor.plugin( 'foo', impl: 'com.acme.bar.FooPlugin' )\n"
           + "moduleDocumentation.skip = false\n"
