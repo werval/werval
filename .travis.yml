@@ -4,8 +4,14 @@ language: java
 jdk:
     - oraclejdk8
 
+env:
+    - TERM=dumb
+
 before_install: true
-install: true
+
+install:
+    - ./build.sh
+
 script:
     - ./check.sh
 

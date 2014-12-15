@@ -217,8 +217,10 @@ checkstyleMain.finalizedBy( checkstyleMainHtmlReport )
 // Tests configuration
 test {
     testLogging {
-        info {
-            exceptionFormat "full"
+        if( System.getenv( 'TRAVIS' ) != null ) {
+            exceptionFormat 'full'
+        } else {
+            info.exceptionFormat 'full'
         }
     }
     // Do not rely on ASM to scan for test classes
