@@ -22,22 +22,22 @@ fi
 
 # core
 $FIGLET io.werval
-./gradlew -b io.werval/build.gradle check install idea
+./gradlew --stacktrace -b io.werval/build.gradle check install
 echo "Checked."
 
 # gradle plugin
 $FIGLET io.werval.gradle
-./gradlew -b io.werval.gradle/build.gradle install check idea
+./gradlew --stacktrace -b io.werval.gradle/build.gradle install check
 echo "Checked."
 
 # maven plugin
 $FIGLET io.werval.maven
-$MAVEN -f io.werval.maven/pom.xml clean verify dependency:sources -Dgpg.skip
+$MAVEN -e -f io.werval.maven/pom.xml clean verify -Dgpg.skip
 echo "Checked."
 
 # modules
 $FIGLET io.werval.modules
-./gradlew -b io.werval.modules/build.gradle check install idea
+./gradlew --stacktrace -b io.werval.modules/build.gradle check install
 echo "Checked."
 
 echo ""

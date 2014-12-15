@@ -1,10 +1,12 @@
 
+For the impatients, here is how to get a Maven skeleton running in development mode quickly:
+
 [TIP]
 .TL;DR
 ====
 ["source",subs="callouts"]
 ----
-git archive --format=tar --prefix=werval-maven/ --remote=git@github.com:werval/werval-skel-maven.git master | tar -xf - <1>
+svn export https://github.com/werval/werval-skel-maven/trunk werval-maven <1>
 cd werval-maven
 mvn werval:devshell <2>
 ----
@@ -19,23 +21,22 @@ To create a new Werval application based on Maven, use the following command:
 
 [source,bash]
 ----
-git archive --format=tar --prefix=YOUR_APP_NAME/ --remote=git@github.com:werval/werval-skel-maven.git master | tar -xf -
+svn export https://github.com/werval/werval-skel-maven/trunk YOUR_APP_NAME
 ----
 
 Where `YOUR_APP_NAME` is, well, your application name.
 A directory with this name will be created with the new application in it.
 
 [IMPORTANT]
-.What is this horrible command?
+.Why use Subversion?
 ====
-What the 'horrible' command above does is to export the content of a git repository at a given reference to a directory
-of your choice without creating a clone.
-In other words, it simply downloads the content of a git repository at a given reference.
+Github does not support `git archive` which is the equivalent of `svn export`.
+Github provide a subversion view of git repositories, we're leveraging that.
+
+`trunk` contains the `master` branch. You can list available branches and tags using `svn ls https://github.com/werval/werval-skel-gradle`.
 
 A command line client for easy usage of application skeletons is under active discussion, planned and will be added in
 a future release.
-
-For the time being, you'll have to copy/paste/edit, or type, this horrible command :)
 ====
 
 
@@ -141,8 +142,8 @@ Here is what you'll find inside:
 
     <repositories>
         <repository>
-            <id>wervalRepo</id>
-            <url>https://repo.codeartisans.org/werval</url>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
         </repository>
     </repositories>
 
@@ -168,8 +169,8 @@ Here is what you'll find inside:
 
     <pluginRepositories>
         <pluginRepository>
-            <id>wervalRepo</id>
-            <url>https://repo.codeartisans.org/werval</url>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
         </pluginRepository>
     </pluginRepositories>
 

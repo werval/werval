@@ -69,16 +69,17 @@ public class ApplicationPluginIntegTest
 
     static
     {
+        String localRepo = new File( "../repository" ).getAbsolutePath();
         BUILD
         = "\n"
           + "buildscript {\n"
           + "  repositories {\n"
-          + "    maven { url wervalLocalRepository }\n"
-          + "    maven { url 'https://repo.codeartisans.org/werval' }\n"
+          + "    maven { url 'file://" + localRepo + "' }\n"
           + "    jcenter()\n"
           + "  }\n"
           + "  dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
           + "}\n"
+          + "repositories { maven { url 'file://" + localRepo + "' } }\n"
           + "apply plugin: \"io.werval.application\"\n"
           + "dependencies {\n"
           + "  runtime 'ch.qos.logback:logback-classic:1.1.2'\n"

@@ -1,6 +1,73 @@
 
+This is the distribution archive of Werval, see http://werval.io
+
+It is intended to be used when dependencies managers downloading on-demand are prohibited.
+
+Here is an overview of the directory structure:
+
+```
+src/                   Full copy of the SDK sources, with build system, tests etc...
+artifacts/             Maven repository with all Werval artifacts (binaries, javadoc and source jars)
+dependencies/          Generated maven project allowing to go offline in a single command
+doc/                   Static website with full documentation
+```
 
 run `mvn -f dependencies/pom.xml package` to download all dependencies.
 They will be deployed in a maven repository structure at `dependencies/repo/`.
 
-Add `artifacts/` and `dependencies/repo/` as repositories to your project and you're done.
+Add `artifacts/` and `dependencies/repo/` as repositories to your build system and you're done.
+
+For Gradle, add the following lines to your `~/.gradle/gradle.properties`:
+
+```
+wervalLocalArtifacts=file:///path/to/werval-version/artifacts
+wervalLocalDependencies=file://path/to/werval-version/dependencies/repo
+```
+
+And then in your `build.gradle`:
+
+```
+buildscript {
+    repositories {
+        maven { url wervalLocalArtifacts }
+        maven { url wervalLocalDependencies }
+    }
+}
+repositories {
+    maven { url wervalLocalArtifacts }
+    maven { url wervalLocalDependencies }
+}
+```
+
+For Maven, add the following lines to your `~/.m2/settings.xml`:
+
+```
+<profiles>
+    <profile>
+        <id>wervalDevelopment</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <repositories>
+            <repository>
+                <id>wervalLocalArtifacts</id>
+                <url>file:///path/to/werval-version/artifacts</url>
+            </repository>
+            <repository>
+                <id>wervalLocalDependencies</id>
+                <url>file://path/to/werval-version/dependencies/repo</url>
+            </repository>
+        </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>wervalLocalArtifacts</id>
+                <url>file:///path/to/werval-version/artifacts</url>
+            </pluginRepository>
+            <pluginRepository>
+                <id>wervalLocalDependencies</id>
+                <url>file://path/to/werval-version/dependencies/repo</url>
+            </pluginRepository>
+        </pluginRepositories>
+    </profile>
+</profiles>
+```

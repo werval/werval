@@ -47,10 +47,6 @@
     
     <repositories>
         <repository>
-            <id>wervalRepo</id>
-            <url>https://repo.codeartisans.org/werval</url>
-        </repository>
-        <repository>
             <id>jcenter</id>
             <url>https://jcenter.bintray.com</url>
         </repository>

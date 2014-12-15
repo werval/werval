@@ -1,10 +1,12 @@
 
+For the impatients, here is how to get a Gradle skeleton running in development mode quickly:
+
 [TIP]
 .TL;DR
 ====
 ["source",subs="callouts"]
 ----
-git archive --format=tar --prefix=werval-gradle/ --remote=git@github.com:werval/werval-skel-gradle.git master | tar -xf - <1>
+svn export https://github.com/werval/werval-skel-gradle/trunk werval-gradle <1>
 cd werval-gradle
 gradle devshell <2>
 ----
@@ -19,23 +21,22 @@ To create a new Werval application based on Gradle, use the following command:
 
 [source,bash]
 ----
-git archive --format=tar --prefix=YOUR_APP_NAME/ --remote=git@github.com:werval/werval-skel-gradle.git master | tar -xf -
+svn export https://github.com/werval/werval-skel-gradle/trunk YOUR_APP_NAME
 ----
 
 Where `YOUR_APP_NAME` is, well, your application name.
 A directory with this name will be created with the new application in it.
 
 [IMPORTANT]
-.What is this horrible command?
+.Why use Subversion?
 ====
-What the 'horrible' command above does is to export the content of a git repository at a given reference to a directory
-of your choice without creating a clone.
-In other words, it simply downloads the content of a git repository at a given reference.
+Github does not support `git archive` which is the equivalent of `svn export`.
+Github provide a subversion view of git repositories, we're leveraging that.
+
+`trunk` contains the `master` branch. You can list available branches and tags using `svn ls https://github.com/werval/werval-skel-gradle`.
 
 A command line client for easy usage of application skeletons is under active discussion, planned and will be added in
 a future release.
-
-For the time being, you'll have to copy/paste/edit, or type, this horrible command :)
 ====
 
 
@@ -122,13 +123,13 @@ Here is what you'll find inside:
 ["source","groovy",subs="attributes,callouts"]
 ----
 buildscript {
-	repositories { maven { url 'https://repo.codeartisans.org/werval' } }    // <1>
+	repositories { jcenter() }    // <1>
 	dependencies { classpath 'io.werval:io.werval.gradle:{werval_version}' } // <2>
 }
 
 apply plugin: 'io.werval.application'       // <3>
 ----
-<1> Declare Werval repository for the build
+<1> Add JCenter repository
 <2> Add Werval Gradle Plugin to build classpath
 <3> Apply the Werval Gradle plugin
 

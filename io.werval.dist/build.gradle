@@ -85,12 +85,11 @@ jbake {
     input file( 'build/tmp/jbake' )
     configuration = [ 'werval_version': version ]
 }
-// TODO DELETE BEGIN
+// Consumed by werval-website
 task documentationArchive(type: Zip, dependsOn: jbake) {
     classifier 'doc'
     from jbake.output
 }
-// TODO DELETE END
 
 
 
@@ -103,8 +102,6 @@ task documentationArchive(type: Zip, dependsOn: jbake) {
 // Generate distribution archive
 //
 
-// In fact, a single archive with all bundled would be much simpler.
-//
 // org.werval.dist-VERSION-zip/
 //               src/                   Full copy of the SDK sources, with build system, tests etc...
 //               artifacts/             Maven repository with all Werval artifacts (binaries, javadoc and source jars)
@@ -149,7 +146,6 @@ task distributionArchive_src {
     }
 }
 
-repositories { maven { url "http://repo.gradle.org/gradle/libs-releases-local" } }
 configurations { binDist }
 dependencies {
     binDist "io.werval:io.werval.server.bootstrap:$version:javadoc"

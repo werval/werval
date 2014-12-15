@@ -47,7 +47,6 @@ class WervalPlugin implements Plugin<Project>
             if( project.hasProperty( 'wervalLocalRepository' ) ) {
                 maven { url project.wervalLocalRepository }
             }
-            maven { url "https://repo.codeartisans.org/werval" }
             jcenter()
         }
 

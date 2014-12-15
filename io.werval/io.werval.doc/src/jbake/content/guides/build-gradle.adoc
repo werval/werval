@@ -5,13 +5,13 @@
 ["source","groovy",subs="attributes,callouts"]
 ----
 buildscript {
-  repositories { maven { url 'https://repo.codeartisans.org/werval' } }    // <1>
+  repositories { jcenter() }    // <1>
   dependencies { classpath 'io.werval:io.werval.gradle:{werval_version}' } // <2>
 }
 
 apply plugin: 'io.werval.application'       // <3>
 ----
-<1> Declare Werval repository for the build
+<1> Add JCenter repository
 <2> Add Werval Gradle Plugin to build classpath
 <3> Apply the Werval Gradle plugin
 
