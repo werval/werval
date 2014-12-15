@@ -21,7 +21,9 @@ import io.werval.util.DeltreeFileVisitor;
 import io.werval.test.util.Slf4jRule;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -46,7 +48,15 @@ import static org.junit.Assert.assertTrue;
  */
 public class JavaWatcherTest
 {
+    @BeforeClass
+    public static void assumeNotTravis()
+    {
+        // This test is disabled on Travis as it is too fragile (Thread.sleeps ...)
+        Assume.assumeTrue( System.getenv("TRAVIS") == null );
+    }
+
     private static final long SLEEP_TIME = 2000;
+
     @Rule
     public final TemporaryFolder tmp = new TemporaryFolder();
 
