@@ -4,6 +4,13 @@ This log of changes contains security fixes, bug fixes, breaking changes, new fe
 For minor changes, build system or test changes, see the full [source code history](https://github.com/werval/werval).
 
 
+## 0.5.1 - [history](https://github.com/werval/werval/commits/0.5.1)
+
+> Werval on Github, Travis & JCenter
+
+This release contains only build & infrastructure changes.
+
+
 ## 0.5.0 - [history](https://github.com/werval/werval/commits/0.5.0)
 
 > Werval!
