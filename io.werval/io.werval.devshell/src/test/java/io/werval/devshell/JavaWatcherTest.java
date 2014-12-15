@@ -46,6 +46,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class JavaWatcherTest
 {
+    private static final long SLEEP_TIME = 2000;
     @Rule
     public final TemporaryFolder tmp = new TemporaryFolder();
 
@@ -177,7 +178,7 @@ public class JavaWatcherTest
 
         createFile( singleFile );
         SourceWatch watch = new JavaWatcher().watch( singleton( singleFile.toFile() ), changed_l );
-        Thread.sleep( 1000 );
+        Thread.sleep( SLEEP_TIME );
         try
         {
             assertThat( changed, is( false ) );
@@ -201,7 +202,7 @@ public class JavaWatcherTest
             }
 
             createFile( otherFile );
-            Thread.sleep( 1000 );
+            Thread.sleep( SLEEP_TIME );
             assertFalse( changed );
         }
         finally
@@ -219,7 +220,7 @@ public class JavaWatcherTest
         Path dir = root.resolve( "dir" );
         Path file = dir.resolve( "file" );
         SourceWatch watch = new JavaWatcher().watch( singleton( dir.toFile() ), changed_l );
-        Thread.sleep( 1000 );
+        Thread.sleep( SLEEP_TIME );
         try
         {
             assertThat( changed, is( false ) );
@@ -250,7 +251,7 @@ public class JavaWatcherTest
         createDirectories( root );
         Path singleFile = root.resolve( "single-file" );
         SourceWatch watch = new JavaWatcher().watch( singleton( singleFile.toFile() ), changed_l );
-        Thread.sleep( 1000 );
+        Thread.sleep( SLEEP_TIME );
         try
         {
             assertThat( changed, is( false ) );
@@ -294,13 +295,13 @@ public class JavaWatcherTest
         Path dir = root.resolve( "dir" );
         Path subdir = root.resolve( "subdir" );
         SourceWatch watch = new JavaWatcher().watch( singleton( subdir.toFile() ), changed_l );
-        Thread.sleep( 1000 );
+        Thread.sleep( SLEEP_TIME );
         try
         {
             assertThat( changed, is( false ) );
 
             createDirectories( dir );
-            Thread.sleep( 1000 );
+            Thread.sleep( SLEEP_TIME );
             assertFalse( changed );
 
             try( Check block = new Check( subdir ) )
