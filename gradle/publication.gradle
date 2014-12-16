@@ -150,21 +150,24 @@ if( project.hasProperty( 'bintrayUsername' ) ) {
         dryRun = false
         publish = false
         pkg {
-            repo = "werval"
-            name = "werval"
-            desc = "werval"
-            websiteUrl = "http://werval.io/"
-            licenses = ['Apache-2.0']
+            repo = 'werval'
+            name = 'werval'
+            desc = 'Werval is an open source JVM based toolkit for building HTTP services'
+            websiteUrl = 'http://werval.io/'
+            licenses = [ 'Apache-2.0' ]
+            labels = [ 'java', 'http' ]
             publicDownloadNumbers = false
             version {
+                name = project.version
+                desc = "Werval ${project.version}"
+                vcsTag = project.version
+                attributes = [ 'gradle-plugin' : 'io.werval.application:io.werval:io.werval.gradle,io.werval.module:io.werval:io.werval.gradle' ]
                 mavenCentralSync {
                     sync = false
                     user = mavenCentralUsername
                     password = mavenCentralPassword
                 }
-                gpg {
-                    sign = false
-                }
+                gpg.sign = false
             }
         }
     }
