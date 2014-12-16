@@ -82,7 +82,7 @@ Java home: /path/to/your/java/installation <3>
 
 === Clone the Werval repositories
 
-We recommend to create a local directory to put all Werval repositories.
+We recommend to create a local directory to put all Werval clones.
 
 [source,bash]
 ----
@@ -119,11 +119,13 @@ git clone git@github.com:werval/werval-sample-beerdb.git
 
 === Configure Gradle & Maven
 
-Gradle and Maven both need some configuration before going any further.
+Gradle and Maven both need some global local configuration before going any further.
 
-Moreover, the core Werval build create a local repository to deploy development versions locally.
+The core Werval build create a `repository/` sub-directory where artifacts are deployed.
+We need to set this directory globally so that you can build other projects (samples, skeletons, etc..) with the whole
+codebase on the develop branch, or any other branch, tag etc...
 
-Theses two needs proper configuration.
+For Gradle,
 
 .~/.gradle/gradle.properties
 [source,groovy]
@@ -131,6 +133,8 @@ Theses two needs proper configuration.
 // Werval Local Repository
 wervalLocalRepository=file:///home/you/src/werval-related/werval/repository
 ----
+
+For Maven,
 
 .~/.m2/settings.xml
 [source,xml]
