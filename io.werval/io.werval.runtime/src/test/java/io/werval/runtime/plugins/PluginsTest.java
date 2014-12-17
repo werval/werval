@@ -19,7 +19,7 @@ import io.werval.test.WervalRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import static io.werval.runtime.util.Iterables.count;
+import static io.werval.util.Iterables.count;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
