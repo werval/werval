@@ -4,6 +4,25 @@ This log of changes contains security fixes, bug fixes, breaking changes, new fe
 For minor changes, build system or test changes, see the full [source code history](https://github.com/werval/werval).
 
 
+
+## develop - [history](https://github.com/werval/werval/commits/develop)
+
+> Unreleased!
+
+### Breaking changes
+
+- #233 `Config.object( String key )` has been replaced by `Config.atKey( String key )` and `Config::atPath( String path )`
+
+### Bug fixes
+
+- #232 & #233 Fix dynamic modules documentation in development mode
+
+### Enhancements
+
+- #68 Server bootstrap now loads `Application` and `HttpServer` implementations through `ServiceLoader`
+
+
+
 ## 0.5.1 - [history](https://github.com/werval/werval/commits/0.5.1)
 
 > Werval on Github, Travis & JCenter
