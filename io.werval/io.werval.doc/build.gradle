@@ -141,17 +141,14 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
 //
 
 buildscript {
-    repositories {
-        jcenter()
-        maven { url 'http://dl.bintray.com/melix/jbake-gradle-plugin' }
-    }
+    repositories { jcenter() }
     dependencies {
-        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.1'
-        classpath 'org.asciidoctor:asciidoctor-java-integration:0.1.4'
-        classpath 'org.freemarker:freemarker:2.3.19'
+        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.2'
+        classpath 'org.asciidoctor:asciidoctor-java-integration:1.5.0.preview1'
+        classpath 'org.freemarker:freemarker:2.3.21'
     }
 }
-apply plugin: 'jbake'
+apply plugin: 'me.champeau.jbake'
 
 task prepareJBakeInput(type: Copy) {
     from file('src/jbake')
