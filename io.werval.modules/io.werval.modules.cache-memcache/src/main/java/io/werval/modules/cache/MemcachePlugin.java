@@ -74,7 +74,7 @@ public class MemcachePlugin
         throws ActivationException
     {
         // Gather Configuration
-        Config config = application.config().object( "memcache" );
+        Config config = application.config().atKey( "memcache" );
         Protocol protocol = Protocol.valueOf( config.string( "protocol" ).toUpperCase( Locale.US ) );
         String addresses = config.string( "addresses" );
         String username = config.has( "username" ) ? config.string( "username" ) : null;

@@ -65,10 +65,10 @@ public class JDBCPlugin
         List<Class<?>> deps = new ArrayList<>();
         if( config.has( DATASOURCES ) )
         {
-            Config allDsConfig = config.object( DATASOURCES );
+            Config allDsConfig = config.atPath( DATASOURCES );
             for( String dsName : allDsConfig.subKeys() )
             {
-                if( allDsConfig.object( dsName ).has( "jndiName" ) )
+                if( allDsConfig.atKey( dsName ).has( "jndiName" ) )
                 {
                     // At least one DataSource has to be registered in JNDI, depend on the JNDI plugin
                     deps.add( JNDI.class );
@@ -97,11 +97,11 @@ public class JDBCPlugin
         Map<String, HikariDataSource> dataSources = new HashMap<>();
         if( config.has( DATASOURCES ) )
         {
-            Config allDsConfig = config.object( DATASOURCES );
+            Config allDsConfig = config.atPath( DATASOURCES );
             setupLog4Jdbc( application, allDsConfig );
             for( String dsName : allDsConfig.subKeys() )
             {
-                Config dsConfig = allDsConfig.object( dsName );
+                Config dsConfig = allDsConfig.atKey( dsName );
                 HikariDataSource ds = createDataSource( dsName, dsConfig, application, config.bool( METRICS ) );
                 dataSources.put( dsName, ds );
             }
@@ -136,7 +136,7 @@ public class JDBCPlugin
         Set<String> log4jdbcEnabledDrivers = new LinkedHashSet<>();
         for( String dsName : allDsConfig.subKeys() )
         {
-            Config dsConfig = allDsConfig.object( dsName );
+            Config dsConfig = allDsConfig.atKey( dsName );
             if( dsConfig.has( "log4jdbc" ) && dsConfig.bool( "log4jdbc" ) )
             {
                 log4jdbcEnabledDrivers.add( dsConfig.string( "driver" ) );

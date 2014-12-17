@@ -57,7 +57,7 @@ public class EhCachePlugin
     public void onActivate( Application application )
         throws ActivationException
     {
-        Config config = application.config().object( "ehcache" );
+        Config config = application.config().atKey( "ehcache" );
         String configResourceName = config.string( "configResource" );
         URL configResourceURL = application.classLoader().getResource( configResourceName );
         CacheManager cacheManager = CacheManager.create( configResourceURL );

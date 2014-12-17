@@ -63,7 +63,7 @@ public class ThymeleafPlugin
         throws ActivationException
     {
         // Load configuration
-        Config config = application.config().object( "thymeleaf" );
+        Config config = application.config().atKey( "thymeleaf" );
         String templateMode = config.string( "template_mode" );
         String characterEncoding = config.has( "charset" )
                                    ? config.string( "charset" ).toUpperCase( US )

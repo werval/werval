@@ -59,7 +59,7 @@ public final class SanitizePlugin
     public void onActivate( Application application )
         throws ActivationException
     {
-        Config config = application.config().object( "sanitize" );
+        Config config = application.config().atKey( "sanitize" );
         URL policy = application.classLoader().getResource( config.string( "policy" ) );
         sanitize = new Sanitize(
             application.classLoader(),

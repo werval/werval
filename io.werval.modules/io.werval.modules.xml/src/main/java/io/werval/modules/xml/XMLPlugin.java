@@ -137,7 +137,7 @@ public final class XMLPlugin
     public void onActivate( Application application )
         throws ActivationException
     {
-        Config config = application.config().object( "xml" );
+        Config config = application.config().atKey( "xml" );
         List<String> catalogs = new ArrayList<>();
         for( String catalog : config.stringList( "external_entities.catalogs" ) )
         {
