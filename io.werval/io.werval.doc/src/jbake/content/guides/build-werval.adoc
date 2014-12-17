@@ -172,18 +172,24 @@ The Werval SDK lies in the `werval` repository, previously cloned into `~/src/we
 
 This very git repository contains several independent projects.
 
-    io.werval               Werval Core
-    io.werval.modules       Modules
-    io.werval.gradle        Gradle Plugin
-    io.werval.maven         Maven Plugin
-    io.werval.dist          Werval Distributions
+[source]
+----
+io.werval               Werval Core
+io.werval.modules       Modules
+io.werval.gradle        Gradle Plugin
+io.werval.maven         Maven Plugin
+io.werval.dist          Werval Distributions
+----
 
 For convenience, four shell scripts are provided:
 
-    clean.sh                Clean the repository of built artifacts
-    build.sh                Quick build without tests
-    check.sh                Full build with all tests
-    dist.sh                 Create distributions archives, without tests
+[source]
+----
+clean.sh                Clean the repository of built artifacts
+build.sh                Quick build without tests
+check.sh                Full build with all tests
+dist.sh                 Create distributions archives, without tests
+----
 
 Please note that if you want to get UML diagrams generated in Javadocs you'll need to have GraphViz installed.
 The build will pass without though.

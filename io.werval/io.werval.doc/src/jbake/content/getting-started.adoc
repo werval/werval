@@ -28,13 +28,13 @@ See theses two presentations about Java build tools:
 
 == Choose your side of the force
 
-- link:get-started-gradle.html[Get started using Gradle]
-- link:get-started-maven.html[Get started using Maven]
+link:get-started-gradle.html[Get started using Gradle,role="btn btn-sm btn-primary"]
+link:get-started-maven.html[Get started using Maven,role="btn btn-sm btn-primary"]
 
 
 == Our advice
 
-_TL;DR_ We recommend using Gradle.
+**TL;DR** We recommend using Gradle.
 
 Everything Werval is automated using Gradle, from the SDK build to the baking and publication of a website embedding
 versioned documentation for past, current and development releases.

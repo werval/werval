@@ -62,9 +62,7 @@ If you hit your browser refresh button again, this should show up:
 image::images/devshell-exception-error.png[Exception,640]
 
 You'll notice that when application sources are concerned, the error page has links to open them quickly.
-Of course this will work better is you setup your development environment to open the files with the right applications.
-
-// Add new feature
+Of course this will work better if you setup your development environment to open the files with the right applications.
 
 Ok, things are failing well :-)
 We will now finally say "Hello World" from our HTTP Application.

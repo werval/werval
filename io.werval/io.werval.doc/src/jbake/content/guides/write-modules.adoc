@@ -4,7 +4,10 @@
 
 Module build is easy when using Gradle as a dedicated plugin is available.
 
-`apply plugin: 'io.werval.module'`
+[source]
+----
+apply plugin: 'io.werval.module'
+----
 
 You can also start from the `werval-skel-module` skeleton that comes with a complete sample Plugin including unit tests.
 
@@ -13,7 +16,10 @@ You can also start from the `werval-skel-module` skeleton that comes with a comp
 
 Declare Plugins in your build:
 
-`moduleDescriptor.plugin 'name', impl: 'fqcn.of.YourPlugin'`
+[source]
+----
+moduleDescriptor.plugin 'name', impl: 'fqcn.of.YourPlugin'
+----
 
 You can declare several of them.
 
