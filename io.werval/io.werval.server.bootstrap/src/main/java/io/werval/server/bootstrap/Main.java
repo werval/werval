@@ -15,24 +15,46 @@
  */
 package io.werval.server.bootstrap;
 
-import io.werval.api.Mode;
-import io.werval.runtime.ApplicationInstance;
-import io.werval.server.netty.NettyServer;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.server.HttpServer;
+import java.util.List;
+import java.util.ServiceLoader;
+
+import static io.werval.util.Iterables.toList;
 
 /**
  * Werval HTTP Server Bootstrap Main Class.
+ * <p>
+ * Use {@link ServiceLoader} to load {@link ApplicationSPI} and {@link HttpServer} implementations.
  */
 public final class Main
 {
     public static void main( String[] args )
         throws Exception
     {
-        ApplicationSPI app = new ApplicationInstance( Mode.PROD );
-        HttpServer server = new NettyServer( app );
+        ApplicationSPI app = load( ApplicationSPI.class );
+        HttpServer server = load( HttpServer.class );
+        server.setApplicationSPI( app );
         server.registerPassivationShutdownHook();
         server.activate();
+    }
+
+    private static <T> T load( Class<T> type )
+    {
+        List<T> impls = toList( ServiceLoader.load( type, Main.class.getClassLoader() ) );
+        if( impls.isEmpty() )
+        {
+            throw new IllegalStateException(
+                String.format( "No %s implementations found on the classpath.", type )
+            );
+        }
+        if( impls.size() > 1 )
+        {
+            throw new IllegalStateException(
+                String.format( "Multiple %s implementations found on the classpath: %s", type, impls )
+            );
+        }
+        return impls.get( 0 );
     }
 
     private Main()

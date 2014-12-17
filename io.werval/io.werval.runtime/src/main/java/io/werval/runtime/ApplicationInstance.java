@@ -172,6 +172,18 @@ public final class ApplicationInstance
     private final DevShellSPI devSpi;
 
     /**
+     * Create a new Application instance in {@link Mode#PROD} mode.
+     *
+     * Routes are loaded from the {@literal routes.conf} file.
+     * <p>
+     * Use the ClassLoader that loaded the {@link ApplicationInstance} class as Application ClassLoader.
+     */
+    public ApplicationInstance()
+    {
+        this( Mode.PROD, new RoutesConfProvider() );
+    }
+
+    /**
      * Create a new Application instance in given {@link Mode}.
      *
      * Routes are loaded from the {@literal routes.conf} file.
