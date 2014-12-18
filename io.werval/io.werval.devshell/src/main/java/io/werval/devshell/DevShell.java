@@ -238,12 +238,12 @@ public final class DevShell
             }
             catch( Exception noAppSecret )
             {
-                // The application has no `app.secret` configuration property, generating a random one
+                // The application has no `app.secret` configuration property, generating a weakly random one
                 System.out.println(
-                    red( "Application has no 'app.secret', generating a random one for development mode!" )
+                    red( "Application has no 'app.secret', generating a weekly random one for development mode!" )
                 );
                 Object secret = appRealm.loadClass( CRYPTO_RUNTIME_CLASS )
-                    .getMethod( "newRandomSecret256BitsHex" )
+                    .getMethod( "newWeaklyRandomSecret256BitsHex" )
                     .invoke( null );
                 configInstance = configRuntimeCtor.newInstance(
                     new Object[]
@@ -253,7 +253,7 @@ public final class DevShell
                 );
                 System.out.println( red(
                     "  The 'app.secret' will last as long as the development mode is running and survive reloads.\n"
-                    + "  If you set it in configuration you'll have to restart the development mode!"
+                    + "  If you set one in configuration you'll have to restart the development mode!"
                 ) );
             }
 

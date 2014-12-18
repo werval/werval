@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Random;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -72,10 +73,17 @@ public class CryptoInstance
         return Base64.getEncoder().encodeToString( newRandomSecret256Bits() );
     }
 
-    @Reflectively.Invoked( by = "DevShell" )
     public static String newRandomSecret256BitsHex()
     {
         return Hex.encode( newRandomSecret256Bits() );
+    }
+
+    @Reflectively.Invoked( by = "DevShell" )
+    public static String newWeaklyRandomSecret256BitsHex()
+    {
+        byte[] bytes = new byte[ 32 ];
+        new Random().nextBytes( bytes );
+        return Hex.encode( bytes );
     }
 
     private static byte[] newRandomSecret256Bits()

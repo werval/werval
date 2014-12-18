@@ -96,8 +96,8 @@ public class WervalHttpTest
         }
         catch( com.typesafe.config.ConfigException.Missing noAppSecret )
         {
-            String secret = CryptoInstance.newRandomSecret256BitsHex();
-            LOG.info( "Application has no 'app.secret', using a random one for test mode: {}", secret );
+            String secret = CryptoInstance.newWeaklyRandomSecret256BitsHex();
+            LOG.info( "Application has no 'app.secret', using a weakly random one for test mode: {}", secret );
             config = new ConfigInstance( classLoader, conf, null, null, singletonMap( "app.secret", secret ) );
         }
         RoutesProvider routesProvider = routesProviderOverride == null
