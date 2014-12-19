@@ -84,9 +84,12 @@ def embeddedJavadocProjects() {
 configurations { embeddedJavadocConfiguration }
 dependencies { embeddedJavadocProjects().each { p -> embeddedJavadocConfiguration p } }
 
-// Dependency to UMLGraph
-configurations { umlgraphDoclet }
-dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
+// Dependency to UMLGraph if available
+def useUmlGraph = 'which dot'.execute().exitValue() == 0
+if( useUmlGraph ) {
+    configurations { umlgraphDoclet }
+    dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
+}
 
 // Javadoc Task
 def javadocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/embedded-javadoc"
@@ -114,8 +117,11 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
         ] )
     // disable the crazy super-strict doclint tool in Java 8
     options.addStringOption( 'Xdoclint:none', '-quiet' )
-    options.docletpath = configurations.umlgraphDoclet.files as List
-    options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
+    // UMLGraph doclet if available
+    if( useUmlGraph ) {
+        options.docletpath = configurations.umlgraphDoclet.files as List
+        options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
+    }
     inputs.dir file( 'src/javadoc' )
     doLast {
         copy {
