@@ -1,9 +1,10 @@
 import org.gradle.api.artifacts.*
 
+description = "Werval Modules"
+
 apply from: rootProject.file( '../gradle/common.gradle' )
 apply from: rootProject.file( '../gradle/repositories.gradle' )
-
-description = "Werval Modules"
+apply plugin: 'base' // To add "clean" task to the root project.
 
 buildscript {
     repositories {
@@ -11,17 +12,14 @@ buildscript {
         jcenter()
     }
     dependencies { 
-        // JDK8_ASM5 // classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath "io.werval:io.werval.gradle:${System.properties.version ?: '0'}"
     }
 }
 
-apply plugin: 'base' // To add "clean" task to the root project.
-apply plugin: 'sonar-runner'
-
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
+
     apply plugin: 'license'
     license {
         header = rootProject.file( '../config/license/header.txt' )
@@ -29,8 +27,8 @@ subprojects {
         ignoreFailures = false
         includes( ["**/*.java", "**/*.groovy"] )
     }
-    // JDK8_ASM5 // apply plugin: 'jacoco'
     licenseTest.onlyIf { false }
+
     apply plugin: 'io.werval.module'
     moduleDocumentation.dynDocPackagePrefix = project.name
 }

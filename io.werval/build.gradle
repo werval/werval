@@ -1,22 +1,18 @@
 import org.gradle.api.artifacts.*
 
-buildscript {
-    repositories { jcenter() }
-    dependencies { 
-        // JDK8_ASM5 // classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-    }
-}
+description = "Werval Core"
 
 apply from: rootProject.file( '../gradle/common.gradle' )
+apply plugin: 'base' // Add "clean" task to the root project.
 
-description = "werval"
-
-apply plugin: 'base' // To add "clean" task to the root project.
-apply plugin: 'sonar-runner'
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0' }
+}
 
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
+
     apply plugin: 'license'
     license {
         header = rootProject.file( '../config/license/header.txt' )
@@ -24,11 +20,10 @@ subprojects {
         ignoreFailures = false
         includes( ["**/*.java", "**/*.groovy"] )
     }
-    // JDK8_ASM5 // apply plugin: 'jacoco'
     licenseTest.onlyIf { false }
 }
 
-task mergedJavadoc( type: Javadoc, description: 'Creates Javadoc from all the projects.' ) {
+task aggregatedJavadoc( type: Javadoc, description: 'Creates Javadoc from all the projects.' ) {
     title = 'werval ' + version
     destinationDir = new File( project.buildDir, 'merged-javadoc' )
     // Note: The closures below are executed lazily.
