@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static com.jayway.restassured.RestAssured.expect;
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.context.CurrentContext.plugin;
@@ -106,7 +107,9 @@ public class MetricsTest
             .when()
             .get( "/@metrics/thread-dump" );
 
-        assertThat( metrics.timer( "io.werval.http.requests" ).getCount(), is( 5L ) );
+        await( "io.werval.http.requests == 5" ).until(
+            () -> metrics.timer( "io.werval.http.requests" ).getCount() == 5L
+        );
         assertThat( metrics.meter( "io.werval.http.success" ).getCount(), is( 5L ) );
         assertThat( metrics.meter( "io.werval.http.redirections" ).getCount(), is( 0L ) );
         assertThat( metrics.meter( "io.werval.http.client-errors" ).getCount(), is( 0L ) );
@@ -118,7 +121,9 @@ public class MetricsTest
         expect().statusCode( 500 ).when().get( "/error" );
         expect().statusCode( 666 ).when().get( "/unknown" );
 
-        assertThat( metrics.timer( "io.werval.http.requests" ).getCount(), is( 10L ) );
+        await( "io.werval.http.requests == 10" ).until(
+            () -> metrics.timer( "io.werval.http.requests" ).getCount() == 10L
+        );
         assertThat( metrics.meter( "io.werval.http.success" ).getCount(), is( 6L ) );
         assertThat( metrics.meter( "io.werval.http.redirections" ).getCount(), is( 1L ) );
         assertThat( metrics.meter( "io.werval.http.client-errors" ).getCount(), is( 1L ) );
