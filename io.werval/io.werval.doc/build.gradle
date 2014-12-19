@@ -85,7 +85,9 @@ configurations { embeddedJavadocConfiguration }
 dependencies { embeddedJavadocProjects().each { p -> embeddedJavadocConfiguration p } }
 
 // Dependency to UMLGraph if available
-def useUmlGraph = 'which dot'.execute().exitValue() == 0
+def useUmlGraphCheck = 'which dot'.execute();
+useUmlGraphCheck.waitFor()
+def useUmlGraph = useUmlGraphCheck.exitValue() == 0
 if( useUmlGraph ) {
     configurations { umlgraphDoclet }
     dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
