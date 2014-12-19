@@ -9,6 +9,10 @@ cache:
     directories:
         - ~/.gradle/caches
 
+services:
+    - memcached
+    - redis-server
+
 language: java
 jdk: oraclejdk8
 
