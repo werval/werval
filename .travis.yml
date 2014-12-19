@@ -5,6 +5,10 @@ sudo: false
 env:
     - TERM=dumb
 
+cache:
+    directories:
+        - ~/.gradle/caches
+
 language: java
 jdk: oraclejdk8
 
