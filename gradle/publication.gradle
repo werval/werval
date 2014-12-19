@@ -161,7 +161,12 @@ if( project.hasProperty( 'bintrayUsername' ) ) {
                 name = project.version
                 desc = "Werval ${project.version}"
                 vcsTag = project.version
-                attributes = [ 'gradle-plugin' : 'io.werval.application:io.werval:io.werval.gradle,io.werval.module:io.werval:io.werval.gradle' ]
+                attributes = [
+                    'gradle-plugin' : [
+                        'io.werval.application:io.werval:io.werval.gradle',
+                        'io.werval.module:io.werval:io.werval.gradle'
+                    ]
+                ]
                 mavenCentralSync {
                     sync = false
                     user = mavenCentralUsername
