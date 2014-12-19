@@ -9,6 +9,7 @@ buildscript {
     repositories { jcenter() }
     dependencies { classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0' }
 }
+repositories { jcenter() }
 
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
@@ -21,6 +22,19 @@ subprojects {
         includes( ["**/*.java", "**/*.groovy"] )
     }
     licenseTest.onlyIf { false }
+
+    apply plugin: 'jacoco'
+    jacoco.toolVersion = '0.7.2.201409121644'
+    jacocoTestReport {
+        additionalSourceDirs = files( sourceSets.main.allSource.srcDirs )
+        sourceDirectories = files( sourceSets.main.allSource.srcDirs )
+        classDirectories =  files( sourceSets.main.output )
+        reports {
+            xml.enabled = true
+            html.enabled = true
+            csv.enabled = false
+        }
+    }
 }
 
 task aggregatedJavadoc( type: Javadoc, description: 'Creates Javadoc from all the projects.' ) {
@@ -35,3 +49,29 @@ task aggregatedJavadoc( type: Javadoc, description: 'Creates Javadoc from all th
     }
 }
 
+task aggregatedTestReport( type: TestReport ) {
+    destinationDir = file( "$buildDir/reports/aggregated-tests" )
+    reportOn subprojects*.test
+}
+
+apply plugin: 'jacoco'
+jacoco.toolVersion = '0.7.2.201409121644'
+task aggregatedJacocoReport( type: org.gradle.testing.jacoco.tasks.JacocoReport ) {
+    // See https://gist.github.com/aalmiray/e6f54aa4b3803be0bcac
+    dependsOn subprojects.test
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        html {
+            enabled = true
+            destination = 'build/reports/aggregated-jacoco/html'
+        }
+        xml {
+            enabled = true
+            destination = 'build/reports/aggregated-jacoco/jacoco-report.xml'
+        }
+        csv.enabled = false
+    }
+}
