@@ -20,14 +20,12 @@ subprojects {
     apply plugin: 'license'
     license {
         header = rootProject.file( '../config/license/header.txt' )
-        strictCheck = true
-        ignoreFailures = true
-        sourceSets = [ project.sourceSets.main ]
+        strictCheck = false
+        ignoreFailures = false
         includes( ["**/*.java", "**/*.groovy"] )
-        ext.year = Calendar.getInstance().get( Calendar.YEAR )
-        ext.name = "the original author or authors"
     }
     // JDK8_ASM5 // apply plugin: 'jacoco'
+    licenseTest.onlyIf { false }
 }
 
 task mergedJavadoc( type: Javadoc, description: 'Creates Javadoc from all the projects.' ) {
