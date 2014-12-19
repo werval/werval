@@ -153,11 +153,11 @@ public interface OutcomeBuilder
     OutcomeBuilder withBody( InputStream body );
 
     /**
-     * Use an InputStream body if undetermined length.
-     *
+     * Use an InputStream body of undetermined length.
+     * <p>
      * Content-Length header will NOT be set and chunked Transfer-Encoding used.
      *
-     * @param body      Body InputStream
+     * @param body      Body InputStream, closed once consumed
      * @param chunkSize Desired HTTP chunk size
      *
      * @return This very OutcomeBuilder instance
@@ -169,7 +169,7 @@ public interface OutcomeBuilder
      *
      * Content-Length header will be set and identity Transfer-Encoding used.
      *
-     * @param body   Body InputStream
+     * @param body   Body InputStream, closed once consumed
      * @param length Body length
      *
      * @return This very OutcomeBuilder instance
