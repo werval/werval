@@ -21,6 +21,11 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - #68 Server bootstrap now loads `Application` and `HttpServer` implementations through `ServiceLoader`
 
+### Dependency changes
+
+- Core
+    - Upgrade Netty from `4.0.24` to `4.0.25`, see the announcement:
+      [4.0.25](http://netty.io/news/2014/12/31/4-0-25-Final.html)
 
 
 ## 0.5.1 - [history](https://github.com/werval/werval/commits/0.5.1)
