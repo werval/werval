@@ -16,6 +16,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Bug fixes
 
 - #232 & #233 Fix dynamic modules documentation in development mode
+- #235 Fix QueryString.Decoder that incorrectly added a null query param
 
 ### Enhancements
 
