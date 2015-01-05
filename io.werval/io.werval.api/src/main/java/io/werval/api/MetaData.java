@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class MetaData
     extends ConcurrentHashMap<String, Object>
+    implements Cloneable
 {
     private static final long serialVersionUID = 1L;
 
