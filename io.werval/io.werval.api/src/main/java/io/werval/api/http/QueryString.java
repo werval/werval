@@ -444,7 +444,7 @@ public interface QueryString
                 hasPath = false;
             }
             // Also take care of cut of things like "http://localhost"
-            this.uri = rawPath + '?' + uri.getRawQuery();
+            this.uri = rawPath + ( uri.getRawQuery() == null ? "" : '?' + uri.getRawQuery() );
 
             this.charset = charset;
             this.maxParams = maxParams;
