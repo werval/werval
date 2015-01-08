@@ -21,7 +21,6 @@ import io.werval.api.routes.ParameterBinders;
 import io.werval.runtime.util.TypeResolver;
 import java.net.MalformedURLException;
 import java.time.DateTimeException;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -608,17 +607,17 @@ public final class ParameterBindersInstance
     /**
      * {@link java.time.ZonedDateTime} Parameter Binder.
      */
-    public static final class ZoneDateTime
+    public static final class ZonedDateTime
         extends StrictTypingParameterBinder<java.time.ZonedDateTime>
     {
         @Override
-        public ZonedDateTime bind( java.lang.String name, java.lang.String value )
+        public java.time.ZonedDateTime bind( java.lang.String name, java.lang.String value )
         {
             return java.time.ZonedDateTime.parse( value );
         }
 
         @Override
-        public java.lang.String unbind( java.lang.String name, ZonedDateTime value )
+        public java.lang.String unbind( java.lang.String name, java.time.ZonedDateTime value )
         {
             return value.toString();
         }
