@@ -15,15 +15,19 @@
  */
 package io.werval.runtime.routes;
 
+import io.werval.api.Application;
 import io.werval.api.exceptions.ParameterBinderException;
 import io.werval.api.routes.ParameterBinder;
 import io.werval.api.routes.ParameterBinders;
 import io.werval.runtime.util.TypeResolver;
+import io.werval.util.Hashids;
 import java.net.MalformedURLException;
 import java.time.DateTimeException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.werval.runtime.ConfigKeys.APP_SECRET;
 
 /**
  * Parameter Binders instance.
@@ -623,11 +627,36 @@ public final class ParameterBindersInstance
         }
     }
 
-    private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
-
-    public ParameterBindersInstance()
+    /**
+     * {@link io.werval.util.Hashid} Parameter Binder.
+     * <p>
+     * Use the application's secret as salt.
+     */
+    public static final class Hashid
+        extends StrictTypingParameterBinder<io.werval.util.Hashid>
     {
+        private Hashids hashids;
+
+        @Override
+        public void onActivate( Application application )
+        {
+            hashids = new Hashids( application.config().string( APP_SECRET ) );
+        }
+
+        @Override
+        public io.werval.util.Hashid bind( java.lang.String name, java.lang.String value )
+        {
+            return hashids.decode( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, io.werval.util.Hashid value )
+        {
+            return value.toString();
+        }
     }
+
+    private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
 
     public ParameterBindersInstance( List<ParameterBinder<?>> parameterBinders )
     {

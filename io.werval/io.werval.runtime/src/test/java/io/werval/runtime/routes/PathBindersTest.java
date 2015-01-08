@@ -18,6 +18,9 @@ package io.werval.runtime.routes;
 import com.acme.app.CustomParam;
 import io.werval.api.routes.ParameterBinder;
 import io.werval.api.routes.ParameterBinders;
+import io.werval.test.WervalHttpRule;
+import io.werval.util.Hashid;
+import io.werval.util.Hashids;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -37,24 +40,29 @@ import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 
+import static io.werval.runtime.ConfigKeys.APP_SECRET;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class PathBindersTest
 {
+    @ClassRule
+    public static final WervalHttpRule WERVAL = new WervalHttpRule();
     private static final String NAME = "name";
     private static ParameterBinders binders;
 
     @BeforeClass
     public static void setupParameterBinders()
     {
-        binders = new ParameterBindersInstance( Arrays.asList(
+        List<ParameterBinder<? extends Object>> list = Arrays.asList(
             new ParameterBindersInstance.String(),
             new ParameterBindersInstance.Boolean(),
             new ParameterBindersInstance.Short(),
@@ -79,9 +87,12 @@ public class PathBindersTest
             new ParameterBindersInstance.LocalDateTime(),
             new ParameterBindersInstance.OffsetTime(),
             new ParameterBindersInstance.OffsetDateTime(),
-            new ParameterBindersInstance.ZoneDateTime(),
+            new ParameterBindersInstance.ZonedDateTime(),
+            new ParameterBindersInstance.Hashid(),
             new CustomParam.ParameterBinder()
-        ) );
+        );
+        list.forEach( b -> b.onActivate( WERVAL.application() ) );
+        binders = new ParameterBindersInstance( list );
     }
 
     @Test
@@ -416,6 +427,20 @@ public class PathBindersTest
                 ZonedDateTime.of( 2007, 12, 3, 23, 42, 23, 0, ZoneOffset.ofHours( 2 ) )
             ),
             equalTo( "2007-12-03T23:42:23+02:00" )
+        );
+    }
+
+    @Test
+    public void hashidBinder()
+    {
+        Hashid hashid = new Hashids( WERVAL.application().config().string( APP_SECRET ) ).encode( 23L );
+        assertThat(
+            binders.bind( Hashid.class, NAME, hashid.toString() ),
+            equalTo( hashid )
+        );
+        assertThat(
+            binders.unbind( Hashid.class, NAME, hashid ),
+            equalTo( hashid.toString() )
         );
     }
 

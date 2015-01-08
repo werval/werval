@@ -1087,7 +1087,11 @@ public final class ApplicationInstance
         {
             try
             {
-                list.add( (ParameterBinder<?>) classLoader.loadClass( parameterBinderClassName ).newInstance() );
+                ParameterBinder<?> binder = (ParameterBinder<?>) classLoader
+                    .loadClass( parameterBinderClassName )
+                    .newInstance();
+                binder.onActivate( this );
+                list.add( binder );
             }
             catch( ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex )
             {

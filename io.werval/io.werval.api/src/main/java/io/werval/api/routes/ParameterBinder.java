@@ -15,6 +15,8 @@
  */
 package io.werval.api.routes;
 
+import io.werval.api.Application;
+
 /**
  * (De)Serialize parameters.
  *
@@ -22,6 +24,18 @@ package io.werval.api.routes;
  */
 public interface ParameterBinder<T>
 {
+    /**
+     * Called on application activation.
+     * <p>
+     * Default to NOOP.
+     *
+     * @param application Application
+     */
+    default void onActivate( Application application )
+    {
+        // NOOP
+    }
+
     /**
      * Check if this ParameterBinder accept the given type.
      *
