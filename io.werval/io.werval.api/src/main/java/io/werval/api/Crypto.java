@@ -15,6 +15,8 @@
  */
 package io.werval.api;
 
+import io.werval.util.Hashids;
+
 /**
  * Cryptography service.
  */
@@ -114,4 +116,11 @@ public interface Crypto
      * @return Message hash encoded in Base64, {@literal Basic} profile, as String
      */
     String sha256Base64( CharSequence message );
+
+    /**
+     * Hashids salted using the application's secret.
+     *
+     * @return Hashids salted using the application's secret
+     */
+    Hashids hashids();
 }

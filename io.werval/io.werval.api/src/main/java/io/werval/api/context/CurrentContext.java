@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import io.werval.api.Application;
 import io.werval.api.ApplicationExecutors;
+import io.werval.api.Crypto;
 import io.werval.api.MetaData;
 import io.werval.api.cache.Cache;
 import io.werval.api.exceptions.WervalException;
@@ -85,6 +86,16 @@ public final class CurrentContext
     public static Application application()
     {
         return get().application();
+    }
+
+    /**
+     * @return Current Crypto
+     *
+     * @throws WervalException if no Context in current Thread
+     */
+    public static Crypto crypto()
+    {
+        return get().application().crypto();
     }
 
     /**

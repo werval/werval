@@ -324,7 +324,7 @@ public final class Hashids
     {
         if( !hexa.matches( "^[0-9a-fA-F]+$" ) )
         {
-            return EMPTY;
+            throw new IllegalArgumentException( String.format( "%s is not a hex string", hexa ) );
         }
         Matcher matcher = Pattern.compile( "[\\w\\W]{1,12}" ).matcher( hexa );
         List<Long> matched = new ArrayList<>();
@@ -509,7 +509,7 @@ public final class Hashids
         long[] resultArray = toArray( result );
         if( !doEncode( resultArray ).toString().equals( hash ) )
         {
-            resultArray = new long[ 0 ];
+            throw new IllegalArgumentException( String.format( "%s is not a valid hashid", hash ) );
         }
         return new Hashid( resultArray, hash );
     }

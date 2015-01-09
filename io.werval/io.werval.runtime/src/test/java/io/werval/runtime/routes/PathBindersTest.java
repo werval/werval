@@ -20,7 +20,6 @@ import io.werval.api.routes.ParameterBinder;
 import io.werval.api.routes.ParameterBinders;
 import io.werval.test.WervalHttpRule;
 import io.werval.util.Hashid;
-import io.werval.util.Hashids;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -47,7 +46,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import static io.werval.runtime.ConfigKeys.APP_SECRET;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -91,7 +89,7 @@ public class PathBindersTest
             new ParameterBindersInstance.Hashid(),
             new CustomParam.ParameterBinder()
         );
-        list.forEach( b -> b.onActivate( WERVAL.application() ) );
+        list.forEach( b -> b.init( WERVAL.application() ) );
         binders = new ParameterBindersInstance( list );
     }
 
@@ -433,7 +431,7 @@ public class PathBindersTest
     @Test
     public void hashidBinder()
     {
-        Hashid hashid = new Hashids( WERVAL.application().config().string( APP_SECRET ) ).encode( 23L );
+        Hashid hashid = WERVAL.application().crypto().hashids().encode( 23L );
         assertThat(
             binders.bind( Hashid.class, NAME, hashid.toString() ),
             equalTo( hashid )

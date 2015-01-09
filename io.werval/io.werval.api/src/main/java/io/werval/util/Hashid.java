@@ -41,6 +41,10 @@ public final class Hashid
 
     public long singleLong()
     {
+        if( longs.length == 0 )
+        {
+            throw new IllegalStateException( String.format( "Hashid %s contains no number", hash ) );
+        }
         if( longs.length != 1 )
         {
             throw new IllegalStateException(
@@ -52,11 +56,19 @@ public final class Hashid
 
     public long firstLong()
     {
+        if( longs.length == 0 )
+        {
+            throw new IllegalStateException( String.format( "Hashid %s contains no number", hash ) );
+        }
         return longs[0];
     }
 
     public long lastLong()
     {
+        if( longs.length == 0 )
+        {
+            throw new IllegalStateException( String.format( "Hashid %s contains no number", hash ) );
+        }
         return longs[longs.length - 1];
     }
 

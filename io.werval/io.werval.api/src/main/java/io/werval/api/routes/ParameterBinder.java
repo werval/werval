@@ -25,13 +25,13 @@ import io.werval.api.Application;
 public interface ParameterBinder<T>
 {
     /**
-     * Called on application activation.
+     * Called on parameter binder init.
      * <p>
      * Default to NOOP.
      *
      * @param application Application
      */
-    default void onActivate( Application application )
+    default void init( Application application )
     {
         // NOOP
     }

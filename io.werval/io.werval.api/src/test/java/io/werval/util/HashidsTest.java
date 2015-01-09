@@ -149,10 +149,10 @@ public class HashidsTest
         }
     }
 
-    @Test
+    @Test( expected = IllegalArgumentException.class )
     public void wrongDecoding()
     {
-        assertEquals( new Hashids( "this is my pepper" ).decodeLongs( "NkK9" ).length, 0 );
+        new Hashids( "this is my pepper" ).decode( "NkK9" );
     }
 
     @Test

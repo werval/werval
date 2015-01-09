@@ -1090,7 +1090,7 @@ public final class ApplicationInstance
                 ParameterBinder<?> binder = (ParameterBinder<?>) classLoader
                     .loadClass( parameterBinderClassName )
                     .newInstance();
-                binder.onActivate( this );
+                binder.init( this );
                 list.add( binder );
             }
             catch( ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex )

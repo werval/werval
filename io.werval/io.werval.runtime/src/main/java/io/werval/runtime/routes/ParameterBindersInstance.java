@@ -27,8 +27,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.werval.runtime.ConfigKeys.APP_SECRET;
-
 /**
  * Parameter Binders instance.
  *
@@ -638,9 +636,9 @@ public final class ParameterBindersInstance
         private Hashids hashids;
 
         @Override
-        public void onActivate( Application application )
+        public void init( Application application )
         {
-            hashids = new Hashids( application.config().string( APP_SECRET ) );
+            hashids = application.crypto().hashids();
         }
 
         @Override
@@ -667,20 +665,37 @@ public final class ParameterBindersInstance
     @SuppressWarnings( "unchecked" )
     public <T> T bind( java.lang.Class<T> type, java.lang.String paramName, java.lang.String paramValue )
     {
+        List<Exception> errors = new ArrayList<>();
         for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
             if( parameterBinder.accept( type ) )
             {
-                return (T) parameterBinder.bind( paramName, paramValue );
+                try
+                {
+                    return (T) parameterBinder.bind( paramName, paramValue );
+                }
+                catch( Exception ex )
+                {
+                    errors.add( ex );
+                }
             }
         }
-        throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+        if( errors.isEmpty() )
+        {
+            throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+        }
+        ParameterBinderException ex = new ParameterBinderException(
+            "Unable to bind parameter " + paramName + " valued to " + paramValue
+        );
+        errors.forEach( e -> ex.addSuppressed( e ) );
+        throw ex;
     }
 
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> java.lang.String unbind( java.lang.Class<T> type, java.lang.String paramName, T paramValue )
     {
+        List<Exception> errors = new ArrayList<>();
         for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
             if( parameterBinder.accept( type ) )
@@ -688,6 +703,14 @@ public final class ParameterBindersInstance
                 return ( (ParameterBinder<T>) parameterBinder ).unbind( paramName, paramValue );
             }
         }
-        throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+        if( errors.isEmpty() )
+        {
+            throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+        }
+        ParameterBinderException ex = new ParameterBinderException(
+            "Unable to unbind parameter " + paramName + " valued to " + paramValue
+        );
+        errors.forEach( e -> ex.addSuppressed( e ) );
+        throw ex;
     }
 }

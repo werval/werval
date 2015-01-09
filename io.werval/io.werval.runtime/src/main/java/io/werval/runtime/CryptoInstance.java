@@ -17,6 +17,8 @@ package io.werval.runtime;
 
 import io.werval.api.Crypto;
 import io.werval.api.exceptions.WervalException;
+import io.werval.runtime.util.Lazy;
+import io.werval.util.Hashids;
 import io.werval.util.Hex;
 import io.werval.util.Reflectively;
 import java.nio.charset.Charset;
@@ -37,6 +39,7 @@ public class CryptoInstance
 {
     private final byte[] secretBytes;
     private final Charset charset;
+    private final Lazy<Hashids> hashids;
 
     public CryptoInstance( String secret, Charset charset )
     {
@@ -53,6 +56,7 @@ public class CryptoInstance
             throw new WervalException( "Weak Application Secret: must be at least 256bits long" );
         }
         this.charset = charset;
+        this.hashids = Lazy.of( () -> new Hashids( secret, 4 ) );
     }
 
     @Override
@@ -173,5 +177,11 @@ public class CryptoInstance
     public String sha256Base64( CharSequence message )
     {
         return Base64.getEncoder().encodeToString( sha256( message ) );
+    }
+
+    @Override
+    public Hashids hashids()
+    {
+        return hashids.get();
     }
 }
