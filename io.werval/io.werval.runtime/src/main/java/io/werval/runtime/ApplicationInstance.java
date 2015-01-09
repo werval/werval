@@ -27,6 +27,7 @@ import io.werval.api.cache.Cache;
 import io.werval.api.context.Context;
 import io.werval.api.context.ThreadContextHelper;
 import io.werval.api.exceptions.ParameterBinderException;
+import io.werval.api.exceptions.ParameterBindingException;
 import io.werval.api.exceptions.PassivationException;
 import io.werval.api.exceptions.WervalException;
 import io.werval.api.exceptions.RouteNotFoundException;
@@ -863,22 +864,22 @@ public final class ApplicationInstance
                 ).build()
             );
         }
-        else if( rootCause instanceof ParameterBinderException )
+        else if( rootCause instanceof ParameterBindingException )
         {
-            if( mode == Mode.DEV )
+            if( mode == Mode.PROD )
             {
-                LOG.warn( "ParameterBinderException, will return 400.", rootCause );
+                LOG.trace( "ParameterBindingException, will return 404.", rootCause );
             }
             else
             {
-                LOG.trace( "ParameterBinderException, will return 400.", rootCause );
+                LOG.warn( "ParameterBindingException, will return 404.", rootCause );
             }
             return finalizeOutcome(
                 request,
                 DefaultErrorOutcomes.errorOutcome(
                     request,
-                    Status.BAD_REQUEST,
-                    Status.BAD_REQUEST.reasonPhrase(),
+                    Status.NOT_FOUND,
+                    "404 Route Not Found",
                     rootCause.getMessage(),
                     outcomes
                 ).build()
@@ -886,13 +887,13 @@ public final class ApplicationInstance
         }
         else if( rootCause instanceof BadRequestException )
         {
-            if( mode == Mode.DEV )
+            if( mode == Mode.PROD )
             {
-                LOG.warn( "BadRequestException, will return 400.", rootCause );
+                LOG.trace( "BadRequestException, will return 400.", rootCause );
             }
             else
             {
-                LOG.trace( "BadRequestException, will return 400.", rootCause );
+                LOG.warn( "BadRequestException, will return 400.", rootCause );
             }
             return finalizeOutcome(
                 request,
@@ -1095,8 +1096,10 @@ public final class ApplicationInstance
             }
             catch( ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex )
             {
-                throw new ParameterBinderException( "Unable to instanciate ParameterBinders, failed at: "
-                                                    + parameterBinderClassName, ex );
+                throw new ParameterBinderException(
+                    "Unable to instanciate ParameterBinders, failed at: " + parameterBinderClassName,
+                    ex
+                );
             }
         }
         parameterBinders = new ParameterBindersInstance( list );

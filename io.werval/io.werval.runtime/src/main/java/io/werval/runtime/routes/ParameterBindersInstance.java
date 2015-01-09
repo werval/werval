@@ -17,6 +17,8 @@ package io.werval.runtime.routes;
 
 import io.werval.api.Application;
 import io.werval.api.exceptions.ParameterBinderException;
+import io.werval.api.exceptions.ParameterBindingException;
+import io.werval.api.exceptions.ParameterUnbindingException;
 import io.werval.api.routes.ParameterBinder;
 import io.werval.api.routes.ParameterBinders;
 import io.werval.runtime.util.TypeResolver;
@@ -664,6 +666,7 @@ public final class ParameterBindersInstance
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> T bind( java.lang.Class<T> type, java.lang.String paramName, java.lang.String paramValue )
+        throws ParameterBindingException
     {
         List<Exception> errors = new ArrayList<>();
         for( ParameterBinder<?> parameterBinder : parameterBinders )
@@ -682,9 +685,9 @@ public final class ParameterBindersInstance
         }
         if( errors.isEmpty() )
         {
-            throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+            throw new ParameterBindingException( "No ParameterBinder found for type: " + type );
         }
-        ParameterBinderException ex = new ParameterBinderException(
+        ParameterBindingException ex = new ParameterBindingException(
             "Unable to bind parameter " + paramName + " valued to " + paramValue
         );
         errors.forEach( e -> ex.addSuppressed( e ) );
@@ -694,6 +697,7 @@ public final class ParameterBindersInstance
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> java.lang.String unbind( java.lang.Class<T> type, java.lang.String paramName, T paramValue )
+        throws ParameterUnbindingException
     {
         List<Exception> errors = new ArrayList<>();
         for( ParameterBinder<?> parameterBinder : parameterBinders )
@@ -705,9 +709,9 @@ public final class ParameterBindersInstance
         }
         if( errors.isEmpty() )
         {
-            throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+            throw new ParameterUnbindingException( "No ParameterBinder found for type: " + type );
         }
-        ParameterBinderException ex = new ParameterBinderException(
+        ParameterUnbindingException ex = new ParameterUnbindingException(
             "Unable to unbind parameter " + paramName + " valued to " + paramValue
         );
         errors.forEach( e -> ex.addSuppressed( e ) );

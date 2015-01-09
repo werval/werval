@@ -15,6 +15,9 @@
  */
 package io.werval.api.routes;
 
+import io.werval.api.exceptions.ParameterBindingException;
+import io.werval.api.exceptions.ParameterUnbindingException;
+
 /**
  * Parameter Binders.
  *
@@ -31,8 +34,11 @@ public interface ParameterBinders
      * @param value Parameter value
      *
      * @return The bound value
+     *
+     * @throws ParameterBindingException if unable to bind
      */
-    <T> T bind( Class<T> type, String name, String value );
+    <T> T bind( Class<T> type, String name, String value )
+        throws ParameterBindingException;
 
     /**
      * Unbind a parameter value.
@@ -43,6 +49,9 @@ public interface ParameterBinders
      * @param value Parameter value
      *
      * @return The unbound raw value
+     *
+     * @throws ParameterUnbindingException if unable to unbind
      */
-    <T> String unbind( Class<T> type, String name, T value );
+    <T> String unbind( Class<T> type, String name, T value )
+        throws ParameterUnbindingException;
 }
