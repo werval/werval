@@ -25,6 +25,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Enhancements
 
 - (#68) Server bootstrap now loads `Application` and `HttpServer` implementations through `ServiceLoader`
+- (#164) Performance enhancement, all `equals()` methods have been short-circuited
 
 ### Dependency changes
 

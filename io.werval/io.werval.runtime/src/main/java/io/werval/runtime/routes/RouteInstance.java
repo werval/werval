@@ -520,6 +520,10 @@ import static io.werval.util.Strings.rightPad;
     public boolean equals( Object obj )
     {
         // CHECKSTYLE:OFF
+        if( this == obj )
+        {
+            return true;
+        }
         if( obj == null )
         {
             return false;
