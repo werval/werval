@@ -22,18 +22,18 @@ import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.when;
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.http.Headers.Names.CONNECTION;
 import static io.werval.api.http.Headers.Values.CLOSE;
 import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 import static java.util.Locale.US;
-import static org.apache.http.params.CoreProtocolPNames.PROTOCOL_VERSION;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -59,11 +59,6 @@ public class KeepAliveTest
         {
             return outcomes().internalServerError().build();
         }
-
-        public Outcome unknown()
-        {
-            return outcomes().status( 666 ).build();
-        }
     }
 
     @ClassRule
@@ -72,96 +67,82 @@ public class KeepAliveTest
         + "GET /ok io.werval.runtime.http.KeepAliveTest$Controller.ok\n"
         + "GET /clientError io.werval.runtime.http.KeepAliveTest$Controller.clientError\n"
         + "GET /serverError io.werval.runtime.http.KeepAliveTest$Controller.serverError\n"
-        + "GET /unknown io.werval.runtime.http.KeepAliveTest$Controller.unknown\n"
     ) );
 
     @Test
     public void http11_keepalive()
     {
-        expect().
-            statusCode( 200 ).
-            header( CONNECTION, KEEP_ALIVE ).
-            when().get( "/ok" );
-        expect().
-            statusCode( 400 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/clientError" );
-        expect().
-            statusCode( 500 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/serverError" );
-        expect().
-            statusCode( 666 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/unknown" );
+        when().get( "/ok" )
+            .then().statusCode( 200 )
+            .and().header( CONNECTION, KEEP_ALIVE );
+        when().get( "/clientError" )
+            .then().statusCode( 400 )
+            .and().header( CONNECTION, CLOSE );
+        when().get( "/serverError" )
+            .then().statusCode( 500 )
+            .and().header( CONNECTION, CLOSE );
     }
 
     @Test
     public void http11_close()
     {
-        given().
-            header( CONNECTION, CLOSE ).
-            expect().
-            statusCode( 200 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/ok" );
-        given().
-            header( CONNECTION, KEEP_ALIVE ).
-            expect().
-            statusCode( 400 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/clientError" );
-        given().
-            header( CONNECTION, KEEP_ALIVE ).
-            expect().
-            statusCode( 500 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/serverError" );
-        given().
-            header( CONNECTION, KEEP_ALIVE ).
-            expect().
-            statusCode( 666 ).
-            header( CONNECTION, CLOSE ).
-            when().get( "/unknown" );
+        given().header( CONNECTION, CLOSE )
+            .when().get( "/ok" )
+            .then().statusCode( 200 )
+            .and().header( CONNECTION, CLOSE );
+        given().header( CONNECTION, KEEP_ALIVE )
+            .when().get( "/clientError" )
+            .then().statusCode( 400 )
+            .and().header( CONNECTION, CLOSE );
+        given().header( CONNECTION, KEEP_ALIVE )
+            .when().get( "/serverError" )
+            .then().statusCode( 500 )
+            .and().header( CONNECTION, CLOSE );
     }
 
     @Test
     public void http10_default()
         throws IOException
     {
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
-        get.getParams().setParameter( PROTOCOL_VERSION, new ProtocolVersion( "HTTP", 1, 0 ) );
-        // Apache HttpClient is a mess, without this it force Keep-Alive on HTTP/1.0 requests ...
-        get.setHeader( CONNECTION, "NOT PRESENT" );
-        HttpResponse response = client.execute( get );
-        assertThat( response.getProtocolVersion().getMinor(), is( 0 ) );
-        assertThat( response.getFirstHeader( CONNECTION ).getValue().toLowerCase( US ), equalTo( CLOSE ) );
+        try( CloseableHttpClient client = HttpClientBuilder.create().build() )
+        {
+            HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
+            get.setProtocolVersion( new ProtocolVersion( "HTTP", 1, 0 ) );
+            // Apache HttpClient is a mess, without this it force Keep-Alive on HTTP/1.0 requests ...
+            get.setHeader( CONNECTION, "NOT PRESENT" );
+            HttpResponse response = client.execute( get );
+            assertThat( response.getProtocolVersion().getMinor(), is( 0 ) );
+            assertThat( response.getFirstHeader( CONNECTION ).getValue().toLowerCase( US ), equalTo( CLOSE ) );
+        }
     }
 
     @Test
     public void http10_close()
         throws IOException
     {
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
-        get.getParams().setParameter( PROTOCOL_VERSION, new ProtocolVersion( "HTTP", 1, 0 ) );
-        get.setHeader( CONNECTION, CLOSE );
-        HttpResponse response = client.execute( get );
-        assertThat( response.getProtocolVersion().getMinor(), is( 0 ) );
-        assertThat( response.getFirstHeader( CONNECTION ).getValue().toLowerCase( US ), equalTo( CLOSE ) );
+        try( CloseableHttpClient client = HttpClientBuilder.create().build() )
+        {
+            HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
+            get.setProtocolVersion( new ProtocolVersion( "HTTP", 1, 0 ) );
+            get.setHeader( CONNECTION, CLOSE );
+            HttpResponse response = client.execute( get );
+            assertThat( response.getProtocolVersion().getMinor(), is( 0 ) );
+            assertThat( response.getFirstHeader( CONNECTION ).getValue().toLowerCase( US ), equalTo( CLOSE ) );
+        }
     }
 
     @Test
     public void http10_keepalive()
         throws IOException
     {
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
-        get.getParams().setParameter( PROTOCOL_VERSION, new ProtocolVersion( "HTTP", 1, 0 ) );
-        get.setHeader( CONNECTION, KEEP_ALIVE );
-        HttpResponse response = client.execute( get );
-        assertThat( response.getProtocolVersion().getMinor(), is( 0 ) );
-        assertThat( response.getFirstHeader( CONNECTION ).getValue().toLowerCase( US ), equalTo( KEEP_ALIVE ) );
+        try( CloseableHttpClient client = HttpClientBuilder.create().build() )
+        {
+            HttpGet get = new HttpGet( WERVAL.baseHttpUrl() + "/ok" );
+            get.setProtocolVersion( new ProtocolVersion( "HTTP", 1, 0 ) );
+            get.setHeader( CONNECTION, KEEP_ALIVE );
+            HttpResponse response = client.execute( get );
+            assertThat( response.getProtocolVersion().getMinor(), is( 0 ) );
+            assertThat( response.getFirstHeader( CONNECTION ).getValue().toLowerCase( US ), equalTo( KEEP_ALIVE ) );
+        }
     }
 }
