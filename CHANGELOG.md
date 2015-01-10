@@ -11,7 +11,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 ### Breaking changes
 
-- (#233) `Config.object( String key )` has been replaced by `Config.atKey( String key )` and `Config::atPath( String path )`
+- (#233) `Config.object( String key )` has been replaced by `Config.atKey( String key )` and `Config.atPath( String path )`
 
 ### Bug fixes
 
