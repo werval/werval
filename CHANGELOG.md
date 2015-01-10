@@ -29,8 +29,17 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Dependency changes
 
 - Core
+    - Upgrade SLF4J from `1.7.7` to `1.7.10`, see the [annoucements](http://www.slf4j.org/news.html)
     - Upgrade Netty from `4.0.24` to `4.0.25`, see the announcement:
       [4.0.25](http://netty.io/news/2014/12/31/4-0-25-Final.html)
+- Modules
+    - Upgrade Jackson from `2.4.4` to `2.5.0`, see the [release-notes](https://github.com/FasterXML/jackson/wiki/Jackson-Release-2.5)
+    - Upgrade Jedis from `2.6.1` to `2.6.2`, see the [release-notes](https://github.com/xetorthio/jedis/releases)
+    - Upgrade Liquibase from `3.3.0` to `3.3.2`, see the [announcement](http://blog.liquibase.org/2015/01/liquibase-3-3-2-released.html)
+    - Upgrade spymemcached from `2.11.4` to `2.11.5`, see the [history](https://github.com/couchbase/spymemcached)
+    - Upgrade Spring from `4.1.2` to `4.1.4`, see the [changes-report](http://docs.spring.io/spring-framework/docs/4.1.x/spring-framework-reference/htmlsingle/#new-in-4.1)
+    - Upgrade Thymeleaf from `2.1.3` to `2.1.4`, see the [changelog](https://github.com/thymeleaf/thymeleaf/blob/thymeleaf-2.1.4.RELEASE/ChangeLog.txt)
+
 
 
 ## 0.5.1 - [history](https://github.com/werval/werval/commits/0.5.1)
