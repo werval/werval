@@ -84,9 +84,14 @@ def embeddedJavadocProjects() {
 configurations { embeddedJavadocConfiguration }
 dependencies { embeddedJavadocProjects().each { p -> embeddedJavadocConfiguration p } }
 
-// Dependency to UMLGraph
-configurations { umlgraphDoclet }
-dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
+// Dependency to UMLGraph if available
+def useUmlGraphCheck = 'which dot'.execute();
+useUmlGraphCheck.waitFor()
+def useUmlGraph = useUmlGraphCheck.exitValue() == 0
+if( useUmlGraph ) {
+    configurations { umlgraphDoclet }
+    dependencies { umlgraphDoclet 'org.umlgraph:umlgraph:5.6.6' }
+}
 
 // Javadoc Task
 def javadocGenResourcesPath = "$project.projectDir.absolutePath/build/docs/embedded-javadoc"
@@ -114,8 +119,11 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
         ] )
     // disable the crazy super-strict doclint tool in Java 8
     options.addStringOption( 'Xdoclint:none', '-quiet' )
-    options.docletpath = configurations.umlgraphDoclet.files as List
-    options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
+    // UMLGraph doclet if available
+    if( useUmlGraph ) {
+        options.docletpath = configurations.umlgraphDoclet.files as List
+        options.doclet = "org.umlgraph.doclet.UmlGraphDoc"
+    }
     inputs.dir file( 'src/javadoc' )
     doLast {
         copy {
@@ -141,17 +149,14 @@ task generateEmbeddedJavadoc( type: Javadoc ) {
 //
 
 buildscript {
-    repositories {
-        jcenter()
-        maven { url 'http://dl.bintray.com/melix/jbake-gradle-plugin' }
-    }
+    repositories { jcenter() }
     dependencies {
-        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.1'
-        classpath 'org.asciidoctor:asciidoctor-java-integration:0.1.4'
-        classpath 'org.freemarker:freemarker:2.3.19'
+        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.2'
+        classpath 'org.asciidoctor:asciidoctor-java-integration:1.5.0.preview1'
+        classpath 'org.freemarker:freemarker:2.3.21'
     }
 }
-apply plugin: 'jbake'
+apply plugin: 'me.champeau.jbake'
 
 task prepareJBakeInput(type: Copy) {
     from file('src/jbake')

@@ -70,7 +70,7 @@ public class JPAPlugin
         Map<String, Map<String, Object>> properties = new HashMap<>();
         if( config.has( "jpa.units" ) )
         {
-            Config units = config.object( "jpa.units" );
+            Config units = config.atPath( "jpa.units" );
             units.subKeys().stream().forEach(
                 unit -> properties.put( unit, (Map<String, Object>) (Map) units.stringMap( unit ) )
             );

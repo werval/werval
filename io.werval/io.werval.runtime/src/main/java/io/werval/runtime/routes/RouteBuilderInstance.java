@@ -41,7 +41,8 @@ import javassist.util.proxy.ProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES;
+import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES_CONTROLLERS;
+import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES_PARAMETERS;
 import static io.werval.util.Strings.EMPTY;
 import static io.werval.util.Strings.isEmpty;
 import static io.werval.util.Strings.withHead;
@@ -461,7 +462,7 @@ public class RouteBuilderInstance
                 }
 
                 // Parse controller type
-                Class<?> controllerType = app.classLoader().loadClass( controllerTypeName );
+                Class<?> controllerType = lookupControllerType( app, controllerTypeName );
 
                 // Parse controller method parameters
                 ControllerParams controllerParams = parseControllerParams( app, routeString, controllerMethodParams );
@@ -628,6 +629,25 @@ public class RouteBuilderInstance
             return ParamValue.NONE;
         }
 
+        private static Class<?> lookupControllerType( Application application, String controllerTypeName )
+            throws ClassNotFoundException
+        {
+            try
+            {
+                // First try parameter FQCN
+                return application.classLoader().loadClass( controllerTypeName );
+            }
+            catch( ClassNotFoundException fqcnNotFound )
+            {
+                return lookupImportedType(
+                    "Controller",
+                    application,
+                    controllerTypeName,
+                    application.config().stringList( WERVAL_ROUTES_IMPORTEDPACKAGES_CONTROLLERS )
+                );
+            }
+        }
+
         private static Class<?> lookupParamType( Application application, String paramTypeName )
             throws ClassNotFoundException
         {
@@ -638,27 +658,42 @@ public class RouteBuilderInstance
             }
             catch( ClassNotFoundException fqcnNotFound )
             {
-                LOG.trace( "Lookup Param Type - {} not found", paramTypeName );
-                List<String> typesTried = new ArrayList<>();
-                typesTried.add( paramTypeName );
-                // Try in configured imported packages
-                List<String> importedPackages = application.config().stringList( WERVAL_ROUTES_IMPORTEDPACKAGES );
-                for( String importedPackage : importedPackages )
-                {
-                    String fqcn = importedPackage + "." + paramTypeName;
-                    try
-                    {
-                        Class<?> clazz = application.classLoader().loadClass( fqcn );
-                        LOG.trace( "Lookup Param Type - {} found", fqcn );
-                        return clazz;
-                    }
-                    catch( ClassNotFoundException importedNotFound )
-                    {
-                        LOG.trace( "Lookup Param Type - {} not found", fqcn );
-                    }
-                }
-                throw new ClassNotFoundException( "Param type not found, tried " + typesTried.toString() );
+                return lookupImportedType(
+                    "Param",
+                    application,
+                    paramTypeName,
+                    application.config().stringList( WERVAL_ROUTES_IMPORTEDPACKAGES_PARAMETERS )
+                );
             }
+        }
+
+        private static Class<?> lookupImportedType(
+            String typeKind,
+            Application application,
+            String typeName,
+            List<String> importedPackages
+        )
+            throws ClassNotFoundException
+        {
+            LOG.trace( "Lookup {} Type - {} not found", typeKind, typeName );
+            List<String> typesTried = new ArrayList<>();
+            typesTried.add( typeName );
+            // Try in configured imported packages
+            for( String importedPackage : importedPackages )
+            {
+                String fqcn = importedPackage + "." + typeName;
+                try
+                {
+                    Class<?> clazz = application.classLoader().loadClass( fqcn );
+                    LOG.trace( "Lookup {} Type - {} found", typeKind, fqcn );
+                    return clazz;
+                }
+                catch( ClassNotFoundException importedNotFound )
+                {
+                    LOG.trace( "Lookup {} Type - {} not found", typeKind, fqcn );
+                }
+            }
+            throw new ClassNotFoundException( typeKind + " type not found, tried " + typesTried.toString() );
         }
     }
 }

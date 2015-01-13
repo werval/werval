@@ -34,7 +34,7 @@ public class ClasspathTest
 {
     @ClassRule
     public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
-        "GET /*path io.werval.controllers.Classpath.metainf( String path )" ) );
+        "GET /*path Classpath.metainf( String path )" ) );
 
     @Test
     public void givenNonExistentResourceWhenRequestingExpectNotFound()

@@ -61,7 +61,8 @@ public interface ConfigKeys
     String WERVAL_HTTP_UPLOADS_MULTIVALUED = "werval.http.uploads.multi_valued";
     String WERVAL_MIMETYPES_SUPPLEMENTARY = "werval.mimetypes.supplementary";
     String WERVAL_MIMETYPES_TEXTUAL = "werval.mimetypes.textual";
-    String WERVAL_ROUTES_IMPORTEDPACKAGES = "werval.routes.imported_packages";
+    String WERVAL_ROUTES_IMPORTEDPACKAGES_CONTROLLERS = "werval.routes.imported_packages.controllers";
+    String WERVAL_ROUTES_IMPORTEDPACKAGES_PARAMETERS = "werval.routes.imported_packages.parameters";
     String WERVAL_ROUTES_PARAMETERBINDERS = "werval.routes.parameter_binders";
     String WERVAL_SHUTDOWN_QUIETPERIOD = "werval.shutdown.quiet_period";
     String WERVAL_SHUTDOWN_TIMEOUT = "werval.shutdown.timeout";

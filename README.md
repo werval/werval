@@ -8,7 +8,7 @@
 >
 > [werval.io](http://werval.io/)
 
-[ ![Download](https://api.bintray.com/packages/eskatos/werval/werval/images/download.svg) ](https://bintray.com/eskatos/werval/werval/_latestVersion) [![Build Status](https://travis-ci.org/werval/werval.svg?branch=develop)](https://travis-ci.org/werval/werval)
+[![Build Status](https://travis-ci.org/werval/werval.svg?branch=develop)](https://travis-ci.org/werval/werval) [![Download](https://api.bintray.com/packages/eskatos/werval/werval/images/download.svg) ](https://bintray.com/eskatos/werval/werval/_latestVersion) [![License](http://img.shields.io/badge/license-ASF2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 Werval is an open source JVM based toolkit for building HTTP services. A lightweight core, live reload dev mode, useful modules, plugins for several build tools and multiple languages support leave you free to choose the right architecture for your domain.
 
@@ -20,7 +20,7 @@ You can also use the application [skeletons](http://werval.io/resources/skeleton
 
 ## Getting Help
 
-To discuss with the Werval community, post questions and get answers, join us at http://freenode.net/[freenode], IRC channel `##werval`.
+To discuss with the Werval community, post questions and get answers, join us at [freenode](http://freenode.net/), IRC channel `##werval`.
 
 If you found a bug, want to request a new feature or enhancement or would like to contribute to Werval, start [here](http://werval.io/community.html).
 

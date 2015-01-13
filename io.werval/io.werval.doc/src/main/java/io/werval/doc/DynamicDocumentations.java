@@ -131,10 +131,10 @@ public class DynamicDocumentations
         Map<String, DynDoc> map = new LinkedHashMap<>();
         if( application.config().has( "werval.devshell.dyndocs" ) )
         {
-            Config dyndocsConfig = application.config().object( "werval.devshell.dyndocs" );
+            Config dyndocsConfig = application.config().atPath( "werval.devshell.dyndocs" );
             for( String id : dyndocsConfig.subKeys() )
             {
-                Config dyndocConfig = dyndocsConfig.object( id );
+                Config dyndocConfig = dyndocsConfig.atKey( id );
                 if( !dyndocConfig.has( "base_path" ) )
                 {
                     LOG.warn(

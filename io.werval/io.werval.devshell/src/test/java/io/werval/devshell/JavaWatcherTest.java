@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -46,6 +47,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * JavaWatcher Test.
  */
+@Ignore( "unstable" )
 public class JavaWatcherTest
 {
     @BeforeClass

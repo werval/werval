@@ -1,6 +1,15 @@
 
 == HTTP
 
+=== Configuration
+
+[source,json]
+----
+werval.http.address = "0.0.0.0"
+werval.http.port = 80
+----
+
+
 === Session
 
 As Werval is stateless oriented, it provides no way to keep session state server side.
@@ -53,8 +62,6 @@ It's a bit simple, but this is for good.
 No multi-value parameters is allowed.
 A request coming with multiple values (eg. `foo=bar&foo=baz`) is, by default, rejected with a `400 Bad Request` status
 and a warning is logged.
-
-// TODO In dev-mode, put meta-data in exceptions with pointers to documentation!!!
 
 On the other hand, and if you really need it, you can easily enable multiple values support by setting the
 `werval.http.query-string.multi-valued` to yes.

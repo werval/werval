@@ -1,9 +1,10 @@
 import org.gradle.api.artifacts.*
 
+description = "Werval Modules"
+
 apply from: rootProject.file( '../gradle/common.gradle' )
 apply from: rootProject.file( '../gradle/repositories.gradle' )
-
-description = "Werval Modules"
+apply plugin: 'base' // To add "clean" task to the root project.
 
 buildscript {
     repositories {
@@ -11,28 +12,64 @@ buildscript {
         jcenter()
     }
     dependencies { 
-        // JDK8_ASM5 // classpath 'org.ajoberstar:gradle-jacoco:0.3.0'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath "io.werval:io.werval.gradle:${System.properties.version ?: '0'}"
     }
 }
-
-apply plugin: 'base' // To add "clean" task to the root project.
-apply plugin: 'sonar-runner'
+repositories { jcenter() }
 
 subprojects {
     apply from: rootProject.file( 'common.gradle' )
+
     apply plugin: 'license'
     license {
         header = rootProject.file( '../config/license/header.txt' )
-        strictCheck = true
-        ignoreFailures = true
-        sourceSets = [ project.sourceSets.main ]
+        strictCheck = false
+        ignoreFailures = false
         includes( ["**/*.java", "**/*.groovy"] )
-        ext.year = Calendar.getInstance().get( Calendar.YEAR )
-        ext.name = "the original author or authors"
     }
-    // JDK8_ASM5 // apply plugin: 'jacoco'
+    licenseTest.onlyIf { false }
+
+    apply plugin: 'jacoco'
+    jacoco.toolVersion = '0.7.2.201409121644'
+    jacocoTestReport {
+        additionalSourceDirs = files( sourceSets.main.allSource.srcDirs )
+        sourceDirectories = files( sourceSets.main.allSource.srcDirs )
+        classDirectories =  files( sourceSets.main.output )
+        reports {
+            xml.enabled = true
+            html.enabled = true
+            csv.enabled = false
+        }
+    }
+
     apply plugin: 'io.werval.module'
     moduleDocumentation.dynDocPackagePrefix = project.name
+}
+
+task aggregatedTestReport( type: TestReport ) {
+    destinationDir = file( "$buildDir/reports/aggregated-tests" )
+    reportOn subprojects*.test
+}
+
+apply plugin: 'jacoco'
+jacoco.toolVersion = '0.7.2.201409121644'
+task aggregatedJacocoReport( type: org.gradle.testing.jacoco.tasks.JacocoReport ) {
+    // See https://gist.github.com/aalmiray/e6f54aa4b3803be0bcac
+    dependsOn subprojects.test
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        html {
+            enabled = true
+            destination = 'build/reports/aggregated-jacoco/html'
+        }
+        xml {
+            enabled = true
+            destination = 'build/reports/aggregated-jacoco/jacoco-report.xml'
+        }
+        csv.enabled = false
+    }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.runtime.util;
+package io.werval.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,39 +27,71 @@ import java.util.NoSuchElementException;
  */
 public final class Iterables
 {
-    private static final Iterable EMPTY = new Iterable()
+    private static final class EmptyIterable
+        implements Iterable
     {
-        private final Iterator iterator = new Iterator()
+        @Override
+        public Iterator iterator()
         {
-            @Override
-            public boolean hasNext()
-            {
-                return false;
-            }
+            return new EmptyIterator();
+        }
+    }
 
-            @Override
-            public Object next()
-            {
-                throw new NoSuchElementException();
-            }
+    private static final class EmptyIterator
+        implements Iterator
+    {
+        @Override
+        public boolean hasNext()
+        {
+            return false;
+        }
 
-            @Override
-            public void remove()
-            {
-            }
-        };
+        @Override
+        public Object next()
+        {
+            throw new NoSuchElementException();
+        }
+    }
+
+    private static final class SkipIterable<T>
+        implements Iterable<T>
+    {
+        private final int skip;
+        private final Iterable iterable;
+
+        SkipIterable( int skip, Iterable iterable )
+        {
+            this.skip = skip;
+            this.iterable = iterable;
+        }
 
         @Override
         public Iterator iterator()
         {
+            Iterator<T> iterator = iterable.iterator();
+            for( int i = 0; i < skip; i++ )
+            {
+                if( iterator.hasNext() )
+                {
+                    iterator.next();
+                }
+                else
+                {
+                    return Iterables.<T>empty().iterator();
+                }
+            }
             return iterator;
         }
-    };
+    }
+
+    private static final Iterable EMPTY = new EmptyIterable();
 
     /**
+     * Empty Iterable.
+     *
      * @param <T> Parameterized item type
      *
-     * @return An empty iterable
+     * @return An empty Iterable
      */
     @SuppressWarnings( "unchecked" )
     public static <T> Iterable<T> empty()
@@ -68,6 +100,8 @@ public final class Iterables
     }
 
     /**
+     * First item or null.
+     *
      * @param <T>      Parameterized item type
      * @param iterable Iterable
      *
@@ -80,9 +114,11 @@ public final class Iterables
     }
 
     /**
+     * Count the number of items.
+     *
      * @param iterable Iterable
      *
-     * @return Number of items in the iterable
+     * @return Number of items in the Iterable
      */
     public static long count( Iterable<?> iterable )
     {
@@ -95,39 +131,22 @@ public final class Iterables
     }
 
     /**
+     * Skip some items.
+     *
      * @param <T>      Parameterized item type
      * @param skip     How many items to skip
      * @param iterable Iterable
      *
-     * @return An iterable starting after skipped items
+     * @return An Iterable starting after skipped items
      */
     public static <T> Iterable<T> skip( final int skip, final Iterable<T> iterable )
     {
-        return new Iterable<T>()
-        {
-            @Override
-            public Iterator<T> iterator()
-            {
-                Iterator<T> iterator = iterable.iterator();
-
-                for( int i = 0; i < skip; i++ )
-                {
-                    if( iterator.hasNext() )
-                    {
-                        iterator.next();
-                    }
-                    else
-                    {
-                        return Iterables.<T>empty().iterator();
-                    }
-                }
-
-                return iterator;
-            }
-        };
+        return new SkipIterable<>( skip, iterable );
     }
 
     /**
+     * Add all items of an Iterable into a Collection.
+     *
      * @param <T>        Parameterized item type
      * @param <C>        Parameterized collection type
      * @param collection Collection to add to
@@ -145,22 +164,26 @@ public final class Iterables
     }
 
     /**
+     * Create an Iterable of given items.
+     *
      * @param <T>   Parameterized item type
      * @param items Items to turn in an Iterable
      *
      * @return An Iterable of given items
      */
     @SuppressWarnings( "unchecked" )
-    public static <T> Iterable<T> iterable( T... items )
+    public static <T> Iterable<T> asIterable( T... items )
     {
         return Arrays.asList( items );
     }
 
     /**
+     * Create a new List with all items of an Iterable.
+     *
      * @param <T>      Parameterized item type
      * @param iterable Iterable
      *
-     * @return A new List with all items from the given iterable
+     * @return A new List with all items from the given Iterable
      */
     public static <T> List<T> toList( Iterable<T> iterable )
     {

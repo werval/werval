@@ -19,9 +19,10 @@
     <!-- RouteBuilder Internal Context -->
     <suppress checks="JavadocPackage" files="RouteBuilderContext.java"/>
 
-    <!-- Generated giant constants files -->
+    <!-- Giant constants files -->
     <suppress checks="FileLength" files="MimeTypesNames.java"/>
     <suppress checks="LineLength" files="MimeTypesNames.java"/>
+    <suppress checks="FileLength" files="Status.java"/>
 
     <!-- Erroneous FinalClass check -->
     <suppress checks="FinalClass" files="Maps.java"/>

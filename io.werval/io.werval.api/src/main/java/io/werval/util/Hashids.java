@@ -46,10 +46,12 @@ import static io.werval.util.Strings.isEmpty;
  * <pre>
  * Hashids hashids = new Hashids( "this is your salt" );
  * long number = -1234567890;
- * String enc = ( Math.abs( number ) != number ? "-" : "" ) + hashids.encode( Math.abs( number ) );
- * long dec = enc.startsWith( "-" ) ? -hashids.decode( enc.substring( 1 ) )[0] : hashids.decode( enc )[0];
+ * String enc = ( Math.abs( number ) != number ? "-" : "" ) + hashids.encodeToString( Math.abs( number ) );
+ * long dec = enc.startsWith( "-" ) ? -hashids.decodeLongs( enc.substring( 1 ) )[0] : hashids.decodeLongs( enc )[0];
  * </pre>
  * Note that this isn't true Hashids anymore and that this is limited to single number hashes.
+ *
+ * @navassoc 1 create * Hashid
  */
 public final class Hashids
 {
@@ -258,29 +260,45 @@ public final class Hashids
     }
 
     /**
-     * Encrypt numbers to string.
+     * Encrypt number(s).
      *
-     * @param numbers The numbers to encrypt
+     * @param numbers The number(s) to encrypt
      *
-     * @return The encrypted string
+     * @return The Hashid instance with both number(s) and the encrypted string
      */
-    public String encode( long... numbers )
+    public Hashid encode( long... numbers )
     {
         if( numbers.length == 0 )
         {
-            return EMPTY;
+            return Hashid.EMPTY;
         }
         return doEncode( numbers );
     }
 
     /**
-     * Encrypt numbers to string.
+     * Encrypt number(s) to string.
      *
-     * @param numbers The numbers to encrypt
+     * @param numbers The number(s) to encrypt
      *
      * @return The encrypted string
      */
-    public String encode( int... numbers )
+    public String encodeToString( long... numbers )
+    {
+        if( numbers.length == 0 )
+        {
+            return EMPTY;
+        }
+        return encode( numbers ).toString();
+    }
+
+    /**
+     * Encrypt number(s) to string.
+     *
+     * @param numbers The number(s) to encrypt
+     *
+     * @return The encrypted string
+     */
+    public String encodeToString( int... numbers )
     {
         if( numbers.length == 0 )
         {
@@ -292,23 +310,61 @@ public final class Hashids
             longs[idx] = numbers[idx];
 
         }
-        return doEncode( longs );
+        return doEncode( longs ).toString();
     }
 
     /**
-     * Decrypt string to numbers.
+     * Encrypt hexa string to string.
+     *
+     * @param hexa The hexa string to encrypt
+     *
+     * @return The encrypted string
+     */
+    public String encodeToString( String hexa )
+    {
+        if( !hexa.matches( "^[0-9a-fA-F]+$" ) )
+        {
+            throw new IllegalArgumentException( String.format( "%s is not a hex string", hexa ) );
+        }
+        Matcher matcher = Pattern.compile( "[\\w\\W]{1,12}" ).matcher( hexa );
+        List<Long> matched = new ArrayList<>();
+        while( matcher.find() )
+        {
+            matched.add( Long.parseLong( "1" + matcher.group(), 16 ) );
+        }
+        return doEncode( toArray( matched ) ).toString();
+    }
+
+    /**
+     * Decrypt string.
      *
      * @param hash The encrypted string
      *
-     * @return The decrypted numbers
+     * @return The Hashid instance with both hash and the decrypted number(s)
      */
-    public long[] decode( String hash )
+    public Hashid decode( String hash )
+    {
+        if( isEmpty( hash ) )
+        {
+            return Hashid.EMPTY;
+        }
+        return doDecode( hash, alphabet );
+    }
+
+    /**
+     * Decrypt string to longs.
+     *
+     * @param hash The encrypted string
+     *
+     * @return The decrypted longs
+     */
+    public long[] decodeLongs( String hash )
     {
         if( isEmpty( hash ) )
         {
             return new long[ 0 ];
         }
-        return doDecode( hash, alphabet );
+        return doDecode( hash, alphabet ).longs();
     }
 
     /**
@@ -326,7 +382,7 @@ public final class Hashids
         {
             return new int[ 0 ];
         }
-        long[] numbers = doDecode( hash, alphabet );
+        long[] numbers = doDecode( hash, alphabet ).longs();
         int[] ints = new int[ numbers.length ];
         for( int idx = 0; idx < numbers.length; idx++ )
         {
@@ -341,28 +397,6 @@ public final class Hashids
     }
 
     /**
-     * Encrypt hexa to string.
-     *
-     * @param hexa The hexa to encrypt
-     *
-     * @return The encrypted string
-     */
-    public String encodeHex( String hexa )
-    {
-        if( !hexa.matches( "^[0-9a-fA-F]+$" ) )
-        {
-            return EMPTY;
-        }
-        Matcher matcher = Pattern.compile( "[\\w\\W]{1,12}" ).matcher( hexa );
-        List<Long> matched = new ArrayList<>();
-        while( matcher.find() )
-        {
-            matched.add( Long.parseLong( "1" + matcher.group(), 16 ) );
-        }
-        return doEncode( toArray( matched ) );
-    }
-
-    /**
      * Decrypt string to numbers as hex.
      *
      * @param hash The encrypted string
@@ -372,7 +406,7 @@ public final class Hashids
     public String decodeHex( String hash )
     {
         StringBuilder sb = new StringBuilder();
-        long[] numbers = decode( hash );
+        long[] numbers = decodeLongs( hash );
         for( long number : numbers )
         {
             sb.append( Long.toHexString( number ).substring( 1 ) );
@@ -380,7 +414,7 @@ public final class Hashids
         return sb.toString();
     }
 
-    private String doEncode( long... numbers )
+    private Hashid doEncode( long... numbers )
     {
         int numberHashInt = 0;
         for( int idx = 0; idx < numbers.length; idx++ )
@@ -445,10 +479,10 @@ public final class Hashids
             }
         }
 
-        return result;
+        return new Hashid( numbers, result );
     }
 
-    private long[] doDecode( String hash, String alphabet )
+    private Hashid doDecode( String hash, String alphabet )
     {
         int idx = 0;
         String[] hashArray = hash.replaceAll( "[" + guards + "]", SPACE ).split( SPACE );
@@ -473,11 +507,11 @@ public final class Hashids
             result.add( unhash( subHash, alphabet ) );
         }
         long[] resultArray = toArray( result );
-        if( !doEncode( resultArray ).equals( hash ) )
+        if( !doEncode( resultArray ).toString().equals( hash ) )
         {
-            resultArray = new long[ 0 ];
+            throw new IllegalArgumentException( String.format( "%s is not a valid hashid", hash ) );
         }
-        return resultArray;
+        return new Hashid( resultArray, hash );
     }
 
     private String consistentShuffle( String alphabet, String salt )

@@ -42,7 +42,7 @@ public class NestedConfigTest
         assertTrue( config.has( "nested" ) );
         assertTrue( config.has( "nested.list" ) );
 
-        Config nested = config.object( "nested" );
+        Config nested = config.atPath( "nested" );
         assertTrue( nested.has( "list" ) );
 
         List<Config> list = nested.array( "list" );
@@ -59,13 +59,13 @@ public class NestedConfigTest
         assertTrue( config.has( "nested" ) );
         assertTrue( config.has( "nested.dynamics" ) );
 
-        Config dynamics = config.object( "nested.dynamics" );
+        Config dynamics = config.atPath( "nested.dynamics" );
         Set<String> keys = dynamics.subKeys();
         assertThat( keys.size(), is( 2 ) );
         assertTrue( keys.contains( "foo" ) );
         assertTrue( keys.contains( "baz" ) );
 
-        assertThat( dynamics.object( "foo" ).string( "prop" ), equalTo( "bar" ) );
-        assertThat( dynamics.object( "baz" ).string( "prop" ), equalTo( "bazar" ) );
+        assertThat( dynamics.atPath( "foo" ).string( "prop" ), equalTo( "bar" ) );
+        assertThat( dynamics.atPath( "baz" ).string( "prop" ), equalTo( "bazar" ) );
     }
 }

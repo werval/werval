@@ -43,6 +43,7 @@ import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellRebuildException;
 import io.werval.spi.dev.DevShellSPI;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import org.slf4j.Logger;
@@ -262,10 +263,10 @@ public final class WervalHttpHandler
             applyResponseHeader( responseHeader, nettyResponse );
             nettyResponse.headers().set( CONTENT_LENGTH, streamOutcome.contentLength() );
             // Body
-            try
+            try( InputStream bodyInputStream = streamOutcome.bodyInputStream() )
             {
                 ( (ByteBufHolder) nettyResponse ).content().writeBytes(
-                    streamOutcome.bodyInputStream(),
+                    bodyInputStream,
                     new BigDecimal( streamOutcome.contentLength() ).intValueExact()
                 );
             }

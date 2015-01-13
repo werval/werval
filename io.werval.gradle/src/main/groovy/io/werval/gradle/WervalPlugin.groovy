@@ -74,7 +74,9 @@ class WervalPlugin implements Plugin<Project>
             // visible = false
         }
         project.dependencies {
-            devshell group: "io.werval", name: "io.werval.doc", version: BuildVersion.VERSION, transitive: false
+            devshell( group: "io.werval", name: "io.werval.doc", version: BuildVersion.VERSION ) {
+                exclude module: "io.werval.api"
+            }
         }
 
         project.sourceSets {

@@ -1,18 +1,41 @@
 
+[discrete]
+=== Maven
+
+You also need to install link:http://maven.apache.org/[Maven] and ensure that the following command show the proper version.
+
+[source,bash]
+----
+mvn --version
+----
+
+Should output something like:
+
+[source,bash]
+----
+Apache Maven 3.2.1 <1>
+Maven home: /path/to/your/maven/installation
+Java version: 1.8.0, vendor: Oracle Corporation <2>
+Java home: /path/to/your/java8/installation <3>
+----
+<1> This is Maven 3.2.x
+<2> Using Java 8
+<3> From the right JAVA_HOME
+
+
+== TL;DR
+
 For the impatients, here is how to get a Maven skeleton running in development mode quickly:
 
-[TIP]
-.TL;DR
-====
 ["source",subs="callouts"]
 ----
 svn export https://github.com/werval/werval-skel-maven/trunk werval-maven <1>
-cd werval-maven
-mvn werval:devshell <2>
+cd werval-maven <2>
+mvn werval:devshell <3>
 ----
-<1> Create a new application
-<2> Run in development mode
-====
+<1> Create a new application in a `werval-maven` directory
+<2> Enter the newly created directory
+<3> Run in development mode
 
 
 == Create a new application
@@ -27,7 +50,7 @@ svn export https://github.com/werval/werval-skel-maven/trunk YOUR_APP_NAME
 Where `YOUR_APP_NAME` is, well, your application name.
 A directory with this name will be created with the new application in it.
 
-[IMPORTANT]
+[NOTE]
 .Why use Subversion?
 ====
 Github does not support `git archive` which is the equivalent of `svn export`.
@@ -59,7 +82,7 @@ As stated on the welcome page above, when running the Development Shell, the who
 // through the command line by adding `-Dwerval.http.address=0.0.0.0` and `-Dwerval.http.port=80` for example ; or in the
 // `application.conf` file.
 
-[TIP]
+[IMPORTANT]
 ====
 In production mode, you need an application's secret.
 This secret is a key used for cypher and signature operations, it must be unique per application.
@@ -121,9 +144,9 @@ damn easy to add a Gradle or Maven build to such an application.
 At the bottom of the tree you can see the Maven build file.
 Here is what you'll find inside:
 
-// TODO XML is not correctly rendered if ["source","xml",subs="attributes"] is used ... FIXME!
 .`./pom.xml`
 [source,xml]
+[subs="attributes+"]
 ----
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"

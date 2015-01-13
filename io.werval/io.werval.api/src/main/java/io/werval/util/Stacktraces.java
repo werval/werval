@@ -149,7 +149,7 @@ public final class Stacktraces
                 packageName = packageName.substring( 0, Strings.lastIndexOfNth( packageName, 2, "." ) );
                 String filename = matcher.group( "file" );
                 String lineNumber = matcher.group( "line" );
-                String url = urlGen.urlFor( packageName, filename, Integer.valueOf( lineNumber ) );
+                String url = urlGen.urlFor( packageName, filename, Integer.parseInt( lineNumber ) );
                 if( Strings.isEmpty( url ) )
                 {
                     traceWriter.append( line ).append( "\n" );

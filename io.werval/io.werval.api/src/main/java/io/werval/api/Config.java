@@ -35,7 +35,7 @@ public interface Config
     /**
      * @param key config entry key
      *
-     * @return {@literal true} if the config property under the given key is an object
+     * @return {@literal true} if the config property under the given key is an atPath
      */
     boolean isObject( String key );
 
@@ -44,7 +44,14 @@ public interface Config
      *
      * @return new Config object for the config properties under the given key
      */
-    Config object( String key );
+    Config atKey( String key );
+
+    /**
+     * @param path Config entry path
+     *
+     * @return new Config object for the config properties under the given path
+     */
+    Config atPath( String path );
 
     /**
      * @param key config entry key

@@ -15,5 +15,6 @@
     <!-- Spacing issues in need for better global checks -->
     <suppress checks=".*" files="HttpRequestAggregator.java"/>
     <suppress checks=".*" files="NettyHttpFactories.java"/>
+    <suppress checks=".*" files="WervalHttpHandler.java"/>
 
 </suppressions>

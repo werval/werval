@@ -285,7 +285,7 @@ public class ConfigInstance
     /**
      * Internal CTOR.
      * <p>
-     * See {@link #location()}, {@link #object(java.lang.String)} and {@link #array(java.lang.String)}.
+     * See {@link #location()}, {@link #atPath(java.lang.String)} and {@link #array(java.lang.String)}.
      *
      * @param config   TypeSafe Config
      * @param location Config location and overrides
@@ -324,7 +324,13 @@ public class ConfigInstance
     }
 
     @Override
-    public Config object( String key )
+    public Config atKey( String key )
+    {
+        return new ConfigInstance( config.getConfig( '"' + key + '"' ), location );
+    }
+
+    @Override
+    public Config atPath( String key )
     {
         return new ConfigInstance( config.getConfig( key ), location );
     }

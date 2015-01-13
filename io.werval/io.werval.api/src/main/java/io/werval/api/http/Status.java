@@ -1000,13 +1000,17 @@ public final class Status
     }
 
     @Override
-    public boolean equals( final Object o )
+    public boolean equals( final Object obj )
     {
-        if( !( o instanceof Status ) )
+        if( this == obj )
+        {
+            return true;
+        }
+        if( !( obj instanceof Status ) )
         {
             return false;
         }
-        return code() == ( (Status) o ).code();
+        return code() == ( (Status) obj ).code();
     }
 
     @Override

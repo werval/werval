@@ -23,8 +23,7 @@ The documentation build is organized to allow documentation:
 Both core and dynamic documentation are written using Asciidoc and can contain other static assets such as images and
 the like.
 
-[discrete]
-===== Core documentation
+**Core documentation**
 
 Core documentation includes a getting started guide, the other guides, the manual and the API javadoc.
 Its sources are in the `io.werval.doc` project.
@@ -36,13 +35,15 @@ NOTE: `io.werval.doc` contains the JBake project that is used later to build the
 
 All documentation source is assembled in a ZIP artifact published with the `doc` classifier:
 
-    io.werval:io.werval.doc:{werval_version}:doc@zip
+[source]
+----
+io.werval:io.werval.doc:{werval_version}:doc@zip
+----
 
 It contains the complete JBake project.
 
 
-[discrete]
-===== Dynamic documentation
+**Dynamic documentation**
 
 Each Werval module can have its own documentation included thanks to dynamic documentation.
 This is not called *modules documentation* on purpose, *dynamic documentation* way better convey what is going on under
@@ -55,10 +56,13 @@ link:write-modules.html#documentation[module writing guide].
 Dynamic documentations are registered by adding the following lines to a `reference.conf` files in the module's
 classpath root:
 
-    werval.devshell.dyndoc.your-module-id {
-        name = "Your shiny module's name"
-        base_path = io/werval/modules/your-module-id/doc
-    }
+[source]
+----
+werval.devshell.dyndoc.your-module-id {
+    name = "Your shiny module's name"
+    base_path = io/werval/modules/your-module-id/doc
+}
+----
 
 Static documentation is then be generated at `base_path` in the module's classpath.
 
@@ -66,7 +70,10 @@ All documentation source is assembled in a ZIP artifact published with the `doc`
 
 Example for the SMTP Module:
 
-    io.werval:io.werval.modules.smtp:{werval_version}:doc@zip
+[source]
+----
+io.werval:io.werval.modules.smtp:{werval_version}:doc@zip
+----
 
 The build system of `io.werval.modules` do all that automatically as soon as it can find the `src/doc` directory in a
 module's project.
@@ -74,8 +81,7 @@ module's project.
 
 ==== Documentation targets
 
-[discrete]
-===== Development shell
+**Development shell**
 
 The `io.werval.doc` project host the `DocumentationPlugin` that gets automatically registered in development
 mode and setup routes to serve documentation at `/@doc`.
@@ -96,8 +102,7 @@ Or, to see the result in-situ, with dynamic documentation served, you can:
 - `gradle devshell` your application ;
 - refresh `/@doc`.
 
-[discrete]
-===== Documentations archives
+**Documentations archives**
 
 The `io.werval.dist` project that create distributions, does the job of assembling documentation archives.
 
@@ -110,11 +115,10 @@ The result is assembled in a ZIP archive published with the `doc` classifier for
 
     io.werval:io.werval.dist:{werval_version}:doc@zip
 
-[discrete]
-===== Website
+**Website**
 
-The Werval website provide general information about Werval and its community and embedd documentation sites for all past,
-current and develop versions documentations mini-sites.
+The Werval website provide general information about Werval and its community and embedd documentation sites for all
+past, current and develop versions documentations mini-sites.
 
 Notable things included in the website are out of the Werval releases lifecycle, like Skeletons and Samples.
 Thus, this is built in a separate project, in a separate git repository named `werval-website`.
@@ -158,7 +162,6 @@ Here are the Werval specific attributes that are set while rendering the documen
 
 ==== Styling
 
-`io.werval.doc` styles the Werval Documentation for DevShell and distributions archives.
+`io.werval.doc.css` styles the Werval Documentation for DevShell and distributions archives.
 
-`io.werval.website` embed the Werval Documentation as is and styles the website home and some other root pages.
-
+`io.werval.website.css` embed the Werval Documentation as is and styles the website home and some other root pages.

@@ -25,12 +25,14 @@ import io.werval.runtime.routes.RoutesProvider;
 import io.werval.server.netty.NettyServer;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.server.HttpServer;
+import io.werval.test.util.FreePortFinder;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.singletonMap;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
 import static io.werval.test.WervalTestHelper.setupRestAssuredDefaults;
@@ -85,27 +87,46 @@ public class WervalHttpTest
     @Before
     public final void beforeEachTestMethod()
     {
+        // Classloader
         ClassLoader classLoader = getClass().getClassLoader();
+
+        // Configuration
         String conf = configurationResourceNameOverride == null
                       ? configurationResourceName()
                       : configurationResourceNameOverride;
         ConfigInstance config = new ConfigInstance( classLoader, conf );
+
+        // Configuration overrides
+        Map<String, Object> overrides = new LinkedHashMap<>( 2 );
+        String address = config.string( WERVAL_HTTP_ADDRESS );
+        int freePort = FreePortFinder.findRandomOnInterfaceByName( address );
+        LOG.info( "Application will forcibly listen on {}:{} for test mode", address, freePort );
+        overrides.put( WERVAL_HTTP_PORT, freePort );
         try
         {
             config.string( ConfigKeys.APP_SECRET );
         }
         catch( com.typesafe.config.ConfigException.Missing noAppSecret )
         {
-            String secret = CryptoInstance.newRandomSecret256BitsHex();
-            LOG.info( "Application has no 'app.secret', using a random one for test mode: {}", secret );
-            config = new ConfigInstance( classLoader, conf, null, null, singletonMap( "app.secret", secret ) );
+            String secret = CryptoInstance.newWeaklyRandomSecret256BitsHex();
+            LOG.info( "Application has no 'app.secret', using a weakly random one for test mode: {}", secret );
+            overrides.put( "app.secret", secret );
         }
+        config = new ConfigInstance( classLoader, conf, null, null, overrides );
+
+        // Routes
         RoutesProvider routesProvider = routesProviderOverride == null
                                         ? routesProvider()
                                         : routesProviderOverride;
+
+        // Application
         app = new ApplicationInstance( Mode.TEST, config, classLoader, routesProvider );
+
+        // Server
         httpServer = new NettyServer( app );
         httpServer.activate();
+
+        // Final setups
         setupRestAssuredDefaults( config );
     }
 

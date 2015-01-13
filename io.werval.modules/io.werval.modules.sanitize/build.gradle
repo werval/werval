@@ -20,6 +20,9 @@ dependencies {
     // https://code.google.com/p/owasp-java-encoder/
     compile 'org.owasp.encoder:encoder:1.1.1'
 
+    // http://www.unbescape.org/
+    // compile 'org.unbescape:unbescape:1.1.0.RELEASE'
+
     // http://jsoup.org/cookbook/cleaning-html/whitelist-sanitizer
     // compile 'org.jsoup:jsoup:1.8.1'
 

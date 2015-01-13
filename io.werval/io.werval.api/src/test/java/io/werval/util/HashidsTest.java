@@ -41,9 +41,9 @@ public class HashidsTest
         long number = 12_345L;
         String expected = "NkK9";
 
-        assertThat( hashids.encode( number ), equalTo( expected ) );
+        assertThat( hashids.encodeToString( number ), equalTo( expected ) );
 
-        long[] decoded = hashids.decode( expected );
+        long[] decoded = hashids.decodeLongs( expected );
         assertThat( decoded.length, is( 1 ) );
         assertThat( decoded[0], is( number ) );
     }
@@ -59,9 +59,9 @@ public class HashidsTest
         };
         String expected = "aBMswoO2UB3Sj";
 
-        assertThat( hashids.encode( numbers ), equalTo( expected ) );
+        assertThat( hashids.encodeToString( numbers ), equalTo( expected ) );
 
-        long[] decoded = hashids.decode( expected );
+        long[] decoded = hashids.decodeLongs( expected );
         assertThat( decoded.length, is( numbers.length ) );
         assertTrue( Arrays.equals( decoded, numbers ) );
     }
@@ -74,9 +74,9 @@ public class HashidsTest
         long number = 1L;
         String expected = "gB0NV05e";
 
-        assertThat( hashids.encode( number ), equalTo( expected ) );
+        assertThat( hashids.encodeToString( number ), equalTo( expected ) );
 
-        long[] decoded = hashids.decode( expected );
+        long[] decoded = hashids.decodeLongs( expected );
         assertThat( decoded.length, is( 1 ) );
         assertThat( decoded[0], is( number ) );
     }
@@ -92,9 +92,9 @@ public class HashidsTest
         };
         String expected = "1Wc8cwcE";
 
-        assertThat( hashids.encode( numbers ), equalTo( expected ) );
+        assertThat( hashids.encodeToString( numbers ), equalTo( expected ) );
 
-        long[] decoded = hashids.decode( expected );
+        long[] decoded = hashids.decodeLongs( expected );
         assertThat( decoded.length, is( numbers.length ) );
         assertTrue( Arrays.equals( decoded, numbers ) );
     }
@@ -110,9 +110,9 @@ public class HashidsTest
         };
         String expected = "kRHnurhptKcjIDTWC3sx";
 
-        assertThat( hashids.encode( numbers ), equalTo( expected ) );
+        assertThat( hashids.encodeToString( numbers ), equalTo( expected ) );
 
-        long[] decoded = hashids.decode( expected );
+        long[] decoded = hashids.decodeLongs( expected );
         assertThat( decoded.length, is( numbers.length ) );
         assertTrue( Arrays.equals( decoded, numbers ) );
     }
@@ -121,17 +121,17 @@ public class HashidsTest
     public void randomnessForIncrementing()
     {
         Hashids hashids = new Hashids( "this is my salt" );
-        assertEquals( hashids.encode( 1L ), "NV" );
-        assertEquals( hashids.encode( 2L ), "6m" );
-        assertEquals( hashids.encode( 3L ), "yD" );
-        assertEquals( hashids.encode( 4L ), "2l" );
-        assertEquals( hashids.encode( 5L ), "rD" );
+        assertEquals( hashids.encodeToString( 1L ), "NV" );
+        assertEquals( hashids.encodeToString( 2L ), "6m" );
+        assertEquals( hashids.encodeToString( 3L ), "yD" );
+        assertEquals( hashids.encodeToString( 4L ), "2l" );
+        assertEquals( hashids.encodeToString( 5L ), "rD" );
     }
 
     @Test
     public void valuesGreaterIntMaxValue()
     {
-        assertThat( new Hashids( "this is my salt" ).encode( 9_876_543_210_123L ), equalTo( "Y8r7W1kNN" ) );
+        assertThat( new Hashids( "this is my salt" ).encodeToString( 9_876_543_210_123L ), equalTo( "Y8r7W1kNN" ) );
     }
 
     @Test
@@ -140,7 +140,7 @@ public class HashidsTest
     {
         try
         {
-            new Hashids( "this is my salt" ).encode( Hashids.MAX_NUMBER_VALUE + 1 );
+            new Hashids( "this is my salt" ).encodeToString( Hashids.MAX_NUMBER_VALUE + 1 );
             fail( "Hashids shoud not allow encoding number greater or equal to 2^53." );
         }
         catch( IllegalArgumentException expected )
@@ -149,10 +149,10 @@ public class HashidsTest
         }
     }
 
-    @Test
+    @Test( expected = IllegalArgumentException.class )
     public void wrongDecoding()
     {
-        assertEquals( new Hashids( "this is my pepper" ).decode( "NkK9" ).length, 0 );
+        new Hashids( "this is my pepper" ).decode( "NkK9" );
     }
 
     @Test
@@ -161,7 +161,7 @@ public class HashidsTest
         Hashids hashids = new Hashids( "this is my salt" );
         String hex = "507f1f77bcf86cd799439011";
 
-        String hash = hashids.encodeHex( hex );
+        String hash = hashids.encodeToString( hex );
         String returnedHex = hashids.decodeHex( hash );
 
         assertTrue( hasText( hash ) );
@@ -175,7 +175,7 @@ public class HashidsTest
         Hashids hashids = new Hashids( "", minHashLength );
         String hex = "507f1f77bcf86cd799439011";
 
-        String hash = hashids.encodeHex( hex );
+        String hash = hashids.encodeToString( hex );
         String returnedHex = hashids.decodeHex( hash );
 
         assertTrue( hasText( hash ) );
@@ -190,7 +190,7 @@ public class HashidsTest
         Hashids hashids = new Hashids( "this is my salt" );
         String hex = "f000000000000000000000000000000000000000000000000000000000000000000000000000000000000f";
 
-        String hash = hashids.encodeHex( hex );
+        String hash = hashids.encodeToString( hex );
         String returnedHex = hashids.decodeHex( hash );
 
         assertTrue( hasText( hash ) );
@@ -207,8 +207,8 @@ public class HashidsTest
             1, 2, 3, 4, 5
         };
 
-        String hash = hashids.encode( numbers );
-        long[] returnedNumbers = hashids.decode( hash );
+        String hash = hashids.encodeToString( numbers );
+        long[] returnedNumbers = hashids.decodeLongs( hash );
 
         assertTrue( hasText( hash ) );
         assertThat( returnedNumbers, equalTo( numbers ) );
@@ -227,8 +227,8 @@ public class HashidsTest
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
 
-        String hash = hashids.encode( numbers );
-        long[] returnedNumbers = hashids.decode( hash );
+        String hash = hashids.encodeToString( numbers );
+        long[] returnedNumbers = hashids.decodeLongs( hash );
 
         assertTrue( hasText( hash ) );
         assertThat( returnedNumbers, equalTo( numbers ) );
@@ -243,7 +243,7 @@ public class HashidsTest
     {
         try
         {
-            new Hashids( "this is my salt" ).encode( -1 );
+            new Hashids( "this is my salt" ).encodeToString( -1 );
             fail( "Hashids shoud not allow encoding negative numbers." );
         }
         catch( IllegalArgumentException expected )
@@ -274,8 +274,8 @@ public class HashidsTest
         {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
-        String hashid = hashids.encode( numbers );
-        long[] decoded = hashids.decode( hashid );
+        String hashid = hashids.encodeToString( numbers );
+        long[] decoded = hashids.decodeLongs( hashid );
         assertTrue( Arrays.equals( numbers, decoded ) );
     }
 
@@ -287,8 +287,8 @@ public class HashidsTest
         {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
-        String hashid = hashids.encode( numbers );
-        long[] decoded = hashids.decode( hashid );
+        String hashid = hashids.encodeToString( numbers );
+        long[] decoded = hashids.decodeLongs( hashid );
         assertTrue( Arrays.equals( numbers, decoded ) );
     }
 
@@ -300,7 +300,7 @@ public class HashidsTest
         {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
-        String hashid = hashids.encode( numbers );
+        String hashid = hashids.encodeToString( numbers );
         int[] decoded = hashids.decodeInts( hashid );
         assertTrue( Arrays.equals( numbers, decoded ) );
     }

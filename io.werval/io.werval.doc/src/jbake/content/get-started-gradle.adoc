@@ -7,6 +7,9 @@ Quick walkthrough writing some HTTP "Hello World" using Gradle
 :toc: right
 :toc-title: Get started using Gradle
 
+In this guide you'll download a skeleton application and run it in development mode, walkthrough the application code
+and learn a few other things about Werval.
+
 toc::[]
 
 include::getting-started/preamble.adoc[]

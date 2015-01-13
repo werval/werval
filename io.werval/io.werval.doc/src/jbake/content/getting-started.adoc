@@ -28,13 +28,13 @@ See theses two presentations about Java build tools:
 
 == Choose your side of the force
 
-- link:get-started-gradle.html[Get started using Gradle]
-- link:get-started-maven.html[Get started using Maven]
+link:get-started-gradle.html[Get started using Gradle,role="btn btn-sm btn-primary"]
+link:get-started-maven.html[Get started using Maven,role="btn btn-sm btn-primary"]
 
 
 == Our advice
 
-_TL;DR_ We recommend using Gradle.
+**TL;DR** We recommend using Gradle.
 
 Everything Werval is automated using Gradle, from the SDK build to the baking and publication of a website embedding
 versioned documentation for past, current and development releases.
@@ -43,7 +43,7 @@ The only exception is the Maven support that is built using, well, Maven.
 We love Gradle.
 Mainly for its DSL expressiveness and extensibility.
 But, Maven is very commonly used and changing the build tool used in an organisation can be challenging.
-We implement new features in Gradle support and port them to Maven support afterwards, if even possible.
+We implement new features for Gradle and port them to Maven support afterwards, if even possible.
 In other words, work on the Werval Maven support is motivated by ease of adoption only.
 
 So, do we need to say more?

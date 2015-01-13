@@ -26,9 +26,9 @@ public class DefaultTest
 {
     @ClassRule
     public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
-        "GET /notFound io.werval.controllers.Default.notFound\n"
-        + "GET /internalServerError io.werval.controllers.Default.internalServerError\n"
-        + "GET /notImplemented io.werval.controllers.Default.notImplemented" ) );
+        "GET /notFound Default.notFound\n"
+        + "GET /internalServerError Default.internalServerError\n"
+        + "GET /notImplemented Default.notImplemented" ) );
 
     @Test
     public void givenNotFoundRouteWhenRequestingExpectNotFound()

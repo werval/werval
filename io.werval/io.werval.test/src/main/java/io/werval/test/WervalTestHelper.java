@@ -19,7 +19,7 @@ import io.werval.api.Config;
 import io.werval.api.Errors;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
@@ -60,17 +60,30 @@ import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
     /* package */ static void setupRestAssuredDefaults( Config config )
     {
         // Setup RestAssured defaults if present
+        Class<?> restAssured;
         try
         {
-            Field restAssuredPortField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "port" );
-            restAssuredPortField.set( null, config.intNumber( WERVAL_HTTP_PORT ) );
-            Field restAssuredBaseURLField = Class.forName( "com.jayway.restassured.RestAssured" ).getField( "baseURL" );
-            restAssuredBaseURLField.set( null, "http://" + config.string( WERVAL_HTTP_ADDRESS ) );
+            restAssured = Class.forName( "com.jayway.restassured.RestAssured" );
         }
-        catch( ClassNotFoundException | NoSuchFieldException |
-               IllegalArgumentException | IllegalAccessException noRestAssured )
+        catch( ClassNotFoundException noRestAssured )
         {
             // RestAssured is not present, we simply don't configure it.
+            restAssured = null;
+        }
+        if( restAssured != null )
+        {
+            try
+            {
+                restAssured.getField( "port" ).set( null, config.intNumber( WERVAL_HTTP_PORT ) );
+                restAssured.getField( "baseURI" ).set( null, "http://" + config.string( WERVAL_HTTP_ADDRESS ) );
+                restAssured.getMethod( "enableLoggingOfRequestAndResponseIfValidationFails" ).invoke( null );
+            }
+            catch( NoSuchFieldException | NoSuchMethodException | InvocationTargetException |
+                   IllegalArgumentException | IllegalAccessException ex )
+            {
+                System.err.println( "Unable to setup rest-assured" );
+                ex.printStackTrace( System.err );
+            }
         }
     }
 

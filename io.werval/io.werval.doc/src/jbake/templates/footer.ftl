@@ -4,7 +4,11 @@
 
     <div id="footer">
         <p class="muted credit">&copy; ${.now?string("yyyy")} | Werval ${config.werval_version} | The Werval Community</p>
-        <p class="muted credit">Mixed with <a href="http://getbootstrap.com/">Bootstrap</a> | Baked with <a href="http://jbake.org">JBake</a></p>
+        <p class="muted credit">
+            Authored with <a href="http://asciidoctor.org/">Asciidoctor</a>
+            | Baked with <a href="http://jbake.org">JBake</a>
+            | Mixed with <a href="http://getbootstrap.com/">Bootstrap</a>
+        </p>
       </div>
     </div>
 

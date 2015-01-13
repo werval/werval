@@ -15,13 +15,16 @@
  */
 package io.werval.runtime.routes;
 
+import io.werval.api.Application;
 import io.werval.api.exceptions.ParameterBinderException;
+import io.werval.api.exceptions.ParameterBindingException;
+import io.werval.api.exceptions.ParameterUnbindingException;
 import io.werval.api.routes.ParameterBinder;
 import io.werval.api.routes.ParameterBinders;
 import io.werval.runtime.util.TypeResolver;
+import io.werval.util.Hashids;
 import java.net.MalformedURLException;
 import java.time.DateTimeException;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -608,27 +611,52 @@ public final class ParameterBindersInstance
     /**
      * {@link java.time.ZonedDateTime} Parameter Binder.
      */
-    public static final class ZoneDateTime
+    public static final class ZonedDateTime
         extends StrictTypingParameterBinder<java.time.ZonedDateTime>
     {
         @Override
-        public ZonedDateTime bind( java.lang.String name, java.lang.String value )
+        public java.time.ZonedDateTime bind( java.lang.String name, java.lang.String value )
         {
             return java.time.ZonedDateTime.parse( value );
         }
 
         @Override
-        public java.lang.String unbind( java.lang.String name, ZonedDateTime value )
+        public java.lang.String unbind( java.lang.String name, java.time.ZonedDateTime value )
+        {
+            return value.toString();
+        }
+    }
+
+    /**
+     * {@link io.werval.util.Hashid} Parameter Binder.
+     * <p>
+     * Use the application's secret as salt.
+     */
+    public static final class Hashid
+        extends StrictTypingParameterBinder<io.werval.util.Hashid>
+    {
+        private Hashids hashids;
+
+        @Override
+        public void init( Application application )
+        {
+            hashids = application.crypto().hashids();
+        }
+
+        @Override
+        public io.werval.util.Hashid bind( java.lang.String name, java.lang.String value )
+        {
+            return hashids.decode( value );
+        }
+
+        @Override
+        public java.lang.String unbind( java.lang.String name, io.werval.util.Hashid value )
         {
             return value.toString();
         }
     }
 
     private final List<ParameterBinder<?>> parameterBinders = new ArrayList<>();
-
-    public ParameterBindersInstance()
-    {
-    }
 
     public ParameterBindersInstance( List<ParameterBinder<?>> parameterBinders )
     {
@@ -638,21 +666,40 @@ public final class ParameterBindersInstance
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> T bind( java.lang.Class<T> type, java.lang.String paramName, java.lang.String paramValue )
+        throws ParameterBindingException
     {
+        List<Exception> errors = new ArrayList<>();
         for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
             if( parameterBinder.accept( type ) )
             {
-                return (T) parameterBinder.bind( paramName, paramValue );
+                try
+                {
+                    return (T) parameterBinder.bind( paramName, paramValue );
+                }
+                catch( Exception ex )
+                {
+                    errors.add( ex );
+                }
             }
         }
-        throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+        if( errors.isEmpty() )
+        {
+            throw new ParameterBindingException( "No ParameterBinder found for type: " + type );
+        }
+        ParameterBindingException ex = new ParameterBindingException(
+            "Unable to bind parameter " + paramName + " valued to " + paramValue
+        );
+        errors.forEach( e -> ex.addSuppressed( e ) );
+        throw ex;
     }
 
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> java.lang.String unbind( java.lang.Class<T> type, java.lang.String paramName, T paramValue )
+        throws ParameterUnbindingException
     {
+        List<Exception> errors = new ArrayList<>();
         for( ParameterBinder<?> parameterBinder : parameterBinders )
         {
             if( parameterBinder.accept( type ) )
@@ -660,6 +707,14 @@ public final class ParameterBindersInstance
                 return ( (ParameterBinder<T>) parameterBinder ).unbind( paramName, paramValue );
             }
         }
-        throw new ParameterBinderException( "No ParameterBinder found for type: " + type );
+        if( errors.isEmpty() )
+        {
+            throw new ParameterUnbindingException( "No ParameterBinder found for type: " + type );
+        }
+        ParameterUnbindingException ex = new ParameterUnbindingException(
+            "Unable to unbind parameter " + paramName + " valued to " + paramValue
+        );
+        errors.forEach( e -> ex.addSuppressed( e ) );
+        throw ex;
     }
 }

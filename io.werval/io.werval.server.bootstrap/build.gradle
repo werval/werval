@@ -3,8 +3,9 @@ description = "Werval Server - Bootstrap"
 
 dependencies {
 
-    compile project( ":io.werval.runtime" )
-    // TODO Remove me!
+    compile project( ":io.werval.spi" )
+    // Default server implementation is Netty
+    // Hardcoded here for now
     compile project( ":io.werval.server.netty" )
     
 }

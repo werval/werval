@@ -158,7 +158,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
             APP_EXECUTORS + "." + defaultExecutor + ".thread_name_prefix"
         );
         this.shutdownTimeoutMillis = application.config().milliseconds( APP_EXECUTORS_SHUTDOWN_TIMEOUT );
-        Config executorsConfig = application.config().object( APP_EXECUTORS );
+        Config executorsConfig = application.config().atPath( APP_EXECUTORS );
         int executorsCount = executorsConfig.subKeys().size();
         this.executors = new HashMap<>( executorsCount - 1 );
         this.executorsThreadNamePrefixes = new HashMap<>( executorsCount );

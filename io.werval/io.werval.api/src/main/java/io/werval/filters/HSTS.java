@@ -87,7 +87,7 @@ public @interface HSTS
             return chain.next( context ).thenApply(
                 (outcome) ->
                 {
-                    Config config = context.application().config().object( "werval.filters.hsts" );
+                    Config config = context.application().config().atPath( "werval.filters.hsts" );
                     long maxAge = annotation.map(
                         annot -> annot.maxAge() == -1 ? null : annot.maxAge()
                     ).orElse(
