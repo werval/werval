@@ -165,6 +165,16 @@ For Maven,
 
 We're now done with the setup, time to build!
 
+[TIP]
+====
+If you need to use the wervalLocalRepository in another gradle project, simply throw thie following line in its build.gradle:
+
+[source,groovy]
+----
+buildscript { if( project.hasProperty( 'wervalLocalRepository' ) ) repositories { maven { url project.wervalLocalRepository } } }
+----
+====
+
 
 === Build the SDK
 
