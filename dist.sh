@@ -33,7 +33,7 @@ $MAVEN -q -e -f io.werval.maven/pom.xml install -DskipTests -Dgpg.skip
 echo "Built."
 
 # modules
-$FIGLET oio.werval.modules
+$FIGLET io.werval.modules
 ./gradlew -q --stacktrace -b io.werval.modules/build.gradle install
 echo "Built."
 
