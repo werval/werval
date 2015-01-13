@@ -37,8 +37,8 @@ public class IntrospectTest
 {
     @ClassRule
     public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
-        "GET /@config io.werval.controllers.Introspect.config\n"
-        + "GET /@version io.werval.controllers.Introspect.version\n"
+        "GET /@config Introspect.config\n"
+        + "GET /@version Introspect.version\n"
     ) );
 
     @Test

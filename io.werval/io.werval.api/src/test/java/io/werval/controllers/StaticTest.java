@@ -36,8 +36,8 @@ public class StaticTest
 {
     @ClassRule
     public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
-        "GET /single io.werval.controllers.Static.file( String file = 'src/test/resources/logback.xml' )\n"
-        + "GET /tree/*path io.werval.controllers.Static.tree( String root = 'src/test/resources', String path )"
+        "GET /single Static.file( String file = 'src/test/resources/logback.xml' )\n"
+        + "GET /tree/*path Static.tree( String root = 'src/test/resources', String path )"
     ) );
 
     private static final File ROOT = new File( "src/test/resources" );

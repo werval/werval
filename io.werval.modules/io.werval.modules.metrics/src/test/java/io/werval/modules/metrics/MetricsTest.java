@@ -43,9 +43,9 @@ public class MetricsTest
 {
     @ClassRule
     public static WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
-        "GET / io.werval.controllers.Default.ok\n"
-        + "GET /redir io.werval.controllers.Default.seeOther( String url = / )\n"
-        + "GET /error io.werval.controllers.Default.internalServerError\n"
+        "GET / Default.ok\n"
+        + "GET /redir Default.seeOther( String url = / )\n"
+        + "GET /error Default.internalServerError\n"
         + "GET /unknown io.werval.modules.metrics.MetricsTest$Controller.unknown\n"
         + "GET /@metrics io.werval.modules.metrics.Tools.devShellIndex\n"
         + "GET /@metrics/metrics io.werval.modules.metrics.Tools.metrics\n"
