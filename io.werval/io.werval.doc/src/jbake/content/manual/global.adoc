@@ -1,6 +1,37 @@
 
 == The Global object
 
+
+=== Configuration
+
+[source,json]
+----
+app.global = com.acme.WervalGlobal
+----
+
+[source,java]
+----
+package com.acme;
+
+public class WervalGlobal extends io.werval.api.Global
+{
+    @Override
+    public void onActivate( Application application )
+    {
+        // Called on application activation
+    }
+
+    @Override
+    public void onPassivate( Application application )
+    {
+        // Called on application passivation
+    }
+
+    // Many other methods, see io.werval.api.Global
+    // ...
+}
+----
+
 // === Instanciation
 
 // - Controllers

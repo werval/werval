@@ -1,6 +1,57 @@
 
-// == Core Controllers and Filters
+== Core Library
 
-// === Controllers
+The `io.werval.api` jar contains core controllers and filters.
 
-// === Filters
+=== Controllers
+
+Core library controllers can be declared in routes by their class simple name, no need to use fully qualified class
+names. In other words you can use `Default` instead of `io.werval.controllers.Default`.
+
+==== Default
+
+.routes.conf
+[source]
+----
+GET /ok Default.ok
+GET /ping Default.ping
+# ...
+----
+
+
+==== Classpath resources
+
+.routes.conf
+[source]
+----
+GET /assets/*path   Classpath.resource( String basepath = 'assets/', String path )
+GET /favicon.ico    Classpath.resource( String path = 'assets/favicon.ico' )
+----
+
+==== Static files
+
+.routes.conf
+[source]
+----
+GET /single Static.file( String file = 'path/to/single/file.png' )
+GET /tree/*path Static.tree( String root = 'path/to/tree', String path )
+----
+
+=== Filters
+
+==== @LogIfSlow
+
+[source,java]
+----
+@io.werval.filters.LogIfSlow
+public Outcome interaction( /*..*/ ) { /*..*/ }
+----
+
+==== @AcceptContentTypes
+
+[source,java]
+----
+@io.werval.filters.AcceptContentTypes( { "application/json" } )
+public Outcome interaction( /*..*/ ) { /*..*/ }
+----
+
