@@ -1,9 +1,11 @@
 // Define libraries and webjars used accross projects and their versions
 
-// Core libraries versions
+// Core API libraries versions
 def v_slf4j = '1.7.10'
-def v_typesafe_config = '1.2.1'
+
+// Core Runtime libraries versions
 def v_javassist = '3.18.2-GA' // 3.19.0-GA available but fails with HikariCP
+def v_typesafe_config = '1.2.1'
 
 // HTTP Server libraries versions
 def v_netty = '4.0.25.Final'
@@ -59,10 +61,12 @@ def v_subethasmtp = '3.1.7'
 rootProject.ext {
     libs = [
 
-        // Core libraries
+        // Core API libraries
         slf4j:                  "org.slf4j:slf4j-api:$v_slf4j",
-        typesafe_config:        "com.typesafe:config:$v_typesafe_config",
+
+        // Core Runtime libraries
         javassist:              "org.javassist:javassist:$v_javassist",
+        typesafe_config:        "com.typesafe:config:$v_typesafe_config",
 
         // HTTP Server libraries
         netty_http:             "io.netty:netty-codec-http:$v_netty",
