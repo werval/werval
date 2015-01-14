@@ -5,6 +5,12 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## develop - [history](https://github.com/werval/werval/commits/develop)
+
+> Unreleased!
+
+
+
 ## 0.6.0 - [history](https://github.com/werval/werval/commits/0.6.0)
 
 > [U can't touch this](http://grooveshark.com/s/U+Cant+Touch+This/3sWgpi)
