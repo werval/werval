@@ -60,79 +60,79 @@ rootProject.ext {
     libs = [
 
         // Core libraries
-        slf4j:              "org.slf4j:slf4j-api:$v_slf4j",
-        typesafe_config:    "com.typesafe:config:$v_typesafe_config",
-        javassist:          "org.javassist:javassist:$v_javassist",
+        slf4j:                  "org.slf4j:slf4j-api:$v_slf4j",
+        typesafe_config:        "com.typesafe:config:$v_typesafe_config",
+        javassist:              "org.javassist:javassist:$v_javassist",
 
         // HTTP Server libraries
-        netty_http:         "io.netty:netty-codec-http:$v_netty",
+        netty_http:             "io.netty:netty-codec-http:$v_netty",
 
         // DevShell librairies
-        classworlds:        "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
-        sitemesh:           "org.sitemesh:sitemesh:$v_sitemesh",
+        classworlds:            "org.codehaus.plexus:plexus-classworlds:$v_classworlds",
+        sitemesh:               "org.sitemesh:sitemesh:$v_sitemesh",
 
         // CLI libraries
-        cli:                "commons-cli:commons-cli:$v_cli",
+        cli:                    "commons-cli:commons-cli:$v_cli",
 
         // Modules libraries
-        eclipselink:        "org.eclipse.persistence:eclipselink:$v_eclipselink",
-        ehcache:            "net.sf.ehcache:ehcache:$v_ehcache",
-        email:              "org.apache.commons:commons-email:$v_email",
-        guice:              "com.google.inject:guice:$v_guice",
-        hikaricp:           "com.zaxxer:HikariCP:$v_hikaricp",
+        eclipselink:            "org.eclipse.persistence:eclipselink:$v_eclipselink",
+        ehcache:                "net.sf.ehcache:ehcache:$v_ehcache",
+        email:                  "org.apache.commons:commons-email:$v_email",
+        guice:                  "com.google.inject:guice:$v_guice",
+        hikaricp:               "com.zaxxer:HikariCP:$v_hikaricp",
         jackson: [
-                            "com.fasterxml.jackson.core:jackson-core:$v_jackson",
-                            "com.fasterxml.jackson.core:jackson-annotations:$v_jackson",
-                            "com.fasterxml.jackson.core:jackson-databind:$v_jackson",
+                                "com.fasterxml.jackson.core:jackson-core:$v_jackson",
+                                "com.fasterxml.jackson.core:jackson-annotations:$v_jackson",
+                                "com.fasterxml.jackson.core:jackson-databind:$v_jackson",
         ],
-        jedis:              "redis.clients:jedis:$v_jedis",
-        jing:               "com.thaiopensource:jing:$v_jing",
-        jpa:                "org.eclipse.persistence:javax.persistence:$v_jpa",
-        liquibase:          "org.liquibase:liquibase-core:$v_liquibase",
-        liquibase_slf4j:    "com.mattbertolini:liquibase-slf4j:$v_liquibase_slf4j",
-        log4jdbc:           "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:$v_log4jdbc",
-        memcache:           "net.spy:spymemcached:$v_memcache",
+        jedis:                  "redis.clients:jedis:$v_jedis",
+        jing:                   "com.thaiopensource:jing:$v_jing",
+        jpa:                    "org.eclipse.persistence:javax.persistence:$v_jpa",
+        liquibase:              "org.liquibase:liquibase-core:$v_liquibase",
+        liquibase_slf4j:        "com.mattbertolini:liquibase-slf4j:$v_liquibase_slf4j",
+        log4jdbc:               "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:$v_log4jdbc",
+        memcache:               "net.spy:spymemcached:$v_memcache",
         metrics: [
-                            "io.dropwizard.metrics:metrics-core:$v_metrics",
-                            "io.dropwizard.metrics:metrics-healthchecks:$v_metrics",
-                            "io.dropwizard.metrics:metrics-jvm:$v_metrics",
-                            "io.dropwizard.metrics:metrics-json:$v_metrics",
+                                "io.dropwizard.metrics:metrics-core:$v_metrics",
+                                "io.dropwizard.metrics:metrics-healthchecks:$v_metrics",
+                                "io.dropwizard.metrics:metrics-jvm:$v_metrics",
+                                "io.dropwizard.metrics:metrics-json:$v_metrics",
         ],
-        qi4j_bootstrap:     "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
-        qi4j_runtime:       "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
+        qi4j_bootstrap:         "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
+        qi4j_runtime:           "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
         rythm: [
-                            "org.rythmengine:rythm-engine:$v_rythm",
-                            'org.eclipse.jdt.core.compiler:ecj:4.4'
+                                "org.rythmengine:rythm-engine:$v_rythm",
+                                'org.eclipse.jdt.core.compiler:ecj:4.4'
         ],
-        thymeleaf:          "org.thymeleaf:thymeleaf:$v_thymeleaf",
-        saxon:              "net.sf.saxon:Saxon-HE:$v_saxon",
-        spring_context:     "org.springframework:spring-context:$v_spring",
-        spring_test:        "org.springframework:spring-test:$v_spring",
-        tyrex:              "tyrex:tyrex:$v_tyrex",
-        woodstox:           "org.codehaus.woodstox:woodstox-core-asl:$v_woodstox",
-        xerces:             "xerces:xercesImpl:$v_xerces",
-        xmlresolver:        "xml-resolver:xml-resolver:$v_xmlresolver",
+        thymeleaf:              "org.thymeleaf:thymeleaf:$v_thymeleaf",
+        saxon:                  "net.sf.saxon:Saxon-HE:$v_saxon",
+        spring_context:         "org.springframework:spring-context:$v_spring",
+        spring_test:            "org.springframework:spring-test:$v_spring",
+        tyrex:                  "tyrex:tyrex:$v_tyrex",
+        woodstox:               "org.codehaus.woodstox:woodstox-core-asl:$v_woodstox",
+        xerces:                 "xerces:xercesImpl:$v_xerces",
+        xmlresolver:            "xml-resolver:xml-resolver:$v_xmlresolver",
 
         // Build Plugins libraries
-        gradle_tooling:     "org.gradle:gradle-tooling-api:$v_gradle_tooling",
+        gradle_tooling:         "org.gradle:gradle-tooling-api:$v_gradle_tooling",
 
         // Testing Tools libraries
-        awaitility:         "com.jayway.awaitility:awaitility:$v_awaitility",
-        fluentlenium:       "org.fluentlenium:fluentlenium-festassert:$v_fluentlenium",
+        awaitility:             "com.jayway.awaitility:awaitility:$v_awaitility",
+        fluentlenium:           "org.fluentlenium:fluentlenium-festassert:$v_fluentlenium",
         junit: [
-                            "junit:junit:$v_junit",
-                            "org.hamcrest:hamcrest-all:1.3",
+                                "junit:junit:$v_junit",
+                                "org.hamcrest:hamcrest-all:1.3",
         ],
         rest_assured:[
-                            "com.jayway.restassured:rest-assured:$v_rest_assured",
-                            "commons-logging:commons-logging:1.2",
+                                "com.jayway.restassured:rest-assured:$v_rest_assured",
+                                "commons-logging:commons-logging:1.2",
         ],
 
         // Test libraries
-        h2:                 "com.h2database:h2:$v_h2",
-        logback:            "ch.qos.logback:logback-classic:$v_logback",
-        postgres:           "org.postgresql:postgresql:$v_postgres",
-        subethasmtp:        "org.subethamail:subethasmtp:$v_subethasmtp",
+        h2:                     "com.h2database:h2:$v_h2",
+        logback:                "ch.qos.logback:logback-classic:$v_logback",
+        postgres:               "org.postgresql:postgresql:$v_postgres",
+        subethasmtp:            "org.subethamail:subethasmtp:$v_subethasmtp",
 
     ]
 }
