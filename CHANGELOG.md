@@ -9,6 +9,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased!
 
+### Bug fixes
+
+- (#239) Fix ReverseRoutes NPE if controller is interface and no parameters
+
 
 
 ## 0.6.0 - [history](https://github.com/werval/werval/commits/0.6.0)
