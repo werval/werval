@@ -13,6 +13,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - (#239) Fix ReverseRoutes NPE if controller is interface and no parameters
 
+### New features
+
+- (#5) CORS support
+
 
 
 ## 0.6.0 - [history](https://github.com/werval/werval/commits/0.6.0)
