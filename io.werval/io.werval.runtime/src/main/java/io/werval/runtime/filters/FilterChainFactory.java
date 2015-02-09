@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,10 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.Queue;
 
 /**
  * FilterChain Factory.
@@ -41,12 +40,10 @@ public final class FilterChainFactory
 {
     public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
-        Set<Couple<Class<? extends Filter>, Annotation>> uniqueFilters = new LinkedHashSet<>();
-        uniqueFilters.addAll( findFiltersOnType( context.route().controllerType() ) );
-        uniqueFilters.addAll( findFilters( context.route().controllerMethod().getAnnotations() ) );
-        Stack<Couple<Class<? extends Filter>, Annotation>> filtersStack = new Stack<>();
-        filtersStack.addAll( uniqueFilters );
-        return buildFilterChain( app, global, filtersStack, context );
+        Queue<Couple<Class<? extends Filter>, Annotation>> filterQueue = new ArrayDeque<>();
+        filterQueue.addAll( findFiltersOnType( context.route().controllerType() ) );
+        filterQueue.addAll( findFilters( context.route().controllerMethod().getAnnotations() ) );
+        return buildFilterChain( app, global, filterQueue, context );
     }
 
     private List<Couple<Class<? extends Filter>, Annotation>> findFiltersOnType( Class<?> controllerType )
@@ -67,12 +64,16 @@ public final class FilterChainFactory
         return filters;
     }
 
-    private List<Couple<Class<? extends Filter>, Annotation>> findFilters( Annotation[] annotations )
+    private List<Couple<Class<? extends Filter>, Annotation>> findFilters( Annotation... annotations )
     {
         List<Couple<Class<? extends Filter>, Annotation>> filters = new ArrayList<>();
         for( Annotation annotation : annotations )
         {
-            if( FilterWith.class.equals( annotation.annotationType() ) )
+            if( annotation.annotationType().getName().startsWith( "java.lang" ) )
+            {
+                // Skip java.lang annotations, there are cyclic declarations causing stack overflow
+            }
+            else if( FilterWith.class.equals( annotation.annotationType() ) )
             {
                 // Direct @FilterWith usage
                 FilterWith filterWith = (FilterWith) annotation;
@@ -81,59 +82,61 @@ public final class FilterChainFactory
                     filters.add( Couple.leftOnly( filterClass ) );
                 }
             }
-            else if( annotation.annotationType().getAnnotation( FilterWith.class ) != null )
-            {
-                // Annotation annotated with @FilterWith usage
-                FilterWith filterWith = annotation.annotationType().getAnnotation( FilterWith.class );
-                if( filterWith != null )
-                {
-                    for( Class<? extends Filter> filterClass : filterWith.value() )
-                    {
-                        filters.add( Couple.of( filterClass, annotation ) );
-                    }
-                }
-            }
             else
             {
                 // Repeatable annotation usage
                 Method[] methods = annotation.annotationType().getDeclaredMethods();
-                if( methods.length != 1
-                    || !"value".equals( methods[0].getName() )
-                    || !methods[0].getReturnType().isArray() )
+                if( methods.length == 1
+                    && "value".equals( methods[0].getName() )
+                    && methods[0].getReturnType().isArray() )
                 {
-                    continue;
-                }
-                try
-                {
-                    Object[] array = (Object[]) methods[0].invoke( annotation );
-                    List<Annotation> repeatedAnnotations = new ArrayList<>();
-                    for( Object inner : array )
+                    try
                     {
-                        try
+                        Object[] array = (Object[]) methods[0].invoke( annotation );
+                        List<Annotation> repeatedAnnotations = new ArrayList<>();
+                        for( Object inner : array )
                         {
-                            Annotation innerAnnotation = (Annotation) inner;
-                            if( innerAnnotation.annotationType().getAnnotation( Repeatable.class ) != null
-                                && annotation.annotationType().isAssignableFrom(
-                                    innerAnnotation.annotationType().getAnnotation( Repeatable.class ).value()
-                                ) )
+                            try
                             {
-                                repeatedAnnotations.add( innerAnnotation );
+                                Annotation innerAnnotation = (Annotation) inner;
+                                if( innerAnnotation.annotationType().getAnnotation( Repeatable.class ) != null
+                                    && annotation.annotationType().isAssignableFrom(
+                                        innerAnnotation.annotationType().getAnnotation( Repeatable.class ).value()
+                                    ) )
+                                {
+                                    repeatedAnnotations.add( innerAnnotation );
+                                }
+                            }
+                            catch( ClassCastException ex )
+                            {
+                                // Ignored
                             }
                         }
-                        catch( ClassCastException ex )
+                        if( repeatedAnnotations.isEmpty() )
                         {
-                            // Ignored
+                            // Any other annotation
+                            filters.addAll( findFilters( annotation.annotationType().getAnnotations() ) );
+                        }
+                        else
+                        {
+                            // This is a Repeatable annotation usage !
+                            filters.addAll(
+                                findFilters(
+                                    repeatedAnnotations.toArray( new Annotation[ repeatedAnnotations.size() ] )
+                                )
+                            );
                         }
                     }
-                    filters.addAll(
-                        findFilters(
-                            repeatedAnnotations.toArray( new Annotation[ repeatedAnnotations.size() ] )
-                        )
-                    );
+                    catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex )
+                    {
+                        throw new WervalRuntimeException( ex );
+                    }
                 }
-                catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException ex )
+                else
                 {
-                    throw new WervalRuntimeException( ex );
+                    // Any other annotation
+                    System.out.println( "ANNOTATION BEFORE STACKOVERFLOW: " + annotation );
+                    filters.addAll( findFilters( annotation.annotationType().getAnnotations() ) );
                 }
             }
         }
@@ -141,21 +144,18 @@ public final class FilterChainFactory
     }
 
     private FilterChain buildFilterChain(
-        Application app, Global global, Stack<Couple<Class<? extends Filter>, Annotation>> filters, Context context
+        Application app, Global global, Queue<Couple<Class<? extends Filter>, Annotation>> filters, Context context
     )
     {
         if( filters.isEmpty() )
         {
             return new FilterChainControllerTail( app, global );
         }
-        else
-        {
-            return new FilterChainInstance(
-                app,
-                global,
-                filters.pop(),
-                buildFilterChain( app, global, filters, context )
-            );
-        }
+        return new FilterChainInstance(
+            app,
+            global,
+            filters.poll(),
+            buildFilterChain( app, global, filters, context )
+        );
     }
 }

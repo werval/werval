@@ -17,6 +17,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - (#5) CORS support
 
+### Enhancements
+
+- (#240) Allow filter annotations on filter annotations
+
 
 
 ## 0.6.0 - [history](https://github.com/werval/werval/commits/0.6.0)
