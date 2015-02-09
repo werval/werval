@@ -45,10 +45,7 @@ import static org.junit.Assert.assertThat;
 public class FiltersTest
 {
     @FilterWith( ControllerAnnotationOne.Filter.class )
-    @Target(
-                {
-            ElementType.TYPE, ElementType.METHOD
-        } )
+    @Target( { ElementType.TYPE, ElementType.METHOD } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     public static @interface ControllerAnnotationOne
@@ -57,7 +54,9 @@ public class FiltersTest
             implements io.werval.api.filters.Filter<ControllerAnnotationOne>
         {
             @Override
-            public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<ControllerAnnotationOne> annotation )
+            public CompletableFuture<Outcome> filter(
+                FilterChain chain, Context context, Optional<ControllerAnnotationOne> annotation
+            )
             {
                 EVENTS.add( "ControllerAnnotationOne" );
                 return chain.next( context );
@@ -67,10 +66,7 @@ public class FiltersTest
 
     @ControllerAnnotationOne
     @FilterWith( ControllerAnnotationTwo.Filter.class )
-    @Target(
-                {
-            ElementType.TYPE, ElementType.METHOD
-        } )
+    @Target( { ElementType.TYPE, ElementType.METHOD } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     public static @interface ControllerAnnotationTwo
@@ -79,7 +75,9 @@ public class FiltersTest
             implements io.werval.api.filters.Filter<ControllerAnnotationTwo>
         {
             @Override
-            public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<ControllerAnnotationTwo> annotation )
+            public CompletableFuture<Outcome> filter(
+                FilterChain chain, Context context, Optional<ControllerAnnotationTwo> annotation
+            )
             {
                 EVENTS.add( "ControllerAnnotationTwo" );
                 return chain.next( context );
@@ -110,10 +108,7 @@ public class FiltersTest
     }
 
     @FilterWith( MethodAnnotationOne.Filter.class )
-    @Target(
-                {
-            ElementType.TYPE, ElementType.METHOD
-        } )
+    @Target( { ElementType.TYPE, ElementType.METHOD } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     public static @interface MethodAnnotationOne
@@ -122,7 +117,9 @@ public class FiltersTest
             implements io.werval.api.filters.Filter<MethodAnnotationOne>
         {
             @Override
-            public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<MethodAnnotationOne> annotation )
+            public CompletableFuture<Outcome> filter(
+                FilterChain chain, Context context, Optional<MethodAnnotationOne> annotation
+            )
             {
                 EVENTS.add( "MethodAnnotationOne" );
                 return chain.next( context );
@@ -132,10 +129,7 @@ public class FiltersTest
 
     @MethodAnnotationOne
     @FilterWith( MethodAnnotationTwo.Filter.class )
-    @Target(
-                {
-            ElementType.TYPE, ElementType.METHOD
-        } )
+    @Target( { ElementType.TYPE, ElementType.METHOD } )
     @Retention( RetentionPolicy.RUNTIME )
     @Inherited
     @Repeatable( MethodAnnotationTwo.Repeat.class )
@@ -147,17 +141,16 @@ public class FiltersTest
             implements io.werval.api.filters.Filter<MethodAnnotationTwo>
         {
             @Override
-            public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<MethodAnnotationTwo> annotation )
+            public CompletableFuture<Outcome> filter(
+                FilterChain chain, Context context, Optional<MethodAnnotationTwo> annotation
+            )
             {
                 EVENTS.add( "MethodAnnotationTwo" );
                 return chain.next( context );
             }
         }
 
-        @Target(
-                        {
-                ElementType.TYPE, ElementType.METHOD
-            } )
+        @Target( { ElementType.TYPE, ElementType.METHOD } )
         @Retention( RetentionPolicy.RUNTIME )
         @Inherited
         public static @interface Repeat
@@ -190,16 +183,10 @@ public class FiltersTest
     }
 
     @ControllerAnnotationTwo
-    @FilterWith(
-                {
-            ControllerFilterOne.class, ControllerFilterTwo.class
-        } )
+    @FilterWith( { ControllerFilterOne.class, ControllerFilterTwo.class } )
     public static class Controller
     {
-        @FilterWith(
-                        {
-                MethodFilterOne.class, MethodFilterTwo.class
-            } )
+        @FilterWith( { MethodFilterOne.class, MethodFilterTwo.class } )
         @MethodAnnotationTwo
         @MethodAnnotationTwo( discriminator = "another one" )
         public Outcome filtered()

@@ -40,10 +40,10 @@ public final class FilterChainFactory
 {
     public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
-        Queue<Couple<Class<? extends Filter>, Annotation>> filterQueue = new ArrayDeque<>();
-        filterQueue.addAll( findFiltersOnType( context.route().controllerType() ) );
-        filterQueue.addAll( findFilters( context.route().controllerMethod().getAnnotations() ) );
-        return buildFilterChain( app, global, filterQueue, context );
+        Queue<Couple<Class<? extends Filter>, Annotation>> filters = new ArrayDeque<>();
+        filters.addAll( findFiltersOnType( context.route().controllerType() ) );
+        filters.addAll( findFilters( context.route().controllerMethod().getAnnotations() ) );
+        return buildFilterChain( app, global, filters, context );
     }
 
     private List<Couple<Class<? extends Filter>, Annotation>> findFiltersOnType( Class<?> controllerType )
@@ -71,7 +71,7 @@ public final class FilterChainFactory
         {
             if( annotation.annotationType().getName().startsWith( "java.lang" ) )
             {
-                // Skip java.lang annotations, there are cyclic declarations causing stack overflow
+                // Skip java.lang annotations, there contains cyclic declarations causing stack overflows
             }
             else if( FilterWith.class.equals( annotation.annotationType() ) )
             {
@@ -114,8 +114,22 @@ public final class FilterChainFactory
                         }
                         if( repeatedAnnotations.isEmpty() )
                         {
-                            // Any other annotation
-                            filters.addAll( findFilters( annotation.annotationType().getAnnotations() ) );
+                            // Not a Repeatable annotation usage, handling as any other annotation
+                            for( Annotation innerAnnotation : annotation.annotationType().getAnnotations() )
+                            {
+                                if( FilterWith.class.equals( innerAnnotation.annotationType() ) )
+                                {
+                                    FilterWith filterWith = (FilterWith) innerAnnotation;
+                                    for( Class<? extends Filter> filterClass : filterWith.value() )
+                                    {
+                                        filters.add( Couple.of( filterClass, annotation ) );
+                                    }
+                                }
+                                else
+                                {
+                                    filters.addAll( findFilters( innerAnnotation ) );
+                                }
+                            }
                         }
                         else
                         {
@@ -135,8 +149,21 @@ public final class FilterChainFactory
                 else
                 {
                     // Any other annotation
-                    System.out.println( "ANNOTATION BEFORE STACKOVERFLOW: " + annotation );
-                    filters.addAll( findFilters( annotation.annotationType().getAnnotations() ) );
+                    for( Annotation innerAnnotation : annotation.annotationType().getAnnotations() )
+                    {
+                        if( FilterWith.class.equals( innerAnnotation.annotationType() ) )
+                        {
+                            FilterWith filterWith = (FilterWith) innerAnnotation;
+                            for( Class<? extends Filter> filterClass : filterWith.value() )
+                            {
+                                filters.add( Couple.of( filterClass, annotation ) );
+                            }
+                        }
+                        else
+                        {
+                            filters.addAll( findFilters( innerAnnotation ) );
+                        }
+                    }
                 }
             }
         }
