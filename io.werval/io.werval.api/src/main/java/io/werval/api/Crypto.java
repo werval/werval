@@ -23,6 +23,13 @@ import io.werval.util.Hashids;
 public interface Crypto
 {
     /**
+     * Application secret.
+     *
+     * @return Application secret bytes.
+     */
+    byte[] secret();
+
+    /**
      * Generate a 256 bits long secret.
      *
      * @return The generated secret bytes

@@ -60,6 +60,15 @@ public class CryptoInstance
     }
 
     @Override
+    public byte[] secret()
+    {
+        // Defensive copy
+        byte[] secret = new byte[ secretBytes.length ];
+        System.arraycopy( secretBytes, 0, secret, 0, secretBytes.length );
+        return secret;
+    }
+
+    @Override
     public byte[] newSecret()
     {
         return newRandomSecret256Bits();
