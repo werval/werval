@@ -1,0 +1,24 @@
+= JOSE Module
+JSON Object Signing and Encryption (JOSE)
+:jbake-type: module
+
+The JOSE module provide a `JosePlugin` that brings JSON Object Signing and Encryption (JOSE) implementation based on
+https://bitbucket.org/b_c/jose4j[jose4j].
+
+[TIP]
+JSON Object Signing and Encryption
+====
+This documentation do not cover JOSE itself as it is already well covered in the following IETF RFCs and drafts:
+
+- https://tools.ietf.org/html/draft-ietf-jose-json-web-key[JSON Web Key]
+- https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms[JSON Web Algorithms]
+- https://tools.ietf.org/html/draft-ietf-jose-json-web-encryption[JSON Web Encryption]
+- https://tools.ietf.org/html/draft-ietf-jose-json-web-signature[JSON Web Signature]
+- https://tools.ietf.org/html/draft-ietf-oauth-json-web-token[JSON Web Token]
+- http://tools.ietf.org/html/rfc7165[Use Cases and Requirements for JSON Object Signing and Encryption (JOSE)]
+- https://tools.ietf.org/html/draft-ietf-jose-cookbook[Examples of Protecting Content using JSON Object Signing and Encryption (JOSE)]
+====
+
+For now only HMAC256 signed JSON Web Tokens are supported.
+
+By default, the application's secret is used for signature.

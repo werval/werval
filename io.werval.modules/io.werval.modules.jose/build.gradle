@@ -1,0 +1,11 @@
+
+description = "JOSE Module"
+
+moduleDescriptor.plugin 'jwt', impl: 'io.werval.modules.jose.JwtPlugin'
+
+dependencies {
+
+    compile project( ":io.werval.modules.metrics" )
+    compile libs.jose4j
+
+}

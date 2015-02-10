@@ -16,6 +16,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### New features
 
 - (#5) CORS support
+- (#241) JSON Web Token support
 
 ### Enhancements
 
