@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -49,11 +50,8 @@ import static io.werval.api.http.Headers.Values.CLOSE;
 import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 import static io.werval.runtime.http.HttpConstants.DEFAULT_HTTPS_PORT;
 import static io.werval.runtime.http.HttpConstants.DEFAULT_HTTP_PORT;
-import static io.werval.util.Strings.EMPTY;
-import static io.werval.util.Strings.isEmpty;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -62,51 +60,6 @@ import static java.util.stream.Collectors.toList;
 public class RequestHeaderInstance
     implements RequestHeader
 {
-    /**
-     * Extract Content-Type information from Content-Type string value removing options such as Charset.
-     *
-     * @param contentType Content-Type string value
-     *
-     * @return Extracted Content-Type or an empty String if absent
-     */
-    public static String extractContentType( String contentType )
-    {
-        if( isEmpty( contentType ) )
-        {
-            return EMPTY;
-        }
-        return contentType.split( ";" )[0].toLowerCase( US );
-    }
-
-    /**
-     * Extract charset information from Content-Type string value.
-     *
-     * @param contentType Content-Type string value
-     *
-     * @return Extracted charset or an empty String if absent
-     */
-    public static String extractCharset( String contentType )
-    {
-        if( isEmpty( contentType ) )
-        {
-            return EMPTY;
-        }
-        String[] split = contentType.split( ";" );
-        if( split.length <= 1 )
-        {
-            return EMPTY;
-        }
-        for( int idx = 1; idx < split.length; idx++ )
-        {
-            String option = split[idx].trim().toLowerCase( US );
-            if( option.startsWith( "charset" ) )
-            {
-                return option.split( "=" )[1];
-            }
-        }
-        return EMPTY;
-    }
-
     private final Langs langs;
     private final String identity;
     private final String remoteSocketAddress;
@@ -272,15 +225,15 @@ public class RequestHeaderInstance
     }
 
     @Override
-    public String contentType()
+    public Optional<String> contentType()
     {
-        return extractContentType( headers.singleValue( CONTENT_TYPE ) );
+        return Headers.extractContentMimeType( headers.singleValue( CONTENT_TYPE ) );
     }
 
     @Override
-    public String charset()
+    public Optional<String> charset()
     {
-        return extractCharset( headers.singleValue( CONTENT_TYPE ) );
+        return Headers.extractCharset( headers.singleValue( CONTENT_TYPE ) );
     }
 
     @Override

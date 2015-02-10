@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import io.werval.api.routes.ParameterBinders;
 import io.werval.api.routes.Route;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Request Instance.
@@ -106,13 +107,13 @@ public class RequestInstance
     }
 
     @Override
-    public String contentType()
+    public Optional<String> contentType()
     {
         return header.contentType();
     }
 
     @Override
-    public String charset()
+    public Optional<String> charset()
     {
         return header.charset();
     }

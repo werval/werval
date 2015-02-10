@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
  */
 package io.werval.api.http;
 
+import io.werval.util.Strings;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -27,6 +30,51 @@ import java.util.Set;
  */
 public interface Headers
 {
+    /**
+     * Extract MimeType information from Content-Type string value removing options such as Charset.
+     *
+     * @param contentTypeHeaderValue Content-Type string value
+     *
+     * @return Extracted Content-Type or an empty String if absent
+     */
+    static Optional<String> extractContentMimeType( String contentTypeHeaderValue )
+    {
+        if( Strings.isEmpty( contentTypeHeaderValue ) )
+        {
+            return Optional.empty();
+        }
+        return Optional.of( contentTypeHeaderValue.split( ";" )[0].toLowerCase( Locale.US ) );
+    }
+
+    /**
+     * Extract charset information from Content-Type string value.
+     *
+     * @param contentTypeHeaderValue Content-Type string value
+     *
+     * @return Extracted charset, optional
+     */
+    static Optional<String> extractCharset( String contentTypeHeaderValue )
+    {
+        if( Strings.isEmpty( contentTypeHeaderValue ) )
+        {
+            return Optional.empty();
+        }
+        String[] split = contentTypeHeaderValue.split( ";" );
+        if( split.length <= 1 )
+        {
+            return Optional.empty();
+        }
+        for( int idx = 1; idx < split.length; idx++ )
+        {
+            String option = split[idx].trim().toLowerCase( Locale.US );
+            if( option.startsWith( "charset" ) )
+            {
+                return Optional.of( option.split( "=" )[1] );
+            }
+        }
+        return Optional.empty();
+    }
+
     /**
      * @return TRUE if there's no header, FALSE otherwise
      */

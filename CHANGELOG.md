@@ -12,6 +12,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Bug fixes
 
 - (#239) Fix ReverseRoutes NPE if controller is interface and no parameters
+- (#242) Fix `@AcceptContentType` filter failure on `Content-Type` headers with charset info
 
 ### New features
 

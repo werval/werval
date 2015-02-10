@@ -34,6 +34,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
 import static io.werval.api.http.Headers.Names.COOKIE;
@@ -51,7 +52,6 @@ import static io.werval.api.http.ProtocolVersion.HTTP_1_1;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_HEADERS_X_FORWARDED_FOR_CHECK;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_HEADERS_X_FORWARDED_FOR_ENABLED;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_HEADERS_X_FORWARDED_FOR_TRUSTED;
-import static io.werval.runtime.http.RequestHeaderInstance.extractCharset;
 import static io.werval.util.IllegalArguments.ensureInRange;
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static io.werval.util.IllegalArguments.ensureNotNull;
@@ -321,10 +321,10 @@ public class HttpBuildersInstance
             Charset requestCharset = null;
             if( headers.has( CONTENT_TYPE ) )
             {
-                String extractedCharset = extractCharset( headers.singleValue( CONTENT_TYPE ) );
-                if( Strings.hasText( extractedCharset ) )
+                Optional<String> extractedCharset = Headers.extractCharset( headers.singleValue( CONTENT_TYPE ) );
+                if( extractedCharset.isPresent() )
                 {
-                    requestCharset = Charset.forName( extractedCharset );
+                    requestCharset = Charset.forName( extractedCharset.get() );
                 }
             }
             if( requestCharset == null )

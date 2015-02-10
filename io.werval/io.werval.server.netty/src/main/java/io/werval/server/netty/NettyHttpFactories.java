@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDat
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.werval.api.exceptions.WervalException;
 import io.werval.api.http.FormUploads.Upload;
+import io.werval.api.http.Headers;
 import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.Request;
 import io.werval.spi.http.HttpBuildersSPI;
 import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
 import io.werval.runtime.http.FormUploadsInstance.UploadInstance;
-import io.werval.util.ByteSource;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
@@ -50,7 +51,6 @@ import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
-import static io.werval.runtime.http.RequestHeaderInstance.extractContentType;
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static io.werval.util.IllegalArguments.ensureNotNull;
 
@@ -97,72 +97,79 @@ import static io.werval.util.IllegalArguments.ensureNotNull;
                  || PUT.equals( request.getMethod() )
                  || PATCH.equals( request.getMethod() ) ) )
         {
-            switch( extractContentType( request.headers().get( CONTENT_TYPE ) ) )
+            Optional<String> contentType = Headers.extractContentMimeType( request.headers().get( CONTENT_TYPE ) );
+            if( contentType.isPresent() )
             {
-                case APPLICATION_X_WWW_FORM_URLENCODED:
-                case MULTIPART_FORM_DATA:
-                    try
-                    {
-                        Map<String, List<String>> attributes = new LinkedHashMap<>();
-                        Map<String, List<Upload>> uploads = new LinkedHashMap<>();
-                        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder( request );
-                        for( InterfaceHttpData data : postDecoder.getBodyHttpDatas() )
+                switch( contentType.get() )
+                {
+                    case APPLICATION_X_WWW_FORM_URLENCODED:
+                    case MULTIPART_FORM_DATA:
+                        try
                         {
-                            switch( data.getHttpDataType() )
+                            Map<String, List<String>> attributes = new LinkedHashMap<>();
+                            Map<String, List<Upload>> uploads = new LinkedHashMap<>();
+                            HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder( request );
+                            for( InterfaceHttpData data : postDecoder.getBodyHttpDatas() )
                             {
-                                case Attribute:
-                                    Attribute attribute = (Attribute) data;
-                                    if( !attributes.containsKey( attribute.getName() ) )
-                                    {
-                                        attributes.put( attribute.getName(), new ArrayList<>() );
-                                    }
-                                    attributes.get( attribute.getName() ).add( attribute.getValue() );
-                                    break;
-                                case FileUpload:
-                                    FileUpload fileUpload = (FileUpload) data;
-                                    if( !uploads.containsKey( fileUpload.getName() ) )
-                                    {
-                                        uploads.put( fileUpload.getName(), new ArrayList<>() );
-                                    }
-                                    Upload upload;
-                                    if( fileUpload.isInMemory() )
-                                    {
-                                        upload = new UploadInstance(
-                                            fileUpload.getContentType(),
-                                            fileUpload.getCharset(),
-                                            fileUpload.getFilename(),
-                                            new ByteBufByteSource( fileUpload.getByteBuf() ).asBytes(),
-                                            defaultCharset
-                                        );
-                                    }
-                                    else
-                                    {
-                                        upload = new UploadInstance(
-                                            fileUpload.getContentType(),
-                                            fileUpload.getCharset(),
-                                            fileUpload.getFilename(),
-                                            fileUpload.getFile(),
-                                            defaultCharset
-                                        );
-                                    }
-                                    uploads.get( fileUpload.getName() ).add( upload );
-                                    break;
-                                default:
-                                    break;
+                                switch( data.getHttpDataType() )
+                                {
+                                    case Attribute:
+                                        Attribute attribute = (Attribute) data;
+                                        if( !attributes.containsKey( attribute.getName() ) )
+                                        {
+                                            attributes.put( attribute.getName(), new ArrayList<>() );
+                                        }
+                                        attributes.get( attribute.getName() ).add( attribute.getValue() );
+                                        break;
+                                    case FileUpload:
+                                        FileUpload fileUpload = (FileUpload) data;
+                                        if( !uploads.containsKey( fileUpload.getName() ) )
+                                        {
+                                            uploads.put( fileUpload.getName(), new ArrayList<>() );
+                                        }
+                                        Upload upload;
+                                        if( fileUpload.isInMemory() )
+                                        {
+                                            upload = new UploadInstance(
+                                                fileUpload.getContentType(),
+                                                fileUpload.getCharset(),
+                                                fileUpload.getFilename(),
+                                                new ByteBufByteSource( fileUpload.getByteBuf() ).asBytes(),
+                                                defaultCharset
+                                            );
+                                        }
+                                        else
+                                        {
+                                            upload = new UploadInstance(
+                                                fileUpload.getContentType(),
+                                                fileUpload.getCharset(),
+                                                fileUpload.getFilename(),
+                                                fileUpload.getFile(),
+                                                defaultCharset
+                                            );
+                                        }
+                                        uploads.get( fileUpload.getName() ).add( upload );
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
+                            builder = builder.bodyForm( attributes, uploads );
+                            break;
                         }
-                        builder = builder.bodyForm( attributes, uploads );
+                        catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
+                               NotEnoughDataDecoderException | IOException ex )
+                        {
+                            throw new WervalException( "Form or multipart parsing error", ex );
+                        }
+                    default:
+                        builder = builder.bodyBytes( new ByteBufByteSource( request.content() ) );
                         break;
-                    }
-                    catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
-                           NotEnoughDataDecoderException | IOException ex )
-                    {
-                        throw new WervalException( "Form or multipart parsing error", ex );
-                    }
-                default:
-                    ByteSource bodyBytes = new ByteBufByteSource( request.content() );
-                    builder = builder.bodyBytes( bodyBytes );
-                    break;
+                }
+            }
+            else
+            {
+                builder = builder.bodyBytes( new ByteBufByteSource( request.content() ) );
             }
         }
         return builder.build();
