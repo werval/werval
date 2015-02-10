@@ -2,7 +2,7 @@
 JSON Object Signing and Encryption (JOSE)
 :jbake-type: module
 
-The JOSE module provide a `JosePlugin` that brings JSON Object Signing and Encryption (JOSE) implementation based on
+The JOSE module provide plugins for various JSON Object Signing and Encryption (JOSE) operations based on
 https://bitbucket.org/b_c/jose4j[jose4j].
 
 [TIP]

@@ -13,60 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.modules.jose;
+package io.werval.modules.jose.filters;
 
 import io.werval.api.context.Context;
 import io.werval.api.filters.FilterChain;
 import io.werval.api.filters.FilterWith;
 import io.werval.api.outcomes.Outcome;
+import io.werval.modules.jose.JWT;
+import io.werval.util.Strings;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * RequireRoles Filter Annotation.
+ * RequireSubject Filter Annotation.
  */
-@RequireSubject
-@FilterWith( RequireRoles.Filter.class )
+@RequireToken
+@FilterWith( RequireSubject.Filter.class )
 @Target( { ElementType.TYPE, ElementType.METHOD } )
 @Retention( RetentionPolicy.RUNTIME )
 @Inherited
 @Documented
-public @interface RequireRoles
+public @interface RequireSubject
 {
-    String[] value() default
-    {
-    };
-
     /**
-     * RequireRoles Filter.
+     * RequireSubject Filter.
      */
     public static class Filter
-        implements io.werval.api.filters.Filter<RequireRoles>
+        implements io.werval.api.filters.Filter<RequireSubject>
     {
         @Override
         public CompletableFuture<Outcome> filter(
-            FilterChain chain, Context context, Optional<RequireRoles> annotation
+            FilterChain chain, Context context, Optional<RequireSubject> annotation
         )
         {
-            String[] requiredRoles = annotation.map( annot -> annot.value() ).orElse( new String[ 0 ] );
-            if( requiredRoles.length > 0 )
+            Map<String, Object> claims = context.metaData().get( Map.class, JWT.CLAIMS_METADATA_KEY );
+            if( !claims.containsKey( JWT.CLAIM_SUBJECT )
+                || !( claims.get( JWT.CLAIM_SUBJECT ) instanceof String )
+                || Strings.isEmpty( (String) claims.get( JWT.CLAIM_SUBJECT ) ) )
             {
-                Map<String, Object> claims = context.metaData().get( Map.class, JWT.CLAIMS_METADATA_KEY );
-                if( !claims.containsKey( "roles" )
-                    || !( claims.get( "roles" ) instanceof Collection )
-                    || ( (Collection) claims.get( "roles" ) ).containsAll( Arrays.asList( requiredRoles ) ) )
-                {
-                    return CompletableFuture.completedFuture( context.outcomes().unauthorized().build() );
-                }
+                return CompletableFuture.completedFuture( context.outcomes().unauthorized().build() );
             }
             return chain.next( context );
         }

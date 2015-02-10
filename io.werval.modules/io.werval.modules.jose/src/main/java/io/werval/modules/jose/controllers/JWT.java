@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.modules.jose;
+package io.werval.modules.jose.controllers;
 
 import io.werval.api.outcomes.Outcome;
 
@@ -23,18 +23,19 @@ import static io.werval.api.context.CurrentContext.plugin;
 import static io.werval.api.context.CurrentContext.request;
 
 /**
- * Renewal Controller.
+ * JWT Controller.
  */
-public class Renewal
+public class JWT
 {
     public Outcome renew()
     {
-        String jwtHeader = application().config().string( JWT.HTTP_HEADER_CONFIG_KEY );
+        String jwtHeader = application().config().string( io.werval.modules.jose.JWT.HTTP_HEADER_CONFIG_KEY );
         if( !request().headers().has( jwtHeader ) )
         {
             return outcomes().unauthorized().build();
         }
-        String renewed = plugin( JWT.class ).renewToken( request().headers().singleValue( jwtHeader ) );
+        io.werval.modules.jose.JWT jwt = plugin( io.werval.modules.jose.JWT.class );
+        String renewed = jwt.renewToken( request().headers().singleValue( jwtHeader ) );
         return outcomes().ok().withHeader( jwtHeader, renewed ).build();
     }
 }

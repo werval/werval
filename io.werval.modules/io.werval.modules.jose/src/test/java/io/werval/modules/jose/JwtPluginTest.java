@@ -17,6 +17,7 @@ package io.werval.modules.jose;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.werval.api.outcomes.Outcome;
+import io.werval.modules.jose.filters.RequireSubject;
 import io.werval.runtime.routes.RoutesParserProvider;
 import io.werval.test.WervalHttpRule;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class JwtPluginTest
     @ClassRule
     public static final WervalHttpRule WERVAL = new WervalHttpRule( new RoutesParserProvider(
         "POST /login io.werval.modules.jose.JwtPluginTest$Controller.login\n"
-        + "POST /renew io.werval.modules.jose.Renewal.renew\n"
+        + "POST /renew JWT.renew\n"
         + "GET /authenticated io.werval.modules.jose.JwtPluginTest$Controller.authenticated\n"
     ) );
 
