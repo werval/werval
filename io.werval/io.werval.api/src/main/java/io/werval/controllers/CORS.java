@@ -38,10 +38,18 @@ import static java.util.stream.Collectors.toList;
  * <p>
  * To be used in conjunction with the {@link io.werval.filters.CORS} filter annotation.
  * <p>
- * Typical routing for catching all paths:
+ * Some typical usages in {@literal routes.conf}:
  * <pre>
- * OPTIONS /*catchall CORS.preflight( String catchall )
+ * OPTIONS  /*catchall                  CORS.preflight( String catchall )
+ * OPTIONS  /single-resource            CORS.preflight
+ * OPTIONS  /variable/:path/resources   CORS.preflight( String path )
+ * OPTIONS /custom/cors                 CORS.preflight( String origin = 'http://example.com', \
+ *                                                      String methods = 'GET', \
+ *                                                      String headers = 'User-Agent', \
+ *                                                      Boolean creds = true )
  * </pre>
+ * <p>
+ * The only thing missing from the spec is support for custom {@literal Access-Control-Max-Age}.
  */
 public class CORS
 {
