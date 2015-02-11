@@ -47,21 +47,21 @@ public final class FilterChainFactory
         return buildFilterChain( app, global, filters, context );
     }
 
-    private List<Couple<Class<? extends Filter>, Annotation>> findFiltersOnType( Class<?> controllerType )
+    private List<Couple<Class<? extends Filter>, Annotation>> findFiltersOnType( Class<?> type )
     {
         List<Couple<Class<? extends Filter>, Annotation>> filters = new ArrayList<>();
-        if( controllerType.getSuperclass() != null )
+        if( type.getSuperclass() != null )
         {
-            filters.addAll( findFiltersOnType( controllerType.getSuperclass() ) );
+            filters.addAll( findFiltersOnType( type.getSuperclass() ) );
         }
-        if( controllerType.getInterfaces() != null )
+        if( type.getInterfaces() != null )
         {
-            for( Class<?> clazz : controllerType.getInterfaces() )
+            for( Class<?> clazz : type.getInterfaces() )
             {
                 filters.addAll( findFiltersOnType( clazz ) );
             }
         }
-        filters.addAll( findFilters( controllerType.getAnnotations() ) );
+        filters.addAll( findFilters( type.getAnnotations() ) );
         return filters;
     }
 
