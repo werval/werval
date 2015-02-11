@@ -240,6 +240,11 @@ public final class Iterables
         return addAll( new ArrayList<T>(), iterable );
     }
 
+    public static <T, I extends Iterable<T>> I notEmptyOrNull( I iterable )
+    {
+        return iterable != null && count( iterable ) > 0 ? iterable : null;
+    }
+
     private Iterables()
     {
     }

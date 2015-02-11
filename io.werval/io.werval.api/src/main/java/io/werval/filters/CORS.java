@@ -26,18 +26,19 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.werval.api.http.Headers.Names.ACCESS_CONTROL_ALLOW_CREDENTIALS;
 import static io.werval.api.http.Headers.Names.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.werval.api.http.Headers.Names.ACCESS_CONTROL_EXPOSE_HEADERS;
 import static io.werval.api.http.Headers.Names.ORIGIN;
-import static io.werval.util.Strings.hasText;
-import static io.werval.util.Strings.hasTextOrNull;
+import static io.werval.util.Iterables.notEmptyOrNull;
 import static io.werval.util.Strings.join;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -83,6 +84,8 @@ public @interface CORS
     public static class Filter
         implements io.werval.api.filters.Filter<CORS>
     {
+        private static final Logger LOG = LoggerFactory.getLogger( CORS.class );
+
         @Override
         public CompletableFuture<Outcome> filter( FilterChain chain, Context context, Optional<CORS> annotation )
         {
@@ -90,35 +93,56 @@ public @interface CORS
             {
                 String origin = context.request().headers().singleValue( ORIGIN );
                 // Is the origin allowed?
-                String allowOrigin = annotation.map(
-                    annot -> hasTextOrNull( join( annot.allowOrigin(), "," ) )
+                List<String> allowOrigins = annotation.map(
+                    annot -> notEmptyOrNull( asList( annot.allowOrigin() ) )
                 ).orElse(
-                    context.application().config().string( "werval.filters.cors.allow_origin" )
-                );
-                List<String> allowedOrigins = Arrays.asList( allowOrigin.split( "," ) ).stream()
+                    context.application().config().stringList( "werval.filters.cors.allow_origin" )
+                ).stream()
                     .map( String::trim )
                     .collect( toList() );
-                if( allowedOrigins.contains( "*" ) || allowedOrigins.contains( origin ) )
+                if( allowOrigins.contains( "*" ) || allowOrigins.contains( origin ) )
                 {
                     // Are credentials allowed?
                     boolean allowCredentials = annotation.map(
                         annot -> annot.allowCredentials()
                     ).orElse(
                         context.application().config().bool( "werval.filters.cors.allow_credentials" )
-                    ) && !"*".equals( allowOrigin );
+                    ) && !allowOrigins.contains( "*" );
                     // Exposed headers
-                    String exposeHeaders = annotation.map(
-                        annot -> hasTextOrNull( join( annot.exposeHeaders(), "," ) )
+                    List<String> exposeHeaders = annotation.map(
+                        annot -> notEmptyOrNull( asList( annot.exposeHeaders() ) )
                     ).orElse(
-                        context.application().config().string( "werval.filters.cors.expose_headers" )
+                        context.application().config().stringList( "werval.filters.cors.expose_headers" )
                     );
                     // Set response headers
+                    String allowCredentialsValue = String.valueOf( allowCredentials );
+                    String exposeHeadersValue = exposeHeaders.isEmpty() ? null : join( exposeHeaders, ", " );
+                    if( LOG.isTraceEnabled() )
+                    {
+                        if( exposeHeadersValue == null )
+                        {
+                            LOG.trace(
+                                "CORS actual request with headers {}: {} ; {}: {}",
+                                ACCESS_CONTROL_ALLOW_ORIGIN, origin,
+                                ACCESS_CONTROL_ALLOW_CREDENTIALS, allowCredentialsValue
+                            );
+                        }
+                        else
+                        {
+                            LOG.trace(
+                                "CORS actual request with headers {}: {} ; {}: {} ; {}: {}",
+                                ACCESS_CONTROL_ALLOW_ORIGIN, origin,
+                                ACCESS_CONTROL_ALLOW_CREDENTIALS, allowCredentialsValue,
+                                ACCESS_CONTROL_EXPOSE_HEADERS, exposeHeadersValue
+                            );
+                        }
+                    }
                     MutableHeaders headers = context.response().headers();
                     headers.withSingle( ACCESS_CONTROL_ALLOW_ORIGIN, origin );
-                    headers.withSingle( ACCESS_CONTROL_ALLOW_CREDENTIALS, String.valueOf( allowCredentials ) );
-                    if( hasText( exposeHeaders ) )
+                    headers.withSingle( ACCESS_CONTROL_ALLOW_CREDENTIALS, allowCredentialsValue );
+                    if( exposeHeadersValue != null )
                     {
-                        headers.withSingle( ACCESS_CONTROL_EXPOSE_HEADERS, exposeHeaders );
+                        headers.withSingle( ACCESS_CONTROL_EXPOSE_HEADERS, exposeHeadersValue );
                     }
                 }
             }

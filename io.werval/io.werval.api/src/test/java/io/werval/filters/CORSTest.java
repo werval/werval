@@ -37,6 +37,7 @@ import static io.werval.api.http.Status.BAD_REQUEST_CODE;
 import static io.werval.api.http.Status.NO_CONTENT_CODE;
 import static io.werval.api.http.Status.OK_CODE;
 import static io.werval.api.http.Status.UNAUTHORIZED_CODE;
+import static io.werval.util.Strings.join;
 import static org.hamcrest.Matchers.nullValue;
 
 /**
@@ -80,9 +81,10 @@ public class CORSTest
     public void global()
     {
         Config config = WERVAL.application().config();
-        String allowOrigin = config.string( "werval.controllers.cors.allow_origin" );
-        String allowMethods = config.string( "werval.controllers.cors.allow_methods" );
-        String allowHeaders = config.string( "werval.controllers.cors.allow_headers" );
+        String allowOrigin = join( config.stringList( "werval.controllers.cors.allow_origin" ), ", " );
+        String allowMethods = join( config.stringList( "werval.controllers.cors.allow_methods" ), ", " );
+        String allowHeaders = join( config.stringList( "werval.controllers.cors.allow_headers" ), ", " );
+        String exposeHeaders = join( config.stringList( "werval.filters.cors.expose_headers" ), ", " );
         boolean allowCredentials = config.bool( "werval.controllers.cors.allow_credentials" )
                                    && !"*".equals( allowOrigin );
         given()
@@ -102,7 +104,7 @@ public class CORSTest
             .statusCode( OK_CODE )
             .header( ACCESS_CONTROL_ALLOW_ORIGIN, "http://example.com" )
             .header( ACCESS_CONTROL_ALLOW_CREDENTIALS, String.valueOf( allowCredentials ) )
-            .header( ACCESS_CONTROL_EXPOSE_HEADERS, nullValue() )
+            .header( ACCESS_CONTROL_EXPOSE_HEADERS, exposeHeaders )
             .when()
             .get( "/global" );
     }
