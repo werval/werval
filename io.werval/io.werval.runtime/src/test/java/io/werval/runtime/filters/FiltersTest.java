@@ -44,6 +44,26 @@ import static org.junit.Assert.assertThat;
  */
 public class FiltersTest
 {
+    @FilterWith( GlobalAnnotation.Filter.class )
+    @Target( { ElementType.TYPE, ElementType.METHOD } )
+    @Retention( RetentionPolicy.RUNTIME )
+    @Inherited
+    public static @interface GlobalAnnotation
+    {
+        public static class Filter
+            implements io.werval.api.filters.Filter<GlobalAnnotation>
+        {
+            @Override
+            public CompletableFuture<Outcome> filter(
+                FilterChain chain, Context context, Optional<GlobalAnnotation> annotation
+            )
+            {
+                EVENTS.add( "GlobalAnnotation" );
+                return chain.next( context );
+            }
+        }
+    }
+
     @FilterWith( ControllerAnnotationOne.Filter.class )
     @Target( { ElementType.TYPE, ElementType.METHOD } )
     @Retention( RetentionPolicy.RUNTIME )
@@ -195,8 +215,15 @@ public class FiltersTest
         }
     }
 
+    @GlobalAnnotation
+    public static class Global
+        extends io.werval.api.Global
+    {
+    }
+
     @ClassRule
     public static final WervalHttpRule WERVAL = new WervalHttpRule(
+        "global-filters.conf",
         new RoutesParserProvider( "GET / io.werval.runtime.filters.FiltersTest$Controller.filtered" )
     );
 
@@ -218,6 +245,7 @@ public class FiltersTest
         assertThat(
             EVENTS,
             contains(
+                "GlobalAnnotation",
                 "ControllerAnnotationOne", "ControllerAnnotationTwo",
                 "ControllerFilterOne", "ControllerFilterTwo",
                 "MethodFilterOne", "MethodFilterTwo",

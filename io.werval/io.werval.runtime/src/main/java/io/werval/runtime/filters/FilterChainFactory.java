@@ -41,6 +41,7 @@ public final class FilterChainFactory
     public FilterChain buildFilterChain( Application app, Global global, Context context )
     {
         Queue<Couple<Class<? extends Filter>, Annotation>> filters = new ArrayDeque<>();
+        filters.addAll( findFiltersOnType( global.getClass() ) );
         filters.addAll( findFiltersOnType( context.route().controllerType() ) );
         filters.addAll( findFilters( context.route().controllerMethod().getAnnotations() ) );
         return buildFilterChain( app, global, filters, context );

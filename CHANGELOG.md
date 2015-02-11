@@ -22,6 +22,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Enhancements
 
 - (#240) Allow filter annotations on filter annotations
+- (#243) Allow global filter annotations on Global object
 
 
 
