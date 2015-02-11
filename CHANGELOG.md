@@ -23,6 +23,7 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - (#240) Allow filter annotations on filter annotations
 - (#243) Allow global filter annotations on Global object
+- (#244) DevShell now open `http://localhost:port/` instead of `http://0.0.0.0:port/` when `werval.http.address` is `0.0.0.0`
 
 
 
