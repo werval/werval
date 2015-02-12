@@ -18,12 +18,14 @@ package io.werval.modules.jose;
 import io.werval.api.exceptions.WervalException;
 import io.werval.modules.jose.internal.Issuer;
 import io.werval.modules.metrics.Metrics;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.IntDate;
 import org.jose4j.lang.JoseException;
 
 /**
@@ -71,7 +73,7 @@ public class JWT
         // Prepare claims
         Map<String, Object> actualClaims = new LinkedHashMap<>( claims );
         actualClaims.put( CLAIM_ISSUER, issuer.dn() );
-        setTimeRelatedClaimsIfAbsent( actualClaims );
+        setTimeRelatedClaimsIfAbsent( issuer, actualClaims );
 
         // Create token
         try
@@ -126,14 +128,17 @@ public class JWT
             Map<String, Object> claims = JsonUtil.parseJson( jws.getPayload() );
 
             // Validate token not-before/expiration
-            IntDate now = IntDate.now();
-            if( claims.containsKey( CLAIM_NOT_BEFORE )
-                && IntDate.fromSeconds( (Long) claims.get( CLAIM_NOT_BEFORE ) ).after( now ) )
+            ZoneId utc = ZoneId.of( "UTC" );
+            ZonedDateTime nowUtc = ZonedDateTime.now( utc );
+            if( claims.get( CLAIM_NOT_BEFORE ) != null
+                && ZonedDateTime.ofInstant( Instant.ofEpochSecond( (Long) claims.get( CLAIM_NOT_BEFORE ) ), utc )
+                .isAfter( nowUtc ) )
             {
                 throw new WervalException( "JSON Web Token is not valid yet!" );
             }
-            if( claims.containsKey( CLAIM_EXPIRATION )
-                && IntDate.fromSeconds( (Long) claims.get( CLAIM_EXPIRATION ) ).before( now ) )
+            if( claims.get( CLAIM_EXPIRATION ) != null
+                && ZonedDateTime.ofInstant( Instant.ofEpochSecond( (Long) claims.get( CLAIM_EXPIRATION ) ), utc )
+                .isBefore( nowUtc ) )
             {
                 throw new WervalException( "JSON Web Token has expired!" );
             }
@@ -181,7 +186,7 @@ public class JWT
             // Extract claims, remove all time related ones and set them afresh
             Map<String, Object> claims = JsonUtil.parseJson( jws.getPayload() );
             clearTimeRelatedClaims( claims );
-            setTimeRelatedClaimsIfAbsent( claims );
+            setTimeRelatedClaimsIfAbsent( issuer, claims );
 
             // Create renewed token
             jws = new JsonWebSignature();
@@ -221,29 +226,25 @@ public class JWT
         claims.remove( CLAIM_EXPIRATION );
     }
 
-    private void setTimeRelatedClaimsIfAbsent( Map<String, Object> claims )
+    private void setTimeRelatedClaimsIfAbsent( Issuer issuer, Map<String, Object> claims )
     {
-        IntDate now = IntDate.now();
+        ZonedDateTime nowUtc = ZonedDateTime.now( ZoneId.of( "UTC" ) );
         // Issued at
-        if( !claims.containsKey( CLAIM_ISSUED_AT ) )
+        if( claims.get( CLAIM_ISSUED_AT ) == null )
         {
-            claims.put( CLAIM_ISSUED_AT, now.getValue() );
+            claims.put( CLAIM_ISSUED_AT, nowUtc.toEpochSecond() );
         }
         // Not before
-        if( !claims.containsKey( CLAIM_NOT_BEFORE ) )
+        if( claims.get( CLAIM_NOT_BEFORE ) == null )
         {
-            // Five minutes clock skew
-            IntDate nbf = IntDate.fromSeconds( now.getValue() );
-            nbf.addSeconds( -300 );
-            claims.put( CLAIM_NOT_BEFORE, nbf.getValue() );
+            ZonedDateTime nbf = nowUtc.minusSeconds( issuer.notBeforeSeconds() );
+            claims.put( CLAIM_NOT_BEFORE, nbf.toEpochSecond() );
         }
         // Expiration
-        if( !claims.containsKey( CLAIM_EXPIRATION ) )
+        if( claims.get( CLAIM_EXPIRATION ) == null )
         {
-            // 30 minutes expiration
-            IntDate exp = IntDate.fromSeconds( now.getValue() );
-            exp.addSeconds( 1800 );
-            claims.put( CLAIM_EXPIRATION, exp.getValue() );
+            ZonedDateTime exp = nowUtc.plusSeconds( issuer.expirationSeconds() );
+            claims.put( CLAIM_EXPIRATION, exp.toEpochSecond() );
         }
     }
 }

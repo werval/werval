@@ -20,8 +20,10 @@ import io.werval.api.outcomes.Outcome;
 import io.werval.modules.jose.filters.RequireSubject;
 import io.werval.runtime.routes.RoutesParserProvider;
 import io.werval.test.WervalHttpRule;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
-import org.jose4j.jwt.IntDate;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -118,10 +120,17 @@ public class JwtPluginTest
             .then().statusCode( OK_CODE );
 
         // Gather time related claims from token
+        ZoneId utc = ZoneId.of( "UTC" );
         Map<String, Object> claims = jwt.claimsOfToken( token );
-        IntDate iat = IntDate.fromSeconds( (Long) claims.get( JWT.CLAIM_ISSUED_AT ) );
-        IntDate nbf = IntDate.fromSeconds( (Long) claims.get( JWT.CLAIM_NOT_BEFORE ) );
-        IntDate exp = IntDate.fromSeconds( (Long) claims.get( JWT.CLAIM_EXPIRATION ) );
+        ZonedDateTime iat = ZonedDateTime.ofInstant(
+            Instant.ofEpochSecond( (Long) claims.get( JWT.CLAIM_ISSUED_AT ) ), utc
+        );
+        ZonedDateTime nbf = ZonedDateTime.ofInstant(
+            Instant.ofEpochSecond( (Long) claims.get( JWT.CLAIM_NOT_BEFORE ) ), utc
+        );
+        ZonedDateTime exp = ZonedDateTime.ofInstant(
+            Instant.ofEpochSecond( (Long) claims.get( JWT.CLAIM_EXPIRATION ) ), utc
+        );
 
         // Wait at least one second before renewal so new dates will be different
         Thread.sleep( 1200 );
@@ -136,13 +145,19 @@ public class JwtPluginTest
 
         // Gather time related claims from renewed token
         claims = jwt.claimsOfToken( renewed );
-        IntDate renewedIat = IntDate.fromSeconds( (Long) claims.get( JWT.CLAIM_ISSUED_AT ) );
-        IntDate renewedNbf = IntDate.fromSeconds( (Long) claims.get( JWT.CLAIM_NOT_BEFORE ) );
-        IntDate renewedExp = IntDate.fromSeconds( (Long) claims.get( JWT.CLAIM_EXPIRATION ) );
+        ZonedDateTime renewedIat = ZonedDateTime.ofInstant(
+            Instant.ofEpochSecond( (Long) claims.get( JWT.CLAIM_ISSUED_AT ) ), utc
+        );
+        ZonedDateTime renewedNbf = ZonedDateTime.ofInstant(
+            Instant.ofEpochSecond( (Long) claims.get( JWT.CLAIM_NOT_BEFORE ) ), utc
+        );
+        ZonedDateTime renewedExp = ZonedDateTime.ofInstant(
+            Instant.ofEpochSecond( (Long) claims.get( JWT.CLAIM_EXPIRATION ) ), utc
+        );
 
         // Assert renewed token time related claims are greater than the ones in the original token
-        assertTrue( renewedIat.after( iat ) );
-        assertTrue( renewedNbf.after( nbf ) );
-        assertTrue( renewedExp.after( exp ) );
+        assertTrue( renewedIat.isAfter( iat ) );
+        assertTrue( renewedNbf.isAfter( nbf ) );
+        assertTrue( renewedExp.isAfter( exp ) );
     }
 }
