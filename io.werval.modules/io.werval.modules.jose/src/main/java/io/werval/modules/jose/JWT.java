@@ -39,6 +39,7 @@ public class JWT
     public static final String CLAIMS_METADATA_KEY = "JWT-Claims";
     public static final String CLAIM_ISSUER = "iss";
     public static final String CLAIM_SUBJECT = "sub";
+    public static final String CLAIM_ROLES = "roles";
     public static final String CLAIM_ISSUED_AT = "iat";
     public static final String CLAIM_NOT_BEFORE = "nbf";
     public static final String CLAIM_EXPIRATION = "exp";

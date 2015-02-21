@@ -17,12 +17,16 @@ package io.werval.modules.jose;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.werval.api.outcomes.Outcome;
+import io.werval.modules.jose.filters.RequireRoles;
 import io.werval.modules.jose.filters.RequireSubject;
 import io.werval.runtime.routes.RoutesParserProvider;
 import io.werval.test.WervalHttpRule;
+import io.werval.util.Maps;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -30,7 +34,6 @@ import org.junit.Test;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static io.werval.api.context.CurrentContext.application;
-import static io.werval.api.context.CurrentContext.metaData;
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.context.CurrentContext.plugin;
 import static io.werval.api.context.CurrentContext.request;
@@ -54,6 +57,7 @@ public class JwtPluginTest
         "POST /login io.werval.modules.jose.JwtPluginTest$Controller.login\n"
         + "POST /renew JWT.renew\n"
         + "GET /authenticated io.werval.modules.jose.JwtPluginTest$Controller.authenticated\n"
+        + "GET /authorized io.werval.modules.jose.JwtPluginTest$Controller.authorized\n"
     ) );
 
     public static class Controller
@@ -65,7 +69,11 @@ public class JwtPluginTest
             String password = body.get( "password" ).asText();
             if( "admin@example.com".equals( email ) && "admin-password".equals( password ) )
             {
-                String token = plugin( JWT.class ).tokenForClaims( singletonMap( JWT.CLAIM_SUBJECT, email ) );
+                HashMap<String, Object> claims = Maps.newHashMap( String.class, Object.class )
+                    .put( JWT.CLAIM_SUBJECT, email )
+                    .put( "roles", Arrays.asList( "admin" ) )
+                    .toMap();
+                String token = plugin( JWT.class ).tokenForClaims( claims );
                 return outcomes().ok()
                     .withHeader( application().config().string( JWT.HTTP_HEADER_CONFIG_KEY ), token )
                     .build();
@@ -76,11 +84,12 @@ public class JwtPluginTest
         @RequireSubject
         public Outcome authenticated()
         {
-            Map<String, Object> claims = metaData().get( Map.class, JWT.CLAIMS_METADATA_KEY );
-            if( !"admin@example.com".equals( claims.get( JWT.CLAIM_SUBJECT ) ) )
-            {
-                return outcomes().unauthorized().build();
-            }
+            return outcomes().ok().build();
+        }
+
+        @RequireRoles( "admin" )
+        public Outcome authorized()
+        {
             return outcomes().ok().build();
         }
     }
@@ -114,9 +123,14 @@ public class JwtPluginTest
             .log().all()
             .extract().header( tokenHeaderName );
 
-        // Authorized access to authenticated resource
+        // Authenticated access
         given().header( tokenHeaderName, token )
             .when().get( "/authenticated" )
+            .then().statusCode( OK_CODE );
+
+        // Authorized access
+        given().header( tokenHeaderName, token )
+            .when().get( "/authorized" )
             .then().statusCode( OK_CODE );
 
         // Gather time related claims from token

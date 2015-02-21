@@ -60,9 +60,9 @@ public @interface RequireRoles
             if( requiredRoles.length > 0 )
             {
                 Map<String, Object> claims = context.metaData().get( Map.class, JWT.CLAIMS_METADATA_KEY );
-                if( !claims.containsKey( "roles" )
-                    || !( claims.get( "roles" ) instanceof Collection )
-                    || ( (Collection) claims.get( "roles" ) ).containsAll( Arrays.asList( requiredRoles ) ) )
+                if( !claims.containsKey( JWT.CLAIM_ROLES )
+                    || !( claims.get( JWT.CLAIM_ROLES ) instanceof Collection )
+                    || !( (Collection) claims.get( JWT.CLAIM_ROLES ) ).containsAll( Arrays.asList( requiredRoles ) ) )
                 {
                     return CompletableFuture.completedFuture( context.outcomes().unauthorized().build() );
                 }
