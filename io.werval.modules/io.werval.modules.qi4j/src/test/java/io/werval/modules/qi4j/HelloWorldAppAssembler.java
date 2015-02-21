@@ -15,6 +15,7 @@
  */
 package io.werval.modules.qi4j;
 
+import org.qi4j.api.structure.Application;
 import org.qi4j.bootstrap.ApplicationAssembler;
 import org.qi4j.bootstrap.ApplicationAssembly;
 import org.qi4j.bootstrap.ApplicationAssemblyFactory;
@@ -24,12 +25,25 @@ import org.qi4j.bootstrap.ModuleAssembly;
 public class HelloWorldAppAssembler
     implements ApplicationAssembler
 {
+    private final Application.Mode mode;
+
+    public HelloWorldAppAssembler()
+    {
+        this.mode = Application.Mode.production;
+    }
+
+    public HelloWorldAppAssembler( Application.Mode mode )
+    {
+        this.mode = mode;
+    }
+
     @Override
     public ApplicationAssembly assemble( ApplicationAssemblyFactory applicationFactory )
         throws AssemblyException
     {
         ApplicationAssembly assembly = applicationFactory.newApplicationAssembly();
         assembly.setName( "Qi4j Application Under Test" );
+        assembly.setMode( mode );
         ModuleAssembly module = assembly.layer( "Layer 1" ).module( "Module 1" );
         new HelloWorldAssembler().assemble( module );
         return assembly;
