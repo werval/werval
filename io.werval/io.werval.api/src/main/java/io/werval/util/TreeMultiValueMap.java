@@ -15,39 +15,41 @@
  */
 package io.werval.util;
 
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
- * LinkedHashMap MultiValueMap.
+ * TreeMap MultiValueMap.
  *
  * @param <K> Key type
- * @param <V> Values type
+ * @param <V> Value type
  */
-public class LinkedMultiValueMap<K, V>
+public class TreeMultiValueMap<K, V>
     extends MultiValueMapAdapter<K, V>
 {
     private static final long serialVersionUID = 1L;
 
-    public LinkedMultiValueMap()
+    public TreeMultiValueMap()
     {
-        super( new LinkedHashMap<>() );
+        super( new TreeMap<>() );
     }
 
-    public LinkedMultiValueMap( int initialCapacity )
+    public TreeMultiValueMap( Comparator<K> comparator )
     {
-        super( new LinkedHashMap<>( initialCapacity ) );
+        super( new TreeMap<>( comparator ) );
     }
 
-    public LinkedMultiValueMap( Map<K, List<V>> map )
+    public TreeMultiValueMap( SortedMap<K, List<V>> map )
     {
-        super( new LinkedHashMap<>( map ) );
+        super( new TreeMap<>( map ) );
     }
 
     @Override
     protected Map<K, V> newFlattenedMap()
     {
-        return new LinkedHashMap<>( internalMap.size() );
+        return new TreeMap<>( ( (TreeMap) internalMap ).comparator() );
     }
 }

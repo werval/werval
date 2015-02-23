@@ -283,6 +283,25 @@ public final class Maps
     }
 
     /**
+     * Create a MultiValueMap Builder starting with an empty TreeMultiValueMap.
+     *
+     * @param <K>    Key parameterized type
+     * @param <V>    Value parameterized type
+     * @param kClass Key Class
+     * @param vClass Value Class
+     *
+     * @return The MultiValueMap Builder started with an empty TreeMultiValueMap
+     */
+    public static <K, V>
+        MultiValueMapBuilder<TreeMultiValueMap<K, V>, K, V> newTreeMultiValueMap(
+            Class<? super K> kClass,
+            Class<? super V> vClass
+        )
+    {
+        return fromMap( new TreeMultiValueMap<K, V>() );
+    }
+
+    /**
      * Create a Map Builder starting with a given Map.
      *
      * @param <M> Map parameterized type
