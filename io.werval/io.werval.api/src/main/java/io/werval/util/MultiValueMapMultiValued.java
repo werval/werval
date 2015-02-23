@@ -15,6 +15,7 @@
  */
 package io.werval.util;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +31,14 @@ import static java.util.Collections.EMPTY_LIST;
  * @param <V> Value type
  */
 public class MultiValueMapMultiValued<K, V>
-    implements MultiValued<K, V>
+    implements MultiValued<K, V>, Serializable
 {
     protected final MultiValueMap<K, V> mvmap;
+
+    public MultiValueMapMultiValued()
+    {
+        this.mvmap = new TreeMultiValueMap<>();
+    }
 
     public MultiValueMapMultiValued( MultiValueMap<K, V> mvmap )
     {

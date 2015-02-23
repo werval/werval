@@ -15,6 +15,7 @@
  */
 package io.werval.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.TreeMap;
  */
 public class TreeMultiValueMap<K, V>
     extends MultiValueMapAdapter<K, V>
+    implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
