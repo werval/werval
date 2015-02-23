@@ -33,13 +33,15 @@ public interface MultiValueMap<K, V>
 
     void setAll( Map<K, V> map );
 
-    V getSingle( K key );
+    V getSingle( K key )
+        throws IllegalStateException;
 
     V getFirst( K key );
 
     V getLast( K key );
 
-    Map<K, V> toMapSingleValues();
+    Map<K, V> toMapSingleValues()
+        throws IllegalStateException;
 
     Map<K, V> toMapFirstValues();
 

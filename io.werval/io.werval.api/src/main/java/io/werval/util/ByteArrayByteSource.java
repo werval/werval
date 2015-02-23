@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 
+import static io.werval.util.Charsets.UTF_8;
 import static io.werval.util.IllegalArguments.ensureNotNull;
 
 /**
@@ -28,6 +29,16 @@ import static io.werval.util.IllegalArguments.ensureNotNull;
 public final class ByteArrayByteSource
     implements ByteSource, Serializable
 {
+    public static ByteArrayByteSource of( String string )
+    {
+        return of( string, UTF_8 );
+    }
+
+    public static ByteArrayByteSource of( String string, Charset charset )
+    {
+        return new ByteArrayByteSource( string.getBytes( charset ) );
+    }
+
     private final byte[] bytes;
 
     /**

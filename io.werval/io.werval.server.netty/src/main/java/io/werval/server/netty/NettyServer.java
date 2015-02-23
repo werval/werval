@@ -80,8 +80,8 @@ public class NettyServer
 
         // I/O Event Loops.
         // The first is used to handle the accept of new connections and the second will serve the IO of them.
-        int acceptors = app.config().intOptional( WERVAL_HTTP_ACCEPTORS).orElse( DEFAULT_POOL_SIZE );
-        int iothreads = app.config().intOptional( WERVAL_HTTP_IOTHREADS).orElse( DEFAULT_POOL_SIZE );
+        int acceptors = app.config().intOptional( WERVAL_HTTP_ACCEPTORS ).orElse( DEFAULT_POOL_SIZE );
+        int iothreads = app.config().intOptional( WERVAL_HTTP_IOTHREADS ).orElse( DEFAULT_POOL_SIZE );
         bootstrap.group(
             new NioEventLoopGroup( app.mode() == PROD ? acceptors : 1, new NamedThreadFactory( "werval-acceptor" ) ),
             new NioEventLoopGroup( app.mode() == PROD ? iothreads : 1, new NamedThreadFactory( "werval-io" ) )
