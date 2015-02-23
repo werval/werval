@@ -85,6 +85,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -968,8 +969,8 @@ public final class ApplicationInstance
      */
     private void applyKeepAlive( RequestHeader request, Outcome outcome )
     {
-        String connection = outcome.responseHeader().headers().singleValue( CONNECTION );
-        if( connection.isEmpty() )
+        Optional<String> connection = outcome.responseHeader().headers().singleValueOptional( CONNECTION );
+        if( !connection.isPresent() )
         {
             if( outcome.responseHeader().status().statusClass().isForceClose() || !request.isKeepAlive() )
             {

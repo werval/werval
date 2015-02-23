@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -219,5 +219,11 @@ public abstract class MultiValueMapAdapter<K, V>
     public Set<Entry<K, List<V>>> entrySet()
     {
         return internalMap.entrySet();
+    }
+
+    @Override
+    public String toString()
+    {
+        return internalMap.toString();
     }
 }

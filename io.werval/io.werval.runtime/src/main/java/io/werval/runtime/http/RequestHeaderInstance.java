@@ -227,20 +227,24 @@ public class RequestHeaderInstance
     @Override
     public Optional<String> contentType()
     {
-        return Headers.extractContentMimeType( headers.singleValue( CONTENT_TYPE ) );
+        return headers.singleValueOptional( CONTENT_TYPE )
+            .map( Headers::extractContentMimeType )
+            .orElse( Optional.empty() );
     }
 
     @Override
     public Optional<String> charset()
     {
-        return Headers.extractCharset( headers.singleValue( CONTENT_TYPE ) );
+        return headers.singleValueOptional( CONTENT_TYPE )
+            .map( Headers::extractCharset )
+            .orElse( Optional.empty() );
     }
 
     @Override
     public boolean isKeepAlive()
     {
-        String connection = headers.singleValue( CONNECTION );
-        if( CLOSE.equalsIgnoreCase( connection ) )
+        Optional<String> connection = headers.singleValueOptional( CONNECTION );
+        if( connection.isPresent() && CLOSE.equalsIgnoreCase( connection.get() ) )
         {
             return false;
         }
@@ -248,7 +252,7 @@ public class RequestHeaderInstance
         {
             return true;
         }
-        return KEEP_ALIVE.equalsIgnoreCase( connection );
+        return connection.isPresent() && KEEP_ALIVE.equalsIgnoreCase( connection.get() );
     }
 
     @Override

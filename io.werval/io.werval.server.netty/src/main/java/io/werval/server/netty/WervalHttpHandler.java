@@ -319,7 +319,7 @@ public final class WervalHttpHandler
      */
     private void applyResponseHeader( ResponseHeader response, HttpResponse nettyResponse )
     {
-        for( String name : response.headers().names() )
+        for( String name : response.headers().keys() )
         {
             nettyResponse.headers().add(
                 name,

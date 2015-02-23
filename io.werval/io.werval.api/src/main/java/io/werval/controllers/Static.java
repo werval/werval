@@ -16,7 +16,6 @@
 package io.werval.controllers;
 
 import io.werval.util.Dates;
-import io.werval.util.Strings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +23,7 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import io.werval.api.Mode;
 import io.werval.api.outcomes.Outcome;
 import org.slf4j.Logger;
@@ -218,26 +218,24 @@ public class Static
         }
         // If-None-Match, If-Modified-Since & Last-Modified
         boolean notModified = false;
-        if( request().headers().names().contains( IF_NONE_MATCH ) )
+        Optional<String> ifNoneMatch = request().headers().singleValueOptional( IF_NONE_MATCH );
+        if( ifNoneMatch.isPresent() )
         {
-            notModified = request().headers().singleValue( IF_NONE_MATCH ).equals( etag );
+            notModified = ifNoneMatch.get().equals( etag );
         }
-        if( request().headers().names().contains( IF_MODIFIED_SINCE ) )
+        Optional<String> ifModifiedSince = request().headers().singleValueOptional( IF_MODIFIED_SINCE );
+        if( ifModifiedSince.isPresent() )
         {
-            String ifModifiedSince = request().headers().singleValue( IF_MODIFIED_SINCE );
-            if( Strings.hasText( ifModifiedSince ) )
+            try
             {
-                try
+                if( Dates.HTTP.parse( ifModifiedSince.get() ).getTime() >= lastModified )
                 {
-                    if( Dates.HTTP.parse( ifModifiedSince ).getTime() >= lastModified )
-                    {
-                        notModified = true;
-                    }
+                    notModified = true;
                 }
-                catch( ParseException ex )
-                {
-                    LOG.warn( "Unable to parse HTTP date: " + ifModifiedSince, ex );
-                }
+            }
+            catch( ParseException ex )
+            {
+                LOG.warn( "Unable to parse HTTP date: " + ifModifiedSince.get(), ex );
             }
         }
 
