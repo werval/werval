@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -125,14 +126,14 @@ public interface FormUploads
     interface Upload
     {
         /**
-         * @return Upload's content-type or null if not defined
+         * @return Upload's content-type, optional
          */
-        String contentType();
+        Optional<String> contentType();
 
         /**
-         * @return Upload's charset or null if not defined
+         * @return Upload's charset, optional
          */
-        Charset charset();
+        Optional<Charset> charset();
 
         /**
          * @return Upload's filename

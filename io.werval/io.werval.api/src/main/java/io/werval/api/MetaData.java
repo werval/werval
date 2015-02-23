@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package io.werval.api;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -58,6 +59,24 @@ public final class MetaData
             return null;
         }
         return type.cast( value );
+    }
+
+    /**
+     * Optionaly returns the value to which the specified key is mapped.
+     * <p>
+     * See {@link #get(java.lang.Class, java.lang.String)}.
+     *
+     * @param <T>  Parameterized meta-data type
+     * @param type Requested meta-data type
+     * @param key  Key
+     *
+     * @return An Optional of the value to which the specified key is mapped.
+     *
+     * @throws ClassCastException if the MetaData at the given key is not assignable to the given type.
+     */
+    public <T> Optional<T> getOptional( Class<T> type, String key )
+    {
+        return Optional.ofNullable( get( type, key ) );
     }
 
     /**

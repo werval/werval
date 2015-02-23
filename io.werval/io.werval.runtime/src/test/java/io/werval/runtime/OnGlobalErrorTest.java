@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -346,7 +346,7 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).get().message(),
                 equalTo( "getFilterInstance" )
             );
         }
@@ -384,7 +384,7 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).get().message(),
                 equalTo( "getControllerInstance" )
             );
         }
@@ -432,7 +432,7 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).message(),
+                werval.application().errors().lastOfRequest( response.header( X_WERVAL_REQUEST_ID ) ).get().message(),
                 equalTo( "invokeControllerMethod" )
             );
         }
@@ -528,7 +528,9 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                Stacktraces.containsMessage( "getRootCause" ).test( werval.application().errors().last().cause() ),
+                Stacktraces.containsMessage( "getRootCause" ).test(
+                    werval.application().errors().last().get().cause()
+                ),
                 is( true )
             );
         }
@@ -568,7 +570,9 @@ public class OnGlobalErrorTest
                 .get( "/" );
             assertThat( werval.application().errors().count(), is( 1 ) );
             assertThat(
-                Stacktraces.containsMessage( "onRequestError" ).test( werval.application().errors().last().cause() ),
+                Stacktraces.containsMessage( "onRequestError" ).test(
+                    werval.application().errors().last().get().cause()
+                ),
                 is( true )
             );
         }

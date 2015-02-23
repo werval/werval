@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -194,15 +195,15 @@ public class FormUploadsInstance
         }
 
         @Override
-        public String contentType()
+        public Optional<String> contentType()
         {
-            return contentType;
+            return Optional.ofNullable( contentType );
         }
 
         @Override
-        public Charset charset()
+        public Optional<Charset> charset()
         {
-            return charset;
+            return Optional.ofNullable( charset );
         }
 
         @Override

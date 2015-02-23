@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package io.werval.api.http;
 
 import java.util.Map;
 import io.werval.api.http.Cookies.Cookie;
+import java.util.Optional;
 
 /**
  * Session.
@@ -46,9 +47,9 @@ public interface Session
      *
      * @param key Session key
      *
-     * @return Session value for the given key, null if absent
+     * @return Session value for the given key, optional
      */
-    String get( String key );
+    Optional<String> get( String key );
 
     /**
      * Set a Session value.

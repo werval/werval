@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -719,8 +719,8 @@ public final class ApplicationInstance
                             jCookie.setMaxAge( cookie.maxAge() );
                             jCookie.setSecure( cookie.secure() );
                             jCookie.setHttpOnly( cookie.httpOnly() );
-                            jCookie.setComment( cookie.comment() );
-                            jCookie.setCommentURL( cookie.commentUrl() );
+                            jCookie.setComment( cookie.comment().isPresent() ? cookie.comment().get() : null );
+                            jCookie.setCommentURL( cookie.commentUrl().isPresent() ? cookie.commentUrl().get() : null );
                             outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
                         }
 

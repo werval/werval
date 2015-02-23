@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.werval.api;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Application errors.
@@ -67,16 +68,16 @@ public interface Errors
      *
      * @param errorId Error identity
      *
-     * @return Error or null if not found
+     * @return Error, optional
      */
-    Error get( String errorId );
+    Optional<Error> get( String errorId );
 
     /**
      * Get last recorded Error.
      *
-     * @return Last recorded Error
+     * @return Last recorded Error, optional
      */
-    Error last();
+    Optional<Error> last();
 
     /**
      * Get a List&lt;Error&gt; containing only Errors pertaining to a given request.
@@ -92,7 +93,7 @@ public interface Errors
      *
      * @param requestIdentity Request identity
      *
-     * @return Last recorded Error pertaining to the given request
+     * @return Last recorded Error pertaining to the given request, optional
      */
-    Error lastOfRequest( String requestIdentity );
+    Optional<Error> lastOfRequest( String requestIdentity );
 }

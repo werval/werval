@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import io.werval.util.URLs;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,24 +66,25 @@ public final class SessionInstance
         this.session.putAll( session );
     }
 
-    public SessionInstance( Config config, Crypto crypto, Cookie cookie )
+    public SessionInstance( Config config, Crypto crypto, Optional<Cookie> cookie )
     {
         this( config, crypto );
-        if( cookie == null || Strings.isEmpty( cookie.value() ) )
+        if( !cookie.isPresent() || Strings.isEmpty( cookie.get().value() ) )
         {
             return;
         }
-        String[] splitted = cookie.value().split( "-", 2 );
+        String cookieValue = cookie.get().value();
+        String[] splitted = cookieValue.split( "-", 2 );
         if( splitted.length != 2 )
         {
-            LOG.warn( "Invalid Session Cookie Value: '{}'. Will use an empty Session.", cookie.value() );
+            LOG.warn( "Invalid Session Cookie Value: '{}'. Will use an empty Session.", cookieValue );
             return;
         }
         String signature = splitted[0];
         String payload = splitted[1];
         if( !signature.equals( crypto.hmacSha256Hex( payload ) ) )
         {
-            LOG.warn( "Invalid Session Cookie Signature: '{}'. Will use an empty Session.", cookie.value() );
+            LOG.warn( "Invalid Session Cookie Signature: '{}'. Will use an empty Session.", cookieValue );
             return;
         }
         String decoded = URLs.decode( payload, config.charset( WERVAL_CHARACTER_ENCODING ) );
@@ -106,9 +108,9 @@ public final class SessionInstance
     }
 
     @Override
-    public String get( String key )
+    public Optional<String> get( String key )
     {
-        return session.get( key );
+        return Optional.ofNullable( session.get( key ) );
     }
 
     @Override

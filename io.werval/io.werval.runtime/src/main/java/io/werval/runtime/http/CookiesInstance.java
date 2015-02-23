@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -69,21 +70,21 @@ public final class CookiesInstance
     }
 
     @Override
-    public Cookie get( String name )
+    public Optional<Cookie> get( String name )
     {
         ensureNotEmpty( "Cookie Name", name );
-        return cookies.get( name );
+        return Optional.ofNullable( cookies.get( name ) );
     }
 
     @Override
-    public String value( String name )
+    public Optional<String> value( String name )
     {
         ensureNotEmpty( "Cookie Name", name );
         if( cookies.containsKey( name ) )
         {
-            return cookies.get( name ).value();
+            return Optional.of( cookies.get( name ).value() );
         }
-        return Strings.EMPTY;
+        return Optional.empty();
     }
 
     @Override
@@ -231,15 +232,15 @@ public final class CookiesInstance
         }
 
         @Override
-        public String comment()
+        public Optional<String> comment()
         {
-            return comment;
+            return Optional.ofNullable( comment );
         }
 
         @Override
-        public String commentUrl()
+        public Optional<String> commentUrl()
         {
-            return commentUrl;
+            return Optional.ofNullable( commentUrl );
         }
 
         @Override

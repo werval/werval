@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import io.werval.runtime.http.CookiesInstance.CookieInstance;
 import io.werval.runtime.routes.RoutesParserProvider;
 import io.werval.test.WervalHttpRule;
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -83,8 +84,12 @@ public class SessionTest
             false, true,
             null, null
         );
-        Session session = new SessionInstance( WERVAL.application().config(), WERVAL.application().crypto(), sessionCookie );
-        assertThat( session.get( "foo" ), equalTo( "bar" ) );
+        Session session = new SessionInstance(
+            WERVAL.application().config(),
+            WERVAL.application().crypto(),
+            Optional.of( sessionCookie )
+        );
+        assertThat( session.get( "foo" ).get(), equalTo( "bar" ) );
     }
 
     @Test

@@ -9,6 +9,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased!
 
+### Breaking changes
+
+- (#246) APIs now leverage Java 8 `java.util.Optional`
+
 ### Bug fixes
 
 - (#239) Fix ReverseRoutes NPE if controller is interface and no parameters
