@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import io.werval.controllers.Classpath;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,12 +130,12 @@ public class DynamicDocumentations
     private static Map<String, DynDoc> discoverDynDocs( Application application )
     {
         Map<String, DynDoc> map = new LinkedHashMap<>();
-        if( application.config().has( "werval.devshell.dyndocs" ) )
+        Optional<Config> dyndocsConfig = application.config().atPathOptional( "werval.devshell.dyndocs" );
+        if( dyndocsConfig.isPresent() )
         {
-            Config dyndocsConfig = application.config().atPath( "werval.devshell.dyndocs" );
-            for( String id : dyndocsConfig.subKeys() )
+            for( String id : dyndocsConfig.get().subKeys() )
             {
-                Config dyndocConfig = dyndocsConfig.atKey( id );
+                Config dyndocConfig = dyndocsConfig.get().atKey( id );
                 if( !dyndocConfig.has( "base_path" ) )
                 {
                     LOG.warn(
@@ -144,9 +145,7 @@ public class DynamicDocumentations
                     break;
                 }
                 String basePath = dyndocConfig.string( "base_path" );
-                String entryPoint = dyndocConfig.has( "entry_point" )
-                                    ? dyndocConfig.string( "entry_point" )
-                                    : "index.html";
+                String entryPoint = dyndocConfig.stringOptional( "entry_point" ).orElse( "index.html" );
                 String entryPointResource = basePath + "/" + entryPoint;
                 if( application.classLoader().getResource( entryPointResource ) == null )
                 {
@@ -156,7 +155,7 @@ public class DynamicDocumentations
                     );
                     break;
                 }
-                String name = dyndocConfig.has( "name" ) ? dyndocConfig.string( "name" ) : id;
+                String name = dyndocConfig.stringOptional( "name" ).orElse( id );
                 map.put( id, new DynDoc( id, basePath, entryPoint, name ) );
             }
         }

@@ -174,15 +174,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
             String typeKey = executorName + ".type";
             String countKey = executorName + ".count";
             String namePrefixKey = executorName + ".thread_name_prefix";
-            String type = executorsConfig.has( typeKey )
-                          ? executorsConfig.string( typeKey )
-                          : "thread-pool";
-            int count = executorsConfig.has( countKey )
-                        ? executorsConfig.intNumber( countKey )
-                        : DEFAULT_POOL_SIZE;
-            String namePrefix = executorsConfig.has( namePrefixKey )
-                                ? executorsConfig.string( namePrefixKey )
-                                : executorName + "_thread";
+            String type = executorsConfig.stringOptional( typeKey ).orElse( "thread-pool" );
+            int count = executorsConfig.intOptional( countKey ).orElse( DEFAULT_POOL_SIZE );
+            String namePrefix = executorsConfig.stringOptional( namePrefixKey ).orElse( executorName + "_thread" );
 
             // Override default executor in development mode
             // if( defaultExecutor.equals( executorName ) && application.mode() == Mode.DEV )

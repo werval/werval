@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static io.werval.util.Charsets.UTF_8;
@@ -324,15 +325,9 @@ public class ConfigInstance
     }
 
     @Override
-    public Config atKey( String key )
+    public boolean has( String key )
     {
-        return new ConfigInstance( config.getConfig( '"' + key + '"' ), location );
-    }
-
-    @Override
-    public Config atPath( String key )
-    {
-        return new ConfigInstance( config.getConfig( key ), location );
+        return config.hasPath( key );
     }
 
     @Override
@@ -350,11 +345,62 @@ public class ConfigInstance
     }
 
     @Override
+    public Config atKey( String key )
+    {
+        return new ConfigInstance( config.getConfig( '"' + key + '"' ), location );
+    }
+
+    @Override
+    public Optional<Config> atKeyOptional( String key )
+    {
+        try
+        {
+            return Optional.of( atKey( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Config atPath( String key )
+    {
+        return new ConfigInstance( config.getConfig( key ), location );
+    }
+
+    @Override
+    public Optional<Config> atPathOptional( String path )
+    {
+        try
+        {
+            return Optional.of( atPath( path ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<Config> array( String key )
     {
         List<Config> configs = new ArrayList<>();
         config.getConfigList( key ).forEach( conf -> configs.add( new ConfigInstance( conf, location ) ) );
         return configs;
+    }
+
+    @Override
+    public Optional<List<Config>> arrayOptional( String key )
+    {
+        try
+        {
+            return Optional.of( array( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -364,15 +410,22 @@ public class ConfigInstance
     }
 
     @Override
-    public boolean has( String key )
-    {
-        return config.hasPath( key );
-    }
-
-    @Override
     public Boolean bool( String key )
     {
         return config.getBoolean( key );
+    }
+
+    @Override
+    public Optional<Boolean> boolOptional( String key )
+    {
+        try
+        {
+            return Optional.of( bool( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -382,15 +435,54 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<Integer> intOptional( String key )
+    {
+        try
+        {
+            return Optional.of( intNumber( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Double doubleNumber( String key )
     {
         return config.getDouble( key );
     }
 
     @Override
+    public Optional<Double> doubleOptional( String key )
+    {
+        try
+        {
+            return Optional.of( doubleNumber( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public String string( String key )
     {
         return config.getString( key );
+    }
+
+    @Override
+    public Optional<String> stringOptional( String key )
+    {
+        try
+        {
+            return Optional.of( string( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -414,9 +506,35 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<List<Boolean>> boolListOptional( String key )
+    {
+        try
+        {
+            return Optional.of( boolList( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<Integer> intList( String key )
     {
         return config.getIntList( key );
+    }
+
+    @Override
+    public Optional<List<Integer>> intListOptional( String key )
+    {
+        try
+        {
+            return Optional.of( intList( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -426,9 +544,35 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<List<Double>> doubleListOptional( String key )
+    {
+        try
+        {
+            return Optional.of( doubleList( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<String> stringList( String key )
     {
         return config.getStringList( key );
+    }
+
+    @Override
+    public Optional<List<String>> stringListOptional( String key )
+    {
+        try
+        {
+            return Optional.of( stringList( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -444,9 +588,35 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<Map<String, String>> stringMapOptional( String key )
+    {
+        try
+        {
+            return Optional.of( stringMap( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public char[] chars( String key )
     {
         return config.getString( key ).toCharArray();
+    }
+
+    @Override
+    public Optional<char[]> charsOptional( String key )
+    {
+        try
+        {
+            return Optional.of( chars( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -456,9 +626,35 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<byte[]> utf8BytesOptional( String key )
+    {
+        try
+        {
+            return Optional.of( utf8Bytes( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Charset charset( String key )
     {
         return Charset.forName( config.getString( key ) );
+    }
+
+    @Override
+    public Optional<Charset> charsetOptional( String key )
+    {
+        try
+        {
+            return Optional.of( charset( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -480,9 +676,35 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<URL> urlOptional( String key )
+    {
+        try
+        {
+            return Optional.of( url( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public File file( String key )
     {
         return new File( config.getString( key ) );
+    }
+
+    @Override
+    public Optional<File> fileOptional( String key )
+    {
+        try
+        {
+            return Optional.of( file( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -492,9 +714,35 @@ public class ConfigInstance
     }
 
     @Override
+    public Optional<Long> secondsOptional( String key )
+    {
+        try
+        {
+            return Optional.of( seconds( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Long milliseconds( String key )
     {
         return config.getDuration( key, MILLISECONDS );
+    }
+
+    @Override
+    public Optional<Long> millisecondsOptional( String key )
+    {
+        try
+        {
+            return Optional.of( milliseconds( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override

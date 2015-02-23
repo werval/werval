@@ -166,7 +166,7 @@ public final class SessionInstance
             config.string( APP_SESSION_COOKIE_NAME ),
             signedCookieValue,
             config.string( APP_SESSION_COOKIE_PATH ),
-            config.has( APP_SESSION_COOKIE_DOMAIN ) ? config.string( APP_SESSION_COOKIE_DOMAIN ) : null,
+            config.stringOptional( APP_SESSION_COOKIE_DOMAIN ).orElse( null ),
             Long.MIN_VALUE,
             config.bool( APP_SESSION_COOKIE_SECURE ),
             config.bool( APP_SESSION_COOKIE_HTTPONLY ),
