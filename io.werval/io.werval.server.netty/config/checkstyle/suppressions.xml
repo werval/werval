@@ -16,5 +16,6 @@
     <suppress checks=".*" files="HttpRequestAggregator.java"/>
     <suppress checks=".*" files="NettyHttpFactories.java"/>
     <suppress checks=".*" files="WervalHttpHandler.java"/>
+    <suppress checks=".*" files="ChunkedPublisher.java"/>
 
 </suppressions>

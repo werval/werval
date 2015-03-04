@@ -5,6 +5,8 @@ dependencies {
 
     compile project( ":io.werval.spi" )
     compile libs.javassist
+    compile libs.rx_java
+    compile libs.rx_reactive_streams
     compile libs.typesafe_config
     
     testCompile project( ":io.werval.test" )

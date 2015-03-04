@@ -30,6 +30,7 @@ import io.werval.api.http.Status;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.outcomes.ChunkedInputOutcome;
 import io.werval.runtime.outcomes.InputStreamOutcome;
+import io.werval.runtime.outcomes.ReactiveOutcome;
 import io.werval.runtime.outcomes.SimpleOutcome;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellRebuildException;
@@ -61,9 +62,12 @@ import static io.werval.util.Charsets.UTF_8;
 import static io.werval.server.netty.NettyHttpFactories.remoteAddressOf;
 import static io.werval.server.netty.NettyHttpFactories.requestOf;
 
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static rx.RxReactiveStreams.toObservable;
+import static rx.RxReactiveStreams.toPublisher;
 
 /**
  * Handle HTTP Requests.
@@ -313,6 +317,25 @@ public final class WervalHttpHandler
             // Body
             ( (ByteBufHolder) nettyResponse ).content().writeBytes( body );
             writeFuture = nettyContext.writeAndFlush( nettyResponse );
+        }
+        else if( outcome instanceof ReactiveOutcome )
+        {
+            ReactiveOutcome reactiveOutcome = (ReactiveOutcome) outcome;
+            nettyResponse = new DefaultHttpResponse( responseVersion, responseStatus );
+            // Headers
+            applyResponseHeader( responseHeader, nettyResponse );
+            nettyResponse.headers().set( TRANSFER_ENCODING, CHUNKED );
+            nettyResponse.headers().set( TRAILER, X_WERVAL_CONTENT_LENGTH );
+            // Body
+            nettyContext.write( nettyResponse );
+            writeFuture = nettyContext.writeAndFlush(
+                new HttpChunkedBodyEncoder(
+                    new ChunkedPublisher(
+                        toPublisher( toObservable( reactiveOutcome.reactiveBody() )
+                            .map( bytes -> wrappedBuffer( bytes.asBytes() ) ) )
+                    )
+                )
+            );
         }
         else
         {

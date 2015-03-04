@@ -26,6 +26,8 @@ import io.werval.api.outcomes.OutcomeBuilder;
 import io.werval.util.ByteArrayByteSource;
 import io.werval.util.ByteSource;
 
+import org.reactivestreams.Publisher;
+
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
 import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static io.werval.api.mime.MimeTypesNames.APPLICATION_XML;
@@ -179,6 +181,13 @@ public class OutcomeBuilderInstance
     }
 
     @Override
+    public OutcomeBuilder withBody( Publisher<ByteSource> publisher )
+    {
+        body = publisher;
+        return this;
+    }
+
+    @Override
     public Outcome build()
     {
         if( body == null )
@@ -198,6 +207,11 @@ public class OutcomeBuilderInstance
                 return new InputStreamOutcome( response, bodyInputStream, length );
             }
             return new ChunkedInputOutcome( response, bodyInputStream, chunkSize );
+        }
+        if( body instanceof Publisher )
+        {
+            Publisher<ByteSource> publisher = (Publisher<ByteSource>) body;
+            return new ReactiveOutcome( response ).withBody( publisher );
         }
         throw new UnsupportedOperationException( "Unsupported body type ( " + body.getClass() + " ) " + body );
     }

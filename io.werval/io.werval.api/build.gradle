@@ -4,6 +4,7 @@ description = "Werval API"
 dependencies {
 
     compile libs.slf4j
+    compile libs.reactive_streams
 
     testCompile project( ':io.werval.test' )
     testCompile libs.rest_assured

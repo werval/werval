@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.api.outcomes;
+package io.werval.runtime.outcomes;
 
 import io.werval.api.http.ResponseHeader;
 import io.werval.util.ByteSource;
+
 import org.reactivestreams.Publisher;
 
 /**
- * Outcome of a HTTP Request processing.
- *
- * @navcomposed 1 - 1 ResponseHeader
+ * Reactive Outcome.
  */
-public interface Outcome
+public class ReactiveOutcome
+    extends AbstractOutcome<ReactiveOutcome>
 {
-    /**
-     * @return Outcome HTTP Response header.
-     */
-    ResponseHeader responseHeader();
-
-    /**
-     * @return Outome body as a reactive bytes publisher
-     */
-    default Publisher<ByteSource> reactiveBody()
+    private Publisher<ByteSource> reactiveBody = null;
+    /* serialization */ ReactiveOutcome()
     {
-        return null;
+        super( null );
+    }
+
+    /* package */ ReactiveOutcome( ResponseHeader response )
+    {
+        super( response );
+    }
+
+    public ReactiveOutcome withBody( Publisher<ByteSource> publisher )
+    {
+        this.reactiveBody = publisher;
+        return this;
+    }
+
+    @Override
+    public Publisher<ByteSource> reactiveBody()
+    {
+        return reactiveBody;
     }
 }

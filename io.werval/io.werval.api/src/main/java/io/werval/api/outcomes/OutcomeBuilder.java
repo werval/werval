@@ -15,8 +15,10 @@
  */
 package io.werval.api.outcomes;
 
+import io.werval.util.ByteSource;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import org.reactivestreams.Publisher;
 
 /**
  * Builder for Outcomes.
@@ -175,6 +177,8 @@ public interface OutcomeBuilder
      * @return This very OutcomeBuilder instance
      */
     OutcomeBuilder withBody( InputStream body, long length );
+
+    OutcomeBuilder withBody( Publisher<ByteSource> publisher );
 
     /**
      * @return A new Outcome instance

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.api.outcomes;
-
-import io.werval.api.http.ResponseHeader;
-import io.werval.util.ByteSource;
-import org.reactivestreams.Publisher;
-
 /**
- * Outcome of a HTTP Request processing.
- *
- * @navcomposed 1 - 1 ResponseHeader
+ * Streams.
  */
-public interface Outcome
-{
-    /**
-     * @return Outcome HTTP Response header.
-     */
-    ResponseHeader responseHeader();
-
-    /**
-     * @return Outome body as a reactive bytes publisher
-     */
-    default Publisher<ByteSource> reactiveBody()
-    {
-        return null;
-    }
-}
+package io.werval.api.streams;
