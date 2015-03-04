@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package io.werval.api.http;
 
 import java.util.Set;
 import io.werval.api.http.Cookies.Cookie;
+import java.util.Optional;
 
 /**
  * HTTP Cookies.
@@ -55,16 +56,16 @@ public interface Cookies
     /**
      * @param name Name of the HTTP Cookie
      *
-     * @return The Cookie
+     * @return The Cookie, optional
      */
-    Cookie get( String name );
+    Optional<Cookie> get( String name );
 
     /**
      * @param name Name of the HTTP Cookie
      *
-     * @return Value for this HTTP Cookie name or an empty String
+     * @return Value for this HTTP Cookie name, optional
      */
-    String value( String name );
+    Optional<String> value( String name );
 
     /**
      * HTTP Cookie.
@@ -139,15 +140,15 @@ public interface Cookies
         /**
          * Comment of the cookie.
          *
-         * @return Comment of the cookie
+         * @return Comment of the cookie, optional
          */
-        String comment();
+        Optional<String> comment();
 
         /**
          * Comment URL of the cookie.
          *
-         * @return Comment URL of the cookie
+         * @return Comment URL of the cookie, optional
          */
-        String commentUrl();
+        Optional<String> commentUrl();
     }
 }

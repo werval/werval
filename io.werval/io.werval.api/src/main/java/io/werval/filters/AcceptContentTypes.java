@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ import java.util.concurrent.CompletableFuture;
 import io.werval.api.context.Context;
 import io.werval.api.filters.FilterChain;
 import io.werval.api.filters.FilterWith;
+import io.werval.api.http.Headers;
 import io.werval.api.outcomes.Outcome;
+import java.util.Arrays;
 
 /**
  * Accept Content Types Annotation.
@@ -61,27 +63,22 @@ public @interface AcceptContentTypes
         )
         {
             String[] acceptedContentTypes = annotation.map( annot -> annot.value() ).orElse( new String[ 0 ] );
-            boolean accepted = false;
-            String requestContentType = context.request().contentType();
-            for( String acceptedContentType : acceptedContentTypes )
+            Optional<String> contentType = context.request().contentType().map( Headers::extractContentMimeType ).get();
+            if( contentType.isPresent() )
             {
-                if( acceptedContentType.equals( requestContentType ) )
+                if( Arrays.stream( acceptedContentTypes ).anyMatch( ct -> ct.equals( contentType.get() ) ) )
                 {
-                    accepted = true;
-                    break;
+                    return chain.next( context );
                 }
-            }
-            if( !accepted )
-            {
                 return CompletableFuture.completedFuture(
-                    context.outcomes()
-                    .badRequest()
-                    .withBody( "Unacceptable content-type: " + requestContentType )
-                    .asTextPlain()
-                    .build()
+                    context.outcomes().badRequest().asTextPlain()
+                    .withBody( "Unacceptable content-type: `" + contentType.get() + '`' ).build()
                 );
             }
-            return chain.next( context );
+            return CompletableFuture.completedFuture(
+                context.outcomes().badRequest().asTextPlain()
+                .withBody( "Content-Type header must be provided" ).build()
+            );
         }
     }
 }

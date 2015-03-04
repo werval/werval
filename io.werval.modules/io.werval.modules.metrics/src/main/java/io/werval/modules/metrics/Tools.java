@@ -77,7 +77,9 @@ public class Tools
 
     private static ObjectWriter getJsonWriter()
     {
-        final boolean prettyPrint = Boolean.parseBoolean( request().queryString().firstValue( "pretty" ) );
+        final boolean prettyPrint = Boolean.parseBoolean(
+            request().queryString().firstValueOptional( "pretty" ).orElse( "false" )
+        );
         if( prettyPrint )
         {
             return plugin( JSON.class ).mapper().writerWithDefaultPrettyPrinter();

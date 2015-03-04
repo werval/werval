@@ -4,8 +4,8 @@ description = "Werval Runtime"
 dependencies {
 
     compile project( ":io.werval.spi" )
-    compile libs.typesafe_config
     compile libs.javassist
+    compile libs.typesafe_config
     
     testCompile project( ":io.werval.test" )
     testCompile libs.jackson

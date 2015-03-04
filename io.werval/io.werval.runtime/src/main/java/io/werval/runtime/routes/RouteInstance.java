@@ -300,7 +300,7 @@ import static io.werval.util.Strings.rightPad;
                 }
                 catch( IllegalArgumentException noMatchingGroupInPath )
                 {
-                    if( queryString.names().contains( param.name() ) )
+                    if( queryString.keys().contains( param.name() ) )
                     {
                         // QUID We currently requires a single value to bind QueryString parameter.
                         // QUID Should we provide a config property to use first/last value?

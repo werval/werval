@@ -87,9 +87,10 @@ public @interface Cached
             String key = key( context, annotation.get().vary() );
             String etagKey = key + "-etag";
 
-            String requestEtag = context.request().headers().singleValue( IF_NONE_MATCH );
+            Optional<String> requestEtag = context.request().headers().singleValueOptional( IF_NONE_MATCH );
             String cacheEtag = context.application().cache().get( etagKey );
-            if( "*".equals( requestEtag ) || Objects.equals( cacheEtag, requestEtag ) )
+            if( requestEtag.isPresent()
+                && ( "*".equals( requestEtag.get() ) || Objects.equals( cacheEtag, requestEtag.get() ) ) )
             {
                 return CompletableFuture.completedFuture( context.outcomes().notModified().build() );
             }

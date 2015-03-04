@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 /**
  * Utilities to work with Iterables.
@@ -84,6 +85,50 @@ public final class Iterables
         }
     }
 
+    private static final class MapIterable<I, O>
+        implements Iterable<O>
+    {
+        private final Iterable<I> input;
+        private final Function<I, O> function;
+
+        private MapIterable( Iterable<I> input, Function<I, O> function )
+        {
+            this.input = input;
+            this.function = function;
+        }
+
+        @Override
+        public Iterator<O> iterator()
+        {
+            return new MapIterator<>( input.iterator(), function );
+        }
+    }
+
+    private static final class MapIterator<I, O>
+        implements Iterator<O>
+    {
+        private final Iterator<I> input;
+        private final Function<I, O> function;
+
+        private MapIterator( Iterator<I> input, Function<I, O> function )
+        {
+            this.input = input;
+            this.function = function;
+        }
+
+        @Override
+        public boolean hasNext()
+        {
+            return input.hasNext();
+        }
+
+        @Override
+        public O next()
+        {
+            return function.apply( input.next() );
+        }
+    }
+
     private static final Iterable EMPTY = new EmptyIterable();
 
     /**
@@ -144,6 +189,11 @@ public final class Iterables
         return new SkipIterable<>( skip, iterable );
     }
 
+    public static <I, O> Iterable<O> map( Iterable<I> input, Function<I, O> function )
+    {
+        return new MapIterable<>( input, function );
+    }
+
     /**
      * Add all items of an Iterable into a Collection.
      *
@@ -188,6 +238,11 @@ public final class Iterables
     public static <T> List<T> toList( Iterable<T> iterable )
     {
         return addAll( new ArrayList<T>(), iterable );
+    }
+
+    public static <T, I extends Iterable<T>> I notEmptyOrNull( I iterable )
+    {
+        return iterable != null && count( iterable ) > 0 ? iterable : null;
     }
 
     private Iterables()

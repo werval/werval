@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package io.werval.modules.qi4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import org.json.JSONException;
 import org.qi4j.api.structure.ApplicationDescriptor;
 import org.qi4j.bootstrap.ApplicationAssembler;
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Plugin for Qi4j Application.
- *
+ * <p>
  * See the Qi4j documentation at <a href="http://qi4j.org/">qi4j.org</a>.
  */
 public class Qi4jPlugin
@@ -74,12 +75,7 @@ public class Qi4jPlugin
             if( hasAssembler )
             {
                 String assembler = application.config().string( "qi4j.assembler" );
-                Object instance = application.classLoader().loadClass( assembler ).newInstance();
-                if( !ApplicationAssembler.class.isAssignableFrom( instance.getClass() ) )
-                {
-                    throw new IllegalArgumentException( assembler + " is not an ApplicationAssembler." );
-                }
-                ApplicationAssembler appAssembler = (ApplicationAssembler) instance;
+                ApplicationAssembler appAssembler = createApplicationAssembler( application, assembler );
                 Energy4Java qi4j = new Energy4Java();
                 ApplicationDescriptor model = qi4j.newApplicationModel( appAssembler );
                 qi4jApplication = model.newInstance( qi4j.api() );
@@ -88,6 +84,7 @@ public class Qi4jPlugin
             }
             else
             {
+                // TODO Support application modes!
                 String assembly = application.config().string( "qi4j.assembly" );
                 try( InputStream json = application.classLoader().getResourceAsStream( assembly ) )
                 {
@@ -96,9 +93,48 @@ public class Qi4jPlugin
                 LOG.debug( "Qi4j Application assembled from '{}' successfuly activated", assembly );
             }
         }
-        catch( ClassNotFoundException | InstantiationException | IllegalAccessException |
-               JSONException | IOException |
+        catch( JSONException | IOException |
                org.qi4j.bootstrap.AssemblyException | org.qi4j.api.activation.ActivationException ex )
+        {
+            throw new io.werval.api.exceptions.ActivationException( ex.getMessage(), ex );
+        }
+    }
+
+    private ApplicationAssembler createApplicationAssembler( io.werval.api.Application application, String assembler )
+    {
+        try
+        {
+            Class<?> assemblerClass = application.classLoader().loadClass( assembler );
+            if( !ApplicationAssembler.class.isAssignableFrom( assemblerClass ) )
+            {
+                throw new IllegalArgumentException( assembler + " is not an ApplicationAssembler." );
+            }
+            try
+            {
+                org.qi4j.api.structure.Application.Mode mode;
+                switch( application.mode() )
+                {
+                    case DEV:
+                        mode = org.qi4j.api.structure.Application.Mode.development;
+                        break;
+                    case TEST:
+                        mode = org.qi4j.api.structure.Application.Mode.test;
+                        break;
+                    case PROD:
+                    default:
+                        mode = org.qi4j.api.structure.Application.Mode.production;
+                        break;
+                }
+                return (ApplicationAssembler) assemblerClass
+                    .getConstructor( org.qi4j.api.structure.Application.Mode.class )
+                    .newInstance( mode );
+            }
+            catch( NoSuchMethodException ex )
+            {
+                return (ApplicationAssembler) assemblerClass.newInstance();
+            }
+        }
+        catch( ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException ex )
         {
             throw new io.werval.api.exceptions.ActivationException( ex.getMessage(), ex );
         }

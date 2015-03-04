@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
@@ -39,6 +40,6 @@ public class MetaDataTest
         assertThat( meta.get( Integer.class, "integer" ), equalTo( 42 ) );
 
         assertNull( meta.get( "bazar" ) );
-        assertNull( meta.get( ArrayList.class, "bazar" ) );
+        assertFalse( meta.getOptional( ArrayList.class, "bazar" ).isPresent() );
     }
 }

@@ -99,6 +99,9 @@ task documentationArchive(type: Zip, dependsOn: jbake) {
 // Generate distribution archive
 //
 
+// Disable JAR creation
+jar.enabled false
+
 // org.werval.dist-VERSION-zip/
 //               src/                   Full copy of the SDK sources, with build system, tests etc...
 //               artifacts/             Maven repository with all Werval artifacts (binaries, javadoc and source jars)

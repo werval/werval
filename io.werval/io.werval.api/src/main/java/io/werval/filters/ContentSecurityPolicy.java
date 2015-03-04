@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,9 @@ public @interface ContentSecurityPolicy
          */
         public Outcome logViolation()
         {
-            if( !POST.equals( request().method() ) || !APPLICATION_JSON.equals( request().contentType() ) )
+            if( !POST.equals( request().method() )
+                || ( request().contentType().isPresent()
+                     && !APPLICATION_JSON.equals( request().contentType().get() ) ) )
             {
                 return outcomes().badRequest().build();
             }

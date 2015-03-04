@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import io.werval.api.i18n.Lang;
 import io.werval.api.mime.MediaRange;
 import io.werval.api.routes.ParameterBinders;
 import io.werval.api.routes.Route;
+import java.util.Optional;
 
 /**
  * Request header.
@@ -105,11 +106,11 @@ public interface RequestHeader
     String remoteAddress();
 
     /**
-     * The HTTP Host with or without the port, or an empty String.
+     * The HTTP Host with or without the port.
      * <p>
      * HTTP Host header, mandatory since HTTP 1.1.
      *
-     * @return The HTTP Host with or without the port, or an empty String
+     * @return The HTTP Host with or without the port
      */
     String host();
 
@@ -132,22 +133,22 @@ public interface RequestHeader
     String domain();
 
     /**
-     * The HTTP Request content type, or and empty String.
+     * The HTTP Request content type, optional.
      * <p>
      * Computed from the Content-Type header, charset removed.
      *
-     * @return The HTTP Request content type, or and empty String
+     * @return The HTTP Request content type, optional
      */
-    String contentType();
+    Optional<String> contentType();
 
     /**
-     * The HTTP Request Charset or an empty String.
+     * The HTTP Request Charset, optional.
      * <p>
      * Computed from the Content-Type header.
      *
-     * @return The HTTP Request Charset or an empty String
+     * @return The HTTP Request Charset, optional
      */
-    String charset();
+    Optional<String> charset();
 
     /**
      * Return {@literal true} if and only if the connection can remain open.

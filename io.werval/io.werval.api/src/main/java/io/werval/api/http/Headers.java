@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package io.werval.api.http;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import io.werval.util.MultiValued;
+import io.werval.util.Strings;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * HTTP Headers.
@@ -26,92 +27,52 @@ import java.util.Set;
  * @has 1 - 1 Values
  */
 public interface Headers
+    extends MultiValued<String, String>
 {
     /**
-     * @return TRUE if there's no header, FALSE otherwise
+     * Extract MimeType information from Content-Type string value removing options such as Charset.
+     *
+     * @param contentTypeHeaderValue Content-Type string value
+     *
+     * @return Extracted Content-Type or an empty String if absent
      */
-    boolean isEmpty();
+    static Optional<String> extractContentMimeType( String contentTypeHeaderValue )
+    {
+        if( Strings.isEmpty( contentTypeHeaderValue ) )
+        {
+            return Optional.empty();
+        }
+        return Optional.of( contentTypeHeaderValue.split( ";" )[0].toLowerCase( Locale.US ) );
+    }
 
     /**
-     * @param name Name of the header
+     * Extract charset information from Content-Type string value.
      *
-     * @return TRUE if there's a header with the given name
+     * @param contentTypeHeaderValue Content-Type string value
+     *
+     * @return Extracted charset, optional
      */
-    boolean has( String name );
-
-    /**
-     * @return All HTTP Header names as immutable Set&lt;String&gt;.
-     */
-    Set<String> names();
-
-    /**
-     * Get single header value, ensuring it has only one value.
-     *
-     * @param name Name of the HTTP Header
-     *
-     * @return Value for this HTTP Header name or an empty String
-     *
-     * @throws IllegalStateException if there is multiple values for this header
-     */
-    String singleValue( String name );
-
-    /**
-     * Get first header value.
-     *
-     * @param name Name of the HTTP Header
-     *
-     * @return First value for this HTTP Header name or an empty String
-     */
-    String firstValue( String name );
-
-    /**
-     * Get last header value.
-     *
-     * @param name Name of the HTTP Header
-     *
-     * @return Last value for this HTTP Header name or an empty String
-     */
-    String lastValue( String name );
-
-    /**
-     * Get all header values.
-     *
-     * @param name Name of the HTTP Header
-     *
-     * @return All first values for this HTTP Header name as immutable List&lt;String&gt;, or an empty immutable one.
-     */
-    List<String> values( String name );
-
-    /**
-     * Get all headers single values, ensuring each has only one value.
-     *
-     * @return Every single value of each HTTP Header as immutable Map&lt;String,String&gt;, or an empty immutable one.
-     *
-     * @throws IllegalStateException if there is multiple values for a header
-     */
-    Map<String, String> singleValues();
-
-    /**
-     * Get all headers first values.
-     *
-     * @return Every first value of each HTTP Header as immutable Map&lt;String,String&gt;, or an empty immutable one.
-     */
-    Map<String, String> firstValues();
-
-    /**
-     * Get all headers last values.
-     *
-     * @return Every last value of each HTTP Header as immutable Map&lt;String,String&gt;, or an empty immutable one.
-     */
-    Map<String, String> lastValues();
-
-    /**
-     * Get all headers values.
-     *
-     * @return Every values of each HTTP Header as immutable Map&lt;String,List&lt;String&gt;&gt;,
-     *         or an empty immutable one.
-     */
-    Map<String, List<String>> allValues();
+    static Optional<String> extractCharset( String contentTypeHeaderValue )
+    {
+        if( Strings.isEmpty( contentTypeHeaderValue ) )
+        {
+            return Optional.empty();
+        }
+        String[] split = contentTypeHeaderValue.split( ";" );
+        if( split.length <= 1 )
+        {
+            return Optional.empty();
+        }
+        for( int idx = 1; idx < split.length; idx++ )
+        {
+            String option = split[idx].trim().toLowerCase( Locale.US );
+            if( option.startsWith( "charset" ) )
+            {
+                return Optional.of( option.split( "=" )[1] );
+            }
+        }
+        return Optional.empty();
+    }
 
     /**
      * HTTP Header Names.

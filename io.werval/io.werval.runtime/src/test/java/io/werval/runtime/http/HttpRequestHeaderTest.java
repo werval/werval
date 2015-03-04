@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.werval.runtime.http;
 import io.werval.api.http.Headers;
 import io.werval.api.http.MutableHeaders;
 import io.werval.api.http.RequestHeader;
-import io.werval.util.Strings;
 import org.junit.Test;
 
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
@@ -27,6 +26,7 @@ import static io.werval.api.http.ProtocolVersion.HTTP_1_1;
 import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class HttpRequestHeaderTest
@@ -80,10 +80,10 @@ public class HttpRequestHeaderTest
     {
         MutableHeaders headers = new HeadersInstance();
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).contentType(),
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).contentType().get(),
             equalTo( "application/json" ) );
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8" ) ).contentType(),
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8" ) ).contentType().get(),
             equalTo( "application/json" ) );
     }
 
@@ -92,19 +92,19 @@ public class HttpRequestHeaderTest
     {
         MutableHeaders headers = new HeadersInstance();
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).charset(),
-            equalTo( Strings.EMPTY ) );
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON ) ).charset().orElse( null ),
+            nullValue() );
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=us-ascii" ) ).charset(),
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=us-ascii" ) ).charset().get(),
             equalTo( "us-ascii" ) );
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8" ) ).charset(),
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8" ) ).charset().get(),
             equalTo( "utf-8" ) );
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8;foo=bar" ) ).charset(),
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";charset=utf-8;foo=bar" ) ).charset().get(),
             equalTo( "utf-8" ) );
         assertThat(
-            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";foo=bar;charset=utf-8" ) ).charset(),
+            withHeaders( headers.withSingle( CONTENT_TYPE, APPLICATION_JSON + ";foo=bar;charset=utf-8" ) ).charset().get(),
             equalTo( "utf-8" ) );
     }
 

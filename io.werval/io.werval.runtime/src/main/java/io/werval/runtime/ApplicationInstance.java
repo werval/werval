@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -719,8 +720,8 @@ public final class ApplicationInstance
                             jCookie.setMaxAge( cookie.maxAge() );
                             jCookie.setSecure( cookie.secure() );
                             jCookie.setHttpOnly( cookie.httpOnly() );
-                            jCookie.setComment( cookie.comment() );
-                            jCookie.setCommentURL( cookie.commentUrl() );
+                            jCookie.setComment( cookie.comment().isPresent() ? cookie.comment().get() : null );
+                            jCookie.setCommentURL( cookie.commentUrl().isPresent() ? cookie.commentUrl().get() : null );
                             outcome.responseHeader().headers().with( SET_COOKIE, jCookie.toString() );
                         }
 
@@ -968,8 +969,8 @@ public final class ApplicationInstance
      */
     private void applyKeepAlive( RequestHeader request, Outcome outcome )
     {
-        String connection = outcome.responseHeader().headers().singleValue( CONNECTION );
-        if( connection.isEmpty() )
+        Optional<String> connection = outcome.responseHeader().headers().singleValueOptional( CONNECTION );
+        if( !connection.isPresent() )
         {
             if( outcome.responseHeader().status().statusClass().isForceClose() || !request.isKeepAlive() )
             {

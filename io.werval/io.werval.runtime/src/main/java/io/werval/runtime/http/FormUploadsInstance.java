@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@ package io.werval.runtime.http;
 
 import io.werval.api.exceptions.WervalException;
 import io.werval.api.http.FormUploads;
-import io.werval.runtime.exceptions.BadRequestException;
+import io.werval.util.MultiValueMapMultiValued;
+import io.werval.util.TreeMultiValueMap;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,134 +30,23 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.Optional;
 
 import static io.werval.runtime.util.Comparators.LOWER_CASE;
-import static io.werval.util.IllegalArguments.ensureNotEmpty;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
 
 public class FormUploadsInstance
+    extends MultiValueMapMultiValued<String, FormUploads.Upload>
     implements FormUploads
 {
-    private final Map<String, List<Upload>> uploads = new TreeMap<>( LOWER_CASE );
-
-    public FormUploadsInstance( Map<String, List<Upload>> uploads )
+    public FormUploadsInstance( Map<String, List<Upload>> values )
     {
-        if( uploads != null )
+        super( new TreeMultiValueMap<>( LOWER_CASE ) );
+        if( values != null )
         {
-            uploads.entrySet().stream().forEach(
-                upload -> this.uploads.put( upload.getKey(), new ArrayList<>( upload.getValue() ) )
+            values.entrySet().stream().forEach(
+                val -> this.mvmap.put( val.getKey(), new ArrayList<>( val.getValue() ) )
             );
         }
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        return uploads.isEmpty();
-    }
-
-    @Override
-    public boolean has( String name )
-    {
-        ensureNotEmpty( "Form Upload Name", name );
-        return uploads.containsKey( name );
-    }
-
-    @Override
-    public Set<String> names()
-    {
-        return unmodifiableSet( uploads.keySet() );
-    }
-
-    @Override
-    public Upload singleValue( String name )
-    {
-        ensureNotEmpty( "Form Upload Name", name );
-        if( !uploads.containsKey( name ) )
-        {
-            throw new IllegalArgumentException( "No Form Upload named '" + name + "'" );
-        }
-        List<Upload> values = uploads.get( name );
-        if( values.size() != 1 )
-        {
-            throw new BadRequestException( "Form Upload " + name + " has multiple values" );
-        }
-        return values.get( 0 );
-    }
-
-    @Override
-    public Upload firstValue( String name )
-    {
-        ensureNotEmpty( "Form Upload Name", name );
-        if( !uploads.containsKey( name ) )
-        {
-            throw new IllegalArgumentException( "No Form Upload named '" + name + "'" );
-        }
-        return uploads.get( name ).get( 0 );
-    }
-
-    @Override
-    public Upload lastValue( String name )
-    {
-        ensureNotEmpty( "Form Upload Name", name );
-        if( !uploads.containsKey( name ) )
-        {
-            throw new IllegalArgumentException( "No Form Upload named '" + name + "'" );
-        }
-        List<Upload> values = uploads.get( name );
-        return values.get( values.size() - 1 );
-    }
-
-    @Override
-    public List<Upload> values( String name )
-    {
-        ensureNotEmpty( "Form Upload Name", name );
-        if( !uploads.containsKey( name ) )
-        {
-            return emptyList();
-        }
-        return unmodifiableList( uploads.get( name ) );
-    }
-
-    @Override
-    public Map<String, Upload> singleValues()
-    {
-        Map<String, Upload> singleValues = new TreeMap<>( LOWER_CASE );
-        uploads.keySet().stream().forEach( name -> singleValues.put( name, singleValue( name ) ) );
-        return unmodifiableMap( singleValues );
-    }
-
-    @Override
-    public Map<String, Upload> firstValues()
-    {
-        Map<String, Upload> firstValues = new TreeMap<>( LOWER_CASE );
-        uploads.keySet().stream().forEach( name -> firstValues.put( name, firstValue( name ) ) );
-        return unmodifiableMap( firstValues );
-    }
-
-    @Override
-    public Map<String, Upload> lastValues()
-    {
-        Map<String, Upload> lastValues = new TreeMap<>( LOWER_CASE );
-        uploads.keySet().stream().forEach( name -> lastValues.put( name, lastValue( name ) ) );
-        return unmodifiableMap( lastValues );
-    }
-
-    @Override
-    public Map<String, List<Upload>> allValues()
-    {
-        return unmodifiableMap( uploads );
-    }
-
-    @Override
-    public String toString()
-    {
-        return uploads.toString();
     }
 
     public static class UploadInstance
@@ -194,15 +84,15 @@ public class FormUploadsInstance
         }
 
         @Override
-        public String contentType()
+        public Optional<String> contentType()
         {
-            return contentType;
+            return Optional.ofNullable( contentType );
         }
 
         @Override
-        public Charset charset()
+        public Optional<Charset> charset()
         {
-            return charset;
+            return Optional.ofNullable( charset );
         }
 
         @Override

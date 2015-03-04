@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import static io.werval.runtime.ConfigKeys.APP_ERRORS_RECORD_MAX;
@@ -172,19 +173,19 @@ public final class ErrorsInstance
     }
 
     @Override
-    public Error get( String errorId )
+    public Optional<Error> get( String errorId )
     {
-        return errors.get( errorId );
+        return Optional.ofNullable( errors.get( errorId ) );
     }
 
     @Override
-    public Error last()
+    public Optional<Error> last()
     {
         if( errors.isEmpty() )
         {
-            return null;
+            return Optional.empty();
         }
-        return errors.get( errors.keySet().iterator().next() );
+        return Optional.of( errors.get( errors.keySet().iterator().next() ) );
     }
 
     @Override
@@ -200,17 +201,17 @@ public final class ErrorsInstance
     }
 
     @Override
-    public Error lastOfRequest( String requestIdentity )
+    public Optional<Error> lastOfRequest( String requestIdentity )
     {
         if( errors.isEmpty() )
         {
-            return null;
+            return Optional.empty();
         }
         List<Error> ofRequest = ofRequest( requestIdentity );
         if( ofRequest.isEmpty() )
         {
-            return null;
+            return Optional.empty();
         }
-        return ofRequest.get( 0 );
+        return Optional.of( ofRequest.get( 0 ) );
     }
 }

@@ -210,10 +210,17 @@ public class ReverseRoutesInstance
             throws Throwable
         {
             methodName = controllerMethod.getName();
-            paramsTypes = Arrays.stream( args )
-                .map( obj -> obj.getClass() )
-                .collect( Collectors.toList() )
-                .toArray( new Class<?>[ 0 ] );
+            if( args == null || args.length == 0 )
+            {
+                paramsTypes = new Class<?>[ 0 ];
+            }
+            else
+            {
+                paramsTypes = Arrays.stream( args )
+                    .map( obj -> obj.getClass() )
+                    .collect( Collectors.toList() )
+                    .toArray( new Class<?>[ 0 ] );
+            }
             paramsValues = args;
             return null;
         }

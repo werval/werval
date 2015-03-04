@@ -5,6 +5,32 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## 0.7.0 - [history](https://github.com/werval/werval/commits/0.7.0)
+
+> One step at a time!
+
+### Breaking changes
+
+- (#246) APIs now leverage Java 8 `java.util.Optional`
+
+### Bug fixes
+
+- (#239) Fix ReverseRoutes NPE if controller is interface and no parameters
+- (#242) Fix `@AcceptContentType` filter failure on `Content-Type` headers with charset info
+
+### New features
+
+- (#5) CORS support
+- (#241) JSON Web Token support
+
+### Enhancements
+
+- (#240) Allow filter annotations on filter annotations
+- (#243) Allow global filter annotations on Global object
+- (#244) DevShell now open `http://localhost:port/` instead of `http://0.0.0.0:port/` when `werval.http.address` is `0.0.0.0`
+
+
+
 ## 0.6.0 - [history](https://github.com/werval/werval/commits/0.6.0)
 
 > [U can't touch this](http://grooveshark.com/s/U+Cant+Touch+This/3sWgpi)
