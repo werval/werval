@@ -5,9 +5,9 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-## develop - [history](https://github.com/werval/werval/commits/develop)
+## 0.7.0 - [history](https://github.com/werval/werval/commits/0.7.0)
 
-> Unreleased!
+> One step at a time!
 
 ### Breaking changes
 
