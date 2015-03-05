@@ -5,6 +5,21 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## develop - [history](https://github.com/werval/werval/commits/develop)
+
+> Unreleased
+
+### Dependency changes
+
+- Core
+    - Upgrade Javassist from `3.18` to `3.19`, see the [history](https://github.com/jboss-javassist/javassist/commits/3.19) 
+    - Upgrade Netty from `4.0.25` to `4.0.26`, see the announcement:
+      [4.0.26](http://netty.io/news/2015/03/04/three-releases.html)
+- Modules
+    - Upgrade PostgreSQL JDBC driver from `9.3` to `9.4`, see the [history](https://github.com/pgjdbc/pgjdbc/commits/REL9_4_STABLE)
+
+
+
 ## 0.7.0 - [history](https://github.com/werval/werval/commits/0.7.0)
 
 > One step at a time!
