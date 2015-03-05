@@ -63,7 +63,9 @@ public @interface AcceptContentTypes
         )
         {
             String[] acceptedContentTypes = annotation.map( annot -> annot.value() ).orElse( new String[ 0 ] );
-            Optional<String> contentType = context.request().contentType().map( Headers::extractContentMimeType ).get();
+            Optional<String> contentType = context.request().contentType()
+                .map( Headers::extractContentMimeType )
+                .orElse( Optional.empty() );
             if( contentType.isPresent() )
             {
                 if( Arrays.stream( acceptedContentTypes ).anyMatch( ct -> ct.equals( contentType.get() ) ) )
