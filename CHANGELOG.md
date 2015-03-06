@@ -20,6 +20,16 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## 0.7.1 - [history](https://github.com/werval/werval/commits/0.7.1)
+
+> HotFix 0.7!
+
+### Bug fixes
+
+- (#242) Fix `@AcceptContentType` filter failure when `Content-Type` header absent
+
+
+
 ## 0.7.0 - [history](https://github.com/werval/werval/commits/0.7.0)
 
 > One step at a time!
