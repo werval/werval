@@ -16,6 +16,7 @@
 package io.werval.runtime.http;
 
 import io.werval.api.http.FormAttributes;
+import io.werval.runtime.exceptions.BadRequestException;
 import io.werval.util.MultiValueMapMultiValued;
 import io.werval.util.TreeMultiValueMap;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class FormAttributesInstance
 {
     public FormAttributesInstance( Map<String, List<String>> values )
     {
-        super( new TreeMultiValueMap<>( LOWER_CASE ) );
+        super( new TreeMultiValueMap<>( LOWER_CASE ), BadRequestException.BUILDER );
         if( values != null )
         {
             values.entrySet().stream().forEach(

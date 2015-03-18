@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,43 +64,35 @@ public class FormTest
         given()
             .formParam( "foo", "bar" )
             .formParam( "bazar", "cathedral" )
-            .expect()
-            .body( equalTo( "{bazar=[cathedral], foo=[bar]}" ) )
-            .when()
-            .post( "/attributes" );
+            .when().post( "/attributes" )
+            .then().body( equalTo( "{bazar=[cathedral], foo=[bar]}" ) );
 
         given()
             .formParam( "mou", "zou" )
             .formParam( "grou", "mlou" )
-            .expect()
-            .body( equalTo( "{grou=[mlou], mou=[zou]}" ) )
-            .when()
-            .post( "/attributes" );
+            .when().post( "/attributes" )
+            .then().body( equalTo( "{grou=[mlou], mou=[zou]}" ) );
 
         given()
             .formParam( "foo", "bar" )
             .formParam( "bazar", "cathedral" )
-            .expect()
-            .body( equalTo( "{bazar=[cathedral], foo=[bar]}" ) )
-            .when()
-            .post( "/attributes" );
+            .when().post( "/attributes" )
+            .then().body( equalTo( "{bazar=[cathedral], foo=[bar]}" ) );
     }
 
     @Test
     public void smallUpload()
     {
-        byte[] upload = "Small upload content".getBytes();
+        byte[] upload = "Small upload content".getBytes( UTF_8 );
         given()
             .multiPart( "small-upload", "filename.txt", upload, TEXT_PLAIN )
-            .expect()
-            .body(
+            .when().post( "/uploads" )
+            .then().body(
                 equalTo(
                     "{small-upload=[{contentType: text/plain, charset: UTF-8, filename: filename.txt, length: "
                     + upload.length + " }]}"
                 )
-            )
-            .when()
-            .post( "/uploads" );
+            );
     }
 
     @Test
@@ -110,15 +102,13 @@ public class FormTest
         Arrays.fill( upload, "A".getBytes( UTF_8 )[0] );
         given()
             .multiPart( "big-upload", "filename.txt", upload, TEXT_PLAIN )
-            .expect()
-            .body(
+            .when().post( "/uploads" )
+            .then().body(
                 equalTo(
                     "{big-upload=[{contentType: text/plain, charset: UTF-8, filename: filename.txt, length: "
                     + upload.length + " }]}"
                 )
-            )
-            .when()
-            .post( "/uploads" );
+            );
 
     }
 }

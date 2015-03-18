@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static io.werval.runtime.util.Comparators.LOWER_CASE;
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
@@ -36,8 +37,6 @@ public final class HeadersInstance
     extends MultiValueMapMultiValued<String, String>
     implements MutableHeaders, Serializable
 {
-    public static final Headers EMPTY = new HeadersInstance();
-
     /**
      * Create new empty Headers instance.
      */
@@ -47,30 +46,44 @@ public final class HeadersInstance
     }
 
     /**
+     * Deep-copy constructor.
+     *
+     * @param headers Headers to copy
+     */
+    private HeadersInstance( Headers headers )
+    {
+        this( emptyMap() );
+        withAll( headers );
+    }
+
+    /**
      * Deep-copy Map constructor.
      *
      * @param values Headers to copy
      */
-    public HeadersInstance( Map<String, List<String>> values )
+    private HeadersInstance( Map<String, List<String>> values )
     {
-        super( new TreeMultiValueMap<>( LOWER_CASE ) );
+        this( values, DEFAULT_CONSTRAINT_EX_BUILDER );
+    }
+
+    /**
+     * Deep-copy Map constructur with custom constraint exception builder.
+     *
+     * @param values              Headers to copy
+     * @param constraintExBuilder MultiValued-constraint-exception builder
+     */
+    public HeadersInstance(
+        Map<String, List<String>> values,
+        Function<String, ? extends RuntimeException> constraintExBuilder
+    )
+    {
+        super( new TreeMultiValueMap<>( LOWER_CASE ), constraintExBuilder );
         if( values != null )
         {
             values.entrySet().stream().forEach(
                 val -> this.mvmap.put( val.getKey(), new ArrayList<>( val.getValue() ) )
             );
         }
-    }
-
-    /**
-     * Deep-copy constructor.
-     *
-     * @param headers Headers to copy
-     */
-    public HeadersInstance( Headers headers )
-    {
-        this();
-        withAll( headers );
     }
 
     @Override
