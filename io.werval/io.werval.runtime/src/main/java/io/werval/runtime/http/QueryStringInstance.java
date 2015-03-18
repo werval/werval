@@ -16,17 +16,15 @@
 package io.werval.runtime.http;
 
 import io.werval.api.http.QueryString;
-import io.werval.runtime.exceptions.BadRequestException;
 import io.werval.util.MultiValueMapMultiValued;
-import io.werval.util.Strings;
 import io.werval.util.TreeMultiValueMap;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static io.werval.runtime.util.Comparators.LOWER_CASE;
-import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static java.util.Collections.emptyMap;
 
 public class QueryStringInstance
@@ -42,7 +40,15 @@ public class QueryStringInstance
 
     public QueryStringInstance( Map<String, List<String>> values )
     {
-        super( new TreeMultiValueMap<>( LOWER_CASE ) );
+        this( values, DEFAULT_CONSTRAINT_EX_BUILDER );
+    }
+
+    public QueryStringInstance(
+        Map<String, List<String>> values,
+        Function<String, ? extends RuntimeException> constraintExBuilder
+    )
+    {
+        super( new TreeMultiValueMap<>( LOWER_CASE ), constraintExBuilder );
         if( values != null )
         {
             values.entrySet().stream().forEach(
@@ -50,23 +56,4 @@ public class QueryStringInstance
             );
         }
     }
-
-    @Override
-    public String singleValue( String name )
-    {
-        ensureNotEmpty( "Query String Parameter Name", name );
-        if( !mvmap.containsKey( name ) )
-        {
-            return Strings.EMPTY;
-        }
-        List<String> values = mvmap.get( name );
-        if( values.size() != 1 )
-        {
-            // TODO Do not rely on BadRequestException for single value enforcment
-            // This whole method can be removed after that.
-            throw new BadRequestException( "QueryString Parameter '" + name + "' has multiple values" );
-        }
-        return values.get( 0 );
-    }
-
 }

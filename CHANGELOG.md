@@ -5,6 +5,16 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## 0.7.2 - [history](https://github.com/werval/werval/commits/0.7.2)
+
+> HotFix 0.7!
+
+### Bug fixes
+
+- (#249) Fix response code on request's single-value constraints violations
+
+
+
 ## 0.7.1 - [history](https://github.com/werval/werval/commits/0.7.1)
 
 > HotFix 0.7!

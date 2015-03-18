@@ -25,6 +25,7 @@ import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.QueryString;
 import io.werval.api.http.Request;
 import io.werval.api.i18n.Langs;
+import io.werval.runtime.exceptions.BadRequestException;
 import io.werval.spi.http.HttpBuildersSPI;
 import io.werval.util.ByteSource;
 import io.werval.util.Strings;
@@ -55,6 +56,7 @@ import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_HEADERS_X_FORWARDED_FOR_T
 import static io.werval.util.IllegalArguments.ensureInRange;
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static io.werval.util.IllegalArguments.ensureNotNull;
+import static java.util.Collections.emptyMap;
 
 /**
  * HTTP API Objects Builders Instance.
@@ -62,6 +64,8 @@ import static io.werval.util.IllegalArguments.ensureNotNull;
 public class HttpBuildersInstance
     implements HttpBuildersSPI
 {
+    private static final Headers EMPTY_REQ_HEADERS = new HeadersInstance( emptyMap(), BadRequestException.BUILDER );
+
     private final Config config;
     private final Charset defaultCharset;
     private final Langs langs;
@@ -122,7 +126,7 @@ public class HttpBuildersInstance
             this.version = version == null ? HTTP_1_1 : version;
             this.method = method;
             this.uri = uri;
-            this.headers = headers == null ? HeadersInstance.EMPTY : headers;
+            this.headers = headers == null ? EMPTY_REQ_HEADERS : headers;
             this.cookies = cookies == null ? CookiesInstance.EMPTY : cookies;
             this.bodyBytes = bodyBytes;
             this.attributes = attributes;
@@ -263,7 +267,7 @@ public class HttpBuildersInstance
         @Override
         public RequestBuilder headers( Map<String, List<String>> headers )
         {
-            return headers( new HeadersInstance( headers ) );
+            return headers( new HeadersInstance( headers, BadRequestException.BUILDER ) );
         }
 
         @Override
@@ -315,7 +319,7 @@ public class HttpBuildersInstance
             // Parse Path & QueryString from URI
             QueryString.Decoder decoder = new QueryString.Decoder( uri, defaultCharset );
             String path = URLs.decode( decoder.path(), defaultCharset );
-            QueryString queryString = new QueryStringInstance( decoder.parameters() );
+            QueryString queryString = new QueryStringInstance( decoder.parameters(), BadRequestException.BUILDER );
 
             // Request charset
             Charset requestCharset = null;

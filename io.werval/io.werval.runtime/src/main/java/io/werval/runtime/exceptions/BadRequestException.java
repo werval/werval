@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.werval.runtime.exceptions;
 
 import io.werval.api.exceptions.WervalException;
+import java.util.function.Function;
 
 /**
  * Bad Request Exception.
@@ -24,6 +25,8 @@ public class BadRequestException
     extends WervalException
 {
     private static final long serialVersionUID = 1L;
+
+    public static final Function<String, BadRequestException> BUILDER = msg -> new BadRequestException( msg );
 
     public BadRequestException( String message )
     {
