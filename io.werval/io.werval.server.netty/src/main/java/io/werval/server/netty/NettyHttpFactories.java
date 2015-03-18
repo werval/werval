@@ -80,99 +80,107 @@ import static io.werval.util.IllegalArguments.ensureNotNull;
         String remoteSocketAddress, String identity,
         FullHttpRequest request
     )
+        throws HttpRequestParsingException
     {
         ensureNotEmpty( "Request Identity", identity );
         ensureNotNull( "Netty FullHttpRequest", request );
 
-        RequestBuilder builder = builders.newRequestBuilder()
-            .identifiedBy( identity )
-            .remoteSocketAddress( remoteSocketAddress )
-            .version( ProtocolVersion.valueOf( request.getProtocolVersion().text() ) )
-            .method( request.getMethod().name() )
-            .uri( request.getUri() )
-            .headers( headersToMap( request.headers() ) );
-
-        if( request.content().readableBytes() > 0
-            && ( POST.equals( request.getMethod() )
-                 || PUT.equals( request.getMethod() )
-                 || PATCH.equals( request.getMethod() ) ) )
+        try
         {
-            Optional<String> contentType = Headers.extractContentMimeType( request.headers().get( CONTENT_TYPE ) );
-            if( contentType.isPresent() )
+            RequestBuilder builder = builders.newRequestBuilder()
+                .identifiedBy( identity )
+                .remoteSocketAddress( remoteSocketAddress )
+                .version( ProtocolVersion.valueOf( request.getProtocolVersion().text() ) )
+                .method( request.getMethod().name() )
+                .uri( request.getUri() )
+                .headers( headersToMap( request.headers() ) );
+
+            if( request.content().readableBytes() > 0
+                && ( POST.equals( request.getMethod() )
+                     || PUT.equals( request.getMethod() )
+                     || PATCH.equals( request.getMethod() ) ) )
             {
-                switch( contentType.get() )
+                Optional<String> contentType = Headers.extractContentMimeType( request.headers().get( CONTENT_TYPE ) );
+                if( contentType.isPresent() )
                 {
-                    case APPLICATION_X_WWW_FORM_URLENCODED:
-                    case MULTIPART_FORM_DATA:
-                        try
-                        {
-                            Map<String, List<String>> attributes = new LinkedHashMap<>();
-                            Map<String, List<Upload>> uploads = new LinkedHashMap<>();
-                            HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder( request );
-                            for( InterfaceHttpData data : postDecoder.getBodyHttpDatas() )
+                    switch( contentType.get() )
+                    {
+                        case APPLICATION_X_WWW_FORM_URLENCODED:
+                        case MULTIPART_FORM_DATA:
+                            try
                             {
-                                switch( data.getHttpDataType() )
+                                Map<String, List<String>> attributes = new LinkedHashMap<>();
+                                Map<String, List<Upload>> uploads = new LinkedHashMap<>();
+                                HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder( request );
+                                for( InterfaceHttpData data : postDecoder.getBodyHttpDatas() )
                                 {
-                                    case Attribute:
-                                        Attribute attribute = (Attribute) data;
-                                        if( !attributes.containsKey( attribute.getName() ) )
-                                        {
-                                            attributes.put( attribute.getName(), new ArrayList<>() );
-                                        }
-                                        attributes.get( attribute.getName() ).add( attribute.getValue() );
-                                        break;
-                                    case FileUpload:
-                                        FileUpload fileUpload = (FileUpload) data;
-                                        if( !uploads.containsKey( fileUpload.getName() ) )
-                                        {
-                                            uploads.put( fileUpload.getName(), new ArrayList<>() );
-                                        }
-                                        Upload upload;
-                                        if( fileUpload.isInMemory() )
-                                        {
-                                            upload = new UploadInstance(
-                                                fileUpload.getContentType(),
-                                                fileUpload.getCharset(),
-                                                fileUpload.getFilename(),
-                                                new ByteBufByteSource( fileUpload.getByteBuf() ).asBytes(),
-                                                defaultCharset
-                                            );
-                                        }
-                                        else
-                                        {
-                                            upload = new UploadInstance(
-                                                fileUpload.getContentType(),
-                                                fileUpload.getCharset(),
-                                                fileUpload.getFilename(),
-                                                fileUpload.getFile(),
-                                                defaultCharset
-                                            );
-                                        }
-                                        uploads.get( fileUpload.getName() ).add( upload );
-                                        break;
-                                    default:
-                                        break;
+                                    switch( data.getHttpDataType() )
+                                    {
+                                        case Attribute:
+                                            Attribute attribute = (Attribute) data;
+                                            if( !attributes.containsKey( attribute.getName() ) )
+                                            {
+                                                attributes.put( attribute.getName(), new ArrayList<>() );
+                                            }
+                                            attributes.get( attribute.getName() ).add( attribute.getValue() );
+                                            break;
+                                        case FileUpload:
+                                            FileUpload fileUpload = (FileUpload) data;
+                                            if( !uploads.containsKey( fileUpload.getName() ) )
+                                            {
+                                                uploads.put( fileUpload.getName(), new ArrayList<>() );
+                                            }
+                                            Upload upload;
+                                            if( fileUpload.isInMemory() )
+                                            {
+                                                upload = new UploadInstance(
+                                                    fileUpload.getContentType(),
+                                                    fileUpload.getCharset(),
+                                                    fileUpload.getFilename(),
+                                                    new ByteBufByteSource( fileUpload.getByteBuf() ).asBytes(),
+                                                    defaultCharset
+                                                );
+                                            }
+                                            else
+                                            {
+                                                upload = new UploadInstance(
+                                                    fileUpload.getContentType(),
+                                                    fileUpload.getCharset(),
+                                                    fileUpload.getFilename(),
+                                                    fileUpload.getFile(),
+                                                    defaultCharset
+                                                );
+                                            }
+                                            uploads.get( fileUpload.getName() ).add( upload );
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
+                                builder = builder.bodyForm( attributes, uploads );
+                                break;
                             }
-                            builder = builder.bodyForm( attributes, uploads );
+                            catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
+                                   NotEnoughDataDecoderException | IOException ex )
+                            {
+                                throw new WervalException( "Form or multipart parsing error", ex );
+                            }
+                        default:
+                            builder = builder.bodyBytes( new ByteBufByteSource( request.content() ) );
                             break;
-                        }
-                        catch( ErrorDataDecoderException | IncompatibleDataDecoderException |
-                               NotEnoughDataDecoderException | IOException ex )
-                        {
-                            throw new WervalException( "Form or multipart parsing error", ex );
-                        }
-                    default:
-                        builder = builder.bodyBytes( new ByteBufByteSource( request.content() ) );
-                        break;
+                    }
+                }
+                else
+                {
+                    builder = builder.bodyBytes( new ByteBufByteSource( request.content() ) );
                 }
             }
-            else
-            {
-                builder = builder.bodyBytes( new ByteBufByteSource( request.content() ) );
-            }
+            return builder.build();
         }
-        return builder.build();
+        catch( Exception ex )
+        {
+            throw new HttpRequestParsingException( ex );
+        }
     }
 
     private static Map<String, List<String>> headersToMap( HttpHeaders nettyHeaders )

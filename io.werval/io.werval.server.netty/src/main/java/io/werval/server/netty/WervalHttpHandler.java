@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.stream.ChunkedStream;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutException;
+import io.werval.api.Mode;
 import io.werval.api.events.HttpEvent;
 import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.Request;
@@ -49,6 +50,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
@@ -149,7 +151,7 @@ public final class WervalHttpHandler
         }
 
         // Create Request Instance
-        // Can throw exceptions
+        // Can throw HttpRequestParsingException
         Request request = requestOf(
             app.defaultCharset(),
             app.httpBuilders(),
@@ -216,6 +218,27 @@ public final class WervalHttpHandler
                 ),
                 new HttpRequestCompleteChannelFutureListener( requestHeader )
             );
+        }
+        else if( cause instanceof HttpRequestParsingException )
+        {
+            if( app.mode() == Mode.PROD )
+            {
+                LOG.trace( "HTTP request parsing error, returning 400, was: {}", cause.getMessage(), cause );
+            }
+            else
+            {
+                LOG.warn( "HTTP request parsing error, returning 400, was: {}", cause.getMessage(), cause );
+            }
+            DefaultFullHttpResponse nettyResponse = new DefaultFullHttpResponse( HTTP_1_1, BAD_REQUEST );
+            nettyResponse.headers().set( CONTENT_LENGTH, 0 );
+            nettyContext.writeAndFlush( nettyResponse )
+                .addListeners(
+                    f -> app.events().emit(
+                        new HttpEvent.ResponseSent( requestIdentity, Status.BAD_REQUEST )
+                    ),
+                    new HttpRequestCompleteChannelFutureListener( requestHeader ),
+                    ChannelFutureListener.CLOSE
+                );
         }
         else
         {

@@ -12,6 +12,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Bug fixes
 
 - (#249) Fix response code on request's single-value constraints violations
+- (#250) Fix Netty server bahaviour on invalid/unparseable HTTP requests
 
 
 
