@@ -52,10 +52,10 @@ public interface MultiValued<K, V>
      *
      * @return Single value for this key
      *
-     * @throws IllegalArgumentException if there is no or multiple values for this key
+     * @throws MultiValuedConstraintException if there is no or multiple values for this key
      */
     V singleValue( K key )
-        throws IllegalArgumentException;
+        throws MultiValuedConstraintException;
 
     /**
      * Get first value, ensuring there's one.
@@ -64,10 +64,10 @@ public interface MultiValued<K, V>
      *
      * @return First value for this key
      *
-     * @throws IllegalArgumentException if there are no value for this key
+     * @throws MultiValuedConstraintException if there are no value for this key
      */
     V firstValue( K key )
-        throws IllegalArgumentException;
+        throws MultiValuedConstraintException;
 
     /**
      * Get last value, ensuring there's one.
@@ -76,10 +76,10 @@ public interface MultiValued<K, V>
      *
      * @return Last value for this key
      *
-     * @throws IllegalArgumentException if there are no value for this key
+     * @throws MultiValuedConstraintException if there are no value for this key
      */
     V lastValue( K key )
-        throws IllegalArgumentException;
+        throws MultiValuedConstraintException;
 
     /**
      * Get single value.
@@ -129,10 +129,10 @@ public interface MultiValued<K, V>
      *
      * @return Every single values for all keys as immutable Map, or an empty immutable one.
      *
-     * @throws IllegalStateException if there is multiple values for a parameter
+     * @throws MultiValuedConstraintException if there is no or multiple values for any key
      */
     Map<K, V> singleValues()
-        throws IllegalStateException;
+        throws MultiValuedConstraintException;
 
     /**
      * Get all first values.

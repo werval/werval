@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015 the original author or authors
+ * Copyright (c) 2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.runtime.exceptions;
-
-import io.werval.api.exceptions.WervalException;
-import java.util.function.Function;
+package io.werval.server.netty;
 
 /**
- * Bad Request Exception.
+ * Thrown if unable to parse Netty's HttpRequest.
  */
-public class BadRequestException
-    extends WervalException
+public class HttpRequestParsingException
+    extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
 
-    public static final Function<String, BadRequestException> BUILDER = msg -> new BadRequestException( msg );
-
-    public BadRequestException( String message )
+    public HttpRequestParsingException( String message )
     {
         super( message );
     }
 
-    public BadRequestException( Throwable cause )
+    public HttpRequestParsingException( Throwable cause )
     {
         super( cause );
-    }
-
-    public BadRequestException( String message, Throwable cause )
-    {
-        super( message, cause );
     }
 }

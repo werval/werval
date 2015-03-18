@@ -17,6 +17,7 @@ package io.werval.runtime.http;
 
 import io.werval.api.exceptions.WervalException;
 import io.werval.api.http.FormUploads;
+import io.werval.runtime.exceptions.BadRequestException;
 import io.werval.util.MultiValueMapMultiValued;
 import io.werval.util.TreeMultiValueMap;
 import java.io.ByteArrayInputStream;
@@ -40,7 +41,7 @@ public class FormUploadsInstance
 {
     public FormUploadsInstance( Map<String, List<Upload>> values )
     {
-        super( new TreeMultiValueMap<>( LOWER_CASE ) );
+        super( new TreeMultiValueMap<>( LOWER_CASE ), BadRequestException.BUILDER );
         if( values != null )
         {
             values.entrySet().stream().forEach(

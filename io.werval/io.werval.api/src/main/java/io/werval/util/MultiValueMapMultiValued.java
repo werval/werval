@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.util.Collections.EMPTY_LIST;
 
 /**
@@ -33,16 +35,33 @@ import static java.util.Collections.EMPTY_LIST;
 public class MultiValueMapMultiValued<K, V>
     implements MultiValued<K, V>, Serializable
 {
+    protected static final Function<String, ? extends RuntimeException> DEFAULT_CONSTRAINT_EX_BUILDER;
+
+    static
+    {
+        DEFAULT_CONSTRAINT_EX_BUILDER = message -> new MultiValuedConstraintException( message );
+    }
+
+    private final Function<String, ? extends RuntimeException> constraintExBuilder;
     protected final MultiValueMap<K, V> mvmap;
 
     public MultiValueMapMultiValued()
     {
-        this.mvmap = new TreeMultiValueMap<>();
+        this( new TreeMultiValueMap<>(), DEFAULT_CONSTRAINT_EX_BUILDER );
     }
 
     public MultiValueMapMultiValued( MultiValueMap<K, V> mvmap )
     {
+        this( mvmap, DEFAULT_CONSTRAINT_EX_BUILDER );
+    }
+
+    public MultiValueMapMultiValued(
+        MultiValueMap<K, V> mvmap,
+        Function<String, ? extends RuntimeException> constraintExBuilder
+    )
+    {
         this.mvmap = mvmap;
+        this.constraintExBuilder = constraintExBuilder;
     }
 
     @Override
@@ -59,36 +78,36 @@ public class MultiValueMapMultiValued<K, V>
 
     @Override
     public V singleValue( K key )
-        throws IllegalArgumentException
+        throws MultiValuedConstraintException
     {
         return singleValueOptional( key )
             .orElseThrow(
-                () -> new IllegalArgumentException(
-                    String.format( "No or multiple %s for %s", valueTypeDisplayName(), key )
+                () -> constraintExBuilder.apply(
+                    format( "No or multiple %s(s) for '%s'", valueTypeDisplayName(), key )
                 )
             );
     }
 
     @Override
     public V firstValue( K key )
-        throws IllegalArgumentException
+        throws MultiValuedConstraintException
     {
         return firstValueOptional( key )
             .orElseThrow(
-                () -> new IllegalArgumentException(
-                    String.format( "No %s for %s", valueTypeDisplayName(), key )
+                () -> constraintExBuilder.apply(
+                    format( "No %s for '%s', so no first '%s'", valueTypeDisplayName(), key, valueTypeDisplayName() )
                 )
             );
     }
 
     @Override
     public V lastValue( K key )
-        throws IllegalArgumentException
+        throws MultiValuedConstraintException
     {
         return lastValueOptional( key )
             .orElseThrow(
-                () -> new IllegalArgumentException(
-                    String.format( "No %s for %s", valueTypeDisplayName(), key )
+                () -> constraintExBuilder.apply(
+                    format( "No %s for '%s', so no last '%s'", valueTypeDisplayName(), key, valueTypeDisplayName() )
                 )
             );
     }
@@ -96,7 +115,14 @@ public class MultiValueMapMultiValued<K, V>
     @Override
     public Optional<V> singleValueOptional( K key )
     {
-        return Optional.ofNullable( mvmap.getSingle( key ) );
+        try
+        {
+            return Optional.ofNullable( mvmap.getSingle( key ) );
+        }
+        catch( IllegalStateException ex )
+        {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -126,7 +152,14 @@ public class MultiValueMapMultiValued<K, V>
     @Override
     public Map<K, V> singleValues()
     {
-        return Collections.unmodifiableMap( mvmap.toMapSingleValues() );
+        try
+        {
+            return Collections.unmodifiableMap( mvmap.toMapSingleValues() );
+        }
+        catch( IllegalStateException ex )
+        {
+            throw constraintExBuilder.apply( ex.getMessage() );
+        }
     }
 
     @Override

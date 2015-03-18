@@ -163,14 +163,16 @@ public class RequestHeaderInstance
             {
                 if( proxyChain.length == 1 )
                 {
-                    throw new BadRequestException( X_FORWARDED_FOR + " header cannot be trusted." );
+                    throw new BadRequestException( X_FORWARDED_FOR + " header cannot be trusted, no proxy in chain." );
                 }
                 for( int idx = 1; idx < proxyChain.length; idx++ )
                 {
-                    String proxy = proxyChain[idx];
-                    if( !xffTrustedProxies.contains( proxy.trim() ) )
+                    String proxy = proxyChain[idx].trim();
+                    if( !xffTrustedProxies.contains( proxy ) )
                     {
-                        throw new BadRequestException( X_FORWARDED_FOR + " header cannot be trusted." );
+                        throw new BadRequestException(
+                            X_FORWARDED_FOR + " header cannot be trusted, untrusted proxy in chain: " + proxy
+                        );
                     }
                 }
             }
