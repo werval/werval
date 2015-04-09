@@ -51,7 +51,7 @@ public class SmtpPlugin
     @Override
     public List<Class<?>> dependencies( Config config )
     {
-        if( config.bool( "smtp.metrics" ) )
+        if( config.bool( "smtp.metrics" ) || config.bool( "smtp.healthcheck" ) )
         {
             return Arrays.asList( Metrics.class );
         }
@@ -93,18 +93,16 @@ public class SmtpPlugin
         long ioTimeoutMillis = config.milliseconds( "smtp.io_timeout" );
         String username = config.has( "smtp.username" ) ? config.string( "smtp.username" ) : null;
         String password = config.has( "smtp.password" ) ? config.string( "smtp.password" ) : null;
-        String bounce = config.has( "smtp.bounce" ) ? config.string( "smtp.bounce" ) : null;
-        boolean metrics = config.bool( "smtp.metrics" );
         smtp = new Smtp(
             host, port,
             transport, validateCert,
             connTimeoutMillis, ioTimeoutMillis,
             username, password,
-            bounce,
+            config.has( "smtp.bounce" ) ? config.string( "smtp.bounce" ) : null,
             application.defaultCharset(),
-            metrics ? application.plugin( Metrics.class ) : null
+            config.bool( "smtp.metrics" ) ? application.plugin( Metrics.class ) : null
         );
-        if( metrics )
+        if( config.bool( "smtp.healthcheck" ) )
         {
             application.plugin( Metrics.class ).healthChecks().register(
                 "smtp",

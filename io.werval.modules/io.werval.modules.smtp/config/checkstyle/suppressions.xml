@@ -14,5 +14,6 @@
 
     <!-- Builders & Big Constructors -->
     <suppress checks="ParameterNumber" files="Smtp.java"/>
+    <suppress checks="ParameterNumber" files="SmtpHealthCheck.java"/>
 
 </suppressions>

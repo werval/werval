@@ -15,6 +15,9 @@
  */
 package io.werval.modules.smtp.internal;
 
+/**
+ * Internal transport enum, used to load the configuration.
+ */
 public enum Transport
 {
     CLEAR, SSL, TLS
