@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.werval.modules.smtp;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import io.werval.test.WervalRule;
 import io.werval.modules.metrics.Metrics;
 import java.util.List;
@@ -33,6 +34,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Assert that SmtpPlugin works.
@@ -83,5 +85,8 @@ public class SmtpPluginTest
         MetricRegistry metrics = WERVAL.application().plugin( Metrics.class ).metrics();
         assertThat( metrics.meter( "io.werval.modules.smtp.sent" ).getCount(), is( 1L ) );
         assertThat( metrics.meter( "io.werval.modules.smtp.errors" ).getCount(), is( 0L ) );
+
+        HealthCheckRegistry healthChecks = WERVAL.application().plugin( Metrics.class ).healthChecks();
+        assertTrue( healthChecks.runHealthCheck( "smtp" ).isHealthy() );
     }
 }

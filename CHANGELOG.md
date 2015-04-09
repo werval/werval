@@ -13,6 +13,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - (#251) JOSE: Allow issuance of JWT without subject
 
+### Enhancements
+
+- (#252) Add server health-check to the SMTP module
+
 ### Dependency changes
 
 - Core
