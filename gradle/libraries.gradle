@@ -8,7 +8,7 @@ def v_javassist = '3.19.0-GA' // 3.19.0-GA available but fails with HikariCP
 def v_typesafe_config = '1.2.1'
 
 // HTTP Server libraries versions
-def v_netty = '4.0.26.Final'
+def v_netty = '4.0.27.Final'
 
 // DevShell librairies versions
 def v_classworlds = '2.5.2'

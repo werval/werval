@@ -18,8 +18,8 @@ For minor changes, build system or test changes, see the full [source code histo
 - Core
     - Upgrade SLF4J from `1.7.10` to `1.7.12`, see the [announcements](http://slf4j.org/news.html)
     - Upgrade Javassist from `3.18` to `3.19`, see the [history](https://github.com/jboss-javassist/javassist/commits/3.19) 
-    - Upgrade Netty from `4.0.25` to `4.0.26`, see the announcement:
-      [4.0.26](http://netty.io/news/2015/03/04/three-releases.html)
+    - Upgrade Netty from `4.0.25` to `4.0.27`, see the announcements:
+      [4.0.26](http://netty.io/news/2015/03/04/three-releases.html) and [4.0.27](http://netty.io/news/2015/04/02/4-0-27-Final.html)
 - Modules
     - Upgrade PostgreSQL JDBC driver from `9.3` to `9.4`, see the [history](https://github.com/pgjdbc/pgjdbc/commits/REL9_4_STABLE)
 
