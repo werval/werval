@@ -9,6 +9,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased
 
+### Bug fixes
+
+- (#251) JOSE: Allow issuance of JWT without subject
+
 ### Dependency changes
 
 - Core

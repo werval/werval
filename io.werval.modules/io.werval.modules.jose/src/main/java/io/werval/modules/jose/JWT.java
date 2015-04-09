@@ -63,11 +63,6 @@ public class JWT
 
     public String tokenForClaims( Map<String, Object> claims )
     {
-        if( !claims.containsKey( CLAIM_SUBJECT ) )
-        {
-            throw new IllegalArgumentException( "Cannot issue token without a subject claim ('sub')!" );
-        }
-
         // Token issuer
         Issuer issuer = issuers.get( defaultIssuer );
 
