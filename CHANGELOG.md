@@ -16,6 +16,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Dependency changes
 
 - Core
+    - Upgrade SLF4J from `1.7.10` to `1.7.12`, see the [announcements](http://slf4j.org/news.html)
     - Upgrade Javassist from `3.18` to `3.19`, see the [history](https://github.com/jboss-javassist/javassist/commits/3.19) 
     - Upgrade Netty from `4.0.25` to `4.0.26`, see the announcement:
       [4.0.26](http://netty.io/news/2015/03/04/three-releases.html)

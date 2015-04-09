@@ -1,7 +1,7 @@
 // Define libraries and webjars used accross projects and their versions
 
 // Core API libraries versions
-def v_slf4j = '1.7.10'
+def v_slf4j = '1.7.12'
 
 // Core Runtime libraries versions
 def v_javassist = '3.19.0-GA' // 3.19.0-GA available but fails with HikariCP
