@@ -5,9 +5,9 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
-## develop - [history](https://github.com/werval/werval/commits/develop)
+## 0.7.3 - [history](https://github.com/werval/werval/commits/0.7.3)
 
-> Unreleased
+> HotFix 0.7!
 
 ### Bug fixes
 
