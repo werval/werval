@@ -24,6 +24,7 @@ import org.apache.commons.mail.SimpleEmail;
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.smtp.internal.MultiPartEmailMetrics;
 import io.werval.modules.smtp.internal.SimpleEmailMetrics;
+import io.werval.modules.smtp.internal.Transport;
 
 /**
  * SMTP.

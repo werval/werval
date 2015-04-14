@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.werval.modules.smtp;
+package io.werval.modules.jose;
 
-/* package */ enum Transport
+import io.werval.api.exceptions.WervalException;
+
+/**
+ * JoseException.
+ * <p>
+ * Thrown when something goes bad when processing JOSE entities like JWTs.
+ */
+public class JoseException
+    extends WervalException
 {
-    CLEAR, SSL, TLS
+    public JoseException( String message )
+    {
+        super( message );
+    }
+
+    public JoseException( Throwable cause )
+    {
+        super( cause );
+    }
+
+    public JoseException( String message, Throwable cause )
+    {
+        super( message, cause );
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Plugin;
 import io.werval.api.exceptions.ActivationException;
+import io.werval.modules.metrics.Metrics;
+import io.werval.modules.smtp.internal.SmtpHealthCheck;
+import io.werval.modules.smtp.internal.Transport;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import io.werval.modules.metrics.Metrics;
 
 import static java.util.Collections.EMPTY_LIST;
 
@@ -49,7 +51,7 @@ public class SmtpPlugin
     @Override
     public List<Class<?>> dependencies( Config config )
     {
-        if( config.bool( "smtp.metrics" ) )
+        if( config.bool( "smtp.metrics" ) || config.bool( "smtp.healthcheck" ) )
         {
             return Arrays.asList( Metrics.class );
         }
@@ -85,19 +87,33 @@ public class SmtpPlugin
                     throw new InternalError( "Invalid Transport" );
             }
         }
+        String host = config.string( "smtp.host" );
+        boolean validateCert = config.bool( "smtp.validate_certificate" );
+        long connTimeoutMillis = config.milliseconds( "smtp.connection_timeout" );
+        long ioTimeoutMillis = config.milliseconds( "smtp.io_timeout" );
+        String username = config.has( "smtp.username" ) ? config.string( "smtp.username" ) : null;
+        String password = config.has( "smtp.password" ) ? config.string( "smtp.password" ) : null;
         smtp = new Smtp(
-            config.string( "smtp.host" ),
-            port,
-            transport,
-            config.bool( "smtp.validate_certificate" ),
-            config.milliseconds( "smtp.connection_timeout" ),
-            config.milliseconds( "smtp.io_timeout" ),
-            config.has( "smtp.username" ) ? config.string( "smtp.username" ) : null,
-            config.has( "smtp.password" ) ? config.string( "smtp.password" ) : null,
+            host, port,
+            transport, validateCert,
+            connTimeoutMillis, ioTimeoutMillis,
+            username, password,
             config.has( "smtp.bounce" ) ? config.string( "smtp.bounce" ) : null,
             application.defaultCharset(),
             config.bool( "smtp.metrics" ) ? application.plugin( Metrics.class ) : null
         );
+        if( config.bool( "smtp.healthcheck" ) )
+        {
+            application.plugin( Metrics.class ).healthChecks().register(
+                "smtp",
+                new SmtpHealthCheck(
+                    host, port,
+                    transport, validateCert,
+                    connTimeoutMillis, ioTimeoutMillis,
+                    username, password
+                )
+            );
+        }
     }
 
     @Override

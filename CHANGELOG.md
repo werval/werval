@@ -5,6 +5,33 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## 0.7.3 - [history](https://github.com/werval/werval/commits/0.7.3)
+
+> HotFix 0.7!
+
+### Bug fixes
+
+- (#251) JOSE: Allow issuance of JWT without subject
+
+### Enhancements
+
+- (#252) Add server health-check to the SMTP module
+
+### Dependency changes
+
+- Core
+    - Upgrade SLF4J from `1.7.10` to `1.7.12`, see the [announcements](http://slf4j.org/news.html)
+    - Upgrade Javassist from `3.18` to `3.19`, see the [history](https://github.com/jboss-javassist/javassist/commits/3.19) 
+    - Upgrade Netty from `4.0.25` to `4.0.27`, see the announcements:
+      [4.0.26](http://netty.io/news/2015/03/04/three-releases.html) and [4.0.27](http://netty.io/news/2015/04/02/4-0-27-Final.html)
+- Modules
+    - Upgrade PostgreSQL JDBC driver from `9.3` to `9.4`, see the [history](https://github.com/pgjdbc/pgjdbc/commits/REL9_4_STABLE)
+    - Upgrade EclipseLink from `2.5` to `2.6`, see the [release-notes](http://www.eclipse.org/eclipselink/releases/index.php)
+    - Upgrade EhCache from `2.9` to `2.10`, see the [changes-report](http://www.ehcache.org/changes-report)
+    - Upgrade Jedis from `2.6` to `2.7`, see the [release-notes](https://github.com/xetorthio/jedis/releases)
+
+
+
 ## 0.7.2 - [history](https://github.com/werval/werval/commits/0.7.2)
 
 > HotFix 0.7!
@@ -116,6 +143,7 @@ This release contains only build & infrastructure changes.
 
 - Tooling
     - Upgrade Gradle from `2.2` to `2.2.1`, see the [release-notes](http://www.gradle.org/docs/2.2.1/release-notes)
+
 
 
 ## 0.4.0 - [history](https://github.com/werval/werval/commits/0.4.0)

@@ -15,7 +15,6 @@
  */
 package io.werval.modules.jose;
 
-import io.werval.api.exceptions.WervalException;
 import io.werval.modules.jose.internal.Issuer;
 import io.werval.modules.metrics.Metrics;
 import java.time.Instant;
@@ -26,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.lang.JoseException;
 
 /**
  * JSON Web Token.
@@ -62,12 +60,8 @@ public class JWT
     }
 
     public String tokenForClaims( Map<String, Object> claims )
+        throws JoseException
     {
-        if( !claims.containsKey( CLAIM_SUBJECT ) )
-        {
-            throw new IllegalArgumentException( "Cannot issue token without a subject claim ('sub')!" );
-        }
-
         // Token issuer
         Issuer issuer = issuers.get( defaultIssuer );
 
@@ -91,25 +85,18 @@ public class JWT
             }
             return jwt;
         }
-        catch( JoseException ex )
-        {
-            if( metrics != null )
-            {
-                metrics.metrics().meter( METRIC_TOKEN_ISSUANCE_ERRORS ).mark();
-            }
-            throw new WervalException( "Unable to issue JSON Web Token", ex );
-        }
         catch( Exception ex )
         {
             if( metrics != null )
             {
                 metrics.metrics().meter( METRIC_TOKEN_ISSUANCE_ERRORS ).mark();
             }
-            throw ex;
+            throw new JoseException( "Unable to issue JSON Web Token", ex );
         }
     }
 
     public Map<String, Object> claimsOfToken( String token )
+        throws JoseException
     {
         // Token issuer
         Issuer issuer = issuers.get( defaultIssuer );
@@ -122,7 +109,7 @@ public class JWT
             jws.setKey( issuer.key() );
             if( !jws.verifySignature() )
             {
-                throw new WervalException( "JSON Web Token signature verification failed" );
+                throw new JoseException( "JSON Web Token signature verification failed" );
             }
 
             // Extract claims
@@ -135,13 +122,13 @@ public class JWT
                 && ZonedDateTime.ofInstant( Instant.ofEpochSecond( (Long) claims.get( CLAIM_NOT_BEFORE ) ), utc )
                 .isAfter( nowUtc ) )
             {
-                throw new WervalException( "JSON Web Token is not valid yet!" );
+                throw new JoseException( "JSON Web Token is not valid yet!" );
             }
             if( claims.get( CLAIM_EXPIRATION ) != null
                 && ZonedDateTime.ofInstant( Instant.ofEpochSecond( (Long) claims.get( CLAIM_EXPIRATION ) ), utc )
                 .isBefore( nowUtc ) )
             {
-                throw new WervalException( "JSON Web Token has expired!" );
+                throw new JoseException( "JSON Web Token has expired!" );
             }
             if( metrics != null )
             {
@@ -151,25 +138,18 @@ public class JWT
             // Claims
             return Collections.unmodifiableMap( claims );
         }
-        catch( JoseException ex )
-        {
-            if( metrics != null )
-            {
-                metrics.metrics().meter( METRIC_TOKEN_VALIDATION_ERRORS ).mark();
-            }
-            throw new WervalException( "JSON Web Token validation failed", ex );
-        }
         catch( Exception ex )
         {
             if( metrics != null )
             {
                 metrics.metrics().meter( METRIC_TOKEN_VALIDATION_ERRORS ).mark();
             }
-            throw ex;
+            throw new JoseException( "JSON Web Token validation failed", ex );
         }
     }
 
     public String renewToken( String token )
+        throws JoseException
     {
         // Token issuer
         Issuer issuer = issuers.get( defaultIssuer );
@@ -181,7 +161,7 @@ public class JWT
             jws.setKey( issuer.key() );
             if( !jws.verifySignature() )
             {
-                throw new WervalException( "JSON Web Token signature verification failed" );
+                throw new JoseException( "JSON Web Token signature verification failed" );
             }
 
             // Extract claims, remove all time related ones and set them afresh
@@ -202,21 +182,13 @@ public class JWT
             }
             return jwt;
         }
-        catch( JoseException ex )
-        {
-            if( metrics != null )
-            {
-                metrics.metrics().meter( METRIC_TOKEN_RENEWAL_ERRORS ).mark();
-            }
-            throw new WervalException( "JSON Web Token renewal failed", ex );
-        }
         catch( Exception ex )
         {
             if( metrics != null )
             {
                 metrics.metrics().meter( METRIC_TOKEN_RENEWAL_ERRORS ).mark();
             }
-            throw ex;
+            throw new JoseException( "JSON Web Token renewal failed", ex );
         }
     }
 

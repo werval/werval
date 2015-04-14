@@ -53,7 +53,7 @@ public class StartMojoIT
             HttpGet get = new HttpGet( "http://localhost:23023/" );
             ResponseHandler<String> handler = new BasicResponseHandler();
 
-            await().atMost( 30, SECONDS ).pollDelay( 5, SECONDS ).until(
+            await().atMost( 60, SECONDS ).pollDelay( 5, SECONDS ).until(
                 () ->
                 {
                     try

@@ -52,7 +52,7 @@ public class DevShellMojoIT
         {
             devshellThread.start();
 
-            await().atMost( 30, SECONDS ).until( () -> lock.exists() );
+            await().atMost( 60, SECONDS ).until( () -> lock.exists() );
 
             if( errorHolder.isSet() )
             {
