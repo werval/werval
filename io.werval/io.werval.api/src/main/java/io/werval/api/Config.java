@@ -136,6 +136,20 @@ public interface Config
     /**
      * @param key Config entry key
      *
+     * @return Config entry value as Long
+     */
+    Long longNumber( String key );
+
+    /**
+     * @param key Config entry key
+     *
+     * @return Config entry value as Long
+     */
+    Optional<Long> longOptional( String key );
+
+    /**
+     * @param key Config entry key
+     *
      * @return Config entry value as Double
      */
     Double doubleNumber( String key );

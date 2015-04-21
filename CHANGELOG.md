@@ -5,6 +5,16 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## develop - [history](https://github.com/werval/werval/commits/develop)
+
+> Unreleased
+
+### Enhancements
+
+- (#254) Allow long numbers in configuration
+
+
+
 ## 0.7.3 - [history](https://github.com/werval/werval/commits/0.7.3)
 
 > HotFix 0.7!

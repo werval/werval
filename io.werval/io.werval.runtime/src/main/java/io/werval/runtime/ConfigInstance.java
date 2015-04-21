@@ -448,6 +448,25 @@ public class ConfigInstance
     }
 
     @Override
+    public Long longNumber( String key )
+    {
+        return config.getLong( key );
+    }
+
+    @Override
+    public Optional<Long> longOptional( String key )
+    {
+        try
+        {
+            return Optional.of( longNumber( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Double doubleNumber( String key )
     {
         return config.getDouble( key );
