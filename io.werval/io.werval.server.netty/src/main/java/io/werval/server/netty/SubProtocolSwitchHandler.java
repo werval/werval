@@ -66,8 +66,8 @@ public class SubProtocolSwitchHandler
             LOG.trace( "Switching to plain HTTP protocol" );
             ChannelPipeline pipeline = context.pipeline();
 
-            int maxBodySize = app.config().intNumber( WERVAL_HTTP_REQUESTS_BODY_MAX_SIZE );
-            int diskThreshold = app.config().intNumber( WERVAL_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
+            long maxBodySize = app.config().longNumber( WERVAL_HTTP_REQUESTS_BODY_MAX_SIZE );
+            long diskThreshold = app.config().longNumber( WERVAL_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
             pipeline.addLast(
                 "http-aggregator",
                 new HttpRequestAggregator( helper, app.events(), maxBodySize, diskThreshold, app.tmpdir() )

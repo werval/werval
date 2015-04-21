@@ -82,8 +82,8 @@ public class HttpRequestAggregator
 
     private final HttpServerHelper helper;
     private final EventsSPI eventsSpi;
-    private final int maxContentLength;
-    private final int diskThreshold;
+    private final long maxContentLength;
+    private final long diskThreshold;
     private final File diskOverflowDirectory;
     private HttpRequest aggregatedRequestHeader;
     private int consumedContentlength = 0;
@@ -92,7 +92,7 @@ public class HttpRequestAggregator
 
     public HttpRequestAggregator(
         HttpServerHelper helper, EventsSPI eventsSpi,
-        int maxContentLength, int diskThreshold, File diskOverflowDirectory
+        long maxContentLength, long diskThreshold, File diskOverflowDirectory
     )
     {
         this.helper = helper;
