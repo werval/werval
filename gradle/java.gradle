@@ -14,7 +14,12 @@ apply plugin: 'eclipse'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation"
+}
+tasks.matching({ task -> task instanceof JavaCompile && !task.name.contains( 'test' ) })
+    .each({ task -> task.options.compilerArgs << "-Xlint:unchecked" })
 
 // All projects gets basic test dependencies
 dependencies {
