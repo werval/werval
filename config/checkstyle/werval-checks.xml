@@ -10,7 +10,7 @@
     <!--
         If you set the basedir property below, then all reported file
         names will be relative to the specified directory. See
-        http://checkstyle.sourceforge.net/5.x/config.html#Checker
+        http://checkstyle.sourceforge.net/config.html#Checker
 
         <property name="basedir" value="${basedir}"/>
     -->
@@ -111,9 +111,19 @@
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->
         <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
+        <module name="IllegalImport">
+            <property name="illegalPkgs" value="sun, com.sun"/>
+        </module>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
+        <module name="ImportOrder">
+            <property name="option" value="bottom"/>
+            <property name="groups" value="/^javax?\./,/^io.werval/"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="caseSensitive" value="true"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
+        </module>
 
 
         <!-- Checks for Size Violations.                    -->
@@ -156,6 +166,7 @@
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock"/>
         <module name="NeedBraces"/>
         <module name="LeftCurly">
             <property name="option" value="nl"/>
@@ -182,11 +193,9 @@
             <property name="ignoreNumbers" value="-1, 0, 1, 2, 4, 8, 10, 16, 24, 60, 500, 1000, 3600"/>
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
+            <property name="ignoreFieldDeclaration" value="true"/>
         </module>
         <module name="MissingSwitchDefault"/>
-        <module name="RedundantThrows">
-            <property name="allowUnchecked" value="true"/>
-        </module>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 

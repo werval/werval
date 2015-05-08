@@ -15,8 +15,6 @@
  */
 package io.werval.runtime.mime;
 
-import io.werval.api.mime.MimeTypes;
-import io.werval.runtime.exceptions.WervalRuntimeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +22,13 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
+import io.werval.api.mime.MimeTypes;
+import io.werval.runtime.exceptions.WervalRuntimeException;
+
+import static java.util.Locale.US;
+
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static io.werval.util.IllegalArguments.ensureNotNull;
-import static java.util.Locale.US;
 
 /**
  * Application MimeType instance.

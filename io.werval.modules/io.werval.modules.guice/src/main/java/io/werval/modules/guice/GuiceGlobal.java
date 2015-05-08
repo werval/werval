@@ -17,6 +17,7 @@ package io.werval.modules.guice;
 
 import io.werval.api.Application;
 import io.werval.api.Global;
+
 import com.google.inject.Injector;
 
 /**

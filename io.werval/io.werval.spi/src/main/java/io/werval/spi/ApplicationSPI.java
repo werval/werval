@@ -15,16 +15,17 @@
  */
 package io.werval.spi;
 
+import java.util.concurrent.CompletableFuture;
+
 import io.werval.api.Application;
 import io.werval.api.Global;
 import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.Request;
 import io.werval.api.http.RequestHeader;
 import io.werval.api.outcomes.Outcome;
-import io.werval.util.Reflectively;
 import io.werval.spi.events.EventsSPI;
 import io.werval.spi.http.HttpBuildersSPI;
-import java.util.concurrent.CompletableFuture;
+import io.werval.util.Reflectively;
 
 /**
  * Application SPI.

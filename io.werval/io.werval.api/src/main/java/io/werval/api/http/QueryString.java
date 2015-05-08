@@ -15,8 +15,6 @@
  */
 package io.werval.api.http;
 
-import io.werval.util.Charsets;
-import io.werval.util.MultiValued;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,6 +26,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.werval.util.Charsets;
+import io.werval.util.MultiValued;
 
 /**
  * URI Query String.

@@ -15,24 +15,26 @@
  */
 package io.werval.modules.cache;
 
-import io.werval.api.Application;
-import io.werval.api.Config;
-import io.werval.api.cache.Cache;
-import io.werval.api.cache.CachePlugin;
-import io.werval.api.exceptions.ActivationException;
-import io.werval.util.Strings;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.cache.Cache;
+import io.werval.api.cache.CachePlugin;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.modules.metrics.Metrics;
+import io.werval.util.Strings;
+
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
 import net.spy.memcached.auth.PlainCallbackHandler;
-import io.werval.modules.metrics.Metrics;
 
 import static java.util.Collections.EMPTY_LIST;
 

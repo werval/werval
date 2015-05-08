@@ -15,17 +15,18 @@
  */
 package io.werval.runtime.outcomes;
 
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import io.werval.api.Config;
 import io.werval.api.http.Status;
 import io.werval.api.mime.MimeTypes;
 import io.werval.api.outcomes.OutcomeBuilder;
 import io.werval.api.outcomes.Outcomes;
-import io.werval.util.URLs;
 import io.werval.runtime.http.ResponseHeaderInstance;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import io.werval.util.URLs;
 
 import static io.werval.api.http.Headers.Names.LOCATION;
 import static io.werval.api.http.Status.ACCEPTED;

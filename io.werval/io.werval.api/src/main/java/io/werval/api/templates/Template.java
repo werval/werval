@@ -18,6 +18,7 @@ package io.werval.api.templates;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
+
 import io.werval.api.exceptions.TemplateException;
 
 import static java.util.Collections.EMPTY_MAP;

@@ -15,11 +15,6 @@
  */
 package io.werval.devshell;
 
-import io.werval.api.exceptions.PassivationException;
-import io.werval.api.exceptions.WervalException;
-import io.werval.spi.dev.DevShellRebuildException;
-import io.werval.spi.dev.DevShellSPI;
-import io.werval.spi.dev.DevShellSPIWrapper;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -37,10 +32,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+
+import io.werval.api.exceptions.PassivationException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.dev.DevShellSPIWrapper;
+
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.classworlds.realm.NoSuchRealmException;
+
+import static java.util.Collections.singletonMap;
 
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
@@ -50,7 +54,6 @@ import static io.werval.runtime.util.AnsiColor.white;
 import static io.werval.runtime.util.AnsiColor.yellow;
 import static io.werval.util.ClassLoaders.printLoadedClasses;
 import static io.werval.util.ClassLoaders.printURLs;
-import static java.util.Collections.singletonMap;
 
 /**
  * Werval DevShell.

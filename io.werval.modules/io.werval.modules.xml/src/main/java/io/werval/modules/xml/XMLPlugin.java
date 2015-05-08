@@ -15,15 +15,6 @@
  */
 package io.werval.modules.xml;
 
-import io.werval.api.Application;
-import io.werval.api.Config;
-import io.werval.api.Plugin;
-import io.werval.api.exceptions.ActivationException;
-import io.werval.api.exceptions.WervalException;
-import io.werval.modules.xml.internal.CatalogResolver;
-import io.werval.modules.xml.internal.EmptyResolver;
-import io.werval.modules.xml.internal.Internal;
-import io.werval.modules.xml.internal.ThrowingResolver;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,12 +32,24 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPathFactory;
+
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.modules.xml.internal.CatalogResolver;
+import io.werval.modules.xml.internal.EmptyResolver;
+import io.werval.modules.xml.internal.Internal;
+import io.werval.modules.xml.internal.ThrowingResolver;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import static io.werval.util.Strings.NEWLINE;
 import static java.util.Collections.EMPTY_LIST;
+
+import static io.werval.util.Strings.NEWLINE;
 
 /**
  * XML Plugin.

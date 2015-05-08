@@ -15,12 +15,14 @@
  */
 package io.werval.spi.server;
 
-import io.werval.api.exceptions.PassivationException;
-import io.werval.util.Reflectively;
-import io.werval.spi.ApplicationSPI;
-import io.werval.spi.dev.DevShellSPI;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.werval.api.exceptions.PassivationException;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.util.Reflectively;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

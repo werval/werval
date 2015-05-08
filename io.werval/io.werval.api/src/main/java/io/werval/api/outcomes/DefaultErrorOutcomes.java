@@ -18,14 +18,14 @@ package io.werval.api.outcomes;
 import io.werval.api.http.RequestHeader;
 import io.werval.api.http.Status;
 
-import static io.werval.util.Strings.NEWLINE;
-import static io.werval.util.Strings.SPACE;
-import static io.werval.util.Strings.hasText;
 import static io.werval.api.http.Headers.Names.ACCEPT;
 import static io.werval.api.http.Headers.Names.VARY;
 import static io.werval.api.mime.MimeTypes.APPLICATION_JSON;
 import static io.werval.api.mime.MimeTypes.TEXT_HTML;
 import static io.werval.api.mime.MimeTypes.TEXT_PLAIN;
+import static io.werval.util.Strings.NEWLINE;
+import static io.werval.util.Strings.SPACE;
+import static io.werval.util.Strings.hasText;
 
 /**
  * Default error outcomes utilities.

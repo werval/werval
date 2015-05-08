@@ -15,11 +15,12 @@
  */
 package io.werval.doc;
 
+import java.util.List;
+
 import io.werval.api.Mode;
 import io.werval.api.Plugin;
 import io.werval.api.routes.Route;
 import io.werval.api.routes.RouteBuilder;
-import java.util.List;
 
 /**
  * Documentation Plugin.

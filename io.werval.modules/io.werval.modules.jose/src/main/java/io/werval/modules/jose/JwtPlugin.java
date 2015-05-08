@@ -15,6 +15,13 @@
  */
 package io.werval.modules.jose;
 
+import java.security.Key;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Plugin;
@@ -22,12 +29,7 @@ import io.werval.api.exceptions.ActivationException;
 import io.werval.modules.jose.internal.Issuer;
 import io.werval.modules.metrics.Metrics;
 import io.werval.util.Hex;
-import java.security.Key;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.HmacKey;
 

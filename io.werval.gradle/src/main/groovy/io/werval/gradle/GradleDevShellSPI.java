@@ -15,9 +15,6 @@
  */
 package io.werval.gradle;
 
-import io.werval.spi.dev.DevShellRebuildException;
-import io.werval.spi.dev.DevShellSPI.SourceWatcher;
-import io.werval.spi.dev.DevShellSPIAdapter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UncheckedIOException;
@@ -26,6 +23,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Set;
+
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI.SourceWatcher;
+import io.werval.spi.dev.DevShellSPIAdapter;
+
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 

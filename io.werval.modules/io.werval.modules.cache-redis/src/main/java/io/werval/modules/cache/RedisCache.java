@@ -15,11 +15,13 @@
  */
 package io.werval.modules.cache;
 
-import io.werval.spi.cache.CacheAdapter;
-import io.werval.util.Serializables;
 import java.util.UUID;
+
+import io.werval.spi.cache.CacheAdapter;
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.metrics.internal.CacheMetricsHandler;
+import io.werval.util.Serializables;
+
 import redis.clients.jedis.Jedis;
 
 import static io.werval.util.Charsets.UTF_8;

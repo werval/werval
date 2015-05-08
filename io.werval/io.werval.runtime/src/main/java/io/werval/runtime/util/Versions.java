@@ -15,9 +15,10 @@
  */
 package io.werval.runtime.util;
 
-import io.werval.runtime.exceptions.WervalRuntimeException;
 import java.util.Arrays;
 import java.util.stream.Stream;
+
+import io.werval.runtime.exceptions.WervalRuntimeException;
 
 /**
  * Werval Versions Utilities.

@@ -18,6 +18,7 @@ package io.werval.modules.qi4j;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+
 import org.json.JSONException;
 import org.qi4j.api.structure.ApplicationDescriptor;
 import org.qi4j.bootstrap.ApplicationAssembler;

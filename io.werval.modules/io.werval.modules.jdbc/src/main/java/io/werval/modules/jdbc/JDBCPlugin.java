@@ -15,12 +15,6 @@
  */
 package io.werval.modules.jdbc;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import io.werval.api.Application;
-import io.werval.api.Config;
-import io.werval.api.Plugin;
-import io.werval.api.exceptions.ActivationException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Driver;
@@ -34,8 +28,16 @@ import java.util.Map;
 import java.util.Set;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.exceptions.ActivationException;
 import io.werval.modules.jndi.JNDI;
 import io.werval.modules.metrics.Metrics;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import static io.werval.util.Strings.EMPTY;
 import static io.werval.util.Strings.isEmpty;

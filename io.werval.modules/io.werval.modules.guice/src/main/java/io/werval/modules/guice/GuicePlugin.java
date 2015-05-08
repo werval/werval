@@ -18,6 +18,7 @@ package io.werval.modules.guice;
 import io.werval.api.Application;
 import io.werval.api.Plugin;
 import io.werval.api.exceptions.ActivationException;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;

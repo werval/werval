@@ -15,12 +15,14 @@
  */
 package io.werval.maven;
 
-import io.werval.commands.StartCommand;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import io.werval.commands.StartCommand;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;

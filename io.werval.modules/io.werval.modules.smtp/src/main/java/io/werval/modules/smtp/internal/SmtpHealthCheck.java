@@ -15,10 +15,12 @@
  */
 package io.werval.modules.smtp.internal;
 
-import com.codahale.metrics.health.HealthCheck;
-import io.werval.util.Strings;
 import java.util.Properties;
 import javax.mail.Session;
+
+import io.werval.util.Strings;
+
+import com.codahale.metrics.health.HealthCheck;
 
 /**
  * Smtp HealthCheck.

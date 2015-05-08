@@ -17,6 +17,7 @@ package io.werval.modules.spring;
 
 import io.werval.api.Application;
 import io.werval.api.Global;
+
 import org.springframework.context.ApplicationContext;
 
 /**

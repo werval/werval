@@ -15,17 +15,6 @@
  */
 package io.werval.runtime.routes;
 
-import io.werval.api.exceptions.IllegalRouteException;
-import io.werval.api.exceptions.ParameterBinderException;
-import io.werval.api.http.Method;
-import io.werval.api.http.QueryString;
-import io.werval.api.http.RequestHeader;
-import io.werval.api.outcomes.Outcome;
-import io.werval.api.routes.ControllerParams;
-import io.werval.api.routes.ControllerParams.ParamValue;
-import io.werval.api.routes.ParameterBinders;
-import io.werval.api.routes.Route;
-import io.werval.runtime.util.TypeResolver;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +27,18 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.werval.api.exceptions.IllegalRouteException;
+import io.werval.api.exceptions.ParameterBinderException;
+import io.werval.api.http.Method;
+import io.werval.api.http.QueryString;
+import io.werval.api.http.RequestHeader;
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.routes.ControllerParams;
+import io.werval.api.routes.ControllerParams.ParamValue;
+import io.werval.api.routes.ParameterBinders;
+import io.werval.api.routes.Route;
+import io.werval.runtime.util.TypeResolver;
 
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static io.werval.util.IllegalArguments.ensureNotNull;

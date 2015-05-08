@@ -15,11 +15,6 @@
  */
 package io.werval.filters;
 
-import io.werval.api.context.Context;
-import io.werval.api.filters.FilterChain;
-import io.werval.api.filters.FilterWith;
-import io.werval.api.http.MutableHeaders;
-import io.werval.api.outcomes.Outcome;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -29,6 +24,13 @@ import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import io.werval.api.context.Context;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.http.MutableHeaders;
+import io.werval.api.outcomes.Outcome;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,9 +15,10 @@
  */
 package io.werval.api.http;
 
-import java.util.Set;
-import io.werval.api.http.Cookies.Cookie;
 import java.util.Optional;
+import java.util.Set;
+
+import io.werval.api.http.Cookies.Cookie;
 
 /**
  * HTTP Cookies.

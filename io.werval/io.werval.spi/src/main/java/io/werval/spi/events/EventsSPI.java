@@ -15,8 +15,8 @@
  */
 package io.werval.spi.events;
 
-import io.werval.api.events.Events;
 import io.werval.api.events.Event;
+import io.werval.api.events.Events;
 
 /**
  * Application Events SPI.

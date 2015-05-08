@@ -15,8 +15,9 @@
  */
 package io.werval.runtime.outcomes;
 
-import io.werval.api.http.ResponseHeader;
 import java.io.InputStream;
+
+import io.werval.api.http.ResponseHeader;
 
 /**
  * {@link InputStream} based Outcome for chunked output.

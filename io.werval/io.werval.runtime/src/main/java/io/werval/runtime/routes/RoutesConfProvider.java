@@ -15,15 +15,16 @@
  */
 package io.werval.runtime.routes;
 
-import io.werval.api.Application;
-import io.werval.api.routes.Route;
-import io.werval.util.Strings;
-import io.werval.runtime.exceptions.WervalRuntimeException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
+
+import io.werval.api.Application;
+import io.werval.api.routes.Route;
+import io.werval.util.Strings;
+import io.werval.runtime.exceptions.WervalRuntimeException;
 
 /**
  * Routes Provider using 'routes.conf' from the Application classpath root.

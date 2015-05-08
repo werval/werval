@@ -15,6 +15,9 @@
  */
 package io.werval.test;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import io.werval.api.Mode;
 import io.werval.runtime.ApplicationInstance;
 import io.werval.runtime.ConfigInstance;
@@ -26,8 +29,7 @@ import io.werval.server.netty.NettyServer;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.server.HttpServer;
 import io.werval.test.util.FreePortFinder;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;

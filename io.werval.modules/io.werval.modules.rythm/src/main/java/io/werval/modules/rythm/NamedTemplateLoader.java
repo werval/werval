@@ -15,8 +15,10 @@
  */
 package io.werval.modules.rythm;
 
-import io.werval.api.Application;
 import java.net.URL;
+
+import io.werval.api.Application;
+
 import org.rythmengine.RythmEngine;
 import org.rythmengine.extension.ICodeType;
 import org.rythmengine.extension.ITemplateResourceLoader;

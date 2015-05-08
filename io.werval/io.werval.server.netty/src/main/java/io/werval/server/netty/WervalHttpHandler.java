@@ -15,20 +15,11 @@
  */
 package io.werval.server.netty;
 
-import io.netty.buffer.ByteBufHolder;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.stream.ChunkedStream;
-import io.netty.handler.timeout.ReadTimeoutException;
-import io.netty.handler.timeout.WriteTimeoutException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+
 import io.werval.api.Mode;
 import io.werval.api.events.HttpEvent;
 import io.werval.api.http.ProtocolVersion;
@@ -43,16 +34,24 @@ import io.werval.runtime.outcomes.SimpleOutcome;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellRebuildException;
 import io.werval.spi.dev.DevShellSPI;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.math.BigDecimal;
+
+import io.netty.buffer.ByteBufHolder;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.stream.ChunkedStream;
+import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.WriteTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
 import static io.werval.api.http.Headers.Names.TRAILER;
 import static io.werval.api.http.Headers.Names.TRANSFER_ENCODING;
@@ -61,6 +60,10 @@ import static io.werval.api.http.Headers.Values.CHUNKED;
 import static io.werval.util.Charsets.UTF_8;
 import static io.werval.server.netty.NettyHttpFactories.remoteAddressOf;
 import static io.werval.server.netty.NettyHttpFactories.requestOf;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * Handle HTTP Requests.

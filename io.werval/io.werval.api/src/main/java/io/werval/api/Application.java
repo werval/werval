@@ -15,11 +15,10 @@
  */
 package io.werval.api;
 
-import io.werval.util.Reflectively;
-import io.werval.util.Stacktraces;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
+
 import io.werval.api.cache.Cache;
 import io.werval.api.events.Events;
 import io.werval.api.exceptions.ActivationException;
@@ -30,6 +29,8 @@ import io.werval.api.routes.ParameterBinders;
 import io.werval.api.routes.ReverseRoutes;
 import io.werval.api.routes.Routes;
 import io.werval.api.templates.Templates;
+import io.werval.util.Reflectively;
+import io.werval.util.Stacktraces;
 
 /**
  * Application.

@@ -15,9 +15,9 @@
  */
 package io.werval.spi.server;
 
-import io.werval.util.Reflectively;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellSPI;
+import io.werval.util.Reflectively;
 
 /**
  * Werval Http Server.

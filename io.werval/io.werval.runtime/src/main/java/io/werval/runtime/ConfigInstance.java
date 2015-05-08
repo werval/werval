@@ -15,8 +15,6 @@
  */
 package io.werval.runtime;
 
-import io.werval.api.Config;
-import io.werval.util.Reflectively;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,9 +28,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static io.werval.util.Charsets.UTF_8;
+import io.werval.api.Config;
+import io.werval.util.Reflectively;
+
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import static io.werval.util.Charsets.UTF_8;
 
 /**
  * Config Instance backed by TypeSafe Config.

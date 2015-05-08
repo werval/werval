@@ -15,7 +15,6 @@
  */
 package io.werval.test.util;
 
-import io.werval.util.Couple;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.management.ManagementFactory;
@@ -23,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
+
+import io.werval.util.Couple;
 
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 

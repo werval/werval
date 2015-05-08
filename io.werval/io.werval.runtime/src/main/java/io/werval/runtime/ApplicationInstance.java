@@ -15,6 +15,22 @@
  */
 package io.werval.runtime;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.HttpCookie;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 import io.werval.api.Application;
 import io.werval.api.ApplicationExecutors;
 import io.werval.api.Config;
@@ -73,21 +89,7 @@ import io.werval.runtime.routes.RoutesConfProvider;
 import io.werval.runtime.routes.RoutesInstance;
 import io.werval.runtime.routes.RoutesProvider;
 import io.werval.runtime.util.TypeResolver;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.net.HttpCookie;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,12 +101,6 @@ import static io.werval.api.http.Headers.Names.X_WERVAL_REQUEST_ID;
 import static io.werval.api.http.Headers.Values.CLOSE;
 import static io.werval.api.http.Headers.Values.KEEP_ALIVE;
 import static io.werval.api.mime.MimeTypes.TEXT_HTML;
-import static io.werval.util.IllegalArguments.ensureNotNull;
-import static io.werval.util.InputStreams.BUF_SIZE_4K;
-import static io.werval.util.InputStreams.transferTo;
-import static io.werval.util.Strings.NEWLINE;
-import static io.werval.util.Strings.hasText;
-import static io.werval.util.Strings.indentTwoSpaces;
 import static io.werval.runtime.BuildVersion.COMMIT;
 import static io.werval.runtime.BuildVersion.DATE;
 import static io.werval.runtime.BuildVersion.DIRTY;
@@ -125,6 +121,12 @@ import static io.werval.runtime.ConfigKeys.WERVAL_MIMETYPES_TEXTUAL;
 import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_PARAMETERBINDERS;
 import static io.werval.runtime.ConfigKeys.WERVAL_SHUTDOWN_RETRYAFTER;
 import static io.werval.runtime.ConfigKeys.WERVAL_TMPDIR;
+import static io.werval.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
+import static io.werval.util.InputStreams.transferTo;
+import static io.werval.util.Strings.NEWLINE;
+import static io.werval.util.Strings.hasText;
+import static io.werval.util.Strings.indentTwoSpaces;
 
 /**
  * An Application Instance.

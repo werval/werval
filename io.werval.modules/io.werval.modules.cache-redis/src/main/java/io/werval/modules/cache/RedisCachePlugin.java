@@ -15,14 +15,16 @@
  */
 package io.werval.modules.cache;
 
+import java.util.Arrays;
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.cache.Cache;
 import io.werval.api.cache.CachePlugin;
 import io.werval.api.exceptions.ActivationException;
-import java.util.Arrays;
-import java.util.List;
 import io.werval.modules.metrics.Metrics;
+
 import redis.clients.jedis.Jedis;
 
 import static java.util.Collections.EMPTY_LIST;

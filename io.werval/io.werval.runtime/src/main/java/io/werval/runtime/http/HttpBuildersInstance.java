@@ -15,6 +15,13 @@
  */
 package io.werval.runtime.http;
 
+import java.net.HttpCookie;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import io.werval.api.Config;
 import io.werval.api.http.Cookies;
 import io.werval.api.http.Cookies.Cookie;
@@ -30,12 +37,6 @@ import io.werval.spi.http.HttpBuildersSPI;
 import io.werval.util.ByteSource;
 import io.werval.util.Strings;
 import io.werval.util.URLs;
-import java.net.HttpCookie;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
 import static io.werval.api.http.Headers.Names.COOKIE;

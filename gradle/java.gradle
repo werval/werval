@@ -165,7 +165,7 @@ checkstyle {
     // Checkstyle generates a report per sourceset
     sourceSets = [ project.sourceSets.main ]
     // Fix used checkstyle version
-    toolVersion = '6.1.1'
+    toolVersion = '6.6'
 }
 // Generate checkstyle HTML report
 task checkstyleMainHtmlReport {

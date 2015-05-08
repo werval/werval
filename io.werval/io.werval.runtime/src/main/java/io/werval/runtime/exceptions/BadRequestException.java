@@ -15,8 +15,9 @@
  */
 package io.werval.runtime.exceptions;
 
-import io.werval.api.exceptions.WervalException;
 import java.util.function.Function;
+
+import io.werval.api.exceptions.WervalException;
 
 /**
  * Bad Request Exception.

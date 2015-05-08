@@ -15,14 +15,6 @@
  */
 package io.werval.runtime;
 
-import io.werval.api.Application;
-import io.werval.api.Mode;
-import io.werval.api.Plugin;
-import io.werval.api.context.Context;
-import io.werval.api.exceptions.PassivationException;
-import io.werval.api.exceptions.WervalException;
-import io.werval.api.routes.Route;
-import io.werval.runtime.routes.RouteBuilderInstance;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -43,12 +35,22 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
+import io.werval.api.Application;
+import io.werval.api.Mode;
+import io.werval.api.Plugin;
+import io.werval.api.context.Context;
+import io.werval.api.exceptions.PassivationException;
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.routes.Route;
+import io.werval.runtime.routes.RouteBuilderInstance;
+
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.stream.Collectors.toList;
+
 import static io.werval.util.IllegalArguments.ensureNotNull;
 import static io.werval.util.Strings.EMPTY;
 import static io.werval.util.Strings.NEWLINE;
 import static io.werval.util.Strings.rightPad;
-import static java.util.Collections.EMPTY_LIST;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Plugins Instance.

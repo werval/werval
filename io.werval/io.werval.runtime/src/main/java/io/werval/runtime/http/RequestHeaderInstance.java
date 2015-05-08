@@ -15,6 +15,16 @@
  */
 package io.werval.runtime.http;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import io.werval.api.http.Cookies;
 import io.werval.api.http.Headers;
 import io.werval.api.http.Method;
@@ -30,15 +40,6 @@ import io.werval.runtime.exceptions.BadRequestException;
 import io.werval.runtime.mime.MediaRangeInstance;
 import io.werval.util.Couple;
 import io.werval.util.Strings;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.werval.api.http.Headers.Names.ACCEPT;
 import static io.werval.api.http.Headers.Names.ACCEPT_LANGUAGE;

@@ -15,14 +15,16 @@
  */
 package io.werval.modules.rythm;
 
-import io.werval.api.exceptions.TemplateException;
-import io.werval.api.templates.Template;
-import io.werval.api.templates.Templates;
-import io.werval.modules.metrics.internal.TemplatesMetricsHandler;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.Map;
+
+import io.werval.api.exceptions.TemplateException;
+import io.werval.api.templates.Template;
+import io.werval.api.templates.Templates;
+import io.werval.modules.metrics.internal.TemplatesMetricsHandler;
+
 import org.rythmengine.RythmEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

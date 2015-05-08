@@ -15,7 +15,6 @@
  */
 package io.werval.controllers;
 
-import io.werval.util.Dates;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,15 +23,16 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import io.werval.api.Mode;
 import io.werval.api.outcomes.Outcome;
+import io.werval.util.Dates;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.werval.util.Charsets.US_ASCII;
-import static io.werval.util.IllegalArguments.ensureNotEmpty;
-import static io.werval.util.IllegalArguments.ensureNotNull;
 import static java.util.Locale.US;
+
 import static io.werval.api.context.CurrentContext.application;
 import static io.werval.api.context.CurrentContext.mimeTypes;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -45,6 +45,9 @@ import static io.werval.api.http.Headers.Names.IF_MODIFIED_SINCE;
 import static io.werval.api.http.Headers.Names.IF_NONE_MATCH;
 import static io.werval.api.http.Headers.Names.LAST_MODIFIED;
 import static io.werval.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
+import static io.werval.util.Charsets.US_ASCII;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
 
 /**
  * Serve static files or directory trees.

@@ -15,6 +15,14 @@
  */
 package io.werval.runtime.http;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import io.werval.api.Config;
 import io.werval.api.Crypto;
 import io.werval.api.http.Cookies.Cookie;
@@ -23,13 +31,7 @@ import io.werval.runtime.http.CookiesInstance.CookieInstance;
 import io.werval.runtime.util.Comparators;
 import io.werval.util.Strings;
 import io.werval.util.URLs;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

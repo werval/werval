@@ -15,15 +15,18 @@
  */
 package io.werval.test.templates;
 
-import io.werval.api.templates.Template;
-import io.werval.api.templates.Templates;
-import io.werval.test.WervalTest;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import io.werval.api.templates.Template;
+import io.werval.api.templates.Templates;
+import io.werval.test.WervalTest;
+
 import org.junit.Test;
 
 import static io.werval.util.Maps.fromMap;
+
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 

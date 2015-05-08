@@ -15,9 +15,10 @@
  */
 package io.werval.runtime.outcomes;
 
+import java.io.InputStream;
+
 import io.werval.api.http.Headers.Names;
 import io.werval.api.http.ResponseHeader;
-import java.io.InputStream;
 
 /**
  * {@link InputStream} based Outcome for streamed output.

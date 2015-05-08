@@ -15,8 +15,9 @@
  */
 package io.werval.api.http;
 
-import io.werval.util.Charsets;
 import java.io.Serializable;
+
+import io.werval.util.Charsets;
 
 /**
  * HTTP Status.

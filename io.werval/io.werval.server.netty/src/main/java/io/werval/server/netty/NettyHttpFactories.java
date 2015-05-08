@@ -15,24 +15,6 @@
  */
 package io.werval.server.netty;
 
-import io.netty.channel.Channel;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.multipart.Attribute;
-import io.netty.handler.codec.http.multipart.FileUpload;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDecoderException;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.IncompatibleDataDecoderException;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDataDecoderException;
-import io.netty.handler.codec.http.multipart.InterfaceHttpData;
-import io.werval.api.exceptions.WervalException;
-import io.werval.api.http.FormUploads.Upload;
-import io.werval.api.http.Headers;
-import io.werval.api.http.ProtocolVersion;
-import io.werval.api.http.Request;
-import io.werval.spi.http.HttpBuildersSPI;
-import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
-import io.werval.runtime.http.FormUploadsInstance.UploadInstance;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -45,14 +27,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.werval.api.exceptions.WervalException;
+import io.werval.api.http.FormUploads.Upload;
+import io.werval.api.http.Headers;
+import io.werval.api.http.ProtocolVersion;
+import io.werval.api.http.Request;
+import io.werval.spi.http.HttpBuildersSPI;
+import io.werval.spi.http.HttpBuildersSPI.RequestBuilder;
+import io.werval.runtime.http.FormUploadsInstance.UploadInstance;
+
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.multipart.Attribute;
+import io.netty.handler.codec.http.multipart.FileUpload;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDecoderException;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.IncompatibleDataDecoderException;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.NotEnoughDataDecoderException;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.IllegalArguments.ensureNotNull;
+
 import static io.netty.handler.codec.http.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static io.netty.handler.codec.http.HttpHeaders.Values.MULTIPART_FORM_DATA;
 import static io.netty.handler.codec.http.HttpMethod.PATCH;
 import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpMethod.PUT;
-import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
-import static io.werval.util.IllegalArguments.ensureNotEmpty;
-import static io.werval.util.IllegalArguments.ensureNotNull;
 
 /**
  * Factory methods used by the server.

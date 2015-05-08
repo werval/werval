@@ -15,9 +15,10 @@
  */
 package io.werval.runtime.outcomes;
 
+import java.io.Serializable;
+
 import io.werval.api.http.ResponseHeader;
 import io.werval.api.outcomes.Outcome;
-import java.io.Serializable;
 
 /**
  * Base Outcome class.

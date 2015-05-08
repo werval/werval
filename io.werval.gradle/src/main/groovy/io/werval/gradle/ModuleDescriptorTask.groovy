@@ -17,6 +17,7 @@ package io.werval.gradle
 
 import java.io.File
 import java.util.Properties
+
 import org.asciidoctor.gradle.AsciidoctorPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException

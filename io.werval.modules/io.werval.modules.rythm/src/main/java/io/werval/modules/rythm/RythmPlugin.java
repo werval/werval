@@ -15,6 +15,11 @@
  */
 package io.werval.modules.rythm;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Mode;
@@ -23,14 +28,12 @@ import io.werval.api.templates.Templates;
 import io.werval.api.templates.TemplatesPlugin;
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.metrics.internal.TemplatesMetricsHandler;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import org.rythmengine.Rythm;
 import org.rythmengine.RythmEngine;
 
 import static java.util.Collections.EMPTY_LIST;
+
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_CLASS_LOADER_PARENT_IMPL;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_MODE;
 import static org.rythmengine.conf.RythmConfigurationKey.ENGINE_PLUGIN_VERSION;

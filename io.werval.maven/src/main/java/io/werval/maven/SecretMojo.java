@@ -16,6 +16,7 @@
 package io.werval.maven;
 
 import io.werval.commands.SecretCommand;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

@@ -15,7 +15,6 @@
  */
 package io.werval.api;
 
-import io.werval.util.Reflectively;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import io.werval.util.Reflectively;
 
 /**
  * Application Config.

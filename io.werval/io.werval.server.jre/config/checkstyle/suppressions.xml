@@ -12,4 +12,6 @@
     <!-- DO NOT COMMIT -->
     <!--suppress checks=".*" files=".*"/-->
 
+    <suppress checks="IllegalImport" files=".*"/>
+
 </suppressions>

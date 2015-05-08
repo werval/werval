@@ -15,10 +15,11 @@
  */
 package io.werval.spi.cache;
 
-import io.werval.api.cache.Cache;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import io.werval.api.cache.Cache;
 
 /**
  * Cache Adapter.

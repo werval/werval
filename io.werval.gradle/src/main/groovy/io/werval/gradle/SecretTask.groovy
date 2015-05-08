@@ -16,6 +16,7 @@
 package io.werval.gradle
 
 import io.werval.commands.SecretCommand
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction

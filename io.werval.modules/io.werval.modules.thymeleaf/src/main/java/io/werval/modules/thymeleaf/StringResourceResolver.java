@@ -15,12 +15,14 @@
  */
 package io.werval.modules.thymeleaf;
 
-import io.werval.util.IdentityGenerator;
-import io.werval.util.UUIDIdentityGenerator;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import io.werval.util.IdentityGenerator;
+import io.werval.util.UUIDIdentityGenerator;
+
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;
 import org.thymeleaf.util.Validate;

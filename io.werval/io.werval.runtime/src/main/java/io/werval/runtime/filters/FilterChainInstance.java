@@ -15,6 +15,10 @@
  */
 package io.werval.runtime.filters;
 
+import java.lang.annotation.Annotation;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
 import io.werval.api.Application;
 import io.werval.api.Global;
 import io.werval.api.context.Context;
@@ -23,9 +27,6 @@ import io.werval.api.filters.Filter;
 import io.werval.api.filters.FilterChain;
 import io.werval.api.outcomes.Outcome;
 import io.werval.util.Couple;
-import java.lang.annotation.Annotation;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Instance of FilterChain.

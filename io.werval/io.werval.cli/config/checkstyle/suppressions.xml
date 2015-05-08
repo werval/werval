@@ -8,8 +8,8 @@
 
 <suppressions>
 
-    <!-- Uncomment while working on the source -->
-    <!-- DO NOT COMMIT -->
-    <suppress checks=".*" files=".*"/>
+    <suppress checks="LineLength" files="DamnSmallDevShell"/>
+    <suppress checks="MethodLength" files="DamnSmallDevShell"/>
+    <suppress checks="WhitespaceAround" files="DamnSmallDevShell"/>
 
 </suppressions>

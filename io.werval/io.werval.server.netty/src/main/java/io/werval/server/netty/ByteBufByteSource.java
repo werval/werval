@@ -15,12 +15,14 @@
  */
 package io.werval.server.netty;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.werval.util.ByteSource;
-import io.werval.util.InputStreams;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+
+import io.werval.util.ByteSource;
+import io.werval.util.InputStreams;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 
 /**
  * ByteSource backed by a Netty ByteBuf.

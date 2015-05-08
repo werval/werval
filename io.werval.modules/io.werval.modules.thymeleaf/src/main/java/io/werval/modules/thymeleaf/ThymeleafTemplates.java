@@ -15,12 +15,14 @@
  */
 package io.werval.modules.thymeleaf;
 
+import java.io.Writer;
+import java.util.Map;
+
 import io.werval.api.exceptions.TemplateException;
 import io.werval.api.templates.Template;
 import io.werval.api.templates.Templates;
 import io.werval.modules.metrics.internal.TemplatesMetricsHandler;
-import java.io.Writer;
-import java.util.Map;
+
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
