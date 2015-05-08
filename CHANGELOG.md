@@ -13,6 +13,11 @@ For minor changes, build system or test changes, see the full [source code histo
 
 - (#254) Allow long numbers in configuration
 
+### Dependency changes
+
+- Core
+    - Upgrade Netty from `4.0.27` to `4.0.28`, see the [announcement](http://netty.io/news/2015/05/07/4-0-28-Final.html)
+
 
 
 ## 0.7.3 - [history](https://github.com/werval/werval/commits/0.7.3)
