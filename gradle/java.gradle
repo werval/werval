@@ -18,7 +18,7 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:deprecation"
 }
-tasks.matching({ task -> task instanceof JavaCompile && !task.name.contains( 'test' ) })
+tasks.matching({ task -> task instanceof JavaCompile && !task.name.toLowerCase().contains( 'test' ) })
     .each({ task -> task.options.compilerArgs << "-Xlint:unchecked" })
 
 // All projects gets basic test dependencies
