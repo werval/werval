@@ -9,6 +9,10 @@ For minor changes, build system or test changes, see the full [source code histo
 
 > Unreleased
 
+### Bug fixes
+
+- (#255) Fix StartCommand fork command line -classpath
+
 ### Enhancements
 
 - (#254) Allow long numbers in configuration

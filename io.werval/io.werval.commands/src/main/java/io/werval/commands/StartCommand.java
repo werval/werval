@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,13 +116,22 @@ public class StartCommand
         Iterator<URL> cpIt = Arrays.asList( classpath ).iterator();
         while( cpIt.hasNext() )
         {
-            cpBuilder.append( cpIt.next().toString() );
+            URL cpUrl = cpIt.next();
+            if( "file".equals( cpUrl.getProtocol() ) )
+            {
+                cpBuilder.append( cpUrl.getPath() );
+            }
+            else
+            {
+                cpBuilder.append( cpUrl.toString() );
+            }
             if( cpIt.hasNext() )
             {
-                cpBuilder.append( ":" );
+                cpBuilder.append( File.pathSeparator );
             }
         }
-        cmd.add( cpBuilder.toString() );
+        String classpathString = cpBuilder.toString();
+        cmd.add( classpathString );
         if( configResource != null )
         {
             cmd.add( "-Dconfig.resource=\"" + configResource + "\"" );
