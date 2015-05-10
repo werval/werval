@@ -16,6 +16,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Enhancements
 
 - (#254) Allow long numbers in configuration
+- (#256) Gradle Plugin now check Gradle version in use
 
 ### Dependency changes
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013-2014 the original author or authors
+ * Copyright (c) 2013-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package io.werval.gradle
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
@@ -30,8 +31,21 @@ import org.gradle.api.plugins.JavaPlugin
  */
 class WervalPlugin implements Plugin<Project>
 {
+    final GRADLE_MIN_MAJOR = 2
+    final GRADLE_MIN_MINOR = 2
+    final GRADLE_MIN_VERSION = "$GRADLE_MIN_MAJOR.$GRADLE_MIN_VERSION"
+
     void apply( Project project )
     {
+        // Ensure Gradle Version
+        def gradleVersion = project.gradle.gradleVersion
+        def gradleVerSplit = gradleVersion.split(/\./)
+        if( gradleVerSplit[0].toInteger() < GRADLE_MIN_MAJOR || gradleVerSplit[1].toInteger() < GRADLE_MIN_MINOR ) {
+            def err = "Werval $BuildVersion.VERSION requires Gradle >= $GRADLE_MIN_VERSION, you're using $gradleVersion"
+            project.logger.error err
+            throw new GradleException( err )
+        }
+
         // Java 8
         project.plugins.apply( JavaPlugin )
         project.sourceCompatibility = '1.8'
