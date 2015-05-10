@@ -58,16 +58,16 @@ public final class Iterables
         implements Iterable<T>
     {
         private final int skip;
-        private final Iterable iterable;
+        private final Iterable<T> iterable;
 
-        SkipIterable( int skip, Iterable iterable )
+        SkipIterable( int skip, Iterable<T> iterable )
         {
             this.skip = skip;
             this.iterable = iterable;
         }
 
         @Override
-        public Iterator iterator()
+        public Iterator<T> iterator()
         {
             Iterator<T> iterator = iterable.iterator();
             for( int i = 0; i < skip; i++ )

@@ -22,7 +22,7 @@ import io.werval.api.exceptions.ActivationException;
 import io.werval.api.routes.Route;
 import io.werval.api.routes.RouteBuilder;
 
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
 
 /**
  * Application Plugin.
@@ -68,7 +68,7 @@ public interface Plugin<API>
      */
     default List<Class<?>> dependencies( Config config )
     {
-        return EMPTY_LIST;
+        return emptyList();
     }
 
     /**
@@ -100,7 +100,7 @@ public interface Plugin<API>
      */
     default List<Route> firstRoutes( Mode mode, RouteBuilder routeBuilder )
     {
-        return EMPTY_LIST;
+        return emptyList();
     }
 
     /**
@@ -117,7 +117,7 @@ public interface Plugin<API>
      */
     default List<Route> lastRoutes( Mode mode, RouteBuilder routeBuilder )
     {
-        return EMPTY_LIST;
+        return emptyList();
     }
 
     /**

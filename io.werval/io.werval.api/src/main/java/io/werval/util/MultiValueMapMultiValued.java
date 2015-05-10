@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static java.lang.String.format;
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
 
 /**
  * MultiValueMap MultiValued.
@@ -146,7 +146,7 @@ public class MultiValueMapMultiValued<K, V>
     @Override
     public List<V> values( K key )
     {
-        return Collections.unmodifiableList( mvmap.getOrDefault( key, EMPTY_LIST ) );
+        return Collections.unmodifiableList( mvmap.getOrDefault( key, emptyList() ) );
     }
 
     @Override

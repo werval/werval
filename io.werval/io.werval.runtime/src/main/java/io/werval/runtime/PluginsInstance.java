@@ -44,7 +44,7 @@ import io.werval.api.exceptions.WervalException;
 import io.werval.api.routes.Route;
 import io.werval.runtime.routes.RouteBuilderInstance;
 
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import static io.werval.util.IllegalArguments.ensureNotNull;
@@ -117,7 +117,7 @@ import static io.werval.util.Strings.rightPad;
 
     private volatile boolean activated = false;
     private boolean activatingOrPassivating = false;
-    private List<PluginInfo> activePlugins = EMPTY_LIST;
+    private List<PluginInfo> activePlugins = emptyList();
 
     /**
      * Activate Plugins.
@@ -147,7 +147,7 @@ import static io.werval.util.Strings.rightPad;
         }
         catch( Exception ex )
         {
-            activePlugins = EMPTY_LIST;
+            activePlugins = emptyList();
             throw ex;
         }
         finally
@@ -184,7 +184,7 @@ import static io.werval.util.Strings.rightPad;
                     it.remove();
                 }
             }
-            activePlugins = EMPTY_LIST;
+            activePlugins = emptyList();
             activated = false;
             if( !errors.isEmpty() )
             {

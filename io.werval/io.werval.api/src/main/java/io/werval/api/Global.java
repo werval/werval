@@ -31,9 +31,10 @@ import io.werval.util.Stacktraces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptyList;
+
 import static io.werval.api.mime.MimeTypes.TEXT_HTML;
 import static io.werval.util.Strings.EMPTY;
-import static java.util.Collections.EMPTY_LIST;
 
 /**
  * Application Global Object.
@@ -60,7 +61,7 @@ public class Global
      */
     public List<Plugin<?>> extraPlugins()
     {
-        return EMPTY_LIST;
+        return emptyList();
     }
 
     /**

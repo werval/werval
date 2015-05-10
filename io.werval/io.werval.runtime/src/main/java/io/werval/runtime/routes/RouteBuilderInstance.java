@@ -43,13 +43,14 @@ import javassist.util.proxy.ProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.emptySet;
+
 import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES_CONTROLLERS;
 import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES_PARAMETERS;
 import static io.werval.util.Strings.EMPTY;
 import static io.werval.util.Strings.isEmpty;
 import static io.werval.util.Strings.withHead;
 import static io.werval.util.Strings.withoutTrail;
-import static java.util.Collections.EMPTY_SET;
 
 /**
  * RouteBuilder Instance.
@@ -116,7 +117,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route()
     {
         return new RouteDeclarationInstance(
-            null, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            null, pathPrefix, null, null, null, ControllerParams.EMPTY, emptySet()
         );
     }
 
@@ -124,7 +125,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( String httpMethod )
     {
         return new RouteDeclarationInstance(
-            Method.valueOf( httpMethod ), pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            Method.valueOf( httpMethod ), pathPrefix, null, null, null, ControllerParams.EMPTY, emptySet()
         );
     }
 
@@ -132,7 +133,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( Method httpMethod )
     {
         return new RouteDeclarationInstance(
-            httpMethod, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            httpMethod, pathPrefix, null, null, null, ControllerParams.EMPTY, emptySet()
         );
     }
 
