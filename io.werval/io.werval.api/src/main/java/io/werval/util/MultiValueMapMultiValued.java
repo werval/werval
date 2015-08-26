@@ -35,6 +35,7 @@ import static java.util.Collections.emptyList;
 public class MultiValueMapMultiValued<K, V>
     implements MultiValued<K, V>, Serializable
 {
+    private static final long serialVersionUID = 1L;
     protected static final Function<String, ? extends RuntimeException> DEFAULT_CONSTRAINT_EX_BUILDER;
 
     static
