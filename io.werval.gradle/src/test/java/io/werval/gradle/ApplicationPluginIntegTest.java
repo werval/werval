@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
  */
 package io.werval.gradle;
 
-import io.werval.runtime.util.Holder;
-import io.werval.util.InputStreams;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.concurrent.Callable;
+
+import io.werval.runtime.util.Holder;
+import io.werval.util.InputStreams;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -33,15 +35,18 @@ import org.gradle.testkit.functional.GradleRunner;
 import org.gradle.testkit.functional.GradleRunnerFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import static com.jayway.awaitility.Awaitility.await;
 import static io.werval.api.BuildVersion.VERSION;
-import static io.werval.util.InputStreams.BUF_SIZE_4K;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import static io.werval.util.InputStreams.BUF_SIZE_4K;
+
+import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.StringContains.containsString;
@@ -216,6 +221,7 @@ public class ApplicationPluginIntegTest
     }
 
     @Test
+    @Ignore
     public void secretTaskIntegrationTest()
         throws IOException
     {
@@ -228,6 +234,7 @@ public class ApplicationPluginIntegTest
     }
 
     @Test
+    @Ignore
     public void devshellTaskIntegrationTest()
         throws InterruptedException, IOException
     {
@@ -368,6 +375,7 @@ public class ApplicationPluginIntegTest
                         }
                         catch( Exception ex )
                         {
+                            ex.printStackTrace();
                             return null;
                         }
                     }
@@ -402,8 +410,10 @@ public class ApplicationPluginIntegTest
                 {
                     GradleRunner runner = GradleRunnerFactory.create();
                     runner.setDirectory( tmp.getRoot() );
-                    runner.setArguments( asList( "--debug", "--stacktrace", task ) );
-                    runner.run();
+                    runner.setArguments( asList( "-d", "-S", task ) );
+                    ExecutionResult result = runner.run();
+                    System.out.println( result.getStandardOutput() );
+                    System.err.println( result.getStandardError() );
                 }
                 catch( Exception ex )
                 {

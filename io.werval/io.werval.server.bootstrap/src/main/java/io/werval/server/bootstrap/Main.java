@@ -15,6 +15,9 @@
  */
 package io.werval.server.bootstrap;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -33,6 +36,17 @@ public final class Main
     public static void main( String[] args )
         throws Exception
     {
+        URL[] cp = ( (URLClassLoader) Main.class.getClassLoader() ).getURLs();
+        System.out.println( "=======================================================================================" );
+        System.out.println( "CLASSPATH FROM INSIDE MAIN" );
+        System.out.println( "LOADER " + Main.class.getClassLoader() );
+        System.out.println( Arrays.toString( cp ) );
+        System.out.println( "application.conf " + Main.class.getClassLoader().getResource( "application.conf" ) );
+        System.out.println( "application-custom.conf "
+                            + Main.class.getClassLoader().getResource( "application-custom.conf" ) );
+        System.out.println( "=======================================================================================" );
+
+        Thread.currentThread().setContextClassLoader( Main.class.getClassLoader() );
         ApplicationSPI app = load( ApplicationSPI.class );
         HttpServer server = load( HttpServer.class );
         server.setApplicationSPI( app );

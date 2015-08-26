@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,21 +82,23 @@ class StartTask extends DefaultTask
         project.logger.debug msg.toString()
 
         def applicationClasspath = sourceSets.collect { sourceSet ->
-            [ sourceSet.output.classesDir.toURI().toURL(), sourceSet.output.resourcesDir.toURI().toURL() ]
-        }.flatten()
+            [ sourceSet.output.classesDir, sourceSet.output.resourcesDir ]
+        }.flatten().findAll{ it.exists() }.collect{ it.toURI().toURL() }
         def runtimeClasspath = sourceSets.collect { sourceSet ->
-            project.configurations[sourceSet.runtimeConfigurationName].files.collect { f -> f.toURI().toURL() }
-        }.flatten()
+            project.configurations[ sourceSet.runtimeConfigurationName ].files
+        }.flatten().findAll{ it.exists() }.collect{ it.toURI().toURL() }
 
         project.logger.debug "====================================================================================="
         project.logger.debug "APPLICATION CLASSPATH"
         project.logger.debug applicationClasspath.toString()
         project.logger.debug "RUNTIME CLASSPATH"
         project.logger.debug runtimeClasspath.toString()
+        project.logger.debug "COMPLETE CLASSPATH URL[]"
+        project.logger.debug Arrays.toString( ( applicationClasspath + runtimeClasspath ) as URL[] )
         project.logger.debug "====================================================================================="
 
         new StartCommand(
-            StartCommand.ExecutionModel.ISOLATED_THREADS,
+            StartCommand.ExecutionModel.FORK,
             mainClass,
             arguments,
             ( applicationClasspath + runtimeClasspath ) as URL[],

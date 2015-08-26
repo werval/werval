@@ -44,7 +44,7 @@ def v_xmlresolver = '1.2'
 def v_zest = '2.1'
 
 // Build Plugins libraries versions
-def v_gradle_tooling = '2.2.1'
+def v_gradle_tooling = '2.4'
 
 // Testing Tools libraries versions
 def v_awaitility = '1.6.3'

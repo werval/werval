@@ -76,6 +76,8 @@ public class BuildLauncherBackedGradleHandle implements GradleHandle {
         if (exception == null) {
             return new DefaultExecutionResult(getStandardOutput(), getStandardError());
         } else {
+            System.out.println( getStandardOutput() );
+            System.err.println( getStandardError() );
             throw exception;
         }
     }

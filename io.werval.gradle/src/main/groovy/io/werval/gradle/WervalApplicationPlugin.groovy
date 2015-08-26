@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2014-2015 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ class WervalApplicationPlugin implements Plugin<Project>
             "stage",
             group: "Werval",
             description: "Install the Application distribution tree, ready to run.",
-            dependsOn: [ project.tasks.getByName( "clean" ), project.tasks.getByName( "installApp" ) ]
+            dependsOn: [ project.tasks.getByName( "clean" ), project.tasks.getByName( "installDist" ) ]
         )
 
         // TODO task stageHeroku( dependsOn: [ 'stage' ] )

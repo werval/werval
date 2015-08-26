@@ -15,8 +15,12 @@
  */
 package io.werval.commands;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,6 +33,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.werval.api.exceptions.WervalException;
 
@@ -131,6 +136,10 @@ public class StartCommand
             }
         }
         String classpathString = cpBuilder.toString();
+        System.out.println( "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
+        System.out.println( "CLASSPATH STRING FROM START_COMMAND" );
+        System.out.println( classpathString );
+        System.out.println( "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
         cmd.add( classpathString );
         if( configResource != null )
         {
@@ -144,11 +153,23 @@ public class StartCommand
         {
             cmd.add( "-Dconfig.url=\"" + configUrl.toString() + "\"" );
         }
+        cmd.add( "-Dconfig.trace=loads" );
         cmd.add( mainClass );
         cmd.addAll( Arrays.asList( arguments ) );
+        System.out.println( "#######################################################################################" );
+        System.out.println( "COMMAND LINE IN START_COMMAND" );
+        String line = cmd.stream().collect( Collectors.joining( " " ) );
+        System.out.println( line );
+        System.out.println( "Length " + line.length() );
+        String quoted = "\"" + cmd.stream().collect( Collectors.joining( "\" \"" ) ) + "\"";
+        System.out.println( quoted );
+        System.out.println( "Quoted length " + quoted.length() );
+        System.out.println( "#######################################################################################" );
         try
         {
             Process process = new ProcessBuilder( cmd ).start();
+            new StreamGobblerThread( "werval-fork-stdout-pipe", process.getInputStream(), System.out ).start();
+            new StreamGobblerThread( "werval-fork-stderr-pipe", process.getErrorStream(), System.err ).start();
             int status = process.waitFor();
             if( status != 0 )
             {
@@ -165,6 +186,38 @@ public class StartCommand
         {
             Thread.interrupted();
             throw new WervalException( "An exception occured while executing the Werval Application.", ex );
+        }
+    }
+
+    private static final class StreamGobblerThread
+        extends Thread
+    {
+        private final InputStream input;
+        private final PrintStream output;
+
+        private StreamGobblerThread( String name, InputStream input, PrintStream output )
+        {
+            setName( name );
+            this.input = input;
+            this.output = output;
+        }
+
+        @Override
+        public void run()
+        {
+            try( InputStreamReader inputReader = new InputStreamReader( input ) )
+            {
+                BufferedReader bufferedInput = new BufferedReader( inputReader );
+                String line;
+                while( ( line = bufferedInput.readLine() ) != null )
+                {
+                    output.println( line );
+                }
+            }
+            catch( IOException ex )
+            {
+                // Ignored
+            }
         }
     }
 

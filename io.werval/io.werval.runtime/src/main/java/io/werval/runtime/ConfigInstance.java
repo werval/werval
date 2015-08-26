@@ -237,6 +237,11 @@ public class ConfigInstance
             // Invalidate TypeSafe Config caches (system properties)
             com.typesafe.config.ConfigFactory.invalidateCaches();
             // Effectively load configuration
+            System.out.println( "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" );
+            System.out.println( "IN CONFIGINSTANCE" );
+            System.out.println( "LOADER: " + loader );
+            System.out.println( "application-custom.conf " + loader.getResource( "application-custom.conf" ) );
+            System.out.println( "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" );
             this.config = com.typesafe.config.ConfigFactory.load( loader );
         }
         finally
