@@ -26,6 +26,7 @@ For minor changes, build system or test changes, see the full [source code histo
 - Modules
     - Upgrade Commons Email from `1.3.3` to `1.4`, see the [changes-report](http://commons.apache.org/proper/commons-email/changes-report.html)
     - Upgrade Liquibase from `3.3.2` to `3.4.1`, see the [announcement](http://www.liquibase.org/2015/07/liquibase-3-4-1-released.html)
+    - Upgrade Guice from `4.0-beta5` to `4.0`, see the [wiki](https://github.com/google/guice/wiki/Guice40)
 
 
 
