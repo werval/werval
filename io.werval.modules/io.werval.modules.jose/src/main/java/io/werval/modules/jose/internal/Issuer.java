@@ -16,6 +16,7 @@
 package io.werval.modules.jose.internal;
 
 import java.security.Key;
+import java.util.Optional;
 
 /**
  * Issuer.
@@ -28,10 +29,13 @@ public final class Issuer
     private final Key key;
     private final String keyId;
     private final String algorithm;
-    private final long notBeforeSeconds;
-    private final long expirationSeconds;
+    private final Optional<Long> notBeforeSeconds;
+    private final Optional<Long> expirationSeconds;
 
-    public Issuer( String dn, Key key, String keyId, String algorithm, long notBeforeSeconds, long expirationSeconds )
+    public Issuer(
+        String dn, Key key, String keyId, String algorithm,
+        Optional<Long> notBeforeSeconds, Optional<Long> expirationSeconds
+    )
     {
         this.dn = dn;
         this.key = key;
@@ -61,12 +65,12 @@ public final class Issuer
         return algorithm;
     }
 
-    public long notBeforeSeconds()
+    public Optional<Long> notBeforeSeconds()
     {
         return notBeforeSeconds;
     }
 
-    public long expirationSeconds()
+    public Optional<Long> expirationSeconds()
     {
         return expirationSeconds;
     }

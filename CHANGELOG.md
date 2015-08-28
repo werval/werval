@@ -12,6 +12,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Bug fixes
 
 - (#255) Fix StartCommand fork command line -classpath
+- (#258) JOSE: Allow issuance of JWT without exp or nbf
 
 ### Enhancements
 

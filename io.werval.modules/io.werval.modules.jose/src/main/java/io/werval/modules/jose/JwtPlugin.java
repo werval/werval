@@ -99,8 +99,8 @@ public class JwtPlugin
                     key,
                     issuerConfig.has( "key_id" ) ? issuerConfig.string( "key_id" ) : dn,
                     algorithm,
-                    issuerConfig.has( "not_before" ) ? issuerConfig.seconds( "not_before" ) : 300L,
-                    issuerConfig.has( "expiration" ) ? issuerConfig.seconds( "expiration" ) : 300L
+                    issuerConfig.secondsOptional( "not_before" ),
+                    issuerConfig.secondsOptional( "expiration" )
                 )
             );
         }
