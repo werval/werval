@@ -19,6 +19,10 @@ For minor changes, build system or test changes, see the full [source code histo
 - (#254) Allow long numbers in configuration
 - (#256) Gradle Plugin now check Gradle version in use
 
+### New Features
+
+- (#259) The `zest` plugin provides Apache Zest™ applications support
+
 ### Dependency changes
 
 - Core

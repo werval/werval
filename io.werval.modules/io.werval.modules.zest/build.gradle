@@ -1,0 +1,13 @@
+
+description = "Zest Module"
+
+moduleDescriptor.plugin 'zest', impl: 'io.werval.modules.zest.ZestPlugin'
+
+dependencies {
+
+    compile libs.zest_bootstrap
+    
+    runtime libs.zest_runtime
+    
+}
+
