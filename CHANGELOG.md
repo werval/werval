@@ -21,7 +21,7 @@ For minor changes, build system or test changes, see the full [source code histo
 ### Dependency changes
 
 - Core
-    - Upgrade Netty from `4.0.27` to `4.0.28`, see the [announcement](http://netty.io/news/2015/05/07/4-0-28-Final.html)
+    - Upgrade Netty from `4.0.27` to `4.0.30`, see the announcements: [4.0.28](http://netty.io/news/2015/05/07/4-0-28-Final.html), [4.0.29](http://netty.io/news/2015/06/23/4-0-29-Final.html) and [4.0.30](http://netty.io/news/2015/07/24/4-0-30-Final.html)
     - Upgrade Typesafe Config from `1.2.1` to `1.3.0`, see the [changelog](https://github.com/typesafehub/config/blob/v1.3.0/NEWS.md)
 - Modules
     - Upgrade Commons Email from `1.3.3` to `1.4`, see the [changes-report](http://commons.apache.org/proper/commons-email/changes-report.html)

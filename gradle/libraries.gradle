@@ -8,7 +8,7 @@ def v_javassist = '3.19.0-GA'
 def v_typesafe_config = '1.3.0'
 
 // HTTP Server libraries versions
-def v_netty = '4.0.28.Final'
+def v_netty = '4.0.30.Final'
 
 // DevShell librairies versions
 def v_classworlds = '2.5.2'
