@@ -15,17 +15,6 @@
  */
 package io.werval.cli;
 
-import io.werval.api.exceptions.WervalException;
-import io.werval.commands.DevShellCommand;
-import io.werval.commands.SecretCommand;
-import io.werval.commands.StartCommand;
-import io.werval.devshell.JavaWatcher;
-import io.werval.runtime.CryptoInstance;
-import io.werval.spi.dev.DevShellRebuildException;
-import io.werval.spi.dev.DevShellSPI.SourceWatcher;
-import io.werval.spi.dev.DevShellSPIAdapter;
-import io.werval.util.ClassLoaders;
-import io.werval.util.DeltreeFileVisitor;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,6 +34,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import io.werval.api.exceptions.WervalException;
+import io.werval.commands.DevShellCommand;
+import io.werval.commands.SecretCommand;
+import io.werval.commands.StartCommand;
+import io.werval.devshell.JavaWatcher;
+import io.werval.runtime.CryptoInstance;
+import io.werval.spi.dev.DevShellRebuildException;
+import io.werval.spi.dev.DevShellSPI.SourceWatcher;
+import io.werval.spi.dev.DevShellSPIAdapter;
+import io.werval.util.ClassLoaders;
+import io.werval.util.DeltreeFileVisitor;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -303,7 +305,7 @@ public final class DamnSmallDevShell
         // Generate Gradle build file
         String gradle = "buildscript {\n"
                         + "  repositories { jcenter() }\n"
-                        + "	 dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
+                        + "  dependencies { classpath 'io.werval:io.werval.gradle:" + VERSION + "' }\n"
                         + "}\n"
                         + "apply plugin: 'io.werval.application'\n"
                         + "\n"

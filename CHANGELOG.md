@@ -5,6 +5,36 @@ For minor changes, build system or test changes, see the full [source code histo
 
 
 
+## 0.7.4 - [history](https://github.com/werval/werval/commits/0.7.4)
+
+> Hotfix 0.7!
+
+### Bug fixes
+
+- (#255) Fix StartCommand fork command line -classpath
+- (#258) JOSE: Allow issuance of JWT without exp or nbf
+
+### Enhancements
+
+- (#254) Allow long numbers in configuration
+- (#256) Gradle Plugin now check Gradle version in use
+
+### New Features
+
+- (#259) The `zest` plugin provides Apache Zest™ applications support
+
+### Dependency changes
+
+- Core
+    - Upgrade Netty from `4.0.27` to `4.0.30`, see the announcements: [4.0.28](http://netty.io/news/2015/05/07/4-0-28-Final.html), [4.0.29](http://netty.io/news/2015/06/23/4-0-29-Final.html) and [4.0.30](http://netty.io/news/2015/07/24/4-0-30-Final.html)
+    - Upgrade Typesafe Config from `1.2.1` to `1.3.0`, see the [changelog](https://github.com/typesafehub/config/blob/v1.3.0/NEWS.md)
+- Modules
+    - Upgrade Commons Email from `1.3.3` to `1.4`, see the [changes-report](http://commons.apache.org/proper/commons-email/changes-report.html)
+    - Upgrade Liquibase from `3.3.2` to `3.4.1`, see the [announcement](http://www.liquibase.org/2015/07/liquibase-3-4-1-released.html)
+    - Upgrade Guice from `4.0-beta5` to `4.0`, see the [wiki](https://github.com/google/guice/wiki/Guice40)
+
+
+
 ## 0.7.3 - [history](https://github.com/werval/werval/commits/0.7.3)
 
 > HotFix 0.7!

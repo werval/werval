@@ -15,10 +15,10 @@
  */
 package io.werval.modules.metrics;
 
-import com.codahale.metrics.health.HealthCheck;
-import com.codahale.metrics.jvm.ThreadDump;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import java.io.ByteArrayOutputStream;
+import java.lang.management.ManagementFactory;
+import java.util.SortedMap;
+
 import io.werval.api.outcomes.Outcome;
 import io.werval.controllers.Classpath;
 import io.werval.filters.ContentSecurityPolicy;
@@ -26,10 +26,12 @@ import io.werval.filters.NeverCached;
 import io.werval.filters.XContentTypeOptions;
 import io.werval.filters.XFrameOptions;
 import io.werval.filters.XXSSProtection;
-import java.io.ByteArrayOutputStream;
-import java.lang.management.ManagementFactory;
-import java.util.SortedMap;
 import io.werval.modules.json.JSON;
+
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.jvm.ThreadDump;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.context.CurrentContext.plugin;

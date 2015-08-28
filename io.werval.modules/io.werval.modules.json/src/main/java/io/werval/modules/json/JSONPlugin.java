@@ -15,12 +15,13 @@
  */
 package io.werval.modules.json;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import io.werval.api.Application;
 import io.werval.api.Plugin;
 import io.werval.api.exceptions.ActivationException;
+
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 /**
  * JsonPlugin.

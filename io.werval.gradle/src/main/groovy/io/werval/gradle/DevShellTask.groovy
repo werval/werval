@@ -15,9 +15,11 @@
  */
 package io.werval.gradle
 
+import java.io.File
+
 import io.werval.commands.DevShellCommand
 import io.werval.devshell.JavaWatcher
-import java.io.File
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction

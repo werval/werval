@@ -15,7 +15,6 @@
  */
 package io.werval.modules.xml.internal;
 
-import com.ctc.wstx.api.WstxInputProperties;
 import java.io.InputStream;
 import java.io.Reader;
 import javax.xml.XMLConstants;
@@ -30,14 +29,17 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.XMLEventAllocator;
 import javax.xml.transform.Source;
 
+import com.ctc.wstx.api.WstxInputProperties;
+
+import static io.werval.modules.xml.internal.Internal.ACCESS_EXTERNAL_ALL;
+import static io.werval.modules.xml.internal.Internal.ACCESS_EXTERNAL_NONE;
+import static io.werval.modules.xml.internal.Internal.LOG;
+
 import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ATTRIBUTES_PER_ELEMENT;
 import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ATTRIBUTE_LENGTH;
 import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ELEMENT_DEPTH;
 import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ENTITY_COUNT;
 import static com.ctc.wstx.api.ReaderConfig.DEFAULT_MAX_ENTITY_DEPTH;
-import static io.werval.modules.xml.internal.Internal.ACCESS_EXTERNAL_ALL;
-import static io.werval.modules.xml.internal.Internal.ACCESS_EXTERNAL_NONE;
-import static io.werval.modules.xml.internal.Internal.LOG;
 
 /**
  * XMLInputFactory (StAX) implementation for XMLPlugin.

@@ -15,10 +15,10 @@
  */
 package io.werval.api;
 
-import io.werval.util.Stacktraces;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+
 import io.werval.api.context.Context;
 import io.werval.api.exceptions.WervalException;
 import io.werval.api.http.RequestHeader;
@@ -26,12 +26,15 @@ import io.werval.api.http.Status;
 import io.werval.api.outcomes.DefaultErrorOutcomes;
 import io.werval.api.outcomes.Outcome;
 import io.werval.api.outcomes.Outcomes;
+import io.werval.util.Stacktraces;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.werval.util.Strings.EMPTY;
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
+
 import static io.werval.api.mime.MimeTypes.TEXT_HTML;
+import static io.werval.util.Strings.EMPTY;
 
 /**
  * Application Global Object.
@@ -58,7 +61,7 @@ public class Global
      */
     public List<Plugin<?>> extraPlugins()
     {
-        return EMPTY_LIST;
+        return emptyList();
     }
 
     /**

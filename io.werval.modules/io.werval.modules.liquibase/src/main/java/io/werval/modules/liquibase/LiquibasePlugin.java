@@ -15,22 +15,24 @@
  */
 package io.werval.modules.liquibase;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Plugin;
 import io.werval.api.exceptions.ActivationException;
 import io.werval.api.exceptions.WervalException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import io.werval.modules.jdbc.JDBC;
+
 import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import io.werval.modules.jdbc.JDBC;
 
 import static io.werval.api.Mode.TEST;
 import static io.werval.util.Strings.EMPTY;

@@ -15,7 +15,6 @@
  */
 package io.werval.modules.jpa;
 
-import io.werval.api.exceptions.WervalException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+
+import io.werval.api.exceptions.WervalException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

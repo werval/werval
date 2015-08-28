@@ -15,6 +15,13 @@
  */
 package io.werval.runtime.routes;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import io.werval.api.context.CurrentContext;
 import io.werval.api.http.Method;
 import io.werval.api.http.QueryString;
@@ -23,12 +30,6 @@ import io.werval.runtime.http.HttpConstants;
 import io.werval.runtime.util.Comparators;
 import io.werval.util.IllegalArguments;
 import io.werval.util.Strings;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Reverse route instance.

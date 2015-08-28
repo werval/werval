@@ -15,15 +15,6 @@
  */
 package io.werval.runtime.filters;
 
-import io.werval.api.Application;
-import io.werval.api.Global;
-import io.werval.api.context.Context;
-import io.werval.api.filters.Filter;
-import io.werval.api.filters.FilterChain;
-import io.werval.api.filters.FilterWith;
-import io.werval.util.Couple;
-import io.werval.runtime.exceptions.WervalRuntimeException;
-import io.werval.runtime.filters.FilterChainInstance.FilterChainControllerTail;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +23,16 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+
+import io.werval.api.Application;
+import io.werval.api.Global;
+import io.werval.api.context.Context;
+import io.werval.api.filters.Filter;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.runtime.exceptions.WervalRuntimeException;
+import io.werval.runtime.filters.FilterChainInstance.FilterChainControllerTail;
+import io.werval.util.Couple;
 
 /**
  * FilterChain Factory.

@@ -15,13 +15,15 @@
  */
 package io.werval.server.jre;
 
-import com.sun.net.httpserver.HttpServer;
-import io.werval.runtime.exceptions.WervalRuntimeException;
-import io.werval.spi.server.HttpServerAdapter;
-import io.werval.spi.ApplicationSPI;
-import io.werval.spi.dev.DevShellSPI;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+
+import io.werval.runtime.exceptions.WervalRuntimeException;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.server.HttpServerAdapter;
+
+import com.sun.net.httpserver.HttpServer;
 
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;

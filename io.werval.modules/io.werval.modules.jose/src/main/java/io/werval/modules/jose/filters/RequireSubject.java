@@ -15,12 +15,6 @@
  */
 package io.werval.modules.jose.filters;
 
-import io.werval.api.context.Context;
-import io.werval.api.filters.FilterChain;
-import io.werval.api.filters.FilterWith;
-import io.werval.api.outcomes.Outcome;
-import io.werval.modules.jose.JWT;
-import io.werval.util.Strings;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -30,6 +24,13 @@ import java.lang.annotation.Target;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import io.werval.api.context.Context;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
+import io.werval.modules.jose.JWT;
+import io.werval.util.Strings;
 
 /**
  * RequireSubject Filter Annotation.

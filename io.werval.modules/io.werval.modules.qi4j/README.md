@@ -1,2 +1,0 @@
-# Qi4j Plugin
-

@@ -15,7 +15,6 @@
  */
 package io.werval.spi.dev;
 
-import io.werval.api.exceptions.WervalException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import io.werval.api.exceptions.WervalException;
 
 /**
  * Adapter for DevShellSPI that listen to changes but has NOOP rebuild methods.

@@ -15,8 +15,6 @@
  */
 package io.werval.filters;
 
-import io.werval.util.Dates;
-import io.werval.util.Strings;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -28,10 +26,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
 import io.werval.api.context.Context;
 import io.werval.api.filters.FilterChain;
 import io.werval.api.filters.FilterWith;
 import io.werval.api.outcomes.Outcome;
+import io.werval.util.Dates;
+import io.werval.util.Strings;
 
 import static io.werval.api.http.Headers.Names.ETAG;
 import static io.werval.api.http.Headers.Names.EXPIRES;

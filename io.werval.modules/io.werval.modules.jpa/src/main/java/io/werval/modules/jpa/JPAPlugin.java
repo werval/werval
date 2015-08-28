@@ -15,16 +15,17 @@
  */
 package io.werval.modules.jpa;
 
-import io.werval.api.Application;
-import io.werval.api.Config;
-import io.werval.api.Plugin;
-import io.werval.api.context.Context;
-import io.werval.api.exceptions.ActivationException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Plugin;
+import io.werval.api.context.Context;
+import io.werval.api.exceptions.ActivationException;
 import io.werval.modules.jdbc.JDBC;
 import io.werval.modules.metrics.Metrics;
 

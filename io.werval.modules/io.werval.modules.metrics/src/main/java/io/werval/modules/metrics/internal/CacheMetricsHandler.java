@@ -15,10 +15,12 @@
  */
 package io.werval.modules.metrics.internal;
 
+import java.util.function.Function;
+
+import io.werval.spi.cache.CacheAdapter.CacheEvent;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import io.werval.spi.cache.CacheAdapter.CacheEvent;
-import java.util.function.Function;
 
 import static com.codahale.metrics.MetricRegistry.name;
 

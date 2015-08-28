@@ -15,14 +15,16 @@
  */
 package io.werval.doc;
 
-import io.werval.api.Application;
-import io.werval.api.Config;
-import io.werval.api.outcomes.Outcome;
-import io.werval.controllers.Classpath;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.outcomes.Outcome;
+import io.werval.controllers.Classpath;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

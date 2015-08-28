@@ -15,6 +15,10 @@
  */
 package io.werval.modules.smtp;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Plugin;
@@ -22,9 +26,6 @@ import io.werval.api.exceptions.ActivationException;
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.smtp.internal.SmtpHealthCheck;
 import io.werval.modules.smtp.internal.Transport;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 import static java.util.Collections.EMPTY_LIST;
 

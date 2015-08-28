@@ -15,6 +15,8 @@
  */
 package io.werval.runtime.context;
 
+import java.util.concurrent.ExecutorService;
+
 import io.werval.api.Application;
 import io.werval.api.MetaData;
 import io.werval.api.context.Context;
@@ -25,7 +27,6 @@ import io.werval.api.outcomes.Outcomes;
 import io.werval.api.routes.Route;
 import io.werval.runtime.http.ResponseHeaderInstance;
 import io.werval.runtime.outcomes.OutcomesInstance;
-import java.util.concurrent.ExecutorService;
 
 /**
  * A HTTP Interaction Context instance.

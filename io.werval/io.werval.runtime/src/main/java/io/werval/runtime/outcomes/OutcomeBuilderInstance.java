@@ -15,6 +15,9 @@
  */
 package io.werval.runtime.outcomes;
 
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
 import io.werval.api.Config;
 import io.werval.api.http.ResponseHeader;
 import io.werval.api.mime.MimeTypes;
@@ -22,8 +25,6 @@ import io.werval.api.outcomes.Outcome;
 import io.werval.api.outcomes.OutcomeBuilder;
 import io.werval.util.ByteArrayByteSource;
 import io.werval.util.ByteSource;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
 import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;

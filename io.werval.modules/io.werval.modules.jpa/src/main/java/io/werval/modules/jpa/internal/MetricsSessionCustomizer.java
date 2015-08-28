@@ -15,9 +15,10 @@
  */
 package io.werval.modules.jpa.internal;
 
+import io.werval.modules.metrics.Metrics;
+
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.sessions.Session;
-import io.werval.modules.metrics.Metrics;
 
 /**
  * EclipseLink Metrics SessionCustomizer.

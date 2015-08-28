@@ -15,15 +15,17 @@
  */
 package io.werval.maven;
 
-import io.werval.commands.DevShellCommand;
-import io.werval.devshell.JavaWatcher;
-import io.werval.spi.dev.DevShellSPI;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import io.werval.commands.DevShellCommand;
+import io.werval.devshell.JavaWatcher;
+import io.werval.spi.dev.DevShellSPI;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -32,6 +34,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import static java.util.Collections.EMPTY_SET;
+
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 

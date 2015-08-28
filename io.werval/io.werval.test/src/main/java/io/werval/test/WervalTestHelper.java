@@ -15,11 +15,12 @@
  */
 package io.werval.test;
 
-import io.werval.api.Config;
-import io.werval.api.Errors;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+
+import io.werval.api.Config;
+import io.werval.api.Errors;
 
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;

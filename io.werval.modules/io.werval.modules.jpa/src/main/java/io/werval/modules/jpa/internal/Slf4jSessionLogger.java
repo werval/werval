@@ -15,9 +15,11 @@
  */
 package io.werval.modules.jpa.internal;
 
-import io.werval.util.Strings;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.werval.util.Strings;
+
 import org.eclipse.persistence.logging.AbstractSessionLog;
 import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.logging.SessionLogEntry;

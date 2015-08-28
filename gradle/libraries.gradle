@@ -4,11 +4,11 @@
 def v_slf4j = '1.7.12'
 
 // Core Runtime libraries versions
-def v_javassist = '3.19.0-GA' // 3.19.0-GA available but fails with HikariCP
-def v_typesafe_config = '1.2.1'
+def v_javassist = '3.19.0-GA'
+def v_typesafe_config = '1.3.0'
 
 // HTTP Server libraries versions
-def v_netty = '4.0.27.Final'
+def v_netty = '4.0.30.Final'
 
 // DevShell librairies versions
 def v_classworlds = '2.5.2'
@@ -20,18 +20,17 @@ def v_cli = '1.2'
 // Modules libraries versions
 def v_eclipselink = '2.6.0'
 def v_ehcache = '2.10.0'
-def v_email = '1.3.3'
-def v_guice = '4.0-beta5' // FIXME Final!
+def v_email = '1.4'
+def v_guice = '4.0'
 def v_hikaricp = '2.3.6'
 def v_jackson = '2.5.2'
 def v_jedis = '2.7.0'
 def v_jing = '20091111'
 def v_jose4j = '0.4.1'
 def v_jpa = '2.1.0'
-def v_liquibase = '3.3.2'
+def v_liquibase = '3.4.1'
 def v_liquibase_slf4j = '1.2.1'
 def v_log4jdbc = '1.16'
-def v_qi4j = '2.1-SNAPSHOT' // FIXME Final!
 def v_memcache = '2.11.7'
 def v_metrics = '3.1.1'
 def v_rythm = '1.0.1'
@@ -42,6 +41,7 @@ def v_tyrex = '1.0.1'
 def v_woodstox = '4.4.1'
 def v_xerces = '2.11.0'
 def v_xmlresolver = '1.2'
+def v_zest = '2.1'
 
 // Build Plugins libraries versions
 def v_gradle_tooling = '2.2.1'
@@ -105,8 +105,6 @@ rootProject.ext {
                                 "io.dropwizard.metrics:metrics-jvm:$v_metrics",
                                 "io.dropwizard.metrics:metrics-json:$v_metrics",
         ],
-        qi4j_bootstrap:         "org.qi4j.core:org.qi4j.core.bootstrap:$v_qi4j",
-        qi4j_runtime:           "org.qi4j.core:org.qi4j.core.runtime:$v_qi4j",
         rythm: [
                                 "org.rythmengine:rythm-engine:$v_rythm",
                                 'org.eclipse.jdt.core.compiler:ecj:4.4'
@@ -119,6 +117,8 @@ rootProject.ext {
         woodstox:               "org.codehaus.woodstox:woodstox-core-asl:$v_woodstox",
         xerces:                 "xerces:xercesImpl:$v_xerces",
         xmlresolver:            "xml-resolver:xml-resolver:$v_xmlresolver",
+        zest_bootstrap:         "org.qi4j.core:org.qi4j.core.bootstrap:$v_zest",
+        zest_runtime:           "org.qi4j.core:org.qi4j.core.runtime:$v_zest",
 
         // Build Plugins libraries
         gradle_tooling:         "org.gradle:gradle-tooling-api:$v_gradle_tooling",

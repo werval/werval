@@ -15,14 +15,17 @@
  */
 package io.werval.modules.jose;
 
-import io.werval.modules.jose.internal.Issuer;
-import io.werval.modules.metrics.Metrics;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import io.werval.modules.jose.internal.Issuer;
+import io.werval.modules.metrics.Metrics;
+
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jws.JsonWebSignature;
 
@@ -62,8 +65,15 @@ public class JWT
     public String tokenForClaims( Map<String, Object> claims )
         throws JoseException
     {
+        return tokenForClaims( defaultIssuer, claims );
+    }
+
+    public String tokenForClaims( String issuerId, Map<String, Object> claims )
+        throws JoseException
+    {
         // Token issuer
-        Issuer issuer = issuers.get( defaultIssuer );
+        Issuer issuer = issuers.get( issuerId );
+        Objects.requireNonNull( issuer, "Unknown issuer: " + issuerId );
 
         // Prepare claims
         Map<String, Object> actualClaims = new LinkedHashMap<>( claims );
@@ -98,8 +108,15 @@ public class JWT
     public Map<String, Object> claimsOfToken( String token )
         throws JoseException
     {
+        return claimsOfToken( defaultIssuer, token );
+    }
+
+    public Map<String, Object> claimsOfToken( String issuerId, String token )
+        throws JoseException
+    {
         // Token issuer
-        Issuer issuer = issuers.get( defaultIssuer );
+        Issuer issuer = issuers.get( issuerId );
+        Objects.requireNonNull( issuer, "Unknown issuer: " + issuerId );
 
         try
         {
@@ -208,15 +225,15 @@ public class JWT
             claims.put( CLAIM_ISSUED_AT, nowUtc.toEpochSecond() );
         }
         // Not before
-        if( claims.get( CLAIM_NOT_BEFORE ) == null )
+        if( claims.get( CLAIM_NOT_BEFORE ) == null && issuer.notBeforeSeconds().isPresent() )
         {
-            ZonedDateTime nbf = nowUtc.minusSeconds( issuer.notBeforeSeconds() );
+            ZonedDateTime nbf = nowUtc.minusSeconds( issuer.notBeforeSeconds().get() );
             claims.put( CLAIM_NOT_BEFORE, nbf.toEpochSecond() );
         }
         // Expiration
-        if( claims.get( CLAIM_EXPIRATION ) == null )
+        if( claims.get( CLAIM_EXPIRATION ) == null && issuer.expirationSeconds().isPresent() )
         {
-            ZonedDateTime exp = nowUtc.plusSeconds( issuer.expirationSeconds() );
+            ZonedDateTime exp = nowUtc.plusSeconds( issuer.expirationSeconds().get() );
             claims.put( CLAIM_EXPIRATION, exp.toEpochSecond() );
         }
     }

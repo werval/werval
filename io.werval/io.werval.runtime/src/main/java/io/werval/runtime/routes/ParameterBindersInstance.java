@@ -15,6 +15,12 @@
  */
 package io.werval.runtime.routes;
 
+import java.net.MalformedURLException;
+import java.time.DateTimeException;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.exceptions.ParameterBinderException;
 import io.werval.api.exceptions.ParameterBindingException;
@@ -23,11 +29,6 @@ import io.werval.api.routes.ParameterBinder;
 import io.werval.api.routes.ParameterBinders;
 import io.werval.runtime.util.TypeResolver;
 import io.werval.util.Hashids;
-import java.net.MalformedURLException;
-import java.time.DateTimeException;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parameter Binders instance.

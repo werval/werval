@@ -16,8 +16,9 @@
 package io.werval.api.http;
 
 import java.util.Map;
-import io.werval.api.http.Cookies.Cookie;
 import java.util.Optional;
+
+import io.werval.api.http.Cookies.Cookie;
 
 /**
  * Session.

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import static java.util.Objects.requireNonNull;
+
 import static io.werval.util.IllegalArguments.ensureGreaterOrEqual;
 
 /**

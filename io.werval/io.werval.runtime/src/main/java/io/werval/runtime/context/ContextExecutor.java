@@ -15,11 +15,12 @@
  */
 package io.werval.runtime.context;
 
+import java.util.concurrent.ExecutorService;
+
 import io.werval.api.context.Context;
 import io.werval.api.context.CurrentContext;
 import io.werval.api.context.ThreadContextHelper;
 import io.werval.runtime.util.ExecutorServiceDecoratorAdapter;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Context Executor.

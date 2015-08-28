@@ -15,16 +15,18 @@
  */
 package io.werval.modules.jpa.internal;
 
-import com.codahale.metrics.Timer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.persistence.sessions.Record;
-import org.eclipse.persistence.sessions.SessionProfiler;
+
+import io.werval.modules.metrics.Metrics;
+
+import com.codahale.metrics.Timer;
 import org.eclipse.persistence.internal.sessions.AbstractRecord;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.queries.DatabaseQuery;
-import io.werval.modules.metrics.Metrics;
+import org.eclipse.persistence.sessions.Record;
+import org.eclipse.persistence.sessions.SessionProfiler;
 
 import static io.werval.util.Strings.EMPTY;
 

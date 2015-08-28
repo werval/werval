@@ -117,7 +117,7 @@ public abstract class AbstractRunGoalIT
           + "        <dependency>\n"
           + "            <groupId>org.slf4j</groupId>\n"
           + "            <artifactId>slf4j-simple</artifactId>\n"
-          + "            <version>1.7.7</version>\n"
+          + "            <version>1.7.12</version>\n"
           + "            <scope>runtime</scope>\n"
           + "        </dependency>\n"
           + "    </dependencies>\n"

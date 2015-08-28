@@ -15,15 +15,16 @@
  */
 package io.werval.server.netty;
 
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.server.HttpServerHelper;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.werval.spi.ApplicationSPI;
-import io.werval.spi.dev.DevShellSPI;
-import io.werval.spi.server.HttpServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +67,8 @@ public class SubProtocolSwitchHandler
             LOG.trace( "Switching to plain HTTP protocol" );
             ChannelPipeline pipeline = context.pipeline();
 
-            int maxBodySize = app.config().intNumber( WERVAL_HTTP_REQUESTS_BODY_MAX_SIZE );
-            int diskThreshold = app.config().intNumber( WERVAL_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
+            long maxBodySize = app.config().longNumber( WERVAL_HTTP_REQUESTS_BODY_MAX_SIZE );
+            long diskThreshold = app.config().longNumber( WERVAL_HTTP_REQUESTS_BODY_DISK_THRESHOLD );
             pipeline.addLast(
                 "http-aggregator",
                 new HttpRequestAggregator( helper, app.events(), maxBodySize, diskThreshold, app.tmpdir() )

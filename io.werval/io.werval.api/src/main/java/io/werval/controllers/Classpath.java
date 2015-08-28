@@ -16,17 +16,13 @@
 package io.werval.controllers;
 
 import java.util.List;
+
 import io.werval.api.Mode;
 import io.werval.api.outcomes.Outcome;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.werval.util.Charsets.US_ASCII;
-import static io.werval.util.ClassLoaders.resourceExists;
-import static io.werval.util.IllegalArguments.ensureNotEmpty;
-import static io.werval.util.Strings.withoutHead;
-import static io.werval.util.Strings.withoutTrail;
-import static java.util.Locale.US;
 import static io.werval.api.context.CurrentContext.application;
 import static io.werval.api.context.CurrentContext.mimeTypes;
 import static io.werval.api.context.CurrentContext.outcomes;
@@ -35,6 +31,12 @@ import static io.werval.api.context.CurrentContext.response;
 import static io.werval.api.http.Headers.Names.CACHE_CONTROL;
 import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
 import static io.werval.api.mime.MimeTypesNames.APPLICATION_OCTET_STREAM;
+import static io.werval.util.Charsets.US_ASCII;
+import static io.werval.util.ClassLoaders.resourceExists;
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
+import static io.werval.util.Strings.withoutHead;
+import static io.werval.util.Strings.withoutTrail;
+import static java.util.Locale.US;
 
 /**
  * Serve resources from the classpath.

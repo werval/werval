@@ -1,0 +1,56 @@
+= Apache Zest™ Module
+Apache Zest™ Application Support
+:jbake-type: module
+
+The Zest module provide a `ZestPlugin` that brings support for Zest Applications to be embedded in Werval Applications.
+
+
+[TIP]
+.Apache Zest™ Documentation
+====
+This documentation do not cover Apache Zest™ itself as it is already well covered on the official
+https://zest.apache.org/java/latest[documentation].
+====
+
+
+
+== Declaration
+
+In order to use the `ZestPlugin` you must add a dependency to `io.werval.modules.zest` and register the plugin in your
+configuration.
+
+When using Gradle:
+
+.build.gradle
+[source,groovy,subs="attributes,specialcharacters"]
+----
+compile 'io.werval:io.werval.modules.zest:{werval-version}'
+----
+
+When using Maven:
+
+.pom.xml
+[source,xml,subs="attributes,specialcharacters"]
+----
+<dependency>
+    <groupId>io.werval</groupId>
+    <artifactId>io.werval.modules.zest</artifactId>
+    <version>{werval-version}</version>
+</dependency>
+----
+
+And finally your application configuration:
+
+.application.conf
+[source,json]
+----
+app.plugins.enabled += zest
+----
+
+
+== Configuration
+
+
+
+== Usage
+

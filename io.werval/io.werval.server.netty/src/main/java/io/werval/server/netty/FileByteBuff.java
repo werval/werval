@@ -15,10 +15,6 @@
  */
 package io.werval.server.netty;
 
-import io.netty.buffer.AbstractByteBuf;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.werval.api.exceptions.WervalException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +27,12 @@ import java.nio.ByteOrder;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.file.Files;
+
+import io.werval.api.exceptions.WervalException;
+
+import io.netty.buffer.AbstractByteBuf;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

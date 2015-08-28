@@ -15,9 +15,11 @@
  */
 package io.werval.controllers;
 
-import io.werval.api.outcomes.Outcome;
 import java.util.List;
 import java.util.Locale;
+
+import io.werval.api.outcomes.Outcome;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

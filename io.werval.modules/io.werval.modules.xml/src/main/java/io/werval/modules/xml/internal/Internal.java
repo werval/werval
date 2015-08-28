@@ -17,7 +17,9 @@ package io.werval.modules.xml.internal;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
 import io.werval.modules.xml.XML;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

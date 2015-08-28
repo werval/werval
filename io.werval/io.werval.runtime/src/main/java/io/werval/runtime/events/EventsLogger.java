@@ -15,8 +15,10 @@
  */
 package io.werval.runtime.events;
 
-import io.werval.api.events.Event;
 import java.util.function.Consumer;
+
+import io.werval.api.events.Event;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

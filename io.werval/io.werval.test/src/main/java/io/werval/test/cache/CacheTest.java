@@ -22,14 +22,17 @@ import io.werval.filters.Cached;
 import io.werval.runtime.routes.RoutesParserProvider;
 import io.werval.runtime.routes.RoutesProvider;
 import io.werval.test.WervalTest;
+
 import org.junit.Test;
+
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.http.Headers.Names.ETAG;
 import static io.werval.api.http.Headers.Names.IF_NONE_MATCH;
 import static io.werval.api.http.Method.GET;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
+
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertFalse;

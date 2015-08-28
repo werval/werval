@@ -15,8 +15,6 @@
  */
 package io.werval.runtime;
 
-import io.werval.api.Config;
-import io.werval.util.Reflectively;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,9 +28,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static io.werval.util.Charsets.UTF_8;
+import io.werval.api.Config;
+import io.werval.util.Reflectively;
+
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import static io.werval.util.Charsets.UTF_8;
 
 /**
  * Config Instance backed by TypeSafe Config.
@@ -440,6 +442,25 @@ public class ConfigInstance
         try
         {
             return Optional.of( intNumber( key ) );
+        }
+        catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
+        {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Long longNumber( String key )
+    {
+        return config.getLong( key );
+    }
+
+    @Override
+    public Optional<Long> longOptional( String key )
+    {
+        try
+        {
+            return Optional.of( longNumber( key ) );
         }
         catch( com.typesafe.config.ConfigException.WrongType | com.typesafe.config.ConfigException.Missing ex )
         {

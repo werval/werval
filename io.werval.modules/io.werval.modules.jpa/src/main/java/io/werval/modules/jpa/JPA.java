@@ -15,14 +15,6 @@
  */
 package io.werval.modules.jpa;
 
-import io.werval.api.Mode;
-import io.werval.api.context.Context;
-import io.werval.api.context.CurrentContext;
-import io.werval.api.filters.Filter;
-import io.werval.api.filters.FilterChain;
-import io.werval.api.filters.FilterWith;
-import io.werval.api.outcomes.Outcome;
-import io.werval.util.Strings;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -40,9 +32,19 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUtil;
+
+import io.werval.api.Mode;
+import io.werval.api.context.Context;
+import io.werval.api.context.CurrentContext;
+import io.werval.api.filters.Filter;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
 import io.werval.modules.jpa.internal.MetricsSessionCustomizer;
 import io.werval.modules.jpa.internal.Slf4jSessionLogger;
 import io.werval.modules.metrics.Metrics;
+import io.werval.util.Strings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

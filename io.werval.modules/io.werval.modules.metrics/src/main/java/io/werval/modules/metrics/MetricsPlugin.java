@@ -15,6 +15,30 @@
  */
 package io.werval.modules.metrics;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import io.werval.api.Application;
+import io.werval.api.Config;
+import io.werval.api.Mode;
+import io.werval.api.Plugin;
+import io.werval.api.events.ConnectionEvent;
+import io.werval.api.events.Event;
+import io.werval.api.events.HttpEvent;
+import io.werval.api.events.Registration;
+import io.werval.api.exceptions.ActivationException;
+import io.werval.api.routes.Route;
+import io.werval.api.routes.RouteBuilder;
+import io.werval.modules.json.JSON;
+
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.JmxReporter;
@@ -35,39 +59,18 @@ import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
-import io.werval.api.Application;
-import io.werval.api.Config;
-import io.werval.api.Mode;
-import io.werval.api.Plugin;
-import io.werval.api.events.ConnectionEvent;
-import io.werval.api.events.Event;
-import io.werval.api.events.HttpEvent;
-import io.werval.api.events.Registration;
-import io.werval.api.exceptions.ActivationException;
-import io.werval.api.routes.Route;
-import io.werval.api.routes.RouteBuilder;
-import java.io.File;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import io.werval.modules.json.JSON;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 
-import static io.werval.api.Mode.DEV;
-import static io.werval.api.http.Method.GET;
 import static java.lang.management.ManagementFactory.getPlatformMBeanServer;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Locale.US;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
+import static io.werval.api.Mode.DEV;
+import static io.werval.api.http.Method.GET;
 
 /**
  * Metrics Plugin.

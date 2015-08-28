@@ -15,15 +15,17 @@
  */
 package io.werval.modules.cache;
 
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.cache.Cache;
 import io.werval.api.cache.CachePlugin;
 import io.werval.api.exceptions.ActivationException;
 import io.werval.modules.metrics.Metrics;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
+
 import net.sf.ehcache.CacheManager;
 
 import static java.util.Collections.EMPTY_LIST;

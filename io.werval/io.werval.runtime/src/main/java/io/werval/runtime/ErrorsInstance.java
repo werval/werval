@@ -15,10 +15,6 @@
  */
 package io.werval.runtime;
 
-import io.werval.api.Config;
-import io.werval.api.Error;
-import io.werval.api.Errors;
-import io.werval.util.UUIDIdentityGenerator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,10 +23,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import static io.werval.runtime.ConfigKeys.APP_ERRORS_RECORD_MAX;
+import io.werval.api.Config;
+import io.werval.api.Error;
+import io.werval.api.Errors;
+import io.werval.util.UUIDIdentityGenerator;
+
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
+
+import static io.werval.runtime.ConfigKeys.APP_ERRORS_RECORD_MAX;
 
 /**
  * Application Errors Instance.

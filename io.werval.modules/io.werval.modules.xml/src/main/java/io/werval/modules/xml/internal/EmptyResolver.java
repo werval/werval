@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
+
 import org.apache.xerces.dom.DOMInputImpl;
 import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.XNIException;

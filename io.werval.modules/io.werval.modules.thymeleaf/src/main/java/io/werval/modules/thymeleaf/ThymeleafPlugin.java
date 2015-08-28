@@ -15,24 +15,27 @@
  */
 package io.werval.modules.thymeleaf;
 
+import java.util.Arrays;
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.exceptions.ActivationException;
 import io.werval.api.templates.Templates;
 import io.werval.api.templates.TemplatesPlugin;
-import java.util.Arrays;
-import java.util.List;
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.metrics.internal.TemplatesMetricsHandler;
+
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.TemplateResolver;
+
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.Locale.US;
 
 import static io.werval.api.Mode.DEV;
 import static io.werval.util.Strings.EMPTY;
 import static io.werval.util.Strings.withTrail;
 import static io.werval.util.Strings.withoutHead;
-import static java.util.Collections.EMPTY_LIST;
-import static java.util.Locale.US;
 
 /**
  * Thymeleaf Templates Plugin.

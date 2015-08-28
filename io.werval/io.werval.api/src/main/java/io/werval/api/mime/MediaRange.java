@@ -15,8 +15,9 @@
  */
 package io.werval.api.mime;
 
-import io.werval.util.Couple;
 import java.util.List;
+
+import io.werval.util.Couple;
 
 /**
  * Media Range as defined in RFC 2616, sections 3.7 and 14.1.

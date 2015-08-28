@@ -15,11 +15,6 @@
  */
 package io.werval.modules.metrics;
 
-import com.codahale.metrics.MetricRegistry;
-import io.werval.api.context.Context;
-import io.werval.api.filters.FilterChain;
-import io.werval.api.filters.FilterWith;
-import io.werval.api.outcomes.Outcome;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -28,6 +23,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import io.werval.api.context.Context;
+import io.werval.api.filters.FilterChain;
+import io.werval.api.filters.FilterWith;
+import io.werval.api.outcomes.Outcome;
+
+import com.codahale.metrics.MetricRegistry;
 
 import static io.werval.util.IllegalArguments.ensureNotEmpty;
 

@@ -15,11 +15,10 @@
  */
 package io.werval.server.netty;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import io.werval.api.exceptions.PassivationException;
 import io.werval.api.exceptions.WervalException;
 import io.werval.runtime.exceptions.WervalRuntimeException;
@@ -28,12 +27,13 @@ import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellSPI;
 import io.werval.spi.server.HttpServerAdapter;
 import io.werval.util.Reflectively;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
-import static io.netty.channel.ChannelOption.TCP_NODELAY;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+
 import static io.werval.api.Mode.PROD;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ACCEPTORS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_ADDRESS;
@@ -41,6 +41,9 @@ import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_IOTHREADS;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_PORT;
 import static io.werval.runtime.ConfigKeys.WERVAL_SHUTDOWN_QUIETPERIOD;
 import static io.werval.runtime.ConfigKeys.WERVAL_SHUTDOWN_TIMEOUT;
+
+import static io.netty.channel.ChannelOption.SO_KEEPALIVE;
+import static io.netty.channel.ChannelOption.TCP_NODELAY;
 
 /**
  * Netty HTTP Server.

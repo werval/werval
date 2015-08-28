@@ -15,23 +15,25 @@
  */
 package io.werval.server.jre;
 
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import java.io.IOException;
+import java.io.InputStream;
+
 import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.Request;
 import io.werval.api.outcomes.Outcome;
 import io.werval.runtime.outcomes.ChunkedInputOutcome;
 import io.werval.runtime.outcomes.InputStreamOutcome;
 import io.werval.runtime.outcomes.SimpleOutcome;
-import io.werval.spi.server.HttpServerHelper;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellRebuildException;
 import io.werval.spi.dev.DevShellSPI;
+import io.werval.spi.server.HttpServerHelper;
 import io.werval.util.InputStreamByteSource;
 import io.werval.util.InputStreams;
-import java.io.IOException;
-import java.io.InputStream;
+
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 /**
  * com.sun.net HTTP Handler.

@@ -15,11 +15,6 @@
  */
 package io.werval.devshell;
 
-import io.werval.util.LinkedMultiValueMap;
-import io.werval.util.MultiValueMap;
-import io.werval.spi.dev.DevShellSPI.SourceChangeListener;
-import io.werval.spi.dev.DevShellSPI.SourceWatch;
-import io.werval.spi.dev.DevShellSPI.SourceWatcher;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -34,11 +29,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.werval.util.LinkedMultiValueMap;
+import io.werval.util.MultiValueMap;
+import io.werval.spi.dev.DevShellSPI.SourceChangeListener;
+import io.werval.spi.dev.DevShellSPI.SourceWatch;
+import io.werval.spi.dev.DevShellSPI.SourceWatcher;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.werval.util.IllegalArguments.ensureNotNull;
-import static io.werval.util.Iterables.first;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
@@ -49,6 +49,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+
+import static io.werval.util.IllegalArguments.ensureNotNull;
+import static io.werval.util.Iterables.first;
 
 /**
  * Java WatchService based SourceWatcher.

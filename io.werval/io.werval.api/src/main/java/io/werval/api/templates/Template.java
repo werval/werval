@@ -18,9 +18,10 @@ package io.werval.api.templates;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
+
 import io.werval.api.exceptions.TemplateException;
 
-import static java.util.Collections.EMPTY_MAP;
+import static java.util.Collections.emptyMap;
 
 /**
  * Template, ready to render.
@@ -37,7 +38,7 @@ public interface Template
     default String render()
         throws TemplateException
     {
-        return render( EMPTY_MAP );
+        return render( emptyMap() );
     }
 
     /**
@@ -67,7 +68,7 @@ public interface Template
     default void render( Writer output )
         throws TemplateException
     {
-        render( EMPTY_MAP, output );
+        render( emptyMap(), output );
     }
 
     /**

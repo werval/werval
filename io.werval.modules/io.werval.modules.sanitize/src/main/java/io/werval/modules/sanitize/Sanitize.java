@@ -15,20 +15,22 @@
  */
 package io.werval.modules.sanitize;
 
-import com.codahale.metrics.Timer;
-import com.google.json.JsonSanitizer;
-import io.werval.api.i18n.Lang;
 import java.net.URL;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import io.werval.api.i18n.Lang;
+import io.werval.modules.metrics.Metrics;
+
+import com.codahale.metrics.Timer;
+import com.google.json.JsonSanitizer;
 import org.owasp.encoder.Encode;
 import org.owasp.validator.css.CssScanner;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.InternalPolicy;
 import org.owasp.validator.html.Policy;
-import io.werval.modules.metrics.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

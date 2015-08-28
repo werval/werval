@@ -32,6 +32,7 @@ import java.util.Set;
 public abstract class MultiValueMapAdapter<K, V>
     implements MultiValueMap<K, V>, Serializable
 {
+    private static final long serialVersionUID = 1L;
     protected final Map<K, List<V>> internalMap;
 
     protected MultiValueMapAdapter( Map<K, List<V>> internalMap )

@@ -15,12 +15,13 @@
  */
 package io.werval.runtime.http;
 
+import java.io.Serializable;
+
 import io.werval.api.http.MutableCookies;
 import io.werval.api.http.MutableHeaders;
 import io.werval.api.http.ProtocolVersion;
 import io.werval.api.http.ResponseHeader;
 import io.werval.api.http.Status;
-import java.io.Serializable;
 
 import static io.werval.api.http.Headers.Names.CONNECTION;
 import static io.werval.api.http.Headers.Values.KEEP_ALIVE;

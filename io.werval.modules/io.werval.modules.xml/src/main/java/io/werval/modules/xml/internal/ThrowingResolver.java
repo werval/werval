@@ -16,9 +16,11 @@
 package io.werval.modules.xml.internal;
 
 import javax.xml.transform.Source;
+
+import io.werval.modules.xml.UncheckedXMLException;
+
 import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.parser.XMLInputSource;
-import io.werval.modules.xml.UncheckedXMLException;
 import org.w3c.dom.ls.LSInput;
 import org.xml.sax.InputSource;
 

@@ -15,10 +15,11 @@
  */
 package io.werval.commands;
 
-import io.werval.spi.dev.DevShellSPI;
-import io.werval.devshell.DevShell;
 import java.io.File;
 import java.net.URL;
+
+import io.werval.devshell.DevShell;
+import io.werval.spi.dev.DevShellSPI;
 
 /**
  * DevShell Command.

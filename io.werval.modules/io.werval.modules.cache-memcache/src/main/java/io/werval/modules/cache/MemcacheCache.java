@@ -15,12 +15,14 @@
  */
 package io.werval.modules.cache;
 
-import io.werval.spi.cache.CacheAdapter;
 import java.util.UUID;
-import net.spy.memcached.MemcachedClient;
-import net.spy.memcached.transcoders.SerializingTranscoder;
+
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.metrics.internal.CacheMetricsHandler;
+import io.werval.spi.cache.CacheAdapter;
+
+import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.transcoders.SerializingTranscoder;
 
 /**
  * Memcache Cache.

@@ -17,14 +17,16 @@ package io.werval.modules.smtp;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailAttachment;
-import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
+
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.smtp.internal.MultiPartEmailMetrics;
 import io.werval.modules.smtp.internal.SimpleEmailMetrics;
 import io.werval.modules.smtp.internal.Transport;
+
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.MultiPartEmail;
+import org.apache.commons.mail.SimpleEmail;
 
 /**
  * SMTP.

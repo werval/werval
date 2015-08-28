@@ -15,12 +15,13 @@
  */
 package io.werval.server.netty;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.werval.spi.ApplicationSPI;
 import io.werval.spi.dev.DevShellRebuildException;
 import io.werval.spi.dev.DevShellSPI;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,6 +15,20 @@
  */
 package io.werval.server.netty;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.List;
+
+import io.werval.api.events.HttpEvent;
+import io.werval.spi.events.EventsSPI;
+import io.werval.spi.server.HttpServerHelper;
+import io.werval.runtime.exceptions.WervalRuntimeException;
+import io.werval.util.IdentityGenerator;
+import io.werval.util.UUIDIdentityGenerator;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,20 +43,16 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.werval.api.events.HttpEvent;
-import io.werval.spi.events.EventsSPI;
-import io.werval.spi.server.HttpServerHelper;
-import io.werval.runtime.exceptions.WervalRuntimeException;
-import io.werval.util.IdentityGenerator;
-import io.werval.util.UUIDIdentityGenerator;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Locale.US;
+
+import static io.werval.api.http.Headers.Names.CONNECTION;
+import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
+import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
+import static io.werval.api.http.Headers.Values.CLOSE;
+import static io.werval.util.Charsets.US_ASCII;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
@@ -50,12 +60,6 @@ import static io.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static io.netty.handler.codec.http.HttpHeaders.removeTransferEncodingChunked;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-import static io.werval.api.http.Headers.Names.CONNECTION;
-import static io.werval.api.http.Headers.Names.CONTENT_LENGTH;
-import static io.werval.api.http.Headers.Names.CONTENT_TYPE;
-import static io.werval.api.http.Headers.Values.CLOSE;
-import static io.werval.util.Charsets.US_ASCII;
-import static java.util.Locale.US;
 
 /**
  * Aggregate chunked HttpRequest in FullHttpRequest.
@@ -82,8 +86,8 @@ public class HttpRequestAggregator
 
     private final HttpServerHelper helper;
     private final EventsSPI eventsSpi;
-    private final int maxContentLength;
-    private final int diskThreshold;
+    private final long maxContentLength;
+    private final long diskThreshold;
     private final File diskOverflowDirectory;
     private HttpRequest aggregatedRequestHeader;
     private int consumedContentlength = 0;
@@ -92,7 +96,7 @@ public class HttpRequestAggregator
 
     public HttpRequestAggregator(
         HttpServerHelper helper, EventsSPI eventsSpi,
-        int maxContentLength, int diskThreshold, File diskOverflowDirectory
+        long maxContentLength, long diskThreshold, File diskOverflowDirectory
     )
     {
         this.helper = helper;

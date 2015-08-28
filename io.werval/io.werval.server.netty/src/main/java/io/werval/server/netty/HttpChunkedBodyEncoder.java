@@ -23,8 +23,9 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.stream.ChunkedInput;
 
-import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
 import static io.werval.api.http.Headers.Names.X_WERVAL_CONTENT_LENGTH;
+
+import static io.netty.buffer.Unpooled.EMPTY_BUFFER;
 
 /**
  * Encode a ChunkedInput&lt;ByteBuf&gt; into HTTP chunks.

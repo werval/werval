@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static java.lang.String.format;
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
 
 /**
  * MultiValueMap MultiValued.
@@ -35,6 +35,7 @@ import static java.util.Collections.EMPTY_LIST;
 public class MultiValueMapMultiValued<K, V>
     implements MultiValued<K, V>, Serializable
 {
+    private static final long serialVersionUID = 1L;
     protected static final Function<String, ? extends RuntimeException> DEFAULT_CONSTRAINT_EX_BUILDER;
 
     static
@@ -146,7 +147,7 @@ public class MultiValueMapMultiValued<K, V>
     @Override
     public List<V> values( K key )
     {
-        return Collections.unmodifiableList( mvmap.getOrDefault( key, EMPTY_LIST ) );
+        return Collections.unmodifiableList( mvmap.getOrDefault( key, emptyList() ) );
     }
 
     @Override

@@ -1,0 +1,17 @@
+
+{
+    "name": "Zest Application from JSON",
+    "layers": [
+        {
+            "name": "Layer 1",
+            "modules": [
+                {
+                    "name": "Module 1",
+                    "assemblers": [
+                        "io.werval.modules.zest.HelloWorldAssembler"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -15,9 +15,10 @@
  */
 package io.werval.runtime.routes;
 
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.routes.Route;
-import java.util.List;
 
 /**
  * RouteProvider that parse routes from a string.

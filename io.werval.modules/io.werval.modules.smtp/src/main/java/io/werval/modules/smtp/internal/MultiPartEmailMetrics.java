@@ -15,9 +15,10 @@
  */
 package io.werval.modules.smtp.internal;
 
+import io.werval.modules.metrics.Metrics;
+
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
-import io.werval.modules.metrics.Metrics;
 
 /**
  * MultiPartEmail with Metrics.

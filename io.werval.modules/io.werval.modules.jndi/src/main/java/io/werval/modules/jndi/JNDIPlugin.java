@@ -15,11 +15,12 @@
  */
 package io.werval.modules.jndi;
 
+import javax.naming.NamingException;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Plugin;
 import io.werval.api.exceptions.ActivationException;
-import javax.naming.NamingException;
 
 /**
  * JNDI Plugin.

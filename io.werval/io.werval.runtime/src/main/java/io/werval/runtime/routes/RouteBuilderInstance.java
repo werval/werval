@@ -15,6 +15,17 @@
  */
 package io.werval.runtime.routes;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
 import io.werval.api.Application;
 import io.werval.api.exceptions.IllegalRouteException;
 import io.werval.api.exceptions.WervalException;
@@ -26,20 +37,13 @@ import io.werval.api.routes.ControllerParams.ParamValue;
 import io.werval.api.routes.Route;
 import io.werval.api.routes.internal.RouteBuilderContext;
 import io.werval.runtime.util.Holder;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.emptySet;
 
 import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES_CONTROLLERS;
 import static io.werval.runtime.ConfigKeys.WERVAL_ROUTES_IMPORTEDPACKAGES_PARAMETERS;
@@ -47,7 +51,6 @@ import static io.werval.util.Strings.EMPTY;
 import static io.werval.util.Strings.isEmpty;
 import static io.werval.util.Strings.withHead;
 import static io.werval.util.Strings.withoutTrail;
-import static java.util.Collections.EMPTY_SET;
 
 /**
  * RouteBuilder Instance.
@@ -114,7 +117,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route()
     {
         return new RouteDeclarationInstance(
-            null, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            null, pathPrefix, null, null, null, ControllerParams.EMPTY, emptySet()
         );
     }
 
@@ -122,7 +125,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( String httpMethod )
     {
         return new RouteDeclarationInstance(
-            Method.valueOf( httpMethod ), pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            Method.valueOf( httpMethod ), pathPrefix, null, null, null, ControllerParams.EMPTY, emptySet()
         );
     }
 
@@ -130,7 +133,7 @@ public class RouteBuilderInstance
     public RouteDeclaration route( Method httpMethod )
     {
         return new RouteDeclarationInstance(
-            httpMethod, pathPrefix, null, null, null, ControllerParams.EMPTY, EMPTY_SET
+            httpMethod, pathPrefix, null, null, null, ControllerParams.EMPTY, emptySet()
         );
     }
 

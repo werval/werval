@@ -15,10 +15,11 @@
  */
 package io.werval.api.http;
 
-import io.werval.util.MultiValued;
-import io.werval.util.Strings;
 import java.util.Locale;
 import java.util.Optional;
+
+import io.werval.util.MultiValued;
+import io.werval.util.Strings;
 
 /**
  * HTTP Headers.

@@ -15,10 +15,11 @@
  */
 package io.werval.server.bootstrap;
 
-import io.werval.spi.ApplicationSPI;
-import io.werval.spi.server.HttpServer;
 import java.util.List;
 import java.util.ServiceLoader;
+
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.server.HttpServer;
 
 import static io.werval.util.Iterables.toList;
 

@@ -15,10 +15,11 @@
  */
 package io.werval.runtime.routes;
 
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.routes.Route;
 import io.werval.util.Reflectively;
-import java.util.List;
 
 /**
  * Routes Provider.

@@ -15,13 +15,14 @@
  */
 package io.werval.modules.sanitize;
 
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
 import io.werval.api.Application;
 import io.werval.api.Config;
 import io.werval.api.Plugin;
 import io.werval.api.exceptions.ActivationException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import io.werval.modules.metrics.Metrics;
 import io.werval.modules.xml.XML;
 

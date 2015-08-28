@@ -15,6 +15,12 @@
  */
 package io.werval.server.netty;
 
+import java.net.InetSocketAddress;
+
+import io.werval.api.events.ConnectionEvent;
+import io.werval.spi.ApplicationSPI;
+import io.werval.spi.dev.DevShellSPI;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -26,13 +32,10 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import io.werval.api.events.ConnectionEvent;
-import io.werval.spi.ApplicationSPI;
-import io.werval.spi.dev.DevShellSPI;
-import java.net.InetSocketAddress;
 
 import static java.util.Locale.US;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_LOG_LOWLEVEL_ENABLED;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_LOG_LOWLEVEL_LEVEL;
 import static io.werval.runtime.ConfigKeys.WERVAL_HTTP_TIMEOUT_READ;
