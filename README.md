@@ -22,7 +22,7 @@ You can also use the application [skeletons](http://werval.io/resources/skeleton
 
 To discuss with the Werval community, post questions and get answers, join us at [freenode](http://freenode.net/), IRC channel `##werval`.
 
-If you found a bug, want to request a new feature or enhancement or would like to contribute to Werval, start [here](http://werval.io/community.html).
+If you found a bug, want to request a new feature or enhancement or would like to contribute, start [here](http://werval.io/community.html).
 
 
 ## Versioning Scheme
