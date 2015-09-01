@@ -50,6 +50,8 @@ import static io.werval.util.Strings.isEmpty;
  * long dec = enc.startsWith( "-" ) ? -hashids.decodeLongs( enc.substring( 1 ) )[0] : hashids.decodeLongs( enc )[0];
  * </pre>
  * Note that this isn't true Hashids anymore and that this is limited to single number hashes.
+ * <p>
+ * Hashids instances are thread-safe.
  *
  * @navassoc 1 create * Hashid
  */
