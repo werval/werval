@@ -38,7 +38,7 @@ import static io.werval.util.Strings.isEmpty;
  * {@literal separators} to a client, client-side is not safe.
  * <p>
  * Only positive numbers are supported.
- * All methods in this class with throw an {@link IllegalArgumentException} if a negative number is given.
+ * All methods in this class will throw an {@link IllegalArgumentException} if a negative number is given.
  * If you want to use negative numbers you'll have to handle prepending {@literal -} to the hash string yourself and
  * would be limited to single number hashes.
  * <p>
@@ -50,6 +50,8 @@ import static io.werval.util.Strings.isEmpty;
  * long dec = enc.startsWith( "-" ) ? -hashids.decodeLongs( enc.substring( 1 ) )[0] : hashids.decodeLongs( enc )[0];
  * </pre>
  * Note that this isn't true Hashids anymore and that this is limited to single number hashes.
+ * <p>
+ * Hashids instances are thread-safe.
  *
  * @navassoc 1 create * Hashid
  */
